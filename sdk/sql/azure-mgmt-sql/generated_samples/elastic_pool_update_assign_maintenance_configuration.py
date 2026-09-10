@@ -44,6 +44,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-01-01/ElasticPoolUpdateAssignMaintenanceConfiguration.json
+# x-ms-original-file: 2025-08-01-preview/ElasticPoolUpdateAssignMaintenanceConfiguration.json
 if __name__ == "__main__":
     main()

@@ -1051,7 +1051,7 @@ def load_feature_set_backfill_request(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :type relative_origin: str
+    :paramtype relative_origin: str
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :paramtype params_override: List[Dict]

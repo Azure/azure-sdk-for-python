@@ -8,18 +8,20 @@ import time
 import urllib
 from unittest import mock
 
+import pytest
+from opentelemetry.trace import format_span_id, format_trace_id
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
+from utils import HTTP_RESPONSES, HTTP_REQUESTS, create_http_response, request_and_responses_product
+from tracing_common import FakeSpan
+
 from azure.core.pipeline import Pipeline, PipelineResponse, PipelineRequest, PipelineContext
 from azure.core.pipeline.policies import DistributedTracingPolicy, HttpLoggingPolicy, UserAgentPolicy, RetryPolicy
+
+# pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import HttpTransport, RequestsTransport
 from azure.core.settings import settings
 from azure.core.tracing._models import SpanKind
 from azure.core.tracing._abstract_span import HttpSpanMixin
-import pytest
-from opentelemetry.trace import format_span_id, format_trace_id
-from opentelemetry.instrumentation.requests import RequestsInstrumentor
-
-from utils import HTTP_RESPONSES, HTTP_REQUESTS, create_http_response, request_and_responses_product
-from tracing_common import FakeSpan
 
 
 class TestTracingPolicyPluginImplementation:

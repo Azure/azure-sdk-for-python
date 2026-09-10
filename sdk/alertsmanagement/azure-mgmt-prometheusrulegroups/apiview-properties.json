@@ -28,5 +28,5 @@
         "azure.mgmt.prometheusrulegroups.operations.PrometheusRuleGroupsOperations.list_by_subscription": "Microsoft.AlertsManagement.PrometheusRuleGroupResources.listBySubscription",
         "azure.mgmt.prometheusrulegroups.aio.operations.PrometheusRuleGroupsOperations.list_by_subscription": "Microsoft.AlertsManagement.PrometheusRuleGroupResources.listBySubscription"
     },
-    "CrossLanguageVersion": "8e0c8db73996"
+    "CrossLanguageVersion": "1a801be7fa9e"
 }

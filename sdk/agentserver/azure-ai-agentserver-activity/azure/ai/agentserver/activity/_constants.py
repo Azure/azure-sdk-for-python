@@ -5,8 +5,8 @@
 
 All domain/magic strings used by the activity host live here: header names,
 routing, M365 connection-manager configuration keys, outbound-auth scopes and
-claims, the digital-worker MSAL patch, OpenTelemetry baggage keys, log-record
-field names, error classification values, and inbound activity field names.
+claims, OpenTelemetry baggage keys, log-record field names, error
+classification values, and inbound activity field names.
 
 Cross-cutting header names (for example the session ID header) are imported
 from :mod:`azure.ai.agentserver.core._platform_headers`.
@@ -33,9 +33,7 @@ class ActivityConstants:
 
     # Routing
     ACTIVITY_MESSAGES_PATH: str = "/activity/messages"
-    API_MESSAGES_PATH: str = "/api/messages"
     ACTIVITY_ROUTE_NAME: str = "create_activity"
-    API_MESSAGES_ROUTE_NAME: str = "create_activity_api_messages"
 
 
 class FoundryEnv:
@@ -69,6 +67,7 @@ class ConnectionSettings:
 
     # Values
     AUTH_TYPE_USER_MANAGED_IDENTITY: str = "UserManagedIdentity"
+    AUTH_TYPE_IDENTITY_PROXY_MANAGER: str = "IdentityProxyManager"
     MAP_SERVICE_URL_WILDCARD: str = "*"
     SERVICE_CONNECTION_NAME: str = "SERVICE_CONNECTION"
     AUTHORITY_TEMPLATE: str = "https://login.microsoftonline.com/{tenant_id}"
@@ -86,16 +85,6 @@ class OutboundAuth:
     CLAIM_AUDIENCE: str = "aud"
     AUTH_TYPE_ANONYMOUS: str = "Anonymous"
     AUTH_TYPE_BEARER: str = "Bearer"
-
-
-class MsalPatch:
-    """Constants for the digital-worker MSAL federated-identity (FMI) patch."""
-
-    PATCH_FLAG: str = "_activity_sdk_msal_patched"
-    TOKEN_EXCHANGE_SCOPE: str = "api://AzureADTokenExchange/.default"
-    FMI_PATH_KEY: str = "fmi_path"
-    MSAL_CONFIGURATION_ATTR: str = "_msal_configuration"
-    MSAL_CLIENT_ID_ATTR: str = "CLIENT_ID"
 
 
 class BaggageKeys:

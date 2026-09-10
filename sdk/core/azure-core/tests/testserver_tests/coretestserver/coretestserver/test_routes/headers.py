@@ -5,7 +5,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from flask import Response, Blueprint, request
+from flask import Response, Blueprint
 
 headers_api = Blueprint("headers_api", __name__)
 

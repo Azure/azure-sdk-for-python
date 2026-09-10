@@ -6,10 +6,41 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Iterable, Protocol, runtime_checkable
 
-from ..models._generated import OutputItem, ResponseObject, ResponseStreamEvent
+from ..models._generated import OutputItem, ResponseObject
 
 if TYPE_CHECKING:
     from .._response_context import PlatformContext
+
+
+class ResponseAlreadyExistsError(Exception):
+    """Raised by a response-store provider when ``create_response`` is called for
+    a ``response_id`` that already has a non-deleted entry.
+
+    Callers should treat this as the idempotent-create signal: the response is
+    already persisted from a prior attempt (typically a recovered handler
+    re-emitting ``response.created``), and there is no need to write again.
+    Continue execution toward the terminal ``update_response``.
+
+    :param response_id: The response identifier that already exists.
+    :type response_id: str
+    """
+
+    def __init__(self, response_id: str) -> None:
+        super().__init__(f"response '{response_id}' already exists")
+        self.response_id = response_id
+
+
+class ResponseStoreCorruptionError(RuntimeError):
+    """Raised when a persisted response envelope exists but its backing data is
+    incomplete or corrupt (e.g. an ``output[]`` item file referenced by the
+    envelope is missing).
+
+    This is deliberately **distinct from not-found**: the response WAS persisted
+    (it was resiliently created), so callers must surface a server/storage error
+    rather than a 404, and recovery must treat it as transient corruption rather
+    than the "never persisted" drop signal. Subclasses :class:`RuntimeError` so
+    existing broad ``RuntimeError`` handling continues to apply.
+    """
 
 
 @runtime_checkable
@@ -144,69 +175,3 @@ class ResponseProviderProtocol(Protocol):
         :rtype: list[str]
         """
         ...
-
-
-@runtime_checkable
-class ResponseStreamProviderProtocol(Protocol):
-    """Protocol for providers that can persist and replay SSE stream events.
-
-    Implement this protocol alongside :class:`ResponseProviderProtocol` to enable
-    SSE replay for responses that are no longer resident in the in-process runtime
-    state (for example, after a process restart).
-    """
-
-    async def save_stream_events(
-        self,
-        response_id: str,
-        events: list[ResponseStreamEvent],
-        *,
-        context: PlatformContext | None = None,
-    ) -> None:
-        """Persist the complete ordered list of SSE events for a response.
-
-        Called once when the background+stream response reaches terminal state.
-        The *events* list contains ``ResponseStreamEvent`` model instances.
-
-        :param response_id: The unique identifier of the response.
-        :type response_id: str
-        :param events: Ordered list of event instances to persist.
-        :type events: list[ResponseStreamEvent]
-        :keyword context: Platform context for multi-tenant partitioning.
-        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
-        :rtype: None
-        """
-
-    async def get_stream_events(
-        self,
-        response_id: str,
-        *,
-        context: PlatformContext | None = None,
-    ) -> list[ResponseStreamEvent] | None:
-        """Retrieve the persisted SSE events for a response.
-
-        :param response_id: The unique identifier of the response whose events to retrieve.
-        :type response_id: str
-        :keyword context: Platform context for multi-tenant partitioning.
-        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
-        :returns: The ordered list of event instances, or ``None`` if not found.
-        :rtype: list[ResponseStreamEvent] | None
-        """
-
-    async def delete_stream_events(
-        self,
-        response_id: str,
-        *,
-        context: PlatformContext | None = None,
-    ) -> None:
-        """Delete persisted SSE events for a response.
-
-        Called when a response is deleted via ``DELETE /responses/{id}``.
-        Implementations should remove any stored event data for the given
-        response. No-op if no events exist for the ID.
-
-        :param response_id: The unique identifier of the response whose events to remove.
-        :type response_id: str
-        :keyword context: Platform context for multi-tenant partitioning.
-        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
-        :rtype: None
-        """

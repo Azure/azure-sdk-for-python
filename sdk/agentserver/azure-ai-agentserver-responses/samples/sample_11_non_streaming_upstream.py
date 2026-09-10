@@ -72,11 +72,11 @@ async def handler(
     # Build the upstream request — translate every input item.
     # Both model stacks share the same JSON wire contract, so
     # serializing our Item to dict round-trips to the OpenAI SDK.
-    input_items = [item.as_dict() for item in await context.get_input_items()]
+    input_items = [dict(item) for item in await context.get_input_items()]
 
     # Call upstream without streaming and get the complete response.
     result = await upstream.responses.create(
-        model=request.model or "gpt-4o-mini",
+        model=request.get("model") or "gpt-4o-mini",
         input=input_items,  # type: ignore[arg-type]
     )
 

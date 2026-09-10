@@ -3,15 +3,16 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the user agent policy."""
-from azure.core.pipeline.policies import UserAgentPolicy
-from azure.core.pipeline import PipelineRequest, PipelineContext
-
 try:
     from unittest import mock
 except ImportError:
     import mock
+
 import pytest
 from utils import HTTP_REQUESTS
+
+from azure.core.pipeline.policies import UserAgentPolicy
+from azure.core.pipeline import PipelineRequest, PipelineContext
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

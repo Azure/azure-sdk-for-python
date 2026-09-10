@@ -6,7 +6,7 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2024_04_01_preview.models import ConnectionCategory
+from azure.ai.ml._restclient.arm_ml_service.models import ConnectionCategory
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.resource import ResourceSchema
 from azure.ai.ml._schema.job import CreationContextSchema

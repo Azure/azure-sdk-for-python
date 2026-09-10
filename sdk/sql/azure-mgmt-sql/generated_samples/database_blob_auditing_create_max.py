@@ -56,6 +56,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-01-01/DatabaseBlobAuditingCreateMax.json
+# x-ms-original-file: 2025-08-01-preview/DatabaseBlobAuditingCreateMax.json
 if __name__ == "__main__":
     main()

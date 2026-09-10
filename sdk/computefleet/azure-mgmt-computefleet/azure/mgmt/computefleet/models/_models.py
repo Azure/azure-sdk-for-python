@@ -2754,7 +2754,7 @@ class VirtualMachine(_Model):
      subscriptions/{subId}/resourceGroups/{rgName}/providers/Microsoft.Compute/virtualMachines/{vmName}.
      Required.
     :vartype id: str
-    :ivar type: Type of the virtual machine.
+    :ivar type: ARM resource type - virtual machine.
     :vartype type: str
     :ivar operation_status: This represents the operationStatus of the virtual machine in response
      to the last operation that was performed on it by Azure Fleet resource. Required. Known values
@@ -2762,6 +2762,12 @@ class VirtualMachine(_Model):
     :vartype operation_status: str or ~azure.mgmt.computefleet.models.VMOperationStatus
     :ivar error: Error information when ``operationStatus`` is ``Failed``.
     :vartype error: ~azure.mgmt.computefleet.models.ApiError
+    :ivar vm_size: The VM size of the virtual machine.
+    :vartype vm_size: str
+    :ivar zone: The availability zone of the virtual machine.
+    :vartype zone: str
+    :ivar priority: The priority of the virtual machine.
+    :vartype priority: str
     """
 
     name: str = rest_field(visibility=["read"])
@@ -2771,13 +2777,19 @@ class VirtualMachine(_Model):
      subscriptions/{subId}/resourceGroups/{rgName}/providers/Microsoft.Compute/virtualMachines/{vmName}.
      Required."""
     type: Optional[str] = rest_field(visibility=["read"])
-    """Type of the virtual machine."""
+    """ARM resource type - virtual machine."""
     operation_status: Union[str, "_models.VMOperationStatus"] = rest_field(name="operationStatus", visibility=["read"])
     """This represents the operationStatus of the virtual machine in response to the last operation
      that was performed on it by Azure Fleet resource. Required. Known values are: \"Launching\",
      \"Creating\", \"Failed\", and \"Succeeded\"."""
     error: Optional["_models.ApiError"] = rest_field(visibility=["read"])
     """Error information when ``operationStatus`` is ``Failed``."""
+    vm_size: Optional[str] = rest_field(name="vmSize", visibility=["read"])
+    """The VM size of the virtual machine."""
+    zone: Optional[str] = rest_field(visibility=["read"])
+    """The availability zone of the virtual machine."""
+    priority: Optional[str] = rest_field(visibility=["read"])
+    """The priority of the virtual machine."""
 
 
 class VirtualMachineScaleSet(_Model):

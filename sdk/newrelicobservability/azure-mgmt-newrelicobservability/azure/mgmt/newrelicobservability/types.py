@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,23 +13,18 @@ from typing_extensions import Required, TypedDict
 if TYPE_CHECKING:
     from .models import (
         AccountCreationSource,
-        ActionType,
-        BillingSource,
         CreatedByType,
         LiftrResourceCategories,
         ManagedServiceIdentityType,
         MarketplaceSubscriptionStatus,
         MonitoringStatus,
         OrgCreationSource,
-        Origin,
         PatchOperation,
         ProvisioningState,
         SendAadLogsStatus,
         SendActivityLogsStatus,
         SendMetricsStatus,
         SendSubscriptionLogsStatus,
-        SendingLogsStatus,
-        SendingMetricsStatus,
         SingleSignOnStates,
         Status,
         TagAction,
@@ -40,10 +35,10 @@ if TYPE_CHECKING:
 class AccountInfo(TypedDict, total=False):
     """Account Info of the NewRelic account.
 
-    :ivar account_id: Account id.
-    :vartype account_id: str
-    :ivar ingestion_key: Credential string.
-    :vartype ingestion_key: str
+    :ivar accountId: Account id.
+    :vartype accountId: str
+    :ivar ingestionKey: Credential string.
+    :vartype ingestionKey: str
     :ivar region: Region where New Relic account is present.
     :vartype region: str
     """
@@ -52,29 +47,6 @@ class AccountInfo(TypedDict, total=False):
     """Account id."""
     ingestionKey: str
     """Credential string."""
-    region: str
-    """Region where New Relic account is present."""
-
-
-class AccountProperties(TypedDict, total=False):
-    """List of all the New relic accounts for the given user.
-
-    :ivar organization_id: organization id.
-    :vartype organization_id: str
-    :ivar account_id: account id.
-    :vartype account_id: str
-    :ivar account_name: account name.
-    :vartype account_name: str
-    :ivar region: Region where New Relic account is present.
-    :vartype region: str
-    """
-
-    organizationId: str
-    """organization id."""
-    accountId: str
-    """account id."""
-    accountName: str
-    """account name."""
     region: str
     """Region where New Relic account is present."""
 
@@ -90,9 +62,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -118,41 +90,19 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
-
-
-class AccountResource(ProxyResource):
-    """The details of a account resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: "AccountProperties"
-    """
-
-    properties: "AccountProperties"
-    """The resource-specific properties for this resource."""
 
 
 class ActivateSaaSParameterRequest(TypedDict, total=False):
     """SaaS guid & PublishedId for Activate and Validate SaaS Resource.
 
-    :ivar saas_guid: SaaS guid for Activate and Validate SaaS Resource. Required.
-    :vartype saas_guid: str
-    :ivar publisher_id: Publisher Id for NewRelic resource. Required.
-    :vartype publisher_id: str
+    :ivar saasGuid: SaaS guid for Activate and Validate SaaS Resource. Required.
+    :vartype saasGuid: str
+    :ivar publisherId: Publisher Id for NewRelic resource. Required.
+    :vartype publisherId: str
     """
 
     saasGuid: Required[str]
@@ -161,140 +111,19 @@ class ActivateSaaSParameterRequest(TypedDict, total=False):
     """Publisher Id for NewRelic resource. Required."""
 
 
-class AppServiceInfo(TypedDict, total=False):
-    """Details of VM Resource having NewRelic OneAgent installed.
-
-    :ivar azure_resource_id: Azure App service resource ID.
-    :vartype azure_resource_id: str
-    :ivar agent_version: Version of the NewRelic agent installed on the App service.
-    :vartype agent_version: str
-    :ivar agent_status: Status of the NewRelic agent installed on the App service.
-    :vartype agent_status: str
-    """
-
-    azureResourceId: str
-    """Azure App service resource ID."""
-    agentVersion: str
-    """Version of the NewRelic agent installed on the App service."""
-    agentStatus: str
-    """Status of the NewRelic agent installed on the App service."""
-
-
 class AppServicesGetRequest(TypedDict, total=False):
     """Request of a app services get Operation.
 
-    :ivar azure_resource_ids: Azure resource IDs.
-    :vartype azure_resource_ids: list[str]
-    :ivar user_email: Reusable representation of an email address. Required.
-    :vartype user_email: str
+    :ivar azureResourceIds: Azure resource IDs.
+    :vartype azureResourceIds: list[str]
+    :ivar userEmail: Reusable representation of an email address. Required.
+    :vartype userEmail: str
     """
 
     azureResourceIds: list[str]
     """Azure resource IDs."""
     userEmail: Required[str]
     """Reusable representation of an email address. Required."""
-
-
-class BillingInfoResponse(TypedDict, total=False):
-    """Marketplace Subscription and Organization details to which resource gets billed into.
-
-    :ivar marketplace_saas_info: Marketplace Subscription details.
-    :vartype marketplace_saas_info: "MarketplaceSaaSInfo"
-    :ivar partner_billing_entity: Partner Billing Entity details: Organization Info.
-    :vartype partner_billing_entity: "PartnerBillingEntity"
-    """
-
-    marketplaceSaasInfo: "MarketplaceSaaSInfo"
-    """Marketplace Subscription details."""
-    partnerBillingEntity: "PartnerBillingEntity"
-    """Partner Billing Entity details: Organization Info."""
-
-
-class ConnectedPartnerResourceProperties(TypedDict, total=False):
-    """Connected Partner Resource Properties.
-
-    :ivar account_name: NewRelic account name.
-    :vartype account_name: str
-    :ivar account_id: NewRelic Account Id.
-    :vartype account_id: str
-    :ivar azure_resource_id: The azure resource Id of the deployment.
-    :vartype azure_resource_id: str
-    :ivar location: The location of the deployment.
-    :vartype location: str
-    """
-
-    accountName: str
-    """NewRelic account name."""
-    accountId: str
-    """NewRelic Account Id."""
-    azureResourceId: str
-    """The azure resource Id of the deployment."""
-    location: str
-    """The location of the deployment."""
-
-
-class ConnectedPartnerResourcesListFormat(TypedDict, total=False):
-    """Connected Partner Resources List Format.
-
-    :ivar properties: Connected Partner Resource Properties.
-    :vartype properties: "ConnectedPartnerResourceProperties"
-    """
-
-    properties: "ConnectedPartnerResourceProperties"
-    """Connected Partner Resource Properties."""
-
-
-class ErrorAdditionalInfo(TypedDict, total=False):
-    """The resource management error additional info.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: Any
-    """
-
-    type: str
-    """The additional info type."""
-    info: Any
-    """The additional info."""
-
-
-class ErrorDetail(TypedDict, total=False):
-    """The error detail.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list["ErrorDetail"]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list["ErrorAdditionalInfo"]
-    """
-
-    code: str
-    """The error code."""
-    message: str
-    """The error message."""
-    target: str
-    """The error target."""
-    details: list["ErrorDetail"]
-    """The error details."""
-    additionalInfo: list["ErrorAdditionalInfo"]
-    """The error additional info."""
-
-
-class ErrorResponse(TypedDict, total=False):
-    """Error response.
-
-    :ivar error: The error object.
-    :vartype error: "ErrorDetail"
-    """
-
-    error: "ErrorDetail"
-    """The error object."""
 
 
 class FilteringTag(TypedDict, total=False):
@@ -322,10 +151,10 @@ class FilteringTag(TypedDict, total=False):
 class HostsGetRequest(TypedDict, total=False):
     """Request of a Hosts get Operation.
 
-    :ivar vm_ids: VM resource IDs.
-    :vartype vm_ids: list[str]
-    :ivar user_email: Reusable representation of an email address. Required.
-    :vartype user_email: str
+    :ivar vmIds: VM resource IDs.
+    :vartype vmIds: list[str]
+    :ivar userEmail: Reusable representation of an email address. Required.
+    :vartype userEmail: str
     """
 
     vmIds: list[str]
@@ -334,49 +163,23 @@ class HostsGetRequest(TypedDict, total=False):
     """Reusable representation of an email address. Required."""
 
 
-class LatestLinkedSaaSResponse(TypedDict, total=False):
-    """Response of get latest linked SaaS resource operation.
-
-    :ivar saa_s_resource_id: SaaS resource id.
-    :vartype saa_s_resource_id: str
-    :ivar is_hidden_saa_s: Flag indicating if the SaaS resource is hidden.
-    :vartype is_hidden_saa_s: bool
-    """
-
-    saaSResourceId: str
-    """SaaS resource id."""
-    isHiddenSaaS: bool
-    """Flag indicating if the SaaS resource is hidden."""
-
-
-class LinkedResource(TypedDict, total=False):
-    """The definition of a linked resource.
-
-    :ivar id: The ARM id of the linked resource.
-    :vartype id: str
-    """
-
-    id: str
-    """The ARM id of the linked resource."""
-
-
 class LogRules(TypedDict, total=False):
     """Set of rules for sending logs for the Monitor resource.
 
-    :ivar send_aad_logs: Flag specifying if AAD logs should be sent for the Monitor resource. Known
+    :ivar sendAadLogs: Flag specifying if AAD logs should be sent for the Monitor resource. Known
      values are: "Enabled" and "Disabled".
-    :vartype send_aad_logs: Union[str, "SendAadLogsStatus"]
-    :ivar send_subscription_logs: Flag specifying if subscription logs should be sent for the
-     Monitor resource. Known values are: "Enabled" and "Disabled".
-    :vartype send_subscription_logs: Union[str, "SendSubscriptionLogsStatus"]
-    :ivar send_activity_logs: Flag specifying if activity logs from Azure resources should be sent
+    :vartype sendAadLogs: Union[str, "SendAadLogsStatus"]
+    :ivar sendSubscriptionLogs: Flag specifying if subscription logs should be sent for the Monitor
+     resource. Known values are: "Enabled" and "Disabled".
+    :vartype sendSubscriptionLogs: Union[str, "SendSubscriptionLogsStatus"]
+    :ivar sendActivityLogs: Flag specifying if activity logs from Azure resources should be sent
      for the Monitor resource. Known values are: "Enabled" and "Disabled".
-    :vartype send_activity_logs: Union[str, "SendActivityLogsStatus"]
-    :ivar filtering_tags: List of filtering tags to be used for capturing logs. This only takes
+    :vartype sendActivityLogs: Union[str, "SendActivityLogsStatus"]
+    :ivar filteringTags: List of filtering tags to be used for capturing logs. This only takes
      effect if SendActivityLogs flag is enabled. If empty, all resources will be captured. If only
      Exclude action is specified, the rules will apply to the list of all available resources. If
      Include actions are specified, the rules will only include resources with the associated tags.
-    :vartype filtering_tags: list["FilteringTag"]
+    :vartype filteringTags: list["FilteringTag"]
     """
 
     sendAadLogs: Union[str, "SendAadLogsStatus"]
@@ -398,17 +201,17 @@ class LogRules(TypedDict, total=False):
 class ManagedServiceIdentity(TypedDict, total=False):
     """Managed service identity (system assigned and/or user assigned identities).
 
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+    :ivar principalId: The service principal ID of the system assigned identity. This property will
+     only be provided for a system assigned identity.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
-    :vartype tenant_id: str
+    :vartype tenantId: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
      "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
     :vartype type: Union[str, "ManagedServiceIdentityType"]
-    :ivar user_assigned_identities: The identities assigned to this resource by the user.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar userAssignedIdentities: The identities assigned to this resource by the user.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     principalId: str
@@ -424,53 +227,16 @@ class ManagedServiceIdentity(TypedDict, total=False):
     """The identities assigned to this resource by the user."""
 
 
-class MarketplaceSaaSInfo(TypedDict, total=False):
-    """Marketplace SAAS Info of the resource.
-
-    :ivar marketplace_subscription_id: Marketplace Subscription Id. This is a GUID-formatted
-     string.
-    :vartype marketplace_subscription_id: str
-    :ivar marketplace_subscription_name: Marketplace Subscription Details: SAAS Name.
-    :vartype marketplace_subscription_name: str
-    :ivar marketplace_resource_id: Marketplace Subscription Details: Resource URI.
-    :vartype marketplace_resource_id: str
-    :ivar marketplace_status: Marketplace Subscription Details: SaaS Subscription Status.
-    :vartype marketplace_status: str
-    :ivar billed_azure_subscription_id: The Azure Subscription ID to which the Marketplace
-     Subscription belongs and gets billed into.
-    :vartype billed_azure_subscription_id: str
-    :ivar publisher_id: Publisher Id of the Marketplace offer.
-    :vartype publisher_id: str
-    :ivar offer_id: Offer Id of the Marketplace offer,.
-    :vartype offer_id: str
-    """
-
-    marketplaceSubscriptionId: str
-    """Marketplace Subscription Id. This is a GUID-formatted string."""
-    marketplaceSubscriptionName: str
-    """Marketplace Subscription Details: SAAS Name."""
-    marketplaceResourceId: str
-    """Marketplace Subscription Details: Resource URI."""
-    marketplaceStatus: str
-    """Marketplace Subscription Details: SaaS Subscription Status."""
-    billedAzureSubscriptionId: str
-    """The Azure Subscription ID to which the Marketplace Subscription belongs and gets billed into."""
-    publisherId: str
-    """Publisher Id of the Marketplace offer."""
-    offerId: str
-    """Offer Id of the Marketplace offer,."""
-
-
 class MetricRules(TypedDict, total=False):
     """Set of rules for sending metrics for the Monitor resource.
 
-    :ivar send_metrics: Flag specifying if metrics should be sent for the Monitor resource. Known
+    :ivar sendMetrics: Flag specifying if metrics should be sent for the Monitor resource. Known
      values are: "Enabled" and "Disabled".
-    :vartype send_metrics: Union[str, "SendMetricsStatus"]
-    :ivar filtering_tags: List of filtering tags to be used for capturing metrics.
-    :vartype filtering_tags: list["FilteringTag"]
-    :ivar user_email: Reusable representation of an email address.
-    :vartype user_email: str
+    :vartype sendMetrics: Union[str, "SendMetricsStatus"]
+    :ivar filteringTags: List of filtering tags to be used for capturing metrics.
+    :vartype filteringTags: list["FilteringTag"]
+    :ivar userEmail: Reusable representation of an email address.
+    :vartype userEmail: str
     """
 
     sendMetrics: Union[str, "SendMetricsStatus"]
@@ -485,8 +251,8 @@ class MetricRules(TypedDict, total=False):
 class MetricsRequest(TypedDict, total=False):
     """Request of get metrics Operation.
 
-    :ivar user_email: Reusable representation of an email address. Required.
-    :vartype user_email: str
+    :ivar userEmail: Reusable representation of an email address. Required.
+    :vartype userEmail: str
     """
 
     userEmail: Required[str]
@@ -496,10 +262,10 @@ class MetricsRequest(TypedDict, total=False):
 class MetricsStatusRequest(TypedDict, total=False):
     """Request of get metrics status Operation.
 
-    :ivar azure_resource_ids: Azure resource IDs.
-    :vartype azure_resource_ids: list[str]
-    :ivar user_email: Reusable representation of an email address. Required.
-    :vartype user_email: str
+    :ivar azureResourceIds: Azure resource IDs.
+    :vartype azureResourceIds: list[str]
+    :ivar userEmail: Reusable representation of an email address. Required.
+    :vartype userEmail: str
     """
 
     azureResourceIds: list[str]
@@ -508,62 +274,18 @@ class MetricsStatusRequest(TypedDict, total=False):
     """Reusable representation of an email address. Required."""
 
 
-class MetricsStatusResponse(TypedDict, total=False):
-    """Response of get metrics status Operation.
-
-    :ivar azure_resource_ids: Azure resource IDs.
-    :vartype azure_resource_ids: list[str]
-    """
-
-    azureResourceIds: list[str]
-    """Azure resource IDs."""
-
-
-class MonitoredResource(TypedDict, total=False):
-    """Details of resource being monitored by NewRelic monitor resource.
-
-    :ivar id: The ARM id of the resource.
-    :vartype id: str
-    :ivar sending_metrics: Flag indicating if resource is sending metrics to NewRelic. Known values
-     are: "Enabled" and "Disabled".
-    :vartype sending_metrics: Union[str, "SendingMetricsStatus"]
-    :ivar reason_for_metrics_status: Reason for why the resource is sending metrics (or why it is
-     not sending).
-    :vartype reason_for_metrics_status: str
-    :ivar sending_logs: Flag indicating if resource is sending logs to NewRelic. Known values are:
-     "Enabled" and "Disabled".
-    :vartype sending_logs: Union[str, "SendingLogsStatus"]
-    :ivar reason_for_logs_status: Reason for why the resource is sending logs (or why it is not
-     sending).
-    :vartype reason_for_logs_status: str
-    """
-
-    id: str
-    """The ARM id of the resource."""
-    sendingMetrics: Union[str, "SendingMetricsStatus"]
-    """Flag indicating if resource is sending metrics to NewRelic. Known values are: \"Enabled\" and
-     \"Disabled\"."""
-    reasonForMetricsStatus: str
-    """Reason for why the resource is sending metrics (or why it is not sending)."""
-    sendingLogs: Union[str, "SendingLogsStatus"]
-    """Flag indicating if resource is sending logs to NewRelic. Known values are: \"Enabled\" and
-     \"Disabled\"."""
-    reasonForLogsStatus: str
-    """Reason for why the resource is sending logs (or why it is not sending)."""
-
-
 class MonitoredSubscription(TypedDict, total=False):
     """The list of subscriptions and it's monitoring status by current NewRelic monitor.
 
-    :ivar subscription_id: The subscriptionId to be monitored.
-    :vartype subscription_id: str
+    :ivar subscriptionId: The subscriptionId to be monitored.
+    :vartype subscriptionId: str
     :ivar status: The state of monitoring. Known values are: "InProgress", "Active", "Failed", and
      "Deleting".
     :vartype status: Union[str, "Status"]
     :ivar error: The reason of not monitoring the subscription.
     :vartype error: str
-    :ivar tag_rules: The resource-specific properties for this resource.
-    :vartype tag_rules: "MonitoringTagRulesProperties"
+    :ivar tagRules: The resource-specific properties for this resource.
+    :vartype tagRules: "MonitoringTagRulesProperties"
     """
 
     subscriptionId: str
@@ -588,9 +310,9 @@ class MonitoredSubscriptionProperties(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The request to update subscriptions needed to be monitored by the NewRelic
      monitor resource.
     :vartype properties: "SubscriptionList"
@@ -603,14 +325,14 @@ class MonitoredSubscriptionProperties(ProxyResource):
 class MonitoringTagRulesProperties(TypedDict, total=False):
     """The resource-specific properties for this resource.
 
-    :ivar provisioning_state: Provisioning State of the resource. Known values are: "Accepted",
+    :ivar provisioningState: Provisioning State of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar log_rules: Set of rules for sending logs for the Monitor resource.
-    :vartype log_rules: "LogRules"
-    :ivar metric_rules: Set of rules for sending metrics for the Monitor resource.
-    :vartype metric_rules: "MetricRules"
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar logRules: Set of rules for sending logs for the Monitor resource.
+    :vartype logRules: "LogRules"
+    :ivar metricRules: Set of rules for sending metrics for the Monitor resource.
+    :vartype metricRules: "MetricRules"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -625,41 +347,41 @@ class MonitoringTagRulesProperties(TypedDict, total=False):
 class MonitorProperties(TypedDict, total=False):
     """Properties specific to the NewRelic Monitor resource.
 
-    :ivar provisioning_state: Provisioning State of the resource. Known values are: "Accepted",
+    :ivar provisioningState: Provisioning State of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar monitoring_status: MonitoringStatus of the resource. Known values are: "Enabled" and
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar monitoringStatus: MonitoringStatus of the resource. Known values are: "Enabled" and
      "Disabled".
-    :vartype monitoring_status: Union[str, "MonitoringStatus"]
-    :ivar marketplace_subscription_status: NewRelic Organization properties of the resource. Known
+    :vartype monitoringStatus: Union[str, "MonitoringStatus"]
+    :ivar marketplaceSubscriptionStatus: NewRelic Organization properties of the resource. Known
      values are: "Active" and "Suspended".
-    :vartype marketplace_subscription_status: Union[str, "MarketplaceSubscriptionStatus"]
-    :ivar marketplace_subscription_id: Marketplace Subscription Id.
-    :vartype marketplace_subscription_id: str
-    :ivar new_relic_account_properties: MarketplaceSubscriptionStatus of the resource.
-    :vartype new_relic_account_properties: "NewRelicAccountProperties"
-    :ivar user_info: User Info.
-    :vartype user_info: "UserInfo"
-    :ivar plan_data: Plan details.
-    :vartype plan_data: "PlanData"
-    :ivar saa_s_data: SaaS details.
-    :vartype saa_s_data: "SaaSData"
-    :ivar liftr_resource_category: Liftr resource category. Known values are: "Unknown" and
+    :vartype marketplaceSubscriptionStatus: Union[str, "MarketplaceSubscriptionStatus"]
+    :ivar marketplaceSubscriptionId: Marketplace Subscription Id.
+    :vartype marketplaceSubscriptionId: str
+    :ivar newRelicAccountProperties: MarketplaceSubscriptionStatus of the resource.
+    :vartype newRelicAccountProperties: "NewRelicAccountProperties"
+    :ivar userInfo: User Info.
+    :vartype userInfo: "UserInfo"
+    :ivar planData: Plan details.
+    :vartype planData: "PlanData"
+    :ivar saaSData: SaaS details.
+    :vartype saaSData: "SaaSData"
+    :ivar liftrResourceCategory: Liftr resource category. Known values are: "Unknown" and
      "MonitorLogs".
-    :vartype liftr_resource_category: Union[str, "LiftrResourceCategories"]
-    :ivar liftr_resource_preference: Liftr resource preference. The priority of the resource.
-    :vartype liftr_resource_preference: int
-    :ivar org_creation_source: Source of org creation. Known values are: "LIFTR" and "NEWRELIC".
-    :vartype org_creation_source: Union[str, "OrgCreationSource"]
-    :ivar account_creation_source: Source of account creation. Known values are: "LIFTR" and
+    :vartype liftrResourceCategory: Union[str, "LiftrResourceCategories"]
+    :ivar liftrResourcePreference: Liftr resource preference. The priority of the resource.
+    :vartype liftrResourcePreference: int
+    :ivar orgCreationSource: Source of org creation. Known values are: "LIFTR" and "NEWRELIC".
+    :vartype orgCreationSource: Union[str, "OrgCreationSource"]
+    :ivar accountCreationSource: Source of account creation. Known values are: "LIFTR" and
      "NEWRELIC".
-    :vartype account_creation_source: Union[str, "AccountCreationSource"]
-    :ivar subscription_state: State of the Azure Subscription containing the monitor resource.
-    :vartype subscription_state: str
-    :ivar saa_s_azure_subscription_status: Status of Azure Subscription where Marketplace SaaS is
+    :vartype accountCreationSource: Union[str, "AccountCreationSource"]
+    :ivar subscriptionState: State of the Azure Subscription containing the monitor resource.
+    :vartype subscriptionState: str
+    :ivar saaSAzureSubscriptionStatus: Status of Azure Subscription where Marketplace SaaS is
      located.
-    :vartype saa_s_azure_subscription_status: str
+    :vartype saaSAzureSubscriptionStatus: str
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -697,14 +419,14 @@ class MonitorProperties(TypedDict, total=False):
 class NewRelicAccountProperties(TypedDict, total=False):
     """Properties of the NewRelic account.
 
-    :ivar user_id: User id.
-    :vartype user_id: str
-    :ivar account_info: NewRelic Account Information.
-    :vartype account_info: "AccountInfo"
-    :ivar organization_info: NewRelic Organization Information.
-    :vartype organization_info: "OrganizationInfo"
-    :ivar single_sign_on_properties: date when plan was applied.
-    :vartype single_sign_on_properties: "NewRelicSingleSignOnProperties"
+    :ivar userId: User id.
+    :vartype userId: str
+    :ivar accountInfo: NewRelic Account Information.
+    :vartype accountInfo: "AccountInfo"
+    :ivar organizationInfo: NewRelic Organization Information.
+    :vartype organizationInfo: "OrganizationInfo"
+    :ivar singleSignOnProperties: date when plan was applied.
+    :vartype singleSignOnProperties: "NewRelicSingleSignOnProperties"
     """
 
     userId: str
@@ -728,9 +450,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -754,9 +476,9 @@ class NewRelicMonitorResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -795,19 +517,19 @@ class NewRelicMonitorResourceUpdate(TypedDict, total=False):
 class NewRelicMonitorResourceUpdateProperties(TypedDict, total=False):
     """The updatable properties of the NewRelicMonitorResource.
 
-    :ivar new_relic_account_properties: MarketplaceSubscriptionStatus of the resource.
-    :vartype new_relic_account_properties: "NewRelicAccountProperties"
-    :ivar user_info: User Info.
-    :vartype user_info: "UserInfo"
-    :ivar plan_data: Plan details.
-    :vartype plan_data: "PlanData"
-    :ivar saa_s_data: SaaS details.
-    :vartype saa_s_data: "SaaSData"
-    :ivar org_creation_source: Source of org creation. Known values are: "LIFTR" and "NEWRELIC".
-    :vartype org_creation_source: Union[str, "OrgCreationSource"]
-    :ivar account_creation_source: Source of account creation. Known values are: "LIFTR" and
+    :ivar newRelicAccountProperties: MarketplaceSubscriptionStatus of the resource.
+    :vartype newRelicAccountProperties: "NewRelicAccountProperties"
+    :ivar userInfo: User Info.
+    :vartype userInfo: "UserInfo"
+    :ivar planData: Plan details.
+    :vartype planData: "PlanData"
+    :ivar saaSData: SaaS details.
+    :vartype saaSData: "SaaSData"
+    :ivar orgCreationSource: Source of org creation. Known values are: "LIFTR" and "NEWRELIC".
+    :vartype orgCreationSource: Union[str, "OrgCreationSource"]
+    :ivar accountCreationSource: Source of account creation. Known values are: "LIFTR" and
      "NEWRELIC".
-    :vartype account_creation_source: Union[str, "AccountCreationSource"]
+    :vartype accountCreationSource: Union[str, "AccountCreationSource"]
     """
 
     newRelicAccountProperties: "NewRelicAccountProperties"
@@ -827,16 +549,16 @@ class NewRelicMonitorResourceUpdateProperties(TypedDict, total=False):
 class NewRelicSingleSignOnProperties(TypedDict, total=False):
     """Single sign on Info of the NewRelic account.
 
-    :ivar single_sign_on_state: Single sign-on state. Known values are: "Initial", "Enable",
+    :ivar singleSignOnState: Single sign-on state. Known values are: "Initial", "Enable",
      "Disable", and "Existing".
-    :vartype single_sign_on_state: Union[str, "SingleSignOnStates"]
-    :ivar enterprise_app_id: The Id of the Enterprise App used for Single sign-on.
-    :vartype enterprise_app_id: str
-    :ivar single_sign_on_url: The login URL specific to this NewRelic Organization.
-    :vartype single_sign_on_url: str
-    :ivar provisioning_state: Provisioning state. Known values are: "Accepted", "Creating",
+    :vartype singleSignOnState: Union[str, "SingleSignOnStates"]
+    :ivar enterpriseAppId: The Id of the Enterprise App used for Single sign-on.
+    :vartype enterpriseAppId: str
+    :ivar singleSignOnUrl: The login URL specific to this NewRelic Organization.
+    :vartype singleSignOnUrl: str
+    :ivar provisioningState: Provisioning state. Known values are: "Accepted", "Creating",
      "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and "NotSpecified".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     singleSignOnState: Union[str, "SingleSignOnStates"]
@@ -850,154 +572,29 @@ class NewRelicSingleSignOnProperties(TypedDict, total=False):
      \"Succeeded\", \"Failed\", \"Canceled\", \"Deleted\", and \"NotSpecified\"."""
 
 
-class Operation(TypedDict, total=False):
-    """REST API Operation.
-
-    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
-    :vartype name: str
-    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
-     data-plane operations and "false" for Azure Resource Manager/control-plane operations.
-    :vartype is_data_action: bool
-    :ivar display: Localized display information for this particular operation.
-    :vartype display: "OperationDisplay"
-    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
-     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
-     and "user,system".
-    :vartype origin: Union[str, "Origin"]
-    :ivar action_type: Extensible enum. Indicates the action type. "Internal" refers to actions
-     that are for internal only APIs. "Internal"
-    :vartype action_type: Union[str, "ActionType"]
-    """
-
-    name: str
-    """The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     \"Microsoft.Compute/virtualMachines/write\",
-     \"Microsoft.Compute/virtualMachines/capture/action\"."""
-    isDataAction: bool
-    """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
-     \"false\" for Azure Resource Manager/control-plane operations."""
-    display: "OperationDisplay"
-    """Localized display information for this particular operation."""
-    origin: Union[str, "Origin"]
-    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-     logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
-     \"user,system\"."""
-    actionType: Union[str, "ActionType"]
-    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
-     internal only APIs. \"Internal\""""
-
-
-class OperationDisplay(TypedDict, total=False):
-    """Localized display information for an operation.
-
-    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
-     Monitoring Insights" or "Microsoft Compute".
-    :vartype provider: str
-    :ivar resource: The localized friendly name of the resource type related to this operation.
-     E.g. "Virtual Machines" or "Job Schedule Collections".
-    :vartype resource: str
-    :ivar operation: The concise, localized friendly name for the operation; suitable for
-     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
-    :vartype operation: str
-    :ivar description: The short, localized friendly description of the operation; suitable for
-     tool tips and detailed views.
-    :vartype description: str
-    """
-
-    provider: str
-    """The localized friendly form of the resource provider name, e.g. \"Microsoft Monitoring
-     Insights\" or \"Microsoft Compute\"."""
-    resource: str
-    """The localized friendly name of the resource type related to this operation. E.g. \"Virtual
-     Machines\" or \"Job Schedule Collections\"."""
-    operation: str
-    """The concise, localized friendly name for the operation; suitable for dropdowns. E.g. \"Create
-     or Update Virtual Machine\", \"Restart Virtual Machine\"."""
-    description: str
-    """The short, localized friendly description of the operation; suitable for tool tips and detailed
-     views."""
-
-
 class OrganizationInfo(TypedDict, total=False):
     """Organization Info of the NewRelic account.
 
-    :ivar organization_id: Organization id.
-    :vartype organization_id: str
+    :ivar organizationId: Organization id.
+    :vartype organizationId: str
     """
 
     organizationId: str
     """Organization id."""
 
 
-class OrganizationProperties(TypedDict, total=False):
-    """Details of Organizations.
-
-    :ivar organization_id: organization id.
-    :vartype organization_id: str
-    :ivar organization_name: organization name.
-    :vartype organization_name: str
-    :ivar billing_source: Billing source. Known values are: "AZURE" and "NEWRELIC".
-    :vartype billing_source: Union[str, "BillingSource"]
-    """
-
-    organizationId: str
-    """organization id."""
-    organizationName: str
-    """organization name."""
-    billingSource: Union[str, "BillingSource"]
-    """Billing source. Known values are: \"AZURE\" and \"NEWRELIC\"."""
-
-
-class OrganizationResource(ProxyResource):
-    """The details of a Organization resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: "OrganizationProperties"
-    """
-
-    properties: "OrganizationProperties"
-    """The resource-specific properties for this resource."""
-
-
-class PartnerBillingEntity(TypedDict, total=False):
-    """Partner Billing details associated with the resource.
-
-    :ivar organization_id: The New Relic Organization Id.
-    :vartype organization_id: str
-    :ivar organization_name: The New Relic Organization Name.
-    :vartype organization_name: str
-    """
-
-    organizationId: str
-    """The New Relic Organization Id."""
-    organizationName: str
-    """The New Relic Organization Name."""
-
-
 class PlanData(TypedDict, total=False):
     """Plan data of NewRelic Monitor resource.
 
-    :ivar usage_type: Different usage type like PAYG/COMMITTED. this could be enum. Known values
+    :ivar usageType: Different usage type like PAYG/COMMITTED. this could be enum. Known values
      are: "PAYG" and "COMMITTED".
-    :vartype usage_type: Union[str, "UsageType"]
-    :ivar billing_cycle: Different billing cycles like Monthly/Weekly.
-    :vartype billing_cycle: str
-    :ivar plan_details: plan id as published by NewRelic.
-    :vartype plan_details: str
-    :ivar effective_date: date when plan was applied.
-    :vartype effective_date: str
+    :vartype usageType: Union[str, "UsageType"]
+    :ivar billingCycle: Different billing cycles like Monthly/Weekly.
+    :vartype billingCycle: str
+    :ivar planDetails: plan id as published by NewRelic.
+    :vartype planDetails: str
+    :ivar effectiveDate: date when plan was applied.
+    :vartype effectiveDate: str
     """
 
     usageType: Union[str, "UsageType"]
@@ -1011,70 +608,28 @@ class PlanData(TypedDict, total=False):
     """date when plan was applied."""
 
 
-class PlanDataProperties(TypedDict, total=False):
-    """Plan details.
-
-    :ivar plan_data: Plan details.
-    :vartype plan_data: "PlanData"
-    :ivar org_creation_source: Source of org creation. Known values are: "LIFTR" and "NEWRELIC".
-    :vartype org_creation_source: Union[str, "OrgCreationSource"]
-    :ivar account_creation_source: Source of account creation. Known values are: "LIFTR" and
-     "NEWRELIC".
-    :vartype account_creation_source: Union[str, "AccountCreationSource"]
-    """
-
-    planData: "PlanData"
-    """Plan details."""
-    orgCreationSource: Union[str, "OrgCreationSource"]
-    """Source of org creation. Known values are: \"LIFTR\" and \"NEWRELIC\"."""
-    accountCreationSource: Union[str, "AccountCreationSource"]
-    """Source of account creation. Known values are: \"LIFTR\" and \"NEWRELIC\"."""
-
-
-class PlanDataResource(ProxyResource):
-    """The details of a PlanData resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: "PlanDataProperties"
-    """
-
-    properties: "PlanDataProperties"
-    """The resource-specific properties for this resource."""
-
-
 class ResubscribeProperties(TypedDict, total=False):
     """Resubscribe Properties.
 
-    :ivar plan_id: Newly selected plan Id to create the new Marketplace subscription for
+    :ivar planId: Newly selected plan Id to create the new Marketplace subscription for
      Resubscribe.
-    :vartype plan_id: str
-    :ivar term_id: Newly selected term Id to create the new Marketplace subscription for
+    :vartype planId: str
+    :ivar termId: Newly selected term Id to create the new Marketplace subscription for
      Resubscribe.
-    :vartype term_id: str
-    :ivar subscription_id: Newly selected Azure Subscription Id in which the new Marketplace
+    :vartype termId: str
+    :ivar subscriptionId: Newly selected Azure Subscription Id in which the new Marketplace
      subscription will be created for Resubscribe.
-    :vartype subscription_id: str
-    :ivar resource_group: Newly selected Azure resource group in which the new Marketplace
+    :vartype subscriptionId: str
+    :ivar resourceGroup: Newly selected Azure resource group in which the new Marketplace
      subscription will be created for Resubscribe.
-    :vartype resource_group: str
-    :ivar organization_id: Organization Id of the NewRelic Organization that needs to be
+    :vartype resourceGroup: str
+    :ivar organizationId: Organization Id of the NewRelic Organization that needs to be
      resubscribed.
-    :vartype organization_id: str
-    :ivar publisher_id: Publisher Id of the NewRelic offer that needs to be resubscribed.
-    :vartype publisher_id: str
-    :ivar offer_id: Offer Id of the NewRelic offer that needs to be resubscribed.
-    :vartype offer_id: str
+    :vartype organizationId: str
+    :ivar publisherId: Publisher Id of the NewRelic offer that needs to be resubscribed.
+    :vartype publisherId: str
+    :ivar offerId: Offer Id of the NewRelic offer that needs to be resubscribed.
+    :vartype offerId: str
     """
 
     planId: str
@@ -1098,48 +653,26 @@ class ResubscribeProperties(TypedDict, total=False):
 class SaaSData(TypedDict, total=False):
     """SaaS details.
 
-    :ivar saa_s_resource_id: SaaS resource id.
-    :vartype saa_s_resource_id: str
+    :ivar saaSResourceId: SaaS resource id.
+    :vartype saaSResourceId: str
     """
 
     saaSResourceId: str
     """SaaS resource id."""
 
 
-class SaaSResourceDetailsResponse(ProxyResource):
-    """Marketplace SaaS resource details.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar saas_id: Id of the Marketplace SaaS Resource.
-    :vartype saas_id: str
-    """
-
-    saasId: str
-    """Id of the Marketplace SaaS Resource."""
-
-
 class SubscriptionList(TypedDict, total=False):
     """The request to update subscriptions needed to be monitored by the NewRelic monitor resource.
 
-    :ivar patch_operation: The operation for the patch on the resource. Known values are:
+    :ivar patchOperation: The operation for the patch on the resource. Known values are:
      "AddBegin", "AddComplete", "DeleteBegin", "DeleteComplete", and "Active".
-    :vartype patch_operation: Union[str, "PatchOperation"]
-    :ivar monitored_subscription_list: List of subscriptions and the state of the monitoring.
-    :vartype monitored_subscription_list: list["MonitoredSubscription"]
-    :ivar provisioning_state: Provisioning State of the resource. Known values are: "Accepted",
+    :vartype patchOperation: Union[str, "PatchOperation"]
+    :ivar monitoredSubscriptionList: List of subscriptions and the state of the monitoring.
+    :vartype monitoredSubscriptionList: list["MonitoredSubscription"]
+    :ivar provisioningState: Provisioning State of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     patchOperation: Union[str, "PatchOperation"]
@@ -1155,14 +688,14 @@ class SubscriptionList(TypedDict, total=False):
 class SwitchBillingRequest(TypedDict, total=False):
     """Request of a switch billing Operation.
 
-    :ivar azure_resource_id: Azure resource Id.
-    :vartype azure_resource_id: str
-    :ivar organization_id: Organization id.
-    :vartype organization_id: str
-    :ivar plan_data: Plan details.
-    :vartype plan_data: "PlanData"
-    :ivar user_email: Reusable representation of an email address. Required.
-    :vartype user_email: str
+    :ivar azureResourceId: Azure resource Id.
+    :vartype azureResourceId: str
+    :ivar organizationId: Organization id.
+    :vartype organizationId: str
+    :ivar planData: Plan details.
+    :vartype planData: "PlanData"
+    :ivar userEmail: Reusable representation of an email address. Required.
+    :vartype userEmail: str
     """
 
     azureResourceId: str
@@ -1178,20 +711,20 @@ class SwitchBillingRequest(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -1221,9 +754,9 @@ class TagRule(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource. Required.
     :vartype properties: "MonitoringTagRulesProperties"
     """
@@ -1246,10 +779,10 @@ class TagRuleUpdate(TypedDict, total=False):
 class TagRuleUpdateProperties(TypedDict, total=False):
     """The updatable properties of the TagRule.
 
-    :ivar log_rules: Set of rules for sending logs for the Monitor resource.
-    :vartype log_rules: "LogRules"
-    :ivar metric_rules: Set of rules for sending metrics for the Monitor resource.
-    :vartype metric_rules: "MetricRules"
+    :ivar logRules: Set of rules for sending logs for the Monitor resource.
+    :vartype logRules: "LogRules"
+    :ivar metricRules: Set of rules for sending metrics for the Monitor resource.
+    :vartype metricRules: "MetricRules"
     """
 
     logRules: "LogRules"
@@ -1261,10 +794,10 @@ class TagRuleUpdateProperties(TypedDict, total=False):
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -1276,14 +809,14 @@ class UserAssignedIdentity(TypedDict, total=False):
 class UserInfo(TypedDict, total=False):
     """User Info of NewRelic Monitor resource.
 
-    :ivar first_name: First name.
-    :vartype first_name: str
-    :ivar last_name: Last name.
-    :vartype last_name: str
-    :ivar email_address: Reusable representation of an email address.
-    :vartype email_address: str
-    :ivar phone_number: Contact phone number.
-    :vartype phone_number: str
+    :ivar firstName: First name.
+    :vartype firstName: str
+    :ivar lastName: Last name.
+    :vartype lastName: str
+    :ivar emailAddress: Reusable representation of an email address.
+    :vartype emailAddress: str
+    :ivar phoneNumber: Contact phone number.
+    :vartype phoneNumber: str
     :ivar country: country if user.
     :vartype country: str
     """
@@ -1298,33 +831,3 @@ class UserInfo(TypedDict, total=False):
     """Contact phone number."""
     country: str
     """country if user."""
-
-
-class VMExtensionPayload(TypedDict, total=False):
-    """Response of payload to be passed while installing VM agent.
-
-    :ivar ingestion_key: Ingestion key of the account.
-    :vartype ingestion_key: str
-    """
-
-    ingestionKey: str
-    """Ingestion key of the account."""
-
-
-class VMInfo(TypedDict, total=False):
-    """Details of VM Resource having NewRelic OneAgent installed.
-
-    :ivar vm_id: Azure VM resource ID.
-    :vartype vm_id: str
-    :ivar agent_version: Version of the NewRelic agent installed on the VM.
-    :vartype agent_version: str
-    :ivar agent_status: Status of the NewRelic agent installed on the VM.
-    :vartype agent_status: str
-    """
-
-    vmId: str
-    """Azure VM resource ID."""
-    agentVersion: str
-    """Version of the NewRelic agent installed on the VM."""
-    agentStatus: str
-    """Status of the NewRelic agent installed on the VM."""

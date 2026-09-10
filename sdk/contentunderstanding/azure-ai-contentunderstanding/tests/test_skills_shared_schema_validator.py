@@ -21,15 +21,11 @@ from pathlib import Path
 
 import pytest
 
-_SKILL_SHARED_DIR = (
-    Path(__file__).resolve().parent.parent / ".github" / "skills" / "_shared"
-)
+_SKILL_SHARED_DIR = Path(__file__).resolve().parent.parent / ".github" / "skills" / "_shared"
 
 
 def _load_validator():
-    spec = importlib.util.spec_from_file_location(
-        "_skill_schema_validator", _SKILL_SHARED_DIR / "schema_validator.py"
-    )
+    spec = importlib.util.spec_from_file_location("_skill_schema_validator", _SKILL_SHARED_DIR / "schema_validator.py")
     assert spec and spec.loader, "could not load schema_validator.py"
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -136,6 +132,13 @@ def test_validate_schema_file_missing(tmp_path):
     assert any("not found" in e for e in errors)
 
 
+def test_validate_schema_file_os_error(tmp_path):
+    ok, errors = sv.validate_schema_file(tmp_path)
+    assert not ok
+    assert len(errors) == 1
+    assert errors[0].startswith(f"could not read schema file ({tmp_path}): ")
+
+
 def test_validate_schema_file_invalid_json(tmp_path):
     p = tmp_path / "broken.json"
     p.write_text("{ this is not json", encoding="utf-8")
@@ -148,8 +151,7 @@ def test_purity_guard_no_forbidden_imports():
     source = (_SKILL_SHARED_DIR / "schema_validator.py").read_text(encoding="utf-8")
     for forbidden in ("import azure", "from azure", "import requests", "import urllib"):
         assert forbidden not in source, (
-            f"schema_validator.py must not contain {forbidden!r}; "
-            "see _shared/README.md for rules"
+            f"schema_validator.py must not contain {forbidden!r}; " "see _shared/README.md for rules"
         )
 
 

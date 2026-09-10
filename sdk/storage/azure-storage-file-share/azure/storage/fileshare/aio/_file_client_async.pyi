@@ -34,7 +34,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ._download_async import StorageStreamDownloader
 from ._lease_async import ShareLeaseClient
 from ._models import FileProperties, Handle
-from .._models import ContentSettings, NTFSAttributes
+from .._models import ContentSettings, FileRange, NTFSAttributes
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
@@ -306,6 +306,17 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> List[Dict[str, int]]: ...
+    @distributed_trace
+    def list_ranges(
+        self,
+        *,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        results_per_page: Optional[int] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[FileRange]: ...
     @distributed_trace_async
     async def get_ranges_diff(
         self,
@@ -318,6 +329,19 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]: ...
+    @distributed_trace
+    def list_ranges_diff(
+        self,
+        previous_sharesnapshot: Union[str, Dict[str, Any]],
+        *,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        include_renames: Optional[bool] = None,
+        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        results_per_page: Optional[int] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[FileRange]: ...
     @distributed_trace_async
     async def clear_range(
         self,

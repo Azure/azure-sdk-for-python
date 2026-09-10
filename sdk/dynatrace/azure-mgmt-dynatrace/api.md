@@ -2414,45 +2414,6 @@ namespace azure.mgmt.dynatrace.types
         region_id: str
 
 
-    class azure.mgmt.dynatrace.types.AppServiceInfo(TypedDict, total=False):
-        key "autoUpdateSetting": Union[str, AutoUpdateSetting]
-        key "availabilityState": Union[str, AvailabilityState]
-        key "hostGroup": str
-        key "hostName": str
-        key "logModule": Union[str, LogModule]
-        key "monitoringType": Union[str, MonitoringType]
-        key "resourceId": str
-        key "updateStatus": Union[str, UpdateStatus]
-        key "version": str
-        auto_update_setting: Union[str, AutoUpdateSetting]
-        availability_state: Union[str, AvailabilityState]
-        host_group: str
-        host_name: str
-        log_module: Union[str, LogModule]
-        monitoring_type: Union[str, MonitoringType]
-        resource_id: str
-        update_status: Union[str, UpdateStatus]
-        version: str
-
-
-    class azure.mgmt.dynatrace.types.ConnectedResourcesCountResponse(TypedDict, total=False):
-        key "connectedResourcesCount": int
-        connected_resources_count: int
-
-
-    class azure.mgmt.dynatrace.types.CreateResourceSupportedProperties(TypedDict, total=False):
-        key "creationSupported": bool
-        key "name": str
-        creation_supported: bool
-        name: str
-
-
-    class azure.mgmt.dynatrace.types.CreateResourceSupportedResponse(TypedDict, total=False):
-        key "nextLink": str
-        next_link: str
-        value: list[CreateResourceSupportedProperties]
-
-
     class azure.mgmt.dynatrace.types.DynatraceEnvironmentProperties(TypedDict, total=False):
         key "accountInfo": ForwardRef('AccountInfo', module='types')
         key "environmentInfo": ForwardRef('EnvironmentInfo', module='types')
@@ -2501,30 +2462,6 @@ namespace azure.mgmt.dynatrace.types
         logs_ingestion_endpoint: str
 
 
-    class azure.mgmt.dynatrace.types.ErrorAdditionalInfo(TypedDict, total=False):
-        key "info": Any
-        key "type": str
-        info: Any
-        type: str
-
-
-    class azure.mgmt.dynatrace.types.ErrorDetail(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        key "target": str
-        additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
-        code: str
-        details: list[ErrorDetail]
-        message: str
-        target: str
-
-
-    class azure.mgmt.dynatrace.types.ErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorDetail', module='types')
-        error: ErrorDetail
-
-
     class azure.mgmt.dynatrace.types.FilteringTag(TypedDict, total=False):
         key "action": Union[str, TagAction]
         key "name": str
@@ -2552,15 +2489,6 @@ namespace azure.mgmt.dynatrace.types
         region: str
         tenant_id: str
         user_principal: str
-
-
-    class azure.mgmt.dynatrace.types.LinkableEnvironmentResponse(TypedDict, total=False):
-        key "environmentId": str
-        key "environmentName": str
-        key "planData": ForwardRef('PlanData', module='types')
-        environment_id: str
-        environment_name: str
-        plan_data: PlanData
 
 
     class azure.mgmt.dynatrace.types.LogRules(TypedDict, total=False):
@@ -2607,17 +2535,6 @@ namespace azure.mgmt.dynatrace.types
         tenant_id: str
 
 
-    class azure.mgmt.dynatrace.types.MarketplaceSaaSResourceDetailsResponse(TypedDict, total=False):
-        key "marketplaceSaaSResourceId": str
-        key "marketplaceSaaSResourceName": str
-        key "marketplaceSubscriptionStatus": Union[str, MarketplaceSubscriptionStatus]
-        key "planId": str
-        marketplace_saa_s_resource_id: str
-        marketplace_saa_s_resource_name: str
-        marketplace_subscription_status: Union[str, MarketplaceSubscriptionStatus]
-        plan_id: str
-
-
     class azure.mgmt.dynatrace.types.MarketplaceSubscriptionIdRequest(TypedDict, total=False):
         key "marketplaceSubscriptionId": Required[str]
         marketplace_subscription_id: str
@@ -2633,11 +2550,6 @@ namespace azure.mgmt.dynatrace.types
     class azure.mgmt.dynatrace.types.MetricStatusRequest(TypedDict, total=False):
         monitoredResourceIds: list[str]
         monitored_resource_ids: list[str]
-
-
-    class azure.mgmt.dynatrace.types.MetricsStatusResponse(TypedDict, total=False):
-        azureResourceIds: list[str]
-        azure_resource_ids: list[str]
 
 
     class azure.mgmt.dynatrace.types.MonitorProperties(TypedDict, total=False):
@@ -2692,19 +2604,6 @@ namespace azure.mgmt.dynatrace.types
         plan_data: PlanData
 
 
-    class azure.mgmt.dynatrace.types.MonitoredResource(TypedDict, total=False):
-        key "id": str
-        key "reasonForLogsStatus": str
-        key "reasonForMetricsStatus": str
-        key "sendingLogs": Union[str, SendingLogsStatus]
-        key "sendingMetrics": Union[str, SendingMetricsStatus]
-        id: str
-        reason_for_logs_status: str
-        reason_for_metrics_status: str
-        sending_logs: Union[str, SendingLogsStatus]
-        sending_metrics: Union[str, SendingMetricsStatus]
-
-
     class azure.mgmt.dynatrace.types.MonitoredSubscription(TypedDict, total=False):
         key "error": str
         key "status": Union[str, Status]
@@ -2736,30 +2635,6 @@ namespace azure.mgmt.dynatrace.types
         log_rules: LogRules
         metric_rules: MetricRules
         provisioning_state: Union[str, ProvisioningState]
-
-
-    class azure.mgmt.dynatrace.types.Operation(TypedDict, total=False):
-        key "actionType": Union[str, ActionType]
-        key "display": ForwardRef('OperationDisplay', module='types')
-        key "isDataAction": bool
-        key "name": str
-        key "origin": Union[str, Origin]
-        action_type: Union[str, ActionType]
-        display: OperationDisplay
-        is_data_action: bool
-        name: str
-        origin: Union[str, Origin]
-
-
-    class azure.mgmt.dynatrace.types.OperationDisplay(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
 
 
     class azure.mgmt.dynatrace.types.PlanData(TypedDict, total=False):
@@ -2798,19 +2673,6 @@ namespace azure.mgmt.dynatrace.types
     class azure.mgmt.dynatrace.types.SSODetailsRequest(TypedDict, total=False):
         key "userPrincipal": Required[str]
         user_principal: str
-
-
-    class azure.mgmt.dynatrace.types.SSODetailsResponse(TypedDict, total=False):
-        key "isSsoEnabled": Union[str, SSOStatus]
-        key "metadataUrl": str
-        key "singleSignOnUrl": str
-        aadDomains: list[str]
-        aad_domains: list[str]
-        adminUsers: list[str]
-        admin_users: list[str]
-        is_sso_enabled: Union[str, SSOStatus]
-        metadata_url: str
-        single_sign_on_url: str
 
 
     class azure.mgmt.dynatrace.types.SubscriptionList(TypedDict, total=False):
@@ -2887,34 +2749,6 @@ namespace azure.mgmt.dynatrace.types
         first_name: str
         last_name: str
         phone_number: str
-
-
-    class azure.mgmt.dynatrace.types.VMExtensionPayload(TypedDict, total=False):
-        key "environmentId": str
-        key "ingestionKey": str
-        environment_id: str
-        ingestion_key: str
-
-
-    class azure.mgmt.dynatrace.types.VMInfo(TypedDict, total=False):
-        key "autoUpdateSetting": Union[str, AutoUpdateSetting]
-        key "availabilityState": Union[str, AvailabilityState]
-        key "hostGroup": str
-        key "hostName": str
-        key "logModule": Union[str, LogModule]
-        key "monitoringType": Union[str, MonitoringType]
-        key "resourceId": str
-        key "updateStatus": Union[str, UpdateStatus]
-        key "version": str
-        auto_update_setting: Union[str, AutoUpdateSetting]
-        availability_state: Union[str, AvailabilityState]
-        host_group: str
-        host_name: str
-        log_module: Union[str, LogModule]
-        monitoring_type: Union[str, MonitoringType]
-        resource_id: str
-        update_status: Union[str, UpdateStatus]
-        version: str
 
 
 ```

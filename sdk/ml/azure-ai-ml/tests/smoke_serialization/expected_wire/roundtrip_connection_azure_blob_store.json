@@ -1,0 +1,15 @@
+{
+  "properties": {
+    "authType": "AccountKey",
+    "category": "AzureBlob",
+    "credentials": {
+      "sas": "smoke-account-key"
+    },
+    "isSharedToAll": true,
+    "metadata": {
+      "AccountName": "smokeaccount",
+      "ContainerName": "smoke-container"
+    },
+    "target": "https://smokeaccount.blob.core.windows.net/smoke-container"
+  }
+}

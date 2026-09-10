@@ -1,12 +1,10 @@
-"""Implementation of an httpx.Client that forwards traffic to the Azure SDK test-proxy.
+"""Implementation of an OpenAI HTTP client that forwards traffic to the Azure SDK test-proxy.
 
 .. note::
 
-    This module has side-effects!
-
-    Importing this module will replace the default httpx.Client used
-    by the openai package with one that can redirect it's traffic
-    to the Azure SDK test-proxy on demand.
+    Importing this module replaces OpenAI's default sync and async HTTP
+    wrapper classes with proxy-aware subclasses. The subclasses preserve
+    whichever underlying transport OpenAI selected, including httpx2.
 
 """
 
@@ -69,14 +67,16 @@ class TestProxyHttpxClientBase:
         assert self.is_recording(), f"{self._reroute_to_proxy.__qualname__} should only be called while recording"
         config = self.recording_config
         original_url = request.url
+        url_type = type(original_url)
 
         request_path = original_url.copy_with(scheme="", netloc=b"")
-        request.url = httpx.URL(config.proxy_url).join(request_path)
+        request.url = url_type(config.proxy_url).join(request_path)
 
         original_headers = request.headers
         request.headers = request.headers.copy()
         request.headers.setdefault(
-            "x-recording-upstream-base-uri", str(httpx.URL(scheme=original_url.scheme, netloc=original_url.netloc))
+            "x-recording-upstream-base-uri",
+            str(url_type(scheme=original_url.scheme, netloc=original_url.netloc)),
         )
         request.headers["x-recording-id"] = config.recording_id
         request.headers["x-recording-mode"] = config.recording_mode
@@ -89,30 +89,24 @@ class TestProxyHttpxClientBase:
 
 class TestProxyHttpxClient(TestProxyHttpxClientBase, openai._base_client.SyncHttpxClientWrapper):
     @override
-    def send(self, request: httpx.Request, **kwargs) -> httpx.Response:
+    def _send_single_request(self, request: httpx.Request) -> httpx.Response:
+        # OpenAI auth and redirect-safety hooks must evaluate the original Azure URL before proxy routing.
         if self.is_recording():
             with self._reroute_to_proxy(request):
-                response = super().send(request, **kwargs)
-
-            response.request.url = request.url
-            return response
-        else:
-            return super().send(request, **kwargs)
+                return super()._send_single_request(request)
+        return super()._send_single_request(request)
 
 
 class TestProxyAsyncHttpxClient(TestProxyHttpxClientBase, openai._base_client.AsyncHttpxClientWrapper):
     @override
-    async def send(self, request: httpx.Request, **kwargs) -> httpx.Response:
+    async def _send_single_request(self, request: httpx.Request) -> httpx.Response:
+        # OpenAI auth and redirect-safety hooks must evaluate the original Azure URL before proxy routing.
         if self.is_recording():
             with self._reroute_to_proxy(request):
-                response = await super().send(request, **kwargs)
-
-            response.request.url = request.url
-            return response
-        else:
-            return await super().send(request, **kwargs)
+                return await super()._send_single_request(request)
+        return await super()._send_single_request(request)
 
 
-# openai._base_client.{Async,Sync}HttpxClientWrapper are default httpx.Clients instantiated by openai
+# OpenAI instantiates these aliases when no custom HTTP client is provided.
 openai._base_client.SyncHttpxClientWrapper = TestProxyHttpxClient
 openai._base_client.AsyncHttpxClientWrapper = TestProxyAsyncHttpxClient

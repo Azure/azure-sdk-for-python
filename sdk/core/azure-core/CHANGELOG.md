@@ -1,5 +1,11 @@
 # Release History
 
+## 1.42.0 (Unreleased)
+
+### Features Added
+
+- Added `azure-deprecating` to the default allowed headers list in `HttpLoggingPolicy`, so deprecation notification headers are logged without redaction.
+
 ## 1.41.0 (2026-05-07)
 
 ### Features Added

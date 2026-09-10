@@ -10,10 +10,10 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 class ServerlessSparkCompute:
     """Serverless Spark compute.
 
-    :param runtime_version: The runtime version of the compute.
-    :type runtime_version: str
-    :param instance_type: The instance type of the compute.
-    :type instance_type: str
+    :keyword runtime_version: The runtime version of the compute.
+    :paramtype runtime_version: str
+    :keyword instance_type: The instance type of the compute.
+    :paramtype instance_type: str
     """
 
     def __init__(

@@ -42,7 +42,13 @@ class TestSqlManagementManagedInstanceAdministratorsOperationsAsync(AzureMgmtRec
                 parameters={
                     "id": "str",
                     "name": "str",
-                    "properties": {"administratorType": "str", "login": "str", "sid": "str", "tenantId": "str"},
+                    "properties": {
+                        "administratorType": "str",
+                        "login": "str",
+                        "sid": "str",
+                        "principalType": "str",
+                        "tenantId": "str",
+                    },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",

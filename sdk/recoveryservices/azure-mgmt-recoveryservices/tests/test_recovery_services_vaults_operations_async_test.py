@@ -24,7 +24,7 @@ class TestRecoveryServicesVaultsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_vaults_list_by_subscription_id(self, resource_group):
         response = self.client.vaults.list_by_subscription_id()
         result = [r async for r in response]
-        assert response
+        assert len(result)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -33,4 +33,4 @@ class TestRecoveryServicesVaultsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
         )
         result = [r async for r in response]
-        assert result == []
+        assert len(result) == 0

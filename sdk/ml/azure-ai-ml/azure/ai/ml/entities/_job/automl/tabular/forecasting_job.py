@@ -6,15 +6,21 @@
 
 from typing import Any, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Forecasting as RestForecasting
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ForecastingPrimaryMetrics, JobBase, TaskType
+from azure.ai.ml._restclient.arm_ml_service.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.arm_ml_service.models import Forecasting as RestForecasting
+from azure.ai.ml._restclient.arm_ml_service.models import ForecastingPrimaryMetrics, JobBase, TaskType
+from azure.ai.ml._restclient.arm_ml_service.models import IdentityConfiguration as RestIdentityConfiguration
+from azure.ai.ml._restclient.arm_ml_service.models import JobOutput as RestJobOutput
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
 from azure.ai.ml.constants import TabularTrainingMode
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
-from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
+from azure.ai.ml.entities._job._input_output_helpers import (
+    from_rest_data_outputs,
+    to_hybrid_rest_model,
+    to_rest_data_outputs,
+)
 from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
 from azure.ai.ml.entities._job.automl.tabular.automl_tabular import AutoMLTabular
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import TabularFeaturizationSettings
@@ -28,10 +34,10 @@ class ForecastingJob(AutoMLTabular):
     """
     Configuration for AutoML Forecasting Task.
 
-    :param primary_metric: The primary metric to use for model selection.
-    :type primary_metric: Optional[str]
-    :param forecasting_settings: The settings for the forecasting task.
-    :type forecasting_settings:
+    :keyword primary_metric: The primary metric to use for model selection.
+    :paramtype primary_metric: Optional[str]
+    :keyword forecasting_settings: The settings for the forecasting task.
+    :paramtype forecasting_settings:
         Optional[~azure.ai.ml.automl.ForecastingSettings]
     :param kwargs: Job-specific arguments
     :type kwargs: Dict[str, Any]
@@ -145,7 +151,7 @@ class ForecastingJob(AutoMLTabular):
             should predict out. When task type is forecasting, this parameter is required. For more information on
             setting forecasting parameters, see `Auto-train a time-series forecast model <https://learn.microsoft.com/
             azure/machine-learning/how-to-auto-train-forecast>`_.
-        :type forecast_horizon: Optional[Union[int, str]]
+        :paramtype forecast_horizon: Optional[Union[int, str]]
         :keyword time_series_id_column_names:
             The names of columns used to group a time series.
             It can be used to create multiple series. If time series id column names is not defined or
@@ -184,7 +190,7 @@ class ForecastingJob(AutoMLTabular):
                auto correlation will designate the lag. If first significant element (value correlate with
                itself) is followed by insignificant, the lag will be 0 and we will not use look back features.
 
-        :type target_lags: Optional[Union[str, int, List[int]]]
+        :paramtype target_lags: Optional[Union[str, int, List[int]]]
         :keyword feature_lags: Flag for generating lags for the numeric features with 'auto' or None.
         :paramtype feature_lags: Optional[str]
         :keyword target_rolling_window_size: The number of past periods used to create a rolling window average of the
@@ -202,7 +208,7 @@ class ForecastingJob(AutoMLTabular):
         :keyword use_stl: Configure STL Decomposition of the time-series target column.
             use_stl can take three values: None (default) - no stl decomposition, 'season' - only generate
             season component and season_trend - generate both season and trend components.
-        :type use_stl: Optional[str]
+        :paramtype use_stl: Optional[str]
         :keyword seasonality: Set time series seasonality as an integer multiple of the series frequency.
             If seasonality is set to 'auto', it will be inferred.
             If set to None, the time series is assumed non-seasonal which is equivalent to seasonality=1.
@@ -272,7 +278,7 @@ class ForecastingJob(AutoMLTabular):
             | False      | None                     | False                | None                        |
             +------------+--------------------------+----------------------+-----------------------------+
 
-        :type short_series_handling_config: Optional[str]
+        :paramtype short_series_handling_config: Optional[str]
         :keyword frequency: Forecast frequency.
 
             When forecasting, this parameter represents the period with which the forecast is desired,
@@ -283,7 +289,7 @@ class ForecastingJob(AutoMLTabular):
             The frequency needs to be a pandas offset alias.
             Please refer to pandas documentation for more information:
             https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#dateoffset-objects
-        :type frequency: Optional[str]
+        :paramtype frequency: Optional[str]
         :keyword target_aggregate_function: The function to be used to aggregate the time series target
             column to conform to a user specified frequency. If the target_aggregation_function is set,
             but the freq parameter is not set, the error is raised. The possible target aggregation
@@ -339,7 +345,7 @@ class ForecastingJob(AutoMLTabular):
                 |                |                               | | function.                          |
                 +----------------+-------------------------------+--------------------------------------+
 
-        :type target_aggregate_function: Optional[str]
+        :paramtype target_aggregate_function: Optional[str]
         :keyword cv_step_size: Number of periods between the origin_time of one CV fold and the next fold.
             For example, if `n_step` = 3 for daily data, the origin time for each fold will be three days apart.
         :paramtype cv_step_size: Optional[int]
@@ -436,7 +442,7 @@ class ForecastingJob(AutoMLTabular):
             For more information, see `Interpretability: model explanations in automated machine learning
             <https://learn.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
             , defaults to None
-        :type enable_model_explainability: Optional[bool]
+        :paramtype enable_model_explainability: Optional[bool]
         :keyword enable_stack_ensemble:
             Whether to enable/disable StackEnsemble iteration.
             If `enable_onnx_compatible_models` flag is being set, then StackEnsemble iteration will be disabled.
@@ -445,13 +451,13 @@ class ForecastingJob(AutoMLTabular):
             For more information about ensembles, see `Ensemble configuration
             <https://learn.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
             , defaults to None
-        :type enable_stack_ensemble: Optional[bool]
+        :paramtype enable_stack_ensemble: Optional[bool]
         :keyword enable_vote_ensemble:
             Whether to enable/disable VotingEnsemble iteration.
             For more information about ensembles, see `Ensemble configuration
             <https://learn.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
             , defaults to None
-        :type enable_vote_ensemble: Optional[bool]
+        :paramtype enable_vote_ensemble: Optional[bool]
         :keyword stack_ensemble_settings:
             Settings for StackEnsemble iteration, defaults to None
         :paramtype stack_ensemble_settings: Optional[StackEnsembleSettings]
@@ -479,7 +485,7 @@ class ForecastingJob(AutoMLTabular):
             * auto- Currently, it is same as non_distributed. In future, this might change.
 
             Note: This parameter is in public preview and may change in future.
-        :type training_mode: Optional[Union[~azure.ai.ml.constants.TabularTrainingMode, str]]
+        :paramtype training_mode: Optional[Union[~azure.ai.ml.constants.TabularTrainingMode, str]]
         """
         super().set_training(
             enable_onnx_compatible_models=enable_onnx_compatible_models,
@@ -542,6 +548,7 @@ class ForecastingJob(AutoMLTabular):
 
         properties = RestAutoMLJob(
             display_name=self.display_name,
+            is_archived=False,
             description=self.description,
             experiment_name=self.experiment_name,
             tags=self.tags,
@@ -550,10 +557,12 @@ class ForecastingJob(AutoMLTabular):
             environment_id=self.environment_id,
             environment_variables=self.environment_variables,
             services=self.services,
-            outputs=to_rest_data_outputs(self.outputs),
+            outputs=to_hybrid_rest_model(to_rest_data_outputs(self.outputs), RestJobOutput),
             resources=self.resources,
             task_details=forecasting_task,
-            identity=self.identity._to_job_rest_object() if self.identity else None,
+            identity=to_hybrid_rest_model(
+                self.identity._to_job_rest_object() if self.identity else None, RestIdentityConfiguration
+            ),
             queue_settings=self.queue_settings,
         )
 

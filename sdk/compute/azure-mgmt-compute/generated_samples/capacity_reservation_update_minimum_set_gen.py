@@ -37,6 +37,7 @@ def main():
         parameters={
             "properties": {
                 "instanceView": {
+                    "reservationStateInfo": {"reservationState": "str"},
                     "statuses": [
                         {
                             "code": "str",
@@ -46,13 +47,22 @@ def main():
                             "time": "2020-02-20 00:00:00",
                         }
                     ],
-                    "utilizationInfo": {"currentCapacity": 0, "virtualMachinesAllocated": [{"id": "str"}]},
+                    "utilizationInfo": {
+                        "currentCapacity": 0,
+                        "usedReservedCountBySubscription": {"str": 0},
+                        "virtualMachinesAllocated": [{"id": "str"}],
+                    },
                 },
                 "platformFaultDomainCount": 0,
                 "provisioningState": "str",
                 "provisioningTime": "2020-02-20 00:00:00",
                 "reservationId": "str",
-                "scheduleProfile": {"end": "str", "start": "str"},
+                "scheduleProfile": {
+                    "end": "str",
+                    "minimumCommitmentDays": 0,
+                    "modifiableUntil": "2020-02-20 00:00:00",
+                    "start": "str",
+                },
                 "timeCreated": "2020-02-20 00:00:00",
                 "virtualMachinesAssociated": [{"id": "str"}],
             },
@@ -63,6 +73,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/capacityReservationExamples/CapacityReservation_Update_MinimumSet_Gen.json
+# x-ms-original-file: 2026-04-01/capacityReservationExamples/CapacityReservation_Update_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

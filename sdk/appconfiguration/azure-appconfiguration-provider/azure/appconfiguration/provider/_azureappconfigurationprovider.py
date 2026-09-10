@@ -78,7 +78,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         self._startup_timeout: int = kwargs.pop("startup_timeout", DEFAULT_STARTUP_TIMEOUT)
 
         self._replica_client_manager = ConfigurationClientManager(
-            connection_string=kwargs.pop("connection_string"),
+            connection_string=kwargs.pop("connection_string", None),
             endpoint=kwargs.pop("endpoint"),
             credential=kwargs.pop("credential", None),
             user_agent=user_agent,
@@ -207,7 +207,12 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 self._secret_provider.secret_refresh_timer
                 and self._secret_provider.secret_refresh_timer.needs_refresh()
             ):
-                self._dict.update(self._secret_provider.refresh_secrets())
+                # Publish a new dict rather than mutating in place. Readers may hold a live view or
+                # iterator over self._dict, and an in-place update could raise "dictionary changed
+                # size during iteration". Every write to self._dict must rebind to a new object.
+                updated_settings = dict(self._dict)
+                updated_settings.update(self._secret_provider.refresh_secrets())
+                self._dict = updated_settings
             self._replica_client_manager.refresh_clients()
             self._replica_client_manager.find_active_clients()
             replica_count = self._replica_client_manager.get_client_count() - 1

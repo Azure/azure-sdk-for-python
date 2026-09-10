@@ -1,0 +1,58 @@
+{
+  "properties": {
+    "computeId": "smoke-compute",
+    "earlyTermination": {
+      "delayEvaluation": 5,
+      "evaluationInterval": 2,
+      "policyType": "TruncationSelection",
+      "truncationPercentage": 20
+    },
+    "experimentName": "smoke-experiment",
+    "inputs": {},
+    "isArchived": false,
+    "jobType": "Sweep",
+    "limits": {
+      "jobLimitsType": "Sweep",
+      "maxConcurrentTrials": 4,
+      "maxTotalTrials": 8
+    },
+    "objective": {
+      "goal": "maximize",
+      "primaryMetric": "accuracy"
+    },
+    "outputs": {},
+    "properties": {},
+    "samplingAlgorithm": {
+      "samplingAlgorithmType": "Bayesian"
+    },
+    "searchSpace": {
+      "dropout": [
+        "quniform",
+        [
+          0.0,
+          0.5,
+          1
+        ]
+      ],
+      "lr": [
+        "loguniform",
+        [
+          -6,
+          -1
+        ]
+      ],
+      "units": [
+        "randint",
+        [
+          128
+        ]
+      ]
+    },
+    "tags": {},
+    "trial": {
+      "command": "python train.py --lr ${{search_space.lr}} --units ${{search_space.units}}",
+      "environmentId": "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+      "environmentVariables": {}
+    }
+  }
+}

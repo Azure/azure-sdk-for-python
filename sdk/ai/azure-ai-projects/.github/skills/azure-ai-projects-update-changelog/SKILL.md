@@ -56,7 +56,7 @@ From the JSON response:
 
 Check if CHANGELOG.md already has a section for the current version:
 - If there's a section `## {CURRENT_VERSION} (Unreleased)` — we will update it
-- If there's a section `## {CURRENT_VERSION} (YYYY-MM-DD)` with an actual date — the version is already released, report this to the user and stop
+- If there's a section `## {CURRENT_VERSION} (YYYY-MM-DD)` with an actual date. If the date is in the past, then this version is already released, report this to the user and stop. If it's today's date, we will update it.
 - If there's no section for `CURRENT_VERSION` — we will create a new one
 
 ---

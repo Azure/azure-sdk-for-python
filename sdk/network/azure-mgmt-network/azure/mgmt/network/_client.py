@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -21,6 +21,7 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from ._configuration import NetworkManagementClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
+    AddressPrefixSetsOperations,
     AdminRuleCollectionsOperations,
     AdminRulesOperations,
     ApplicationGatewayPrivateEndpointConnectionsOperations,
@@ -56,6 +57,7 @@ from .operations import (
     ExpressRouteCrossConnectionPeeringsOperations,
     ExpressRouteCrossConnectionsOperations,
     ExpressRouteGatewaysOperations,
+    ExpressRouteLagsOperations,
     ExpressRouteLinksOperations,
     ExpressRoutePortAuthorizationsOperations,
     ExpressRoutePortsLocationsOperations,
@@ -68,8 +70,10 @@ from .operations import (
     FirewallPolicyIdpsSignaturesFilterValuesOperations,
     FirewallPolicyIdpsSignaturesOperations,
     FirewallPolicyIdpsSignaturesOverridesOperations,
+    FirewallPolicyKubeSelectorGroupsOperations,
     FirewallPolicyRuleCollectionGroupDraftsOperations,
     FirewallPolicyRuleCollectionGroupsOperations,
+    FirstPartyServiceTagsOperations,
     FlowLogsOperations,
     HubRouteTablesOperations,
     HubVirtualNetworkConnectionsOperations,
@@ -198,7 +202,7 @@ if TYPE_CHECKING:
 
 class NetworkManagementClient(
     _NetworkManagementClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """NetworkManagementClient.
 
     :ivar operations: Operations operations
@@ -251,12 +255,18 @@ class NetworkManagementClient(
     :ivar express_route_port_authorizations: ExpressRoutePortAuthorizationsOperations operations
     :vartype express_route_port_authorizations:
      azure.mgmt.network.operations.ExpressRoutePortAuthorizationsOperations
+    :ivar express_route_lags: ExpressRouteLagsOperations operations
+    :vartype express_route_lags: azure.mgmt.network.operations.ExpressRouteLagsOperations
     :ivar firewall_policies: FirewallPoliciesOperations operations
     :vartype firewall_policies: azure.mgmt.network.operations.FirewallPoliciesOperations
     :ivar firewall_policy_rule_collection_groups: FirewallPolicyRuleCollectionGroupsOperations
      operations
     :vartype firewall_policy_rule_collection_groups:
      azure.mgmt.network.operations.FirewallPolicyRuleCollectionGroupsOperations
+    :ivar firewall_policy_kube_selector_groups: FirewallPolicyKubeSelectorGroupsOperations
+     operations
+    :vartype firewall_policy_kube_selector_groups:
+     azure.mgmt.network.operations.FirewallPolicyKubeSelectorGroupsOperations
     :ivar firewall_policy_idps_signatures_overrides:
      FirewallPolicyIdpsSignaturesOverridesOperations operations
     :vartype firewall_policy_idps_signatures_overrides:
@@ -445,6 +455,11 @@ class NetworkManagementClient(
     :vartype interconnect_groups: azure.mgmt.network.operations.InterconnectGroupsOperations
     :ivar subgroups: SubgroupsOperations operations
     :vartype subgroups: azure.mgmt.network.operations.SubgroupsOperations
+    :ivar first_party_service_tags: FirstPartyServiceTagsOperations operations
+    :vartype first_party_service_tags:
+     azure.mgmt.network.operations.FirstPartyServiceTagsOperations
+    :ivar address_prefix_sets: AddressPrefixSetsOperations operations
+    :vartype address_prefix_sets: azure.mgmt.network.operations.AddressPrefixSetsOperations
     :ivar application_gateway_private_link_resources:
      ApplicationGatewayPrivateLinkResourcesOperations operations
     :vartype application_gateway_private_link_resources:
@@ -745,10 +760,16 @@ class NetworkManagementClient(
         self.express_route_port_authorizations = ExpressRoutePortAuthorizationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.express_route_lags = ExpressRouteLagsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.firewall_policies = FirewallPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.firewall_policy_rule_collection_groups = FirewallPolicyRuleCollectionGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.firewall_policy_kube_selector_groups = FirewallPolicyKubeSelectorGroupsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.firewall_policy_idps_signatures_overrides = FirewallPolicyIdpsSignaturesOverridesOperations(
@@ -927,6 +948,12 @@ class NetworkManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.subgroups = SubgroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.first_party_service_tags = FirstPartyServiceTagsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.address_prefix_sets = AddressPrefixSetsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.application_gateway_private_link_resources = ApplicationGatewayPrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

@@ -13,7 +13,7 @@ from azure.ai.ml.operations._run_history_constants import JobStatus
 from typing import Optional, Dict
 from azure.ai.ml.entities._job.finetuning.azure_openai_finetuning_job import AzureOpenAIFineTuningJob
 from azure.ai.ml.entities._job.finetuning.azure_openai_hyperparameters import AzureOpenAIHyperparameters
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     FineTuningTaskType,
 )
 import uuid

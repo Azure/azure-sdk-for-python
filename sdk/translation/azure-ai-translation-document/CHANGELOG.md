@@ -1,14 +1,43 @@
 # Release History
 
-## 1.1.1 (Unreleased)
+## 2.0.0 (2026-08-01)
 
 ### Features Added
 
+- Added support for the `2026-03-01` service API version, which is now the default.
+- Added image translation support: the `translate_text_within_image` keyword on `begin_translation`
+  for batch requests, and a `translate_text_within_image` keyword on `SingleDocumentTranslationClient.translate`
+  for single document requests. When enabled, each document's status also reports image scan usage.
+- Added the `deployment_name` property to `TranslationTarget` and the `deployment_name` keyword to
+  `begin_translation` to specify the deployment name of the custom translation model for a batch
+  translation request.
+- Added the `deployment_name` keyword to `SingleDocumentTranslationClient.translate` for single
+  document translation requests.
+- Added the `deployment_name` property to `DocumentStatus`, exposing the deployment name of the
+  custom translation model used for the translation.
+- Added image scan reporting to `DocumentStatus`: `image_characters_detected`, `images_charged`,
+  `total_image_scans_succeeded`, and `total_image_scans_failed`.
+- Added image scan totals to `TranslationStatusSummary`: `total_image_scans_succeeded`,
+  `total_image_scans_failed`, and `total_images_charged`.
+- Added the `BatchOptions` model for specifying batch translation options.
+
 ### Breaking Changes
 
-### Bugs Fixed
+- Changed the default service API version from `2024-05-01` to `2026-03-01`. To keep the previous
+  behavior, pass `api_version="2024-05-01"` when constructing the client.
+- Models are no longer re-exported from the top-level `azure.ai.translation.document` namespace and
+  must now be imported from `azure.ai.translation.document.models`. This affects `TranslationGlossary`,
+  `TranslationTarget`, `DocumentTranslationInput`, `TranslationStatus`, `DocumentStatus`,
+  `DocumentTranslationError`, `DocumentTranslationFileFormat`, and `StorageInputType`. For example,
+  replace `from azure.ai.translation.document import TranslationStatus` with
+  `from azure.ai.translation.document.models import TranslationStatus`. The clients
+  (`DocumentTranslationClient`, `SingleDocumentTranslationClient`), `DocumentTranslationApiVersion`,
+  and `DocumentTranslationLROPoller` remain available at the top level.
 
 ### Other Changes
+
+- This version and all future versions will require Python 3.9+. Python 3.8 is no longer supported.
+- Bumped the minimum required `azure-core` version from `1.30.0` to `1.37.0`.
 
 ## 1.1.0 (2024-11-15)
 

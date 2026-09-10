@@ -8,7 +8,7 @@ them, the background task's ``try_evict()`` can remove the record from
 in-memory state, causing ``delete()`` to return ``False`` and producing
 a spurious 404.
 
-The fix falls through to the durable provider when ``delete()`` returns
+The fix falls through to the resilient provider when ``delete()`` returns
 ``False`` — since ``try_evict`` only runs AFTER a provider persistence
 attempt, the provider will typically have the response at that point,
 though it may not if persistence failed.
@@ -24,17 +24,16 @@ from typing import Any
 import pytest
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.responses import ResponsesAgentServerHost
+from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
 from azure.ai.agentserver.responses.hosting._runtime_state import _RuntimeState
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
 from tests._helpers import poll_until
 
-
 # ─── Handler ──────────────────────────────────────────────
 
 
-def _simple_handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
+async def _simple_handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
     """Handler that emits created → completed."""
 
     async def _events():
@@ -106,7 +105,7 @@ class TestDeleteEvictionRace:
         monkeypatch.setattr(_RuntimeState, "delete", _racing_delete)
 
         provider = InMemoryResponseProvider()
-        app = ResponsesAgentServerHost(store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
         app.response_handler(_simple_handler)
         client = TestClient(app)
 
@@ -128,9 +127,7 @@ class TestDeleteEvictionRace:
 
         # DELETE should succeed (not 404) via provider fallback
         delete_resp = client.delete(f"/responses/{response_id}")
-        assert delete_resp.status_code == 200, (
-            f"Expected 200 but got {delete_resp.status_code}: {delete_resp.json()}"
-        )
+        assert delete_resp.status_code == 200, f"Expected 200 but got {delete_resp.status_code}: {delete_resp.json()}"
         body = delete_resp.json()
         assert body["id"] == response_id
         assert body["deleted"] is True
@@ -171,7 +168,7 @@ class TestDeleteEvictionRace:
         monkeypatch.setattr(RS, "get", _detecting_get)
 
         provider = InMemoryResponseProvider()
-        app = ResponsesAgentServerHost(store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
         app.response_handler(_simple_handler)
         client = TestClient(app)
 
@@ -200,9 +197,7 @@ class TestDeleteEvictionRace:
 
         # DELETE — should succeed via provider fallback (record is None)
         delete_resp = client.delete(f"/responses/{response_id}")
-        assert delete_resp.status_code == 200, (
-            f"Expected 200 but got {delete_resp.status_code}: {delete_resp.json()}"
-        )
+        assert delete_resp.status_code == 200, f"Expected 200 but got {delete_resp.status_code}: {delete_resp.json()}"
         body = delete_resp.json()
         assert body["id"] == response_id
         assert body["deleted"] is True
@@ -232,7 +227,7 @@ class TestDeleteEvictionRace:
         monkeypatch.setattr(_RuntimeState, "delete", _racing_delete)
 
         provider = InMemoryResponseProvider()
-        app = ResponsesAgentServerHost(store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
         app.response_handler(_simple_handler)
         client = TestClient(app)
 

@@ -45,6 +45,7 @@ class TestPolicyPolicyExemptionsOperationsAsync(AzureMgmtRecordedTestCase):
                     "assignmentScopeValidation": "str",
                     "description": "str",
                     "displayName": "str",
+                    "exemptionManagementMode": "str",
                     "expiresOn": "2020-02-20 00:00:00",
                     "metadata": {},
                     "policyDefinitionReferenceIds": ["str"],
@@ -76,6 +77,7 @@ class TestPolicyPolicyExemptionsOperationsAsync(AzureMgmtRecordedTestCase):
             parameters={
                 "properties": {
                     "assignmentScopeValidation": "str",
+                    "exemptionManagementMode": "str",
                     "resourceSelectors": [
                         {"name": "str", "selectors": [{"in": ["str"], "kind": "str", "notIn": ["str"]}]}
                     ],

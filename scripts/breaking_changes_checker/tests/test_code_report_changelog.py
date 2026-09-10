@@ -414,6 +414,19 @@ def test_compare_code_reports_for_azure_mgmt_apimanagement_apistub():
     )
 
 
+def test_uninstall_package_uses_active_python_environment():
+    from breaking_changes_checker import detect_breaking_changes
+
+    with mock.patch.object(detect_breaking_changes.subprocess, "run") as run:
+        detect_breaking_changes._uninstall_package("azure-mgmt-network", "/tmp/azure-mgmt-network")
+
+    run.assert_called_once_with(
+        [sys.executable, "-m", "pip", "uninstall", "-y", "azure-mgmt-network"],
+        cwd="/tmp/azure-mgmt-network",
+        check=False,
+    )
+
+
 def test_use_apistub_changelog_resolves_stable_from_pypi_and_current_from_local():
     """``--use-apistub`` without ``-s`` must diff local source against the previous PyPI release.
 
@@ -432,12 +445,17 @@ def test_use_apistub_changelog_resolves_stable_from_pypi_and_current_from_local(
     checker = mock.MagicMock()
     checker.report_changes.return_value = ""
     checker.breaking_changes = []
+    events = mock.Mock()
 
     with mock.patch("pypi_tools.pypi.PyPIClient", return_value=pypi_client) as pypi_client_cls, mock.patch.object(
+        detect_breaking_changes, "_uninstall_package"
+    ) as uninstall_package, mock.patch.object(
         detect_breaking_changes, "build_report_from_apistub", return_value={}
     ) as build_report, mock.patch.object(
         detect_breaking_changes, "compare_report_dicts", return_value=checker
     ) as compare:
+        events.attach_mock(uninstall_package, "uninstall")
+        events.attach_mock(build_report, "build_report")
         detect_breaking_changes.main(
             package_name="azure-mgmt-network",
             target_module="azure.mgmt.network",
@@ -453,6 +471,25 @@ def test_use_apistub_changelog_resolves_stable_from_pypi_and_current_from_local(
         )
 
     assert build_report.call_count == 2, "Expected separate apistub reports for current and stable"
+    assert events.mock_calls == [
+        mock.call.uninstall("azure-mgmt-network", "/tmp/azure-mgmt-network"),
+        mock.call.build_report(
+            "azure-mgmt-network",
+            "/tmp/azure-mgmt-network",
+            version="30.2.0",
+            debug=False,
+            label="stable",
+            from_pypi=True,
+        ),
+        mock.call.uninstall("azure-mgmt-network", "/tmp/azure-mgmt-network"),
+        mock.call.build_report(
+            "azure-mgmt-network",
+            "/tmp/azure-mgmt-network",
+            debug=False,
+            label="current",
+            from_pypi=False,
+        ),
+    ]
 
     # The resolver must force the public PyPI backend: in CI PIP_INDEX_URL points
     # at the curated Azure Artifacts feed, which is not a full mirror of PyPI.

@@ -4,15 +4,17 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import os
 from concurrent import futures
 from io import BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation
 from itertools import islice
 from math import ceil
 from threading import Lock
+from uuid import uuid4
 
 from azure.core.tracing.common import with_current_context
 
-from . import encode_base64, url_quote
+from . import encode_base64
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
 
@@ -121,7 +123,7 @@ def upload_substream_blocks(
     else:
         range_ids = [uploader.process_substream_block(b) for b in uploader.get_substream_blocks()]
     if any(range_ids):
-        return sorted(range_ids)
+        return [block_id for _, block_id in sorted(range_ids, key=lambda r: r[0])]
     return []
 
 
@@ -265,9 +267,10 @@ class BlockBlobChunkUploader(_ChunkUploader):
         self.current_length = None
 
     def _upload_chunk(self, chunk_offset, chunk_data):
-        # TODO: This is incorrect, but works with recording.
+        # Generate a unique block ID for each staged block. The chunk offset is
+        # still returned so the block list can be committed in the correct order.
         index = f"{chunk_offset:032d}"
-        block_id = encode_base64(url_quote(encode_base64(index)))
+        block_id = encode_base64(f"{uuid4().int:048d}")
         self.service.stage_block(
             block_id,
             len(chunk_data),
@@ -280,7 +283,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     def _upload_substream_block(self, index, block_stream):
         try:
-            block_id = f"BlockId{(index//self.chunk_size):05}"
+            block_id = encode_base64(os.urandom(9))
             self.service.stage_block(
                 block_id,
                 len(block_stream),
@@ -291,7 +294,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
             )
         finally:
             block_stream.close()
-        return block_id
+        return index, block_id
 
 
 class PageBlobChunkUploader(_ChunkUploader):
@@ -414,6 +417,8 @@ class FileChunkUploader(_ChunkUploader):
 class SubStream(IOBase):
 
     def __init__(self, wrapped_stream, stream_begin_index, length, lockObj):
+        super(SubStream, self).__init__()
+
         # Python 2.7: file-like objects created with open() typically support seek(), but are not
         # derivations of io.IOBase and thus do not implement seekable().
         # Python > 3.0: file-like objects created with open() are derived from io.IOBase.
@@ -437,13 +442,12 @@ class SubStream(IOBase):
         )
         self._current_buffer_start = 0
         self._current_buffer_size = 0
-        super(SubStream, self).__init__()
 
     def __len__(self):
         return self._length
 
     def close(self):
-        if self._buffer:
+        if hasattr(self, "_buffer"):
             self._buffer.close()
         self._wrapped_stream = None
         IOBase.close(self)

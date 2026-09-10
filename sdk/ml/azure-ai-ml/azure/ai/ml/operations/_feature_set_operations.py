@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,reimported
 
 import json
 import os
@@ -15,7 +15,7 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient082023Preview
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient102023
 from azure.ai.ml._restclient.arm_ml_service.models import (
     FeaturesetVersion,
@@ -92,7 +92,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :type name: Optional[str]
         :keyword list_view_type: View type for including/excluding (for example) archived FeatureSet assets.
             Defaults to ACTIVE_ONLY.
-        :type list_view_type: Optional[ListViewType]
+        :paramtype list_view_type: Optional[ListViewType]
         :return: An iterator like instance of FeatureSet objects
         :rtype: ~azure.core.paging.ItemPaged[FeatureSet]
         """

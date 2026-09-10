@@ -11,12 +11,12 @@ from typing import Any
 import pytest
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.responses import ResponsesAgentServerHost
+from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from tests._helpers import EventGate, poll_until
 
 
-def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _noop_response_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Minimal handler used to wire the hosting surface in contract tests."""
 
     async def _events():
@@ -26,14 +26,14 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
     return _events()
 
 
-def _delayed_response_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _delayed_response_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that keeps background execution cancellable for a short period."""
 
     async def _events():
-        if cancellation_signal.is_set():
+        if context._cancellation_signal.is_set():
             return
         await asyncio.sleep(0.25)
-        if cancellation_signal.is_set():
+        if context._cancellation_signal.is_set():
             return
         if False:  # pragma: no cover - keep async generator shape.
             yield None
@@ -41,7 +41,7 @@ def _delayed_response_handler(request: Any, context: Any, cancellation_signal: A
     return _events()
 
 
-def _cancellable_bg_response_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _cancellable_bg_response_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits response.created then blocks until cancelled.
 
     Phase 3: response_created_signal is set on the first event, so run_background
@@ -57,13 +57,13 @@ def _cancellable_bg_response_handler(request: Any, context: Any, cancellation_si
             },
         }
         # Block until cancellation signal is set
-        while not cancellation_signal.is_set():
+        while not context._cancellation_signal.is_set():
             await asyncio.sleep(0.01)
 
     return _events()
 
 
-def _raising_response_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _raising_response_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that raises to transition a background response into failed."""
 
     async def _events():
@@ -74,7 +74,7 @@ def _raising_response_handler(request: Any, context: Any, cancellation_signal: A
     return _events()
 
 
-def _unknown_cancellation_response_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _unknown_cancellation_response_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that raises an unknown cancellation exception source."""
 
     async def _events():
@@ -85,7 +85,7 @@ def _unknown_cancellation_response_handler(request: Any, context: Any, cancellat
     return _events()
 
 
-def _incomplete_response_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _incomplete_response_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits an explicit incomplete terminal response event."""
 
     async def _events():
@@ -117,11 +117,11 @@ def _incomplete_response_handler(request: Any, context: Any, cancellation_signal
 def _make_blocking_sync_response_handler(started_gate: EventGate, release_gate: threading.Event):
     """Factory for a handler that holds a sync request in-flight for deterministic concurrent cancel checks."""
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             started_gate.signal(True)
             while not release_gate.is_set():
-                if cancellation_signal.is_set():
+                if context._cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
             if False:  # pragma: no cover - keep async generator shape.
@@ -192,9 +192,9 @@ def _assert_error(
     if expected_message is not None:
         assert payload["error"].get("message") == expected_message
     if expected_code is not None:
-        assert payload["error"].get("code") == expected_code, (
-            f"Expected error.code={expected_code!r}, got {payload['error'].get('code')!r}"
-        )
+        assert (
+            payload["error"].get("code") == expected_code
+        ), f"Expected error.code={expected_code!r}, got {payload['error'].get('code')!r}"
 
 
 def test_cancel__cancels_background_response_and_clears_output() -> None:
@@ -251,7 +251,7 @@ def test_cancel__returns_failed_for_immediate_handler_failure() -> None:
     before emitting it, the POST returns 200 with status=failed.
     """
 
-    def _raising_before_events(req: Any, ctx: Any, sig: Any):
+    async def _raising_before_events(req: Any, ctx: Any, cancellation_signal: asyncio.Event):
         async def _ev():
             raise RuntimeError("simulated handler failure")
             if False:  # pragma: no cover
@@ -298,7 +298,7 @@ async def test_cancel__stream_disconnect_sets_handler_cancellation_signal() -> N
     app = ResponsesAgentServerHost()
 
     @app.response_handler
-    def _handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
@@ -345,12 +345,13 @@ async def test_cancel__stream_disconnect_sets_handler_cancellation_signal() -> N
         await asyncio.sleep(1.5)
 
         assert handler_started.is_set(), "Handler should have started"
-        # The generator should have been cancelled by Hypercorn's
-        # CancelledError propagation. The handler either saw cancellation_signal
-        # or was killed by CancelledError before reaching the check.
-        assert not handler_completed.is_set(), (
-            "Handler should NOT have completed all 500 chunks — disconnect should stop it"
-        )
+        # The handler should have observed cancellation_signal via the
+        # disconnect monitor and broken out of its emit loop. The
+        # post-loop close events may still run, but the handler MUST
+        # have seen the cancellation signal — that's the contract this
+        # test exercises (B17 propagates client disconnect through the
+        # asyncio Event to the handler's work loop).
+        assert handler_cancelled.is_set(), "Handler did not observe cancellation_signal after client disconnect (B17)"
 
 
 @pytest.mark.asyncio
@@ -369,7 +370,7 @@ async def test_cancel__background_stream_disconnect_does_not_cancel_handler() ->
     app = ResponsesAgentServerHost()
 
     @app.response_handler
-    def _handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
@@ -565,7 +566,7 @@ def test_cancel__from_queued_or_early_in_progress_succeeds() -> None:
 # ══════════════════════════════════════════════════════════
 
 
-def _stubborn_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _stubborn_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that ignores the cancellation signal entirely."""
 
     async def _events():
@@ -616,14 +617,14 @@ def test_cancel__provider_fallback_returns_400_for_completed_after_restart() -> 
     provider = InMemoryResponseProvider()
 
     # First app instance: create and complete a response
-    app1 = ResponsesAgentServerHost(store=provider)
+    app1 = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
     app1.response_handler(_noop_response_handler)
     client1 = TestClient(app1)
     response_id = _create_background_response(client1)
     _wait_for_status(client1, response_id, "completed")
 
     # Second app instance (simulating restart): fresh runtime state, same provider
-    app2 = ResponsesAgentServerHost(store=provider)
+    app2 = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
     app2.response_handler(_noop_response_handler)
     client2 = TestClient(app2)
 
@@ -644,14 +645,14 @@ def test_cancel__provider_fallback_returns_400_for_failed_after_restart() -> Non
     provider = InMemoryResponseProvider()
 
     # First app instance: create a response that fails
-    app1 = ResponsesAgentServerHost(store=provider)
+    app1 = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
     app1.response_handler(_raising_response_handler)
     client1 = TestClient(app1)
     response_id = _create_background_response(client1)
     _wait_for_status(client1, response_id, "failed")
 
     # Second app instance (simulating restart)
-    app2 = ResponsesAgentServerHost(store=provider)
+    app2 = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
     app2.response_handler(_noop_response_handler)
     client2 = TestClient(app2)
 
@@ -668,13 +669,13 @@ def test_cancel__provider_fallback_returns_400_for_failed_after_restart() -> Non
 def test_cancel__persisted_state_is_cancelled_even_when_handler_completes_after_timeout() -> None:
     """B11 race condition: handler eventually yields response.completed after cancel.
 
-    The durable store must still reflect 'cancelled', not 'completed'.
+    The response store must still reflect 'cancelled', not 'completed'.
     """
     from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 
     provider = InMemoryResponseProvider()
 
-    def _uncooperative_handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _uncooperative_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         """Handler that ignores cancellation and eventually completes."""
 
         async def _events():
@@ -693,7 +694,7 @@ def test_cancel__persisted_state_is_cancelled_even_when_handler_completes_after_
 
         return _events()
 
-    app = ResponsesAgentServerHost(store=provider)
+    app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
     app.response_handler(_uncooperative_handler)
     client = TestClient(app)
 
@@ -714,7 +715,7 @@ def test_cancel__persisted_state_is_cancelled_even_when_handler_completes_after_
 
     time.sleep(2.0)
 
-    # GET from durable store must show cancelled
+    # GET from response store must show cancelled
     get = client.get(f"/responses/{response_id}")
     assert get.status_code == 200
     assert get.json()["status"] == "cancelled", (
@@ -729,7 +730,7 @@ def test_cancel__in_progress_response_triggers_cancellation_signal() -> None:
     Ported from CancelResponseProtocolTests.Cancel_InProgressResponse_TriggersCancellationToken.
     """
 
-    def _tracking_handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _tracking_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             yield {
                 "type": "response.created",
@@ -738,7 +739,7 @@ def test_cancel__in_progress_response_triggers_cancellation_signal() -> None:
             # Block until cancel; the asyncio.sleep yields to the event loop
             # so the cancel endpoint's signal actually propagates.
             for _ in range(500):
-                if cancellation_signal.is_set():
+                if context._cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
 

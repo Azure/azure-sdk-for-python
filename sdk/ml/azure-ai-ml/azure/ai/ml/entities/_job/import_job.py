@@ -134,19 +134,19 @@ class FileImportSource(ImportSource):
 class ImportJob(Job, JobIOMixin):
     """Import job.
 
-    :param name: Name of the job.
-    :type name: str
-    :param description: Description of the job.
-    :type description: str
-    :param display_name: Display name of the job.
-    :type display_name: str
-    :param experiment_name:  Name of the experiment the job will be created under.
+    :keyword name: Name of the job.
+    :paramtype name: str
+    :keyword description: Description of the job.
+    :paramtype description: str
+    :keyword display_name: Display name of the job.
+    :paramtype display_name: str
+    :keyword experiment_name:  Name of the experiment the job will be created under.
         If None is provided, default will be set to current directory name.
-    :type experiment_name: str
-    :param source: Input source parameters to the import job.
-    :type source: azure.ai.ml.entities.DatabaseImportSource or FileImportSource
-    :param output: output data binding used in the job.
-    :type output: azure.ai.ml.Output
+    :paramtype experiment_name: str
+    :keyword source: Input source parameters to the import job.
+    :paramtype source: azure.ai.ml.entities.DatabaseImportSource or FileImportSource
+    :keyword output: output data binding used in the job.
+    :paramtype output: azure.ai.ml.Output
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """

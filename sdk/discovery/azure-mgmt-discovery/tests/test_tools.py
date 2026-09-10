@@ -4,15 +4,20 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for Tools operations."""
+
+import os
 import pytest
 from azure.mgmt.discovery import DiscoveryMgmtClient, models
 from devtools_testutils import recorded_by_proxy
 
 from .testcase import DiscoveryMgmtTestCase, AZURE_RESOURCE_GROUP
 
-
 # Known tool name in the test environment
-TOOL_NAME = "test-tool-50d87c62"
+TOOL_NAME = "sanitized-tool"
+
+# Live resources for read-only tests (read, never mutated)
+READ_RESOURCE_GROUP = os.environ.get("AZURE_RESOURCE_GROUP", "rgname")
+READ_TOOL_NAME = os.environ.get("DISCOVERY_TOOL_NAME", "sanitized-tool")
 
 
 class TestTools(DiscoveryMgmtTestCase):
@@ -31,18 +36,19 @@ class TestTools(DiscoveryMgmtTestCase):
     @recorded_by_proxy
     def test_list_tools_by_resource_group(self):
         """Test listing tools in a resource group."""
-        tools = list(self.client.tools.list_by_resource_group(self.resource_group))
+        tools = list(self.client.tools.list_by_resource_group(READ_RESOURCE_GROUP))
         assert isinstance(tools, list)
 
     @recorded_by_proxy
     def test_get_tool(self):
         """Test getting a specific tool by name."""
-        tool = self.client.tools.get(self.resource_group, TOOL_NAME)
+        tool = self.client.tools.get(READ_RESOURCE_GROUP, READ_TOOL_NAME)
         assert tool is not None
         # Don't assert on name since it may be sanitized in playback
         assert hasattr(tool, "name")
         assert hasattr(tool, "location")
 
+    @pytest.mark.playback_only
     @recorded_by_proxy
     def test_create_tool(self):
         """Test creating a tool."""
@@ -92,13 +98,14 @@ class TestTools(DiscoveryMgmtTestCase):
             ),
         )
         operation = self.client.tools.begin_create_or_update(
-            resource_group_name="olawal",
-            tool_name="test-tool-50d87c62",
+            resource_group_name="rgname",
+            tool_name="sanitized-tool",
             resource=tool_data,
         )
         tool = operation.result()
         assert tool is not None
 
+    @pytest.mark.playback_only
     @recorded_by_proxy
     def test_update_tool(self):
         """Test updating a tool."""
@@ -106,18 +113,19 @@ class TestTools(DiscoveryMgmtTestCase):
             tags={"SkipAutoDeleteTill": "2026-12-31"},
         )
         operation = self.client.tools.begin_update(
-            resource_group_name="olawal",
+            resource_group_name="rgname",
             tool_name=TOOL_NAME,
             properties=tool_data,
         )
         updated_tool = operation.result()
         assert updated_tool is not None
 
+    @pytest.mark.playback_only
     @recorded_by_proxy
     def test_delete_tool(self):
         """Test deleting a tool."""
         operation = self.client.tools.begin_delete(
-            resource_group_name="olawal",
+            resource_group_name="rgname",
             tool_name=TOOL_NAME,
         )
         operation.result()

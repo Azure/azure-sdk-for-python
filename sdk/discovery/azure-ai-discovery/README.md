@@ -3,7 +3,7 @@
 The Azure AI Discovery client library for Python provides two clients for interacting with Azure AI Discovery services:
 
 - **WorkspaceClient** — manage investigations, conversations, tasks, and tools in a Discovery workspace.
-- **BookshelfClient** — manage knowledge bases and knowledge base versions.
+- **BookshelfClient** — manage knowledge bases, including indexing and search.
 
 [Source code][source_code] | [Package (PyPI)][pypi] | [Samples][samples]
 
@@ -59,8 +59,7 @@ The `WorkspaceClient` provides access to Discovery workspace operations, organiz
 
 The `BookshelfClient` provides access to knowledge base management:
 
-- **Knowledge Bases** — list available knowledge bases.
-- **Knowledge Base Versions** — create, update, index, and manage versions of knowledge bases backed by storage assets.
+- **Knowledge Bases** — create, update, get, list, and delete knowledge bases backed by storage assets, run indexing as a long-running operation, and execute long-running search queries.
 
 ## Examples
 
@@ -161,7 +160,7 @@ print(f"Run completed: {result.status}")
 
 ```python
 from azure.ai.discovery import BookshelfClient
-from azure.ai.discovery.models import KnowledgeBaseVersion, StorageAssetReference
+from azure.ai.discovery.models import KnowledgeBase, SearchRequest, StorageAssetReference
 from azure.identity import DefaultAzureCredential
 
 client = BookshelfClient(
@@ -169,15 +168,14 @@ client = BookshelfClient(
     credential=DefaultAzureCredential(),
 )
 
-# List knowledge bases
+# List knowledge bases (ItemPaged — transparent paging)
 for kb in client.knowledge_bases.list():
     print(f"Knowledge base: {kb.name}")
 
-# Create a knowledge base version
-version = client.knowledge_base_versions.create_or_update(
+# Create or update a knowledge base (long-running)
+poller = client.knowledge_bases.begin_create_or_update(
     knowledge_base_name="my-kb",
-    version_name="v1",
-    resource=KnowledgeBaseVersion(
+    resource=KnowledgeBase(
         description="Research data for compound analysis",
         copilot_instruction="Use this to query information about compound interactions.",
         storage_asset_references=[
@@ -188,7 +186,21 @@ version = client.knowledge_base_versions.create_or_update(
         ],
     ),
 )
-print(f"Created version: {version.name}")
+kb = poller.result()
+print(f"Created knowledge base: {kb.name}")
+
+# Run indexing (long-running)
+client.knowledge_bases.begin_start_indexing(
+    knowledge_base_name="my-kb",
+    node_pool_id="/subscriptions/.../nodePools/my-pool",
+    project_id="/subscriptions/.../projects/my-project",
+).result()
+
+# Search the knowledge base (long-running)
+client.knowledge_bases.begin_search(
+    knowledge_base_name="my-kb",
+    body=SearchRequest(query="What are common drug interactions?"),
+).result()
 ```
 
 ## Troubleshooting

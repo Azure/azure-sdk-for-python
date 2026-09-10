@@ -3,9 +3,43 @@
 # ---------------------------------------------------------
 from enum import Enum
 
-# pylint: disable=unused-import
-from azure.ai.ml._restclient.v2023_04_01_preview.models import NlpLearningRateScheduler, TrainingMode
+from azure.core import CaseInsensitiveEnumMeta
+
 from azure.ai.ml._utils._experimental import experimental
+
+
+class NlpLearningRateScheduler(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """NLP learning rate scheduler enum."""
+
+    NONE = "None"
+    LINEAR = "Linear"
+    COSINE = "Cosine"
+    COSINE_WITH_RESTARTS = "CosineWithRestarts"
+    POLYNOMIAL = "Polynomial"
+    CONSTANT = "Constant"
+    CONSTANT_WITH_WARMUP = "ConstantWithWarmup"
+
+
+class TrainingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the type of training mode for the AutoML job."""
+
+    AUTO = "Auto"
+    DISTRIBUTED = "Distributed"
+    NON_DISTRIBUTED = "NonDistributed"
+
+
+class LogTrainingMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine whether or not to log training metrics."""
+
+    ENABLE = "Enable"
+    DISABLE = "Disable"
+
+
+class LogValidationLoss(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine whether or not to log validation loss."""
+
+    ENABLE = "Enable"
+    DISABLE = "Disable"
 
 
 class AutoMLConstants:

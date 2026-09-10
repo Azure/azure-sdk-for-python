@@ -14,9 +14,11 @@ DESCRIPTION:
     version, routes the configured hosted agent name to that version, and then
     creates a routine configured with a `GitHubIssueRoutineTrigger`. The trigger
     uses a GitHub-compatible Foundry RemoteTool connection supplied through
-    `GITHUB_CONNECTION_NAME`. After creating the routine, open an issue in the
-    configured repository to fire it. The sample polls the routine run history
-    for a short period and then deletes the routine and hosted-agent version.
+    `GITHUB_CONNECTION_NAME`. If `GITHUB_PAT_TOKEN` is set, the sample also
+    creates a GitHub issue titled `Testing routine` and assigns it to the
+    configured owner to trigger the routine automatically; otherwise you can
+    open an issue manually. The sample polls the routine run history for a
+    short period and then deletes the routine and hosted-agent version.
 
     Routines are currently a preview feature. In the Python SDK, you access
     these operations via `project_client.beta.routines`.
@@ -38,9 +40,12 @@ USAGE:
     4) GITHUB_CONNECTION_NAME - The Foundry GitHub RemoteTool connection name.
        The connection must be GitHub-compatible and use PAT or OAuth2 credentials.
     5) GITHUB_USERNAME - The GitHub owner or organization name.
-    6) GITHUB_REPOSITORY - The GitHub repository name in the format of https://github.com/xxx/xxx.git.
+    6) GITHUB_REPOSITORY_NAME - The GitHub repository name from `https://github.com/<owner>/<repository_name>`.
     7) POLL_INTERVAL_SECONDS - Optional. Seconds to sleep between run-history polls.
-        Defaults to 10.
+       Defaults to 10.
+    8) GITHUB_PAT_TOKEN - Optional. GitHub personal access token with permission
+        to create and assign issues. If set, the sample creates a `Testing routine`
+        issue and assigns it to `GITHUB_USERNAME` automatically.
 """
 
 import json
@@ -63,22 +68,25 @@ from azure.ai.projects.models import (
     RoutineRun,
 )
 
+from github_routine_util import start_issue_creation_thread
 from hosted_agents_util import create_version_from_code, select_basic_agent_code_zip
 
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME", "MyHostedAgent")
+agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME") or "MyHostedAgent"
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
 github_connection_name = os.environ["GITHUB_CONNECTION_NAME"]
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
+github_pat_token = os.environ.get("GITHUB_PAT_TOKEN")
 
 github_owner = os.environ["GITHUB_USERNAME"]
-github_repository = os.environ["GITHUB_REPOSITORY"]
+github_repository_name = os.environ["GITHUB_REPOSITORY_NAME"]
 
 
 def main() -> None:
     dependency_resolution, code_zip_stream = select_basic_agent_code_zip(True)
+    issue_thread = None
 
     with (
         code_zip_stream as code_stream,
@@ -107,7 +115,7 @@ def main() -> None:
     ):
         routine_name = "sample-routine-github-issue"
 
-        print(f"Preparing routine `{routine_name}` for {github_repository}.")
+        print(f"Preparing routine `{routine_name}` for {github_repository_name}.")
         try:
             print(f"Deleting any existing routine `{routine_name}`.")
             project_client.beta.routines.delete(routine_name)
@@ -124,19 +132,27 @@ def main() -> None:
                 "on-issue": GitHubIssueRoutineTrigger(
                     connection_id=github_connection_name,  # Currently accepts a connection name.
                     owner=github_owner,
-                    repository=github_repository,
+                    repository=github_repository_name,
                     issue_event=GitHubIssueEvent.OPENED,
                 ),
             },
             action=InvokeAgentResponsesApiRoutineAction(agent_name=agent_name),
         )
+        time.sleep(5)
         print(
             f"Created routine: {created.name} enabled={created.enabled} "
-            f"repo={github_owner}/{github_repository} event={GitHubIssueEvent.OPENED}"
+            f"repo={github_owner}/{github_repository_name} event={GitHubIssueEvent.OPENED}"
         )
-        print(f"Open a GitHub issue in {github_repository} to fire the routine.")
-        print("Waiting for a routine run for up to 10 minutes...")
 
+        issue_thread = start_issue_creation_thread(
+            github_owner,
+            github_repository_name,
+            github_pat_token,
+            github_owner,
+        )
+        print(f"Open a GitHub issue in {github_owner}/{github_repository_name} to fire the routine.")
+
+        print("Waiting for a routine run for up to 10 minutes...")
         try:
             seen_phases: dict[str, str] = {}
             final_run: RoutineRun | None = None
@@ -174,6 +190,8 @@ def main() -> None:
         except KeyboardInterrupt:
             print("Interrupted by user; cleaning up routine before exiting.")
         finally:
+            if issue_thread is not None:
+                issue_thread.join(timeout=5)
             try:
                 project_client.beta.routines.delete(routine_name)
                 print("Routine deleted")

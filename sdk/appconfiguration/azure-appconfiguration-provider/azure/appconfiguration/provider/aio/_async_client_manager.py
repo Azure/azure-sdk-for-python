@@ -134,7 +134,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                     self.LOGGER.debug("Refresh all triggered by key: %s label %s.", key, label)
                     return True, None
             else:
-                raise e
+                raise
         return False, None
 
     @distributed_trace
@@ -345,7 +345,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             if e.status_code == 404:
                 self.LOGGER.warning("Snapshot '%s' not found when resolving snapshot.", snapshot_name)
                 return False
-            raise e
+            raise
         if snapshot.composition_type != SnapshotComposition.KEY:
             raise ValueError(f"Composition type for '{snapshot_name}' must be 'key'.")
         return True
@@ -486,18 +486,13 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
         if self._next_update_time and self._next_update_time > time.time():
             return
 
-        failover_endpoints = await find_auto_failover_endpoints(
-            self._original_endpoint, self._replica_discovery_enabled
-        )
-
-        if failover_endpoints is None:
-            # SRV record not found, so we should refresh after a longer interval
+        try:
+            failover_endpoints = await find_auto_failover_endpoints(
+                self._original_endpoint, self._replica_discovery_enabled
+            )
+        except TimeoutError:
+            # SRV record resolution timed out, so we should refresh after a longer interval
             self._next_update_time = time.time() + FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL
-            return
-
-        if len(failover_endpoints) == 0:
-            # No failover endpoints in SRV record.
-            self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
             return
 
         discovered_clients = []
@@ -535,6 +530,12 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
                         )
                     )
         self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
+        # Close any replica clients that are no longer part of the failover.
+        retained_endpoints = {self._original_client.endpoint}
+        retained_endpoints.update(client.endpoint for client in discovered_clients)
+        for client in self._replica_clients:
+            if client.endpoint not in retained_endpoints:
+                await client.close()
         if not self._load_balancing_enabled:
             random.shuffle(discovered_clients)
             self._replica_clients = [self._original_client] + discovered_clients

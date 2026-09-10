@@ -1,10 +1,7 @@
 from typing import List, Any, Optional
 import os
-import bs4
-import urllib3
 from ci_tools.variables import str_to_bool
 
-http = urllib3.PoolManager()
 # arguments: |
 #       -c "${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}"
 #       -w "$(Build.SourcesDirectory)/conda/conda-recipes"
@@ -48,22 +45,6 @@ http = urllib3.PoolManager()
 #       version: 12.7.0
 
 
-def get_package_sdist_url(package: str, version: str) -> str:
-    url = f"https://pypi.org/pypi/{package}/{version}/json"
-    response = http.request("GET", url)
-
-    if response.status != 200:
-        raise RuntimeError(f"Failed to fetch metadata for {package}@{version} from PyPI.")
-
-    data = response.json()
-
-    for file_info in data.get("urls", []):
-        if file_info.get("packagetype") == "sdist":
-            return file_info["url"]
-
-    raise ValueError(f"Unable to find a source distribution for {package}@{version}.")
-
-
 class CheckoutConfiguration:
     def __init__(self, raw_json: dict):
         # we should always have a package name
@@ -77,10 +58,14 @@ class CheckoutConfiguration:
         self.version = raw_json.get("version", None)
         self.download_uri = raw_json.get("download_uri", None)
 
-        if self.version and self.checkout_path is None:
-            self.download_uri = get_package_sdist_url(self.package, self.version)
+        # A package identified only by name + version is sourced from a package index rather than
+        # from a git checkout. Resolution is deferred to download time so that it can be performed
+        # by pip against PIP_INDEX_URL, rather than by a direct call to the public PyPI API here.
+        # Resolving eagerly would also force a network call for every configured package, including
+        # ones that are not part of the current batch.
+        self.from_package_index = bool(self.version and self.checkout_path is None)
 
-        if not self.checkout_path and not self.download_uri:
+        if not self.checkout_path and not self.download_uri and not self.from_package_index:
             raise ValueError(
                 "When defining a checkout configuration, one must either have a valid PyPI download url"
                 " (download_uri) or a path and version in the repo (checkout_path, version)."
@@ -90,6 +75,8 @@ class CheckoutConfiguration:
         if self.download_uri:
             return f"""- {self.package} downloaded from pypi
   {self.download_uri}"""
+        elif self.from_package_index:
+            return f"- {self.package}=={self.version} downloaded from the configured package index"
         else:
             return f"""- {self.checkout_path}/{self.package} from git @ {self.version}"""
 

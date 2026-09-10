@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype,line-too-long,too-many-statements
+# pylint: disable=protected-access,docstring-missing-return,docstring-missing-param,docstring-missing-rtype,line-too-long,too-many-statements,reimported,too-many-branches
 
 import re
 from contextlib import contextmanager
@@ -23,12 +23,11 @@ from azure.ai.ml._artifacts._constants import (
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.model_dataplane import ModelDataplaneClient as ServiceClientModelDataPlane
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
-)
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import ModelVersionData
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ListViewType, ModelVersion
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient082023Preview
+from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
+from azure.ai.ml._restclient.arm_ml_service.models import ModelContainer as ArmModelContainer
+from azure.ai.ml._restclient.arm_ml_service.models import ModelVersion as ArmModelVersion
+from azure.ai.ml._restclient.arm_ml_service.models import ModelVersion
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -46,10 +45,17 @@ from azure.ai.ml._utils._asset_utils import (
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
+    begin_create_or_update_registry_versioned_asset,
+    begin_import_registry_asset,
+    begin_package_registry_model,
+    begin_package_workspace_model,
     get_asset_body_for_registry_storage,
     get_registry_client,
+    get_registry_container_asset,
+    get_registry_versioned_asset,
     get_sas_uri_for_registry_asset,
     get_storage_details_for_registry_assets,
+    list_registry_assets,
 )
 from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
 from azure.ai.ml._utils.utils import _is_evaluator, resolve_short_datastore_url, validate_ml_flow_folder
@@ -87,11 +93,9 @@ class ModelOperations(_ScopeDependentOperations):
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace
-        resources (ServiceClient082023Preview or ServiceClient102021Dataplane).
-    :type service_client: typing.Union[
-        azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
-        azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
-        AzureMachineLearningWorkspaces]
+        resources.
+    :type service_client:
+        ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient
     :param datastore_operations: Represents a client for performing operations on Datastores.
     :type datastore_operations: ~azure.ai.ml.operations._datastore_operations.DatastoreOperations
     :param all_operations: All operations classes of an MLClient object.
@@ -105,7 +109,7 @@ class ModelOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient082023Preview, ServiceClient102021Dataplane],
+        service_client: ServiceClient082023Preview,
         datastore_operations: DatastoreOperations,
         service_client_model_dataplane: ServiceClientModelDataPlane = None,
         all_operations: Optional[OperationsContainer] = None,
@@ -118,6 +122,7 @@ class ModelOperations(_ScopeDependentOperations):
         if service_client_model_dataplane is not None:
             self._model_dataplane_operation = service_client_model_dataplane.models
         self._service_client = service_client
+        self._registry_service_client = kwargs.pop("registry_service_client", None)
         self._datastore_operation = datastore_operations
         self._all_operations = all_operations
         self._control_plane_client: Any = kwargs.get("control_plane_client", None)
@@ -192,6 +197,8 @@ class ModelOperations(_ScopeDependentOperations):
                     resource_group_name=self._operation_scope.resource_group_name,
                     workspace_name=self._workspace_name,
                     registry_name=self._registry_name,
+                    registry_service_client=self._registry_service_client,
+                    asset_plural="models",
                 )
 
             version = model.version
@@ -203,11 +210,13 @@ class ModelOperations(_ScopeDependentOperations):
                 if isinstance(model, WorkspaceAssetReference):
                     # verify that model is not already in registry
                     try:
-                        self._model_versions_operation.get(
-                            name=model.name,
-                            version=model.version,
-                            resource_group_name=self._resource_group_name,
-                            registry_name=self._registry_name,
+                        get_registry_versioned_asset(
+                            self._registry_service_client,
+                            "models",
+                            model.name,
+                            model.version,
+                            self._resource_group_name,
+                            self._registry_name,
                         )
                     except Exception as err:  # pylint: disable=W0718
                         if isinstance(err, ResourceNotFoundError):
@@ -224,18 +233,19 @@ class ModelOperations(_ScopeDependentOperations):
                         )
 
                     model_rest = model._to_rest_object()
-                    result = self._service_client.resource_management_asset_reference.begin_import_method(
-                        resource_group_name=self._resource_group_name,
-                        registry_name=self._registry_name,
-                        body=model_rest,
-                    ).result()
+                    result = begin_import_registry_asset(
+                        self._registry_service_client,
+                        self._resource_group_name,
+                        self._registry_name,
+                        model_rest,
+                    )
 
                     if not result:
                         model_rest_obj = self._get(name=str(model.name), version=model.version)
                         return Model._from_rest_object(model_rest_obj)
 
                 sas_uri = get_sas_uri_for_registry_asset(
-                    service_client=self._service_client,
+                    service_client=self._registry_service_client,
                     name=model.name,
                     version=model.version,
                     resource_group=self._resource_group_name,
@@ -303,8 +313,13 @@ class ModelOperations(_ScopeDependentOperations):
     def _begin_create_or_update_registry_model(self, name, version, model_version_resource, cont_token):
         # if continuation token is None and system_metadata attribute found
         # we need to send the system_metadata values in the request
-        return (
-            self._model_dataplane_operation.begin_create_or_update_model_with_system_metadata(
+        if (
+            self._registry_name
+            and cont_token is None
+            and hasattr(model_version_resource.properties, "system_metadata")
+            and self._model_dataplane_operation is not None
+        ):
+            return self._model_dataplane_operation.begin_create_or_update_model_with_system_metadata(
                 subscription_id=self._operation_scope._subscription_id,
                 name=str(name),
                 version=str(version),
@@ -312,29 +327,51 @@ class ModelOperations(_ScopeDependentOperations):
                 registry_name=self._registry_name,
                 **self._scope_kwargs,
             ).result()
-            if self._registry_name
-            and cont_token is None
-            and hasattr(model_version_resource.properties, "system_metadata")
-            and self._model_dataplane_operation is not None
-            else self._model_versions_operation.begin_create_or_update(
-                name=name,
-                version=version,
-                body=model_version_resource,
-                registry_name=self._registry_name,
-                **self._scope_kwargs,
-            ).result()
+        # Byte-identical to the legacy v2021_10 ``model_versions.begin_create_or_update`` on the MFE endpoint. The body
+        # may be a msrest ``ModelVersionData`` (deployment-template path) or an arm hybrid ``ModelVersion``; serialize the
+        # former to a wire dict so the shared LRO helper posts the identical payload.
+        body = (
+            model_version_resource.serialize()
+            if hasattr(model_version_resource, "serialize")
+            else model_version_resource
+        )
+        return ArmModelVersion._deserialize(
+            begin_create_or_update_registry_versioned_asset(
+                self._registry_service_client,
+                "models",
+                name,
+                version,
+                self._resource_group_name,
+                self._registry_name,
+                body,
+            ),
+            [],
         )
 
-    def _get_with_registry(self, name: str, version: Optional[str] = None) -> ModelVersionData:  # name:latest
+    def _get_with_registry(self, name: str, version: Optional[str] = None) -> ArmModelVersion:  # name:latest
         if version:
-            return self._model_versions_operation.get(
-                name=name,
-                version=version,
-                registry_name=self._registry_name,
-                **self._scope_kwargs,
+            return ArmModelVersion._deserialize(
+                get_registry_versioned_asset(
+                    self._registry_service_client,
+                    "models",
+                    name,
+                    version,
+                    self._resource_group_name,
+                    self._registry_name,
+                ),
+                [],
             )
 
-        return self._model_container_operation.get(name=name, registry_name=self._registry_name, **self._scope_kwargs)
+        return ArmModelContainer._deserialize(
+            get_registry_container_asset(
+                self._registry_service_client,
+                "models",
+                name,
+                self._resource_group_name,
+                self._registry_name,
+            ),
+            [],
+        )
 
     def _get_with_workspace(self, name: str, version: Optional[str] = None) -> ModelVersion:  # name:latest
         if version:
@@ -347,7 +384,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         return self._model_container_operation.get(name=name, workspace_name=self._workspace_name, **self._scope_kwargs)
 
-    def _get(self, name: str, version: Optional[str] = None) -> Union[ModelVersion, ModelVersionData]:  # name:latest
+    def _get(self, name: str, version: Optional[str] = None) -> Union[ModelVersion, ArmModelVersion]:  # name:latest
         if self._registry_name:
             return self._get_with_registry(name, version)
         return self._get_with_workspace(name, version)
@@ -415,7 +452,7 @@ class ModelOperations(_ScopeDependentOperations):
         ds_name, path_prefix = get_ds_name_and_path_prefix(model_uri, self._registry_name)
         if self._registry_name:
             sas_uri, auth_type = get_storage_details_for_registry_assets(
-                service_client=self._service_client,
+                service_client=self._registry_service_client,
                 asset_name=name,
                 asset_version=version,
                 reg_name=self._registry_name,
@@ -516,6 +553,9 @@ class ModelOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             label=label,
+            asset_plural="models",
+            version_arm_cls=ArmModelVersion,
+            container_arm_cls=ArmModelContainer,
         )
 
     @monitor_with_activity(ops_logger, "Model.Restore", ActivityType.PUBLICAPI)
@@ -552,6 +592,9 @@ class ModelOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             label=label,
+            asset_plural="models",
+            version_arm_cls=ArmModelVersion,
+            container_arm_cls=ArmModelContainer,
         )
 
     @monitor_with_activity(ops_logger, "Model.List", ActivityType.PUBLICAPI)
@@ -578,11 +621,14 @@ class ModelOperations(_ScopeDependentOperations):
             return cast(
                 Iterable[Model],
                 (
-                    self._model_versions_operation.list(
-                        name=name,
-                        registry_name=self._registry_name,
-                        cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
-                        **self._scope_kwargs,
+                    list_registry_assets(
+                        self._registry_service_client,
+                        "models",
+                        name,
+                        self._resource_group_name,
+                        self._registry_name,
+                        ArmModelVersion,
+                        Model._from_rest_object,
                     )
                     if self._registry_name
                     else self._model_versions_operation.list(
@@ -590,7 +636,9 @@ class ModelOperations(_ScopeDependentOperations):
                         workspace_name=self._workspace_name,
                         cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
                         list_view_type=list_view_type,
-                        stage=stage,
+                        # The arm_ml_service ModelVersions.list has no typed ``stage`` param; send it as a
+                        # query param (byte-identical to the legacy client) instead of leaking it to the transport.
+                        **({"params": {"stage": stage}} if stage else {}),
                         **self._scope_kwargs,
                     )
                 ),
@@ -599,11 +647,15 @@ class ModelOperations(_ScopeDependentOperations):
         return cast(
             Iterable[Model],
             (
-                self._model_container_operation.list(
-                    registry_name=self._registry_name,
-                    cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
+                list_registry_assets(
+                    self._registry_service_client,
+                    "models",
+                    None,
+                    self._resource_group_name,
+                    self._registry_name,
+                    ArmModelContainer,
+                    Model._from_container_rest_object,
                     list_view_type=list_view_type,
-                    **self._scope_kwargs,
                 )
                 if self._registry_name
                 else self._model_container_operation.list(
@@ -673,6 +725,9 @@ class ModelOperations(_ScopeDependentOperations):
             self._resource_group_name,
             self._workspace_name,
             self._registry_name,
+            registry_service_client=self._registry_service_client,
+            asset_plural="models",
+            arm_cls=ArmModelVersion,
         )
         return Model._from_rest_object(result)
 
@@ -687,16 +742,18 @@ class ModelOperations(_ScopeDependentOperations):
         sub_ = self._operation_scope._subscription_id
         registry_ = self._operation_scope.registry_name
         client_ = self._service_client
+        registry_service_client_ = self._registry_service_client
         model_versions_operation_ = self._model_versions_operation
 
         try:
-            _client, _rg, _sub, _model_client = get_registry_client(
+            _client, _rg, _sub, _model_client, _arm_client = get_registry_client(
                 self._service_client._config.credential, registry_name
             )
             self._operation_scope.registry_name = registry_name
             self._operation_scope._resource_group_name = _rg
             self._operation_scope._subscription_id = _sub
             self._service_client = _client
+            self._registry_service_client = _arm_client
             self._model_versions_operation = _client.model_versions
             yield
         finally:
@@ -704,6 +761,7 @@ class ModelOperations(_ScopeDependentOperations):
             self._operation_scope._resource_group_name = rg_
             self._operation_scope._subscription_id = sub_
             self._service_client = client_
+            self._registry_service_client = registry_service_client_
             self._model_versions_operation = model_versions_operation_
 
     @experimental
@@ -735,13 +793,13 @@ class ModelOperations(_ScopeDependentOperations):
                     package_request.inferencing_server.code_configuration.code,
                     AzureMLResourceType.CODE,
                 ):
-                    if package_request.inferencing_server.code_configuration.code.startswith(ARM_ID_PREFIX):
-                        package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(
-                            package_request.inferencing_server.code_configuration.code[len(ARM_ID_PREFIX) :],
+                    if package_request.inferencing_server.code_configuration.code.startswith(ARM_ID_PREFIX):  # type: ignore[union-attr]
+                        package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(  # type: ignore[assignment]
+                            package_request.inferencing_server.code_configuration.code[len(ARM_ID_PREFIX) :],  # type: ignore[index]
                             azureml_type=AzureMLResourceType.CODE,
                         )
                     else:
-                        package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(
+                        package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(  # type: ignore[assignment]
                             Code(
                                 base_path=package_request._base_path,
                                 path=package_request.inferencing_server.code_configuration.code,
@@ -752,21 +810,21 @@ class ModelOperations(_ScopeDependentOperations):
                     package_request.inferencing_server.code_configuration, "code"
                 ):
                     package_request.inferencing_server.code_configuration.code = (
-                        "azureml:/" + package_request.inferencing_server.code_configuration.code
+                        "azureml:/" + package_request.inferencing_server.code_configuration.code  # type: ignore[operator]
                     )
 
             if package_request.base_environment_source and hasattr(
                 package_request.base_environment_source, "resource_id"
             ):
-                if not package_request.base_environment_source.resource_id.startswith(REGISTRY_URI_FORMAT):
-                    package_request.base_environment_source.resource_id = orchestrators.get_asset_arm_id(
+                if not package_request.base_environment_source.resource_id.startswith(REGISTRY_URI_FORMAT):  # type: ignore[union-attr]
+                    package_request.base_environment_source.resource_id = orchestrators.get_asset_arm_id(  # type: ignore[assignment]
                         package_request.base_environment_source.resource_id,
                         azureml_type=AzureMLResourceType.ENVIRONMENT,
                     )
 
                 package_request.base_environment_source.resource_id = (
-                    "azureml:/" + package_request.base_environment_source.resource_id
-                    if not package_request.base_environment_source.resource_id.startswith(ARM_ID_PREFIX)
+                    "azureml:/" + package_request.base_environment_source.resource_id  # type: ignore[operator]
+                    if not package_request.base_environment_source.resource_id.startswith(ARM_ID_PREFIX)  # type: ignore[union-attr]
                     else package_request.base_environment_source.resource_id
                 )
 
@@ -787,36 +845,49 @@ class ModelOperations(_ScopeDependentOperations):
                 package_request.target_environment_id = (
                     package_request.target_environment_id + f"/versions/{package_request.environment_version}"
                 )
-            package_request = package_request._to_rest_object()
+            package_request = package_request._to_rest_object()  # type: ignore[assignment]
 
         if self._registry_reference:
-            package_request.target_environment_id = f"azureml://locations/{self._operation_scope._workspace_location}/workspaces/{self._operation_scope._workspace_id}/environments/{package_request.target_environment_id}"
-        package_out = (
-            self._model_versions_operation.begin_package(
-                name=name,
-                version=version,
-                registry_name=self._registry_name if self._registry_name else self._registry_reference,
-                body=package_request,
-                **self._scope_kwargs,
-            ).result()
-            if self._registry_name or self._registry_reference
-            else self._model_versions_operation.begin_package(
-                name=name,
-                version=version,
-                workspace_name=self._workspace_name,
-                body=package_request,
-                **self._scope_kwargs,
-            ).result()
-        )
+            package_request["targetEnvironmentId"] = (  # type: ignore[index]
+                f"azureml://locations/{self._operation_scope._workspace_location}"
+                f"/workspaces/{self._operation_scope._workspace_id}/environments/"
+                f"{package_request.get('targetEnvironmentId')}"  # type: ignore[attr-defined]
+            )
+        if self._registry_name or self._registry_reference:
+            # Byte-identical to the legacy v2021_10 registry ``begin_package`` (same MFE endpoint + api-version + wire body).
+            package_out = begin_package_registry_model(
+                self._registry_service_client,
+                name,
+                version,
+                self._resource_group_name,
+                self._registry_name if self._registry_name else self._registry_reference,
+                package_request,
+            )
+        else:
+            # arm model_versions has no begin_package; issue the byte-identical workspace LRO via send_request.
+            package_out = begin_package_workspace_model(
+                self._service_client,
+                name,
+                version,
+                self._resource_group_name,
+                self._workspace_name,
+                package_request,
+            )
         if is_deployment_flow:  # No need to go through the schema, as this is for deployment notification only
             return package_out
-        if hasattr(package_out, "target_environment_id"):
+        if isinstance(package_out, dict):
+            environment_id = package_out.get("targetEnvironmentId")
+        elif hasattr(package_out, "target_environment_id"):
             environment_id = package_out.target_environment_id
         else:
-            environment_id = package_out.additional_properties["targetEnvironmentId"]
+            environment_id = (
+                package_out.additional_properties["targetEnvironmentId"]
+                if hasattr(package_out, "additional_properties")
+                else package_out.get("targetEnvironmentId")
+            )
 
         pattern = r"azureml://locations/(\w+)/workspaces/([\w-]+)/environments/([\w.-]+)/versions/(\d+)"
-        parsed_id: Any = re.search(pattern, environment_id)
+        parsed_id: Any = re.search(pattern, environment_id)  # type: ignore[arg-type]
 
         if parsed_id:
             environment_name = parsed_id.group(3)
@@ -827,7 +898,9 @@ class ModelOperations(_ScopeDependentOperations):
             environment_version = parsed_id.asset_version
 
         module_logger.info("\nPackage Created")
-        if package_out is not None and package_out.__class__.__name__ == "PackageResponse":
+        if package_out is not None and (
+            isinstance(package_out, dict) or package_out.__class__.__name__ == "PackageResponse"
+        ):
             if self._registry_name:
                 current_rg = self._scope_kwargs.pop("resource_group_name", None)
                 self._scope_kwargs["resource_group_name"] = self._workspace_rg

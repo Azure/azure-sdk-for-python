@@ -1,0 +1,28 @@
+# cspell configuration for this service. Words are case-insensitive and
+# kept sorted alphabetically. The import of the central config is required.
+import:
+  - ../../.vscode/cspell.json
+words:
+  - AARTI
+  - deser
+  - DIYA
+  - FLORIAN
+  - GENAI
+  - HDOMNI
+  - libasound
+  - logprobs
+  - MEERA
+  - precomputes
+  - pyaudio
+  - SSML
+  - ULAW
+  - VISEME
+  - WEBRTC
+  - XHIGH
+  - XIAOXIAO
+  - XIMENA
+  - YUNXI
+ignorePaths:
+  - sdk/voicelive/azure-ai-voicelive/**/*.csv
+  - sdk/voicelive/azure-ai-voicelive/**/*.json
+  - sdk/voicelive/azure-ai-voicelive/**/*.ulaw

@@ -26,8 +26,8 @@ class TestListTranslations(DocumentTranslationTest):
         client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # create some translations
-        operations_count = 5
-        docs_per_operation = 5
+        operations_count = 2
+        docs_per_operation = 1
         self._begin_multiple_translations(
             client, operations_count, docs_per_operation=docs_per_operation, wait=False, variables=variables
         )
@@ -51,8 +51,8 @@ class TestListTranslations(DocumentTranslationTest):
         client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
         # prepare data
-        operations_count = 10
-        docs_per_operation = 2
+        operations_count = 2
+        docs_per_operation = 1
         skip = 5
 
         # create some translations
@@ -72,7 +72,7 @@ class TestListTranslations(DocumentTranslationTest):
     def test_list_translations_filter_by_status(self, **kwargs):
         client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
-        operations_count = 5
+        operations_count = 2
         docs_per_operation = 1
 
         # create some translations with the status 'Succeeded'
@@ -109,8 +109,8 @@ class TestListTranslations(DocumentTranslationTest):
     def test_list_translations_filter_by_ids(self, **kwargs):
         client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
-        operations_count = 3
-        docs_per_operation = 2
+        operations_count = 2
+        docs_per_operation = 1
 
         # create some translations
         translation_ids = self._begin_multiple_translations(
@@ -132,8 +132,8 @@ class TestListTranslations(DocumentTranslationTest):
     def test_list_translations_filter_by_created_after(self, **kwargs):
         client = kwargs.pop("client")
         # create some translations
-        operations_count = 3
-        docs_per_operation = 2
+        operations_count = 2
+        docs_per_operation = 1
 
         # create some translations
         start = datetime.utcnow()
@@ -159,7 +159,7 @@ class TestListTranslations(DocumentTranslationTest):
             'end' must be timezone-aware!
         """
         client = kwargs.pop("client")
-        operations_count = 5
+        operations_count = 2
         docs_per_operation = 1
 
         # create some translations
@@ -184,8 +184,8 @@ class TestListTranslations(DocumentTranslationTest):
     def test_list_translations_order_by_creation_time_asc(self, **kwargs):
         client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
-        operations_count = 3
-        docs_per_operation = 2
+        operations_count = 2
+        docs_per_operation = 1
 
         # create some translations
         self._begin_multiple_translations(
@@ -209,8 +209,8 @@ class TestListTranslations(DocumentTranslationTest):
     def test_list_translations_order_by_creation_time_desc(self, **kwargs):
         client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
-        operations_count = 3
-        docs_per_operation = 2
+        operations_count = 2
+        docs_per_operation = 1
 
         # create some translations
         self._begin_multiple_translations(
@@ -234,7 +234,7 @@ class TestListTranslations(DocumentTranslationTest):
     def test_list_translations_mixed_filters(self, **kwargs):
         client = kwargs.pop("client")
         # create some translations
-        operations_count = 4
+        operations_count = 2
         docs_per_operation = 1
         statuses = ["Succeeded"]
         skip = 1

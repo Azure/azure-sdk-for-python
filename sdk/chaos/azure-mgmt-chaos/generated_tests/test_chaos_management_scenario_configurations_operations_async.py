@@ -46,14 +46,26 @@ class TestChaosManagementScenarioConfigurationsOperationsAsync(AzureMgmtRecorded
                     "name": "str",
                     "properties": {
                         "scenarioId": "str",
-                        "exclusions": {
-                            "resources": ["str"],
-                            "tags": [{"key": "str", "value": "str"}],
-                            "types": ["str"],
-                        },
-                        "filters": {"locations": ["str"], "physicalZones": ["str"], "zones": ["str"]},
                         "parameters": [{"key": "str", "value": "str"}],
                         "provisioningState": "str",
+                        "resourceTargeting": {
+                            "exclude": {
+                                "locations": ["str"],
+                                "physicalZones": ["str"],
+                                "resources": ["str"],
+                                "tags": [{"key": "str", "value": "str"}],
+                                "types": ["str"],
+                                "zones": ["str"],
+                            },
+                            "include": {
+                                "locations": ["str"],
+                                "physicalZones": ["str"],
+                                "resources": ["str"],
+                                "tags": [{"key": "str", "value": "str"}],
+                                "types": ["str"],
+                                "zones": ["str"],
+                            },
+                        },
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -100,13 +112,15 @@ class TestChaosManagementScenarioConfigurationsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_scenario_configurations_execute(self, resource_group):
-        response = await self.client.scenario_configurations.execute(
-            resource_group_name=resource_group.name,
-            workspace_name="str",
-            scenario_name="str",
-            scenario_configuration_name="str",
-        )
+    async def test_scenario_configurations_begin_execute(self, resource_group):
+        response = await (
+            await self.client.scenario_configurations.begin_execute(
+                resource_group_name=resource_group.name,
+                workspace_name="str",
+                scenario_name="str",
+                scenario_configuration_name="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

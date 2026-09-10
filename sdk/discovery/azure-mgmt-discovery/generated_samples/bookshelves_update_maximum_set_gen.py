@@ -32,18 +32,18 @@ def main():
 
     response = client.bookshelves.begin_update(
         resource_group_name="rgdiscovery",
-        bookshelf_name="c6189a7b33260c4a72",
+        bookshelf_name="14964dff7a049b02ad",
         properties={
             "properties": {
-                "keyVaultProperties": {"keyName": "b", "keyVersion": "kyf"},
+                "keyVaultProperties": {"keyName": "rioczxrgqxcnesqxnxpuc", "keyVersion": "lhpxvapkhljzkdt"},
                 "publicNetworkAccess": "Enabled",
             },
-            "tags": {"key1792": "dnybouectwzjb"},
+            "tags": {"key5254": "fozqmnqttenfggdjxalzycvqqzfe"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/Bookshelves_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/Bookshelves_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

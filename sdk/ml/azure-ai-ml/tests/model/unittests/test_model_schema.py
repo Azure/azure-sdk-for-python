@@ -6,7 +6,7 @@ from marshmallow.exceptions import ValidationError
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_model
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import ModelVersionData
+from azure.ai.ml._restclient.arm_ml_service.models import ModelVersion
 from azure.ai.ml._schema import ModelSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes
 from azure.ai.ml.entities._assets import Model
@@ -77,7 +77,8 @@ class TestModelSchema:
             "systemData": {},
         }
 
-        from_rest_ipp_model = Model._from_rest_object(ModelVersionData.deserialize(rest_ipp_model))
+        # intellectual_property is preserved on the arm hybrid model as a camelCase mapping key.
+        from_rest_ipp_model = Model._from_rest_object(ModelVersion._deserialize(rest_ipp_model, []))
 
         assert from_rest_ipp_model._intellectual_property
         assert from_rest_ipp_model._intellectual_property.protection_level == "All"
@@ -116,7 +117,6 @@ default_deployment_template:
 
     def test_model_with_default_deployment_template_to_rest_object(self) -> None:
         """Test Model._to_rest_object() with default_deployment_template."""
-        from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import ModelVersionData
         from azure.ai.ml.entities._assets.default_deployment_template import DeploymentTemplateReference
 
         template = DeploymentTemplateReference(
@@ -133,10 +133,10 @@ default_deployment_template:
 
         rest_object = model._to_rest_object()
 
-        # Should return ModelVersionData when default_deployment_template is present
-        assert isinstance(rest_object, ModelVersionData)
-        assert rest_object.properties.default_deployment_template is not None
-        assert rest_object.properties.default_deployment_template.asset_id == template.asset_id
+        # Deployment-template fields are carried as camelCase wire keys on the arm ModelVersion.
+        assert isinstance(rest_object, ModelVersion)
+        assert rest_object.properties["defaultDeploymentTemplate"] is not None
+        assert rest_object.properties["defaultDeploymentTemplate"]["assetId"] == template.asset_id
 
     def test_model_with_default_deployment_template_from_rest_object(self) -> None:
         """Test Model._from_rest_object() with default_deployment_template."""
@@ -160,7 +160,7 @@ default_deployment_template:
             "systemData": {},
         }
 
-        from_rest_model = Model._from_rest_object(ModelVersionData.deserialize(rest_model_with_template))
+        from_rest_model = Model._from_rest_object(ModelVersion._deserialize(rest_model_with_template, []))
 
         assert from_rest_model.default_deployment_template is not None
         assert from_rest_model.default_deployment_template.asset_id is not None

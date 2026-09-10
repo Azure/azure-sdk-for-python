@@ -32,12 +32,12 @@ def main():
 
     response = client.bookshelf_private_link_resources.get(
         resource_group_name="rgdiscovery",
-        bookshelf_name="9158657d63f4f9235f",
+        bookshelf_name="28b448d6fa86171ee3",
         private_link_resource_name="connection",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/BookshelfPrivateLinkResources_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/BookshelfPrivateLinkResources_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

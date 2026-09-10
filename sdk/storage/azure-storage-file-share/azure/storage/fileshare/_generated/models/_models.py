@@ -1265,6 +1265,58 @@ class ShareFileRangeList(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ShareFileRangeListSegment(_Model):
+    """The paginated list of file ranges.
+
+    :ivar ranges: The file ranges.
+    :vartype ranges: ~azure.storage.fileshare._generated.models.FileRange
+    :ivar clear_ranges: The clear ranges.
+    :vartype clear_ranges: ~azure.storage.fileshare._generated.models.ClearRange
+    :ivar next_marker: The next marker.
+    :vartype next_marker: str
+    """
+
+    ranges: Optional[list["_models.FileRange"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "Range", "name": "Range", "text": False, "unwrapped": True},
+    )
+    """The file ranges."""
+    clear_ranges: Optional[list["_models.ClearRange"]] = rest_field(
+        name="clearRanges",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "ClearRange", "name": "ClearRange", "text": False, "unwrapped": True},
+    )
+    """The clear ranges."""
+    next_marker: Optional[str] = rest_field(
+        name="nextMarker",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "NextMarker", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
+    )
+    """The next marker."""
+
+    _xml = {"attribute": False, "name": "Ranges", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ranges: Optional[list["_models.FileRange"]] = None,
+        clear_ranges: Optional[list["_models.ClearRange"]] = None,
+        next_marker: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ShareItemInternal(_Model):
     """A listed Azure Storage share item.
 
@@ -1343,7 +1395,7 @@ class ShareItemInternal(_Model):
 
 
 class ShareNfsSettings(_Model):
-    """Settings for SMB protocol.
+    """Settings for NFS protocol.
 
     :ivar encryption_in_transit: Enable or disable encryption in transit.
     :vartype encryption_in_transit:

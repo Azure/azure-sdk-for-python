@@ -3,18 +3,29 @@ from unittest.mock import patch
 
 import pytest
 
-from azure.ai.ml._restclient.v2024_01_01_preview.models import MLFlowModelJobInput, UriFileJobInput
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    MLFlowModelJobInput,
+    UriFileJobInput,
+)
 from azure.ai.ml.constants import DataGenerationTaskType, DataGenerationType
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
-from azure.ai.ml.entities._job.distillation.endpoint_request_settings import EndpointRequestSettings
+from azure.ai.ml.entities._job.distillation.endpoint_request_settings import (
+    EndpointRequestSettings,
+)
 from azure.ai.ml.entities._job.distillation.prompt_settings import PromptSettings
-from azure.ai.ml.entities._job.distillation.teacher_model_settings import TeacherModelSettings
+from azure.ai.ml.entities._job.distillation.teacher_model_settings import (
+    TeacherModelSettings,
+)
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
-from azure.ai.ml.entities._workspace.connections.connection_subtypes import ServerlessConnection
-from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
+from azure.ai.ml.entities._workspace.connections.connection_subtypes import (
+    ServerlessConnection,
+)
+from azure.ai.ml.entities._workspace.connections.workspace_connection import (
+    WorkspaceConnection,
+)
 
 
 class TestDistillationJobConversion:
@@ -51,7 +62,9 @@ class TestDistillationJobConversion:
             data_generation_type=DataGenerationType.LABEL_GENERATION,
             data_generation_task_type=data_generation_task_type,
             teacher_model_endpoint_connection=ServerlessConnection(
-                name="Llama-3-1-405B-Instruct-BASE", endpoint="http://foo.com", api_key="TESTKEY"
+                name="Llama-3-1-405B-Instruct-BASE",
+                endpoint="http://foo.com",
+                api_key="TESTKEY",
             ),
             student_model=Input(
                 type=AssetTypes.MLFLOW_MODEL,
@@ -127,7 +140,8 @@ class TestDistillationJobConversion:
             original_object.teacher_model_settings, TeacherModelSettings
         ), "Teacher model settings is not TeacherModelSettings"
         assert isinstance(
-            original_object.teacher_model_settings.endpoint_request_settings, EndpointRequestSettings
+            original_object.teacher_model_settings.endpoint_request_settings,
+            EndpointRequestSettings,
         ), "Endpoint request settings is not EndpointRequestSettings"
         assert (
             original_object.teacher_model_settings.endpoint_request_settings.request_batch_size == 2

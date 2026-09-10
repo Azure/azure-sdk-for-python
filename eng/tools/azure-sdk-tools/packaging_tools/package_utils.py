@@ -1,6 +1,7 @@
 import re
 import sys
 import os
+import json
 from packaging.version import Version
 import ast
 import shutil
@@ -22,6 +23,12 @@ from . import build_packaging
 from .change_log import main as change_log_main
 
 _LOGGER = logging.getLogger(__name__)
+
+PREVIEW_API_STABLE_VERSION_WARNING = (
+    "WARNING: Stable SDK version {sdk_version} is used with preview API version {api_version}. "
+    "If this is expected, delete this line; otherwise, check this PR."
+)
+PREVIEW_API_STABLE_VERSION_WARNING_PREFIX = "WARNING: Stable SDK version "
 
 
 # prefolder: "sdk/compute"; name: "azure-mgmt-compute"
@@ -354,12 +361,87 @@ class CheckFile:
 
         _LOGGER.info("Updated pyproject.toml with required azure-sdk-build configurations")
 
+    def check_preview_api_version(self):
+        metadata_path = self.package_path / "_metadata.json"
+        if not metadata_path.exists():
+            return
+
+        try:
+            with open(metadata_path, "r") as file:
+                metadata = json.load(file)
+        except Exception as e:
+            _LOGGER.info(f"Failed to parse {metadata_path}: {e}")
+            return
+
+        api_versions = []
+        api_version = metadata.get("apiVersion")
+        if isinstance(api_version, str):
+            api_versions.append(api_version)
+
+        api_versions_map = metadata.get("apiVersions")
+        if isinstance(api_versions_map, dict):
+            api_versions.extend(str(value) for value in api_versions_map.values())
+
+        preview_api_version = next((version for version in api_versions if "preview" in version.lower()), "")
+        if not preview_api_version:
+            return
+
+        version_files = list((self.package_path / "azure" / "mgmt").glob("**/_version.py"))
+        if not version_files:
+            _LOGGER.info(f"Can not find _version.py under {self.package_path / 'azure' / 'mgmt'}")
+            return
+
+        try:
+            with open(version_files[0], "r") as file:
+                tree = ast.parse(file.read())
+        except Exception as e:
+            _LOGGER.info(f"Failed to parse {version_files[0]}: {e}")
+            return
+
+        sdk_version = ""
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name) and target.id == "VERSION" and isinstance(node.value, ast.Constant):
+                        sdk_version = str(node.value.value)
+                        break
+
+        if not sdk_version or "b" in sdk_version.lower():
+            return
+
+        warning = PREVIEW_API_STABLE_VERSION_WARNING.format(
+            sdk_version=sdk_version,
+            api_version=preview_api_version,
+        )
+
+        changelog_path = self.package_path / "CHANGELOG.md"
+        if not changelog_path.exists():
+            _LOGGER.info(f"{changelog_path} does not exist.")
+            return
+
+        def add_warning_to_changelog(content: List[str]):
+            if any(line.startswith(PREVIEW_API_STABLE_VERSION_WARNING_PREFIX) for line in content):
+                return
+            for i, line in enumerate(content):
+                if re.match(r"^## \d+\.\d+\.\d+(?:b\d+)?\s+\(", line):
+                    insert_at = i + 1
+                    if insert_at < len(content) and not content[insert_at].strip():
+                        insert_at += 1
+                    content.insert(insert_at, f"{warning}\n\n")
+                    _LOGGER.warning(
+                        f"Added preview API/stable SDK version warning to {changelog_path} for SDK version {sdk_version}"
+                    )
+                    break
+
+        modify_file(str(changelog_path), add_warning_to_changelog)
+
     def run(self):
         self.check_file_with_packaging_tool()
         self.check_pprint_name()
         self.check_sdk_readme()
         self.check_dev_requirement()
         self.check_pyproject_toml()
+        self.check_preview_api_version()
 
 
 def check_file(package_path: Path):

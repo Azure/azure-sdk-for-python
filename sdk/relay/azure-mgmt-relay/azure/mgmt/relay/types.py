@@ -13,51 +13,21 @@ from typing_extensions import Required, TypedDict
 if TYPE_CHECKING:
     from .models import (
         AccessRights,
-        ActionType,
         CreatedByType,
         DefaultAction,
         EndPointProvisioningState,
         KeyType,
         NetworkRuleIPAction,
-        Origin,
         PrivateLinkConnectionStatus,
         PublicNetworkAccess,
+        RelayClusterProvisioningState,
+        RelayClusterSkuName,
+        RelayClusterSkuTier,
         Relaytype,
         SkuName,
         SkuTier,
-        UnavailableReason,
+        TlsVersion,
     )
-
-
-class AccessKeys(TypedDict, total=False):
-    """Namespace/Relay Connection String.
-
-    :ivar primary_connection_string: Primary connection string of the created namespace
-     authorization rule.
-    :vartype primary_connection_string: str
-    :ivar secondary_connection_string: Secondary connection string of the created namespace
-     authorization rule.
-    :vartype secondary_connection_string: str
-    :ivar primary_key: A base64-encoded 256-bit primary key for signing and validating the SAS
-     token.
-    :vartype primary_key: str
-    :ivar secondary_key: A base64-encoded 256-bit secondary key for signing and validating the SAS
-     token.
-    :vartype secondary_key: str
-    :ivar key_name: A string that describes the authorization rule.
-    :vartype key_name: str
-    """
-
-    primaryConnectionString: str
-    """Primary connection string of the created namespace authorization rule."""
-    secondaryConnectionString: str
-    """Secondary connection string of the created namespace authorization rule."""
-    primaryKey: str
-    """A base64-encoded 256-bit primary key for signing and validating the SAS token."""
-    secondaryKey: str
-    """A base64-encoded 256-bit secondary key for signing and validating the SAS token."""
-    keyName: str
-    """A string that describes the authorization rule."""
 
 
 class Resource(TypedDict, total=False):
@@ -71,9 +41,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -99,9 +69,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -116,9 +86,9 @@ class AuthorizationRule(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties supplied to create or update AuthorizationRule.
     :vartype properties: "AuthorizationRuleProperties"
     :ivar location: The geo-location where the resource lives.
@@ -157,31 +127,6 @@ class CheckNameAvailability(TypedDict, total=False):
      number. Required."""
 
 
-class CheckNameAvailabilityResult(TypedDict, total=False):
-    """Description of the check name availability request properties.
-
-    :ivar message: The detailed info regarding the reason associated with the namespace.
-    :vartype message: str
-    :ivar name_available: Value indicating namespace is available. Returns true if the namespace is
-     available; otherwise, false.
-    :vartype name_available: bool
-    :ivar reason: The reason for unavailability of a namespace. Known values are: "None",
-     "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown", and
-     "TooManyNamespaceInCurrentSubscription".
-    :vartype reason: Union[str, "UnavailableReason"]
-    """
-
-    message: str
-    """The detailed info regarding the reason associated with the namespace."""
-    nameAvailable: bool
-    """Value indicating namespace is available. Returns true if the namespace is available; otherwise,
-     false."""
-    reason: Union[str, "UnavailableReason"]
-    """The reason for unavailability of a namespace. Known values are: \"None\", \"InvalidName\",
-     \"SubscriptionIsDisabled\", \"NameInUse\", \"NameInLockdown\", and
-     \"TooManyNamespaceInCurrentSubscription\"."""
-
-
 class ConnectionState(TypedDict, total=False):
     """ConnectionState information.
 
@@ -199,59 +144,6 @@ class ConnectionState(TypedDict, total=False):
     """Description of the connection state."""
 
 
-class ErrorAdditionalInfo(TypedDict, total=False):
-    """The resource management error additional info.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: Any
-    """
-
-    type: str
-    """The additional info type."""
-    info: Any
-    """The additional info."""
-
-
-class ErrorDetail(TypedDict, total=False):
-    """The error detail.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list["ErrorDetail"]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list["ErrorAdditionalInfo"]
-    """
-
-    code: str
-    """The error code."""
-    message: str
-    """The error message."""
-    target: str
-    """The error target."""
-    details: list["ErrorDetail"]
-    """The error details."""
-    additionalInfo: list["ErrorAdditionalInfo"]
-    """The error additional info."""
-
-
-class ErrorResponse(TypedDict, total=False):
-    """Error response.
-
-    :ivar error: The error object.
-    :vartype error: "ErrorDetail"
-    """
-
-    error: "ErrorDetail"
-    """The error object."""
-
-
 class HybridConnection(ProxyResource):
     """Description of hybrid connection resource.
 
@@ -263,9 +155,9 @@ class HybridConnection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties of the HybridConnection.
     :vartype properties: "HybridConnectionProperties"
     :ivar location: The geo-location where the resource lives.
@@ -281,21 +173,21 @@ class HybridConnection(ProxyResource):
 class HybridConnectionProperties(TypedDict, total=False):
     """Properties of the HybridConnection.
 
-    :ivar created_at: The time the hybrid connection was created.
-    :vartype created_at: str
-    :ivar updated_at: The time the namespace was updated.
-    :vartype updated_at: str
-    :ivar listener_count: The number of listeners for this hybrid connection. Note that min : 1 and
+    :ivar createdAt: The time the hybrid connection was created.
+    :vartype createdAt: str
+    :ivar updatedAt: The time the namespace was updated.
+    :vartype updatedAt: str
+    :ivar listenerCount: The number of listeners for this hybrid connection. Note that min : 1 and
      max:25 are supported.
-    :vartype listener_count: int
-    :ivar requires_client_authorization: Returns true if client authorization is needed for this
+    :vartype listenerCount: int
+    :ivar requiresClientAuthorization: Returns true if client authorization is needed for this
      hybrid connection; otherwise, false.
-    :vartype requires_client_authorization: bool
-    :ivar user_metadata: The usermetadata is a placeholder to store user-defined string data for
-     the hybrid connection endpoint. For example, it can be used to store descriptive data, such as
-     a list of teams and their contact information. Also, user-defined configuration settings can be
+    :vartype requiresClientAuthorization: bool
+    :ivar userMetadata: The usermetadata is a placeholder to store user-defined string data for the
+     hybrid connection endpoint. For example, it can be used to store descriptive data, such as a
+     list of teams and their contact information. Also, user-defined configuration settings can be
      stored.
-    :vartype user_metadata: str
+    :vartype userMetadata: str
     """
 
     createdAt: str
@@ -323,9 +215,9 @@ class NetworkRuleSet(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: NetworkRuleSet properties.
     :vartype properties: "NetworkRuleSetProperties"
     """
@@ -337,17 +229,16 @@ class NetworkRuleSet(ProxyResource):
 class NetworkRuleSetProperties(TypedDict, total=False):
     """NetworkRuleSet properties.
 
-    :ivar trusted_service_access_enabled: Value that indicates whether Trusted Service Access is
+    :ivar trustedServiceAccessEnabled: Value that indicates whether Trusted Service Access is
      Enabled or not.
-    :vartype trusted_service_access_enabled: bool
-    :ivar default_action: Default Action for Network Rule Set. Known values are: "Allow" and
-     "Deny".
-    :vartype default_action: Union[str, "DefaultAction"]
-    :ivar public_network_access: This determines if traffic is allowed over public network. By
+    :vartype trustedServiceAccessEnabled: bool
+    :ivar defaultAction: Default Action for Network Rule Set. Known values are: "Allow" and "Deny".
+    :vartype defaultAction: Union[str, "DefaultAction"]
+    :ivar publicNetworkAccess: This determines if traffic is allowed over public network. By
      default it is enabled. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
-    :vartype public_network_access: Union[str, "PublicNetworkAccess"]
-    :ivar ip_rules: List of IpRules.
-    :vartype ip_rules: list["NWRuleSetIpRules"]
+    :vartype publicNetworkAccess: Union[str, "PublicNetworkAccess"]
+    :ivar ipRules: List of IpRules.
+    :vartype ipRules: list["NWRuleSetIpRules"]
     """
 
     trustedServiceAccessEnabled: bool
@@ -364,8 +255,8 @@ class NetworkRuleSetProperties(TypedDict, total=False):
 class NWRuleSetIpRules(TypedDict, total=False):
     """The response from the List namespace operation.
 
-    :ivar ip_mask: IP Mask.
-    :vartype ip_mask: str
+    :ivar ipMask: IP Mask.
+    :vartype ipMask: str
     :ivar action: The IP Filter Action. "Allow"
     :vartype action: Union[str, "NetworkRuleIPAction"]
     """
@@ -374,75 +265,6 @@ class NWRuleSetIpRules(TypedDict, total=False):
     """IP Mask."""
     action: Union[str, "NetworkRuleIPAction"]
     """The IP Filter Action. \"Allow\""""
-
-
-class Operation(TypedDict, total=False):
-    """REST API Operation.
-
-    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
-    :vartype name: str
-    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
-     data-plane operations and "false" for Azure Resource Manager/control-plane operations.
-    :vartype is_data_action: bool
-    :ivar display: Localized display information for this particular operation.
-    :vartype display: "OperationDisplay"
-    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
-     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
-     and "user,system".
-    :vartype origin: Union[str, "Origin"]
-    :ivar action_type: Extensible enum. Indicates the action type. "Internal" refers to actions
-     that are for internal only APIs. "Internal"
-    :vartype action_type: Union[str, "ActionType"]
-    """
-
-    name: str
-    """The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     \"Microsoft.Compute/virtualMachines/write\",
-     \"Microsoft.Compute/virtualMachines/capture/action\"."""
-    isDataAction: bool
-    """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
-     \"false\" for Azure Resource Manager/control-plane operations."""
-    display: "OperationDisplay"
-    """Localized display information for this particular operation."""
-    origin: Union[str, "Origin"]
-    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-     logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
-     \"user,system\"."""
-    actionType: Union[str, "ActionType"]
-    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
-     internal only APIs. \"Internal\""""
-
-
-class OperationDisplay(TypedDict, total=False):
-    """Localized display information for an operation.
-
-    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
-     Monitoring Insights" or "Microsoft Compute".
-    :vartype provider: str
-    :ivar resource: The localized friendly name of the resource type related to this operation.
-     E.g. "Virtual Machines" or "Job Schedule Collections".
-    :vartype resource: str
-    :ivar operation: The concise, localized friendly name for the operation; suitable for
-     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
-    :vartype operation: str
-    :ivar description: The short, localized friendly description of the operation; suitable for
-     tool tips and detailed views.
-    :vartype description: str
-    """
-
-    provider: str
-    """The localized friendly form of the resource provider name, e.g. \"Microsoft Monitoring
-     Insights\" or \"Microsoft Compute\"."""
-    resource: str
-    """The localized friendly name of the resource type related to this operation. E.g. \"Virtual
-     Machines\" or \"Job Schedule Collections\"."""
-    operation: str
-    """The concise, localized friendly name for the operation; suitable for dropdowns. E.g. \"Create
-     or Update Virtual Machine\", \"Restart Virtual Machine\"."""
-    description: str
-    """The short, localized friendly description of the operation; suitable for tool tips and detailed
-     views."""
 
 
 class PrivateEndpoint(TypedDict, total=False):
@@ -467,9 +289,9 @@ class PrivateEndpointConnection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties of the PrivateEndpointConnection.
     :vartype properties: "PrivateEndpointConnectionProperties"
     :ivar location: The geo-location where the resource lives.
@@ -485,13 +307,13 @@ class PrivateEndpointConnection(ProxyResource):
 class PrivateEndpointConnectionProperties(TypedDict, total=False):
     """Properties of the private endpoint connection resource.
 
-    :ivar private_endpoint: The Private Endpoint resource for this Connection.
-    :vartype private_endpoint: "PrivateEndpoint"
-    :ivar private_link_service_connection_state: Details about the state of the connection.
-    :vartype private_link_service_connection_state: "ConnectionState"
-    :ivar provisioning_state: Provisioning state of the Private Endpoint Connection. Known values
+    :ivar privateEndpoint: The Private Endpoint resource for this Connection.
+    :vartype privateEndpoint: "PrivateEndpoint"
+    :ivar privateLinkServiceConnectionState: Details about the state of the connection.
+    :vartype privateLinkServiceConnectionState: "ConnectionState"
+    :ivar provisioningState: Provisioning state of the Private Endpoint Connection. Known values
      are: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
-    :vartype provisioning_state: Union[str, "EndPointProvisioningState"]
+    :vartype provisioningState: Union[str, "EndPointProvisioningState"]
     """
 
     privateEndpoint: "PrivateEndpoint"
@@ -503,69 +325,13 @@ class PrivateEndpointConnectionProperties(TypedDict, total=False):
      \"Updating\", \"Deleting\", \"Succeeded\", \"Canceled\", and \"Failed\"."""
 
 
-class PrivateLinkResource(ProxyResource):
-    """A resource that supports private link capabilities.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: A resource that supports private link capabilities.
-    :vartype properties: "PrivateLinkResourceProperties"
-    """
-
-    properties: "PrivateLinkResourceProperties"
-    """A resource that supports private link capabilities."""
-
-
-class PrivateLinkResourceProperties(TypedDict, total=False):
-    """Properties of PrivateLinkResource.
-
-    :ivar group_id: The private link resource group id.
-    :vartype group_id: str
-    :ivar required_members: The private link resource required member names.
-    :vartype required_members: list[str]
-    :ivar required_zone_names: The private link resource Private link DNS zone name.
-    :vartype required_zone_names: list[str]
-    """
-
-    groupId: str
-    """The private link resource group id."""
-    requiredMembers: list[str]
-    """The private link resource required member names."""
-    requiredZoneNames: list[str]
-    """The private link resource Private link DNS zone name."""
-
-
-class PrivateLinkResourcesListResult(TypedDict, total=False):
-    """Result of the List private link resources operation.
-
-    :ivar value: A collection of private link resources. Required.
-    :vartype value: list["PrivateLinkResource"]
-    :ivar next_link: A link for the next page of private link resources.
-    :vartype next_link: str
-    """
-
-    value: Required[list["PrivateLinkResource"]]
-    """A collection of private link resources. Required."""
-    nextLink: str
-    """A link for the next page of private link resources."""
-
-
 class RegenerateAccessKeyParameters(TypedDict, total=False):
     """Parameters supplied to the regenerate authorization rule operation, specifies which key needs
     to be reset.
 
-    :ivar key_type: The access key to regenerate. Required. Known values are: "PrimaryKey" and
+    :ivar keyType: The access key to regenerate. Required. Known values are: "PrimaryKey" and
      "SecondaryKey".
-    :vartype key_type: Union[str, "KeyType"]
+    :vartype keyType: Union[str, "KeyType"]
     :ivar key: Optional. If the key value is provided, this is set to key type, or autogenerated
      key value set for key type.
     :vartype key: str
@@ -589,9 +355,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -602,6 +368,118 @@ class TrackedResource(Resource):
     """Resource tags."""
     location: Required[str]
     """The geo-location where the resource lives. Required."""
+
+
+class RelayCluster(TrackedResource):
+    """A Relay dedicated cluster.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "RelayClusterProperties"
+    :ivar sku: The Relay cluster SKU. Required.
+    :vartype sku: "RelayClusterSku"
+    """
+
+    properties: "RelayClusterProperties"
+    """The resource-specific properties for this resource."""
+    sku: Required["RelayClusterSku"]
+    """The Relay cluster SKU. Required."""
+
+
+class RelayClusterProperties(TypedDict, total=False):
+    """Relay cluster properties.
+
+    :ivar provisioningState: The provisioning state of the Relay cluster. Known values are:
+     "Succeeded", "Failed", "Canceled", "Creating", "Deleting", and "Scaling".
+    :vartype provisioningState: Union[str, "RelayClusterProvisioningState"]
+    :ivar metricId: The metric ID of the Relay cluster.
+    :vartype metricId: str
+    :ivar status: The status of the Relay cluster.
+    :vartype status: str
+    :ivar supportsScaling: Indicates whether the Relay cluster supports capacity scaling.
+    :vartype supportsScaling: bool
+    :ivar zoneRedundant: Indicates whether the Relay cluster was created as zone redundant.
+    :vartype zoneRedundant: bool
+    """
+
+    provisioningState: Union[str, "RelayClusterProvisioningState"]
+    """The provisioning state of the Relay cluster. Known values are: \"Succeeded\", \"Failed\",
+     \"Canceled\", \"Creating\", \"Deleting\", and \"Scaling\"."""
+    metricId: str
+    """The metric ID of the Relay cluster."""
+    status: str
+    """The status of the Relay cluster."""
+    supportsScaling: bool
+    """Indicates whether the Relay cluster supports capacity scaling."""
+    zoneRedundant: bool
+    """Indicates whether the Relay cluster was created as zone redundant."""
+
+
+class RelayClusterSku(TypedDict, total=False):
+    """SKU parameters for a Relay cluster.
+
+    :ivar name: Name of the Relay cluster SKU. Required. "Dedicated"
+    :vartype name: Union[str, "RelayClusterSkuName"]
+    :ivar tier: Tier of the Relay cluster SKU. "Dedicated"
+    :vartype tier: Union[str, "RelayClusterSkuTier"]
+    :ivar capacity: The number of capacity units assigned to the Relay cluster.
+    :vartype capacity: int
+    """
+
+    name: Required[Union[str, "RelayClusterSkuName"]]
+    """Name of the Relay cluster SKU. Required. \"Dedicated\""""
+    tier: Union[str, "RelayClusterSkuTier"]
+    """Tier of the Relay cluster SKU. \"Dedicated\""""
+    capacity: int
+    """The number of capacity units assigned to the Relay cluster."""
+
+
+class RelayClusterSkuUpdate(TypedDict, total=False):
+    """Mutable Relay cluster SKU parameters.
+
+    :ivar name: Name of the Relay cluster SKU. "Dedicated"
+    :vartype name: Union[str, "RelayClusterSkuName"]
+    :ivar tier: Tier of the Relay cluster SKU. "Dedicated"
+    :vartype tier: Union[str, "RelayClusterSkuTier"]
+    :ivar capacity: The number of capacity units assigned to the Relay cluster.
+    :vartype capacity: int
+    """
+
+    name: Union[str, "RelayClusterSkuName"]
+    """Name of the Relay cluster SKU. \"Dedicated\""""
+    tier: Union[str, "RelayClusterSkuTier"]
+    """Tier of the Relay cluster SKU. \"Dedicated\""""
+    capacity: int
+    """The number of capacity units assigned to the Relay cluster."""
+
+
+class RelayClusterUpdate(TypedDict, total=False):
+    """Parameters for updating a Relay cluster.
+
+    :ivar sku: The Relay cluster SKU.
+    :vartype sku: "RelayClusterSkuUpdate"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    sku: "RelayClusterSkuUpdate"
+    """The Relay cluster SKU."""
+    tags: dict[str, str]
+    """Resource tags."""
 
 
 class RelayNamespace(TrackedResource):
@@ -615,9 +493,9 @@ class RelayNamespace(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -637,23 +515,27 @@ class RelayNamespace(TrackedResource):
 class RelayNamespaceProperties(TypedDict, total=False):
     """Properties of the namespace.
 
-    :ivar provisioning_state: Provisioning state of the Namespace.
-    :vartype provisioning_state: str
+    :ivar provisioningState: Provisioning state of the Namespace.
+    :vartype provisioningState: str
     :ivar status: Status of the Namespace.
     :vartype status: str
-    :ivar created_at: The time the namespace was created.
-    :vartype created_at: str
-    :ivar updated_at: The time the namespace was updated.
-    :vartype updated_at: str
-    :ivar service_bus_endpoint: Endpoint you can use to perform Service Bus operations.
-    :vartype service_bus_endpoint: str
-    :ivar metric_id: Identifier for Azure Insights metrics.
-    :vartype metric_id: str
-    :ivar private_endpoint_connections: List of private endpoint connections.
-    :vartype private_endpoint_connections: list["PrivateEndpointConnection"]
-    :ivar public_network_access: This determines if traffic is allowed over public network. By
+    :ivar createdAt: The time the namespace was created.
+    :vartype createdAt: str
+    :ivar updatedAt: The time the namespace was updated.
+    :vartype updatedAt: str
+    :ivar serviceBusEndpoint: Endpoint you can use to perform Service Bus operations.
+    :vartype serviceBusEndpoint: str
+    :ivar metricId: Identifier for Azure Insights metrics.
+    :vartype metricId: str
+    :ivar privateEndpointConnections: List of private endpoint connections.
+    :vartype privateEndpointConnections: list["PrivateEndpointConnection"]
+    :ivar publicNetworkAccess: This determines if traffic is allowed over public network. By
      default it is enabled. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
-    :vartype public_network_access: Union[str, "PublicNetworkAccess"]
+    :vartype publicNetworkAccess: Union[str, "PublicNetworkAccess"]
+    :ivar minimumTlsVersion: The minimum TLS version for the namespace. Supported values are 1.2
+     and 1.3. The service defaults to 1.2 when the property is omitted. Existing namespaces
+     configured with TLS 1.0 or 1.1 are reported as TLS 1.2. Known values are: "1.2" and "1.3".
+    :vartype minimumTlsVersion: Union[str, "TlsVersion"]
     """
 
     provisioningState: str
@@ -673,6 +555,10 @@ class RelayNamespaceProperties(TypedDict, total=False):
     publicNetworkAccess: Union[str, "PublicNetworkAccess"]
     """This determines if traffic is allowed over public network. By default it is enabled. Known
      values are: \"Enabled\", \"Disabled\", and \"SecuredByPerimeter\"."""
+    minimumTlsVersion: Union[str, "TlsVersion"]
+    """The minimum TLS version for the namespace. Supported values are 1.2 and 1.3. The service
+     defaults to 1.2 when the property is omitted. Existing namespaces configured with TLS 1.0 or
+     1.1 are reported as TLS 1.2. Known values are: \"1.2\" and \"1.3\"."""
 
 
 class ResourceNamespacePatch(Resource):
@@ -686,9 +572,9 @@ class ResourceNamespacePatch(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
@@ -708,9 +594,9 @@ class RelayUpdateParameters(ResourceNamespacePatch):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: SKU of the namespace.
@@ -743,20 +629,20 @@ class Sku(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -786,9 +672,9 @@ class WcfRelay(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties of the WCF relay.
     :vartype properties: "WcfRelayProperties"
     :ivar location: The geo-location where the resource lives.
@@ -804,27 +690,27 @@ class WcfRelay(ProxyResource):
 class WcfRelayProperties(TypedDict, total=False):
     """Properties of the WCF relay.
 
-    :ivar is_dynamic: Returns true if the relay is dynamic; otherwise, false.
-    :vartype is_dynamic: bool
-    :ivar created_at: The time the WCF relay was created.
-    :vartype created_at: str
-    :ivar updated_at: The time the namespace was updated.
-    :vartype updated_at: str
-    :ivar listener_count: The number of listeners for this relay. Note that min :1 and max:25 are
+    :ivar isDynamic: Returns true if the relay is dynamic; otherwise, false.
+    :vartype isDynamic: bool
+    :ivar createdAt: The time the WCF relay was created.
+    :vartype createdAt: str
+    :ivar updatedAt: The time the namespace was updated.
+    :vartype updatedAt: str
+    :ivar listenerCount: The number of listeners for this relay. Note that min :1 and max:25 are
      supported.
-    :vartype listener_count: int
-    :ivar relay_type: WCF relay type. Known values are: "NetTcp" and "Http".
-    :vartype relay_type: Union[str, "Relaytype"]
-    :ivar requires_client_authorization: Returns true if client authorization is needed for this
+    :vartype listenerCount: int
+    :ivar relayType: WCF relay type. Known values are: "NetTcp" and "Http".
+    :vartype relayType: Union[str, "Relaytype"]
+    :ivar requiresClientAuthorization: Returns true if client authorization is needed for this
      relay; otherwise, false.
-    :vartype requires_client_authorization: bool
-    :ivar requires_transport_security: Returns true if transport security is needed for this relay;
+    :vartype requiresClientAuthorization: bool
+    :ivar requiresTransportSecurity: Returns true if transport security is needed for this relay;
      otherwise, false.
-    :vartype requires_transport_security: bool
-    :ivar user_metadata: The usermetadata is a placeholder to store user-defined string data for
-     the WCF Relay endpoint. For example, it can be used to store descriptive data, such as list of
+    :vartype requiresTransportSecurity: bool
+    :ivar userMetadata: The usermetadata is a placeholder to store user-defined string data for the
+     WCF Relay endpoint. For example, it can be used to store descriptive data, such as list of
      teams and their contact information. Also, user-defined configuration settings can be stored.
-    :vartype user_metadata: str
+    :vartype userMetadata: str
     """
 
     isDynamic: bool

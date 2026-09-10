@@ -30,6 +30,10 @@ class UnsupportedCompute(Compute):
             tags = rest_obj.tags
         else:
             tags = None
+        # arm_ml_service hybrid models (e.g. DataFactory) do not expose the msrest ``additional_properties``
+        # bag; guard the read so unsupported computes still load.
+        _additional_properties = getattr(prop, "additional_properties", None)
+        created_on = _additional_properties.get("createdOn", None) if _additional_properties else None
         response = UnsupportedCompute(
             name=rest_obj.name,
             id=rest_obj.id,
@@ -38,7 +42,7 @@ class UnsupportedCompute(Compute):
             resource_id=prop.resource_id,
             tags=tags,
             provisioning_state=prop.provisioning_state,
-            created_on=prop.additional_properties.get("createdOn", None),
+            created_on=created_on,
         )
         return response
 

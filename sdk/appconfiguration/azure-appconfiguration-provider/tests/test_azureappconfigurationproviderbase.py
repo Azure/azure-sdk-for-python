@@ -67,6 +67,11 @@ class TestBuildWatchedSetting(unittest.TestCase):
         result = _build_watched_setting("test_key")
         self.assertEqual(result, ("test_key", NULL_CHAR))
 
+    def test_two_character_string_input(self):
+        """Test with a two-character string input is treated as a key, not unpacked character-by-character."""
+        result = _build_watched_setting("ab")
+        self.assertEqual(result, ("ab", NULL_CHAR))
+
     def test_tuple_input(self):
         """Test with tuple input."""
         result = _build_watched_setting(("test_key", "test_label"))

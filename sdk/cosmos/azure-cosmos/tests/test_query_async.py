@@ -140,6 +140,55 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         self._delete_container_for_test(container_id)
 
+    async def test_partition_scoped_count_is_index_only_async(self):
+        created_collection = self.created_db.get_container_client(
+            self.config.TEST_MULTI_PARTITION_CONTAINER_ID
+        )
+        partition_key = "PowerCut-" + str(uuid.uuid4())
+        other_partition_key = "Other-" + str(uuid.uuid4())
+        created_items = []
+        try:
+            for i in range(25):
+                item = await created_collection.create_item({
+                    "id": f"power-cut-{i}-{uuid.uuid4()}",
+                    "pk": partition_key,
+                    "value": i,
+                })
+                created_items.append((item["id"], item["pk"]))
+            item = await created_collection.create_item({
+                "id": "other-document-type-" + str(uuid.uuid4()),
+                "pk": other_partition_key,
+            })
+            created_items.append((item["id"], item["pk"]))
+
+            query_iterable = created_collection.query_items(
+                query="SELECT VALUE COUNT(1) FROM c",
+                partition_key=partition_key,
+                populate_query_metrics=True,
+            )
+            pager = query_iterable.by_page()
+            pages = []
+            async for page in pager:
+                pages.append([item async for item in page])
+
+            assert pages == [[25]]
+            assert pager.continuation_token is None
+
+            response_headers = query_iterable.get_response_headers()
+            metrics_header = response_headers[http_constants.HttpHeaders.QueryMetrics]
+            metrics = dict(
+                entry.split("=", 1)
+                for entry in metrics_header.split(";")
+                if entry
+            )
+            assert int(metrics["retrievedDocumentCount"]) == 0
+            assert int(metrics["retrievedDocumentSize"]) == 0
+            assert float(metrics["indexUtilizationRatio"]) == 1.0
+            assert float(response_headers[http_constants.HttpHeaders.RequestCharge]) < 20.0
+        finally:
+            for item_id, item_partition_key in created_items:
+                await created_collection.delete_item(item_id, item_partition_key)
+
     async def test_populate_index_metrics_async(self):
         container_id = "index_metrics_test" + str(uuid.uuid4())
         created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))

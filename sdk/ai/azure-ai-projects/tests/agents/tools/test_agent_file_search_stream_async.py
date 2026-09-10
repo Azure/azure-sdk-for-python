@@ -15,7 +15,7 @@ from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
 class TestAgentFileSearchStreamAsync(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_file_search_stream_async(self, **kwargs):
 
         model = kwargs.get("foundry_model_name")

@@ -32,10 +32,10 @@ def main():
 
     client.workspaces.begin_delete(
         resource_group_name="rgdiscovery",
-        workspace_name="f1559ab1ef72a2eae5",
+        workspace_name="d70f215a9c483cbd5c",
     ).result()
 
 
-# x-ms-original-file: 2026-02-01-preview/Workspaces_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/Workspaces_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

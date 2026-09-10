@@ -6,9 +6,17 @@ from azure.ai.ml.entities import CommandJob, CommandJobLimits, Job
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._builders.command_func import command
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
-from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
-from azure.ai.ml.entities._job.sweep.early_termination_policy import TruncationSelectionPolicy
+from azure.ai.ml.entities._job.distribution import (
+    MpiDistribution,
+    PyTorchDistribution,
+    TensorFlowDistribution,
+)
+from azure.ai.ml.entities._job.job_resource_configuration import (
+    JobResourceConfiguration,
+)
+from azure.ai.ml.entities._job.sweep.early_termination_policy import (
+    TruncationSelectionPolicy,
+)
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.search_space import LogUniform
 from azure.ai.ml.sweep import (
@@ -41,7 +49,13 @@ class TestSweepJob:
             sampling_algorithm="random",
             trial=command_job,
             search_space={"ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])},
-            inputs={"input1": {"path": "top_level.csv", "type": "uri_file", "mode": "ro_mount"}},
+            inputs={
+                "input1": {
+                    "path": "top_level.csv",
+                    "type": "uri_file",
+                    "mode": "ro_mount",
+                }
+            },
             compute="top_level",
             limits=SweepJobLimits(trial_timeout=600),
             identity=UserIdentityConfiguration(),
@@ -153,7 +167,13 @@ class TestSweepJob:
 
     @pytest.mark.parametrize(
         "properties_dict",
-        [{}, {"seed": 999}, {"rule": "sobol"}, {"logbase": "e"}, {"seed": 999, "rule": "sobol", "logbase": "e"}],
+        [
+            {},
+            {"seed": 999},
+            {"rule": "sobol"},
+            {"logbase": "e"},
+            {"seed": 999, "rule": "sobol", "logbase": "e"},
+        ],
     )
     def test_random_sampling_object_with_props(self, properties_dict):
         command_job = CommandJob(
@@ -184,7 +204,9 @@ class TestSweepJob:
         assert rest.properties.sampling_algorithm.sampling_algorithm_type == "Random"
         assert rest.properties.sampling_algorithm.seed == expected_seed
         assert rest.properties.sampling_algorithm.rule == expected_rule
-        assert rest.properties.sampling_algorithm.logbase == expected_logbase
+        # ``logbase`` is not modeled on the shared arm_ml_service RandomSamplingAlgorithm; it is
+        # preserved as an unknown wire key on the hybrid model, so read it from the mapping.
+        assert rest.properties.sampling_algorithm.get("logbase") == expected_logbase
 
         sweep: SweepJob = Job._from_rest_object(rest)
         assert sweep.sampling_algorithm.type == "random"
@@ -195,7 +217,8 @@ class TestSweepJob:
     def test_sweep_job_builder_serialization(self) -> None:
         inputs = {
             "uri": Input(
-                type=AssetTypes.URI_FILE, path="azureml://datastores/workspaceblobstore/paths/python/data.csv"
+                type=AssetTypes.URI_FILE,
+                path="azureml://datastores/workspaceblobstore/paths/python/data.csv",
             ),
             "lr": LogUniform(min_value=0.001, max_value=0.1),
         }
@@ -262,14 +285,20 @@ class TestSweepJob:
             tags={"tag1": "value1"},
             properties={"prop1": "value1"},
             objective=Objective(goal="maximize", primary_metric="accuracy"),
-            limits=SweepJobLimits(max_concurrent_trials=10, max_total_trials=100, timeout=300, trial_timeout=60),
+            limits=SweepJobLimits(
+                max_concurrent_trials=10,
+                max_total_trials=100,
+                timeout=300,
+                trial_timeout=60,
+            ),
             sampling_algorithm="random",
             early_termination=TruncationSelectionPolicy(
                 evaluation_interval=100, delay_evaluation=200, truncation_percentage=40
             ),
             inputs={
                 "uri": Input(
-                    type=AssetTypes.URI_FILE, path="azureml://datastores/workspaceblobstore/paths/python/data.csv"
+                    type=AssetTypes.URI_FILE,
+                    path="azureml://datastores/workspaceblobstore/paths/python/data.csv",
                 )
             },
             outputs={"best_model": {}},
@@ -306,14 +335,20 @@ class TestSweepJob:
             sampling_algorithm="random",
             trial=command_job,
             search_space={"ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])},
-            inputs={"input1": {"path": "top_level.csv", "type": "uri_file", "mode": "ro_mount"}},
+            inputs={
+                "input1": {
+                    "path": "top_level.csv",
+                    "type": "uri_file",
+                    "mode": "ro_mount",
+                }
+            },
             compute="top_level",
             limits=SweepJobLimits(trial_timeout=600),
             identity=UserIdentityConfiguration(),
         )
 
         rest_obj = sweep._to_rest_object()
-        rest_obj.properties.trial.distribution == distribution._to_rest_object() if distribution else None
+        (rest_obj.properties.trial.distribution == distribution._to_rest_object() if distribution else None)
 
         # validate from rest scenario
         sweep_job: SweepJob = Job._from_rest_object(rest_obj)
@@ -347,7 +382,13 @@ class TestSweepJob:
             sampling_algorithm="random",
             trial=command_job,
             search_space={"ss": Choice(type="choice", values=[{"space1": True}, {"space2": True}])},
-            inputs={"input1": {"path": "top_level.csv", "type": "uri_file", "mode": "ro_mount"}},
+            inputs={
+                "input1": {
+                    "path": "top_level.csv",
+                    "type": "uri_file",
+                    "mode": "ro_mount",
+                }
+            },
             compute="top_level",
             limits=SweepJobLimits(trial_timeout=600),
             identity=UserIdentityConfiguration(),
@@ -355,7 +396,7 @@ class TestSweepJob:
         )
 
         rest_obj = sweep._to_rest_object()
-        rest_obj.properties.resources == resources._to_rest_object() if resources else None
+        (rest_obj.properties.get("resources") == resources._to_rest_object() if resources else None)
 
         # validate from rest scenario
         sweep_job: SweepJob = Job._from_rest_object(rest_obj)

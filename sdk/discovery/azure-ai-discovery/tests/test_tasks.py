@@ -9,12 +9,13 @@ Covers all 8 methods on WorkspaceClient.tasks:
   - list (Paged)
   - start, add_comment, add_execution_history
 """
+
 import json
 from datetime import datetime, timezone
 
 from devtools_testutils import recorded_by_proxy
 from azure.core.rest import HttpRequest
-from azure.ai.discovery._workspace.azure.ai.discovery.models import (
+from azure.ai.discovery.models import (
     Task,
     TaskAssignee,
     TaskComment,
@@ -117,12 +118,15 @@ class TestTasks(DiscoveryWorkspaceTestCase):
             self._delete_task_quiet(client, created.name)
 
     @recorded_by_proxy
-    def test_update(self):
-        """Test updating a task (PATCH)."""
+    def test_stable_update(self):
+        """Test updating a task (PATCH).
+
+        Was ``tasks.update`` in beta; renamed to ``tasks.stable_update`` in GA.
+        """
         client = self.create_workspace_client()
         created = self._create_task(client, title="task-for-update-test")
         try:
-            updated = client.tasks.update(
+            updated = client.tasks.stable_update(
                 project_name=self.project_name,
                 investigation_name=self.investigation_name,
                 task_name=created.name,

@@ -9,11 +9,6 @@ import sys
 import threading
 
 import pytest
-from azure.core.instrumentation import get_tracer
-from azure.core.tracing._models import SpanKind, Link
-from azure.core.tracing.opentelemetry import OpenTelemetryTracer
-from azure.core.tracing.common import with_current_context
-
 from opentelemetry.trace import (
     Tracer as OtelTracer,
     Span as OtelSpan,
@@ -22,6 +17,11 @@ from opentelemetry.trace import (
     format_span_id,
     format_trace_id,
 )
+
+from azure.core.instrumentation import get_tracer
+from azure.core.tracing._models import SpanKind, Link
+from azure.core.tracing.opentelemetry import OpenTelemetryTracer
+from azure.core.tracing.common import with_current_context
 
 
 def test_tracer(tracing_helper):

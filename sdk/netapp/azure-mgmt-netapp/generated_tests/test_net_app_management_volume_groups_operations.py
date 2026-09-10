@@ -138,7 +138,10 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                                 "isRestoring": bool,
                                 "kerberosEnabled": bool,
                                 "keyVaultPrivateEndpointResourceId": "str",
+                                "language": "str",
+                                "largeVolumeType": "str",
                                 "ldapEnabled": bool,
+                                "ldapServerType": "str",
                                 "maximumNumberOfFiles": 0,
                                 "mountTargets": [
                                     {

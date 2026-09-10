@@ -160,7 +160,7 @@ def _make_delaying_handler():
     started = asyncio.Event()
     gate = asyncio.Event()
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             started.set()
             await gate.wait()
@@ -181,7 +181,7 @@ def _make_delaying_handler():
 def _make_simple_handler():
     """Handler that emits created + completed immediately."""
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -227,9 +227,9 @@ async def test_bg_stream_not_persisted_until_response_created() -> None:
 
         # GET before response.created — should NOT be accessible yet
         get_resp = await client.get(f"/responses/{response_id}")
-        assert get_resp.status_code == 404, (
-            f"FR-001: response should not be persisted before response.created, got status {get_resp.status_code}"
-        )
+        assert (
+            get_resp.status_code == 404
+        ), f"FR-001: response should not be persisted before response.created, got status {get_resp.status_code}"
 
         # Release handler → response.created will be yielded
         handler.gate.set()
@@ -271,9 +271,9 @@ async def test_bg_nostream_not_persisted_until_response_created() -> None:
 
         # GET before response.created — should NOT be accessible
         get_resp = await client.get(f"/responses/{response_id}")
-        assert get_resp.status_code == 404, (
-            f"FR-001: response should not be persisted before response.created, got status {get_resp.status_code}"
-        )
+        assert (
+            get_resp.status_code == 404
+        ), f"FR-001: response should not be persisted before response.created, got status {get_resp.status_code}"
 
         # Release handler
         handler.gate.set()
@@ -302,7 +302,7 @@ async def test_bg_mode_response_accessible_during_and_after_handler() -> None:
     started = asyncio.Event()
     release = asyncio.Event()
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -378,7 +378,7 @@ async def test_non_bg_not_accessible_until_terminal() -> None:
     started = asyncio.Event()
     release = asyncio.Event()
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -414,9 +414,9 @@ async def test_non_bg_not_accessible_until_terminal() -> None:
 
         # During non-bg handler execution — response should NOT be accessible
         get_mid = await client.get(f"/responses/{response_id}")
-        assert get_mid.status_code == 404, (
-            f"FR-003: non-bg response should not be accessible mid-flight, got {get_mid.status_code}"
-        )
+        assert (
+            get_mid.status_code == 404
+        ), f"FR-003: non-bg response should not be accessible mid-flight, got {get_mid.status_code}"
 
         release.set()
         post_resp = await asyncio.wait_for(post_task, timeout=5.0)

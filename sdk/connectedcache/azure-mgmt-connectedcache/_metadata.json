@@ -1,7 +1,11 @@
 {
-  "apiVersion": "2024-11-30-preview",
-  "commit": "be46becafeb29aa993898709e35759d3643b2809",
+  "apiVersion": "2026-06-01",
+  "apiVersions": {
+    "Microsoft.ConnectedCache": "2026-06-01"
+  },
+  "commit": "f983b23373c32668d1327409b3737a4f8beb634e",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/connectedcache/ConnectedCache.Management",
-  "emitterVersion": "0.56.1"
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.34.2"
 }

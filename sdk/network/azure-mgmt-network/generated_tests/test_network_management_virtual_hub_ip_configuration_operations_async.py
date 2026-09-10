@@ -27,7 +27,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             ip_config_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -416,6 +416,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                                             "id": "str"
                                                                                                         }
                                                                                                     },
+                                                                                                    "enableConnectionTracking": bool,
                                                                                                     "gatewayLoadBalancer": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -604,6 +605,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                                 "id": "str"
                                                                                             }
                                                                                         },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -781,6 +783,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                                         "id": "str"
                                                                                                     }
                                                                                                 },
+                                                                                                "enableConnectionTracking": bool,
                                                                                                 "gatewayLoadBalancer": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -1303,6 +1306,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                                                 "id": "str"
                                                                                                             }
                                                                                                         },
+                                                                                                        "enableConnectionTracking": bool,
                                                                                                         "gatewayLoadBalancer": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -1600,6 +1604,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                                     "id": "str"
                                                                                                 }
                                                                                             },
+                                                                                            "enableConnectionTracking": bool,
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -1682,6 +1687,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                                             "id": "str"
                                                                                                         }
                                                                                                     },
+                                                                                                    "enableConnectionTracking": bool,
                                                                                                     "gatewayLoadBalancer": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -2032,7 +2038,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                         },
                                     },
                                 },
-                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                "ipTags": [{"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}],
                                 "linkedPublicIPAddress": ...,
                                 "migrationPhase": "str",
                                 "natGateway": {
@@ -2064,6 +2070,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                 "publicIPPrefix": {"id": "str"},
                                 "resourceGuid": "str",
                                 "servicePublicIPAddress": ...,
+                                "upgradedToV2": bool,
                             },
                             "sku": {"name": "str", "tier": "str"},
                             "tags": {"str": "str"},
@@ -2141,7 +2148,13 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                     "idleTimeoutInMinutes": 0,
                                                     "ipAddress": "str",
                                                     "ipConfiguration": ...,
-                                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                    "ipTags": [
+                                                        {
+                                                            "firstPartyServiceTagId": "str",
+                                                            "ipTagType": "str",
+                                                            "tag": "str",
+                                                        }
+                                                    ],
                                                     "linkedPublicIPAddress": ...,
                                                     "migrationPhase": "str",
                                                     "natGateway": {
@@ -2173,6 +2186,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                     "publicIPPrefix": {"id": "str"},
                                                     "resourceGuid": "str",
                                                     "servicePublicIPAddress": ...,
+                                                    "upgradedToV2": bool,
                                                 },
                                                 "sku": {"name": "str", "tier": "str"},
                                                 "tags": {"str": "str"},
@@ -2465,7 +2479,13 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                 "subnet": ...,
                                                                             },
                                                                         },
-                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "ipTags": [
+                                                                            {
+                                                                                "firstPartyServiceTagId": "str",
+                                                                                "ipTagType": "str",
+                                                                                "tag": "str",
+                                                                            }
+                                                                        ],
                                                                         "linkedPublicIPAddress": ...,
                                                                         "migrationPhase": "str",
                                                                         "natGateway": {
@@ -2497,6 +2517,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                         "publicIPPrefix": {"id": "str"},
                                                                         "resourceGuid": "str",
                                                                         "servicePublicIPAddress": ...,
+                                                                        "upgradedToV2": bool,
                                                                     },
                                                                     "sku": {"name": "str", "tier": "str"},
                                                                     "tags": {"str": "str"},
@@ -2521,6 +2542,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                             "id": "str"
                                                                                         }
                                                                                     },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -2576,6 +2598,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -2627,6 +2650,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -2794,6 +2818,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                         "ddosSettings": {
                                                                             "ddosCustomPolicy": {"id": "str"}
                                                                         },
+                                                                        "enableConnectionTracking": bool,
                                                                         "gatewayLoadBalancer": {"id": "str"},
                                                                         "inboundNatPools": [{"id": "str"}],
                                                                         "inboundNatRules": [{"id": "str"}],
@@ -2840,7 +2865,11 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                     },
                                                                                 },
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -2883,6 +2912,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -3034,6 +3064,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                 "ddosSettings": {
                                                                                     "ddosCustomPolicy": {"id": "str"}
                                                                                 },
+                                                                                "enableConnectionTracking": bool,
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -3085,6 +3116,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -3134,6 +3166,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -3336,6 +3369,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -3385,6 +3419,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -3718,7 +3753,11 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                 },
                                                                             },
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -3759,6 +3798,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -3783,6 +3823,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                                 "id": "str"
                                                                                             }
                                                                                         },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -3844,6 +3885,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -3909,6 +3951,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -4155,6 +4198,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                             "ddosSettings": {
                                                                                 "ddosCustomPolicy": {"id": "str"}
                                                                             },
+                                                                            "enableConnectionTracking": bool,
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -4206,6 +4250,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -4253,6 +4298,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -4317,6 +4363,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                             "id": "str"
                                                                                         }
                                                                                     },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -4372,6 +4419,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -4423,6 +4471,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -4627,6 +4676,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -4678,6 +4728,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -4848,7 +4899,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                     },
                     "type": "str",
                 },
-                api_version="2025-07-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -4863,7 +4914,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 virtual_hub_name="str",
                 ip_config_name="str",
-                api_version="2025-07-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -4876,7 +4927,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
         response = self.client.virtual_hub_ip_configuration.list(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
-            api_version="2025-07-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -44,6 +44,37 @@ DESCRIPTION:
     - prebuilt-check.us - US bank checks
     - prebuilt-creditMemo - Credit memos and refund documents
 
+
+    ## Understanding fields
+
+    Fields are organized into three categories that can be combined:
+
+    - **Simple fields** — Single values (string, number, integer, date, time, boolean, json).
+      Access via the typed ``.value`` property on the field object.
+    - **Object fields** — Nested structures. Access nested fields via ``ObjectField.value``,
+      a dict of field name to ``ContentField``.
+    - **Array fields** — Collections. Access elements via ``ArrayField.value`` (a list) or
+      by indexing.
+
+    Field metadata commonly includes:
+
+    - ``confidence`` — Extraction confidence when available
+    - ``source`` — Grounding location in the source document
+    - ``spans`` — Offsets into ``DocumentContent.markdown``
+
+    ### Document unit
+
+    ``DocumentContent.unit`` indicates the measurement system used for polygon coordinates
+    in document sources (typically ``"inch"`` for US documents).
+
+    ## Usage details and LLM input
+
+    After analysis completes, usage details are available from the poller (``poller.usage``),
+    including document page tiers, contextualization tokens, and per-model token counts.
+
+    Use ``to_llm_input(result)`` to convert extracted fields plus markdown into a single
+    LLM-ready text block. For advanced options, see ``sample_to_llm_input.py``.
+
 USAGE:
     python sample_analyze_invoice.py
 
@@ -106,9 +137,7 @@ def main() -> None:
     # Print document unit information
     # The unit indicates the measurement system used for coordinates in the source field
     print(f"Document unit: {document_content.unit or 'unknown'}")
-    print(
-        f"Pages: {document_content.start_page_number} to {document_content.end_page_number}"
-    )
+    print(f"Pages: {document_content.start_page_number} to {document_content.end_page_number}")
 
     # Print page dimensions if available
     if document_content.pages and len(document_content.pages) > 0:
@@ -123,9 +152,7 @@ def main() -> None:
 
     # Extract simple string fields
     customer_name_field = document_content.fields.get("CustomerName")
-    print(
-        f"Customer Name: {customer_name_field.value or '(None)' if customer_name_field else '(None)'}"
-    )
+    print(f"Customer Name: {customer_name_field.value or '(None)' if customer_name_field else '(None)'}")
     if customer_name_field:
         print(
             f"  Confidence: {customer_name_field.confidence:.2f}"
@@ -139,9 +166,7 @@ def main() -> None:
 
     # Extract simple date field
     invoice_date_field = document_content.fields.get("InvoiceDate")
-    print(
-        f"Invoice Date: {invoice_date_field.value or '(None)' if invoice_date_field else '(None)'}"
-    )
+    print(f"Invoice Date: {invoice_date_field.value or '(None)' if invoice_date_field else '(None)'}")
     if invoice_date_field:
         print(
             f"  Confidence: {invoice_date_field.confidence:.2f}"
@@ -160,9 +185,7 @@ def main() -> None:
         currency_field = total_amount_field.value.get("CurrencyCode")
         amount = amount_field.value if amount_field else None
         # Use currency value if present, otherwise default to ""
-        currency = (
-            currency_field.value if currency_field and currency_field.value else ""
-        )
+        currency = currency_field.value if currency_field and currency_field.value else ""
         if isinstance(amount, (int, float)):
             print(f"\nTotal: {currency}{amount:.2f}")
         else:
@@ -172,11 +195,7 @@ def main() -> None:
             if amount_field and amount_field.confidence
             else "  Amount Confidence: N/A"
         )
-        print(
-            f"  Source for Amount: {amount_field.source or 'N/A'}"
-            if amount_field
-            else "  Source: N/A"
-        )
+        print(f"  Source for Amount: {amount_field.source or 'N/A'}" if amount_field else "  Source: N/A")
 
     # Extract array fields (collections like line items)
     line_items_field = document_content.fields.get("LineItems")
@@ -186,16 +205,8 @@ def main() -> None:
             if isinstance(item, ObjectField) and item.value:
                 description_field = item.value.get("Description")
                 quantity_field = item.value.get("Quantity")
-                description = (
-                    description_field.value
-                    if description_field and description_field.value
-                    else "N/A"
-                )
-                quantity = (
-                    quantity_field.value
-                    if quantity_field and quantity_field.value
-                    else "N/A"
-                )
+                description = description_field.value if description_field and description_field.value else "N/A"
+                quantity = quantity_field.value if quantity_field and quantity_field.value else "N/A"
                 print(f"  Item {i}: {description}")
                 print(f"    Quantity: {quantity}")
                 print(
@@ -207,27 +218,22 @@ def main() -> None:
 
     # [START get_usage]
     # Access usage details from the poller (available after result() completes).
-    # Usage reports resource consumption for billing estimation:
+    # Usage is a sibling of the analysis result in the LRO response envelope (poller.usage).
     #
-    # - document_pages_standard/basic/minimal: Pages processed at each extraction tier.
-    #   Standard = layout + OCR (scanned docs), Basic = OCR only, Minimal = digital formats
-    #   (DOCX, XLSX, HTML, TXT) that need no OCR. Charged per 1,000 pages.
+    # Document page meters are three tiers (minimal / basic / standard).
+    # Inline analyze reports document_pages_*_inline instead; see sample_analyze_inline.py.
     #
-    # - contextualization_tokens: Fixed-rate tokens charged by Content Understanding for
-    #   preparing context, generating confidence scores, source grounding, and formatting
-    #   output. Typically 1,000 tokens per page. Charged separately from LLM tokens.
+    # - contextualization_tokens / advanced_contextualization_tokens: Tokens charged by
+    #   Content Understanding for preparing context, confidence, grounding, and formatting.
+    # - tokens: Dict of "{model}-input" / "{model}-output" counts on your Foundry deployment.
     #
-    # - tokens: Dict of "{model}-input" / "{model}-output" token counts consumed by your
-    #   Foundry model deployment (e.g. "gpt-4.1-input", "gpt-4.1-output"). These are
-    #   billed on your Foundry deployment, not on Content Understanding.
-    #
-    # For full pricing details, see:
-    # https://learn.microsoft.com/azure/ai-services/content-understanding/pricing-explainer
+    # Pricing: https://learn.microsoft.com/azure/ai-services/content-understanding/pricing-explainer
     usage = poller.usage
     if usage:
         print("\nUsage Details:")
-        if usage.document_pages_standard is not None:
-            print(f"  Document pages (standard): {usage.document_pages_standard}")
+        print(f"  Document pages (minimal): {usage.document_pages_minimal}")
+        print(f"  Document pages (basic): {usage.document_pages_basic}")
+        print(f"  Document pages (standard): {usage.document_pages_standard}")
         if usage.contextualization_tokens is not None:
             print(f"  Contextualization tokens: {usage.contextualization_tokens}")
         if usage.tokens:

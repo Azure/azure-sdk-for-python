@@ -1,0 +1,33 @@
+{
+  "baseEnvironmentSource": {
+    "baseEnvironmentSourceType": "EnvironmentAsset",
+    "resourceId": "azureml:smoke-base-env:1"
+  },
+  "environmentVariables": {
+    "LOG_LEVEL": "INFO",
+    "WORKER_COUNT": "2"
+  },
+  "inferencingServer": {
+    "codeConfiguration": {
+      "codeId": "azureml:smoke-code:1",
+      "scoringScript": "score.py"
+    },
+    "serverType": "AzureMLOnline"
+  },
+  "inputs": [
+    {
+      "inputType": "UriFolder",
+      "mode": "Download",
+      "mountPath": "/var/inputs/model",
+      "path": {
+        "inputPathType": "PathId",
+        "resourceId": "azureml:smoke-model:1"
+      }
+    }
+  ],
+  "modelConfiguration": {
+    "mode": "download",
+    "mountPath": "/var/azureml-model"
+  },
+  "targetEnvironmentId": "azureml:smoke-packaged-env:3"
+}

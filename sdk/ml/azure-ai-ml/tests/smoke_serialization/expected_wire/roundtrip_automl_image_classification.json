@@ -1,0 +1,30 @@
+{
+  "properties": {
+    "computeId": "smoke-compute",
+    "experimentName": "smoke-experiment",
+    "isArchived": false,
+    "jobType": "AutoML",
+    "outputs": {},
+    "properties": {},
+    "tags": {},
+    "taskDetails": {
+      "limitSettings": {
+        "maxConcurrentTrials": 1,
+        "maxTrials": 2,
+        "timeout": "PT1H"
+      },
+      "logVerbosity": "Info",
+      "primaryMetric": "Accuracy",
+      "targetColumnName": "label",
+      "taskType": "ImageClassification",
+      "trainingData": {
+        "jobInputType": "mltable",
+        "uri": "azureml://datastores/workspaceblobstore/paths/smoke/train/"
+      },
+      "validationData": {
+        "jobInputType": "mltable",
+        "uri": "azureml://datastores/workspaceblobstore/paths/smoke/valid/"
+      }
+    }
+  }
+}

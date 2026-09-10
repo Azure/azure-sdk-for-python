@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Literal, TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
 if TYPE_CHECKING:
@@ -37,7 +37,6 @@ if TYPE_CHECKING:
         StandardTierStorageRedundancy,
         State,
         TriggerType,
-        UsagesUnit,
         VaultPrivateEndpointState,
         VaultSubResourceType,
         VaultUpgradeState,
@@ -47,12 +46,12 @@ if TYPE_CHECKING:
 class AssociatedIdentity(TypedDict, total=False):
     """Identity details to be used for an operation.
 
-    :ivar operation_identity_type: Identity type that should be used for an operation. Known values
+    :ivar operationIdentityType: Identity type that should be used for an operation. Known values
      are: "SystemAssigned" and "UserAssigned".
-    :vartype operation_identity_type: Union[str, "IdentityType"]
-    :ivar user_assigned_identity: User assigned identity to be used for an operation if
+    :vartype operationIdentityType: Union[str, "IdentityType"]
+    :ivar userAssignedIdentity: User assigned identity to be used for an operation if
      operationIdentityType is UserAssigned.
-    :vartype user_assigned_identity: str
+    :vartype userAssignedIdentity: str
     """
 
     operationIdentityType: Union[str, "IdentityType"]
@@ -65,12 +64,12 @@ class AssociatedIdentity(TypedDict, total=False):
 class AzureMonitorAlertSettings(TypedDict, total=False):
     """Settings for Azure Monitor based alerts.
 
-    :ivar alerts_for_all_job_failures: Known values are: "Enabled" and "Disabled".
-    :vartype alerts_for_all_job_failures: Union[str, "AlertsState"]
-    :ivar alerts_for_all_replication_issues: Known values are: "Enabled" and "Disabled".
-    :vartype alerts_for_all_replication_issues: Union[str, "AlertsState"]
-    :ivar alerts_for_all_failover_issues: Known values are: "Enabled" and "Disabled".
-    :vartype alerts_for_all_failover_issues: Union[str, "AlertsState"]
+    :ivar alertsForAllJobFailures: Known values are: "Enabled" and "Disabled".
+    :vartype alertsForAllJobFailures: Union[str, "AlertsState"]
+    :ivar alertsForAllReplicationIssues: Known values are: "Enabled" and "Disabled".
+    :vartype alertsForAllReplicationIssues: Union[str, "AlertsState"]
+    :ivar alertsForAllFailoverIssues: Known values are: "Enabled" and "Disabled".
+    :vartype alertsForAllFailoverIssues: Union[str, "AlertsState"]
     """
 
     alertsForAllJobFailures: Union[str, "AlertsState"]
@@ -84,8 +83,8 @@ class AzureMonitorAlertSettings(TypedDict, total=False):
 class CapabilitiesProperties(TypedDict, total=False):
     """Capabilities information.
 
-    :ivar dns_zones:
-    :vartype dns_zones: list["DNSZone"]
+    :ivar dnsZones:
+    :vartype dnsZones: list["DNSZone"]
     """
 
     dnsZones: list["DNSZone"]
@@ -100,29 +99,6 @@ class ResourceCapabilitiesBase(TypedDict, total=False):
 
     type: Required[str]
     """Describes the Resource type: Microsoft.RecoveryServices/Vaults. Required."""
-
-
-class CapabilitiesResponse(ResourceCapabilitiesBase):
-    """Capabilities response for Microsoft.RecoveryServices.
-
-    :ivar type: Describes the Resource type: Microsoft.RecoveryServices/Vaults. Required.
-    :vartype type: str
-    :ivar properties: Capabilities properties in response.
-    :vartype properties: "CapabilitiesResponseProperties"
-    """
-
-    properties: "CapabilitiesResponseProperties"
-    """Capabilities properties in response."""
-
-
-class CapabilitiesResponseProperties(TypedDict, total=False):
-    """Capabilities properties in response.
-
-    :ivar dns_zones:
-    :vartype dns_zones: list["DNSZoneResponse"]
-    """
-
-    dnsZones: list["DNSZoneResponse"]
 
 
 class CertificateRequest(TypedDict, total=False):
@@ -151,30 +127,13 @@ class CheckNameAvailabilityParameters(TypedDict, total=False):
     """Resource name for which availability needs to be checked."""
 
 
-class CheckNameAvailabilityResult(TypedDict, total=False):
-    """Response for check name availability API. Resource provider will set availability as true |
-    false.
-
-    :ivar name_available:
-    :vartype name_available: bool
-    :ivar reason:
-    :vartype reason: str
-    :ivar message:
-    :vartype message: str
-    """
-
-    nameAvailable: bool
-    reason: str
-    message: str
-
-
 class ClassicAlertSettings(TypedDict, total=False):
     """Settings for classic alerts.
 
-    :ivar alerts_for_critical_operations: Known values are: "Enabled" and "Disabled".
-    :vartype alerts_for_critical_operations: Union[str, "AlertsState"]
-    :ivar email_notifications_for_site_recovery: Known values are: "Enabled" and "Disabled".
-    :vartype email_notifications_for_site_recovery: Union[str, "AlertsState"]
+    :ivar alertsForCriticalOperations: Known values are: "Enabled" and "Disabled".
+    :vartype alertsForCriticalOperations: Union[str, "AlertsState"]
+    :ivar emailNotificationsForSiteRecovery: Known values are: "Enabled" and "Disabled".
+    :vartype emailNotificationsForSiteRecovery: Union[str, "AlertsState"]
     """
 
     alertsForCriticalOperations: Union[str, "AlertsState"]
@@ -183,115 +142,15 @@ class ClassicAlertSettings(TypedDict, total=False):
     """Known values are: \"Enabled\" and \"Disabled\"."""
 
 
-class ClientDiscoveryDisplay(TypedDict, total=False):
-    """Localized display information of an operation.
-
-    :ivar provider: Name of the provider for display purposes.
-    :vartype provider: str
-    :ivar resource: ResourceType for which this Operation can be performed.
-    :vartype resource: str
-    :ivar operation: Operations Name itself.
-    :vartype operation: str
-    :ivar description: Description of the operation having details of what operation is about.
-    :vartype description: str
-    """
-
-    provider: str
-    """Name of the provider for display purposes."""
-    resource: str
-    """ResourceType for which this Operation can be performed."""
-    operation: str
-    """Operations Name itself."""
-    description: str
-    """Description of the operation having details of what operation is about."""
-
-
-class ClientDiscoveryForLogSpecification(TypedDict, total=False):
-    """Class to represent shoebox log specification in json client discovery.
-
-    :ivar name: Name of the log.
-    :vartype name: str
-    :ivar display_name: Localized display name.
-    :vartype display_name: str
-    :ivar blob_duration: Blobs created in customer storage account per hour.
-    :vartype blob_duration: str
-    """
-
-    name: str
-    """Name of the log."""
-    displayName: str
-    """Localized display name."""
-    blobDuration: str
-    """Blobs created in customer storage account per hour."""
-
-
-class ClientDiscoveryForProperties(TypedDict, total=False):
-    """Class to represent shoebox properties in json client discovery.
-
-    :ivar service_specification: Operation properties.
-    :vartype service_specification: "ClientDiscoveryForServiceSpecification"
-    """
-
-    serviceSpecification: "ClientDiscoveryForServiceSpecification"
-    """Operation properties."""
-
-
-class ClientDiscoveryForServiceSpecification(TypedDict, total=False):
-    """Class to represent shoebox service specification in json client discovery.
-
-    :ivar log_specifications: List of log specifications of this operation.
-    :vartype log_specifications: list["ClientDiscoveryForLogSpecification"]
-    """
-
-    logSpecifications: list["ClientDiscoveryForLogSpecification"]
-    """List of log specifications of this operation."""
-
-
-class ClientDiscoveryValueForSingleApi(TypedDict, total=False):
-    """Available operation details.
-
-    :ivar name: Name of the Operation.
-    :vartype name: str
-    :ivar display: Contains the localized display information for this particular operation.
-    :vartype display: "ClientDiscoveryDisplay"
-    :ivar origin: The intended executor of the operation;governs the display of the operation in
-     the RBAC UX and the audit logs UX.
-    :vartype origin: str
-    :ivar properties: ShoeBox properties for the given operation.
-    :vartype properties: "ClientDiscoveryForProperties"
-    """
-
-    name: str
-    """Name of the Operation."""
-    display: "ClientDiscoveryDisplay"
-    """Contains the localized display information for this particular operation."""
-    origin: str
-    """The intended executor of the operation;governs the display of the operation in the RBAC UX and
-     the audit logs UX."""
-    properties: "ClientDiscoveryForProperties"
-    """ShoeBox properties for the given operation."""
-
-
-class CloudError(TypedDict, total=False):
-    """An error response from Azure Backup.
-
-    :ivar error: The resource management error response.
-    :vartype error: "Error"
-    """
-
-    error: "Error"
-    """The resource management error response."""
-
-
 class CmkKekIdentity(TypedDict, total=False):
     """The details of the identity used for CMK.
 
-    :ivar use_system_assigned_identity: Indicate that system assigned identity should be used.
+    :ivar useSystemAssignedIdentity: Indicate that system assigned identity should be used.
      Mutually exclusive with 'userAssignedIdentity' field.
-    :vartype use_system_assigned_identity: bool
-    :ivar user_assigned_identity: The user assigned identity to be used to grant permissions in
-     case the type of identity used is UserAssigned.
-    :vartype user_assigned_identity: str
+    :vartype useSystemAssignedIdentity: bool
+    :ivar userAssignedIdentity: The user assigned identity to be used to grant permissions in case
+     the type of identity used is UserAssigned.
+    :vartype userAssignedIdentity: str
     """
 
     useSystemAssignedIdentity: bool
@@ -305,8 +164,8 @@ class CmkKekIdentity(TypedDict, total=False):
 class CmkKeyVaultProperties(TypedDict, total=False):
     """The properties of the Key Vault which hosts CMK.
 
-    :ivar key_uri: The key uri of the Customer Managed Key.
-    :vartype key_uri: str
+    :ivar keyUri: The key uri of the Customer Managed Key.
+    :vartype keyUri: str
     """
 
     keyUri: str
@@ -316,9 +175,9 @@ class CmkKeyVaultProperties(TypedDict, total=False):
 class CostManagementSettings(TypedDict, total=False):
     """Cost Management Settings of the vault.
 
-    :ivar granularity_level: Settings for granularity level. Known values are: "VaultLevel",
+    :ivar granularityLevel: Settings for granularity level. Known values are: "VaultLevel",
      "ProtectedItemLevel", and "ProtectedItemWithParentTag".
-    :vartype granularity_level: Union[str, "GranularityLevel"]
+    :vartype granularityLevel: Union[str, "GranularityLevel"]
     """
 
     granularityLevel: Union[str, "GranularityLevel"]
@@ -329,9 +188,9 @@ class CostManagementSettings(TypedDict, total=False):
 class CrossSubscriptionRestoreSettings(TypedDict, total=False):
     """Settings for Cross Subscription Restore Settings.
 
-    :ivar cross_subscription_restore_state: Known values are: "Enabled", "Disabled", and
+    :ivar crossSubscriptionRestoreState: Known values are: "Enabled", "Disabled", and
      "PermanentlyDisabled".
-    :vartype cross_subscription_restore_state: Union[str, "CrossSubscriptionRestoreState"]
+    :vartype crossSubscriptionRestoreState: Union[str, "CrossSubscriptionRestoreState"]
     """
 
     crossSubscriptionRestoreState: Union[str, "CrossSubscriptionRestoreState"]
@@ -349,9 +208,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -377,51 +236,10 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
-
-
-class DeletedVault(ProxyResource):
-    """DeletedVault information as returned by the resource provider.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: "DeletedVaultProperties"
-    """
-
-    properties: "DeletedVaultProperties"
-    """The resource-specific properties for this resource."""
-
-
-class DeletedVaultProperties(TypedDict, total=False):
-    """Properties of the DeletedVault.
-
-    :ivar vault_id: ARM Id of the Vault which was deleted.
-    :vartype vault_id: str
-    :ivar vault_deletion_time: Time in UTC at which the Vault was deleted.
-    :vartype vault_deletion_time: str
-    :ivar purge_at: Time in UTC at which the DeletedVault will be purged.
-    :vartype purge_at: str
-    """
-
-    vaultId: str
-    """ARM Id of the Vault which was deleted."""
-    vaultDeletionTime: str
-    """Time in UTC at which the Vault was deleted."""
-    purgeAt: str
-    """Time in UTC at which the DeletedVault will be purged."""
 
 
 class DeletedVaultUndeleteInput(TypedDict, total=False):
@@ -438,8 +256,8 @@ class DeletedVaultUndeleteInput(TypedDict, total=False):
 class DeletedVaultUndeleteInputProperties(TypedDict, total=False):
     """Input definition for DeletedVault undelete properties.
 
-    :ivar recovery_resource_group_id: Recovery resource group Id. Required.
-    :vartype recovery_resource_group_id: str
+    :ivar recoveryResourceGroupId: Recovery resource group Id. Required.
+    :vartype recoveryResourceGroupId: str
     """
 
     recoveryResourceGroupId: Required[str]
@@ -449,10 +267,10 @@ class DeletedVaultUndeleteInputProperties(TypedDict, total=False):
 class DNSZone(TypedDict, total=False):
     """DNSZone information.
 
-    :ivar sub_resource: Subresource type for vault AzureBackup, AzureBackup_secondary or
+    :ivar subResource: Subresource type for vault AzureBackup, AzureBackup_secondary or
      AzureSiteRecovery. Known values are: "AzureBackup", "AzureBackup_secondary", and
      "AzureSiteRecovery".
-    :vartype sub_resource: Union[str, "VaultSubResourceType"]
+    :vartype subResource: Union[str, "VaultSubResourceType"]
     """
 
     subResource: Union[str, "VaultSubResourceType"]
@@ -460,117 +278,22 @@ class DNSZone(TypedDict, total=False):
      values are: \"AzureBackup\", \"AzureBackup_secondary\", and \"AzureSiteRecovery\"."""
 
 
-class DNSZoneResponse(DNSZone):
-    """DNSZone information for Microsoft.RecoveryServices.
-
-    :ivar sub_resource: Subresource type for vault AzureBackup, AzureBackup_secondary or
-     AzureSiteRecovery. Known values are: "AzureBackup", "AzureBackup_secondary", and
-     "AzureSiteRecovery".
-    :vartype sub_resource: Union[str, "VaultSubResourceType"]
-    :ivar required_zone_names: The private link resource Private link DNS zone names.
-    :vartype required_zone_names: list[str]
-    """
-
-    requiredZoneNames: list[str]
-    """The private link resource Private link DNS zone names."""
-
-
-class Error(TypedDict, total=False):
-    """The resource management error response.
-
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list["ErrorAdditionalInfo"]
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar details: The error details.
-    :vartype details: list["Error"]
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    """
-
-    additionalInfo: list["ErrorAdditionalInfo"]
-    """The error additional info."""
-    code: str
-    """The error code."""
-    details: list["Error"]
-    """The error details."""
-    message: str
-    """The error message."""
-    target: str
-    """The error target."""
-
-
-class ErrorAdditionalInfo(TypedDict, total=False):
-    """The resource management error additional info.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: Any
-    """
-
-    type: str
-    """The additional info type."""
-    info: Any
-    """The additional info."""
-
-
-class ErrorDetail(TypedDict, total=False):
-    """The error detail.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list["ErrorDetail"]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list["ErrorAdditionalInfo"]
-    """
-
-    code: str
-    """The error code."""
-    message: str
-    """The error message."""
-    target: str
-    """The error target."""
-    details: list["ErrorDetail"]
-    """The error details."""
-    additionalInfo: list["ErrorAdditionalInfo"]
-    """The error additional info."""
-
-
-class ErrorResponse(TypedDict, total=False):
-    """Error response.
-
-    :ivar error: The error object.
-    :vartype error: "ErrorDetail"
-    """
-
-    error: "ErrorDetail"
-    """The error object."""
-
-
 class IdentityData(TypedDict, total=False):
     """Identity for the resource.
 
-    :ivar principal_id: The principal ID of resource identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of resource.
-    :vartype tenant_id: str
+    :ivar principalId: The principal ID of resource identity.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of resource.
+    :vartype tenantId: str
     :ivar type: The type of managed identity used. The type 'SystemAssigned, UserAssigned' includes
      both an implicitly created identity and a set of user-assigned identities. The type 'None' will
      remove any identities. Required. Known values are: "SystemAssigned", "None", "UserAssigned",
      and "SystemAssigned, UserAssigned".
     :vartype type: Union[str, "ResourceIdentityType"]
-    :ivar user_assigned_identities: The list of user-assigned identities associated with the
+    :ivar userAssignedIdentities: The list of user-assigned identities associated with the
      resource. The user-assigned identity dictionary keys will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-    :vartype user_assigned_identities: dict[str, "UserIdentity"]
+    :vartype userAssignedIdentities: dict[str, "UserIdentity"]
     """
 
     principalId: str
@@ -594,9 +317,9 @@ class ImmutabilityConfiguration(TypedDict, total=False):
     :ivar type: Immutability type. 'AsPerPolicy' inherits duration from backup policy; 'TimeBased'
      requires explicit durationInDays. Known values are: "AsPerPolicy" and "TimeBased".
     :vartype type: Union[str, "ImmutabilityType"]
-    :ivar duration_in_days: Duration in days. Required when type is TimeBased, omitted when
+    :ivar durationInDays: Duration in days. Required when type is TimeBased, omitted when
      AsPerPolicy.
-    :vartype duration_in_days: int
+    :vartype durationInDays: int
     """
 
     type: Union[str, "ImmutabilityType"]
@@ -623,119 +346,19 @@ class ImmutabilitySettings(TypedDict, total=False):
      backup policy (AsPerPolicy) or fixed for a specific duration (TimeBased)."""
 
 
-class JobsSummary(TypedDict, total=False):
-    """Summary of the replication job data for this vault.
-
-    :ivar failed_jobs: Count of failed jobs.
-    :vartype failed_jobs: int
-    :ivar suspended_jobs: Count of suspended jobs.
-    :vartype suspended_jobs: int
-    :ivar in_progress_jobs: Count of in-progress jobs.
-    :vartype in_progress_jobs: int
-    """
-
-    failedJobs: int
-    """Count of failed jobs."""
-    suspendedJobs: int
-    """Count of suspended jobs."""
-    inProgressJobs: int
-    """Count of in-progress jobs."""
-
-
 class MonitoringSettings(TypedDict, total=False):
     """Monitoring Settings of the vault.
 
-    :ivar azure_monitor_alert_settings: Settings for Azure Monitor based alerts.
-    :vartype azure_monitor_alert_settings: "AzureMonitorAlertSettings"
-    :ivar classic_alert_settings: Settings for classic alerts.
-    :vartype classic_alert_settings: "ClassicAlertSettings"
+    :ivar azureMonitorAlertSettings: Settings for Azure Monitor based alerts.
+    :vartype azureMonitorAlertSettings: "AzureMonitorAlertSettings"
+    :ivar classicAlertSettings: Settings for classic alerts.
+    :vartype classicAlertSettings: "ClassicAlertSettings"
     """
 
     azureMonitorAlertSettings: "AzureMonitorAlertSettings"
     """Settings for Azure Monitor based alerts."""
     classicAlertSettings: "ClassicAlertSettings"
     """Settings for classic alerts."""
-
-
-class MonitoringSummary(TypedDict, total=False):
-    """Summary of the replication monitoring data for this vault.
-
-    :ivar un_healthy_vm_count: Count of unhealthy VMs.
-    :vartype un_healthy_vm_count: int
-    :ivar un_healthy_provider_count: Count of unhealthy replication providers.
-    :vartype un_healthy_provider_count: int
-    :ivar events_count: Count of all critical warnings.
-    :vartype events_count: int
-    :ivar deprecated_provider_count: Count of all deprecated recovery service providers.
-    :vartype deprecated_provider_count: int
-    :ivar supported_provider_count: Count of all the supported recovery service providers.
-    :vartype supported_provider_count: int
-    :ivar unsupported_provider_count: Count of all the unsupported recovery service providers.
-    :vartype unsupported_provider_count: int
-    """
-
-    unHealthyVmCount: int
-    """Count of unhealthy VMs."""
-    unHealthyProviderCount: int
-    """Count of unhealthy replication providers."""
-    eventsCount: int
-    """Count of all critical warnings."""
-    deprecatedProviderCount: int
-    """Count of all deprecated recovery service providers."""
-    supportedProviderCount: int
-    """Count of all the supported recovery service providers."""
-    unsupportedProviderCount: int
-    """Count of all the unsupported recovery service providers."""
-
-
-class NameInfo(TypedDict, total=False):
-    """The name of usage.
-
-    :ivar value: Value of usage.
-    :vartype value: str
-    :ivar localized_value: Localized value of usage.
-    :vartype localized_value: str
-    """
-
-    value: str
-    """Value of usage."""
-    localizedValue: str
-    """Localized value of usage."""
-
-
-class OperationResource(TypedDict, total=False):
-    """Operation Resource.
-
-    :ivar end_time: End time of the operation.
-    :vartype end_time: str
-    :ivar error: Required if status == failed or status == canceled. This is the OData v4 error
-     format, used by the RPC and will go into the v2.2 Azure REST API guidelines.
-    :vartype error: "Error"
-    :ivar id: It should match what is used to GET the operation result.
-    :vartype id: str
-    :ivar name: It must match the last segment of the "id" field, and will typically be a GUID /
-     system generated value.
-    :vartype name: str
-    :ivar status: The status of the operation. (InProgress/Success/Failed/Cancelled).
-    :vartype status: str
-    :ivar start_time: Start time of the operation.
-    :vartype start_time: str
-    """
-
-    endTime: str
-    """End time of the operation."""
-    error: "Error"
-    """Required if status == failed or status == canceled. This is the OData v4 error format, used by
-     the RPC and will go into the v2.2 Azure REST API guidelines."""
-    id: str
-    """It should match what is used to GET the operation result."""
-    name: str
-    """It must match the last segment of the \"id\" field, and will typically be a GUID / system
-     generated value."""
-    status: str
-    """The status of the operation. (InProgress/Success/Failed/Cancelled)."""
-    startTime: str
-    """Start time of the operation."""
 
 
 class PatchTrackedResource(Resource):
@@ -749,9 +372,9 @@ class PatchTrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar location: Resource location.
     :vartype location: str
     :ivar tags: Resource tags.
@@ -779,9 +402,9 @@ class PatchVault(PatchTrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar location: Resource location.
     :vartype location: str
     :ivar tags: Resource tags.
@@ -818,17 +441,16 @@ class PrivateEndpoint(TypedDict, total=False):
 class PrivateEndpointConnection(TypedDict, total=False):
     """Private Endpoint Connection Response Properties.
 
-    :ivar provisioning_state: Gets or sets provisioning state of the private endpoint connection.
+    :ivar provisioningState: Gets or sets provisioning state of the private endpoint connection.
      Known values are: "Succeeded", "Deleting", "Failed", and "Pending".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar private_endpoint: The Private Endpoint network resource that is linked to the Private
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar privateEndpoint: The Private Endpoint network resource that is linked to the Private
      Endpoint connection.
-    :vartype private_endpoint: "PrivateEndpoint"
-    :ivar private_link_service_connection_state: Gets or sets private link service connection
-     state.
-    :vartype private_link_service_connection_state: "PrivateLinkServiceConnectionState"
-    :ivar group_ids: Group Ids for the Private Endpoint.
-    :vartype group_ids: list[Union[str, "VaultSubResourceType"]]
+    :vartype privateEndpoint: "PrivateEndpoint"
+    :ivar privateLinkServiceConnectionState: Gets or sets private link service connection state.
+    :vartype privateLinkServiceConnectionState: "PrivateLinkServiceConnectionState"
+    :ivar groupIds: Group Ids for the Private Endpoint.
+    :vartype groupIds: list[Union[str, "VaultSubResourceType"]]
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -873,49 +495,6 @@ class PrivateEndpointConnectionVaultProperties(TypedDict, total=False):
     """The location of the private Endpoint connection."""
 
 
-class PrivateLinkResource(ProxyResource):
-    """Information of the private link resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: Resource properties.
-    :vartype properties: "PrivateLinkResourceProperties"
-    """
-
-    properties: "PrivateLinkResourceProperties"
-    """Resource properties."""
-
-
-class PrivateLinkResourceProperties(TypedDict, total=False):
-    """Properties of the private link resource.
-
-    :ivar group_id: e.g. f9ad6492-33d4-4690-9999-6bfd52a0d081 (Backup) or
-     f9ad6492-33d4-4690-9999-6bfd52a0d082 (SiteRecovery).
-    :vartype group_id: str
-    :ivar required_members: [backup-ecs1, backup-prot1, backup-prot1b, backup-prot1c, backup-id1].
-    :vartype required_members: list[str]
-    :ivar required_zone_names: The private link resource Private link DNS zone name.
-    :vartype required_zone_names: list[str]
-    """
-
-    groupId: str
-    """e.g. f9ad6492-33d4-4690-9999-6bfd52a0d081 (Backup) or f9ad6492-33d4-4690-9999-6bfd52a0d082
-     (SiteRecovery)."""
-    requiredMembers: list[str]
-    """[backup-ecs1, backup-prot1, backup-prot1b, backup-prot1c, backup-id1]."""
-    requiredZoneNames: list[str]
-    """The private link resource Private link DNS zone name."""
-
-
 class PrivateLinkServiceConnectionState(TypedDict, total=False):
     """Gets or sets private link service connection state.
 
@@ -924,8 +503,8 @@ class PrivateLinkServiceConnectionState(TypedDict, total=False):
     :vartype status: Union[str, "PrivateEndpointConnectionStatus"]
     :ivar description: Gets or sets description.
     :vartype description: str
-    :ivar actions_required: Gets or sets actions required.
-    :vartype actions_required: str
+    :ivar actionsRequired: Gets or sets actions required.
+    :vartype actionsRequired: str
     """
 
     status: Union[str, "PrivateEndpointConnectionStatus"]
@@ -940,9 +519,9 @@ class PrivateLinkServiceConnectionState(TypedDict, total=False):
 class RawCertificateData(TypedDict, total=False):
     """Raw certificate data.
 
-    :ivar auth_type: Specifies the authentication type. Known values are: "Invalid", "ACS", "AAD",
+    :ivar authType: Specifies the authentication type. Known values are: "Invalid", "ACS", "AAD",
      "AccessControlService", and "AzureActiveDirectory".
-    :vartype auth_type: Union[str, "AuthType"]
+    :vartype authType: Union[str, "AuthType"]
     :ivar certificate: The base64 encoded certificate raw data string.
     :vartype certificate: str
     """
@@ -954,36 +533,18 @@ class RawCertificateData(TypedDict, total=False):
     """The base64 encoded certificate raw data string."""
 
 
-class ReplicationUsage(TypedDict, total=False):
-    """Replication usages of a vault.
+class RegionOfChoiceSettings(TypedDict, total=False):
+    """Region of choice settings at vault level. This setting allows customers to configure backups
+    for datasources from different region.
 
-    :ivar monitoring_summary: Summary of the replication monitoring data for this vault.
-    :vartype monitoring_summary: "MonitoringSummary"
-    :ivar jobs_summary: Summary of the replication jobs data for this vault.
-    :vartype jobs_summary: "JobsSummary"
-    :ivar protected_item_count: Number of replication protected items for this vault.
-    :vartype protected_item_count: int
-    :ivar recovery_plan_count: Number of replication recovery plans for this vault.
-    :vartype recovery_plan_count: int
-    :ivar registered_servers_count: Number of servers registered to this vault.
-    :vartype registered_servers_count: int
-    :ivar recovery_services_provider_auth_type: The authentication type of recovery service
-     providers in the vault.
-    :vartype recovery_services_provider_auth_type: int
+    :ivar status: The status of region of choice settings - Enabled or Disabled. Known values are:
+     "Invalid", "Enabled", and "Disabled".
+    :vartype status: Union[str, "State"]
     """
 
-    monitoringSummary: "MonitoringSummary"
-    """Summary of the replication monitoring data for this vault."""
-    jobsSummary: "JobsSummary"
-    """Summary of the replication jobs data for this vault."""
-    protectedItemCount: int
-    """Number of replication protected items for this vault."""
-    recoveryPlanCount: int
-    """Number of replication recovery plans for this vault."""
-    registeredServersCount: int
-    """Number of servers registered to this vault."""
-    recoveryServicesProviderAuthType: int
-    """The authentication type of recovery service providers in the vault."""
+    status: Union[str, "State"]
+    """The status of region of choice settings - Enabled or Disabled. Known values are: \"Invalid\",
+     \"Enabled\", and \"Disabled\"."""
 
 
 class ResourceCapabilities(ResourceCapabilitiesBase):
@@ -999,141 +560,11 @@ class ResourceCapabilities(ResourceCapabilitiesBase):
     """Capabilities information."""
 
 
-class ResourceCertificateAndAadDetails(TypedDict, total=False):
-    """Certificate details representing the Vault credentials for AAD.
-
-    :ivar certificate: The base64 encoded certificate raw data string.
-    :vartype certificate: str
-    :ivar friendly_name: Certificate friendly name.
-    :vartype friendly_name: str
-    :ivar issuer: Certificate issuer.
-    :vartype issuer: str
-    :ivar resource_id: Resource ID of the vault.
-    :vartype resource_id: int
-    :ivar subject: Certificate Subject Name.
-    :vartype subject: str
-    :ivar thumbprint: Certificate thumbprint.
-    :vartype thumbprint: str
-    :ivar valid_from: Certificate Validity start Date time.
-    :vartype valid_from: str
-    :ivar valid_to: Certificate Validity End Date time.
-    :vartype valid_to: str
-    :ivar aad_authority: AAD tenant authority. Required.
-    :vartype aad_authority: str
-    :ivar aad_tenant_id: AAD tenant Id. Required.
-    :vartype aad_tenant_id: str
-    :ivar service_principal_client_id: AAD service principal clientId. Required.
-    :vartype service_principal_client_id: str
-    :ivar service_principal_object_id: AAD service principal ObjectId. Required.
-    :vartype service_principal_object_id: str
-    :ivar azure_management_endpoint_audience: Azure Management Endpoint Audience. Required.
-    :vartype azure_management_endpoint_audience: str
-    :ivar service_resource_id: Service Resource Id.
-    :vartype service_resource_id: str
-    :ivar aad_audience: AAD audience for the resource.
-    :vartype aad_audience: str
-    :ivar auth_type: This property will be used as the discriminator for deciding the specific
-     types in the polymorphic chain of types. Required. Default value is "AzureActiveDirectory".
-    :vartype auth_type: Literal["AzureActiveDirectory"]
-    """
-
-    certificate: str
-    """The base64 encoded certificate raw data string."""
-    friendlyName: str
-    """Certificate friendly name."""
-    issuer: str
-    """Certificate issuer."""
-    resourceId: int
-    """Resource ID of the vault."""
-    subject: str
-    """Certificate Subject Name."""
-    thumbprint: str
-    """Certificate thumbprint."""
-    validFrom: str
-    """Certificate Validity start Date time."""
-    validTo: str
-    """Certificate Validity End Date time."""
-    aadAuthority: Required[str]
-    """AAD tenant authority. Required."""
-    aadTenantId: Required[str]
-    """AAD tenant Id. Required."""
-    servicePrincipalClientId: Required[str]
-    """AAD service principal clientId. Required."""
-    servicePrincipalObjectId: Required[str]
-    """AAD service principal ObjectId. Required."""
-    azureManagementEndpointAudience: Required[str]
-    """Azure Management Endpoint Audience. Required."""
-    serviceResourceId: str
-    """Service Resource Id."""
-    aadAudience: str
-    """AAD audience for the resource."""
-    authType: Required[Literal["AzureActiveDirectory"]]
-    """This property will be used as the discriminator for deciding the specific types in the
-     polymorphic chain of types. Required. Default value is \"AzureActiveDirectory\"."""
-
-
-class ResourceCertificateAndAcsDetails(TypedDict, total=False):
-    """Certificate details representing the Vault credentials for ACS.
-
-    :ivar certificate: The base64 encoded certificate raw data string.
-    :vartype certificate: str
-    :ivar friendly_name: Certificate friendly name.
-    :vartype friendly_name: str
-    :ivar issuer: Certificate issuer.
-    :vartype issuer: str
-    :ivar resource_id: Resource ID of the vault.
-    :vartype resource_id: int
-    :ivar subject: Certificate Subject Name.
-    :vartype subject: str
-    :ivar thumbprint: Certificate thumbprint.
-    :vartype thumbprint: str
-    :ivar valid_from: Certificate Validity start Date time.
-    :vartype valid_from: str
-    :ivar valid_to: Certificate Validity End Date time.
-    :vartype valid_to: str
-    :ivar global_acs_namespace: ACS namespace name - tenant for our service. Required.
-    :vartype global_acs_namespace: str
-    :ivar global_acs_host_name: Acs mgmt host name to connect to. Required.
-    :vartype global_acs_host_name: str
-    :ivar global_acs_rp_realm: Global ACS namespace RP realm. Required.
-    :vartype global_acs_rp_realm: str
-    :ivar auth_type: This property will be used as the discriminator for deciding the specific
-     types in the polymorphic chain of types. Required. Default value is "AccessControlService".
-    :vartype auth_type: Literal["AccessControlService"]
-    """
-
-    certificate: str
-    """The base64 encoded certificate raw data string."""
-    friendlyName: str
-    """Certificate friendly name."""
-    issuer: str
-    """Certificate issuer."""
-    resourceId: int
-    """Resource ID of the vault."""
-    subject: str
-    """Certificate Subject Name."""
-    thumbprint: str
-    """Certificate thumbprint."""
-    validFrom: str
-    """Certificate Validity start Date time."""
-    validTo: str
-    """Certificate Validity End Date time."""
-    globalAcsNamespace: Required[str]
-    """ACS namespace name - tenant for our service. Required."""
-    globalAcsHostName: Required[str]
-    """Acs mgmt host name to connect to. Required."""
-    globalAcsRPRealm: Required[str]
-    """Global ACS namespace RP realm. Required."""
-    authType: Required[Literal["AccessControlService"]]
-    """This property will be used as the discriminator for deciding the specific types in the
-     polymorphic chain of types. Required. Default value is \"AccessControlService\"."""
-
-
 class RestoreSettings(TypedDict, total=False):
     """Restore Settings  of the vault.
 
-    :ivar cross_subscription_restore_settings: Settings for CrossSubscriptionRestore.
-    :vartype cross_subscription_restore_settings: "CrossSubscriptionRestoreSettings"
+    :ivar crossSubscriptionRestoreSettings: Settings for CrossSubscriptionRestore.
+    :vartype crossSubscriptionRestoreSettings: "CrossSubscriptionRestoreSettings"
     """
 
     crossSubscriptionRestoreSettings: "CrossSubscriptionRestoreSettings"
@@ -1143,15 +574,15 @@ class RestoreSettings(TypedDict, total=False):
 class SecuritySettings(TypedDict, total=False):
     """Security Settings of the vault.
 
-    :ivar immutability_settings: Immutability Settings of a vault.
-    :vartype immutability_settings: "ImmutabilitySettings"
-    :ivar soft_delete_settings: Soft delete Settings of a vault.
-    :vartype soft_delete_settings: "SoftDeleteSettings"
-    :ivar multi_user_authorization: MUA Settings of a vault. Known values are: "Invalid",
-     "Enabled", and "Disabled".
-    :vartype multi_user_authorization: Union[str, "MultiUserAuthorization"]
-    :ivar source_scan_configuration: Source scan configuration of vault.
-    :vartype source_scan_configuration: "SourceScanConfiguration"
+    :ivar immutabilitySettings: Immutability Settings of a vault.
+    :vartype immutabilitySettings: "ImmutabilitySettings"
+    :ivar softDeleteSettings: Soft delete Settings of a vault.
+    :vartype softDeleteSettings: "SoftDeleteSettings"
+    :ivar multiUserAuthorization: MUA Settings of a vault. Known values are: "Invalid", "Enabled",
+     and "Disabled".
+    :vartype multiUserAuthorization: Union[str, "MultiUserAuthorization"]
+    :ivar sourceScanConfiguration: Source scan configuration of vault.
+    :vartype sourceScanConfiguration: "SourceScanConfiguration"
     """
 
     immutabilitySettings: "ImmutabilitySettings"
@@ -1199,13 +630,13 @@ class Sku(TypedDict, total=False):
 class SoftDeleteSettings(TypedDict, total=False):
     """Soft delete Settings of vault.
 
-    :ivar soft_delete_state: Known values are: "Invalid", "Enabled", "Disabled", and "AlwaysON".
-    :vartype soft_delete_state: Union[str, "SoftDeleteState"]
-    :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
-    :vartype soft_delete_retention_period_in_days: int
-    :ivar enhanced_security_state: Known values are: "Invalid", "Enabled", "Disabled", and
+    :ivar softDeleteState: Known values are: "Invalid", "Enabled", "Disabled", and "AlwaysON".
+    :vartype softDeleteState: Union[str, "SoftDeleteState"]
+    :ivar softDeleteRetentionPeriodInDays: Soft delete retention period in days.
+    :vartype softDeleteRetentionPeriodInDays: int
+    :ivar enhancedSecurityState: Known values are: "Invalid", "Enabled", "Disabled", and
      "AlwaysON".
-    :vartype enhanced_security_state: Union[str, "EnhancedSecurityState"]
+    :vartype enhancedSecurityState: Union[str, "EnhancedSecurityState"]
     """
 
     softDeleteState: Union[str, "SoftDeleteState"]
@@ -1221,8 +652,8 @@ class SourceScanConfiguration(TypedDict, total=False):
 
     :ivar state: Known values are: "Invalid", "Enabled", and "Disabled".
     :vartype state: Union[str, "State"]
-    :ivar source_scan_identity: Identity details to be used for an operation.
-    :vartype source_scan_identity: "AssociatedIdentity"
+    :ivar sourceScanIdentity: Identity details to be used for an operation.
+    :vartype sourceScanIdentity: "AssociatedIdentity"
     """
 
     state: Union[str, "State"]
@@ -1234,20 +665,20 @@ class SourceScanConfiguration(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -1277,9 +708,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1295,26 +726,26 @@ class TrackedResource(Resource):
 class UpgradeDetails(TypedDict, total=False):
     """Details for upgrading vault.
 
-    :ivar operation_id: ID of the vault upgrade operation.
-    :vartype operation_id: str
-    :ivar start_time_utc: UTC time at which the upgrade operation has started.
-    :vartype start_time_utc: str
-    :ivar last_updated_time_utc: UTC time at which the upgrade operation status was last updated.
-    :vartype last_updated_time_utc: str
-    :ivar end_time_utc: UTC time at which the upgrade operation has ended.
-    :vartype end_time_utc: str
+    :ivar operationId: ID of the vault upgrade operation.
+    :vartype operationId: str
+    :ivar startTimeUtc: UTC time at which the upgrade operation has started.
+    :vartype startTimeUtc: str
+    :ivar lastUpdatedTimeUtc: UTC time at which the upgrade operation status was last updated.
+    :vartype lastUpdatedTimeUtc: str
+    :ivar endTimeUtc: UTC time at which the upgrade operation has ended.
+    :vartype endTimeUtc: str
     :ivar status: Status of the vault upgrade operation. Known values are: "Unknown", "InProgress",
      "Upgraded", and "Failed".
     :vartype status: Union[str, "VaultUpgradeState"]
     :ivar message: Message to the user containing information about the upgrade operation.
     :vartype message: str
-    :ivar trigger_type: The way the vault upgrade was triggered. Known values are: "UserTriggered"
+    :ivar triggerType: The way the vault upgrade was triggered. Known values are: "UserTriggered"
      and "ForcedUpgrade".
-    :vartype trigger_type: Union[str, "TriggerType"]
-    :ivar upgraded_resource_id: Resource ID of the upgraded vault.
-    :vartype upgraded_resource_id: str
-    :ivar previous_resource_id: Resource ID of the vault before the upgrade.
-    :vartype previous_resource_id: str
+    :vartype triggerType: Union[str, "TriggerType"]
+    :ivar upgradedResourceId: Resource ID of the upgraded vault.
+    :vartype upgradedResourceId: str
+    :ivar previousResourceId: Resource ID of the vault before the upgrade.
+    :vartype previousResourceId: str
     """
 
     operationId: str
@@ -1342,10 +773,10 @@ class UpgradeDetails(TypedDict, total=False):
 class UserIdentity(TypedDict, total=False):
     """A resource identity that is managed by the user of the service.
 
-    :ivar principal_id: The principal ID of the user-assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the user-assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the user-assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the user-assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -1365,9 +796,9 @@ class Vault(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1392,40 +823,15 @@ class Vault(TrackedResource):
     """etag for the resource."""
 
 
-class VaultCertificateResponse(TypedDict, total=False):
-    """Certificate corresponding to a vault that can be used by clients to register themselves with
-    the vault.
-
-    :ivar name: Resource name associated with the resource.
-    :vartype name: str
-    :ivar type: Resource type represents the complete path of the form
-     Namespace/ResourceType/ResourceType/...
-    :vartype type: str
-    :ivar id: Resource Id represents the complete path to the resource.
-    :vartype id: str
-    :ivar properties: Certificate details representing the Vault credentials.
-    :vartype properties: "ResourceCertificateDetails"
-    """
-
-    name: str
-    """Resource name associated with the resource."""
-    type: str
-    """Resource type represents the complete path of the form Namespace/ResourceType/ResourceType/..."""
-    id: str
-    """Resource Id represents the complete path to the resource."""
-    properties: "ResourceCertificateDetails"
-    """Certificate details representing the Vault credentials."""
-
-
 class VaultExtendedInfo(TypedDict, total=False):
     """Vault extended information.
 
-    :ivar integrity_key: Integrity key.
-    :vartype integrity_key: str
-    :ivar encryption_key: Encryption key.
-    :vartype encryption_key: str
-    :ivar encryption_key_thumbprint: Encryption key thumbprint.
-    :vartype encryption_key_thumbprint: str
+    :ivar integrityKey: Integrity key.
+    :vartype integrityKey: str
+    :ivar encryptionKey: Encryption key.
+    :vartype encryptionKey: str
+    :ivar encryptionKeyThumbprint: Encryption key thumbprint.
+    :vartype encryptionKeyThumbprint: str
     :ivar algorithm: Algorithm for Vault ExtendedInfo.
     :vartype algorithm: str
     """
@@ -1451,9 +857,9 @@ class VaultExtendedInfoResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Vault extended information.
     :vartype properties: "VaultExtendedInfo"
     :ivar etag: etag for the resource.
@@ -1469,51 +875,53 @@ class VaultExtendedInfoResource(ProxyResource):
 class VaultProperties(TypedDict, total=False):
     """Properties of the vault.
 
-    :ivar provisioning_state: Provisioning State.
-    :vartype provisioning_state: str
-    :ivar upgrade_details: Details for upgrading vault.
-    :vartype upgrade_details: "UpgradeDetails"
-    :ivar private_endpoint_connections: List of private endpoint connection.
-    :vartype private_endpoint_connections: list["PrivateEndpointConnectionVaultProperties"]
-    :ivar private_endpoint_state_for_backup: Private endpoint state for backup. Known values are:
+    :ivar provisioningState: Provisioning State.
+    :vartype provisioningState: str
+    :ivar upgradeDetails: Details for upgrading vault.
+    :vartype upgradeDetails: "UpgradeDetails"
+    :ivar privateEndpointConnections: List of private endpoint connection.
+    :vartype privateEndpointConnections: list["PrivateEndpointConnectionVaultProperties"]
+    :ivar privateEndpointStateForBackup: Private endpoint state for backup. Known values are:
      "None" and "Enabled".
-    :vartype private_endpoint_state_for_backup: Union[str, "VaultPrivateEndpointState"]
-    :ivar private_endpoint_state_for_site_recovery: Private endpoint state for site recovery. Known
+    :vartype privateEndpointStateForBackup: Union[str, "VaultPrivateEndpointState"]
+    :ivar privateEndpointStateForSiteRecovery: Private endpoint state for site recovery. Known
      values are: "None" and "Enabled".
-    :vartype private_endpoint_state_for_site_recovery: Union[str, "VaultPrivateEndpointState"]
+    :vartype privateEndpointStateForSiteRecovery: Union[str, "VaultPrivateEndpointState"]
     :ivar encryption: Customer Managed Key details of the resource.
     :vartype encryption: "VaultPropertiesEncryption"
-    :ivar move_details: The details of the latest move operation performed on the Azure Resource.
-    :vartype move_details: "VaultPropertiesMoveDetails"
-    :ivar move_state: The State of the Resource after the move operation. Known values are:
+    :ivar moveDetails: The details of the latest move operation performed on the Azure Resource.
+    :vartype moveDetails: "VaultPropertiesMoveDetails"
+    :ivar moveState: The State of the Resource after the move operation. Known values are:
      "Unknown", "InProgress", "PrepareFailed", "CommitFailed", "PrepareTimedout", "CommitTimedout",
      "MoveSucceeded", "Failure", "CriticalFailure", and "PartialSuccess".
-    :vartype move_state: Union[str, "ResourceMoveState"]
-    :ivar backup_storage_version: Backup storage version. Known values are: "V1", "V2", and
+    :vartype moveState: Union[str, "ResourceMoveState"]
+    :ivar backupStorageVersion: Backup storage version. Known values are: "V1", "V2", and
      "Unassigned".
-    :vartype backup_storage_version: Union[str, "BackupStorageVersion"]
-    :ivar public_network_access: property to enable or disable resource provider inbound network
+    :vartype backupStorageVersion: Union[str, "BackupStorageVersion"]
+    :ivar publicNetworkAccess: property to enable or disable resource provider inbound network
      traffic from public clients. Known values are: "Enabled" and "Disabled".
-    :vartype public_network_access: Union[str, "PublicNetworkAccess"]
-    :ivar monitoring_settings: Monitoring Settings of the vault.
-    :vartype monitoring_settings: "MonitoringSettings"
-    :ivar cost_management_settings: Cost Management Settings of the vault.
-    :vartype cost_management_settings: "CostManagementSettings"
-    :ivar restore_settings: Restore Settings of the vault.
-    :vartype restore_settings: "RestoreSettings"
-    :ivar redundancy_settings: The redundancy Settings of a Vault.
-    :vartype redundancy_settings: "VaultPropertiesRedundancySettings"
-    :ivar security_settings: Security Settings of the vault.
-    :vartype security_settings: "SecuritySettings"
-    :ivar secure_score: Secure Score of Recovery Services Vault. Known values are: "None",
+    :vartype publicNetworkAccess: Union[str, "PublicNetworkAccess"]
+    :ivar monitoringSettings: Monitoring Settings of the vault.
+    :vartype monitoringSettings: "MonitoringSettings"
+    :ivar costManagementSettings: Cost Management Settings of the vault.
+    :vartype costManagementSettings: "CostManagementSettings"
+    :ivar restoreSettings: Restore Settings of the vault.
+    :vartype restoreSettings: "RestoreSettings"
+    :ivar redundancySettings: The redundancy Settings of a Vault.
+    :vartype redundancySettings: "VaultPropertiesRedundancySettings"
+    :ivar securitySettings: Security Settings of the vault.
+    :vartype securitySettings: "SecuritySettings"
+    :ivar secureScore: Secure Score of Recovery Services Vault. Known values are: "None",
      "Minimum", "Adequate", and "Maximum".
-    :vartype secure_score: Union[str, "SecureScoreLevel"]
-    :ivar bcdr_security_level: Security levels of Recovery Services Vault for business continuity
-     and disaster recovery. Known values are: "Poor", "Fair", "Good", and "Excellent".
-    :vartype bcdr_security_level: Union[str, "BCDRSecurityLevel"]
-    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
-     be performed.
-    :vartype resource_guard_operation_requests: list[str]
+    :vartype secureScore: Union[str, "SecureScoreLevel"]
+    :ivar bcdrSecurityLevel: Security levels of Recovery Services Vault for business continuity and
+     disaster recovery. Known values are: "Poor", "Fair", "Good", and "Excellent".
+    :vartype bcdrSecurityLevel: Union[str, "BCDRSecurityLevel"]
+    :ivar resourceGuardOperationRequests: ResourceGuardOperationRequests on which LAC check will be
+     performed.
+    :vartype resourceGuardOperationRequests: list[str]
+    :ivar regionOfChoiceSettings: Region of choice settings for this vault.
+    :vartype regionOfChoiceSettings: "RegionOfChoiceSettings"
     """
 
     provisioningState: str
@@ -1557,18 +965,20 @@ class VaultProperties(TypedDict, total=False):
      values are: \"Poor\", \"Fair\", \"Good\", and \"Excellent\"."""
     resourceGuardOperationRequests: list[str]
     """ResourceGuardOperationRequests on which LAC check will be performed."""
+    regionOfChoiceSettings: "RegionOfChoiceSettings"
+    """Region of choice settings for this vault."""
 
 
 class VaultPropertiesEncryption(TypedDict, total=False):
     """Customer Managed Key details of the resource.
 
-    :ivar key_vault_properties: The properties of the Key Vault which hosts CMK.
-    :vartype key_vault_properties: "CmkKeyVaultProperties"
-    :ivar kek_identity: The details of the identity used for CMK.
-    :vartype kek_identity: "CmkKekIdentity"
-    :ivar infrastructure_encryption: Enabling/Disabling the Double Encryption state. Known values
+    :ivar keyVaultProperties: The properties of the Key Vault which hosts CMK.
+    :vartype keyVaultProperties: "CmkKeyVaultProperties"
+    :ivar kekIdentity: The details of the identity used for CMK.
+    :vartype kekIdentity: "CmkKekIdentity"
+    :ivar infrastructureEncryption: Enabling/Disabling the Double Encryption state. Known values
      are: "Enabled" and "Disabled".
-    :vartype infrastructure_encryption: Union[str, "InfrastructureEncryptionState"]
+    :vartype infrastructureEncryption: Union[str, "InfrastructureEncryptionState"]
     """
 
     keyVaultProperties: "CmkKeyVaultProperties"
@@ -1582,16 +992,16 @@ class VaultPropertiesEncryption(TypedDict, total=False):
 class VaultPropertiesMoveDetails(TypedDict, total=False):
     """The details of the latest move operation performed on the Azure Resource.
 
-    :ivar operation_id: OperationId of the Resource Move Operation.
-    :vartype operation_id: str
-    :ivar start_time_utc: Start Time of the Resource Move Operation.
-    :vartype start_time_utc: str
-    :ivar completion_time_utc: End Time of the Resource Move Operation.
-    :vartype completion_time_utc: str
-    :ivar source_resource_id: Source Resource of the Resource Move Operation.
-    :vartype source_resource_id: str
-    :ivar target_resource_id: Target Resource of the Resource Move Operation.
-    :vartype target_resource_id: str
+    :ivar operationId: OperationId of the Resource Move Operation.
+    :vartype operationId: str
+    :ivar startTimeUtc: Start Time of the Resource Move Operation.
+    :vartype startTimeUtc: str
+    :ivar completionTimeUtc: End Time of the Resource Move Operation.
+    :vartype completionTimeUtc: str
+    :ivar sourceResourceId: Source Resource of the Resource Move Operation.
+    :vartype sourceResourceId: str
+    :ivar targetResourceId: Target Resource of the Resource Move Operation.
+    :vartype targetResourceId: str
     """
 
     operationId: str
@@ -1609,12 +1019,12 @@ class VaultPropertiesMoveDetails(TypedDict, total=False):
 class VaultPropertiesRedundancySettings(TypedDict, total=False):
     """The redundancy Settings of a Vault.
 
-    :ivar standard_tier_storage_redundancy: The storage redundancy setting of a vault. Known values
+    :ivar standardTierStorageRedundancy: The storage redundancy setting of a vault. Known values
      are: "Invalid", "LocallyRedundant", "GeoRedundant", and "ZoneRedundant".
-    :vartype standard_tier_storage_redundancy: Union[str, "StandardTierStorageRedundancy"]
-    :ivar cross_region_restore: Flag to show if Cross Region Restore is enabled on the Vault or
-     not. Known values are: "Enabled" and "Disabled".
-    :vartype cross_region_restore: Union[str, "CrossRegionRestore"]
+    :vartype standardTierStorageRedundancy: Union[str, "StandardTierStorageRedundancy"]
+    :ivar crossRegionRestore: Flag to show if Cross Region Restore is enabled on the Vault or not.
+     Known values are: "Enabled" and "Disabled".
+    :vartype crossRegionRestore: Union[str, "CrossRegionRestore"]
     """
 
     standardTierStorageRedundancy: Union[str, "StandardTierStorageRedundancy"]
@@ -1623,39 +1033,3 @@ class VaultPropertiesRedundancySettings(TypedDict, total=False):
     crossRegionRestore: Union[str, "CrossRegionRestore"]
     """Flag to show if Cross Region Restore is enabled on the Vault or not. Known values are:
      \"Enabled\" and \"Disabled\"."""
-
-
-class VaultUsage(TypedDict, total=False):
-    """Usages of a vault.
-
-    :ivar unit: Unit of the usage. Known values are: "Count", "Bytes", "Seconds", "Percent",
-     "CountPerSecond", and "BytesPerSecond".
-    :vartype unit: Union[str, "UsagesUnit"]
-    :ivar quota_period: Quota period of usage.
-    :vartype quota_period: str
-    :ivar next_reset_time: Next reset time of usage.
-    :vartype next_reset_time: str
-    :ivar current_value: Current value of usage.
-    :vartype current_value: int
-    :ivar limit: Limit of usage.
-    :vartype limit: int
-    :ivar name: Name of usage.
-    :vartype name: "NameInfo"
-    """
-
-    unit: Union[str, "UsagesUnit"]
-    """Unit of the usage. Known values are: \"Count\", \"Bytes\", \"Seconds\", \"Percent\",
-     \"CountPerSecond\", and \"BytesPerSecond\"."""
-    quotaPeriod: str
-    """Quota period of usage."""
-    nextResetTime: str
-    """Next reset time of usage."""
-    currentValue: int
-    """Current value of usage."""
-    limit: int
-    """Limit of usage."""
-    name: "NameInfo"
-    """Name of usage."""
-
-
-ResourceCertificateDetails = Union[ResourceCertificateAndAcsDetails, ResourceCertificateAndAadDetails]

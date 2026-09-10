@@ -40,8 +40,8 @@ def find_auto_failover_endpoints(endpoint: str, replica_discovery_enabled: bool)
 
     replicas = _find_replicas(origin.target)
 
-    if not replicas:
-        return None  # Timeout
+    if replicas is None:
+        raise TimeoutError("Timed out while resolving auto-failover replica endpoints.")
 
     srv_records = [origin] + replicas
     endpoints = []
@@ -57,6 +57,8 @@ def _find_origin(endpoint):
     uri = urlparse(endpoint).hostname
     request = f"_origin._tcp.{uri}"
     srv_records = _request_record(request)
+    if srv_records is None:
+        raise TimeoutError("Timed out while resolving auto-failover origin endpoint.")
     if not srv_records:
         return None
     return SRVRecord(srv_records[0])

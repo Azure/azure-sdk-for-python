@@ -11,9 +11,9 @@ from azure.ai.ml._utils._experimental import experimental
 class DeploymentTemplateReference:
     """Deployment template reference for a model.
 
-    :param asset_id: The asset ID of the deployment template.
+    :keyword asset_id: The asset ID of the deployment template.
         Format: azureml://registries/{registry_name}/deploymenttemplates/{template_name}/versions/{version}
-    :type asset_id: str
+    :paramtype asset_id: str
     """
 
     def __init__(
@@ -24,8 +24,8 @@ class DeploymentTemplateReference:
     ) -> None:
         """Initialize DeploymentTemplateReference.
 
-        :param asset_id: The asset ID of the deployment template.
-        :type asset_id: Optional[str]
+        :keyword asset_id: The asset ID of the deployment template.
+        :paramtype asset_id: Optional[str]
         """
         self.asset_id = asset_id
 

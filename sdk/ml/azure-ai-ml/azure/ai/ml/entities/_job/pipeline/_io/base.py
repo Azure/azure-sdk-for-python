@@ -298,17 +298,16 @@ class NodeInput(InputOutputBase):
         :type name: str
         :param meta: Metadata of this input, eg: type, min, max, etc.
         :type meta: Input
-        :param data: The input data. Valid types include int, bool, float, str,
+        :keyword data: The input data. Valid types include int, bool, float, str,
             Output of another component or pipeline input and Input.
             Note that the output of another component or pipeline input associated should be reachable in the scope
             of current pipeline. Input is introduced to support case like
             TODO: new examples
             component.inputs.xxx = Input(path="arm_id")
-        :type data: Union[int, bool, float, str
-                          azure.ai.ml.Output,
+        :paramtype data: Union[int, bool, float, str,                          azure.ai.ml.Output,
                           azure.ai.ml.Input]
-        :param owner: The owner component of the input, used to calculate binding.
-        :type owner: Union[azure.ai.ml.entities.BaseNode, azure.ai.ml.entities.PipelineJob]
+        :keyword owner: The owner component of the input, used to calculate binding.
+        :paramtype owner: Union[azure.ai.ml.entities.BaseNode, azure.ai.ml.entities.PipelineJob]
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
@@ -484,16 +483,16 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         :param name: The name used to register NodeOutput/PipelineOutput data.
         :type name: str
         :param version: The version used to register NodeOutput/PipelineOutput data.
-        :ype version: str
-        :param data: The output data. Valid types include str, Output
-        :type data: Union[str
+        :type version: str
+        :keyword data: The output data. Valid types include str, Output
+        :paramtype data: Union[str,
                           azure.ai.ml.entities.Output]
         :param mode: The mode of the output.
         :type mode: str
-        :param owner: The owner component of the output, used to calculate binding.
-        :type owner: Union[azure.ai.ml.entities.BaseNode, azure.ai.ml.entities.PipelineJob]
-        :param binding_output: The node output bound to pipeline output, only available for pipeline.
-        :type binding_output: azure.ai.ml.entities.NodeOutput
+        :keyword owner: The owner component of the output, used to calculate binding.
+        :paramtype owner: Union[azure.ai.ml.entities.BaseNode, azure.ai.ml.entities.PipelineJob]
+        :keyword binding_output: The node output bound to pipeline output, only available for pipeline.
+        :paramtype binding_output: azure.ai.ml.entities.NodeOutput
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.

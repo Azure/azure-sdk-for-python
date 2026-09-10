@@ -1,4 +1,4 @@
-"""Echo agent over the ``invocations_ws`` (WebSocket) protocol.
+r"""Echo agent over the ``invocations_ws`` (WebSocket) protocol.
 
 Exposes the same host on:
 
@@ -13,8 +13,8 @@ Usage::
     python ws_invoke_agent.py
 
     # HTTP turn
-    curl -X POST http://localhost:8088/invocations \\
-        -H "Content-Type: application/json" \\
+    curl -X POST http://localhost:8088/invocations \
+        -H "Content-Type: application/json" \
         -d '{"name": "Alice"}'
     # -> {"echo": {"name": "Alice"}}
 

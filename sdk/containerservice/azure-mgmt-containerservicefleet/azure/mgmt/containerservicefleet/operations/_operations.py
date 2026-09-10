@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import ContainerServiceFleetMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -42,7 +42,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -53,7 +52,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -74,7 +73,7 @@ def build_cluster_mesh_profiles_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -111,7 +110,7 @@ def build_cluster_mesh_profiles_create_or_update_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -155,7 +154,7 @@ def build_cluster_mesh_profiles_delete_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}/clusterMeshProfiles/{clusterMeshProfileName}"
     path_format_arguments = {
@@ -187,7 +186,7 @@ def build_cluster_mesh_profiles_list_by_fleet_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -222,7 +221,7 @@ def build_cluster_mesh_profiles_apply_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -257,7 +256,7 @@ def build_fleets_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -292,7 +291,7 @@ def build_fleets_begin_create_or_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -335,7 +334,7 @@ def build_fleets_begin_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -377,7 +376,7 @@ def build_fleets_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}"
     path_format_arguments = {
@@ -408,7 +407,7 @@ def build_fleets_list_by_resource_group_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -437,7 +436,7 @@ def build_fleets_list_by_subscription_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -467,7 +466,7 @@ def build_fleets_list_credentials_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -495,7 +494,7 @@ def build_fleet_members_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -532,7 +531,7 @@ def build_fleet_members_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -577,7 +576,7 @@ def build_fleet_members_begin_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -621,7 +620,7 @@ def build_fleet_members_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}/members/{fleetMemberName}"
     path_format_arguments = {
@@ -660,7 +659,7 @@ def build_fleet_members_list_by_fleet_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -694,7 +693,7 @@ def build_fleet_managed_namespaces_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -731,7 +730,7 @@ def build_fleet_managed_namespaces_create_or_update_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -775,7 +774,7 @@ def build_fleet_managed_namespaces_delete_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}/managedNamespaces/{managedNamespaceName}"
     path_format_arguments = {
@@ -807,7 +806,7 @@ def build_fleet_managed_namespaces_list_by_fleet_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -843,7 +842,7 @@ def build_fleet_managed_namespaces_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -880,7 +879,7 @@ def build_gates_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -917,7 +916,7 @@ def build_gates_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -961,7 +960,7 @@ def build_gates_list_by_fleet_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -995,7 +994,7 @@ def build_update_runs_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1032,7 +1031,7 @@ def build_update_runs_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1076,7 +1075,7 @@ def build_update_runs_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}/updateRuns/{updateRunName}"
     path_format_arguments = {
@@ -1114,7 +1113,7 @@ def build_update_runs_list_by_fleet_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1153,7 +1152,7 @@ def build_update_runs_start_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1195,7 +1194,7 @@ def build_update_runs_stop_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1238,7 +1237,7 @@ def build_update_runs_skip_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1275,7 +1274,7 @@ def build_fleet_update_strategies_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1312,7 +1311,7 @@ def build_fleet_update_strategies_create_or_update_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1356,7 +1355,7 @@ def build_fleet_update_strategies_delete_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}/updateStrategies/{updateStrategyName}"
     path_format_arguments = {
@@ -1394,7 +1393,7 @@ def build_fleet_update_strategies_list_by_fleet_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1426,7 +1425,7 @@ def build_auto_upgrade_profiles_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1463,7 +1462,7 @@ def build_auto_upgrade_profiles_create_or_update_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1507,7 +1506,7 @@ def build_auto_upgrade_profiles_delete_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}/autoUpgradeProfiles/{autoUpgradeProfileName}"
     path_format_arguments = {
@@ -1545,7 +1544,7 @@ def build_auto_upgrade_profiles_list_by_fleet_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1577,7 +1576,7 @@ def build_auto_upgrade_profile_operations_generate_update_run_request(  # pylint
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1600,7 +1599,7 @@ def build_auto_upgrade_profile_operations_generate_update_run_request(  # pylint
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1712,7 +1711,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class ClusterMeshProfilesOperations:
+class ClusterMeshProfilesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1744,7 +1743,7 @@ class ClusterMeshProfilesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
     )
     def get(
         self, resource_group_name: str, fleet_name: str, cluster_mesh_profile_name: str, **kwargs: Any
@@ -1835,14 +1834,14 @@ class ClusterMeshProfilesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-03-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
     )
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         fleet_name: str,
         cluster_mesh_profile_name: str,
-        resource: Union[_models.ClusterMeshProfile, JSON, IO[bytes]],
+        resource: Union[_models.ClusterMeshProfile, _types.ClusterMeshProfile, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1969,7 +1968,7 @@ class ClusterMeshProfilesOperations:
         resource_group_name: str,
         fleet_name: str,
         cluster_mesh_profile_name: str,
-        resource: JSON,
+        resource: _types.ClusterMeshProfile,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -1986,7 +1985,7 @@ class ClusterMeshProfilesOperations:
         :param cluster_mesh_profile_name: The name of the ClusterMeshProfile resource. Required.
         :type cluster_mesh_profile_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.containerservicefleet.types.ClusterMeshProfile
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2057,14 +2056,14 @@ class ClusterMeshProfilesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-03-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
     )
     def begin_create_or_update(
         self,
         resource_group_name: str,
         fleet_name: str,
         cluster_mesh_profile_name: str,
-        resource: Union[_models.ClusterMeshProfile, JSON, IO[bytes]],
+        resource: Union[_models.ClusterMeshProfile, _types.ClusterMeshProfile, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -2079,10 +2078,10 @@ class ClusterMeshProfilesOperations:
         :type fleet_name: str
         :param cluster_mesh_profile_name: The name of the ClusterMeshProfile resource. Required.
         :type cluster_mesh_profile_name: str
-        :param resource: Resource create parameters. Is one of the following types: ClusterMeshProfile,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.containerservicefleet.models.ClusterMeshProfile or JSON or
-         IO[bytes]
+        :param resource: Resource create parameters. Is either a ClusterMeshProfile type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.containerservicefleet.models.ClusterMeshProfile or
+         ~azure.mgmt.containerservicefleet.types.ClusterMeshProfile or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -2162,7 +2161,7 @@ class ClusterMeshProfilesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-03-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
     )
     def _delete_initial(
         self,
@@ -2255,7 +2254,7 @@ class ClusterMeshProfilesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-03-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
     )
     def begin_delete(
         self,
@@ -2338,7 +2337,7 @@ class ClusterMeshProfilesOperations:
         params_added_on={
             "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
         },
-        api_versions_list=["2026-03-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
     )
     def list_by_fleet(
         self, resource_group_name: str, fleet_name: str, **kwargs: Any
@@ -2456,7 +2455,7 @@ class ClusterMeshProfilesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-03-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
     )
     def _apply_initial(
         self,
@@ -2550,7 +2549,7 @@ class ClusterMeshProfilesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-03-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
     )
     def begin_apply(
         self,
@@ -2635,7 +2634,7 @@ class ClusterMeshProfilesOperations:
         )
 
 
-class FleetsOperations:
+class FleetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2728,7 +2727,7 @@ class FleetsOperations:
         self,
         resource_group_name: str,
         fleet_name: str,
-        resource: Union[_models.Fleet, JSON, IO[bytes]],
+        resource: Union[_models.Fleet, _types.Fleet, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -2849,7 +2848,7 @@ class FleetsOperations:
         self,
         resource_group_name: str,
         fleet_name: str,
-        resource: JSON,
+        resource: _types.Fleet,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -2864,7 +2863,7 @@ class FleetsOperations:
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.containerservicefleet.types.Fleet
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2919,7 +2918,7 @@ class FleetsOperations:
         self,
         resource_group_name: str,
         fleet_name: str,
-        resource: Union[_models.Fleet, JSON, IO[bytes]],
+        resource: Union[_models.Fleet, _types.Fleet, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -2932,9 +2931,10 @@ class FleetsOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
-        :param resource: Resource create parameters. Is one of the following types: Fleet, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.containerservicefleet.models.Fleet or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Fleet type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.containerservicefleet.models.Fleet or
+         ~azure.mgmt.containerservicefleet.types.Fleet or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -3025,13 +3025,15 @@ class FleetsOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def _begin_update_initial(
         self,
         resource_group_name: str,
         fleet_name: str,
-        properties: Union[_models.FleetPatch, JSON, IO[bytes]],
+        properties: Union[_models.FleetPatch, _types.FleetPatch, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -3153,7 +3155,7 @@ class FleetsOperations:
         self,
         resource_group_name: str,
         fleet_name: str,
-        properties: JSON,
+        properties: _types.FleetPatch,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -3168,7 +3170,7 @@ class FleetsOperations:
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.containerservicefleet.types.FleetPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3245,13 +3247,15 @@ class FleetsOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def begin_update(
         self,
         resource_group_name: str,
         fleet_name: str,
-        properties: Union[_models.FleetPatch, JSON, IO[bytes]],
+        properties: Union[_models.FleetPatch, _types.FleetPatch, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -3264,9 +3268,10 @@ class FleetsOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         FleetPatch, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.containerservicefleet.models.FleetPatch or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a FleetPatch type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.containerservicefleet.models.FleetPatch or
+         ~azure.mgmt.containerservicefleet.types.FleetPatch or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -3750,7 +3755,7 @@ class FleetsOperations:
         return deserialized  # type: ignore
 
 
-class FleetMembersOperations:
+class FleetMembersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3849,7 +3854,7 @@ class FleetMembersOperations:
         resource_group_name: str,
         fleet_name: str,
         fleet_member_name: str,
-        resource: Union[_models.FleetMember, JSON, IO[bytes]],
+        resource: Union[_models.FleetMember, _types.FleetMember, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -3975,7 +3980,7 @@ class FleetMembersOperations:
         resource_group_name: str,
         fleet_name: str,
         fleet_member_name: str,
-        resource: JSON,
+        resource: _types.FleetMember,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -3992,7 +3997,7 @@ class FleetMembersOperations:
         :param fleet_member_name: The name of the Fleet member resource. Required.
         :type fleet_member_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.containerservicefleet.types.FleetMember
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4051,7 +4056,7 @@ class FleetMembersOperations:
         resource_group_name: str,
         fleet_name: str,
         fleet_member_name: str,
-        resource: Union[_models.FleetMember, JSON, IO[bytes]],
+        resource: Union[_models.FleetMember, _types.FleetMember, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -4066,9 +4071,10 @@ class FleetMembersOperations:
         :type fleet_name: str
         :param fleet_member_name: The name of the Fleet member resource. Required.
         :type fleet_member_name: str
-        :param resource: Resource create parameters. Is one of the following types: FleetMember, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.containerservicefleet.models.FleetMember or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a FleetMember type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.containerservicefleet.models.FleetMember or
+         ~azure.mgmt.containerservicefleet.types.FleetMember or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -4161,6 +4167,8 @@ class FleetMembersOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def _begin_update_initial(
@@ -4168,7 +4176,7 @@ class FleetMembersOperations:
         resource_group_name: str,
         fleet_name: str,
         fleet_member_name: str,
-        properties: Union[_models.FleetMemberUpdate, JSON, IO[bytes]],
+        properties: Union[_models.FleetMemberUpdate, _types.FleetMemberUpdate, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -4295,7 +4303,7 @@ class FleetMembersOperations:
         resource_group_name: str,
         fleet_name: str,
         fleet_member_name: str,
-        properties: JSON,
+        properties: _types.FleetMemberUpdate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -4312,7 +4320,7 @@ class FleetMembersOperations:
         :param fleet_member_name: The name of the Fleet member resource. Required.
         :type fleet_member_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.containerservicefleet.types.FleetMemberUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4393,6 +4401,8 @@ class FleetMembersOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def begin_update(
@@ -4400,7 +4410,7 @@ class FleetMembersOperations:
         resource_group_name: str,
         fleet_name: str,
         fleet_member_name: str,
-        properties: Union[_models.FleetMemberUpdate, JSON, IO[bytes]],
+        properties: Union[_models.FleetMemberUpdate, _types.FleetMemberUpdate, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -4415,10 +4425,10 @@ class FleetMembersOperations:
         :type fleet_name: str
         :param fleet_member_name: The name of the Fleet member resource. Required.
         :type fleet_member_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         FleetMemberUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.containerservicefleet.models.FleetMemberUpdate or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a FleetMemberUpdate type or
+         a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.containerservicefleet.models.FleetMemberUpdate or
+         ~azure.mgmt.containerservicefleet.types.FleetMemberUpdate or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -4757,7 +4767,7 @@ class FleetMembersOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class FleetManagedNamespacesOperations:
+class FleetManagedNamespacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4789,7 +4799,13 @@ class FleetManagedNamespacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+        api_versions_list=[
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
+        ],
     )
     def get(
         self, resource_group_name: str, fleet_name: str, managed_namespace_name: str, **kwargs: Any
@@ -4880,14 +4896,20 @@ class FleetManagedNamespacesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+        api_versions_list=[
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
+        ],
     )
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         fleet_name: str,
         managed_namespace_name: str,
-        resource: Union[_models.FleetManagedNamespace, JSON, IO[bytes]],
+        resource: Union[_models.FleetManagedNamespace, _types.FleetManagedNamespace, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -5017,7 +5039,7 @@ class FleetManagedNamespacesOperations:
         resource_group_name: str,
         fleet_name: str,
         managed_namespace_name: str,
-        resource: JSON,
+        resource: _types.FleetManagedNamespace,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -5034,7 +5056,7 @@ class FleetManagedNamespacesOperations:
         :param managed_namespace_name: The name of the fleet managed namespace resource. Required.
         :type managed_namespace_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.containerservicefleet.types.FleetManagedNamespace
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5105,14 +5127,20 @@ class FleetManagedNamespacesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+        api_versions_list=[
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
+        ],
     )
     def begin_create_or_update(
         self,
         resource_group_name: str,
         fleet_name: str,
         managed_namespace_name: str,
-        resource: Union[_models.FleetManagedNamespace, JSON, IO[bytes]],
+        resource: Union[_models.FleetManagedNamespace, _types.FleetManagedNamespace, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -5127,10 +5155,10 @@ class FleetManagedNamespacesOperations:
         :type fleet_name: str
         :param managed_namespace_name: The name of the fleet managed namespace resource. Required.
         :type managed_namespace_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         FleetManagedNamespace, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.containerservicefleet.models.FleetManagedNamespace or JSON or
-         IO[bytes]
+        :param resource: Resource create parameters. Is either a FleetManagedNamespace type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.containerservicefleet.models.FleetManagedNamespace or
+         ~azure.mgmt.containerservicefleet.types.FleetManagedNamespace or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -5210,7 +5238,13 @@ class FleetManagedNamespacesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+        api_versions_list=[
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
+        ],
     )
     def _delete_initial(
         self,
@@ -5303,7 +5337,13 @@ class FleetManagedNamespacesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+        api_versions_list=[
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
+        ],
     )
     def begin_delete(
         self,
@@ -5386,7 +5426,13 @@ class FleetManagedNamespacesOperations:
         params_added_on={
             "2025-08-01-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
         },
-        api_versions_list=["2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+        api_versions_list=[
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
+        ],
     )
     def list_by_fleet(
         self, resource_group_name: str, fleet_name: str, **kwargs: Any
@@ -5491,9 +5537,9 @@ class FleetManagedNamespacesOperations:
         return ItemPaged(get_next, extract_data)
 
     @api_version_validation(
-        method_added_on="2025-08-01-preview",
+        method_added_on="2026-06-02-preview",
         params_added_on={
-            "2025-08-01-preview": [
+            "2026-06-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -5505,14 +5551,14 @@ class FleetManagedNamespacesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+        api_versions_list=["2026-06-02-preview"],
     )
     def _update_initial(
         self,
         resource_group_name: str,
         fleet_name: str,
         managed_namespace_name: str,
-        properties: Union[_models.FleetManagedNamespacePatch, JSON, IO[bytes]],
+        properties: Union[_models.FleetManagedNamespacePatch, _types.FleetManagedNamespacePatch, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -5640,7 +5686,7 @@ class FleetManagedNamespacesOperations:
         resource_group_name: str,
         fleet_name: str,
         managed_namespace_name: str,
-        properties: JSON,
+        properties: _types.FleetManagedNamespacePatch,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -5657,7 +5703,7 @@ class FleetManagedNamespacesOperations:
         :param managed_namespace_name: The name of the fleet managed namespace resource. Required.
         :type managed_namespace_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.containerservicefleet.types.FleetManagedNamespacePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5714,9 +5760,9 @@ class FleetManagedNamespacesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-08-01-preview",
+        method_added_on="2026-06-02-preview",
         params_added_on={
-            "2025-08-01-preview": [
+            "2026-06-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -5728,14 +5774,14 @@ class FleetManagedNamespacesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+        api_versions_list=["2026-06-02-preview"],
     )
     def begin_update(
         self,
         resource_group_name: str,
         fleet_name: str,
         managed_namespace_name: str,
-        properties: Union[_models.FleetManagedNamespacePatch, JSON, IO[bytes]],
+        properties: Union[_models.FleetManagedNamespacePatch, _types.FleetManagedNamespacePatch, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -5750,10 +5796,10 @@ class FleetManagedNamespacesOperations:
         :type fleet_name: str
         :param managed_namespace_name: The name of the fleet managed namespace resource. Required.
         :type managed_namespace_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         FleetManagedNamespacePatch, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.containerservicefleet.models.FleetManagedNamespacePatch or JSON
-         or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a
+         FleetManagedNamespacePatch type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.containerservicefleet.models.FleetManagedNamespacePatch or
+         ~azure.mgmt.containerservicefleet.types.FleetManagedNamespacePatch or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -5821,7 +5867,7 @@ class FleetManagedNamespacesOperations:
         )
 
 
-class GatesOperations:
+class GatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5853,7 +5899,14 @@ class GatesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+        api_versions_list=[
+            "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
+        ],
     )
     def get(self, resource_group_name: str, fleet_name: str, gate_name: str, **kwargs: Any) -> _models.Gate:
         """Get a Gate.
@@ -5942,14 +5995,21 @@ class GatesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+        api_versions_list=[
+            "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
+        ],
     )
     def _update_initial(
         self,
         resource_group_name: str,
         fleet_name: str,
         gate_name: str,
-        properties: Union[_models.GatePatch, JSON, IO[bytes]],
+        properties: Union[_models.GatePatch, _types.GatePatch, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -6075,7 +6135,7 @@ class GatesOperations:
         resource_group_name: str,
         fleet_name: str,
         gate_name: str,
-        properties: JSON,
+        properties: _types.GatePatch,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -6092,7 +6152,7 @@ class GatesOperations:
         :param gate_name: The name of the Gate resource, a GUID. Required.
         :type gate_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.containerservicefleet.types.GatePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6159,14 +6219,21 @@ class GatesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+        api_versions_list=[
+            "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
+        ],
     )
     def begin_update(
         self,
         resource_group_name: str,
         fleet_name: str,
         gate_name: str,
-        properties: Union[_models.GatePatch, JSON, IO[bytes]],
+        properties: Union[_models.GatePatch, _types.GatePatch, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -6181,9 +6248,10 @@ class GatesOperations:
         :type fleet_name: str
         :param gate_name: The name of the Gate resource, a GUID. Required.
         :type gate_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         GatePatch, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.containerservicefleet.models.GatePatch or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a GatePatch type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.containerservicefleet.models.GatePatch or
+         ~azure.mgmt.containerservicefleet.types.GatePatch or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -6263,7 +6331,14 @@ class GatesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview", "2026-03-02-preview"],
+        api_versions_list=[
+            "2025-04-01-preview",
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
+        ],
     )
     def list_by_fleet(
         self,
@@ -6384,7 +6459,7 @@ class GatesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class UpdateRunsOperations:
+class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6429,6 +6504,8 @@ class UpdateRunsOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def get(self, resource_group_name: str, fleet_name: str, update_run_name: str, **kwargs: Any) -> _models.UpdateRun:
@@ -6531,6 +6608,8 @@ class UpdateRunsOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def _create_or_update_initial(
@@ -6538,7 +6617,7 @@ class UpdateRunsOperations:
         resource_group_name: str,
         fleet_name: str,
         update_run_name: str,
-        resource: Union[_models.UpdateRun, JSON, IO[bytes]],
+        resource: Union[_models.UpdateRun, _types.UpdateRun, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -6664,7 +6743,7 @@ class UpdateRunsOperations:
         resource_group_name: str,
         fleet_name: str,
         update_run_name: str,
-        resource: JSON,
+        resource: _types.UpdateRun,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -6681,7 +6760,7 @@ class UpdateRunsOperations:
         :param update_run_name: The name of the UpdateRun resource. Required.
         :type update_run_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.containerservicefleet.types.UpdateRun
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6763,6 +6842,8 @@ class UpdateRunsOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def begin_create_or_update(
@@ -6770,7 +6851,7 @@ class UpdateRunsOperations:
         resource_group_name: str,
         fleet_name: str,
         update_run_name: str,
-        resource: Union[_models.UpdateRun, JSON, IO[bytes]],
+        resource: Union[_models.UpdateRun, _types.UpdateRun, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -6785,9 +6866,10 @@ class UpdateRunsOperations:
         :type fleet_name: str
         :param update_run_name: The name of the UpdateRun resource. Required.
         :type update_run_name: str
-        :param resource: Resource create parameters. Is one of the following types: UpdateRun, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.containerservicefleet.models.UpdateRun or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a UpdateRun type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.containerservicefleet.models.UpdateRun or
+         ~azure.mgmt.containerservicefleet.types.UpdateRun or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -6879,6 +6961,8 @@ class UpdateRunsOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def _delete_initial(
@@ -6985,6 +7069,8 @@ class UpdateRunsOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def begin_delete(
@@ -7089,6 +7175,8 @@ class UpdateRunsOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def list_by_fleet(
@@ -7232,6 +7320,8 @@ class UpdateRunsOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def _start_initial(
@@ -7339,6 +7429,8 @@ class UpdateRunsOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def begin_start(
@@ -7449,6 +7541,8 @@ class UpdateRunsOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def _stop_initial(
@@ -7556,6 +7650,8 @@ class UpdateRunsOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def begin_stop(
@@ -7663,6 +7759,8 @@ class UpdateRunsOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def _skip_initial(
@@ -7670,7 +7768,7 @@ class UpdateRunsOperations:
         resource_group_name: str,
         fleet_name: str,
         update_run_name: str,
-        body: Union[_models.SkipProperties, JSON, IO[bytes]],
+        body: Union[_models.SkipProperties, _types.SkipProperties, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -7797,7 +7895,7 @@ class UpdateRunsOperations:
         resource_group_name: str,
         fleet_name: str,
         update_run_name: str,
-        body: JSON,
+        body: _types.SkipProperties,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -7814,7 +7912,7 @@ class UpdateRunsOperations:
         :param update_run_name: The name of the UpdateRun resource. Required.
         :type update_run_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.containerservicefleet.types.SkipProperties
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7892,6 +7990,8 @@ class UpdateRunsOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def begin_skip(
@@ -7899,7 +7999,7 @@ class UpdateRunsOperations:
         resource_group_name: str,
         fleet_name: str,
         update_run_name: str,
-        body: Union[_models.SkipProperties, JSON, IO[bytes]],
+        body: Union[_models.SkipProperties, _types.SkipProperties, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -7914,9 +8014,10 @@ class UpdateRunsOperations:
         :type fleet_name: str
         :param update_run_name: The name of the UpdateRun resource. Required.
         :type update_run_name: str
-        :param body: The content of the action request. Is one of the following types: SkipProperties,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.containerservicefleet.models.SkipProperties or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a SkipProperties type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.containerservicefleet.models.SkipProperties or
+         ~azure.mgmt.containerservicefleet.types.SkipProperties or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -7983,7 +8084,7 @@ class UpdateRunsOperations:
         )
 
 
-class FleetUpdateStrategiesOperations:
+class FleetUpdateStrategiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8026,6 +8127,8 @@ class FleetUpdateStrategiesOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def get(
@@ -8128,6 +8231,8 @@ class FleetUpdateStrategiesOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def _create_or_update_initial(
@@ -8135,7 +8240,7 @@ class FleetUpdateStrategiesOperations:
         resource_group_name: str,
         fleet_name: str,
         update_strategy_name: str,
-        resource: Union[_models.FleetUpdateStrategy, JSON, IO[bytes]],
+        resource: Union[_models.FleetUpdateStrategy, _types.FleetUpdateStrategy, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -8262,7 +8367,7 @@ class FleetUpdateStrategiesOperations:
         resource_group_name: str,
         fleet_name: str,
         update_strategy_name: str,
-        resource: JSON,
+        resource: _types.FleetUpdateStrategy,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -8279,7 +8384,7 @@ class FleetUpdateStrategiesOperations:
         :param update_strategy_name: The name of the UpdateStrategy resource. Required.
         :type update_strategy_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.containerservicefleet.types.FleetUpdateStrategy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8361,6 +8466,8 @@ class FleetUpdateStrategiesOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def begin_create_or_update(
@@ -8368,7 +8475,7 @@ class FleetUpdateStrategiesOperations:
         resource_group_name: str,
         fleet_name: str,
         update_strategy_name: str,
-        resource: Union[_models.FleetUpdateStrategy, JSON, IO[bytes]],
+        resource: Union[_models.FleetUpdateStrategy, _types.FleetUpdateStrategy, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -8383,10 +8490,10 @@ class FleetUpdateStrategiesOperations:
         :type fleet_name: str
         :param update_strategy_name: The name of the UpdateStrategy resource. Required.
         :type update_strategy_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         FleetUpdateStrategy, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.containerservicefleet.models.FleetUpdateStrategy or JSON or
-         IO[bytes]
+        :param resource: Resource create parameters. Is either a FleetUpdateStrategy type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.containerservicefleet.models.FleetUpdateStrategy or
+         ~azure.mgmt.containerservicefleet.types.FleetUpdateStrategy or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -8477,6 +8584,8 @@ class FleetUpdateStrategiesOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def _delete_initial(
@@ -8581,6 +8690,8 @@ class FleetUpdateStrategiesOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def begin_delete(
@@ -8683,6 +8794,8 @@ class FleetUpdateStrategiesOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def list_by_fleet(
@@ -8801,7 +8914,7 @@ class FleetUpdateStrategiesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AutoUpgradeProfilesOperations:
+class AutoUpgradeProfilesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8840,6 +8953,8 @@ class AutoUpgradeProfilesOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def get(
@@ -8938,6 +9053,8 @@ class AutoUpgradeProfilesOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def _create_or_update_initial(
@@ -8945,7 +9062,7 @@ class AutoUpgradeProfilesOperations:
         resource_group_name: str,
         fleet_name: str,
         auto_upgrade_profile_name: str,
-        resource: Union[_models.AutoUpgradeProfile, JSON, IO[bytes]],
+        resource: Union[_models.AutoUpgradeProfile, _types.AutoUpgradeProfile, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -9075,7 +9192,7 @@ class AutoUpgradeProfilesOperations:
         resource_group_name: str,
         fleet_name: str,
         auto_upgrade_profile_name: str,
-        resource: JSON,
+        resource: _types.AutoUpgradeProfile,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -9092,7 +9209,7 @@ class AutoUpgradeProfilesOperations:
         :param auto_upgrade_profile_name: The name of the AutoUpgradeProfile resource. Required.
         :type auto_upgrade_profile_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.containerservicefleet.types.AutoUpgradeProfile
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9170,6 +9287,8 @@ class AutoUpgradeProfilesOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def begin_create_or_update(
@@ -9177,7 +9296,7 @@ class AutoUpgradeProfilesOperations:
         resource_group_name: str,
         fleet_name: str,
         auto_upgrade_profile_name: str,
-        resource: Union[_models.AutoUpgradeProfile, JSON, IO[bytes]],
+        resource: Union[_models.AutoUpgradeProfile, _types.AutoUpgradeProfile, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -9192,10 +9311,10 @@ class AutoUpgradeProfilesOperations:
         :type fleet_name: str
         :param auto_upgrade_profile_name: The name of the AutoUpgradeProfile resource. Required.
         :type auto_upgrade_profile_name: str
-        :param resource: Resource create parameters. Is one of the following types: AutoUpgradeProfile,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.containerservicefleet.models.AutoUpgradeProfile or JSON or
-         IO[bytes]
+        :param resource: Resource create parameters. Is either a AutoUpgradeProfile type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.containerservicefleet.models.AutoUpgradeProfile or
+         ~azure.mgmt.containerservicefleet.types.AutoUpgradeProfile or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -9282,6 +9401,8 @@ class AutoUpgradeProfilesOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def _delete_initial(
@@ -9382,6 +9503,8 @@ class AutoUpgradeProfilesOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def begin_delete(
@@ -9480,6 +9603,8 @@ class AutoUpgradeProfilesOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def list_by_fleet(
@@ -9598,7 +9723,7 @@ class AutoUpgradeProfilesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AutoUpgradeProfileOperationsOperations:
+class AutoUpgradeProfileOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9635,6 +9760,8 @@ class AutoUpgradeProfileOperationsOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def _generate_update_run_initial(
@@ -9721,6 +9848,8 @@ class AutoUpgradeProfileOperationsOperations:
             "2025-08-01-preview",
             "2026-02-01-preview",
             "2026-03-02-preview",
+            "2026-06-01",
+            "2026-06-02-preview",
         ],
     )
     def begin_generate_update_run(

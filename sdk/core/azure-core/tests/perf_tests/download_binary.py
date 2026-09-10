@@ -5,7 +5,7 @@
 
 from time import time
 from wsgiref.handlers import format_date_time
-from devtools_testutils.perfstress_tests import get_random_bytes, WriteStream
+from devtools_testutils.perfstress_tests import get_random_bytes
 
 from azure.core.exceptions import (
     HttpResponseError,

@@ -1,14 +1,31 @@
 ## Release History
+> [!IMPORTANT]
+> We strongly recommend that customers use at least version 4.16.3 of `azure-cosmos`.
 
-### 4.16.3 (Unreleased)
+### 4.17.0 (2026-09-09)
 
 #### Features Added
-
-#### Breaking Changes
+* Added the `enable_compact_utf8_item_writes` client option. Set it to `True` to reduce item write request sizes by
+  serializing valid Unicode as compact UTF-8 for create, upsert, replace, patch, and transactional batch operations.
+  See [PR 48914](https://github.com/Azure/azure-sdk-for-python/pull/48914).
 
 #### Bugs Fixed
+* Fixed sync and async item PATCH requests to explicitly send the registered `application/json-patch+json`
+  content type. See [PR 48914](https://github.com/Azure/azure-sdk-for-python/pull/48914).
+
+### 4.16.4 (2026-09-02)
+
+#### Bugs Fixed
+* Fixed regression with handling of v1 legacy containers when passing `{}` as a partition key. `{}` and `NonePartitionKeyValue` now both resolve to the `Undefined` effective partition key. See [PR 48422](https://github.com/Azure/azure-sdk-for-python/pull/48422)
+* Fixed the same `TypeError` on system key (migrated) containers, where a missing partition key value resolves to `_Empty` instead of `Undefined`. It now maps to the minimum effective partition key. See [PR 48422](https://github.com/Azure/azure-sdk-for-python/pull/48422)
 
 #### Other Changes
+* Marked the Throughput Buckets feature as GA. See [48838](https://github.com/Azure/azure-sdk-for-python/pull/48838).
+
+### 4.16.3 (2026-07-29)
+
+#### Bugs Fixed
+* Fixed regression introduced in 4.16.0 on [47105](https://github.com/Azure/azure-sdk-for-python/pull/47105) for complete-partition-key queries scanning documents instead of using partition-key routing, which caused excessive RU consumption and latency for aggregates such as `COUNT`. See [PR 48237](https://github.com/Azure/azure-sdk-for-python/pull/48237)
 
 ### 4.16.2 (2026-07-15)
 
@@ -76,8 +93,6 @@
 * Enhanced error logging by attaching endpoint information to exceptions during database account retrieval. See [PR 44484](https://github.com/Azure/azure-sdk-for-python/pull/44484)
 
 ### 4.15.0 (2026-02-19)
-> [!IMPORTANT]
-> We strongly recommend that customers use at least version 4.15.0 of `azure-cosmos`.
 
 #### Features Added
 * GA support of Per Partition Automatic Failover and AvailabilityStrategy features.

@@ -1,6 +1,13 @@
 # Release History
 
-## 1.3.0 (2026-07-20)
+## 1.3.1 (Unreleased)
+
+### Other Changes
+
+- The SDK now identifies Voice Live WebSocket connections through the `User-Agent` header and
+  `x-ms-client-sdk` query parameter.
+
+## 1.3.0 (2026-08-03)
 
 ### Features Added
 

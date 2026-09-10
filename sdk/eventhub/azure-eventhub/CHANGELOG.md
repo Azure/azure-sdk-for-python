@@ -5,6 +5,7 @@
 ### Bugs Fixed
 
 - Fixed a bug where the async pure-Python AMQP transport failed to connect with `[Errno 22] Invalid argument` (`amqp:socket-error`) inside containerized/virtualized environments such as Docker Desktop on macOS. The transport no longer reads back and re-applies platform-negotiated TCP options (e.g. `TCP_MAXSEG`) that some platforms reject via `setsockopt`. Also fixed the async transport to apply default TCP socket settings even when no custom `socket_settings` are provided. ([#45394](https://github.com/Azure/azure-sdk-for-python/issues/45394))
+- Fixed a bug in the pyAMQP transport where decoding an incoming performative whose trailing null fields were omitted by the sender (permitted by AMQP 1.0 section 1.4) raised `IndexError`/`TypeError`. The decoded field list is now padded to the performative's full field count so omitted trailing fields read back as their AMQP-defined default, including the compact `list0` encoding where every field is omitted. A field encoded as an explicit null but whose declared default is non-null (for example a `max_frame_size` set to null so the connection would compare `None < 512`) now also reads back as that default.
 
 ## 5.15.1 (2025-11-11)
 

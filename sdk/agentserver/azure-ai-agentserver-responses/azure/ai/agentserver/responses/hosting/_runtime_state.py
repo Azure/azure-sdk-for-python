@@ -6,11 +6,40 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
-from typing import Any
+from typing import Any, cast
 
-from ..models._generated import OutputItem
+from ..models import OutputItem
 from ..models.runtime import ResponseExecution
 from ..streaming._helpers import strip_nulls
+
+
+def _json_safe_agent_reference(value: Any) -> dict[str, Any]:
+    """Normalize an agent reference to a plain JSON-safe dict for snapshots.
+
+    The gateway-injected ``AgentReference`` model is a Mapping but is not
+    ``json.dumps``-serializable; the status-only fallback snapshot must therefore
+    coerce it to a dict before it reaches a ``JSONResponse``.
+
+    :param value: An ``AgentReference`` model, a mapping, or ``None``.
+    :type value: Any
+    :returns: A JSON-safe dict (``{}`` when absent).
+    :rtype: dict[str, Any]
+    """
+    if not value:
+        return {}
+    if isinstance(value, dict):
+        return dict(value)
+    as_dict = getattr(value, "as_dict", None)
+    if callable(as_dict):
+        return cast("dict[str, Any]", as_dict())
+    try:
+        return dict(value)
+    except (TypeError, ValueError):
+        return {
+            "type": getattr(value, "type", "agent_reference"),
+            "name": getattr(value, "name", None),
+            "version": getattr(value, "version", None),
+        }
 
 
 class _RuntimeState:
@@ -78,7 +107,7 @@ class _RuntimeState:
 
         Unlike :meth:`delete`, eviction does **not** mark the response as
         deleted — it simply removes the runtime record so that subsequent
-        requests fall through to the durable provider (storage).
+        requests fall through to the resilient provider (storage).
 
         Only records in a terminal status are evicted.  Non-terminal records
         are left untouched so that in-flight operations remain correct.
@@ -101,7 +130,7 @@ class _RuntimeState:
         """Mark a response ID as deleted without requiring a runtime record.
 
         Used by the delete handler's provider fallback path when the record
-        has already been evicted from memory but still exists in durable storage.
+        has already been evicted from memory but still exists in persistent storage.
 
         :param response_id: The response ID to mark as deleted.
         :type response_id: str
@@ -181,8 +210,8 @@ class _RuntimeState:
     def to_snapshot(execution: ResponseExecution) -> dict[str, Any]:
         """Build a normalized response snapshot dictionary from an execution.
 
-        Uses ``execution.response.as_dict()`` directly when a response snapshot is
-        available, avoiding an unnecessary ``Response(dict).as_dict()`` round-trip.
+        Uses the execution's response dict directly when a response snapshot is
+        available.
         Falls back to a minimal status-only dict when no response has been set yet.
 
         :param execution: The execution whose response snapshot to build.
@@ -191,7 +220,7 @@ class _RuntimeState:
         :rtype: dict[str, Any]
         """
         if execution.response is not None:
-            result: dict[str, Any] = execution.response.as_dict()
+            result: dict[str, Any] = deepcopy(dict(execution.response))
             result.setdefault("id", execution.response_id)
             result.setdefault("response_id", execution.response_id)
             result.setdefault("object", "response")
@@ -210,7 +239,7 @@ class _RuntimeState:
             "created_at": int(execution.created_at.timestamp()),
             "output": [],
             "model": execution.initial_model,
-            "agent_reference": deepcopy(execution.initial_agent_reference) or {},
+            "agent_reference": _json_safe_agent_reference(execution.initial_agent_reference),
         }
         # S-038 / S-040: forcibly stamp session & conversation on fallback path
         if execution.agent_session_id is not None:

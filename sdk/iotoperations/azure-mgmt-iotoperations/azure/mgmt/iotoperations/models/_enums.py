@@ -409,6 +409,17 @@ class FilterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Filter type."""
 
 
+class HighPriorityMessagesBackpressureHandling(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Handling of high-priority messages during backpressure state."""
+
+    ACCEPT = "Accept"
+    """When the broker rejects regular-priority messages due to backpressure, it continues to accept
+    high-priority messages."""
+    REJECT = "Reject"
+    """When the broker rejects regular-priority messages due to backpressure, it also rejects
+    high-priority messages."""
+
+
 class InstanceFeatureMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The enum defining mode of a feature."""
 

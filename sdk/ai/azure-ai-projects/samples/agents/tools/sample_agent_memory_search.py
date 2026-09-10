@@ -50,7 +50,7 @@ from azure.ai.projects.models import (
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-AGENT_NAME = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+AGENT_NAME = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 
 credential = DefaultAzureCredential()
 project_client = AIProjectClient(endpoint=endpoint, credential=credential)

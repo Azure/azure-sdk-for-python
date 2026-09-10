@@ -33,9 +33,9 @@ class ConnectedCacheMgmtClientConfiguration:  # pylint: disable=too-many-instanc
     :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :type cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2024-11-30-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-06-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -47,7 +47,7 @@ class ConnectedCacheMgmtClientConfiguration:  # pylint: disable=too-many-instanc
         cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-11-30-preview")
+        api_version: str = kwargs.pop("api_version", "2026-06-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

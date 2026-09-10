@@ -21,7 +21,10 @@ USAGE:
 import os
 import pytest
 from devtools_testutils import recorded_by_proxy
-from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
+from testpreparer import (
+    ContentUnderstandingPreparer,
+    ContentUnderstandingClientTestBase,
+)
 from azure.ai.contentunderstanding.models import AnalysisInput
 
 

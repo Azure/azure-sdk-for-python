@@ -11,9 +11,10 @@ from pytest_mock import MockFixture
 from test_utilities.utils import omit_with_wildcard, verify_entity_load_and_dump
 
 from azure.ai.ml import Input, MLClient, dsl, load_component, load_job
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase as RestJob
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
+from azure.core.serialization import as_attribute_dict
 from azure.ai.ml.automl import classification
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.dsl import pipeline
@@ -27,18 +28,60 @@ from azure.ai.ml.entities._job.automl.image import (
     ImageInstanceSegmentationJob,
     ImageObjectDetectionJob,
 )
-from azure.ai.ml.entities._job.automl.nlp import TextClassificationJob, TextClassificationMultilabelJob, TextNerJob
-from azure.ai.ml.entities._job.automl.tabular import ClassificationJob, ForecastingJob, RegressionJob
-from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
+from azure.ai.ml.entities._job.automl.nlp import (
+    TextClassificationJob,
+    TextClassificationMultilabelJob,
+    TextNerJob,
+)
+from azure.ai.ml.entities._job.automl.tabular import (
+    ClassificationJob,
+    ForecastingJob,
+    RegressionJob,
+)
+from azure.ai.ml.entities._job.job_resource_configuration import (
+    JobResourceConfiguration,
+)
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
 from azure.ai.ml.exceptions import ValidationException
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 
 
+def _rest_job_from_dict(job_dict):
+    """Build an arm JobBase from a (msrest-era) rest fixture.
+
+    arm ``JobBase._deserialize`` expects camelCase wire keys, but these fixtures are authored in
+    snake_case (fully, or just for the input/output ``*_type`` discriminators). Camelize the
+    envelope + ``properties`` schema field keys and the input/output *field* keys (never the
+    user-defined input/output/job names, nor free-form ``tags``/``properties``/``settings``/``jobs``
+    values, which downstream entity code reads as-is) so the arm discriminators resolve.
+    """
+    from azure.ai.ml._utils.utils import snake_to_camel
+
+    d = json.loads(json.dumps(job_dict))
+    d = {snake_to_camel(k): v for k, v in d.items()}
+    props = d.get("properties")
+    if isinstance(props, dict):
+        new_props = {}
+        for k, v in props.items():
+            ck = snake_to_camel(k)
+            if k in ("inputs", "outputs") and isinstance(v, dict):
+                new_props[ck] = {
+                    name: (
+                        {snake_to_camel(fk): fv for fk, fv in fields.items()} if isinstance(fields, dict) else fields
+                    )
+                    for name, fields in v.items()
+                }
+            else:
+                # jobs / tags / properties / settings values are free-form and read as-is downstream.
+                new_props[ck] = v
+        d["properties"] = new_props
+    return RestJob._deserialize(d, [])
+
+
 def load_pipeline_entity_from_rest_json(job_dict) -> PipelineJob:
     """Rest pipeline json -> rest pipeline object -> pipeline entity"""
-    rest_obj = RestJob.from_dict(json.loads(json.dumps(job_dict)))
+    rest_obj = _rest_job_from_dict(job_dict)
     internal_pipeline = PipelineJob._from_rest_object(rest_obj)
     return internal_pipeline
 
@@ -67,9 +110,13 @@ class TestPipelineJobEntity:
         ]
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
@@ -78,7 +125,10 @@ class TestPipelineJobEntity:
 
         expected_dict = {
             "featurization": {"mode": "off"},
-            "limits": {"max_concurrent_trials": 1, "max_trials": "${{parent.inputs.max_trials}}"},
+            "limits": {
+                "max_concurrent_trials": 1,
+                "max_trials": "${{parent.inputs.max_trials}}",
+            },
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "${{parent.inputs.primary_metric}}",
@@ -105,14 +155,21 @@ class TestPipelineJobEntity:
         node = next(iter(job.jobs.values()))
         assert isinstance(node, ClassificationJob)
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
         omit_fields = ["name", "display_name", "experiment_name", "properties"]
-        actual_dict = pydash.omit(rest_job_dict["properties"]["jobs"]["hello_automl_classification"], omit_fields)
+        actual_dict = pydash.omit(
+            rest_job_dict["properties"]["jobs"]["hello_automl_classification"],
+            omit_fields,
+        )
 
         assert actual_dict == {
             "featurization": {"mode": "auto"},
@@ -137,9 +194,13 @@ class TestPipelineJobEntity:
         node = next(iter(job.jobs.values()))
         assert isinstance(node, ForecastingJob)
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
@@ -158,7 +219,11 @@ class TestPipelineJobEntity:
             "training": {"enable_stack_ensemble": False, "enable_vote_ensemble": False},
             "training_data": "${{parent.inputs.forecasting_train_data}}",
             "type": "automl",
-            "forecasting": {"forecast_horizon": 12, "time_column_name": "DATE", "frequency": "MS"},
+            "forecasting": {
+                "forecast_horizon": 12,
+                "time_column_name": "DATE",
+                "frequency": "MS",
+            },
             "n_cross_validations": 2,
         }
 
@@ -206,7 +271,7 @@ class TestPipelineJobEntity:
         rest_job_file = "./tests/test_configs/pipeline_jobs/invalid/with_invalid_job_input_type_mode.json"
         with open(rest_job_file, "r") as f:
             job_dict = yaml.safe_load(f)
-        rest_obj = RestJob.from_dict(json.loads(json.dumps(job_dict)))
+        rest_obj = _rest_job_from_dict(job_dict)
         pipeline = PipelineJob._from_rest_object(rest_obj)
         pipeline_dict = pipeline._to_dict()
         assert pydash.omit(pipeline_dict["jobs"], *["properties", "hello_python_world_job.properties"]) == {
@@ -233,10 +298,16 @@ class TestPipelineJobEntity:
 
         pipeline_rest_dict = pipeline._to_rest_object().as_dict()
         pipeline_rest_dict["properties"]["inputs"] == {
-            "pipeline_sample_input_string": {"job_input_type": "literal", "value": "Hello_Pipeline_World"}
+            "pipeline_sample_input_string": {
+                "job_input_type": "literal",
+                "value": "Hello_Pipeline_World",
+            }
         }
         pipeline_rest_dict["properties"]["outputs"] == {
-            "pipeline_sample_output_data": {"mode": "Upload", "job_output_type": "uri_folder"}
+            "pipeline_sample_output_data": {
+                "mode": "Upload",
+                "job_output_type": "uri_folder",
+            }
         }
         pipeline_rest_dict["properties"]["jobs"] == {
             "hello_python_world_job": {
@@ -298,14 +369,25 @@ class TestPipelineJobEntity:
         pipeline: PipelineJob = load_job(source=test_path)
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(pipeline)
 
         pipeline_dict = pipeline._to_rest_object().as_dict()
 
-        fields_to_omit = ["name", "display_name", "training_data", "validation_data", "experiment_name", "properties"]
+        fields_to_omit = [
+            "name",
+            "display_name",
+            "training_data",
+            "validation_data",
+            "experiment_name",
+            "properties",
+        ]
 
         automl_actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["regression_node"], fields_to_omit)
 
@@ -347,14 +429,21 @@ class TestPipelineJobEntity:
         node = next(iter(job.jobs.values()))
         assert isinstance(node, TextClassificationJob)
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
         omit_fields = ["name", "display_name", "experiment_name", "properties"]
-        actual_dict = pydash.omit(rest_job_dict["properties"]["jobs"]["automl_text_classification"], omit_fields)
+        actual_dict = pydash.omit(
+            rest_job_dict["properties"]["jobs"]["automl_text_classification"],
+            omit_fields,
+        )
 
         assert actual_dict == {
             "featurization": {"dataset_language": "eng"},
@@ -381,15 +470,20 @@ class TestPipelineJobEntity:
         node = next(iter(job.jobs.values()))
         assert isinstance(node, TextClassificationMultilabelJob)
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
         omit_fields = ["name", "display_name", "experiment_name", "properties"]
         actual_dict = pydash.omit(
-            rest_job_dict["properties"]["jobs"]["automl_text_classification_multilabel"], omit_fields
+            rest_job_dict["properties"]["jobs"]["automl_text_classification_multilabel"],
+            omit_fields,
         )
 
         assert actual_dict == {
@@ -412,9 +506,13 @@ class TestPipelineJobEntity:
         node = next(iter(job.jobs.values()))
         assert isinstance(node, TextNerJob)
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
@@ -459,17 +557,25 @@ class TestPipelineJobEntity:
             "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
             return_value="xxx",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
         omit_fields = ["name", "display_name", "experiment_name", "properties"]
         actual_dict = pydash.omit(
-            rest_job_dict["properties"]["jobs"]["hello_automl_image_multiclass_classification"], omit_fields
+            rest_job_dict["properties"]["jobs"]["hello_automl_image_multiclass_classification"],
+            omit_fields,
         )
 
         expected_dict = {
-            "limits": {"timeout_minutes": 60, "max_concurrent_trials": 4, "max_trials": 20},
+            "limits": {
+                "timeout_minutes": 60,
+                "max_concurrent_trials": 4,
+                "max_trials": 20,
+            },
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -536,17 +642,25 @@ class TestPipelineJobEntity:
             "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
             return_value="xxx",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
         omit_fields = ["name", "display_name", "experiment_name", "properties"]
         actual_dict = pydash.omit(
-            rest_job_dict["properties"]["jobs"]["hello_automl_image_multilabel_classification"], omit_fields
+            rest_job_dict["properties"]["jobs"]["hello_automl_image_multilabel_classification"],
+            omit_fields,
         )
 
         expected_dict = {
-            "limits": {"timeout_minutes": 60, "max_concurrent_trials": 4, "max_trials": 20},
+            "limits": {
+                "timeout_minutes": 60,
+                "max_concurrent_trials": 4,
+                "max_trials": 20,
+            },
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "iou",
@@ -589,7 +703,11 @@ class TestPipelineJobEntity:
 
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_automl_node_in_pipeline_image_object_detection(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture, run_type: str, tmp_path: Path
+        self,
+        mock_machinelearning_client: MLClient,
+        mocker: MockFixture,
+        run_type: str,
+        tmp_path: Path,
     ):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_object_detection.yml"
 
@@ -609,17 +727,25 @@ class TestPipelineJobEntity:
             "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
             return_value="xxx",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
         omit_fields = ["name", "display_name", "experiment_name", "properties"]
         actual_dict = pydash.omit(
-            rest_job_dict["properties"]["jobs"]["hello_automl_image_object_detection"], omit_fields
+            rest_job_dict["properties"]["jobs"]["hello_automl_image_object_detection"],
+            omit_fields,
         )
 
         expected_dict = {
-            "limits": {"timeout_minutes": 60, "max_concurrent_trials": 4, "max_trials": 20},
+            "limits": {
+                "timeout_minutes": 60,
+                "max_concurrent_trials": 4,
+                "max_trials": 20,
+            },
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "mean_average_precision",
@@ -689,17 +815,25 @@ class TestPipelineJobEntity:
             "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
             return_value="xxx",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
         omit_fields = ["name", "display_name", "experiment_name", "properties"]
         actual_dict = pydash.omit(
-            rest_job_dict["properties"]["jobs"]["hello_automl_image_instance_segmentation"], omit_fields
+            rest_job_dict["properties"]["jobs"]["hello_automl_image_instance_segmentation"],
+            omit_fields,
         )
 
         expected_dict = {
-            "limits": {"timeout_minutes": 60, "max_concurrent_trials": 4, "max_trials": 20},
+            "limits": {
+                "timeout_minutes": 60,
+                "max_concurrent_trials": 4,
+                "max_trials": 20,
+            },
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "mean_average_precision",
@@ -750,9 +884,13 @@ class TestPipelineJobEntity:
         assert isinstance(node, Spark)
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
@@ -771,13 +909,24 @@ class TestPipelineJobEntity:
                 "spark.executor.instances": 1,
                 "spark.executor.memory": "1g",
             },
-            "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+            "entry": {
+                "file": "add_greeting_column.py",
+                "spark_job_entry_type": "SparkJobPythonEntry",
+            },
             "files": ["my_files.txt"],
             "identity": {"identity_type": "Managed"},
-            "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
+            "inputs": {
+                "file_input": {
+                    "job_input_type": "literal",
+                    "value": "${{parent.inputs.iris_data}}",
+                }
+            },
             "name": "add_greeting_column",
             "py_files": ["utils.zip"],
-            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.4.0"},
+            "resources": {
+                "instance_type": "standard_e4s_v3",
+                "runtime_version": "3.4.0",
+            },
             "type": "spark",
         }
         assert actual_dict == expected_dict
@@ -796,14 +945,25 @@ class TestPipelineJobEntity:
                 "spark.executor.instances": 1,
                 "spark.executor.memory": "1g",
             },
-            "entry": {"file": "count_by_row.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+            "entry": {
+                "file": "count_by_row.py",
+                "spark_job_entry_type": "SparkJobPythonEntry",
+            },
             "files": ["my_files.txt"],
             "identity": {"identity_type": "Managed"},
-            "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
+            "inputs": {
+                "file_input": {
+                    "job_input_type": "literal",
+                    "value": "${{parent.inputs.iris_data}}",
+                }
+            },
             "jars": ["scalaproj.jar"],
             "name": "count_by_row",
             "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
-            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.4.0"},
+            "resources": {
+                "instance_type": "standard_e4s_v3",
+                "runtime_version": "3.4.0",
+            },
             "type": "spark",
         }
         assert actual_dict == expected_dict
@@ -820,9 +980,13 @@ class TestPipelineJobEntity:
         assert result.passed is True
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
@@ -834,9 +998,19 @@ class TestPipelineJobEntity:
             "componentId": "",
             "computeId": "",
             "data_copy_mode": "merge_with_overwrite",
-            "inputs": {"folder1": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"}},
+            "inputs": {
+                "folder1": {
+                    "job_input_type": "literal",
+                    "value": "${{parent.inputs.cosmos_folder}}",
+                }
+            },
             "name": "copy_files",
-            "outputs": {"output_folder": {"type": "literal", "value": "${{parent.outputs.merged_blob}}"}},
+            "outputs": {
+                "output_folder": {
+                    "type": "literal",
+                    "value": "${{parent.outputs.merged_blob}}",
+                }
+            },
             "task": "copy_data",
             "type": "data_transfer",
         }
@@ -854,9 +1028,13 @@ class TestPipelineJobEntity:
         assert result.passed is True
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
@@ -869,11 +1047,22 @@ class TestPipelineJobEntity:
             "computeId": "",
             "data_copy_mode": "merge_with_overwrite",
             "inputs": {
-                "folder1": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"},
-                "folder2": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder_dup}}"},
+                "folder1": {
+                    "job_input_type": "literal",
+                    "value": "${{parent.inputs.cosmos_folder}}",
+                },
+                "folder2": {
+                    "job_input_type": "literal",
+                    "value": "${{parent.inputs.cosmos_folder_dup}}",
+                },
             },
             "name": "merge_files",
-            "outputs": {"output_folder": {"type": "literal", "value": "${{parent.outputs.merged_blob}}"}},
+            "outputs": {
+                "output_folder": {
+                    "type": "literal",
+                    "value": "${{parent.outputs.merged_blob}}",
+                }
+            },
             "task": "copy_data",
             "type": "data_transfer",
         }
@@ -893,9 +1082,13 @@ class TestPipelineJobEntity:
         assert result.passed is True
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
@@ -908,11 +1101,22 @@ class TestPipelineJobEntity:
             "componentId": "",
             "computeId": "",
             "inputs": {
-                "folder1": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"},
-                "folder2": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder_dup}}"},
+                "folder1": {
+                    "job_input_type": "literal",
+                    "value": "${{parent.inputs.cosmos_folder}}",
+                },
+                "folder2": {
+                    "job_input_type": "literal",
+                    "value": "${{parent.inputs.cosmos_folder_dup}}",
+                },
             },
             "name": "merge_files_job",
-            "outputs": {"output_folder": {"type": "literal", "value": "${{parent.outputs.merged_blob}}"}},
+            "outputs": {
+                "output_folder": {
+                    "type": "literal",
+                    "value": "${{parent.outputs.merged_blob}}",
+                }
+            },
             "type": "data_transfer",
             "task": "copy_data",
         }
@@ -932,16 +1136,20 @@ class TestPipelineJobEntity:
         assert result.passed is True
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         omit_fields = [
             "properties.jobs.snowflake_blob.componentId",
             "properties.jobs.snowflake_blob_node_input.componentId",
         ]
-        rest_job_dict = pydash.omit(job._to_rest_object().as_dict(), *omit_fields)
+        rest_job_dict = pydash.omit(as_attribute_dict(job._to_rest_object()), *omit_fields)
 
         assert rest_job_dict == {
             "properties": {
@@ -995,7 +1203,11 @@ class TestPipelineJobEntity:
                 },
                 "outputs": {},
                 "properties": {},
-                "settings": {"_source": "YAML.JOB", "default_compute": "", "default_datastore": ""},
+                "settings": {
+                    "_source": "YAML.JOB",
+                    "default_compute": "",
+                    "default_datastore": "",
+                },
                 "tags": {},
             }
         }
@@ -1014,15 +1226,19 @@ class TestPipelineJobEntity:
         assert result.passed is True
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         omit_fields = [
             "properties.jobs.snowflake_blob.componentId",
         ]
-        rest_job_dict = pydash.omit(job._to_rest_object().as_dict(), *omit_fields)
+        rest_job_dict = pydash.omit(as_attribute_dict(job._to_rest_object()), *omit_fields)
 
         assert rest_job_dict == {
             "properties": {
@@ -1042,7 +1258,11 @@ class TestPipelineJobEntity:
                             "stored_procedure": "SelectEmployeeByJobAndDepartment",
                             "stored_procedure_params": [
                                 {"name": "job", "type": "String", "value": "Engineer"},
-                                {"name": "department", "type": "String", "value": "Engineering"},
+                                {
+                                    "name": "department",
+                                    "type": "String",
+                                    "value": "Engineering",
+                                },
                             ],
                             "type": "database",
                         },
@@ -1052,7 +1272,11 @@ class TestPipelineJobEntity:
                 },
                 "outputs": {},
                 "properties": {},
-                "settings": {"_source": "YAML.JOB", "default_compute": "", "default_datastore": ""},
+                "settings": {
+                    "_source": "YAML.JOB",
+                    "default_compute": "",
+                    "default_datastore": "",
+                },
                 "tags": {},
             }
         }
@@ -1071,23 +1295,30 @@ class TestPipelineJobEntity:
         assert result.passed is True
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         omit_fields = [
             "properties.jobs.s3_blob.componentId",
             "properties.jobs.s3_blob_input.componentId",
         ]
-        rest_job_dict = pydash.omit(job._to_rest_object().as_dict(), *omit_fields)
+        rest_job_dict = pydash.omit(as_attribute_dict(job._to_rest_object()), *omit_fields)
 
         assert rest_job_dict == {
             "properties": {
                 "compute_id": "",
                 "description": "pipeline with data transfer components",
                 "inputs": {
-                    "connection_target": {"job_input_type": "literal", "value": "azureml:my-s3-connection"},
+                    "connection_target": {
+                        "job_input_type": "literal",
+                        "value": "azureml:my-s3-connection",
+                    },
                     "path_source_s3": {"job_input_type": "literal", "value": "test1/*"},
                 },
                 "is_archived": False,
@@ -1121,14 +1352,22 @@ class TestPipelineJobEntity:
                                 "uri": "azureml://datastores/workspaceblobstore/paths/importjob/${{name}}/output_dir/s3//",
                             }
                         },
-                        "source": {"connection": "azureml:my-s3-connection", "path": "test1/*", "type": "file_system"},
+                        "source": {
+                            "connection": "azureml:my-s3-connection",
+                            "path": "test1/*",
+                            "type": "file_system",
+                        },
                         "task": "import_data",
                         "type": "data_transfer",
                     },
                 },
                 "outputs": {},
                 "properties": {},
-                "settings": {"_source": "YAML.JOB", "default_compute": "", "default_datastore": ""},
+                "settings": {
+                    "_source": "YAML.JOB",
+                    "default_compute": "",
+                    "default_datastore": "",
+                },
                 "tags": {},
             }
         }
@@ -1147,16 +1386,20 @@ class TestPipelineJobEntity:
         assert result.passed is True
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         omit_fields = [
             "properties.jobs.blob_azuresql.componentId",
             "properties.jobs.blob_azuresql_node_input.componentId",
         ]
-        rest_job_dict = pydash.omit(job._to_rest_object().as_dict(), *omit_fields)
+        rest_job_dict = pydash.omit(as_attribute_dict(job._to_rest_object()), *omit_fields)
 
         assert rest_job_dict == {
             "properties": {
@@ -1177,7 +1420,10 @@ class TestPipelineJobEntity:
                         "_source": "BUILTIN",
                         "computeId": "",
                         "inputs": {
-                            "source": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"}
+                            "source": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.cosmos_folder}}",
+                            }
                         },
                         "name": "blob_azuresql",
                         "sink": {
@@ -1204,7 +1450,11 @@ class TestPipelineJobEntity:
                 },
                 "outputs": {},
                 "properties": {},
-                "settings": {"_source": "YAML.JOB", "default_compute": "", "default_datastore": ""},
+                "settings": {
+                    "_source": "YAML.JOB",
+                    "default_compute": "",
+                    "default_datastore": "",
+                },
                 "tags": {},
             }
         }
@@ -1221,12 +1471,16 @@ class TestPipelineJobEntity:
         assert result.passed is True
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
-        rest_job_dict = job._to_rest_object().as_dict()
+        rest_job_dict = as_attribute_dict(job._to_rest_object())
         omit_fields = [
             "properties.jobs.*.componentId",
         ]
@@ -1264,14 +1518,22 @@ class TestPipelineJobEntity:
                         "computeId": "",
                         "data_copy_mode": "merge_with_overwrite",
                         "inputs": {
-                            "folder1": {"job_input_type": "literal", "value": "${{parent.jobs.s3_blob.outputs.sink}}"},
+                            "folder1": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.jobs.s3_blob.outputs.sink}}",
+                            },
                             "folder2": {
                                 "job_input_type": "literal",
                                 "value": "${{parent.jobs.snowflake_blob.outputs.sink}}",
                             },
                         },
                         "name": "merge_files",
-                        "outputs": {"output_folder": {"type": "literal", "value": "${{parent.outputs.merged_blob}}"}},
+                        "outputs": {
+                            "output_folder": {
+                                "type": "literal",
+                                "value": "${{parent.outputs.merged_blob}}",
+                            }
+                        },
                         "task": "copy_data",
                         "type": "data_transfer",
                     },
@@ -1304,7 +1566,11 @@ class TestPipelineJobEntity:
                 },
                 "outputs": {"merged_blob": {"job_output_type": "uri_folder"}},
                 "properties": {},
-                "settings": {"_source": "YAML.JOB", "default_compute": "", "default_datastore": ""},
+                "settings": {
+                    "_source": "YAML.JOB",
+                    "default_compute": "",
+                    "default_datastore": "",
+                },
                 "tags": {},
             }
         }
@@ -1318,11 +1584,15 @@ class TestPipelineJobEntity:
             "jobs.sample_word.properties",
             "jobs.count_word.properties",
         ]
-        actual_job = pydash.omit(job._to_rest_object().properties.as_dict(), *omit_fields)
+        actual_job = pydash.omit(as_attribute_dict(job._to_rest_object().properties), *omit_fields)
         assert actual_job == {
             "description": "submit a shakespear sample and word spark job in pipeline",
             "inputs": {
-                "input1": {"job_input_type": "uri_file", "mode": "Direct", "uri": "./dataset/shakespeare.txt"},
+                "input1": {
+                    "job_input_type": "uri_file",
+                    "mode": "Direct",
+                    "uri": "./dataset/shakespeare.txt",
+                },
                 "sample_rate": {"job_input_type": "literal", "value": "0.01"},
             },
             "is_archived": False,
@@ -1338,13 +1608,22 @@ class TestPipelineJobEntity:
                         "spark.executor.instances": 4,
                         "spark.executor.memory": "2g",
                     },
-                    "entry": {"file": "wordcount.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+                    "entry": {
+                        "file": "wordcount.py",
+                        "spark_job_entry_type": "SparkJobPythonEntry",
+                    },
                     "identity": {"identity_type": "UserIdentity"},
                     "inputs": {
-                        "input1": {"job_input_type": "literal", "value": "${{parent.jobs.sample_word.outputs.output1}}"}
+                        "input1": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.jobs.sample_word.outputs.output1}}",
+                        }
                     },
                     "name": "count_word",
-                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.4.0"},
+                    "resources": {
+                        "instance_type": "standard_e4s_v3",
+                        "runtime_version": "3.4.0",
+                    },
                     "type": "spark",
                 },
                 "sample_word": {
@@ -1362,15 +1641,32 @@ class TestPipelineJobEntity:
                         "spark.executor.instances": 1,
                         "spark.executor.memory": "2g",
                     },
-                    "entry": {"file": "sampleword.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+                    "entry": {
+                        "file": "sampleword.py",
+                        "spark_job_entry_type": "SparkJobPythonEntry",
+                    },
                     "identity": {"identity_type": "UserIdentity"},
                     "inputs": {
-                        "input1": {"job_input_type": "literal", "value": "${{parent.inputs.input1}}"},
-                        "sample_rate": {"job_input_type": "literal", "value": "${{parent.inputs.sample_rate}}"},
+                        "input1": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.input1}}",
+                        },
+                        "sample_rate": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.sample_rate}}",
+                        },
                     },
                     "name": "sample_word",
-                    "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.output1}}"}},
-                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.4.0"},
+                    "outputs": {
+                        "output1": {
+                            "type": "literal",
+                            "value": "${{parent.outputs.output1}}",
+                        }
+                    },
+                    "resources": {
+                        "instance_type": "standard_e4s_v3",
+                        "runtime_version": "3.4.0",
+                    },
                     "type": "spark",
                 },
             },
@@ -1417,9 +1713,13 @@ class TestPipelineJobEntity:
         assert isinstance(node, Spark)
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
         result = job._validate()
         assert result.passed is True
@@ -1431,10 +1731,18 @@ class TestPipelineJobEntity:
             "componentId": "",
             "computeId": "",
             "identity": {"identity_type": "Managed"},
-            "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
+            "inputs": {
+                "file_input": {
+                    "job_input_type": "literal",
+                    "value": "${{parent.inputs.iris_data}}",
+                }
+            },
             "name": "kmeans_cluster",
             "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
-            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.4.0"},
+            "resources": {
+                "instance_type": "standard_e4s_v3",
+                "runtime_version": "3.4.0",
+            },
             "type": "spark",
         }
         assert actual_dict == expected_dict
@@ -1505,7 +1813,10 @@ class TestPipelineJobEntity:
                         "_source": "YAML.JOB",
                         "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
                         "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
-                        "inputs": {"model_input": {"type": "uri_folder"}, "test_data": {"type": "uri_folder"}},
+                        "inputs": {
+                            "model_input": {"type": "uri_folder"},
+                            "test_data": {"type": "uri_folder"},
+                        },
                         "is_deterministic": True,
                         "outputs": {"score_output": {"type": "uri_folder"}},
                         "type": "command",
@@ -1521,7 +1832,10 @@ class TestPipelineJobEntity:
                         "_source": "YAML.JOB",
                         "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
                         "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
-                        "inputs": {"model_input": {"type": "mltable"}, "test_data": {"type": "uri_folder"}},
+                        "inputs": {
+                            "model_input": {"type": "mltable"},
+                            "test_data": {"type": "uri_folder"},
+                        },
                         "is_deterministic": True,
                         "outputs": {"score_output": {"type": "uri_folder"}},
                         "type": "command",
@@ -1537,7 +1851,10 @@ class TestPipelineJobEntity:
                         "_source": "YAML.JOB",
                         "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
                         "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
-                        "inputs": {"model_input": {"type": "uri_folder"}, "test_data": {"type": "uri_folder"}},
+                        "inputs": {
+                            "model_input": {"type": "uri_folder"},
+                            "test_data": {"type": "uri_folder"},
+                        },
                         "is_deterministic": True,
                         "outputs": {"score_output": {"type": "uri_folder"}},
                         "type": "command",
@@ -1564,7 +1881,7 @@ class TestPipelineJobEntity:
 
         # check component of pipeline job is expected
         for name, expected_dict in expected_components.items():
-            actual_dict = pipeline_job.jobs[name].component._to_rest_object().as_dict()
+            actual_dict = as_attribute_dict(pipeline_job.jobs[name].component._to_rest_object())
             omit_fields = [
                 "name",
             ]
@@ -1577,12 +1894,16 @@ class TestPipelineJobEntity:
         job = load_job(source=test_path)
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
-        actual_dict = job._to_rest_object().as_dict()["properties"]
+        actual_dict = as_attribute_dict(job._to_rest_object())["properties"]
 
         assert actual_dict == {
             "properties": {},
@@ -1594,7 +1915,10 @@ class TestPipelineJobEntity:
                 "training_input": {"uri": "yyy/", "job_input_type": "uri_folder"},
                 "training_max_epochs": {"job_input_type": "literal", "value": "20"},
                 "training_learning_rate": {"job_input_type": "literal", "value": "1.8"},
-                "learning_rate_schedule": {"job_input_type": "literal", "value": "time-based"},
+                "learning_rate_schedule": {
+                    "job_input_type": "literal",
+                    "value": "time-based",
+                },
             },
             "jobs": {
                 "train_job": {
@@ -1603,7 +1927,10 @@ class TestPipelineJobEntity:
                     "name": "train_job",
                     "computeId": "xxx",
                     "inputs": {
-                        "training_data": {"job_input_type": "literal", "value": "${{parent.inputs.training_input}}"},
+                        "training_data": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.training_input}}",
+                        },
                         "learning_rate": {
                             "job_input_type": "literal",
                             "value": "${{parent.inputs.training_learning_rate}}",
@@ -1612,9 +1939,17 @@ class TestPipelineJobEntity:
                             "job_input_type": "literal",
                             "value": "${{parent.inputs.learning_rate_schedule}}",
                         },
-                        "max_epochs": {"job_input_type": "literal", "value": "${{parent.inputs.training_max_epochs}}"},
+                        "max_epochs": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.training_max_epochs}}",
+                        },
                     },
-                    "outputs": {"model_output": {"value": "${{parent.outputs.trained_model}}", "type": "literal"}},
+                    "outputs": {
+                        "model_output": {
+                            "value": "${{parent.outputs.trained_model}}",
+                            "type": "literal",
+                        }
+                    },
                     "componentId": "xxx",
                 }
             },
@@ -1629,12 +1964,16 @@ class TestPipelineJobEntity:
         job = load_job(source=test_path)
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
-        actual_dict = job._to_rest_object().as_dict()["properties"]
+        actual_dict = as_attribute_dict(job._to_rest_object())["properties"]
 
         assert actual_dict == {
             "properties": {},
@@ -1643,10 +1982,17 @@ class TestPipelineJobEntity:
             "compute_id": "xxx",
             "job_type": "Pipeline",
             "inputs": {
-                "training_input": {"uri": "yyy/", "job_input_type": "uri_folder", "mode": "ReadOnlyMount"},
+                "training_input": {
+                    "uri": "yyy/",
+                    "job_input_type": "uri_folder",
+                    "mode": "ReadOnlyMount",
+                },
                 "training_max_epochs": {"job_input_type": "literal", "value": "20"},
                 "training_learning_rate": {"job_input_type": "literal", "value": "1.8"},
-                "learning_rate_schedule": {"job_input_type": "literal", "value": "time-based"},
+                "learning_rate_schedule": {
+                    "job_input_type": "literal",
+                    "value": "time-based",
+                },
             },
             "jobs": {
                 "train_job": {
@@ -1655,7 +2001,10 @@ class TestPipelineJobEntity:
                     "name": "train_job",
                     "computeId": "xxx",
                     "inputs": {
-                        "training_data": {"job_input_type": "literal", "value": "${{parent.inputs.training_input}}"},
+                        "training_data": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.training_input}}",
+                        },
                         "learning_rate": {
                             "job_input_type": "literal",
                             "value": "${{parent.inputs.training_learning_rate}}",
@@ -1664,9 +2013,17 @@ class TestPipelineJobEntity:
                             "job_input_type": "literal",
                             "value": "${{parent.inputs.learning_rate_schedule}}",
                         },
-                        "max_epochs": {"job_input_type": "literal", "value": "${{parent.inputs.training_max_epochs}}"},
+                        "max_epochs": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.training_max_epochs}}",
+                        },
                     },
-                    "outputs": {"model_output": {"value": "${{parent.outputs.trained_model}}", "type": "literal"}},
+                    "outputs": {
+                        "model_output": {
+                            "value": "${{parent.outputs.trained_model}}",
+                            "type": "literal",
+                        }
+                    },
                     "componentId": "xxx",
                 }
             },
@@ -1681,12 +2038,16 @@ class TestPipelineJobEntity:
         job = load_job(source=test_path)
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
-        actual_dict = job._to_rest_object().as_dict()["properties"]
+        actual_dict = as_attribute_dict(job._to_rest_object())["properties"]
 
         assert pydash.omit(actual_dict, *["properties", "jobs.train_job.properties"]) == {
             "tags": {},
@@ -1700,7 +2061,10 @@ class TestPipelineJobEntity:
                 },
                 "training_max_epochs": {"job_input_type": "literal", "value": "20"},
                 "training_learning_rate": {"job_input_type": "literal", "value": "1.8"},
-                "learning_rate_schedule": {"job_input_type": "literal", "value": "time-based"},
+                "learning_rate_schedule": {
+                    "job_input_type": "literal",
+                    "value": "time-based",
+                },
             },
             "jobs": {
                 "train_job": {
@@ -1722,7 +2086,10 @@ class TestPipelineJobEntity:
                             "job_input_type": "literal",
                             "value": "${{parent.inputs.learning_rate_schedule}}",
                         },
-                        "max_epochs": {"job_input_type": "literal", "value": "${{parent.inputs.training_max_epochs}}"},
+                        "max_epochs": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.training_max_epochs}}",
+                        },
                     },
                     "outputs": {
                         # add mode in rest if binding output set mode
@@ -1746,12 +2113,16 @@ class TestPipelineJobEntity:
         job = load_job(source=test_path)
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
-        actual_dict = job._to_rest_object().as_dict()["properties"]
+        actual_dict = as_attribute_dict(job._to_rest_object())["properties"]
 
         assert pydash.omit(actual_dict, *["properties", "jobs.train_job.properties"]) == {
             "tags": {},
@@ -1759,10 +2130,17 @@ class TestPipelineJobEntity:
             "compute_id": "xxx",
             "job_type": "Pipeline",
             "inputs": {
-                "training_input": {"uri": "yyy/", "job_input_type": "uri_folder", "mode": "Download"},
+                "training_input": {
+                    "uri": "yyy/",
+                    "job_input_type": "uri_folder",
+                    "mode": "Download",
+                },
                 "training_max_epochs": {"job_input_type": "literal", "value": "20"},
                 "training_learning_rate": {"job_input_type": "literal", "value": "1.8"},
-                "learning_rate_schedule": {"job_input_type": "literal", "value": "time-based"},
+                "learning_rate_schedule": {
+                    "job_input_type": "literal",
+                    "value": "time-based",
+                },
             },
             "jobs": {
                 "train_job": {
@@ -1784,7 +2162,10 @@ class TestPipelineJobEntity:
                             "job_input_type": "literal",
                             "value": "${{parent.inputs.learning_rate_schedule}}",
                         },
-                        "max_epochs": {"job_input_type": "literal", "value": "${{parent.inputs.training_max_epochs}}"},
+                        "max_epochs": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.training_max_epochs}}",
+                        },
                     },
                     "outputs": {
                         # add mode in rest if binding output set mode
@@ -1797,7 +2178,12 @@ class TestPipelineJobEntity:
                     "componentId": "xxx",
                 }
             },
-            "outputs": {"trained_model": {"job_output_type": "uri_folder", "mode": "ReadWriteMount"}},
+            "outputs": {
+                "trained_model": {
+                    "job_output_type": "uri_folder",
+                    "mode": "ReadWriteMount",
+                }
+            },
             "settings": {"_source": "YAML.JOB"},
         }
 
@@ -1808,12 +2194,16 @@ class TestPipelineJobEntity:
         job = load_job(source=test_path)
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
         )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mocker.patch(
+            "azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri",
+            return_value="yyy",
+        )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
-        actual_dict = job._to_rest_object().as_dict()["properties"]
+        actual_dict = as_attribute_dict(job._to_rest_object())["properties"]
 
         assert pydash.omit(actual_dict, *["properties", "jobs.train_job.properties"]) == {
             "tags": {},
@@ -1821,10 +2211,17 @@ class TestPipelineJobEntity:
             "compute_id": "xxx",
             "job_type": "Pipeline",
             "inputs": {
-                "training_input": {"uri": "yyy/", "job_input_type": "uri_folder", "mode": "Download"},
+                "training_input": {
+                    "uri": "yyy/",
+                    "job_input_type": "uri_folder",
+                    "mode": "Download",
+                },
                 "training_max_epochs": {"job_input_type": "literal", "value": "20"},
                 "training_learning_rate": {"job_input_type": "literal", "value": "1.8"},
-                "learning_rate_schedule": {"job_input_type": "literal", "value": "time-based"},
+                "learning_rate_schedule": {
+                    "job_input_type": "literal",
+                    "value": "time-based",
+                },
             },
             "jobs": {
                 "train_job": {
@@ -1846,7 +2243,10 @@ class TestPipelineJobEntity:
                             "job_input_type": "literal",
                             "value": "${{parent.inputs.learning_rate_schedule}}",
                         },
-                        "max_epochs": {"job_input_type": "literal", "value": "${{parent.inputs.training_max_epochs}}"},
+                        "max_epochs": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.training_max_epochs}}",
+                        },
                     },
                     "outputs": {
                         # add mode in rest if binding output set mode
@@ -1859,7 +2259,12 @@ class TestPipelineJobEntity:
                     "componentId": "xxx",
                 }
             },
-            "outputs": {"trained_model": {"job_output_type": "uri_folder", "mode": "ReadWriteMount"}},
+            "outputs": {
+                "trained_model": {
+                    "job_output_type": "uri_folder",
+                    "mode": "ReadWriteMount",
+                }
+            },
             "settings": {"_source": "YAML.JOB"},
         }
 
@@ -1884,21 +2289,30 @@ class TestPipelineJobEntity:
             "component_in_boolean": {"path": "${{parent.inputs.group.sub_group.bool_param}}"},
             "component_in_ranged_number": {"path": "${{parent.inputs.group.number_param}}"},
         }
-        rest_job = job._to_rest_object().as_dict()["properties"]
+        rest_job = as_attribute_dict(job._to_rest_object())["properties"]
         assert rest_job["inputs"] == {
             "group.int_param": {"job_input_type": "literal", "value": "5"},
             "group.enum_param": {"job_input_type": "literal", "value": "hello"},
             "group.number_param": {"job_input_type": "literal", "value": "4.0"},
             "group.sub_group.str_param": {"job_input_type": "literal", "value": "str"},
-            "group.sub_group.bool_param": {"job_input_type": "literal", "value": "True"},
+            "group.sub_group.bool_param": {
+                "job_input_type": "literal",
+                "value": "True",
+            },
         }
         assert rest_job["jobs"]["hello_world_component_1"]["inputs"] == {
             "component_in_string": {
                 "job_input_type": "literal",
                 "value": "${{parent.inputs.group.sub_group.str_param}}",
             },
-            "component_in_ranged_integer": {"job_input_type": "literal", "value": "${{parent.inputs.group.int_param}}"},
-            "component_in_enum": {"job_input_type": "literal", "value": "${{parent.inputs.group.enum_param}}"},
+            "component_in_ranged_integer": {
+                "job_input_type": "literal",
+                "value": "${{parent.inputs.group.int_param}}",
+            },
+            "component_in_enum": {
+                "job_input_type": "literal",
+                "value": "${{parent.inputs.group.enum_param}}",
+            },
             "component_in_boolean": {
                 "job_input_type": "literal",
                 "value": "${{parent.inputs.group.sub_group.bool_param}}",
@@ -1924,7 +2338,10 @@ class TestPipelineJobEntity:
             "rai_insights_dashboard": {"path": "${{parent.jobs.create_rai_job.outputs.rai_insights_dashboard}}"},
         }
         rest_pipeline_dict = pipeline._to_rest_object().as_dict()
-        rest_node_dict = pydash.omit_by(rest_pipeline_dict["properties"]["jobs"]["error_analysis_job"], lambda x: not x)
+        rest_node_dict = pydash.omit_by(
+            rest_pipeline_dict["properties"]["jobs"]["error_analysis_job"],
+            lambda x: not x,
+        )
         # Assert integer value became str
         assert rest_node_dict == {
             "_source": "REMOTE.REGISTRY",
@@ -1987,8 +2404,14 @@ class TestPipelineJobEntity:
                 "computeId": "cpu-cluster",
                 "identity": {"identity_type": "UserIdentity"},
                 "inputs": {
-                    "component_in_number": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_number}}"},
-                    "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_path}}"},
+                    "component_in_number": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.job_in_number}}",
+                    },
+                    "component_in_path": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.job_in_path}}",
+                    },
                 },
                 "name": "hello_world_component",
                 "type": "command",
@@ -2001,7 +2424,10 @@ class TestPipelineJobEntity:
                         "job_input_type": "literal",
                         "value": "${{parent.inputs.job_in_other_number}}",
                     },
-                    "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_path}}"},
+                    "component_in_path": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.job_in_path}}",
+                    },
                 },
                 "name": "hello_world_component_2",
                 "type": "command",
@@ -2014,7 +2440,10 @@ class TestPipelineJobEntity:
                         "job_input_type": "literal",
                         "value": "${{parent.inputs.job_in_other_number}}",
                     },
-                    "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_path}}"},
+                    "component_in_path": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.job_in_path}}",
+                    },
                 },
                 "name": "hello_world_component_3",
                 "type": "command",
@@ -2039,7 +2468,12 @@ class TestPipelineJobEntity:
             description="This is the basic pipeline with empty_value",
         )
         def empty_value_pipeline(
-            integer: int, boolean: bool, number: float, str_param: str, empty_str: str, input_group: InputGroup
+            integer: int,
+            boolean: bool,
+            number: float,
+            str_param: str,
+            empty_str: str,
+            input_group: InputGroup,
         ):
             input_types_func(
                 component_in_string=str_param,
@@ -2052,7 +2486,12 @@ class TestPipelineJobEntity:
             input_types_func(component_in_string=input_group.group_none_str)
 
         pipeline = empty_value_pipeline(
-            integer=0, boolean=False, number=0, str_param="str_param", empty_str="", input_group=InputGroup()
+            integer=0,
+            boolean=False,
+            number=0,
+            str_param="str_param",
+            empty_str="",
+            input_group=InputGroup(),
         )
         rest_obj = pipeline._to_rest_object()
         # Currently MFE not support pass empty str or None as pipeline input.
@@ -2087,7 +2526,10 @@ class TestPipelineJobEntity:
 
         pipeline = empty_value_pipeline(integer=0, boolean=False, number=0, str_param="str_param", shm_size="20g")
         rest_obj = pipeline._to_rest_object()
-        expect_resource = {"instance_count": "${{parent.inputs.integer}}", "shm_size": "${{parent.inputs.shm_size}}"}
+        expect_resource = {
+            "instance_count": "${{parent.inputs.integer}}",
+            "shm_size": "${{parent.inputs.shm_size}}",
+        }
         assert rest_obj.properties.jobs["component"]["resources"] == expect_resource
 
     def test_pipeline_job_serverless_compute_with_job_tier(self) -> None:
@@ -2178,18 +2620,29 @@ class TestPipelineJobEntity:
                         "job_input_type": "literal",
                         "value": "text-davinci-003",
                     },
-                    "data": {"job_input_type": "literal", "value": "${{parent.inputs.web_classification_input}}"},
+                    "data": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.web_classification_input}}",
+                    },
                     "url": {"job_input_type": "literal", "value": "${data.url}"},
                 },
                 "name": "anonymous_parallel_flow",
-                "outputs": {"flow_outputs": {"type": "literal", "value": "${{parent.outputs.output_data}}"}},
+                "outputs": {
+                    "flow_outputs": {
+                        "type": "literal",
+                        "value": "${{parent.outputs.output_data}}",
+                    }
+                },
                 "type": "parallel",
             },
             "anonymous_parallel_flow_from_run": {
                 "_source": "YAML.COMPONENT",
                 "componentId": dummy_component_arm_id,
                 "inputs": {
-                    "data": {"job_input_type": "literal", "value": "${{parent.inputs.basic_input}}"},
+                    "data": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.basic_input}}",
+                    },
                     "text": {"job_input_type": "literal", "value": "${data.text}"},
                 },
                 "name": "anonymous_parallel_flow_from_run",

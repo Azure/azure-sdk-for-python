@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 import copy
+import json
 import os
 import shutil
 import signal
@@ -83,7 +84,11 @@ def omit_with_wildcard(obj, *properties: str):
 
 
 def prepare_dsl_curated(
-    pipeline: PipelineJob, job_yaml, omit_fields=None, enable_default_omit_fields=True, in_rest=False
+    pipeline: PipelineJob,
+    job_yaml,
+    omit_fields=None,
+    enable_default_omit_fields=True,
+    in_rest=False,
 ):
     """
     Prepare the dsl pipeline for curated test.
@@ -93,8 +98,15 @@ def prepare_dsl_curated(
         omit_fields = []
     pipeline_from_yaml = load_job(source=job_yaml)
     if in_rest:
-        dsl_pipeline_job_dict = pipeline._to_rest_object().as_dict()  # pylint: disable=protected-access
-        pipeline_job_dict = pipeline_from_yaml._to_rest_object().as_dict()  # pylint: disable=protected-access
+        # ``as_dict`` produces the wire dict for the arm_ml_service hybrid rest model; the ``json``
+        # round-trip with ``default=str`` stringifies any residual data-binding expression objects
+        # (as the legacy msrest ``serialize`` did) so the two dicts compare cleanly.
+        dsl_pipeline_job_dict = json.loads(
+            json.dumps(pipeline._to_rest_object().as_dict(), default=str)  # pylint: disable=protected-access
+        )
+        pipeline_job_dict = json.loads(
+            json.dumps(pipeline_from_yaml._to_rest_object().as_dict(), default=str)  # pylint: disable=protected-access
+        )
 
         if enable_default_omit_fields:
             omit_fields.extend(
@@ -108,6 +120,16 @@ def prepare_dsl_curated(
                     "properties.jobs.*.trial.properties.componentSpec.schema",
                     "properties.jobs.*.trial.properties.isAnonymous",
                     "properties.jobs.*.trial.properties.componentSpec._source",
+                    # The arm_ml_service hybrid ``as_dict`` renders the nested sweep trial with snake_case
+                    # keys (``component_spec``/``is_anonymous``) rather than the legacy msrest camelCase;
+                    # omit both spellings so DSL-vs-YAML equivalence still holds after the client swap.
+                    "properties.jobs.*.trial.name",
+                    "properties.jobs.*.trial.properties.is_anonymous",
+                    "properties.jobs.*.trial.properties.component_spec.name",
+                    "properties.jobs.*.trial.properties.component_spec.version",
+                    "properties.jobs.*.trial.properties.component_spec.$schema",
+                    "properties.jobs.*.trial.properties.component_spec.schema",
+                    "properties.jobs.*.trial.properties.component_spec._source",
                     "properties.settings",
                     "properties.jobs.*.trial.properties.properties.client_component_hash",
                 ]
@@ -152,7 +174,11 @@ def submit_and_wait(ml_client, pipeline_job: PipelineJob, expected_state: str = 
 
 
 def assert_final_job_status(
-    job, client: MLClient, job_type: Job, expected_terminal_status: str, deadline: int = DEFAULT_TASK_TIMEOUT
+    job,
+    client: MLClient,
+    job_type: Job,
+    expected_terminal_status: str,
+    deadline: int = DEFAULT_TASK_TIMEOUT,
 ) -> None:
     assert isinstance(job, job_type)
 
@@ -446,5 +472,8 @@ def mock_artifact_download_to_temp_directory():
             (artifact / f"file_{version}").touch(exist_ok=True)
             return str(artifact)
 
-        with patch("azure.ai.ml._utils._artifact_utils.ArtifactCache.get", side_effect=mock_get_artifacts):
+        with patch(
+            "azure.ai.ml._utils._artifact_utils.ArtifactCache.get",
+            side_effect=mock_get_artifacts,
+        ):
             yield temp_dir

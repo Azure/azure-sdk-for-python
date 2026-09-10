@@ -15,7 +15,7 @@ import time
 import urllib.parse
 from typing import cast
 
-from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
+from azure.ai.agentserver.core.platform_headers import (
     APIM_REQUEST_ID,
     CLIENT_REQUEST_ID,
     FOUNDRY_CALL_ID,
@@ -97,8 +97,7 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
         has_call_id = FOUNDRY_CALL_ID in http_request.headers
 
         logger.debug(
-            "Foundry storage %s %s starting "
-            "(x-ms-client-request-id=%s, traceparent=%s)",
+            "Foundry storage %s %s starting (x-ms-client-request-id=%s, traceparent=%s)",
             method,
             url,
             client_request_id,
@@ -111,8 +110,7 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
         except Exception:
             elapsed_ms = (time.monotonic() - start) * 1000
             logger.error(
-                "Foundry storage %s %s transport failure after %.1fms "
-                "(x-ms-client-request-id=%s, traceparent=%s)",
+                "Foundry storage %s %s transport failure after %.1fms (x-ms-client-request-id=%s, traceparent=%s)",
                 method,
                 url,
                 elapsed_ms,

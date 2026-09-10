@@ -2,19 +2,16 @@
 # Licensed under the MIT license.
 """Contract tests: stream events survive terminal state and respect a 10-minute TTL.
 
-These tests validate two critical invariants:
+This test module pins the behavioural contract that, once a bg+stream
+response reaches terminal status (completed, failed, etc.) and the
+in-memory execution record is eagerly evicted, the persisted SSE events
+MUST still be replayable via ``GET /responses/{id}?stream=true``.  This
+holds for both the default in-memory provider path and the Foundry-like
+hosted path (where the response provider does not also implement
+stream-event persistence — replay is provided by the streams registry).
 
-1. **Stream persistence after terminal state** — Once a bg+stream response
-   reaches terminal status (completed, failed, etc.) and the in-memory
-   execution record is eagerly evicted, the persisted SSE events MUST still
-   be replayable via ``GET /responses/{id}?stream=true``.  This holds for
-   both the default in-memory provider path and the Foundry-like hosted path
-   (where the response provider does not implement ``ResponseStreamProviderProtocol``).
-
-2. **Per-event 10-minute TTL (B35)** — Each SSE event carries a ``_saved_at``
-   timestamp.  ``get_stream_events()`` filters out events older than the
-   replay TTL (default 600 s / 10 minutes).  Events within the window MUST
-   be returned; events outside the window MUST be filtered.
+Per-event TTL semantics live in the SDK ``streams`` registry's own
+conformance suite.
 """
 
 from __future__ import annotations
@@ -30,7 +27,6 @@ from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses.models._generated import OutputItem, ResponseObject
 from azure.ai.agentserver.responses.store._base import (
     ResponseProviderProtocol,
-    ResponseStreamProviderProtocol,
 )
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
@@ -113,13 +109,12 @@ def _build_client_hosted(handler: Any) -> TestClient:
     """Build a TestClient with a response-only provider (simulates Foundry / hosted)."""
     provider = _ResponseOnlyProvider()
     assert isinstance(provider, ResponseProviderProtocol)
-    assert not isinstance(provider, ResponseStreamProviderProtocol)
     app = ResponsesAgentServerHost(store=provider)
     app.response_handler(handler)
     return TestClient(app)
 
 
-def _handler(request: Any, context: Any, cancel: Any) -> Any:
+async def _handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
     """Minimal handler: created → completed."""
 
     async def _events():
@@ -133,7 +128,7 @@ def _handler(request: Any, context: Any, cancel: Any) -> Any:
     return _events()
 
 
-def _handler_with_output(request: Any, context: Any, cancel: Any) -> Any:
+async def _handler_with_output(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
     """Realistic handler: created → in_progress → message with text → completed."""
 
     async def _events():
@@ -315,142 +310,3 @@ class TestStreamSurvivesTerminalState:
                 assert replay.status_code == 200
                 events = _collect_sse_events(replay)
             assert len(events) >= 2
-
-
-# ════════════════════════════════════════════════════════════
-# Tests: Per-event 10-minute TTL (B35)
-# ════════════════════════════════════════════════════════════
-
-
-class TestStreamEventTTL:
-    """Each stream event must be replayable for 10 minutes after emission, then filtered."""
-
-    @pytest.mark.asyncio
-    async def test_events_within_ttl_are_returned(self) -> None:
-        """Events saved less than 10 minutes ago are returned by get_stream_events."""
-        provider = InMemoryResponseProvider()
-        rid = "caresp_ttl_within_0000000000000000"
-        now = datetime.now(timezone.utc)
-
-        events = [
-            {"type": "response.created", "_saved_at": now - timedelta(minutes=5)},
-            {"type": "response.completed", "_saved_at": now - timedelta(minutes=3)},
-        ]
-        await provider.save_stream_events(rid, events)
-
-        result = await provider.get_stream_events(rid)
-        assert result is not None
-        assert len(result) == 2
-        assert result[0]["type"] == "response.created"
-        assert result[1]["type"] == "response.completed"
-
-    @pytest.mark.asyncio
-    async def test_events_older_than_10_minutes_are_filtered(self) -> None:
-        """Events saved more than 10 minutes ago are filtered or purged entirely."""
-        provider = InMemoryResponseProvider()
-        rid = "caresp_ttl_exact_0000000000000000"
-        now = datetime.now(timezone.utc)
-
-        events = [
-            {"type": "response.created", "_saved_at": now - timedelta(minutes=11)},
-            {"type": "response.completed", "_saved_at": now - timedelta(minutes=11)},
-        ]
-        await provider.save_stream_events(rid, events)
-
-        result = await provider.get_stream_events(rid)
-        # Either None (purged entirely by orphan cleanup) or empty list
-        if result is not None:
-            assert len(result) == 0, "Events older than 10 min should be filtered"
-
-    @pytest.mark.asyncio
-    async def test_events_well_past_ttl_are_gone(self) -> None:
-        """Events saved well beyond the 10-minute TTL must be filtered or purged."""
-        provider = InMemoryResponseProvider()
-        rid = "caresp_ttl_old_000000000000000000"
-        now = datetime.now(timezone.utc)
-
-        events = [
-            {"type": "response.created", "_saved_at": now - timedelta(minutes=15)},
-            {"type": "response.completed", "_saved_at": now - timedelta(minutes=12)},
-        ]
-        await provider.save_stream_events(rid, events)
-
-        result = await provider.get_stream_events(rid)
-        # Either None (purged entirely by orphan cleanup) or empty list
-        if result is not None:
-            assert len(result) == 0, "All events older than 10 min should be filtered"
-
-    @pytest.mark.asyncio
-    async def test_mixed_ttl_only_live_events_returned(self) -> None:
-        """Only events within the 10-minute window survive; older ones are dropped."""
-        provider = InMemoryResponseProvider()
-        rid = "caresp_ttl_mixed_0000000000000000"
-        now = datetime.now(timezone.utc)
-
-        events = [
-            {"type": "response.created", "_saved_at": now - timedelta(minutes=12)},
-            {"type": "response.in_progress", "_saved_at": now - timedelta(minutes=8)},
-            {"type": "response.output_item.added", "_saved_at": now - timedelta(minutes=5)},
-            {"type": "response.completed", "_saved_at": now - timedelta(minutes=2)},
-        ]
-        await provider.save_stream_events(rid, events)
-
-        result = await provider.get_stream_events(rid)
-        assert result is not None
-        assert len(result) == 3, f"Expected 3 live events, got {len(result)}"
-        types = [e["type"] for e in result]
-        assert "response.created" not in types, "12-min-old event should be filtered"
-        assert "response.in_progress" in types
-        assert "response.output_item.added" in types
-        assert "response.completed" in types
-
-    @pytest.mark.asyncio
-    async def test_events_just_under_10_minutes_survive(self) -> None:
-        """Events saved 9 minutes 59 seconds ago are still within the TTL window."""
-        provider = InMemoryResponseProvider()
-        rid = "caresp_ttl_just_000000000000000000"
-        now = datetime.now(timezone.utc)
-
-        events = [
-            {"type": "response.created", "_saved_at": now - timedelta(minutes=9, seconds=59)},
-            {"type": "response.completed", "_saved_at": now - timedelta(minutes=9, seconds=59)},
-        ]
-        await provider.save_stream_events(rid, events)
-
-        result = await provider.get_stream_events(rid)
-        assert result is not None
-        assert len(result) == 2, "Events at 9m59s should still be within TTL"
-
-    @pytest.mark.asyncio
-    async def test_orphaned_stream_events_purged_after_ttl(self) -> None:
-        """Standalone stream-only usage: purge removes events older than TTL.
-
-        When InMemoryResponseProvider is used as a fallback stream provider
-        (no _entries for those response IDs), purge_expired must still clean
-        up stream events whose _saved_at exceeds the replay TTL.
-        """
-        provider = InMemoryResponseProvider()
-        rid = "caresp_ttl_orphan_00000000000000000"
-        old_time = datetime.now(timezone.utc) - timedelta(minutes=15)
-
-        events = [
-            {"type": "response.created", "_saved_at": old_time},
-            {"type": "response.completed", "_saved_at": old_time},
-        ]
-        await provider.save_stream_events(rid, events)
-
-        # The auto-purge on each _locked() call cleans orphaned stale events.
-        # After saving stale events and then reading, the stale events are
-        # either filtered on read or purged entirely by the orphan cleanup.
-        result = await provider.get_stream_events(rid)
-        # Result is None (purged) or empty (filtered) — either way, no events.
-        if result is not None:
-            assert len(result) == 0, "Stale events should be filtered"
-
-        # Explicitly call purge_expired to confirm cleanup
-        await provider.purge_expired()
-
-        # After explicit purge, the key must be gone entirely
-        after_purge = await provider.get_stream_events(rid)
-        # The key was already removed; should be None
-        assert after_purge is None, "Orphaned stream events should be fully purged after TTL"

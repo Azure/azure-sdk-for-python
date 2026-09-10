@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/AkriConnectorTemplate_Get_Managed_Rest.json
+# x-ms-original-file: 2026-07-01/AkriConnectorTemplate_Get_Managed_Rest.json
 if __name__ == "__main__":
     main()

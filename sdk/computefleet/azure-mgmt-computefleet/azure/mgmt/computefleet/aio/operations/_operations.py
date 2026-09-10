@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
@@ -52,7 +52,6 @@ from .._configuration import ComputeFleetMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
@@ -254,7 +253,11 @@ class FleetsOperations:
         return deserialized  # type: ignore
 
     async def _create_or_update_initial(
-        self, resource_group_name: str, fleet_name: str, resource: Union[_models.Fleet, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        resource: Union[_models.Fleet, _types.Fleet, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -356,7 +359,7 @@ class FleetsOperations:
         self,
         resource_group_name: str,
         fleet_name: str,
-        resource: JSON,
+        resource: _types.Fleet,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -369,7 +372,7 @@ class FleetsOperations:
         :param fleet_name: The name of the Compute Fleet. Required.
         :type fleet_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.computefleet.types.Fleet
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -409,7 +412,11 @@ class FleetsOperations:
 
     @distributed_trace_async
     async def begin_create_or_update(
-        self, resource_group_name: str, fleet_name: str, resource: Union[_models.Fleet, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        resource: Union[_models.Fleet, _types.Fleet, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.Fleet]:
         """Create a Fleet.
 
@@ -418,9 +425,10 @@ class FleetsOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Compute Fleet. Required.
         :type fleet_name: str
-        :param resource: Resource create parameters. Is one of the following types: Fleet, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.computefleet.models.Fleet or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Fleet type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.computefleet.models.Fleet or ~azure.mgmt.computefleet.types.Fleet
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Fleet. The Fleet is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.computefleet.models.Fleet]
@@ -482,7 +490,7 @@ class FleetsOperations:
         self,
         resource_group_name: str,
         fleet_name: str,
-        properties: Union[_models.FleetUpdate, JSON, IO[bytes]],
+        properties: Union[_models.FleetUpdate, _types.FleetUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -586,7 +594,7 @@ class FleetsOperations:
         self,
         resource_group_name: str,
         fleet_name: str,
-        properties: JSON,
+        properties: _types.FleetUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -599,7 +607,7 @@ class FleetsOperations:
         :param fleet_name: The name of the Compute Fleet. Required.
         :type fleet_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.computefleet.types.FleetUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -642,7 +650,7 @@ class FleetsOperations:
         self,
         resource_group_name: str,
         fleet_name: str,
-        properties: Union[_models.FleetUpdate, JSON, IO[bytes]],
+        properties: Union[_models.FleetUpdate, _types.FleetUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Fleet]:
         """Update a Fleet.
@@ -652,9 +660,10 @@ class FleetsOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Compute Fleet. Required.
         :type fleet_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         FleetUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.computefleet.models.FleetUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a FleetUpdate type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.computefleet.models.FleetUpdate or
+         ~azure.mgmt.computefleet.types.FleetUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Fleet. The Fleet is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.computefleet.models.Fleet]
@@ -1135,7 +1144,7 @@ class FleetsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview"],
+        api_versions_list=["2026-04-01-preview", "2026-06-01-preview"],
     )
     def list_virtual_machines(
         self,

@@ -23,22 +23,22 @@ class CapabilityHost(Resource):
     """Initialize a CapabilityHost instance.
     Capabilityhost management is controlled by MLClient's capabilityhosts operations.
 
-    :param name: The name of the capability host.
-    :type name: str
-    :param description: The description of the capability host.
-    :type description: Optional[str]
-    :param vector_store_connections: A list of vector store  (AI Search) connections.
-    :type vector_store_connections: Optional[List[str]]
-    :param ai_services_connections: A list of OpenAI service connection.
-    :type ai_services_connections: Optional[List[str]]
-    :param storage_connections: A list of storage connections. Default storage connection value is
+    :keyword name: The name of the capability host.
+    :paramtype name: str
+    :keyword description: The description of the capability host.
+    :paramtype description: Optional[str]
+    :keyword vector_store_connections: A list of vector store  (AI Search) connections.
+    :paramtype vector_store_connections: Optional[List[str]]
+    :keyword ai_services_connections: A list of OpenAI service connection.
+    :paramtype ai_services_connections: Optional[List[str]]
+    :keyword storage_connections: A list of storage connections. Default storage connection value is
         projectname/workspaceblobstore for project workspace.
-    :type storage_connections: Optional[List[str]]
-    :param thread_storage_connections: A list of cosmos db connections, which will be used for thread storage.
-    :type thread_storage_connections: Optional[List[str]]
-    :param capability_host_kind: The kind of capability host, either as a string or CapabilityHostKind enum.
+    :paramtype storage_connections: Optional[List[str]]
+    :keyword thread_storage_connections: A list of cosmos db connections, which will be used for thread storage.
+    :paramtype thread_storage_connections: Optional[List[str]]
+    :keyword capability_host_kind: The kind of capability host, either as a string or CapabilityHostKind enum.
         Default is AGENTS.
-    :type capability_host_kind: Union[str, CapabilityHostKind]
+    :paramtype capability_host_kind: Union[str, CapabilityHostKind]
     :param kwargs: Additional keyword arguments.
     :type kwargs: Any
 

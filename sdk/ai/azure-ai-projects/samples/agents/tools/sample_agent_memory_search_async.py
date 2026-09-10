@@ -49,7 +49,7 @@ from azure.ai.projects.models import (
 
 load_dotenv()
 
-AGENT_NAME = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+AGENT_NAME = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 
 
 async def main() -> None:

@@ -37,7 +37,12 @@ class TestFabricMgmtFabricCapacitiesOperations(AzureMgmtRecordedTestCase):
             capacity_name="str",
             resource={
                 "location": "str",
-                "properties": {"administration": {"members": ["str"]}, "provisioningState": "str", "state": "str"},
+                "properties": {
+                    "administration": {"members": ["str"]},
+                    "overage": {"state": "str", "thresholdCapacityUnitHours": 0},
+                    "provisioningState": "str",
+                    "state": "str",
+                },
                 "sku": {"name": "str", "tier": "str"},
                 "id": "str",
                 "name": "str",
@@ -64,7 +69,10 @@ class TestFabricMgmtFabricCapacitiesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             capacity_name="str",
             properties={
-                "properties": {"administration": {"members": ["str"]}},
+                "properties": {
+                    "administration": {"members": ["str"]},
+                    "overage": {"state": "str", "thresholdCapacityUnitHours": 0},
+                },
                 "sku": {"name": "str", "tier": "str"},
                 "tags": {"str": "str"},
             },
@@ -150,6 +158,16 @@ class TestFabricMgmtFabricCapacitiesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_fabric_capacities_list_skus(self, resource_group):
         response = self.client.fabric_capacities.list_skus()
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_fabric_capacities_list_usages(self, resource_group):
+        response = self.client.fabric_capacities.list_usages(
+            location="str",
+        )
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...

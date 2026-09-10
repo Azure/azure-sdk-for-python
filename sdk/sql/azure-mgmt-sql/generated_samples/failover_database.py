@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-01-01/FailoverDatabase.json
+# x-ms-original-file: 2025-08-01-preview/FailoverDatabase.json
 if __name__ == "__main__":
     main()

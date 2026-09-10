@@ -71,6 +71,9 @@ Delimiter = "+"
 class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
     """
     Encapsulates request tracing and telemetry configuration values.
+
+    :param load_balancing_enabled: Whether load balancing is enabled for the request.
+    :type load_balancing_enabled: bool
     """
 
     def __init__(self, load_balancing_enabled: bool = False) -> None:

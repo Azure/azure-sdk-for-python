@@ -17,14 +17,14 @@ from __future__ import annotations
 
 import inspect
 from collections.abc import AsyncIterable
-from typing import TYPE_CHECKING, AsyncIterator, Awaitable, Callable, Union
+from typing import TYPE_CHECKING, AsyncIterator, Awaitable, Callable, Union, cast
 
-from ..models import _generated as generated_models
+from .. import models as response_models
 from ._event_stream import ResponseEventStream
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
-    from ..models._generated import CreateResponse, ResponseObject
+    from ..models import CreateResponse, ResponseObject
 
 #: Union of all accepted text sources.
 TextSource = Union[str, Callable[[], Union[str, Awaitable[str]]], AsyncIterable[str]]
@@ -86,17 +86,17 @@ class TextResponse:
         self._text = text
         self._configure = configure
 
-    def __aiter__(self) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    def __aiter__(self) -> AsyncIterator[response_models.ResponseStreamEvent]:
         return self._generate()
 
-    async def _generate(self) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    async def _generate(self) -> AsyncIterator[response_models.ResponseStreamEvent]:
         stream = ResponseEventStream(
             response_id=self._context.response_id,
             request=self._request,
         )
 
         if self._configure is not None:
-            self._configure(stream.response)
+            self._configure(cast("ResponseObject", stream.response))
 
         yield stream.emit_created()
         yield stream.emit_in_progress()

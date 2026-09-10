@@ -49,7 +49,7 @@ class OnlineEndpoint(Endpoint):
     :keyword properties: The asset property dictionary, defaults to None
     :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
     :keyword auth_mode: Possible values include: "aml_token", "key", defaults to KEY
-    :type auth_mode: typing.Optional[str]
+    :paramtype auth_mode: typing.Optional[str]
     :keyword description: Description of the inference endpoint, defaults to None
     :paramtype description: typing.Optional[str]
     :keyword location: Location of the resource, defaults to None
@@ -99,7 +99,7 @@ class OnlineEndpoint(Endpoint):
         :keyword properties: The asset property dictionary, defaults to None
         :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
         :keyword auth_mode: Possible values include: "aml_token", "key", defaults to KEY
-        :type auth_mode: typing.Optional[str]
+        :paramtype auth_mode: typing.Optional[str]
         :keyword description: Description of the inference endpoint, defaults to None
         :paramtype description: typing.Optional[str]
         :keyword location: Location of the resource, defaults to None
@@ -117,7 +117,7 @@ class OnlineEndpoint(Endpoint):
         :keyword provisioning_state: Provisioning state of an endpoint, defaults to None
         :paramtype provisioning_state: typing.Optional[str]
         :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None
-        :type kind: typing.Optional[str]
+        :paramtype kind: typing.Optional[str]
         """
         self._provisioning_state = kwargs.pop("provisioning_state", None)
 
@@ -341,7 +341,7 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
     :keyword properties: The asset property dictionary, defaults to None
     :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
     :keyword auth_mode: Possible values include: "aml_token", "key", defaults to KEY
-    :type auth_mode: typing.Optional[str]
+    :paramtype auth_mode: typing.Optional[str]
     :keyword description: Description of the inference endpoint, defaults to None
     :paramtype description: typing.Optional[str]
     :keyword location: Location of the resource, defaults to None
@@ -385,7 +385,7 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
         :keyword properties: The asset property dictionary, defaults to None
         :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
         :keyword auth_mode: Possible values include: "aml_token", "key", defaults to KEY
-        :type auth_mode: typing.Optional[str]
+        :paramtype auth_mode: typing.Optional[str]
         :keyword description: Description of the inference endpoint, defaults to None
         :paramtype description: typing.Optional[str]
         :keyword location: Location of the resource, defaults to None
@@ -399,7 +399,7 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
         :keyword identity: Identity Configuration, defaults to SystemAssigned
         :paramtype identity: typing.Optional[IdentityConfiguration]
         :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None
-        :type kind: typing.Optional[str]
+        :paramtype kind: typing.Optional[str]
         """
         super(KubernetesOnlineEndpoint, self).__init__(
             name=name,
@@ -465,7 +465,7 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
     :keyword properties: The asset property dictionary, defaults to None
     :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
     :keyword auth_mode: Possible values include: "aml_token", "key", defaults to KEY
-    :type auth_mode: str
+    :paramtype auth_mode: str
     :keyword description: Description of the inference endpoint, defaults to None
     :paramtype description: typing.Optional[str]
     :keyword location: Location of the resource, defaults to None
@@ -480,7 +480,7 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
     :paramtype kind: typing.Optional[str]
     :keyword public_network_access: Whether to allow public endpoint connectivity, defaults to None
         Allowed values are: "enabled", "disabled"
-    :type public_network_access: typing.Optional[str]
+    :paramtype public_network_access: typing.Optional[str]
     """
 
     def __init__(
@@ -510,7 +510,7 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
         :keyword properties: The asset property dictionary, defaults to None
         :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
         :keyword auth_mode: Possible values include: "aml_token", "key", defaults to KEY
-        :type auth_mode: str
+        :paramtype auth_mode: str
         :keyword description: Description of the inference endpoint, defaults to None
         :paramtype description: typing.Optional[str]
         :keyword location: Location of the resource, defaults to None
@@ -522,10 +522,10 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
         :keyword identity: Identity Configuration, defaults to SystemAssigned
         :paramtype identity: typing.Optional[IdentityConfiguration]
         :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None.
-        :type kind: typing.Optional[str]
+        :paramtype kind: typing.Optional[str]
         :keyword public_network_access: Whether to allow public endpoint connectivity, defaults to None
             Allowed values are: "enabled", "disabled"
-        :type public_network_access: typing.Optional[str]
+        :paramtype public_network_access: typing.Optional[str]
         """
         self.public_network_access = public_network_access
 

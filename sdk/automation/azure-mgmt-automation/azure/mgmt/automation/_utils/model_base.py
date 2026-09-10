@@ -109,6 +109,29 @@ def _serialize_bytes(o, format: typing.Optional[str] = None) -> str:
     return encoded
 
 
+def _serialize_duration(td: timedelta, format: typing.Optional[str] = None):
+    """Serialize a timedelta to its wire representation.
+
+    For the ``seconds``/``milliseconds`` encodings the value is converted to a
+    numeric value, otherwise it falls back to an ISO 8601 duration string.
+
+    :param timedelta td: The timedelta to serialize.
+    :param str format: The duration encoding format.
+    :rtype: int or float or str
+    :return: serialized duration
+    """
+    seconds = td.total_seconds()
+    if format == "duration-seconds-int":
+        return int(seconds)
+    if format == "duration-seconds-float":
+        return seconds
+    if format == "duration-milliseconds-int":
+        return int(seconds * 1000)
+    if format == "duration-milliseconds-float":
+        return seconds * 1000
+    return _timedelta_as_isostr(td)
+
+
 def _serialize_datetime(o, format: typing.Optional[str] = None):
     if hasattr(o, "year") and hasattr(o, "hour"):
         if format == "rfc7231":
@@ -301,6 +324,12 @@ def _deserialize_duration(attr):
     return isodate.parse_duration(attr)
 
 
+def _deserialize_duration_numeric(attr, unit):
+    if isinstance(attr, timedelta):
+        return attr
+    return timedelta(**{unit: float(attr)})
+
+
 def _deserialize_decimal(attr):
     if isinstance(attr, decimal.Decimal):
         return attr
@@ -330,6 +359,10 @@ _DESERIALIZE_MAPPING_WITHFORMAT = {
     "unix-timestamp": _deserialize_datetime_unix_timestamp,
     "base64": _deserialize_bytes,
     "base64url": _deserialize_bytes_base64,
+    "duration-seconds-int": functools.partial(_deserialize_duration_numeric, unit="seconds"),
+    "duration-seconds-float": functools.partial(_deserialize_duration_numeric, unit="seconds"),
+    "duration-milliseconds-int": functools.partial(_deserialize_duration_numeric, unit="milliseconds"),
+    "duration-milliseconds-float": functools.partial(_deserialize_duration_numeric, unit="milliseconds"),
 }
 
 
@@ -425,21 +458,21 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
 
     def keys(self) -> typing.KeysView[str]:
         """
-        :returns: a set-like object providing a view on D's keys
+        :returns: a set-like object providing a view on the mapping's keys
         :rtype: ~typing.KeysView
         """
         return self._data.keys()
 
     def values(self) -> typing.ValuesView[typing.Any]:
         """
-        :returns: an object providing a view on D's values
+        :returns: an object providing a view on the mapping's values
         :rtype: ~typing.ValuesView
         """
         return self._data.values()
 
     def items(self) -> typing.ItemsView[str, typing.Any]:
         """
-        :returns: set-like object providing a view on D's items
+        :returns: a set-like object providing a view on the mapping's items
         :rtype: ~typing.ItemsView
         """
         return self._data.items()
@@ -449,7 +482,7 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
         Get the value for key if key is in the dictionary, else default.
         :param str key: The key to look up.
         :param any default: The value to return if key is not in the dictionary. Defaults to None
-        :returns: D[k] if k in D, else d.
+        :returns: The value for key if key is in the dictionary, else default.
         :rtype: any
         """
         try:
@@ -484,19 +517,19 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
         Removes and returns some (key, value) pair
         :returns: The (key, value) pair.
         :rtype: tuple
-        :raises KeyError: if D is empty.
+        :raises KeyError: if the dictionary is empty.
         """
         return self._data.popitem()
 
     def clear(self) -> None:
         """
-        Remove all items from D.
+        Remove all items from the dictionary.
         """
         self._data.clear()
 
     def update(self, *args: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=arguments-differ
         """
-        Updates D from mapping/iterable E and F.
+        Update the dictionary from a mapping or an iterable of key-value pairs.
         :param any args: Either a mapping object or an iterable of key-value pairs.
         """
         self._data.update(*args, **kwargs)
@@ -509,10 +542,11 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
 
     def setdefault(self, key: str, default: typing.Any = _UNSET) -> typing.Any:
         """
-        Same as calling D.get(k, d), and setting D[k]=d if k not found
+        Return the value for key if key is in the dictionary; otherwise set the key to
+        default and return default.
         :param str key: The key to look up.
         :param any default: The value to set if key is not in the dictionary
-        :returns: D[k] if k in D, else d.
+        :returns: The value for key if key is in the dictionary, else default.
         :rtype: any
         """
         if default is _UNSET:
@@ -564,7 +598,7 @@ def _serialize(o, format: typing.Optional[str] = None):  # pylint: disable=too-m
         pass
     # Last, try datetime.timedelta
     try:
-        return _timedelta_as_isostr(o)
+        return _serialize_duration(o, format)
     except AttributeError:
         # This will be raised when it hits value.total_seconds in the method above
         pass

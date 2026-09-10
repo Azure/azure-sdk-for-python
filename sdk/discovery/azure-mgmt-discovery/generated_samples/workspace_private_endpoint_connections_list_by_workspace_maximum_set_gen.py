@@ -32,12 +32,12 @@ def main():
 
     response = client.workspace_private_endpoint_connections.list_by_workspace(
         resource_group_name="rgdiscovery",
-        workspace_name="cc28db0ff1bebbe39b",
+        workspace_name="704cee821b47e58afe",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2026-02-01-preview/WorkspacePrivateEndpointConnections_ListByWorkspace_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/WorkspacePrivateEndpointConnections_ListByWorkspace_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

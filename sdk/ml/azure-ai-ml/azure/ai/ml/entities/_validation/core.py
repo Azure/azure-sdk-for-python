@@ -233,7 +233,7 @@ class MutableValidationResult(ValidationResult):
         :keyword error_func: A function to create the error. If None, a marshmallow.ValidationError will be created.
                              The first parameter of the function is the string representation of the validation result,
                              and the second parameter is the error message without personal data.
-        :type error_func: typing.Callable[[str, str], Exception]
+        :paramtype error_func: typing.Callable[[str, str], Exception]
         :return: The current validation result.
         :rtype: MutableValidationResult
         """

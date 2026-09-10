@@ -611,5 +611,5 @@
         "azure.mgmt.automation.AutomationClient.convert_graph_runbook_content": "Microsoft.Automation.AutomationAccounts.convertGraphRunbookContent",
         "azure.mgmt.automation.aio.AutomationClient.convert_graph_runbook_content": "Microsoft.Automation.AutomationAccounts.convertGraphRunbookContent"
     },
-    "CrossLanguageVersion": "116ee7f83135"
+    "CrossLanguageVersion": "a0d63e845d1b"
 }

@@ -4,14 +4,17 @@
 # license information.
 # -------------------------------------------------------------------------
 
-import pytest
+# pylint: disable=line-too-long,useless-suppression
 import sys
 import asyncio
-from packaging.version import Version
 from unittest import mock
 
+import pytest
+from packaging.version import Version
 import aiohttp
+from utils import HTTP_REQUESTS, request_and_responses_product
 
+# pylint: disable=no-name-in-module
 from azure.core.pipeline.transport import (
     AsyncHttpResponse as PipelineTransportAsyncHttpResponse,
     AsyncHttpTransport,
@@ -30,8 +33,6 @@ from azure.core.exceptions import (
     ServiceRequestTimeoutError,
     ServiceResponseTimeoutError,
 )
-
-from utils import HTTP_REQUESTS, request_and_responses_product
 
 
 # transport = mock.MagicMock(spec=AsyncHttpTransport)
@@ -970,12 +971,12 @@ async def test_recursive_multipart_receive(http_request, mock_response):
 
 @pytest.mark.skipif(sys.version_info < (3, 10), reason="Loop parameter is deprecated since Python 3.10")
 def test_aiohttp_loop():
-    import asyncio
-    from azure.core.pipeline.transport import AioHttpTransport
-
-    loop = asyncio.get_event_loop()
-    with pytest.raises(ValueError):
-        transport = AioHttpTransport(loop=loop)
+    loop = asyncio.new_event_loop()
+    try:
+        with pytest.raises(ValueError):
+            transport = AioHttpTransport(loop=loop)
+    finally:
+        loop.close()
 
 
 class MockAiohttpResponse:
@@ -1092,7 +1093,7 @@ async def test_aiohttp_timeout_request(http_request):
     async with AioHttpTransport() as transport:
         transport.session._connector.connect = mock.Mock(side_effect=asyncio.TimeoutError("Too slow!"))
 
-        request = http_request("GET", f"http://localhost:12345/basic/string")
+        request = http_request("GET", "http://localhost:12345/basic/string")
 
         # aiohttp 3.10 introduced separate connection timeout
         if Version(aiohttp.__version__) >= Version("3.10"):
@@ -1102,7 +1103,7 @@ async def test_aiohttp_timeout_request(http_request):
             with pytest.raises(ServiceRequestError) as err:
                 await transport.send(request)
 
-            stream_request = http_request("GET", f"http://localhost:12345/streams/basic")
+            stream_request = http_request("GET", "http://localhost:12345/streams/basic")
             with pytest.raises(ServiceRequestTimeoutError) as err:
                 await transport.send(stream_request, stream=True)
 
@@ -1113,6 +1114,6 @@ async def test_aiohttp_timeout_request(http_request):
             with pytest.raises(ServiceResponseError) as err:
                 await transport.send(request)
 
-            stream_request = http_request("GET", f"http://localhost:12345/streams/basic")
+            stream_request = http_request("GET", "http://localhost:12345/streams/basic")
             with pytest.raises(ServiceResponseTimeoutError) as err:
                 await transport.send(stream_request, stream=True)

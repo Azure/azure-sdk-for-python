@@ -32,11 +32,11 @@ def main():
 
     response = client.tools.get(
         resource_group_name="rgdiscovery",
-        tool_name="30ebfda6785888d26f",
+        tool_name="1ba7068ab4d3671156",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/Tools_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/Tools_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

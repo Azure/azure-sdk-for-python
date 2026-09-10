@@ -18,10 +18,10 @@ class UsageName:
     def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None) -> None:
         """The usage name.
 
-        :param value: The name of the resource.
-        :type value: Optional[str]
-        :param localized_value: The localized name of the resource.
-        :type localized_value: Optional[str]
+        :keyword value: The name of the resource.
+        :paramtype value: Optional[str]
+        :keyword localized_value: The localized name of the resource.
+        :paramtype localized_value: Optional[str]
         """
         self.value = value
         self.localized_value = localized_value

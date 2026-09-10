@@ -21,6 +21,7 @@ from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
+from azure.ai.agentserver.core._experimental import experimental
 from azure.ai.agentserver.core._platform_headers import PLATFORM_ERROR_TAG
 from azure.ai.agentserver.core._version import VERSION
 
@@ -34,6 +35,7 @@ FOUNDRY_TOKEN_SCOPE = "https://ai.azure.com/.default"
 JSON_CONTENT_TYPE = "application/json; charset=utf-8"
 
 
+@experimental
 class FoundryStorageClient:
     """Base HTTP client for the Foundry storage API.
 
