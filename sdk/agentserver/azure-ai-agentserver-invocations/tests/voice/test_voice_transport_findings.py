@@ -150,6 +150,37 @@ def test_voice_route_precedes_same_scope_catch_all():
     assert selected == ["voice"]
 
 
+def test_voice_route_preserves_context_for_custom_websocket_route():
+    observed = []
+
+    async def custom_endpoint(websocket: WebSocket) -> None:
+        span_context = trace.get_current_span().get_span_context()
+        observed.append(
+            {
+                "trace_id": f"{span_context.trace_id:032x}",
+                "customer_baggage": baggage.get_baggage("customer-key"),
+            }
+        )
+        await websocket.accept()
+        await websocket.send_text("custom")
+
+    app = VoiceAgentServerHost(
+        routes=[WebSocketRoute("/custom", custom_endpoint)],
+        configure_observability=None,
+    )
+    expected_trace_id = "11111111111111111111111111111111"
+    with TestClient(app).websocket_connect(
+        "/custom",
+        headers={
+            "traceparent": f"00-{expected_trace_id}-2222222222222222-01",
+            "baggage": "customer-key=customer-value",
+        },
+    ) as websocket:
+        assert websocket.receive_text() == "custom"
+
+    assert observed == [{"trace_id": expected_trace_id, "customer_baggage": "customer-value"}]
+
+
 def test_voice_route_rejects_late_same_scope_exact_conflict():
     async def conflicting_endpoint(websocket: WebSocket) -> None:
         await websocket.accept()
