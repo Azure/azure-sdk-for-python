@@ -13,8 +13,7 @@ DESCRIPTION:
     Agent Insights is a preview feature. In the Python SDK, you access these
     operations through `project_client.beta.agent_insight_monitors`.
 
-    The sample replaces the selected agent's existing monitor and deletes its
-    monitor and data during cleanup.
+    The agent must not already have a monitor.
 
     The project must have a connected Application Insights resource, and the
     project's managed identity must have permission to query it.
@@ -61,10 +60,6 @@ def main() -> None:
     ):
         monitor_operations = project_client.beta.agent_insight_monitors
 
-        # Agent Insights supports only one monitor for each agent.
-        for existing_monitor in monitor_operations.list(agent_name=agent_name):
-            _delete_monitor(monitor_operations, existing_monitor.id, "Existing")
-
         monitor = monitor_operations.create(
             AgentInsightMonitorCreate(
                 agent_name=agent_name,
@@ -88,15 +83,16 @@ def main() -> None:
             print(f"Run interval hours: {scheduled_monitor.run_interval_hours}")
             print(f"Next scheduled run: {scheduled_monitor.next_scheduled_run_at}")
         finally:
-            _delete_monitor(monitor_operations, monitor.id, "Scheduled")
+            # Enabling schedules the first occurrence for now, so a run may already be active.
+            _delete_monitor(monitor_operations, monitor.id)
 
 
-def _delete_monitor(operations: BetaAgentInsightMonitorsOperations, monitor_id: str, label: str) -> None:
+def _delete_monitor(operations: BetaAgentInsightMonitorsOperations, monitor_id: str) -> None:
     # Disabling stops future scheduling, but a run may already have started.
     operations.update(monitor_id, AgentInsightMonitorUpdate(enabled=False))
 
     active_statuses = {JobStatus.QUEUED, JobStatus.IN_PROGRESS}
-    for attempt in range(30):
+    for attempt in range(12):
         active_runs = [run for run in operations.list_runs(monitor_id, limit=20) if run.status in active_statuses]
         try:
             for run in active_runs:
@@ -104,16 +100,16 @@ def _delete_monitor(operations: BetaAgentInsightMonitorsOperations, monitor_id: 
 
             if not active_runs:
                 operations.delete(monitor_id)
-                print(f"Deleted {label.lower()} monitor `{monitor_id}`.")
+                print(f"Deleted scheduled monitor `{monitor_id}`.")
                 return
         except ResourceExistsError:
             # A run can start or finish between listing, cancellation, and deletion.
-            if attempt == 29:
+            if attempt == 11:
                 raise
             print(f"Monitor `{monitor_id}` changed during cleanup; retrying.")
 
-        if attempt < 29:
-            time.sleep(2)
+        if attempt < 11:
+            time.sleep(10)
     raise TimeoutError(f"Monitor `{monitor_id}` could not be deleted after stopping its scheduled runs.")
 
 

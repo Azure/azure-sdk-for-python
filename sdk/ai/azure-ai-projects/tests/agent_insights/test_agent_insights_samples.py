@@ -31,16 +31,14 @@ def scheduled_sample(monkeypatch):
 
 
 @pytest.fixture
-def on_demand_sample(monkeypatch):
+def on_demand_sample():
     path = Path(__file__).parents[2] / "samples" / "agent_insights" / "sample_agent_insights_on_demand.py"
-    sample = runpy.run_path(str(path))
-    monkeypatch.setattr(sample["time"], "sleep", MagicMock())
-    return sample
+    return runpy.run_path(str(path))
 
 
-@pytest.fixture(params=["scheduled_sample", "on_demand_sample"])
-def cleanup_sample(request):
-    return request.getfixturevalue(request.param)
+@pytest.fixture
+def cleanup_sample(scheduled_sample):
+    return scheduled_sample
 
 
 @pytest.mark.parametrize("status", ["queued", "in_progress", JobStatus.QUEUED, JobStatus.IN_PROGRESS])
@@ -51,12 +49,12 @@ def test_cleanup_cancels_active_run(cleanup_sample, status):
         [AgentInsightRun({"id": "run-test", "status": "cancelled"})],
     ]
 
-    cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+    cleanup_sample["_delete_monitor"](operations, "monitor-test")
 
     assert operations.update.call_args.args[1].enabled is False
     operations.cancel_run.assert_called_once_with("monitor-test", "run-test")
     operations.delete.assert_called_once_with("monitor-test")
-    cleanup_sample["time"].sleep.assert_called_once_with(2)
+    cleanup_sample["time"].sleep.assert_called_once_with(10)
     assert [method[0] for method in operations.method_calls] == [
         "update",
         "list_runs",
@@ -70,7 +68,7 @@ def test_cleanup_does_not_cancel_completed_run(cleanup_sample):
     operations = MagicMock(spec=BetaAgentInsightMonitorsOperations)
     operations.list_runs.return_value = [SimpleNamespace(id="run-test", status="succeeded")]
 
-    cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+    cleanup_sample["_delete_monitor"](operations, "monitor-test")
 
     operations.cancel_run.assert_not_called()
     operations.delete.assert_called_once_with("monitor-test")
@@ -82,7 +80,7 @@ def test_cleanup_reports_already_deleted_monitor(cleanup_sample):
     operations.update.side_effect = ResourceNotFoundError()
 
     with pytest.raises(ResourceNotFoundError):
-        cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+        cleanup_sample["_delete_monitor"](operations, "monitor-test")
 
     operations.list_runs.assert_not_called()
     operations.delete.assert_not_called()
@@ -93,12 +91,12 @@ def test_cleanup_has_bounded_wait(cleanup_sample):
     operations.list_runs.return_value = [SimpleNamespace(id="run-test", status="in_progress")]
 
     with pytest.raises(TimeoutError, match="could not be deleted"):
-        cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+        cleanup_sample["_delete_monitor"](operations, "monitor-test")
 
-    assert operations.list_runs.call_count == 30
-    assert operations.cancel_run.call_args_list == [call("monitor-test", "run-test")] * 30
+    assert operations.list_runs.call_count == 12
+    assert operations.cancel_run.call_args_list == [call("monitor-test", "run-test")] * 12
     operations.delete.assert_not_called()
-    assert cleanup_sample["time"].sleep.call_args_list == [call(2)] * 29
+    assert cleanup_sample["time"].sleep.call_args_list == [call(10)] * 11
 
 
 def test_cleanup_handles_run_dispatch_during_delete(cleanup_sample):
@@ -110,7 +108,7 @@ def test_cleanup_handles_run_dispatch_during_delete(cleanup_sample):
     ]
     operations.delete.side_effect = [ResourceExistsError(), None]
 
-    cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+    cleanup_sample["_delete_monitor"](operations, "monitor-test")
 
     operations.cancel_run.assert_called_once_with("monitor-test", "run-test")
     assert operations.delete.call_count == 2
@@ -128,7 +126,7 @@ def test_cleanup_handles_run_finishing_during_cancel(cleanup_sample, status):
     ]
     operations.cancel_run.side_effect = ResourceExistsError()
 
-    cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+    cleanup_sample["_delete_monitor"](operations, "monitor-test")
 
     operations.cancel_run.assert_called_once_with("monitor-test", "run-test")
     operations.get_run.assert_not_called()
@@ -143,11 +141,11 @@ def test_cleanup_repeated_cancel_conflict_is_bounded(cleanup_sample):
     operations.cancel_run.side_effect = error
 
     with pytest.raises(ResourceExistsError) as exc_info:
-        cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+        cleanup_sample["_delete_monitor"](operations, "monitor-test")
 
     assert exc_info.value is error
-    assert operations.cancel_run.call_count == 30
-    assert cleanup_sample["time"].sleep.call_args_list == [call(2)] * 29
+    assert operations.cancel_run.call_count == 12
+    assert cleanup_sample["time"].sleep.call_args_list == [call(10)] * 11
     operations.delete.assert_not_called()
 
 
@@ -157,7 +155,7 @@ def test_cleanup_reports_monitor_deleted_during_delete(cleanup_sample):
     operations.delete.side_effect = ResourceNotFoundError()
 
     with pytest.raises(ResourceNotFoundError):
-        cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+        cleanup_sample["_delete_monitor"](operations, "monitor-test")
 
     operations.delete.assert_called_once_with("monitor-test")
     cleanup_sample["time"].sleep.assert_not_called()
@@ -173,7 +171,7 @@ def test_cleanup_does_not_hide_service_error(cleanup_sample, stage):
     getattr(operations, stage).side_effect = error
 
     with pytest.raises(HttpResponseError, match="Service failed") as exc_info:
-        cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+        cleanup_sample["_delete_monitor"](operations, "monitor-test")
     assert exc_info.value is error
     cleanup_sample["time"].sleep.assert_not_called()
 
@@ -184,7 +182,7 @@ def test_cleanup_reports_monitor_disappeared_during_list(cleanup_sample, capsys)
     operations.get.side_effect = ResourceNotFoundError()
 
     with pytest.raises(ResourceNotFoundError):
-        cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+        cleanup_sample["_delete_monitor"](operations, "monitor-test")
 
     operations.get.assert_not_called()
     operations.delete.assert_not_called()
@@ -197,7 +195,7 @@ def test_cleanup_does_not_hide_missing_list_endpoint(cleanup_sample):
     operations.get.return_value = SimpleNamespace(id="monitor-test")
 
     with pytest.raises(ResourceNotFoundError):
-        cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+        cleanup_sample["_delete_monitor"](operations, "monitor-test")
     operations.delete.assert_not_called()
 
 
@@ -207,7 +205,7 @@ def test_cleanup_reports_run_disappearing(cleanup_sample):
     operations.cancel_run.side_effect = ResourceNotFoundError()
 
     with pytest.raises(ResourceNotFoundError):
-        cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+        cleanup_sample["_delete_monitor"](operations, "monitor-test")
 
     operations.list_runs.assert_called_once_with("monitor-test", limit=20)
     operations.delete.assert_not_called()
@@ -219,7 +217,7 @@ def test_cleanup_does_not_report_success_when_cancel_endpoint_is_missing(cleanup
     operations.cancel_run.side_effect = ResourceNotFoundError()
 
     with pytest.raises(ResourceNotFoundError):
-        cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+        cleanup_sample["_delete_monitor"](operations, "monitor-test")
     operations.delete.assert_not_called()
     cleanup_sample["time"].sleep.assert_not_called()
 
@@ -231,11 +229,11 @@ def test_cleanup_repeated_delete_conflict_is_bounded(cleanup_sample):
     operations.delete.side_effect = error
 
     with pytest.raises(ResourceExistsError) as exc_info:
-        cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+        cleanup_sample["_delete_monitor"](operations, "monitor-test")
 
     assert exc_info.value is error
-    assert operations.list_runs.call_count == operations.delete.call_count == 30
-    assert cleanup_sample["time"].sleep.call_args_list == [call(2)] * 29
+    assert operations.list_runs.call_count == operations.delete.call_count == 12
+    assert cleanup_sample["time"].sleep.call_args_list == [call(10)] * 11
 
 
 @pytest.mark.parametrize("stage", ["update", "list_runs"])
@@ -245,7 +243,7 @@ def test_cleanup_does_not_retry_unrelated_conflicts(cleanup_sample, stage):
     getattr(operations, stage).side_effect = error
 
     with pytest.raises(ResourceExistsError) as exc_info:
-        cleanup_sample["_delete_monitor"](operations, "monitor-test", "Existing")
+        cleanup_sample["_delete_monitor"](operations, "monitor-test")
 
     assert exc_info.value is error
     operations.delete.assert_not_called()
@@ -295,33 +293,19 @@ def on_demand_main(on_demand_sample, monkeypatch):
 
 
 @pytest.mark.parametrize("polling_error", [RuntimeError("Polling failed"), KeyboardInterrupt()])
-def test_on_demand_cleans_up_active_runs_after_polling_error(on_demand_main, polling_error, capsys):
+def test_on_demand_leaves_monitor_after_polling_error(on_demand_main, polling_error, capsys):
     main, operations = on_demand_main
     operations.begin_create_run.return_value.result.side_effect = polling_error
-    operations.list_runs.side_effect = [
-        [SimpleNamespace(id="old-run", status="queued")],
-        [SimpleNamespace(id="old-run", status="cancelled")],
-        [SimpleNamespace(id="new-run", status="in_progress")],
-        [SimpleNamespace(id="new-run", status="in_progress")],
-        [SimpleNamespace(id="new-run", status="cancelled")],
-    ]
-
     with pytest.raises(type(polling_error)) as exc_info:
         main()
 
     assert exc_info.value is polling_error
-    assert operations.cancel_run.call_args_list == [
-        call("old-monitor", "old-run"),
-        call("new-monitor", "new-run"),
-        call("new-monitor", "new-run"),
-    ]
-    assert operations.delete.call_args_list == [call("old-monitor"), call("new-monitor")]
-    assert [args.args[0] for args in operations.update.call_args_list] == ["old-monitor", "new-monitor"]
-    assert all(args.args[1].enabled is False for args in operations.update.call_args_list)
-    assert operations.method_calls.index(call.delete("old-monitor")) < next(
-        index for index, method_call in enumerate(operations.method_calls) if method_call[0] == "create"
-    )
-    assert "Deleted monitor `new-monitor`." in capsys.readouterr().out.splitlines()
+    operations.list.assert_not_called()
+    operations.cancel_run.assert_not_called()
+    operations.delete.assert_not_called()
+    operations.update.assert_not_called()
+    operations.list_runs.assert_not_called()
+    assert "Deleted monitor" not in capsys.readouterr().out
 
 
 @pytest.mark.parametrize("severity", ["high", "future-severity"])
@@ -332,7 +316,21 @@ def test_on_demand_cleanup_after_success(on_demand_main, capsys, severity):
     main()
 
     operations.cancel_run.assert_not_called()
-    assert operations.delete.call_args_list == [call("old-monitor"), call("new-monitor")]
+    operations.delete.assert_called_once_with("new-monitor")
+    operations.list.assert_not_called()
+    operations.update.assert_not_called()
+    assert operations.create.call_args.args[0].enabled is False
+    assert operations.begin_create_run.call_args.args[1].lookback_hours == 3
+    operations.begin_create_run.return_value.result.assert_called_once_with()
+    assert [method[0] for method in operations.method_calls] == [
+        "create",
+        "begin_create_run",
+        "get_run",
+        "list_runs",
+        "list_insights",
+        "update_insight",
+        "delete",
+    ]
     output = capsys.readouterr().out.splitlines()
     assert_agent_insights_output("sample_agent_insights_on_demand.py", output)
     assert "Deleted monitor `new-monitor`." in output
@@ -370,37 +368,39 @@ def test_on_demand_allows_insight_without_optional_details(on_demand_main, capsy
     assert f"Insight status after update: {AgentInsightStatus.RESOLVED}" in output
 
 
-def test_on_demand_reports_creation_failure(on_demand_main):
+@pytest.mark.parametrize(
+    "error", [HttpResponseError("Monitor creation failed"), ResourceExistsError("Existing monitor")]
+)
+def test_on_demand_reports_creation_failure(on_demand_main, error):
     main, operations = on_demand_main
-    error = HttpResponseError("Monitor creation failed")
     operations.create.side_effect = error
 
     with pytest.raises(HttpResponseError) as exc_info:
         main()
 
     assert exc_info.value is error
-    operations.delete.assert_called_once_with("old-monitor")
+    operations.list.assert_not_called()
+    operations.delete.assert_not_called()
+    operations.update.assert_not_called()
+    operations.cancel_run.assert_not_called()
     operations.begin_create_run.assert_not_called()
 
 
-@pytest.mark.parametrize("original_error", [None, RuntimeError("Polling failed"), KeyboardInterrupt()])
-def test_on_demand_cleanup_error_retains_original_context(on_demand_main, original_error):
+def test_on_demand_reports_deletion_error(on_demand_main):
     main, operations = on_demand_main
-    operations.begin_create_run.return_value.result.side_effect = original_error
     cleanup_error = HttpResponseError("Cleanup failed")
-    operations.delete.side_effect = [None, cleanup_error]
+    operations.delete.side_effect = cleanup_error
 
     with pytest.raises(HttpResponseError) as exc_info:
         main()
 
     assert exc_info.value is cleanup_error
-    assert exc_info.value.__context__ is original_error
-    assert operations.delete.call_args_list == [call("old-monitor"), call("new-monitor")]
+    operations.delete.assert_called_once_with("new-monitor")
 
 
 def test_cleanup_error_is_not_hidden_by_callers_exception(on_demand_main):
     main, operations = on_demand_main
-    operations.delete.side_effect = [None, HttpResponseError("Cleanup failed")]
+    operations.delete.side_effect = HttpResponseError("Cleanup failed")
 
     try:
         raise ValueError("Caller is handling an unrelated error")
@@ -409,36 +409,35 @@ def test_cleanup_error_is_not_hidden_by_callers_exception(on_demand_main):
             main()
 
 
-@pytest.mark.parametrize("cleanup_stage", ["before", "after"])
-def test_on_demand_cleanup_timeout_is_reported(on_demand_main, cleanup_stage, capsys):
+@pytest.mark.parametrize("stage", ["begin_create_run", "get_run", "list_runs", "list_insights", "update_insight"])
+def test_on_demand_leaves_monitor_after_service_error(on_demand_main, stage, capsys):
     main, operations = on_demand_main
-    polling_error = RuntimeError("Polling failed")
-    operations.begin_create_run.return_value.result.side_effect = polling_error
-    active_runs = [SimpleNamespace(id="run-test", status="in_progress")]
-    operations.list_runs.side_effect = ([[]] if cleanup_stage == "after" else []) + [active_runs] * 30
+    error = HttpResponseError("Service failed")
+    getattr(operations, stage).side_effect = error
 
-    with pytest.raises(TimeoutError, match="could not be deleted") as exc_info:
+    with pytest.raises(HttpResponseError) as exc_info:
         main()
 
-    if cleanup_stage == "before":
-        operations.create.assert_not_called()
-        operations.delete.assert_not_called()
-    else:
-        assert exc_info.value.__context__ is polling_error
-        operations.delete.assert_called_once_with("old-monitor")
+    assert exc_info.value is error
+    operations.delete.assert_not_called()
+    operations.update.assert_not_called()
+    operations.cancel_run.assert_not_called()
     assert "Deleted monitor `new-monitor`." not in capsys.readouterr().out
 
 
+@pytest.mark.parametrize("configuration_error", [RuntimeError("Schedule configuration failed"), KeyboardInterrupt()])
 @pytest.mark.parametrize("cleanup_error", [None, ResourceNotFoundError("Cleanup failed")])
-def test_scheduled_sample_cleans_up_after_configuration_error(scheduled_sample, monkeypatch, cleanup_error):
+def test_scheduled_sample_cleans_up_after_configuration_error(
+    scheduled_sample, monkeypatch, cleanup_error, configuration_error
+):
     main = scheduled_sample["main"]
     operations = MagicMock(spec=BetaAgentInsightMonitorsOperations)
     operations.list.return_value = [SimpleNamespace(id="old-monitor")]
     operations.create.return_value = SimpleNamespace(id="new-monitor", agent_name="test-agent")
-    operations.update.side_effect = RuntimeError("Schedule configuration failed")
+    operations.update.side_effect = configuration_error
     client = MagicMock()
     client.return_value.__enter__.return_value.beta.agent_insight_monitors = operations
-    cleanup = MagicMock(side_effect=[None, cleanup_error])
+    cleanup = MagicMock(side_effect=cleanup_error)
     monkeypatch.setitem(main.__globals__, "AIProjectClient", client)
     monkeypatch.setitem(main.__globals__, "DefaultAzureCredential", MagicMock())
     monkeypatch.setitem(main.__globals__, "load_dotenv", MagicMock())
@@ -454,13 +453,32 @@ def test_scheduled_sample_cleans_up_after_configuration_error(scheduled_sample, 
     if cleanup_error is not None:
         assert exc_info.value.__context__ is operations.update.side_effect
 
-    assert cleanup.call_args_list == [
-        call(operations, "old-monitor", "Existing"),
-        call(operations, "new-monitor", "Scheduled"),
-    ]
+    cleanup.assert_called_once_with(operations, "new-monitor")
+    operations.list.assert_not_called()
     assert operations.create.call_args.args[0].enabled is False
     assert operations.update.call_args.args[1].run_interval_hours == 6
     assert operations.update.call_args.args[1].enabled is True
+
+
+@pytest.mark.parametrize(
+    "error", [HttpResponseError("Monitor creation failed"), ResourceExistsError("Existing monitor")]
+)
+def test_scheduled_creation_failure_leaves_existing_monitor(scheduled_sample, monkeypatch, on_demand_main, error):
+    main = scheduled_sample["main"]
+    configured_main, operations = on_demand_main
+    for name in ("AIProjectClient", "DefaultAzureCredential", "load_dotenv"):
+        monkeypatch.setitem(main.__globals__, name, configured_main.__globals__[name])
+    operations.create.side_effect = error
+
+    with pytest.raises(HttpResponseError) as exc_info:
+        main()
+
+    assert exc_info.value is error
+    operations.list.assert_not_called()
+    operations.update.assert_not_called()
+    operations.list_runs.assert_not_called()
+    operations.cancel_run.assert_not_called()
+    operations.delete.assert_not_called()
 
 
 @pytest.mark.parametrize("next_run", [1_789_000_000, None])
@@ -493,4 +511,6 @@ def test_scheduled_sample_reads_timestamp_and_cleans_up(scheduled_sample, monkey
     assert "Deleted scheduled monitor `new-monitor`." in output
     operations.cancel_run.assert_called_once_with("new-monitor", "scheduled-run")
     operations.delete.assert_called_once_with("new-monitor")
+    operations.list.assert_not_called()
+    scheduled_sample["time"].sleep.assert_called_once_with(10)
     assert [args.args[1].enabled for args in operations.update.call_args_list] == [True, False]

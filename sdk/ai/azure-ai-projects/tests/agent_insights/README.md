@@ -131,8 +131,13 @@ AZURE_TEST_RUN_LIVE=true python -m pytest -q \
 
 The on-demand recording must show a successful run with at least one analyzed
 trace and one insight, then a resolved insight. The scheduled
-sample checks the schedule without waiting for analysis. Both samples disable
-scheduling, cancel any active run, and delete their monitors during cleanup.
+sample checks the schedule without waiting for analysis. The selected agent
+must not already have a monitor. On success, the on-demand sample deletes its
+monitor; errors or interruptions leave it for manual cleanup. The scheduled
+sample uses `finally` to disable scheduling, cancel active runs, and delete
+only its own monitor. Cleanup checks at most 12 times, waiting 10 seconds
+between checks. Enabling schedules the first occurrence for now, so a run may
+already be active during cleanup.
 
 Tests check these outcomes directly from the sample output. They do not call a
 second model or require Code Interpreter to validate the samples.
