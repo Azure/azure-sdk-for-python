@@ -6,6 +6,8 @@ from typing import Any, Optional
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.polling import AsyncLROPoller
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from azure.core.polling.base_polling import OperationResourcePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -39,6 +41,14 @@ class KeyVaultEkmClient(AsyncKeyVaultClientBase):
     """
 
     # pylint:disable=protected-access
+
+    def _get_polling_method(self, kwargs: Any) -> AsyncLROBasePolling:
+        # The service reports private endpoint operation status via the `azure-asyncoperation` header, but Core's
+        # default algorithm looks for `operation-location` and would otherwise stop polling immediately
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        return AsyncLROBasePolling(
+            polling_interval, lro_algorithms=[OperationResourcePolling("azure-asyncoperation")], **kwargs
+        )
 
     @distributed_trace_async
     async def get_ekm_connection(self, **kwargs: Any) -> KeyVaultEkmConnection:
@@ -149,6 +159,7 @@ class KeyVaultEkmClient(AsyncKeyVaultClientBase):
             pe_name=name,
             parameters=parameters,
             cls=KeyVaultEkmPrivateEndpointOperation._from_polling_result,
+            polling=self._get_polling_method(kwargs),
             **kwargs,
         )
 
@@ -169,7 +180,10 @@ class KeyVaultEkmClient(AsyncKeyVaultClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return await self._client.begin_delete_ekm_private_endpoint(
-            pe_name=name, cls=KeyVaultEkmPrivateEndpointOperation._from_polling_result, **kwargs
+            pe_name=name,
+            cls=KeyVaultEkmPrivateEndpointOperation._from_polling_result,
+            polling=self._get_polling_method(kwargs),
+            **kwargs,
         )
 
     @distributed_trace_async
