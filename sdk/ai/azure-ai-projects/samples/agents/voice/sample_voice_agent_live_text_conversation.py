@@ -27,7 +27,7 @@ DESCRIPTION:
     sample_voice_agent_live_text_conversation_async.py for the async version of
     this one).
 
-      pip install "azure-ai-projects[realtime]>=2.7.0b1" azure-identity pyaudio --pre
+      pip install "azure-ai-projects[voice]>=2.7.0" azure-identity pyaudio
 
 USAGE:
     python sample_voice_agent_live_text_conversation.py

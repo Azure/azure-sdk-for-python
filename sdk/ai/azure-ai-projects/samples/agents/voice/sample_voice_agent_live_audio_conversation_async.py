@@ -29,7 +29,7 @@ DESCRIPTION:
     ``response.output_audio.*`` events, decoded to PCM16, mono, 24 kHz.
     Requires ``aiohttp`` and ``pyaudio``.
 
-      pip install "azure-ai-projects>=2.7.0b1" azure-identity aiohttp pyaudio --pre
+      pip install "azure-ai-projects[voice]>=2.7.0" azure-identity pyaudio
 
 USAGE:
     python sample_voice_agent_live_audio_conversation_async.py

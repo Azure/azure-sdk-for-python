@@ -43,7 +43,7 @@ dynamic = [
 ]
 
 [project.optional-dependencies]
-realtime = [
+voice = [
     "websockets>=13.0",
     "aiohttp>=3.9.0,<4.0.0",
 ]

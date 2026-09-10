@@ -49,7 +49,6 @@ def _make_manager(**overrides) -> AsyncRealtimeConnectionManager:
         "credential_scopes": ["https://ai.azure.com/.default"],
         "api_version": "v1",
         "agent_name": "my-agent",
-        "foundry_features": "VoiceAgents=V1Preview",
     }
     kwargs.update(overrides)
     return AsyncRealtimeConnectionManager(**kwargs)

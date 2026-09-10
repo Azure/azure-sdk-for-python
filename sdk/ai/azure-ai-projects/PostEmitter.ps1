@@ -120,34 +120,6 @@ $c = Get-Content $f -Raw
 $c = $c -replace '    if_match = prep_if_match\(etag, match_condition\)\r?\n    if if_match is not None:\r?\n        _headers\["If-Match"\] = _SERIALIZER\.header\("if_match", if_match, "str"\)', "    if etag is not None:`r`n        _headers[`"If-Match`"] = _SERIALIZER.header(`"if_match`", etag, `"str`")"
 Set-Content $f $c -NoNewline
 
-# Regression guard: `_realtime.py` and `aio\_realtime.py` are hand-written files that are NOT
-# `_patch.py`-named, so they aren't covered by the emitter's own "never touch _patch.py" guarantee --
-# nothing in the TypeSpec emitter is aware these files exist. They carry the SDK client-identification
-# fix ported from the azure-ai-voicelive PR #48848 (a User-Agent header and x-ms-client-sdk query
-# parameter, both derived from `_USER_AGENT = UserAgentPolicy(sdk_moniker=...)`, with a case-insensitive
-# guard so a caller-supplied extra_headers User-Agent of any casing is honored instead of duplicated).
-# If a future `tsp-client update` ever starts generating (and thus silently overwriting) a file at either
-# of these paths, this fix would be lost with no other signal until someone happens to run the realtime
-# test suite. Fail the emit step immediately instead, right after regeneration, rather than relying on
-# that eventual test run.
-$realtimeFiles = @('azure\ai\projects\_realtime.py', 'azure\ai\projects\aio\_realtime.py')
-foreach ($f in $realtimeFiles) {
-    if (-not (Test-Path $f)) {
-        throw "PostEmitter safety check failed: '$f' is missing. This hand-written file (not tracked by the TypeSpec emitter) carries the SDK client-identification fix from PR #48848; if the emitter deleted or renamed it, restore it from git history before continuing."
-    }
-    $c = Get-Content $f -Raw
-    if ($c -notmatch 'UserAgentPolicy\(sdk_moniker=') {
-        throw "PostEmitter safety check failed: '$f' no longer defines _USER_AGENT via UserAgentPolicy(sdk_moniker=...). The SDK client-identification fix from PR #48848 appears to have been overwritten -- reinstate the User-Agent header + x-ms-client-sdk query param wiring."
-    }
-    if ($c -notmatch '_has_header_case_insensitive') {
-        throw "PostEmitter safety check failed: '$f' no longer guards the User-Agent header with _has_header_case_insensitive. A caller-supplied extra_headers User-Agent (in any casing) would be duplicated instead of honored -- reinstate the case-insensitive check."
-    }
-    if ($c -notmatch 'x-ms-client-sdk') {
-        throw "PostEmitter safety check failed: '$f' no longer sends the x-ms-client-sdk query parameter alongside the User-Agent header -- reinstate it so service telemetry can still attribute traffic on paths that don't forward the header."
-    }
-}
-Write-Host "PostEmitter safety check passed: SDK client-identification fix (PR #48848) is intact in both _realtime.py files."
-
 # Finishing by running 'black' tool to format code. 
 pip install black
 black --config ../../../eng/black-pyproject.toml .

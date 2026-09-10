@@ -19,7 +19,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.7.0b1" python-dotenv --pre
+    pip install "azure-ai-projects>=2.7.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.

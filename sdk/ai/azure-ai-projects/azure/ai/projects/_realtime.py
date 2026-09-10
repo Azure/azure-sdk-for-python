@@ -43,8 +43,9 @@ from .models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insen
 from ._utils.model_base import Model as _Model, SdkJSONEncoder
 from ._version import VERSION
 
-# Scoped to just the voice-agent preview opt-in; callers connecting to other preview agent
-# kinds through this same route can pass a broader value explicitly via ``foundry_features``.
+# The realtime WebSocket route is voice-agent-specific (see `_to_ws_url`'s
+# `/endpoint/protocols/voice` path), so this is always the correct opt-in value -- callers
+# cannot and do not need to override it.
 _VOICE_AGENT_FEATURE_HEADER: str = _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value
 
 # Identifies the SDK to the service on the WebSocket handshake, which otherwise falls back to
@@ -674,10 +675,9 @@ class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
         credential_scopes: List[str],
         api_version: str,
         agent_name: str,
-        foundry_features: str,
         agent_session_id: Optional[str] = None,
         agent_version_override: Optional[str] = None,
-        structured_inputs: Optional[str] = None,
+        structured_inputs: Optional[Mapping[str, Any]] = None,
         connection_url: Optional[str] = None,
         extra_query: Optional[Mapping[str, str]] = None,
         extra_headers: Optional[Mapping[str, str]] = None,
@@ -688,7 +688,6 @@ class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
         self._credential_scopes = credential_scopes
         self._api_version = api_version
         self._agent_name = agent_name
-        self._foundry_features = foundry_features
         self._agent_session_id = agent_session_id
         self._agent_version_override = agent_version_override
         self._structured_inputs = structured_inputs
@@ -745,10 +744,10 @@ class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
         token = self._credential.get_token(*self._credential_scopes)
         headers: Dict[str, str] = {
             "Authorization": "Bearer " + token.token,
-            _FOUNDRY_FEATURES_HEADER_NAME: self._foundry_features,
+            _FOUNDRY_FEATURES_HEADER_NAME: _VOICE_AGENT_FEATURE_HEADER,
         }
         if self._structured_inputs is not None:
-            headers["x-ms-voice-structured-inputs"] = self._structured_inputs
+            headers["x-ms-voice-structured-inputs"] = json.dumps(self._structured_inputs, cls=SdkJSONEncoder)
         headers.update(self._extra_headers)
         if not _has_header_case_insensitive(headers, "User-Agent"):
             # Only set our default if the caller didn't supply their own (in any casing) --
@@ -822,10 +821,9 @@ class Realtime:  # pylint: disable=too-few-public-methods
         self,
         *,
         agent_name: str,
-        foundry_features: str = _VOICE_AGENT_FEATURE_HEADER,
         agent_session_id: Optional[str] = None,
         agent_version_override: Optional[str] = None,
-        structured_inputs: Optional[str] = None,
+        structured_inputs: Optional[Mapping[str, Any]] = None,
         connection_url: Optional[str] = None,
         api_version: Optional[str] = None,
         credential_scopes: Optional[List[str]] = None,
@@ -836,19 +834,17 @@ class Realtime:  # pylint: disable=too-few-public-methods
         """Open a realtime WebSocket connection to a voice agent.
 
         :keyword str agent_name: The name of the voice agent to connect to.
-        :keyword foundry_features: Preview opt-in value(s) for the ``Foundry-Features`` header.
-         Defaults to ``VoiceAgents=V1Preview``. Pass a comma-separated value to opt in to
-         additional preview features on the same request.
-        :paramtype foundry_features: str
         :keyword agent_session_id: An optional identifier used to correlate the voice session.
          Default value is None.
         :paramtype agent_session_id: str or None
         :keyword agent_version_override: Selects a specific version of the voice agent for this
          session. Default value is None.
         :paramtype agent_version_override: str or None
-        :keyword structured_inputs: A JSON object that maps structured-input names to their
-         values for this session. Default value is None.
-        :paramtype structured_inputs: str or None
+        :keyword structured_inputs: A mapping of structured-input names to their values for this
+         session (see :attr:`~azure.ai.projects.models.CreateTelephonyCallJobRequest.structured_inputs`
+         for the analogous shape used elsewhere). Serialized to JSON on the wire. Default value is
+         None.
+        :paramtype structured_inputs: Mapping[str, Any] or None
         :keyword connection_url: Full ``wss://`` URL that overrides the route computed
          from the client endpoint. Query parameters are still appended. Default value is None.
         :paramtype connection_url: str or None
@@ -860,7 +856,9 @@ class Realtime:  # pylint: disable=too-few-public-methods
         :paramtype credential_scopes: list[str] or None
         :keyword extra_query: Additional query-string parameters for the handshake.
         :paramtype extra_query: Mapping[str, str] or None
-        :keyword extra_headers: Additional headers for the handshake.
+        :keyword extra_headers: Additional headers for the handshake. Pass
+         ``{"Foundry-Features": "..."}`` here to override the ``VoiceAgents=V1Preview`` value
+         this method always sends by default.
         :paramtype extra_headers: Mapping[str, str] or None
         :return: A context manager yielding a :class:`RealtimeConnection`.
         :rtype: ~azure.ai.projects.RealtimeConnectionManager
@@ -871,7 +869,6 @@ class Realtime:  # pylint: disable=too-few-public-methods
             credential_scopes=credential_scopes or self._config.credential_scopes,
             api_version=api_version or self._config.api_version,
             agent_name=agent_name,
-            foundry_features=foundry_features,
             agent_session_id=agent_session_id,
             agent_version_override=agent_version_override,
             structured_inputs=structured_inputs,
