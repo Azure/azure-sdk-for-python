@@ -39,6 +39,14 @@ stages:
     # archetype-python-release.yml can stay short enough to repeat verbatim wherever a
     # Sign_* stage is referenced. Release builds are manual runs and auto-release CI on main;
     # scheduled builds sign the alpha packages that the Integration stage publishes.
+    #
+    # The 'Schedule' term is load bearing and coupled to daily-dev-build-variable.yml, which
+    # sets SetDevVersion=true only when Build.Reason is exactly 'Schedule'. Alpha wheels exist
+    # only when that is true, so Integration needs signed wheels under exactly the same reasons.
+    # If that check ever widens (for example to ScheduleForced), widen this list to match or
+    # scheduled signing silently stops and the alpha publish falls back to skipping the package.
+    # Reasons absent from this list (BatchedCI, ScheduleForced, IndividualCI off main) produce
+    # neither alpha wheels nor a release stage, so skipping signing for them is correct.
     condition: >-
       and(
         succeeded(),

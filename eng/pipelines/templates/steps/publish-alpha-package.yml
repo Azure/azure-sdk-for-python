@@ -15,8 +15,10 @@ steps:
   - pwsh: |
       # The signed artifact is absent when a Sign_* stage failed or was skipped. Skip this one
       # package rather than failing the dev feed publish for every other package in the service.
+      # Logged as a build issue, not just Write-Warning, so a signing failure degrading to
+      # "this package was not published" is visible in the run summary instead of buried in logs.
       if (-not (Test-Path "${{ parameters.PackagePath }}")) {
-        Write-Warning "No build output at '${{ parameters.PackagePath }}'. Skipping alpha publish for ${{ parameters.Artifact.name }}."
+        Write-Host "##vso[task.logissue type=warning]No build output at '${{ parameters.PackagePath }}'. Skipping alpha publish for ${{ parameters.Artifact.name }}. If this package sets signBinaries, check whether its Sign stage failed or was skipped."
         exit 0
       }
 
