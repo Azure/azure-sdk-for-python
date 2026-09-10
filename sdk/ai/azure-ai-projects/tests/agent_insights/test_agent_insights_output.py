@@ -59,6 +59,23 @@ def test_rejects_missing_on_demand_contract_fields(removed_line):
         assert_agent_insights_output("sample_agent_insights_on_demand.py", output)
 
 
+@pytest.mark.parametrize("severity", [*AgentInsightSeverity, "high", "medium", "low", "future-severity"])
+def test_accepts_populated_on_demand_severity(severity):
+    output = [
+        line.replace(f"severity={AgentInsightSeverity.HIGH}", f"severity={severity}") for line in ON_DEMAND_OUTPUT
+    ]
+    assert_agent_insights_output("sample_agent_insights_on_demand.py", output)
+
+
+@pytest.mark.parametrize("severity", [None, "", " ", "\t", " \t "])
+def test_rejects_missing_on_demand_severity(severity):
+    output = [
+        line.replace(f"severity={AgentInsightSeverity.HIGH}", f"severity={severity}") for line in ON_DEMAND_OUTPUT
+    ]
+    with pytest.raises(AssertionError):
+        assert_agent_insights_output("sample_agent_insights_on_demand.py", output)
+
+
 @pytest.mark.parametrize(
     "old,new",
     [
@@ -67,6 +84,7 @@ def test_rejects_missing_on_demand_contract_fields(removed_line):
         ("Insights created: 1", "Insights created: 0"),
         ("Listed insights: 1", "Listed insights: 2"),
         (f"severity={AgentInsightSeverity.HIGH}", "severity=None"),
+        (f"status={AgentInsightStatus.ACTIVE}", "status=future-status"),
         ("traces=8", "traces=0"),
         ("Check approval first.", "None"),
         ("Deleted monitor `monitor-test`.", "Deleted monitor `old-monitor`."),

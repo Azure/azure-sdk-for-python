@@ -19,6 +19,8 @@ from azure.ai.projects.models import (
 from azure.ai.projects.operations import BetaAgentInsightMonitorsOperations
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 
+from agent_insights.sample_test_helpers import assert_agent_insights_output
+
 
 @pytest.fixture
 def scheduled_sample(monkeypatch):
@@ -332,6 +334,7 @@ def test_on_demand_cleanup_after_success(on_demand_main, capsys, severity):
     operations.cancel_run.assert_not_called()
     assert operations.delete.call_args_list == [call("old-monitor"), call("new-monitor")]
     output = capsys.readouterr().out.splitlines()
+    assert_agent_insights_output("sample_agent_insights_on_demand.py", output)
     assert "Deleted monitor `new-monitor`." in output
     assert "Traces analyzed: 10" in output
     assert f"Run status: {JobStatus.SUCCEEDED}" in output

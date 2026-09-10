@@ -9,7 +9,7 @@ import re
 from datetime import datetime
 
 from devtools_testutils import EnvironmentVariableLoader
-from azure.ai.projects.models import AgentInsightSeverity, AgentInsightStatus, JobStatus
+from azure.ai.projects.models import AgentInsightStatus, JobStatus
 
 
 agentInsightsServicePreparer = functools.partial(
@@ -62,14 +62,14 @@ def assert_agent_insights_output(sample_path: str, print_output_calls: list[str]
     assert read_count("Listed runs") > 0
     insight_count = read_count("Listed insights")
     assert insight_count > 0
-    severities = "|".join(re.escape(f"{severity}") for severity in AgentInsightSeverity)
     statuses = "|".join(re.escape(f"{status}") for status in AgentInsightStatus)
     insights = re.findall(
-        rf"^Insight `([^`]+)`: title=`(.+)`, severity=({severities}), " rf"status=({statuses}), traces=([1-9]\d*)\.$",
+        rf"^Insight `([^`]+)`: title=`(.+)`, severity=(.*), status=({statuses}), traces=([1-9]\d*)\.$",
         output,
         re.MULTILINE,
     )
     assert len(insights) == insight_count, "Every listed insight must have populated detail fields."
     assert all(title.strip() for _, title, *_ in insights)
+    assert all(severity.strip() and severity.strip() != "None" for _, _, severity, *_ in insights)
     assert len(re.findall(r"^Recommended action: (?!None$)\S.*$", output, re.MULTILINE)) == insight_count
     assert f"Insight status after update: {AgentInsightStatus.RESOLVED}" in output.splitlines()
