@@ -4,6 +4,7 @@ The AI Projects client library is part of the Microsoft Foundry SDK, and provide
 resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 
 * **Create and run Agents** using methods on the `.agents` client property. This includes **Hosted Agents**, which let you run your own containerized agent runtime while using Microsoft Foundry for managed hosting and scaling.
+* **Build and run Voice Agents (preview)** for real-time, speech-to-speech conversational AI, reachable over a WebSocket (`.beta.realtime`) or telephony (`.beta.agents`, `.beta.agent_telephony`), with persisted conversation transcripts and audio through `.beta.agent_endpoint_conversations`.
 * **Enhance Agents with specialized tools and toolbox tools** such as:
   * Agent-to-Agent (A2A)
   * Azure AI Search
@@ -191,6 +192,7 @@ The table below lists the operation groups supported by the client library, with
 | Sessions | [Manage hosted sessions](https://learn.microsoft.com/azure/foundry/agents/how-to/manage-hosted-sessions?pivots=python) | `samples/hosted_agents/` |
 | Skills (preview) | | `samples/skills/` |
 | Toolboxes | [Curate intent-based toolbox in Foundry](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox?pivots=python) | `samples/hosted_agents/`, `samples/toolboxes/` |
+| Voice agents (preview) | | `samples/agents/voice/` |
 
 
 ## Client-side tracing
