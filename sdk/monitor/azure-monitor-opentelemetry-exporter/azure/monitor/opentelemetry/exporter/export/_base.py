@@ -494,7 +494,7 @@ class BaseExporter:
                                 if dropped_envelope is None or _is_item_too_large(error.message):
                                     dropped_envelope = ""  # type: ignore[assignment]
                                 logger.error(
-                                    "Data drop %s: %s. %s",
+                                    "Data drop %s: %s %s.",
                                     error.status_code,
                                     error.message,
                                     dropped_envelope,

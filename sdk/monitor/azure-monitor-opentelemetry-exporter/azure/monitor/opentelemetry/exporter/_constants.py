@@ -78,7 +78,6 @@ _THROTTLE_STATUS_CODES = (
 
 _REACHED_INGESTION_STATUS_CODES = (200, 206, 402, 408, 413, 429, 439, 500)
 
-
 # Envelope constants
 
 _METRIC_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Metric"
