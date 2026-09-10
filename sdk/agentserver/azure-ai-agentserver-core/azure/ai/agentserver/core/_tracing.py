@@ -584,9 +584,18 @@ def flush_spans(timeout_millis: int = 5000) -> None:
             logger.debug("TracerProvider.force_flush() failed", exc_info=True)
 
 
-# Strong references to in-flight background flush tasks so they are not garbage
-# collected before completing (asyncio only holds weak references to tasks).
-_BG_FLUSH_TASKS: set = set()
+# A single coalesced background flush runs at a time.  ``force_flush`` drains
+# the provider *globally*, so concurrent per-request flushes would be redundant
+# work.  Instead of spawning one task per request (which lets ``_bg_flush_task``
+# / the executor queue grow without bound under load), requests that arrive
+# while a flush is in flight set ``_bg_flush_pending``; the running task then
+# performs exactly one follow-up flush afterwards to capture spans produced
+# during the active flush.  This bounds in-flight background work to a single
+# task regardless of request rate.  The module-level reference also keeps the
+# task alive (asyncio only holds weak references to tasks).  Access is confined
+# to the event-loop thread, so no lock is required.
+_bg_flush_task: "Optional[asyncio.Task[None]]" = None
+_bg_flush_pending: bool = False
 
 
 async def flush_spans_async(timeout_millis: int = 5000) -> None:
@@ -617,13 +626,30 @@ async def flush_spans_async(timeout_millis: int = 5000) -> None:
         logger.debug("TracerProvider.force_flush() (async) failed", exc_info=True)
 
 
+async def _coalesced_flush(timeout_millis: int) -> None:
+    """Run a background flush, then one more pass per pending coalesced request.
+
+    Because ``force_flush`` drains the provider globally, a single trailing
+    flush captures the spans of every request that arrived while a flush was
+    already running -- no need for a task (or export) per request.
+    """
+    global _bg_flush_pending  # pylint: disable=global-statement
+    await flush_spans_async(timeout_millis)
+    while _bg_flush_pending:
+        _bg_flush_pending = False
+        await flush_spans_async(timeout_millis)
+
+
 def schedule_flush_spans(timeout_millis: int = 5000) -> None:
-    """Schedule a span flush as a background task and return immediately.
+    """Schedule a coalesced background span flush and return immediately.
 
     Unlike :func:`flush_spans` / :func:`flush_spans_async`, this does not delay
-    the caller (i.e. the HTTP response) by the export duration.  A strong
-    reference to the task is retained until it completes so it is not garbage
-    collected.  Falls back to a synchronous flush when no event loop is running.
+    the caller (i.e. the HTTP response) by the export duration.  At most one
+    background flush task runs at a time: calls made while a flush is in flight
+    are coalesced into a single follow-up flush rather than spawning a task per
+    request, so neither the retained task reference nor the executor queue grows
+    with the request rate.  Falls back to a synchronous flush when no event loop
+    is running.
 
     .. note::
        Only safe when the hosting platform guarantees a brief drain window
@@ -634,14 +660,18 @@ def schedule_flush_spans(timeout_millis: int = 5000) -> None:
         Defaults to 5000 (5 seconds).
     :type timeout_millis: int
     """
+    global _bg_flush_task, _bg_flush_pending  # pylint: disable=global-statement
     try:
         loop = asyncio.get_running_loop()
     except RuntimeError:
         flush_spans(timeout_millis)
         return
-    task = loop.create_task(flush_spans_async(timeout_millis))
-    _BG_FLUSH_TASKS.add(task)
-    task.add_done_callback(_BG_FLUSH_TASKS.discard)
+    if _bg_flush_task is not None and not _bg_flush_task.done():
+        # A flush is already draining the provider globally; record that more
+        # spans arrived so the running task performs one more pass afterwards.
+        _bg_flush_pending = True
+        return
+    _bg_flush_task = loop.create_task(_coalesced_flush(timeout_millis))
 
 
 def record_error(span: Any, exc: BaseException) -> None:

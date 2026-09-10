@@ -190,6 +190,46 @@ _conversation_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("Conv
 _streaming_var: contextvars.ContextVar[str] = contextvars.ContextVar("Streaming", default="")
 
 
+_FLUSH_MODE_ENV = "AGENTSERVER_FLUSH_MODE"
+_DEFAULT_FLUSH_MODE = "async"
+
+
+async def _flush_spans_for_mode(mode: str) -> None:
+    """Dispatch span flushing according to *mode* (see ``AGENTSERVER_FLUSH_MODE``).
+
+    ``force_flush`` blocks the calling thread until the exporter drains; doing
+    that inline on this ``async`` handler blocks the event loop and serialises
+    concurrent requests behind one export.  The mode selects the strategy:
+
+    * ``"async"`` (default) -> :func:`flush_spans_async`: off the event loop;
+      same durability, no head-of-line blocking under concurrency.
+    * ``"background"`` -> :func:`schedule_flush_spans`: return the response
+      first and flush in the background (lowest latency, but needs the platform
+      to grant a brief drain window before freezing).
+    * ``"sync"`` -> :func:`flush_spans`: legacy blocking behaviour.
+
+    Any unrecognised value falls back to the ``"async"`` default (fail safe:
+    never silently drop telemetry).
+
+    :param mode: The flush mode; matched case-insensitively.
+    :type mode: str
+    """
+    normalized = (mode or "").strip().lower()
+    if normalized == "sync":
+        flush_spans()
+    elif normalized == "background":
+        schedule_flush_spans()
+    else:
+        if normalized and normalized != _DEFAULT_FLUSH_MODE:
+            logger.warning(
+                "Unrecognised %s=%r; falling back to %r flush mode.",
+                _FLUSH_MODE_ENV,
+                mode,
+                _DEFAULT_FLUSH_MODE,
+            )
+        await flush_spans_async()
+
+
 class _ResponseLogFilter(logging.Filter):
     """Attach response-scope IDs to every log record from context vars.
 
@@ -953,25 +993,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             _streaming_var.reset(str_token)
             reset_request_context(platform_ctx_token)
             # Flush pending spans before the process may be frozen.
-            # ``force_flush`` blocks the calling thread until the exporter
-            # drains; doing that inline on this ``async`` handler blocks the
-            # event loop and serialises concurrent requests behind one export.
-            # AGENTSERVER_FLUSH_MODE selects the strategy:
-            #   "async" (default) -> await flush_spans_async(): off the event
-            #                        loop; same durability, no head-of-line
-            #                        blocking under concurrency.
-            #   "background"       -> schedule_flush_spans(): return the response
-            #                        first, flush in the background. Lowest
-            #                        latency, but requires the platform to grant
-            #                        a brief drain window before freezing.
-            #   "sync"             -> flush_spans(): legacy blocking behaviour.
-            _flush_mode = os.environ.get("AGENTSERVER_FLUSH_MODE", "async").lower()
-            if _flush_mode == "sync":
-                flush_spans()
-            elif _flush_mode == "background":
-                schedule_flush_spans()
-            else:
-                await flush_spans_async()
+            # ``AGENTSERVER_FLUSH_MODE`` selects the strategy (see
+            # ``_flush_spans_for_mode``); the default keeps the flush off the
+            # event loop without dropping telemetry.
+            await _flush_spans_for_mode(
+                os.environ.get(_FLUSH_MODE_ENV, _DEFAULT_FLUSH_MODE)
+            )
             try:
                 _otel_context.detach(baggage_token)
             except ValueError:
