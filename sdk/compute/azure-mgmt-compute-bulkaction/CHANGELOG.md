@@ -1,5 +1,69 @@
 # Release History
 
+## 1.0.0b4 (2026-09-11)
+
+### Features Added
+
+  - Client `ComputeBulkActionsMgmtClient` added operation group `bulk_create`
+  - Enum `ScheduledActionsProvisioningState` added member `UPDATING`
+  - Model `VirtualMachineInfo` added property `name`
+  - Model `ZonePreference` added property `target_max_capacity`
+  - Added model `BulkCreateProperties`
+  - Added model `BulkCreateVmSizeProfile`
+  - Added model `LocationBasedBulkCreate`
+  - Added operation group `BulkCreateOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `ComputeBulkActionsMgmtClient.launch_bulk_instances_operation`
+  - Method `BulkCreateCustomOperations.virtual_machines_get_operation_status` changed from `asynchronous` to `synchronous`
+  - Deleted or renamed enum value `DeadlineType.UNKNOWN`
+  - Model `ExecutionParameters` deleted or renamed its instance variable `optimization_preference`
+  - Deleted or renamed enum value `OperationState.PENDING_EXECUTION`
+  - Deleted or renamed enum value `OperationState.PENDING_SCHEDULING`
+  - Deleted or renamed enum value `OperationState.UNKNOWN`
+  - Deleted or renamed enum value `ResourceOperationType.GET_INSTANCE_VIEW`
+  - Deleted or renamed enum value `ResourceOperationType.UNKNOWN`
+  - Deleted or renamed enum value `ScheduledActionsDeadlineType.UNKNOWN`
+  - Model `ScheduledActionsExecutionParameters` deleted or renamed its instance variable `optimization_preference`
+  - Deleted or renamed enum value `ScheduledActionsResourceOperationType.UNKNOWN`
+  - Deleted or renamed model `AcceleratorManufacturer`
+  - Deleted or renamed model `AcceleratorType`
+  - Deleted or renamed model `AcknowledgeBulkOperationErrorsRequest`
+  - Deleted or renamed model `AcknowledgeBulkOperationErrorsResponse`
+  - Deleted or renamed model `ApiError`
+  - Deleted or renamed model `ApiErrorBase`
+  - Deleted or renamed model `ArchitectureType`
+  - Deleted or renamed model `BulkInstancesInnerError`
+  - Deleted or renamed model `CpuManufacturer`
+  - Deleted or renamed model `CreateResourceOperationResponse`
+  - Deleted or renamed model `ExecuteCreateContent`
+  - Deleted or renamed model `ExecuteVdiCreateRequest`
+  - Deleted or renamed model `FlexProperties`
+  - Deleted or renamed model `HyperVGeneration`
+  - Deleted or renamed model `LaunchBulkInstancesOperationProperties`
+  - Deleted or renamed model `LocalStorageDiskType`
+  - Deleted or renamed model `LocationBasedLaunchBulkInstancesOperation`
+  - Deleted or renamed model `OptimizationPreference`
+  - Deleted or renamed model `OsType`
+  - Deleted or renamed model `ResourceProvisionPayload`
+  - Deleted or renamed model `ResourceProvisionVdiPayload`
+  - Deleted or renamed model `VMAttributeMinMaxDouble`
+  - Deleted or renamed model `VMAttributeMinMaxInteger`
+  - Deleted or renamed model `VMAttributeSupport`
+  - Deleted or renamed model `VMAttributes`
+  - Deleted or renamed model `VMCategory`
+  - Deleted or renamed model `VMOperationStatus`
+  - Deleted or renamed model `VirtualMachine`
+  - Deleted or renamed model `VmSizeProfile`
+  - Deleted or renamed method `VirtualMachineBulkOperationsOperations.bulk_acknowledge_operation_errors`
+  - Deleted or renamed method `VirtualMachineBulkOperationsOperations.bulk_create_operation`
+  - Deleted or renamed method `VirtualMachineBulkOperationsOperations.bulk_list_operation_errors`
+  - Deleted or renamed method `VirtualMachineBulkOperationsOperations.bulk_vdi_flex_create_operation`
+  - Deleted or renamed model `LaunchBulkInstancesOperationOperations`
+  - Method `BulkCreateCustomOperations.virtual_machines_get_operation_status` changed return type from `GetOperationStatusResponse` to `AsyncItemPaged[ResourceOperation]`
+  - Method `BulkCreateCustomOperations.virtual_machines_get_operation_status` changed return type from `GetOperationStatusResponse` to `ItemPaged[ResourceOperation]`
+
 ## 1.0.0b3 (2026-08-13)
 
 ### Features Added

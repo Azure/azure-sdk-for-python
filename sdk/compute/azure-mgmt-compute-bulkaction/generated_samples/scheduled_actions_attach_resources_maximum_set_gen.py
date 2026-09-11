@@ -40,14 +40,20 @@ def main():
                     "notificationSettings": [
                         {"destination": "admin@contoso.com", "disabled": True, "language": "en-us", "type": "Email"}
                     ],
-                    "resourceId": "/subscriptions/1d04e8f1-ee04-4056-b0b2-718f5bb45b04/resourceGroups/myRg/providers/Microsoft.Compute/virtualMachines/myVm",
-                }
+                    "resourceId": "/subscriptions/CB26D7CB-3E27-465F-99C8-EAF7A4118245/resourceGroups/rgcompute/providers/Microsoft.Compute/virtualMachines/myVm",
+                },
+                {
+                    "notificationSettings": [
+                        {"destination": "admin@contoso.com", "disabled": True, "language": "en-us", "type": "Email"}
+                    ],
+                    "resourceId": "/subscriptions/CB26D7CB-3E27-465F-99C8-EAF7A4118245/resourceGroups/rgcompute/providers/Microsoft.Compute/virtualMachines/myVm2",
+                },
             ]
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-08-06-preview/ScheduledActions_AttachResources_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-06-preview/ScheduledActions_AttachResources_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
