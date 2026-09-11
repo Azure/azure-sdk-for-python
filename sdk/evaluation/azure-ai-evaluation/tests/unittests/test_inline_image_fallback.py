@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+from azure.ai.evaluation._legacy.prompty._exceptions import InvalidInputError
 from azure.ai.evaluation._legacy.prompty._utils import _inline_image, _to_content_str_or_list
 
 
@@ -96,6 +97,80 @@ class TestInlineImageGracefulFallback:
         assert result["image_url"]["url"].startswith("data:")
         assert "base64" in result["image_url"]["url"]
 
+    def test_parent_traversal_returns_text(self, tmp_path):
+        """A local image reference cannot escape the Prompty directory."""
+        working_dir = tmp_path / "prompty"
+        working_dir.mkdir()
+        (tmp_path / "outside.png").write_bytes(b"outside")
+        image = "![test](../outside.png)"
+
+        result = _inline_image(image, working_dir, "auto")
+
+        assert result == {"type": "text", "text": image}
+
+    def test_mixed_separator_parent_traversal_returns_text(self, tmp_path):
+        """Windows separators cannot bypass containment on other platforms."""
+        working_dir = tmp_path / "prompty"
+        working_dir.mkdir()
+        (tmp_path / "outside.png").write_bytes(b"outside")
+        image = r"![test](..\outside.png)"
+
+        result = _inline_image(image, working_dir, "auto")
+
+        assert result == {"type": "text", "text": image}
+
+    def test_absolute_path_returns_text(self, tmp_path):
+        """Absolute paths are not valid local Prompty image references."""
+        image_path = tmp_path / "inside.png"
+        image_path.write_bytes(b"inside")
+        image = f"![test]({image_path.as_posix()})"
+
+        result = _inline_image(image, tmp_path, "auto")
+
+        assert result == {"type": "text", "text": image}
+
+    def test_windows_absolute_path_returns_text(self, tmp_path):
+        """Windows drive paths are rejected on every operating system."""
+        image = r"![test](C:\outside.png)"
+
+        result = _inline_image(image, tmp_path, "auto")
+
+        assert result == {"type": "text", "text": image}
+
+    def test_symlink_escape_returns_text(self, tmp_path):
+        """A symlink inside the Prompty directory cannot target an outside file."""
+        working_dir = tmp_path / "prompty"
+        working_dir.mkdir()
+        outside_path = tmp_path / "outside.png"
+        outside_path.write_bytes(b"outside")
+        symlink_path = working_dir / "linked.png"
+        try:
+            symlink_path.symlink_to(outside_path)
+        except (NotImplementedError, OSError):
+            pytest.skip("Creating symlinks is not supported in this test environment.")
+
+        result = _inline_image("![test](linked.png)", working_dir, "auto")
+
+        assert result == {"type": "text", "text": "![test](linked.png)"}
+
+    def test_data_path_parent_traversal_raises_invalid_input(self, tmp_path):
+        """The explicit data path form rejects paths outside the Prompty directory."""
+        working_dir = tmp_path / "prompty"
+        working_dir.mkdir()
+        (tmp_path / "outside.png").write_bytes(b"outside")
+
+        with pytest.raises(InvalidInputError, match="within the Prompty directory"):
+            _inline_image("![test](data:image/png;path:../outside.png)", working_dir, "auto")
+
+    def test_data_path_local_image_file(self, tmp_path):
+        """The explicit data path form still inlines a file within the Prompty directory."""
+        (tmp_path / "inside.png").write_bytes(b"inside")
+
+        result = _inline_image("![test](data:image/png;path:inside.png)", tmp_path, "auto")
+
+        assert result["type"] == "image_url"
+        assert result["image_url"]["url"] == f"data:image/png;base64,{base64.b64encode(b'inside').decode('utf-8')}"
+
 
 @pytest.mark.unittest
 class TestToContentStrOrListGracefulFallback:
@@ -109,6 +184,17 @@ class TestToContentStrOrListGracefulFallback:
         # All chunks should be of type "text" since the image is unresolvable
         for item in result:
             assert item["type"] == "text"
+
+    def test_text_with_existing_parent_image_ref(self, tmp_path):
+        """Mixed content cannot inline an existing image outside the Prompty directory."""
+        working_dir = tmp_path / "prompty"
+        working_dir.mkdir()
+        (tmp_path / "outside.png").write_bytes(b"outside")
+
+        result = _to_content_str_or_list("Before ![img](../outside.png) after", working_dir, "auto")
+
+        assert isinstance(result, list)
+        assert all(item["type"] == "text" for item in result)
 
     def test_plain_text_no_images(self, tmp_path):
         """Plain text with no image references should return a string."""
