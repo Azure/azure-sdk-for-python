@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-01-01/HybridConnection/RelayHybridConnectionCreate.json
+# x-ms-original-file: 2026-07-01-preview/HybridConnection/RelayHybridConnectionCreate.json
 if __name__ == "__main__":
     main()

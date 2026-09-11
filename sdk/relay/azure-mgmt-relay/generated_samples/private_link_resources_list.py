@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-01-01/PrivateEndpointConnections/PrivateLinkResourcesList.json
+# x-ms-original-file: 2026-07-01-preview/PrivateEndpointConnections/PrivateLinkResourcesList.json
 if __name__ == "__main__":
     main()

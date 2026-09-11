@@ -15,7 +15,7 @@ from azure.mgmt.search import SearchManagementClient
     pip install azure-identity
     pip install azure-mgmt-search
 # USAGE
-    python search_list_offerings.py
+    python search_fetch_offerings.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,10 +30,10 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.offerings.list()
+    response = client.offerings.fetch()
     print(response)
 
 
-# x-ms-original-file: 2026-03-01-preview/SearchListOfferings.json
+# x-ms-original-file: 2026-09-01-preview/SearchFetchOfferings.json
 if __name__ == "__main__":
     main()

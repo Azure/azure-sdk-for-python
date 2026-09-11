@@ -54,9 +54,10 @@ def upload_data_chunks(
 ):
 
     parallel = max_concurrency > 1
-    if parallel and "modified_access_conditions" in kwargs:
+    if parallel:
         # Access conditions do not work with parallelism
-        kwargs["modified_access_conditions"] = None
+        kwargs.pop("etag", None)
+        kwargs.pop("match_condition", None)
 
     uploader = uploader_class(
         service=service,
@@ -94,9 +95,10 @@ def upload_substream_blocks(
     **kwargs,
 ):
     parallel = max_concurrency > 1
-    if parallel and "modified_access_conditions" in kwargs:
+    if parallel:
         # Access conditions do not work with parallelism
-        kwargs["modified_access_conditions"] = None
+        kwargs.pop("etag", None)
+        kwargs.pop("match_condition", None)
     uploader = uploader_class(
         service=service,
         total_size=total_size,
@@ -264,9 +266,9 @@ class BlockBlobChunkUploader(_ChunkUploader):
         index = f"{chunk_offset:032d}"
         block_id = encode_base64(f"{uuid4().int:048d}")
         self.service.stage_block(
-            block_id,
-            len(chunk_data),
-            chunk_data,
+            block_id=block_id,
+            content_length=len(chunk_data),
+            body=chunk_data,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
             **self.request_options,
@@ -277,9 +279,9 @@ class BlockBlobChunkUploader(_ChunkUploader):
         try:
             block_id = encode_base64(os.urandom(9))
             self.service.stage_block(
-                block_id,
-                len(block_stream),
-                block_stream,
+                block_id=block_id,
+                content_length=len(block_stream),
+                body=block_stream,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
                 **self.request_options,
@@ -313,8 +315,8 @@ class PageBlobChunkUploader(_ChunkUploader):
                 **self.request_options,
             )
 
-            if not self.parallel and self.request_options.get("modified_access_conditions"):
-                self.request_options["modified_access_conditions"].if_match = self.response_headers["etag"]
+            if not self.parallel and self.request_options.get("etag"):
+                self.request_options["etag"] = self.response_headers["etag"]
 
     def _upload_substream_block(self, index, block_stream):
         pass
@@ -338,9 +340,7 @@ class AppendBlobChunkUploader(_ChunkUploader):
             )
             self.current_length = int(self.response_headers["blob_append_offset"])
         else:
-            self.request_options["append_position_access_conditions"].append_position = (
-                self.current_length + chunk_offset
-            )
+            self.request_options["append_position"] = self.current_length + chunk_offset
             self.response_headers = self.service.append_block(
                 body=chunk_data,
                 content_length=len(chunk_data),
@@ -409,6 +409,8 @@ class FileChunkUploader(_ChunkUploader):
 class SubStream(IOBase):
 
     def __init__(self, wrapped_stream, stream_begin_index, length, lockObj):
+        super(SubStream, self).__init__()
+
         # Python 2.7: file-like objects created with open() typically support seek(), but are not
         # derivations of io.IOBase and thus do not implement seekable().
         # Python > 3.0: file-like objects created with open() are derived from io.IOBase.
@@ -432,13 +434,12 @@ class SubStream(IOBase):
         )
         self._current_buffer_start = 0
         self._current_buffer_size = 0
-        super(SubStream, self).__init__()
 
     def __len__(self):
         return self._length
 
     def close(self):
-        if self._buffer:
+        if hasattr(self, "_buffer"):
             self._buffer.close()
         self._wrapped_stream = None
         IOBase.close(self)

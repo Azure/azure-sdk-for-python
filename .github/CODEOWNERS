@@ -10,7 +10,7 @@
 
 # Core
 # PRLabel: %Core.Http
-/sdk/core/corehttp/                                                  @xirzec @johanste @iscai-msft @kashifkhan
+/sdk/core/corehttp/                                                  @xirzec @iscai-msft @kashifkhan
 
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Core.Http
@@ -19,12 +19,12 @@
 # ServiceLabel: %Azure.Core
 
 # PRLabel: %Azure.Core
-/sdk/core/                                                           @xirzec @johanste
-/sdk/core/azure-core/                                                @xirzec @johanste @iscai-msft @kashifkhan
+/sdk/core/                                                           @xirzec
+/sdk/core/azure-core/                                                @xirzec @iscai-msft @kashifkhan
 /sdk/core/azure-mgmt-core/                                           @msyyc
 
 # Smoke Tests
-/common/smoketest/                                                   @xirzec @mccoyp @shurd @southpolesteve
+/common/smoketest/                                                   @xirzec @laiapat @shurd @southpolesteve
 
 ####################
 # Client Libraries
@@ -35,22 +35,22 @@
 /sdk/agrifood/azure-agrifood-farming/    @bhargav-kansagara
 
 # PRLabel: %AI
-/sdk/ai/    @dargilco @luigiw @needuv @singankit @trrwilson @howieleung
+/sdk/ai/    @dargilco @luigiw @needuv @singankit @howieleung
 
 # ServiceLabel: %AI
 # ServiceOwners: @luigiw @needuv @singankit
 
 # ServiceLabel: %AI Agents %Service Attention
 # PRLabel: %AI Agents
-/sdk/ai/azure-ai-agents/    @dargilco @glharper @howieleung @nick863 @trangevi @trrwilson
+/sdk/ai/azure-ai-agents/    @dargilco @glharper @howieleung @nick863 @trangevi
 
 # ServiceLabel: %AI Model Inference %Service Attention
 # PRLabel: %AI Model Inference
-/sdk/ai/azure-ai-inference/    @dargilco @trangevi @trrwilson
+/sdk/ai/azure-ai-inference/    @dargilco @trangevi
 
 # ServiceLabel: %AI Projects %Service Attention
 # PRLabel: %AI Projects
-/sdk/ai/azure-ai-projects/    @dargilco @glharper @howieleung @kingernupur @nick863 @trangevi @trrwilson @bobogogo1990
+/sdk/ai/azure-ai-projects/    @dargilco @glharper @howieleung @kingernupur @nick863 @trangevi @bobogogo1990
 
 # PRLabel: %App Configuration
 /sdk/appconfiguration/    @avanigupta @jimmyca15 @mrm9084 @yuanqu72
@@ -245,7 +245,7 @@
 /sdk/durabletask/    @berndverst @cgillum @kaibocai @philliphoff @RyanLettieri @torosent
 
 # PRLabel: %EngSys
-/sdk/template/    @benbp @mikeharder @danieljurek 
+/sdk/template/    @JennyPng @l0lawrence @danieljurek 
 
 # PRLabel: %Evaluation
 /sdk/evaluation/    @Azure/azure-sdk-write-evaluation
@@ -352,7 +352,7 @@
 /sdk/onlineexperimentation/    @Azure/azure-sdk-write-onlineexperimentation
 
 # PRLabel: %OpenAI
-/sdk/openai/    @kashifkhan @trrwilson
+/sdk/openai/    @kashifkhan
 
 # ServiceLabel: %OpenAI
 # ServiceOwners: @trrwilson
@@ -820,42 +820,42 @@
 ###########
 # Eng Sys and other
 ###########
-/eng/                                                                @danieljurek @mikeharder @benbp
-/eng/common/                                                         @Azure/azure-sdk-eng
-/eng/tools/                                                          @danieljurek @mccoyp
-/.github/workflows/                                                  @Azure/azure-sdk-eng
-/.github/workflows/typespec-python-regenerate.yml                    @Azure/azure-sdk-eng @tadelesh @msyyc @iscai-msft @ChenxiJiang333
-/.github/CODEOWNERS                                                  @xirzec @kashifkhan @Azure/azure-sdk-eng
-/.github/copilot-instructions.md                                     @l0lawrence @praveenkuttappan @maririos
-/.github/prompts/                                                    @mccoyp @l0lawrence @benbp
-/.github/skills/                                                     @mccoyp @l0lawrence @benbp @Azure/azsdk-cli
-/sdk/pullrequest.yml                                                 @danieljurek @mikeharder @benbp
+/eng/                                                                @JennyPng @l0lawrence @danieljurek
+/eng/common/                                                         @JennyPng @l0lawrence @Azure/azure-sdk-eng
+/eng/tools/                                                          @JennyPng @l0lawrence @danieljurek @laiapat
+/.github/workflows/                                                  @JennyPng @l0lawrence @Azure/azure-sdk-eng
+/.github/workflows/typespec-python-regenerate.yml                    @JennyPng @l0lawrence @Azure/azure-sdk-eng @tadelesh @msyyc @iscai-msft @ChenxiJiang333
+/.github/CODEOWNERS                                                  @xirzec @kashifkhan @JennyPng @l0lawrence @Azure/azure-sdk-eng
+/.github/copilot-instructions.md                                     @l0lawrence @praveenkuttappan
+/.github/prompts/                                                    @laiapat @l0lawrence
+/.github/skills/                                                     @laiapat @l0lawrence @Azure/azsdk-cli
+/sdk/pullrequest.yml                                                 @JennyPng @l0lawrence @danieljurek 
 
-/.config/1espt/                                                      @benbp @mikeharder
-/.devcontainer/                                                      @danieljurek @mccoyp @benbp @mikeharder
-/.vscode/                                                            @danieljurek @mccoyp @benbp @mikeharder
+/.config/1espt/                                                      @JennyPng @l0lawrence @danieljurek
+/.devcontainer/                                                      @JennyPng @l0lawrence @danieljurek @laiapat
+/.vscode/                                                            @JennyPng @l0lawrence @danieljurek @laiapat
 
-/scripts/                                                            @danieljurek @mccoyp
-/doc/                                                                @danieljurek @Azure/azure-python-sdk
-/conda/                                                              @danieljurek @xiangyan99 @xirzec
+/scripts/                                                            @JennyPng @l0lawrence @danieljurek @laiapat
+/doc/                                                                @JennyPng @l0lawrence @danieljurek @Azure/azure-python-sdk
+/conda/                                                              @JennyPng @l0lawrence @danieljurek @xirzec
 
-/shared_requirements.txt                                             @azure/azure-sdk-eng @kashifkhan @xirzec
+/shared_requirements.txt                                             @JennyPng @l0lawrence @azure/azure-sdk-eng @kashifkhan @xirzec
 
 # Add owners for notifications for specific pipelines
-/eng/pipelines/templates/jobs/tests-nightly-python.yml               @xirzec @mccoyp
-/eng/pipelines/aggregate-reports.yml                                 @xirzec @mccoyp
-/eng/common/pipelines/codeowners-linter.yml                          @xirzec @mccoyp
-/eng/pipelines/docindex.yml                                          @danieljurek @benbp
+/eng/pipelines/templates/jobs/tests-nightly-python.yml               @xirzec @laiapat
+/eng/pipelines/aggregate-reports.yml                                 @xirzec @laiapat
+/eng/common/pipelines/codeowners-linter.yml                          @xirzec @laiapat
+/eng/pipelines/docindex.yml                                          @JennyPng @l0lawrence @danieljurek
 
 # Add approvers for typespec-python emitter version updates
-/eng/emitter-package.json                                            @mccoyp @iscai-msft @msyyc @ChenxiJiang333
-/eng/emitter-package-lock.json                                       @mccoyp @iscai-msft @msyyc @ChenxiJiang333
+/eng/emitter-package.json                                            @laiapat @iscai-msft @msyyc @ChenxiJiang333
+/eng/emitter-package-lock.json                                       @laiapat @iscai-msft @msyyc @ChenxiJiang333
 
 # TypeSpec Python generated tests and regeneration workflow
 /eng/tools/emitter/                                                  @tadelesh @msyyc @iscai-msft @xirzec @lirenhe @ChenxiJiang333
 
-/pylintrc                                                            @l0lawrence @danieljurek @mccoyp
-/sdk/**/ci.yml                                                       @msyyc @xirzec @danieljurek
+/pylintrc                                                            @JennyPng @l0lawrence @danieljurek @laiapat
+/sdk/**/ci.yml                                                       @JennyPng @l0lawrence @msyyc @xirzec @danieljurek
 
 # Add Johnathan Walker as code owner for Event Hubs SDK
 /sdk/eventhub/azure-eventhub/* @j7nw4r @SwayGom @sagar0207

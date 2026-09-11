@@ -117,11 +117,11 @@ def validate_and_format_range_headers(
     if align_to_page:
         if start_range is not None and start_range % 512 != 0:
             raise ValueError(
-                f"Invalid page blob start_range: {start_range}. " "The size must be aligned to a 512-byte boundary."
+                f"Invalid page blob start_range: {start_range}. The size must be aligned to a 512-byte boundary."
             )
         if end_range is not None and end_range % 512 != 511:
             raise ValueError(
-                f"Invalid page blob end_range: {end_range}. " "The size must be aligned to a 512-byte boundary."
+                f"Invalid page blob end_range: {end_range}. The size must be aligned to a 512-byte boundary."
             )
 
     # Format based on whether end_range is present
@@ -262,6 +262,11 @@ def _make_body_from_sub_request(sub_request):
     # append remaining headers (this will set the Content-Length, as it was set on `sub-request`)
     for header_name, header_value in headers.items():
         if header_value is not None:
+            if "\r" in header_name or "\n" in header_name or "\r" in header_value or "\n" in header_value:
+                raise ValueError(
+                    f"Invalid header {header_name!r} in batch sub-request: the header name or its value "
+                    r"contains a '\r' or '\n' character, which is not permitted."
+                )
             sub_request_body.append(header_name)
             sub_request_body.append(": ")
             sub_request_body.append(header_value)

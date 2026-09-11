@@ -340,11 +340,7 @@ def generate_directory_sas(
     :rtype: str
     """
     canonicalized_directory_name = directory_name.replace("\\", "/")
-    depth = (
-        0
-        if canonicalized_directory_name in ["", "/"]
-        else len(canonicalized_directory_name.strip("/").split("/"))
-    )
+    depth = 0 if canonicalized_directory_name in ["", "/"] else len(canonicalized_directory_name.strip("/").split("/"))
     return generate_blob_sas(
         account_name=account_name,
         container_name=file_system_name,
