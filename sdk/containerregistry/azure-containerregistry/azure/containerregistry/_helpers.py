@@ -104,6 +104,25 @@ def _parse_next_link(link_string: str) -> Optional[str]:
     return link_string[1 : link_string.find(">")]
 
 
+def _validate_next_link(next_link: str, endpoint: str) -> None:
+    """Ensure a pagination continuation link targets the configured registry host.
+
+    The continuation link comes from a service response (the Link header or the
+    response body) and is therefore untrusted. A relative link, or an absolute
+    link whose host matches the endpoint, is accepted. An absolute link to any
+    other host is rejected so request credentials are never sent to a host the
+    caller did not configure.
+
+    :param str next_link: The continuation link returned by the service.
+    :param str endpoint: The configured registry endpoint.
+    :return: None
+    :raises ValueError: If next_link points at a different host than endpoint.
+    """
+    host = urlparse(next_link).hostname
+    if host and host.lower() != (urlparse(endpoint).hostname or "").lower():
+        raise ValueError("The continuation link host does not match the registry endpoint.")
+
+
 def _enforce_https(request: PipelineRequest) -> None:
     """Raise ServiceRequestError if the request URL is non-HTTPS and the sender did not specify enforce_https=False
 
