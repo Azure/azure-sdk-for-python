@@ -1,10 +1,16 @@
-from deid_base_test_case import *
+from deid_base_test_case import DeidBaseTestCase, BatchEnv
 from devtools_testutils import (
     recorded_by_proxy,
 )
 
-from azure.health.deidentification.models import *
 from azure.core.paging import ItemPaged
+from azure.health.deidentification.models import (
+    DeidentificationJob,
+    DeidentificationJobCustomizationOptions,
+    DeidentificationOperationType,
+    SourceStorageLocation,
+    TargetStorageLocation,
+)
 
 
 class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):

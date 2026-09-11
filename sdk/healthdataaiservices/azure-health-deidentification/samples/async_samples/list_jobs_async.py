@@ -18,9 +18,9 @@ USAGE:
 
 
 import asyncio
+import os
 from azure.health.deidentification.aio import DeidentificationClient
 from azure.identity.aio import DefaultAzureCredential
-import os
 
 
 async def list_jobs_async():

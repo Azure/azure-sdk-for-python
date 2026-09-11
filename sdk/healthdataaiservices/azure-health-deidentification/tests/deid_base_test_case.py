@@ -1,18 +1,14 @@
 import functools
 import inspect
 import os
-import random
-import datetime
-import uuid
-from azure.health.deidentification import DeidentificationClient
-from azure.health.deidentification.aio import (
-    DeidentificationClient as DeidentificationClientAsync,
-)
-
 
 from devtools_testutils import (
     AzureRecordedTestCase,
     EnvironmentVariableLoader,
+)
+from azure.health.deidentification import DeidentificationClient
+from azure.health.deidentification.aio import (
+    DeidentificationClient as DeidentificationClientAsync,
 )
 
 RealtimeEnv = functools.partial(

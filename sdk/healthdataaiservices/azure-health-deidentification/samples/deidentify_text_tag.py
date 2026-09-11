@@ -40,7 +40,7 @@ def deidentify_text_tag():
     print(f'\nOriginal Text:    "{body.input_text}"')
 
     if result.tagger_result and result.tagger_result.entities:
-        print(f"Tagged Entities:")
+        print("Tagged Entities:")
         for entity in result.tagger_result.entities:
             print(
                 f'\tEntity Text: "{entity.text}", Entity Category: "{entity.category}", Offset: "{entity.offset.code_point}", Length: "{entity.length.code_point}"'
