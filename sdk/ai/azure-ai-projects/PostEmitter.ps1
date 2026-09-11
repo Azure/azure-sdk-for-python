@@ -74,7 +74,7 @@ foreach ($line in $lines) {
 Set-Content $f $out
 
 # Normalize generated reStructuredText bullet lists in model and enum docstrings.
-# Join wrapped list text while preserving blank separators and closing docstring delimiters.
+# Join incorrectly indented continuations, then reflow long bullets with valid continuation indentation.
 $files = 'azure\ai\projects\models\_models.py', 'azure\ai\projects\models\_enums.py'
 foreach ($f in $files) {
     $lines = Get-Content $f
@@ -103,7 +103,31 @@ foreach ($f in $files) {
         if ($quoteCount % 2 -eq 1 -and -not $isClosingQuote) { $inDocstring = -not $inDocstring }
         if ($isClosingQuote) { $inDocstring = $false; $inBulletList = $false }
     }
-    Set-Content $f $out
+    $wrapped = @()
+    foreach ($line in $out) {
+        if ($line.Length -le 120 -or $line -notmatch '^(\s*)\*\s+(.+)$') {
+            $wrapped += $line
+            continue
+        }
+
+        $firstPrefix = $Matches[1] + '* '
+        $continuationPrefix = $Matches[1] + '  '
+        $prefix = $firstPrefix
+        $currentLine = $prefix
+        foreach ($word in $Matches[2] -split '\s+') {
+            if ($currentLine.Length -gt $prefix.Length -and $currentLine.Length + 1 + $word.Length -gt 120) {
+                $wrapped += $currentLine
+                $prefix = $continuationPrefix
+                $currentLine = $prefix + $word
+            }
+            else {
+                $separator = if ($currentLine.Length -eq $prefix.Length) { '' } else { ' ' }
+                $currentLine += $separator + $word
+            }
+        }
+        $wrapped += $currentLine
+    }
+    Set-Content $f $wrapped
 }
 
 # Fix Sphinx docutils warnings in get_session_log_stream docstrings (sync + async).
@@ -170,8 +194,7 @@ if ($matchCount -ne 4) {
 }
 Set-Content $f $lines
 
-# Finishing by running 'black' tool to format code. 
-pip install black
+# Finishing by running 'black' tool to format code.
 black --config ../../../eng/black-pyproject.toml .
 
 # Regenerate API review artifacts and the public method inventory.

@@ -2368,7 +2368,8 @@ class VoiceConversationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The lifecycle status of a persisted voice conversation:
 
     * `in_progress`: the live session is active, or post-session persistence finalization is pending.
-    * `completed`: finalization succeeded after normal or client close, `end_conversation`, a max-duration `1001` close, or a client or network disconnect that the service can still finalize.
+    * `completed`: finalization succeeded after normal or client close, `end_conversation`, a max-duration `1001` close,
+      or a client or network disconnect that the service can still finalize.
     * `failed`: a terminal service, bridge, storage, or unrecoverable transport failure prevented finalization.
     """
 
