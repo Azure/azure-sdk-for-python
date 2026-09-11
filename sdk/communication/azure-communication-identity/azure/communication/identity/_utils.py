@@ -165,7 +165,11 @@ class BodylessCreateContentTypePolicy(SansIOHTTPPolicy):
             return
         if not http_request.url.split("?")[0].endswith("/identities"):
             return
-        if http_request.body:
+        # The generated operation drops content_type whenever the body is falsy, which covers
+        # both no body at all and an empty JSON object. Both must be repaired, so the test is
+        # "did the operation fail to set a JSON content type", not "is there a body" -- an
+        # empty dict serializes to the string "{}", which is truthy and would be missed.
+        if http_request.headers.get("Content-Type", "").startswith("application/json"):
             return
         override = request.context.options.pop(self.CONTEXT_KEY, None)
         http_request.headers["Content-Type"] = override or "application/json"
