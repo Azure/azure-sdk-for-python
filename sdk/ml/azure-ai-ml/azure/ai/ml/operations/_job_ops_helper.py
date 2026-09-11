@@ -34,6 +34,28 @@ STATUS_KEY = "status"
 module_logger = logging.getLogger(__name__)
 
 
+def _normalize_asset_type(asset_type: Optional[str]) -> str:
+    """Normalizes an asset type so it can be compared across REST contracts.
+
+    The RunHistory dataplane reports asset types in PascalCase (e.g. ``"UriFolder"``, ``"MLFlowModel"``) while the
+    ARM/Machine Learning Services contract uses snake_case (e.g. ``"uri_folder"``, ``"mlflow_model"``). Stripping
+    underscores and lower-casing makes both spellings comparable.
+
+    :param asset_type: The asset type reported by a service.
+    :type asset_type: Optional[str]
+    :return: The normalized asset type.
+    :rtype: str
+    """
+    return (asset_type or "").replace("_", "").lower()
+
+
+_DATA_ASSET_TYPES = {
+    _normalize_asset_type(data_type)
+    for data_type in (DataType.URI_FILE, DataType.URI_FOLDER, DataType.MLTABLE)
+}
+_MODEL_ASSET_TYPES = {_normalize_asset_type(t) for t in ("CustomModel", "MLFlowModel", "TritonModel")}
+
+
 def _get_sorted_filtered_logs(
     logs_iterable: Iterable[str],
     job_type: str,
@@ -252,6 +274,17 @@ def stream_logs_until_completion(
             output_uri = output_uri.split("datastores/")[1]
             datastore_name, prefix = output_uri.split("/", 1)
             ds_properties = get_datastore_info(datastore_operations, datastore_name)
+            # Reading logs straight from the datastore requires signing a short-lived SAS, which is only
+            # possible with an account key or an existing SAS token (both plain strings). Identity-based
+            # datastores resolve to a TokenCredential instead, which cannot sign a SAS. In that case fall
+            # back to the RunHistory log files, which are already SAS-scoped by the service.
+            if not isinstance(ds_properties.get("credential"), str):
+                module_logger.debug(
+                    "Datastore '%s' has no signable key or SAS token; streaming logs from RunHistory instead.",
+                    datastore_name,
+                )
+                ds_properties = None
+                prefix = None
 
     try:
         file_handle.write("RunId: {}\n".format(job_name))
@@ -495,14 +528,14 @@ def get_job_output_uris_from_dataplane(
     dataset_ids = [
         run_outputs[output_name].asset_id
         for output_name in output_names
-        if run_outputs[output_name].type in [o.value for o in DataType]
+        if _normalize_asset_type(run_outputs[output_name].type) in _DATA_ASSET_TYPES
     ]
 
     # Collect all output ids that correspond to models
     model_ids = [
         run_outputs[output_name].asset_id
         for output_name in output_names
-        if run_outputs[output_name].type in ["CustomModel", "MLFlowModel", "TritonModel"]
+        if _normalize_asset_type(run_outputs[output_name].type) in _MODEL_ASSET_TYPES
     ]
 
     output_name_to_dataset_uri = {}

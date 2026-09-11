@@ -5,6 +5,8 @@
 ### Features Added
 
 ### Bugs Fixed
+- Fixed `MLClient.jobs.download(name=..., output_name=...)` silently downloading nothing for named `uri_file` / `uri_folder` / `mltable` outputs (issue [#48941](https://github.com/Azure/azure-sdk-for-python/issues/48941)). `get_job_output_uris_from_dataplane` filtered the RunHistory `run_metadata.outputs` types against the `DataType` enum, whose wire values changed from PascalCase (`"UriFolder"`) to snake_case (`"uri_folder"`) when the REST clients were migrated to the shared `arm_ml_service` client in 1.35.0, while RunHistory still reports PascalCase. Asset types are now compared case- and separator-insensitively, so both spellings resolve.
+- Fixed `MLClient.jobs.stream()` raising `TypeError: argument should be a bytes-like object or ASCII string, not 'ChainedTokenCredential'` for workspaces whose default datastore uses identity-based access. The same `DataType` wire-value change in 1.35.0 made the `job_output_type == DataType.URI_FOLDER` check start matching (it had silently evaluated to `False` since the job clients moved to snake_case), which activated the read-logs-directly-from-the-datastore path. That path signs a short-lived SAS and only works with an account key or SAS token; for identity-based datastores the resolved credential is a `TokenCredential`, which cannot sign. Log streaming now falls back to the RunHistory log files when the datastore credential is not signable.
 
 ## 1.35.0 (2026-09-08)
 
