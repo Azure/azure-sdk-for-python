@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, List
+from typing import Any, List, Optional
 from ._patch_agents_async import AgentsOperations, BetaAgentsOperations
 from ._patch_agent_insights_async import BetaAgentInsightMonitorsOperations
 from ._patch_datasets_async import BetaDatasetsOperations, DatasetsOperations
@@ -19,6 +19,14 @@ from ._patch_connections_async import ConnectionsOperations
 from ._patch_memories_async import BetaMemoryStoresOperations
 from ._patch_models_async import BetaModelsOperations
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
+from .._realtime import (
+    AsyncRealtime,
+    AsyncRealtimeConnection,
+    AsyncRealtimeConnectionManager,
+    ClientEvent,
+    ConversationItem,
+    ServerEvent,
+)
 from ._operations import (
     BetaAgentEndpointConversationsOperations,
     BetaAgentTelephonyOperations,
@@ -90,6 +98,7 @@ class BetaOperations(GeneratedBetaOperations):
         self.agent_insight_monitors = BetaAgentInsightMonitorsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self._realtime: Optional[AsyncRealtime] = None
 
         for property_name, foundry_features_value in _BETA_OPERATION_FEATURE_HEADERS.items():
             setattr(
@@ -98,9 +107,23 @@ class BetaOperations(GeneratedBetaOperations):
                 _OperationMethodHeaderProxy(getattr(self, property_name), foundry_features_value),
             )
 
+    @property
+    def realtime(self) -> AsyncRealtime:
+        """Realtime streaming entry point for voice agents.
+
+        :return: The realtime namespace, exposing ``connect(...)``.
+        :rtype: ~azure.ai.projects.aio.operations.AsyncRealtime
+        """
+        if self._realtime is None:
+            self._realtime = AsyncRealtime(self)
+        return self._realtime
+
 
 __all__: List[str] = [
     "AgentsOperations",
+    "AsyncRealtime",
+    "AsyncRealtimeConnection",
+    "AsyncRealtimeConnectionManager",
     "BetaAgentEndpointConversationsOperations",
     "BetaAgentInsightMonitorsOperations",
     "BetaAgentTelephonyOperations",
@@ -117,9 +140,12 @@ __all__: List[str] = [
     "BetaSchedulesOperations",
     "BetaSkillsOperations",
     "BetaVoiceAgentWebSocketOperations",
+    "ClientEvent",
     "ConnectionsOperations",
+    "ConversationItem",
     "DatasetsOperations",
     "EvaluationRulesOperations",
+    "ServerEvent",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 

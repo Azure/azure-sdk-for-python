@@ -517,6 +517,73 @@ namespace azure.ai.projects.aio.operations
             ) -> SessionFileWriteResult: ...
 
 
+    class azure.ai.projects.aio.operations.AsyncRealtime:
+
+        def __init__(self, client: _ConfigProvider) -> None: ...
+
+        def connect(
+                self, 
+                *, 
+                agent_name: str, 
+                agent_session_id: Optional[str] = ..., 
+                agent_version_override: Optional[str] = ..., 
+                api_version: Optional[str] = ..., 
+                connection_url: Optional[str] = ..., 
+                credential_scopes: Optional[List[str]] = ..., 
+                extra_headers: Optional[Mapping[str, str]] = ..., 
+                extra_query: Optional[Mapping[str, str]] = ..., 
+                structured_inputs: Optional[Mapping[str, Any]] = ..., 
+                **kwargs: Any
+            ) -> AsyncRealtimeConnectionManager: ...
+
+
+    class azure.ai.projects.aio.operations.AsyncRealtimeConnection: implements AsyncContextManager 
+        property closed: bool    # Read-only
+
+        def __aiter__(self) -> AsyncIterator[ServerEvent]: ...
+
+        def __init__(
+                self, 
+                connection: ClientWebSocketResponse, 
+                session: ClientSession
+            ) -> None: ...
+
+        def __repr__(self) -> str: ...
+
+        async def close(
+                self, 
+                *, 
+                code: int = 1000, 
+                reason: str = ""
+            ) -> None: ...
+
+        async def recv(self) -> ServerEvent: ...
+
+        async def send(self, event: ClientEvent) -> None: ...
+
+
+    class azure.ai.projects.aio.operations.AsyncRealtimeConnectionManager: implements AsyncContextManager 
+
+        def __init__(
+                self, 
+                *, 
+                agent_name: str, 
+                agent_session_id: Optional[str] = ..., 
+                agent_version_override: Optional[str] = ..., 
+                api_version: str, 
+                connection_url: Optional[str] = ..., 
+                credential: AsyncTokenCredential, 
+                credential_scopes: List[str], 
+                endpoint: str, 
+                extra_headers: Optional[Mapping[str, str]] = ..., 
+                extra_query: Optional[Mapping[str, str]] = ..., 
+                structured_inputs: Optional[Mapping[str, Any]] = ..., 
+                **kwargs: Any
+            ) -> None: ...
+
+        async def enter(self) -> AsyncRealtimeConnection: ...
+
+
     class azure.ai.projects.aio.operations.BetaAgentEndpointConversationsOperations:
 
         def __init__(
@@ -2344,6 +2411,7 @@ namespace azure.ai.projects.aio.operations
 
 
     class azure.ai.projects.aio.operations.BetaOperations(GeneratedBetaOperations):
+        property realtime: AsyncRealtime    # Read-only
         agent_endpoint_conversations: BetaAgentEndpointConversationsOperations
         agent_insight_monitors: BetaAgentInsightMonitorsOperations
         agent_telephony: BetaAgentTelephonyOperations
@@ -19021,6 +19089,7 @@ namespace azure.ai.projects.operations
 
 
     class azure.ai.projects.operations.BetaOperations(GeneratedBetaOperations):
+        property realtime: Realtime    # Read-only
         agent_endpoint_conversations: BetaAgentEndpointConversationsOperations
         agent_insight_monitors: BetaAgentInsightMonitorsOperations
         agent_telephony: BetaAgentTelephonyOperations
@@ -19791,6 +19860,73 @@ namespace azure.ai.projects.operations
                 name: str, 
                 **kwargs: Any
             ) -> ItemPaged[Index]: ...
+
+
+    class azure.ai.projects.operations.Realtime:
+
+        def __init__(self, client: _ConfigProvider) -> None: ...
+
+        def connect(
+                self, 
+                *, 
+                agent_name: str, 
+                agent_session_id: Optional[str] = ..., 
+                agent_version_override: Optional[str] = ..., 
+                api_version: Optional[str] = ..., 
+                connection_url: Optional[str] = ..., 
+                credential_scopes: Optional[List[str]] = ..., 
+                extra_headers: Optional[Mapping[str, str]] = ..., 
+                extra_query: Optional[Mapping[str, str]] = ..., 
+                structured_inputs: Optional[Mapping[str, Any]] = ..., 
+                **kwargs: Any
+            ) -> RealtimeConnectionManager: ...
+
+
+    class azure.ai.projects.operations.RealtimeConnection: implements ContextManager 
+        property closed: bool    # Read-only
+
+        def __init__(self, connection: ClientConnection) -> None: ...
+
+        def __iter__(self) -> Iterator[ServerEvent]: ...
+
+        def __repr__(self) -> str: ...
+
+        def close(
+                self, 
+                *, 
+                code: int = 1000, 
+                reason: str = ""
+            ) -> None: ...
+
+        def recv(
+                self, 
+                *, 
+                timeout: Optional[float] = ...
+            ) -> ServerEvent: ...
+
+        def send(self, event: ClientEvent) -> None: ...
+
+
+    class azure.ai.projects.operations.RealtimeConnectionManager: implements ContextManager 
+
+        def __init__(
+                self, 
+                *, 
+                agent_name: str, 
+                agent_session_id: Optional[str] = ..., 
+                agent_version_override: Optional[str] = ..., 
+                api_version: str, 
+                connection_url: Optional[str] = ..., 
+                credential: TokenCredential, 
+                credential_scopes: List[str], 
+                endpoint: str, 
+                extra_headers: Optional[Mapping[str, str]] = ..., 
+                extra_query: Optional[Mapping[str, str]] = ..., 
+                structured_inputs: Optional[Mapping[str, Any]] = ..., 
+                **kwargs: Any
+            ) -> None: ...
+
+        def enter(self) -> RealtimeConnection: ...
 
 
     class azure.ai.projects.operations.TelemetryOperations:

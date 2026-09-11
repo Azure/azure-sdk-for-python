@@ -6,11 +6,11 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 ## Summary
 
-There are a total of 198 unique public methods:
+There are a total of 199 unique public methods:
 
 - 5 stable methods on the client
 - 59 stable methods on top-level sub-clients
-- 134 beta methods on nested beta sub-clients
+- 135 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 
@@ -39,6 +39,7 @@ There are a total of 198 unique public methods:
 | `beta.insights` | BetaInsightsOperations | 3 |
 | `beta.memory_stores` | BetaMemoryStoresOperations | 13 |
 | `beta.models` | BetaModelsOperations | 9 |
+| `beta.realtime` | Realtime | 1 |
 | `beta.red_teams` | BetaRedTeamsOperations | 3 |
 | `beta.routines` | BetaRoutinesOperations | 8 |
 | `beta.schedules` | BetaSchedulesOperations | 6 |
@@ -249,6 +250,8 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.models.pending_create_version
 .beta.models.pending_upload
 .beta.models.update
+
+.beta.realtime.connect*
 
 .beta.red_teams.create
 .beta.red_teams.get

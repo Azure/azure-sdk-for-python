@@ -75,6 +75,18 @@ EXCLUDED_BETA_METHODS: dict[str, frozenset] = {
     ),  # multi-step helper: validate -> pending_upload -> azcopy -> pending_create_version -> poll get
 }
 
+# Public `.beta` attributes that are NOT generated REST operations classes and therefore
+# cannot be exercised by the generic header-injection test at all (unlike EXCLUDED_BETA_METHODS,
+# which excludes specific methods on an otherwise-testable sub-client).
+#
+# `realtime` is a hand-written WebSocket entry point (azure/ai/projects/_realtime.py):
+# `Realtime.connect(...)` synchronously builds and returns a RealtimeConnectionManager without
+# performing any I/O -- the actual WebSocket handshake (which carries its own dedicated
+# Foundry-Features header) only happens later, on `__enter__`/`__aenter__`. So it never triggers
+# CapturingTransport, and doesn't have an EXPECTED_FOUNDRY_FEATURES entry. Its header behavior is
+# verified independently in test_realtime_client.py / test_realtime_client_async.py.
+NON_OPERATION_BETA_ATTRIBUTES: frozenset = frozenset({"realtime"})
+
 # Shared test cases for non-beta methods that optionally send the Foundry-Features header.
 # Used by both test_foundry_features_header_optional.py (sync) and
 # test_foundry_features_header_optional_async.py (async).

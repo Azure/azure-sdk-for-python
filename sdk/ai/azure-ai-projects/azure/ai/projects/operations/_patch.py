@@ -10,8 +10,16 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from functools import wraps
 import inspect
-from typing import Any, Callable, List
+from typing import Any, Callable, List, Optional
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _BETA_OPERATION_FEATURE_HEADERS, _has_header_case_insensitive
+from .._realtime import (
+    Realtime,
+    RealtimeConnection,
+    RealtimeConnectionManager,
+    ClientEvent,
+    ConversationItem,
+    ServerEvent,
+)
 from ._patch_agents import AgentsOperations, BetaAgentsOperations
 from ._patch_agent_insights import BetaAgentInsightMonitorsOperations
 from ._patch_datasets import BetaDatasetsOperations, DatasetsOperations
@@ -145,6 +153,7 @@ class BetaOperations(GeneratedBetaOperations):
         self.agent_insight_monitors = BetaAgentInsightMonitorsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self._realtime: Optional[Realtime] = None
 
         for property_name, foundry_features_value in _BETA_OPERATION_FEATURE_HEADERS.items():
             setattr(
@@ -152,6 +161,17 @@ class BetaOperations(GeneratedBetaOperations):
                 property_name,
                 _OperationMethodHeaderProxy(getattr(self, property_name), foundry_features_value),
             )
+
+    @property
+    def realtime(self) -> Realtime:
+        """Realtime streaming entry point for voice agents.
+
+        :return: The realtime namespace, exposing ``connect(...)``.
+        :rtype: ~azure.ai.projects.operations.Realtime
+        """
+        if self._realtime is None:
+            self._realtime = Realtime(self)
+        return self._realtime
 
 
 __all__: List[str] = [
@@ -172,9 +192,15 @@ __all__: List[str] = [
     "BetaSchedulesOperations",
     "BetaSkillsOperations",
     "BetaVoiceAgentWebSocketOperations",
+    "ClientEvent",
     "ConnectionsOperations",
+    "ConversationItem",
     "DatasetsOperations",
     "EvaluationRulesOperations",
+    "Realtime",
+    "RealtimeConnection",
+    "RealtimeConnectionManager",
+    "ServerEvent",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
