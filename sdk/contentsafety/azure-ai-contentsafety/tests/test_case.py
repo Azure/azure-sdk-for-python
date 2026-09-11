@@ -8,7 +8,7 @@ import functools
 from azure.core.credentials import AzureKeyCredential
 from devtools_testutils import AzureRecordedTestCase, is_live, FakeTokenCredential, EnvironmentVariableLoader
 
-from azure.ai.contentsafety import ContentSafetyClient, BlocklistClient
+from azure.ai.contentsafety import ContentSafetyClient, BlocklistClient, ContentProvenanceClient
 
 
 class ContentSafetyTest(AzureRecordedTestCase):
@@ -17,6 +17,9 @@ class ContentSafetyTest(AzureRecordedTestCase):
 
     def create_blocklist_client_from_key(self, endpoint, key):
         return self._create_client_from_key(BlocklistClient, endpoint, key)
+
+    def create_content_provenance_client_from_key(self, endpoint, key):
+        return self._create_client_from_key(ContentProvenanceClient, endpoint, key)
 
     def create_content_safety_client_from_entra_id(self, endpoint):
         return self._create_client_from_entra_id(ContentSafetyClient, endpoint)
@@ -43,4 +46,8 @@ ContentSafetyPreparer = functools.partial(
     content_safety_client_id="00000000000000000000000000000000",
     content_safety_client_secret="00000000000000000000000000000000",
     content_safety_tenant_id="00000000000000000000000000000000",
+    # Blob SAS URIs for provenance detection. The real values carry a SAS token, so they are
+    # sanitized to these placeholders in recordings.
+    content_safety_signed_media_uri="https://fake_storage.blob.core.windows.net/provenance-test/signed.png",
+    content_safety_unsigned_media_uri="https://fake_storage.blob.core.windows.net/provenance-test/unsigned.png",
 )
