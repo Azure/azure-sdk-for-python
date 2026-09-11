@@ -33,7 +33,7 @@ Set these values in the environment or the ignored package `.env` file:
 ```text
 FOUNDRY_PROJECT_ENDPOINT=<existing-project-endpoint>
 FOUNDRY_MODEL_NAME=<analysis-model-deployment-name>
-AGENT_INSIGHTS_APPLICATION_INSIGHTS_RESOURCE_ID=<connected-application-insights-resource-id>
+APP_INSIGHTS_RESOURCE_ID=<connected-application-insights-resource-id>
 ```
 
 Do not supply an existing agent name or OpenTelemetry agent ID. The samples get
