@@ -4203,6 +4203,7 @@ class RoleAssignment(ExtensionResource):
         "created_by",
         "updated_by",
         "delegated_managed_identity_resource_id",
+        "expiration_time",
     ]
 
     @overload
@@ -4335,6 +4336,8 @@ class RoleAssignmentProperties(_Model):
     :vartype updated_by: str
     :ivar delegated_managed_identity_resource_id: Id of the delegated managed identity resource.
     :vartype delegated_managed_identity_resource_id: str
+    :ivar expiration_time: Time at which the role assignment expires.
+    :vartype expiration_time: str
     """
 
     scope: Optional[str] = rest_field(visibility=["read"])
@@ -4372,6 +4375,8 @@ class RoleAssignmentProperties(_Model):
         name="delegatedManagedIdentityResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
     """Id of the delegated managed identity resource."""
+    expiration_time: Optional[str] = rest_field(name="expirationTime", visibility=["read"])
+    """Time at which the role assignment expires."""
 
     @overload
     def __init__(
