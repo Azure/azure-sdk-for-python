@@ -1,6 +1,6 @@
 # Release History
 
-## 2.6.1 (Unreleased)
+## 2.7.0 (Unreleased)
 
 ### Sample updates
 

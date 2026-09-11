@@ -81,12 +81,12 @@ existing sample executor, Test Proxy, and playback sleep fixture. Output checks
 verify agent/monitor ownership and deletion, successful on-demand analysis and
 resolution, and the six-hour schedule without a second model call.
 
-**The existing recordings predate this lifecycle. Their refresh is deferred.**
-They do not yet cover registration, connection lookup, export, ingestion queries,
-or agent deletion. Do not treat old playback as proof of the redesigned samples.
-No asset pointer is changed in this iteration.
+The recordings cover registration, connection lookup, real telemetry export,
+ingestion queries, the monitor scenario, and agent deletion. Playback uses fake
+credentials and routes project, query, and background exporter requests through
+Test Proxy instead of Azure.
 
-When a maintainer refreshes recordings against the prepared existing resources:
+To refresh recordings against the prepared existing resources:
 
 ```bash
 AZURE_TEST_RUN_LIVE=true python -m pytest -q \
@@ -95,6 +95,12 @@ AZURE_TEST_RUN_LIVE=true python -m pytest -q \
 
 No separate provisioning fixture is needed. Record both complete lifecycles and
 check all exporter traffic, including background work, routes through Test Proxy.
+The test disables exporter health statistics and remote configuration requests,
+but does not replace trace generation or export. Function-scoped sanitizers
+preserve trace/span relationships and provide a parseable, fake connection string.
+Set `PYTHON_DOTENV_DISABLED=true` when explicit environment values must take
+precedence over the package `.env` file.
+
 Inspect recordings for secrets and live identifiers, including connection
 strings, resource IDs, generated agent names, and telemetry payloads. Then publish
 with the normal repository recording workflow and replay with

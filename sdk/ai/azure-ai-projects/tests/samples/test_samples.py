@@ -26,6 +26,7 @@ from sample_executor import (
 )
 from test_samples_helpers import get_sample_env_vars
 from agent_insights.sample_test_helpers import agentInsightsServicePreparer, assert_agent_insights_output
+from agent_insights.sanitizers import agent_insights_sample_sanitizers
 from test_fine_tuning_samples_helpers import get_fine_tuning_sample_env_vars
 
 
@@ -123,8 +124,15 @@ class TestSamples(AzureRecordedTestCase):
         # Preserve Location for the final GET; existing URL rules still redact resource identifiers.
         remove_batch_sanitizers(["AZSDK2003"], headers={"x-recording-id": get_recording_id()})
         env_vars = get_sample_env_vars(kwargs)
+        # Record the fictional spans, not exporter health or remote configuration traffic.
+        env_vars.update(
+            APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL="true",
+            APPLICATIONINSIGHTS_SDKSTATS_DISABLED="true",
+            APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED="true",
+        )
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
-        executor.execute()
+        with agent_insights_sample_sanitizers():
+            executor.execute()
         # These lifecycle and schedule checks do not require a second model call.
         assert_agent_insights_output(sample_path, executor.print_output_calls)
 

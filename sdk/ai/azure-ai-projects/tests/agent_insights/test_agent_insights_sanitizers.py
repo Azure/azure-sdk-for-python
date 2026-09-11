@@ -81,3 +81,51 @@ def test_agent_name_is_sanitized_before_its_model_prefix(sanitizer_calls, saniti
         else:
             value = value.replace(rule["target"], rule["value"])
     assert value == sanitized_values["agent_name"]
+
+
+def test_sample_sanitizers_are_scoped_and_preserve_random_trace_relationships(monkeypatch):
+    mocks = {
+        name: MagicMock()
+        for name in ("add_general_regex_sanitizer", "add_body_key_sanitizer", "add_header_regex_sanitizer")
+    }
+    for name, mock in mocks.items():
+        monkeypatch.setattr(sanitizers, name, mock)
+    generator = sanitizers.RandomIdGenerator()
+    with sanitizers.agent_insights_sample_sanitizers():
+        trace_ids = [generator.generate_trace_id() for _ in range(2)]
+        span_ids = [generator.generate_span_id() for _ in range(3)]
+
+    for mock in mocks.values():
+        assert all(call.kwargs["function_scoped"] for call in mock.call_args_list)
+    id_rules = [
+        call.kwargs
+        for call in mocks["add_general_regex_sanitizer"].call_args_list
+        if call.kwargs.get("condition", {}).get("uriRegex", "").endswith("/track")
+    ]
+    assert len(id_rules) == 5
+    for identifiers, width, rules in ((trace_ids, 32, id_rules[:2]), (span_ids, 16, id_rules[2:])):
+        assert len(set(identifiers)) == len(identifiers)
+        for index, (identifier, rule) in enumerate(zip(identifiers, rules), 1):
+            assert identifier != index
+            assert re.sub(rule["regex"], rule["value"], f"{identifier:0{width}x}") == f"{index:0{width}x}"
+
+    connection_rules = [
+        call.kwargs
+        for call in mocks["add_body_key_sanitizer"].call_args_list
+        if "ConnectionString" in call.kwargs["json_path"] or "credentials.key" in call.kwargs["json_path"]
+    ]
+    assert len(connection_rules) == 2
+    for rule in connection_rules:
+        assert re.search(
+            rule["condition"]["uriRegex"], "https://example.com/connections/name/getConnectionWithCredentials"
+        )
+        assert not re.search(rule["condition"]["uriRegex"], "https://example.com/agent_insight_monitors")
+        assert "InstrumentationKey=00000000-0000-0000-0000-000000000000;" in rule["value"]
+
+    context_rule = mocks["add_header_regex_sanitizer"].call_args.kwargs
+    assert context_rule["key"] == "Request-Context"
+    for prefix in ("appId=", "appId=cid-v1:"):
+        identifier = "12345678-1234-1234-1234-123456789012"
+        match = re.search(context_rule["regex"], prefix + identifier)
+        assert match is not None
+        assert match.group(int(context_rule["group_for_replace"])) == identifier
