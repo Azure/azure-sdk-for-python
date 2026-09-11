@@ -150,6 +150,35 @@ class TestRequestBody:
         )
         assert _sent_body(transport)["expiresInMinutes"] == 180
 
+    def test_none_scopes_are_omitted_not_sent_as_null(self, client, transport):
+        """A None scope list must be dropped, as msrest dropped it.
+
+        Passing None for a required argument is a caller error, but it has to fail the way it
+        always failed. The AutoRest client sent {} because msrest omitted None fields; sending
+        {"scopes": null} instead is a different request for a proxy, gateway or log to observe.
+        This does not assert an exception: the previous client did not raise here either.
+        """
+        try:
+            client.get_token(CommunicationUserIdentifier("8:acs:u"), None)
+        except Exception:  # pylint: disable=broad-except
+            pass
+        assert _sent_body(transport) == {}
+
+    def test_none_create_scopes_are_omitted_not_sent_as_null(self, client, transport):
+        try:
+            client.create_user_and_token(None)
+        except Exception:  # pylint: disable=broad-except
+            pass
+        assert _sent_body(transport) == {}
+
+    def test_empty_scope_list_is_still_sent(self, client, transport):
+        """An empty list is a value, not an absence, and must survive."""
+        try:
+            client.get_token(CommunicationUserIdentifier("8:acs:u"), [])
+        except Exception:  # pylint: disable=broad-except
+            pass
+        assert _sent_body(transport) == {"scopes": []}
+
 
 class TestAccessTokenExpiry:
     """expires_on must be the untouched service string, not a deserialized datetime."""
