@@ -54,6 +54,12 @@ def unwrap_operation(value: Any) -> Any:
     return getattr(value, "_operation", value)
 
 
+# Hand-written sub-client properties that don't follow the generated *Operations naming
+# convention (so they're invisible to the `vars(container)` scan below) but are still part
+# of the public surface and should be counted, e.g. `beta.realtime`.
+_EXTRA_SUBCLIENT_PROPERTIES = {"realtime"}
+
+
 def operation_instances(container: Any, *, exclude: set[str] | None = None) -> dict[str, Any]:
     excluded = exclude or set()
     operations: dict[str, Any] = {}
@@ -63,7 +69,18 @@ def operation_instances(container: Any, *, exclude: set[str] | None = None) -> d
         operation = unwrap_operation(value)
         if type(operation).__name__.endswith("Operations"):
             operations[name] = operation
+    for name in _EXTRA_SUBCLIENT_PROPERTIES:
+        if name in excluded or name in operations:
+            continue
+        if isinstance(getattr(type(container), name, None), property):
+            operations[name] = getattr(container, name)
     return operations
+
+
+# Filenames that are fully code-generated from TypeSpec; any other source file backing a
+# method (including hand-written modules that aren't named `_patch*.py`, e.g. `_realtime.py`)
+# counts as handwritten.
+_GENERATED_SOURCE_FILENAMES = {"_operations.py", "_client.py"}
 
 
 def is_handwritten_method(cls: type[Any], name: str) -> bool:
@@ -71,7 +88,7 @@ def is_handwritten_method(cls: type[Any], name: str) -> bool:
     if owner is None:
         raise RuntimeError(f"Unable to find the class that defines {cls.__name__}.{name}")
     source_path = inspect.getsourcefile(owner)
-    return source_path is not None and "_patch" in Path(source_path).name
+    return source_path is not None and Path(source_path).name not in _GENERATED_SOURCE_FILENAMES
 
 
 def public_methods(instance: Any) -> dict[str, bool]:

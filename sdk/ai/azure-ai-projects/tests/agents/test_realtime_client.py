@@ -236,6 +236,22 @@ class TestRealtimeConnectionManagerEnter:
         assert "foo=bar" in _args[0]
         assert kwargs["additional_headers"]["X-Custom"] == "1"
 
+    def test_enter_sends_structured_inputs_as_query_parameter(self):
+        # Regression test: structured_inputs used to be serialized into a custom
+        # "x-ms-voice-structured-inputs" header, but the generated request builder
+        # (build_beta_voice_agent_web_socket_connect_voice_agent_request) defines this as the
+        # "structured_input" query parameter -- the service never actually read the header.
+        fake_connection = MagicMock()
+        with patch("websockets.sync.client.connect", return_value=fake_connection) as mock_connect:
+            manager = _make_manager(structured_inputs={"greeting_name": "Alex"})
+            manager.enter()
+            manager.__exit__()
+
+        _args, kwargs = mock_connect.call_args
+        query = parse_qs(urlparse(_args[0]).query)
+        assert json.loads(query["structured_input"][0]) == {"greeting_name": "Alex"}
+        assert "x-ms-voice-structured-inputs" not in kwargs["additional_headers"]
+
     def test_enter_preserves_existing_query_on_connection_url_override(self):
         # Regression test: the URL builder used to unconditionally append "?", corrupting an
         # override URL that already has a query string (e.g. a SAS-style "?sig=...").
@@ -345,6 +361,38 @@ class TestRealtimeConnectionRecv:
 
             fake_connection.recv.side_effect = ConnectionResetError()
             assert list(conn) == []
+
+    def test_iteration_stops_cleanly_on_graceful_close(self, request):
+        from websockets.exceptions import ConnectionClosedOK
+        from websockets.frames import Close
+
+        fake_connection = MagicMock()
+        with patch("websockets.sync.client.connect", return_value=fake_connection):
+            manager = _make_manager()
+            conn = manager.enter()
+            request.addfinalizer(manager.__exit__)
+
+            fake_connection.recv.side_effect = ConnectionClosedOK(Close(1000, "bye"), None)
+            assert list(conn) == []
+
+    def test_iteration_propagates_abnormal_closure(self, request):
+        # Regression test: recv() converts every websockets.exceptions.ConnectionClosed
+        # (graceful *and* abnormal) into ConnectionResetError, so a blanket except clause here
+        # made a real server-side failure (e.g. close code 1011) indistinguishable from a normal
+        # end of stream -- a `for event in conn:` caller could silently accept a truncated
+        # response. Only a graceful closure (ConnectionClosedOK) should end iteration quietly.
+        from websockets.exceptions import ConnectionClosedError
+        from websockets.frames import Close
+
+        fake_connection = MagicMock()
+        with patch("websockets.sync.client.connect", return_value=fake_connection):
+            manager = _make_manager()
+            conn = manager.enter()
+            request.addfinalizer(manager.__exit__)
+
+            fake_connection.recv.side_effect = ConnectionClosedError(Close(1011, "internal error"), None)
+            with pytest.raises(ConnectionResetError):
+                list(conn)
 
 
 class TestRealtimeConnectionSend:

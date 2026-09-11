@@ -201,7 +201,10 @@ class TestVoiceAgentConversationsAsync(TestBase):
                     ]
                     assert len(b"".join(audio_chunks)) > 0
 
-                # A single item's audio, if any item has one.
+                # A single item's audio, if any item has one. Setup guarantees at least one audio
+                # item exists, so at least one retrieval must succeed -- otherwise a fully-broken
+                # get_item_audio/download_item_audio route would tolerate every 404 and still pass.
+                found_item_audio = False
                 for item in items:
                     item_id = item.get("id")
                     if not item_id:
@@ -212,6 +215,7 @@ class TestVoiceAgentConversationsAsync(TestBase):
                         if e.status_code == 404:
                             continue
                         raise
+                    found_item_audio = True
                     assert item_audio.role is not None
                     if not item_audio.blob_uri:
                         item_audio_chunks = [
@@ -222,6 +226,7 @@ class TestVoiceAgentConversationsAsync(TestBase):
                         ]
                         assert len(b"".join(item_audio_chunks)) > 0
                     break
+                assert found_item_audio, "Expected at least one conversation item to have retrievable audio"
             finally:
                 # Deleting a conversation removes it and all of its responses, items, and audio.
                 await conversations.delete(_AGENT_NAME, conversation_id)

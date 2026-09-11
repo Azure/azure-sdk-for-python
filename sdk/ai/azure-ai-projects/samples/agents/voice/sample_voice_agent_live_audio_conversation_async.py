@@ -11,9 +11,8 @@ DESCRIPTION:
     azure-ai-projects client (see ``azure.ai.projects.aio.operations.AsyncRealtime``).
     This mirrors the ergonomics of the OpenAI Python realtime client.
 
-      1. Generate a starter voice agent (see sample_voice_agent_generate.py),
-         then publish a version with `store=True` so the conversation can be
-         read back afterward.
+      1. Create a voice agent with conversation persistence enabled
+         (`store=True`) so the conversation can be read back afterward.
       2. Stream live mic audio and let the agent's server-side VAD detect your
          turns: your speech is transcribed, the agent replies through the
          speakers, and talking over it barges in.
@@ -37,7 +36,9 @@ USAGE:
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - Foundry project endpoint:
        https://<account>.services.ai.azure.com/api/projects/<project>
-    2) FOUNDRY_VOICE_AGENT_NAME - Optional. Name for the agent created by this
+    2) FOUNDRY_VOICE_MODEL - Optional. The realtime model deployment name.
+       Defaults to "gpt-realtime".
+    3) FOUNDRY_VOICE_AGENT_NAME - Optional. Name for the agent created by this
        sample. Defaults to "sample-live-audio-conversation-agent-async".
 
     Runs until you press Ctrl-C. Authenticates with DefaultAzureCredential, so
@@ -61,8 +62,6 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio.operations import AsyncRealtimeConnection  # pylint: disable=no-name-in-module
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    AgentKind,
-    GenerateVoiceAgentRequest,
     RealtimeServerEventConversationItemInputAudioTranscriptionCompleted,
     RealtimeServerEventInputAudioBufferSpeechStarted,
     RealtimeServerEventResponseAudioDelta,
@@ -71,6 +70,12 @@ from azure.ai.projects.models import (
     RealtimeServerEventResponseDone,
     RealtimeServerEventSessionCreated,
     RealtimeServerEventError,
+    VoiceAgentAudioConfig,
+    VoiceAgentAudioOutputConfig,
+    VoiceAgentDefinition,
+    VoiceModelType,
+    VoiceOutputModality,
+    VoiceType,
 )
 
 load_dotenv()
@@ -338,11 +343,15 @@ async def _run_audio_conversation(client: AIProjectClient, agent_name: str) -> O
                     conversation_id = event.conversation_id or conversation_id
                 elif isinstance(event, RealtimeServerEventInputAudioBufferSpeechStarted):
                     # speech_started fires for every user turn, including the very first one,
-                    # when no response is active yet. Only cancel (barge-in) if a response is
-                    # actually in flight; canceling with none active is a service error.
+                    # when no response is active yet. Always drop whatever reply audio is still
+                    # queued locally -- the speaker can lag well behind the server finishing
+                    # generation, so buffered audio can outlive response_active going false and
+                    # must still be cleared here. Only cancel the *server-side* response (a
+                    # separate RPC) and announce the barge-in when a response is actually in
+                    # flight; canceling with none active is a service error.
+                    ap.skip_pending_audio()
                     if response_active:
                         await conn.response.cancel()
-                        ap.skip_pending_audio()
                         print("(listening...)")
                 elif isinstance(event, RealtimeServerEventConversationItemInputAudioTranscriptionCompleted):
                     print(f"You:  {event.transcript.strip()}")
@@ -407,6 +416,7 @@ async def _read_conversation(client: AIProjectClient, agent_name: str, conversat
 
 async def audio_conversation() -> None:
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+    model = os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
     agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or "sample-live-audio-conversation-agent-async"
 
     async with (
@@ -414,27 +424,28 @@ async def audio_conversation() -> None:
         AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     ):
         try:
-            # 1) Generate a starter voice agent (see sample_voice_agent_generate.py).
-            generated = await project_client.beta.agents.generate(
-                GenerateVoiceAgentRequest(kind=AgentKind.VOICE, name=agent_name)
+            # 1) Create a voice agent with conversation persistence enabled (`store=True`) so the
+            #    session's conversation can be fetched back by id afterward.
+            definition = VoiceAgentDefinition(
+                model_type=VoiceModelType.MANAGED,
+                model=model,
+                instructions="You are a friendly voice assistant. Keep replies short and natural.",
+                audio=VoiceAgentAudioConfig(
+                    output=VoiceAgentAudioOutputConfig(voice="en-US-AvaNeural", voice_type=VoiceType.AZURE_STANDARD),
+                ),
+                output_modalities=[VoiceOutputModality.AUDIO],
+                store=True,
             )
-            definition = generated.versions.latest.definition  # type: ignore[attr-defined]
-
-            # 2) Publish a new version with conversation persistence enabled (`store=True`) so the
-            #    session's conversation can be fetched back by id afterward. Reuse the generated
-            #    definition as-is (instead of reconstructing a new one from a few fields) so audio,
-            #    greeting, tools, and any other service-selected settings are preserved.
-            definition.store = True  # type: ignore[attr-defined]
             await project_client.agents.create_version(
                 agent_name=agent_name,
                 definition=definition,
             )
 
-            # 3) Hold a live microphone conversation with the freshly created agent.
+            # 2) Hold a live microphone conversation with the freshly created agent.
             print(f"Starting realtime session with agent: {agent_name}")
             conversation_id = await _run_audio_conversation(project_client, agent_name)
 
-            # 4) Fetch the persisted conversation back by id.
+            # 3) Fetch the persisted conversation back by id.
             if conversation_id:
                 print(f"Reading persisted conversation {conversation_id!r}...")
                 try:
@@ -457,7 +468,7 @@ async def audio_conversation() -> None:
         except HttpResponseError as e:
             print(f"Service responded with an error: {e.status_code} {e.reason}")
         finally:
-            # 5) Clean up the agent created for this sample.
+            # 4) Clean up the agent created for this sample.
             await project_client.agents.delete(agent_name=agent_name)
             print(f"Deleted voice agent: {agent_name}")
 

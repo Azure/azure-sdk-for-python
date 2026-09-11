@@ -125,6 +125,22 @@ class TestAsyncRealtimeConnectionManagerEnter:
         _args, kwargs = fake_session.ws_connect.call_args
         assert kwargs["headers"]["User-Agent"] == "custom-user-agent"
 
+    async def test_enter_sends_structured_inputs_as_query_parameter(self):
+        # Regression test: structured_inputs used to be serialized into a custom
+        # "x-ms-voice-structured-inputs" header, but the generated request builder
+        # (build_beta_voice_agent_web_socket_connect_voice_agent_request) defines this as the
+        # "structured_input" query parameter -- the service never actually read the header.
+        fake_ws = _make_fake_ws()
+        patcher, fake_session = _patch_client_session(fake_ws)
+        with patcher:
+            manager = _make_manager(structured_inputs={"greeting_name": "Alex"})
+            await manager.enter()
+            await manager.__aexit__()
+
+        _args, kwargs = fake_session.ws_connect.call_args
+        assert json.loads(kwargs["params"]["structured_input"]) == {"greeting_name": "Alex"}
+        assert "x-ms-voice-structured-inputs" not in kwargs["headers"]
+
     async def test_enter_caller_user_agent_overrides_default_case_insensitive(self):
         # Regression test: a plain dict merge of extra_headers would leave a differently-cased
         # caller override (e.g. "user-agent") as a *separate* key alongside our own "User-Agent"
@@ -298,6 +314,60 @@ class TestAsyncRealtimeConnectionRecv:
             try:
                 with pytest.raises(ConnectionResetError):
                     await conn.recv()
+            finally:
+                await manager.__aexit__()
+
+    async def test_iteration_stops_cleanly_on_graceful_close(self):
+        import aiohttp
+
+        fake_ws = _make_fake_ws()
+        fake_ws.close_code = 1000  # Normal Closure
+        fake_ws.receive = AsyncMock(return_value=_make_fake_msg(aiohttp.WSMsgType.CLOSE))
+        patcher, _ = _patch_client_session(fake_ws)
+        with patcher:
+            manager = _make_manager()
+            conn = await manager.enter()
+            try:
+                assert [event async for event in conn] == []
+            finally:
+                await manager.__aexit__()
+
+    async def test_iteration_propagates_abnormal_closure(self):
+        # Regression test: recv() used to raise the same ConnectionResetError for every close
+        # frame regardless of code, and the async iterator caught all of them, so a real
+        # server-side failure (e.g. close code 1011) was indistinguishable from a normal end of
+        # stream -- an `async for event in conn:` caller could silently accept a truncated
+        # response. Only a graceful closure (code 1000/1001) should end iteration quietly.
+        import aiohttp
+
+        fake_ws = _make_fake_ws()
+        fake_ws.close_code = 1011  # Internal Error
+        fake_ws.receive = AsyncMock(return_value=_make_fake_msg(aiohttp.WSMsgType.CLOSE))
+        patcher, _ = _patch_client_session(fake_ws)
+        with patcher:
+            manager = _make_manager()
+            conn = await manager.enter()
+            try:
+                with pytest.raises(ConnectionResetError):
+                    _ = [event async for event in conn]
+            finally:
+                await manager.__aexit__()
+
+    async def test_iteration_propagates_transport_error(self):
+        # Regression test: same as above, but for the WSMsgType.ERROR path (an actual transport
+        # exception, not just an abnormal close code) -- this must never be swallowed either.
+        import aiohttp
+
+        fake_ws = _make_fake_ws()
+        fake_ws.exception = MagicMock(return_value=RuntimeError("boom"))
+        fake_ws.receive = AsyncMock(return_value=_make_fake_msg(aiohttp.WSMsgType.ERROR))
+        patcher, _ = _patch_client_session(fake_ws)
+        with patcher:
+            manager = _make_manager()
+            conn = await manager.enter()
+            try:
+                with pytest.raises(ConnectionResetError):
+                    _ = [event async for event in conn]
             finally:
                 await manager.__aexit__()
 

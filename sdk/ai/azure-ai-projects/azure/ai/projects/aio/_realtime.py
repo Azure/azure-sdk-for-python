@@ -563,6 +563,12 @@ class ResponseResource(_BaseResource):
         )
 
 
+class _AbnormalWebSocketClosure(Exception):
+    """Internal marker chained onto :exc:`ConnectionResetError` for a non-graceful WebSocket
+    closure (an abnormal close code), so :meth:`AsyncRealtimeConnection._iter` can tell it apart
+    from a normal end of stream, which chains no cause."""
+
+
 class AsyncRealtimeConnection:  # pylint: disable=too-many-instance-attributes
     """An open realtime WebSocket connection to a voice agent.
 
@@ -612,8 +618,15 @@ class AsyncRealtimeConnection:  # pylint: disable=too-many-instance-attributes
         while True:
             try:
                 yield await self.recv()
-            except ConnectionResetError:
-                return
+            except ConnectionResetError as exc:
+                # recv() below only chains a cause for a non-graceful closure or transport error
+                # (an abnormal close code, or the real exception behind a WSMsgType.ERROR); a
+                # graceful closure chains none. A `for event in conn:` caller must still see real
+                # failures instead of silently observing end-of-stream, so only the former ends
+                # iteration quietly.
+                if exc.__cause__ is None:
+                    return
+                raise
 
     async def recv(self) -> ServerEvent:
         """Receive and parse the next server event.
@@ -624,7 +637,10 @@ class AsyncRealtimeConnection:  # pylint: disable=too-many-instance-attributes
 
         :return: The parsed server event.
         :rtype: ~azure.ai.projects.aio.ServerEvent
-        :raises ConnectionResetError: If the connection was closed by the server.
+        :raises ConnectionResetError: If the connection was closed by the server, gracefully or
+         otherwise, or if the transport reported an error. Iterating over the connection
+         (``async for event in conn:``) treats only a graceful closure as end-of-stream and
+         re-raises this for an abnormal one.
         """
         import aiohttp  # pylint: disable=import-outside-toplevel
 
@@ -636,6 +652,11 @@ class AsyncRealtimeConnection:  # pylint: disable=too-many-instance-attributes
             aiohttp.WSMsgType.CLOSING,
             aiohttp.WSMsgType.CLOSED,
         ):
+            code = self._connection.close_code
+            if code not in (1000, 1001):
+                raise ConnectionResetError(
+                    f"The realtime connection was closed abnormally (code {code!r})."
+                ) from _AbnormalWebSocketClosure(code)
             raise ConnectionResetError("The realtime connection was closed.")
         if msg.type == aiohttp.WSMsgType.ERROR:
             raise ConnectionResetError(
@@ -750,6 +771,11 @@ class AsyncRealtimeConnectionManager:  # pylint: disable=too-many-instance-attri
             params["agent_session_id"] = self._agent_session_id
         if self._agent_version_override is not None:
             params["x-agent-version-override"] = self._agent_version_override
+        if self._structured_inputs is not None:
+            # The service reads this from the `structured_input` query parameter (see the
+            # generated `build_beta_voice_agent_web_socket_connect_voice_agent_request`), not a
+            # header -- aiohttp appends `params` to the URL for us below.
+            params["structured_input"] = json.dumps(self._structured_inputs, cls=SdkJSONEncoder)
         params.update(self._extra_query)
 
         token = await self._credential.get_token(*self._credential_scopes)
@@ -757,8 +783,6 @@ class AsyncRealtimeConnectionManager:  # pylint: disable=too-many-instance-attri
             "Authorization": "Bearer " + token.token,
             _FOUNDRY_FEATURES_HEADER_NAME: _VOICE_AGENT_FEATURE_HEADER,
         }
-        if self._structured_inputs is not None:
-            headers["x-ms-voice-structured-inputs"] = json.dumps(self._structured_inputs, cls=SdkJSONEncoder)
         headers.update(self._extra_headers)
         if not _has_header_case_insensitive(headers, "User-Agent"):
             # Only set our default if the caller didn't supply their own (in any casing) --

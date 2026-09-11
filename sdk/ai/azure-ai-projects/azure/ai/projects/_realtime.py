@@ -593,8 +593,15 @@ class RealtimeConnection:  # pylint: disable=too-many-instance-attributes
         while True:
             try:
                 yield self.recv()
-            except ConnectionResetError:
-                return
+            except ConnectionResetError as exc:
+                # recv() below chains the *specific* websockets exception as the cause: a plain
+                # graceful closure has no cause (nothing went wrong), while an abnormal closure
+                # is chained from the ConnectionClosed that caused it. Only end iteration quietly
+                # for the former -- a `for event in conn:` caller must still see real failures
+                # (abnormal close codes, e.g. 1011) instead of silently observing end-of-stream.
+                if exc.__cause__ is None:
+                    return
+                raise
 
     def recv(self, *, timeout: Optional[float] = None) -> ServerEvent:
         """Receive and parse the next server event.
@@ -609,16 +616,24 @@ class RealtimeConnection:  # pylint: disable=too-many-instance-attributes
         :paramtype timeout: float or None
         :return: The parsed server event.
         :rtype: ~azure.ai.projects.ServerEvent
-        :raises ConnectionResetError: If the connection was closed by the server.
+        :raises ConnectionResetError: If the connection was closed by the server, gracefully or
+         otherwise. Iterating over the connection (``for event in conn:``) treats only a graceful
+         closure as end-of-stream and re-raises this for an abnormal one.
         :raises TimeoutError: If ``timeout`` elapses before an event is received.
         """
-        from websockets.exceptions import ConnectionClosed  # pylint: disable=import-outside-toplevel
+        from websockets.exceptions import (  # pylint: disable=import-outside-toplevel
+            ConnectionClosed,
+            ConnectionClosedOK,
+        )
 
         try:
             raw = self._connection.recv(timeout=timeout)
+        except ConnectionClosedOK:
+            self._closed = True
+            raise ConnectionResetError("The realtime connection was closed.") from None
         except ConnectionClosed as exc:
             self._closed = True
-            raise ConnectionResetError("The realtime connection was closed.") from exc
+            raise ConnectionResetError(f"The realtime connection was closed abnormally: {exc}") from exc
         data = raw.decode("utf-8") if isinstance(raw, (bytes, bytearray)) else raw
         payload: Dict[str, Any] = json.loads(data)
         event_type = payload.get("type")
@@ -731,6 +746,11 @@ class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
             params["agent_session_id"] = self._agent_session_id
         if self._agent_version_override is not None:
             params["x-agent-version-override"] = self._agent_version_override
+        if self._structured_inputs is not None:
+            # The service reads this from the `structured_input` query parameter (see the
+            # generated `build_beta_voice_agent_web_socket_connect_voice_agent_request`), not a
+            # header -- it must be serialized and appended to the URL below, not sent as one.
+            params["structured_input"] = json.dumps(self._structured_inputs, cls=SdkJSONEncoder)
         params.update(self._extra_query)
 
         if params:
@@ -746,8 +766,6 @@ class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
             "Authorization": "Bearer " + token.token,
             _FOUNDRY_FEATURES_HEADER_NAME: _VOICE_AGENT_FEATURE_HEADER,
         }
-        if self._structured_inputs is not None:
-            headers["x-ms-voice-structured-inputs"] = json.dumps(self._structured_inputs, cls=SdkJSONEncoder)
         headers.update(self._extra_headers)
         if not _has_header_case_insensitive(headers, "User-Agent"):
             # Only set our default if the caller didn't supply their own (in any casing) --
