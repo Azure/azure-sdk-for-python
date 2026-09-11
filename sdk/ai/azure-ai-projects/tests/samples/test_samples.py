@@ -126,6 +126,7 @@ class TestSamples(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         # Record the fictional spans, not exporter health or remote configuration traffic.
         env_vars.update(
+            FOUNDRY_AGENT_NAME="agent-insights-sample",
             APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL="true",
             APPLICATIONINSIGHTS_SDKSTATS_DISABLED="true",
             APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED="true",

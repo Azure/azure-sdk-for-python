@@ -24,6 +24,11 @@ from azure.core.exceptions import ResourceExistsError
 from azure.monitor.query import LogsQueryStatus
 
 
+@pytest.fixture(autouse=True)
+def _sample_import_path(monkeypatch):
+    monkeypatch.syspath_prepend(str(Path(__file__).parents[2] / "samples" / "agent_insights"))
+
+
 @pytest.fixture(name="scheduled_sample")
 def _scheduled_sample(monkeypatch):
     path = Path(__file__).parents[2] / "samples" / "agent_insights" / "sample_agent_insights_scheduled.py"
@@ -165,6 +170,7 @@ def _on_demand_main(on_demand_sample, monkeypatch):
     monkeypatch.setenv("FOUNDRY_PROJECT_ENDPOINT", "https://example.test")
     monkeypatch.setenv("APP_INSIGHTS_RESOURCE_ID", "test-application-insights")
     monkeypatch.setenv("FOUNDRY_MODEL_NAME", "test-model")
+    monkeypatch.delenv("FOUNDRY_AGENT_NAME", raising=False)
     return main, operations
 
 
@@ -273,9 +279,9 @@ def test_scheduled_sample_cleans_up_after_configuration_error(
     assert operations.update.call_args.args[1].run_interval_hours == 6
     assert operations.update.call_args.args[1].enabled is True
     project.agents.delete.assert_called_once_with("test-agent", force=True)
-    assert project.mock_calls.index(call.cleanup_monitor(operations, "new-monitor", scheduled=True)) < project.mock_calls.index(
-        call.agents.delete("test-agent", force=True)
-    )
+    assert project.mock_calls.index(
+        call.cleanup_monitor(operations, "new-monitor", scheduled=True)
+    ) < project.mock_calls.index(call.agents.delete("test-agent", force=True))
 
 
 def test_scheduled_creation_failure_leaves_existing_monitor(scheduled_sample, monkeypatch, on_demand_main):
@@ -307,7 +313,8 @@ def test_scheduled_creation_failure_leaves_existing_monitor(scheduled_sample, mo
 
 
 @pytest.mark.parametrize("sample_fixture", ["on_demand_sample", "scheduled_sample"])
-def test_partial_setup_cleans_up_only_owned_agent(request, sample_fixture, on_demand_main, monkeypatch):
+@pytest.mark.parametrize("name_prefix", [None, "", "custom-agent"])
+def test_partial_setup_cleans_up_only_owned_agent(request, sample_fixture, name_prefix, on_demand_main, monkeypatch):
     main = request.getfixturevalue(sample_fixture)["main"]
     configured_main, operations = on_demand_main
     for name in (
@@ -320,6 +327,8 @@ def test_partial_setup_cleans_up_only_owned_agent(request, sample_fixture, on_de
     ):
         monkeypatch.setitem(main.__globals__, name, configured_main.__globals__[name])
     project = main.__globals__["AIProjectClient"].return_value.__enter__.return_value
+    if name_prefix is not None:
+        monkeypatch.setenv("FOUNDRY_AGENT_NAME", name_prefix)
     error = RuntimeError("Trace export failed")
     main.__globals__["seed_traces"].side_effect = error
 
@@ -327,7 +336,7 @@ def test_partial_setup_cleans_up_only_owned_agent(request, sample_fixture, on_de
         main()
 
     creation = project.agents.create_version.call_args.kwargs
-    assert creation["agent_name"].startswith("agent-insights-sample-")
+    assert creation["agent_name"].startswith(f"{name_prefix or 'agent-insights-sample'}-")
     assert creation["definition"].otel_agent_id == creation["agent_name"]
     assert main.__globals__["AIProjectClient"].call_args.kwargs["allow_preview"] is True
     project.agents.delete.assert_called_once_with("test-agent", force=True)

@@ -30,8 +30,8 @@ from azure.ai.projects.models import (
 from azure.ai.projects.operations import BetaAgentInsightMonitorsOperations
 
 
-def create_agent(project_client: AIProjectClient) -> AgentVersionDetails:
-    agent_name = f"agent-insights-sample-{uuid.uuid4().hex}"
+def create_agent(project_client: AIProjectClient, name_prefix: str) -> AgentVersionDetails:
+    agent_name = f"{name_prefix}-{uuid.uuid4().hex}"
     return project_client.agents.create_version(
         agent_name=agent_name,
         definition=ExternalAgentDefinition(otel_agent_id=agent_name),
