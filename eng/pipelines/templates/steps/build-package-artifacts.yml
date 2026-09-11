@@ -91,8 +91,8 @@ steps:
       BuildTargetingString: ${{ parameters.BuildTargetingString }}
       PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
-  # todo, walk the artifacts and ensure that one which includes an extension package is present
-  # if not, we only need to build on linux. if so, we need to build on all platforms
+  # Decides whether the mac/windows builds produce anything, based on whether any targeted package
+  # declares compiled binaries. If none do, only the linux build runs.
   - template: /eng/pipelines/templates/steps/resolve-build-platforms.yml
     parameters:
       PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
