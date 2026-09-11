@@ -234,6 +234,13 @@ def _get_target_for_db_dependency(
     attributes: Attributes,
 ) -> Optional[str]:
     if attributes:
+        if not target:
+            server_address = attributes.get(server_attributes.SERVER_ADDRESS)
+            if server_address:
+                target = str(server_address)
+                server_port = attributes.get(server_attributes.SERVER_PORT)
+                if server_port and server_port != _get_default_port_db(str(db_system)):
+                    target = "{}:{}".format(target, server_port)
         # Prefer new stable `db.namespace`, fall back to deprecated `db.name`.
         db_name = attributes.get(db_attributes.DB_NAMESPACE) or attributes.get(SpanAttributes.DB_NAME)
         if db_name:

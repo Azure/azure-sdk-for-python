@@ -196,11 +196,12 @@ class TestDependencyData(unittest.TestCase):
             DB_SYSTEM_NAME: "postgresql",
             DB_QUERY_TEXT: "SELECT * FROM table",
             DB_NAMESPACE: "database",
+            "server.address": "stable-server",
         }
         result = _DependencyData._from_span(self.span)
         self.assertEqual(result.type, "postgresql")
         self.assertEqual(result.data, "SELECT * FROM table")
-        self.assertEqual(result.target, "database")
+        self.assertEqual(result.target, "stable-server|database")
 
         self.span.attributes = {
             DB_SYSTEM_NAME: "postgresql",

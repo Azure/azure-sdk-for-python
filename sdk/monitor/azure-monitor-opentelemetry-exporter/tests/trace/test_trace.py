@@ -666,11 +666,13 @@ class TestAzureTraceExporter(unittest.TestCase):
             "db.system.name": "postgresql",
             "db.query.text": "SELECT * from stable_test",
             "db.namespace": "stableDb",
+            "server.address": "stable-server",
+            "server.port": 15432,
         }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.type, "postgresql")
         self.assertEqual(envelope.data.base_data.data, "SELECT * from stable_test")
-        self.assertEqual(envelope.data.base_data.target, "stableDb")
+        self.assertEqual(envelope.data.base_data.target, "stable-server:15432|stableDb")
 
         span._attributes = {
             "db.system.name": "postgresql",
