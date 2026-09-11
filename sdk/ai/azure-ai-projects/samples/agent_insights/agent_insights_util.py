@@ -7,6 +7,7 @@
 """Helpers shared by the Agent Insights samples in this folder."""
 
 import json
+import re
 import time
 import uuid
 from datetime import timedelta
@@ -31,6 +32,11 @@ from azure.ai.projects.operations import BetaAgentInsightMonitorsOperations
 
 
 def create_agent(project_client: AIProjectClient, name_prefix: str) -> AgentVersionDetails:
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9-]{0,29}", name_prefix):
+        raise ValueError(
+            "FOUNDRY_AGENT_NAME must be 1-30 characters, start with an ASCII letter or digit, "
+            "and contain only ASCII letters, digits, or hyphens."
+        )
     agent_name = f"{name_prefix}-{uuid.uuid4().hex}"
     return project_client.agents.create_version(
         agent_name=agent_name,

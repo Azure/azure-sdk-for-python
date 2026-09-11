@@ -38,6 +38,8 @@ USAGE:
     4) FOUNDRY_AGENT_NAME - Optional agent name prefix. Defaults to
        "agent-insights-sample" when unset or empty. A unique suffix is added
        on each run so existing agents and retained traces are not reused.
+       The prefix must be 1-30 characters, start with an ASCII letter or digit,
+       and contain only ASCII letters, digits, or hyphens.
 """
 
 import os

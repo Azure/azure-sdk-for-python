@@ -48,6 +48,23 @@ def _cleanup_sample(scheduled_sample):
     return scheduled_sample["cleanup"].__globals__
 
 
+@pytest.mark.parametrize("name_prefix", ["a" * 31, "my_agent", "-agent"])
+def test_invalid_agent_prefix_fails_before_creation(on_demand_sample, name_prefix):
+    project = MagicMock()
+    with pytest.raises(ValueError, match="FOUNDRY_AGENT_NAME must be 1-30 characters"):
+        on_demand_sample["create_agent"](project, name_prefix)
+    project.agents.create_version.assert_not_called()
+
+
+def test_longest_agent_prefix_fits_service_limit(on_demand_sample):
+    project = MagicMock()
+    on_demand_sample["create_agent"](project, "a" * 30)
+    creation = project.agents.create_version.call_args.kwargs
+    assert len(creation["agent_name"]) == 63
+    assert creation["agent_name"].startswith("a" * 30 + "-")
+    assert creation["definition"].otel_agent_id == creation["agent_name"]
+
+
 def test_cleanup_cancels_active_run(cleanup_sample):
     operations = MagicMock(spec=BetaAgentInsightMonitorsOperations)
     operations.list_runs.side_effect = [
