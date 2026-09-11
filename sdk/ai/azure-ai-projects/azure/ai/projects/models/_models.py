@@ -2991,6 +2991,10 @@ class AgentSessionResource(_Model):  # pylint: disable=docstring-keyword-should-
     :ivar expires_at: The Unix timestamp (in seconds) when the session expires (rolling, 30 days
      from last activity). Required.
     :vartype expires_at: ~datetime.datetime
+    :ivar stopped_at: The Unix timestamp (in seconds) when the session sandbox was last observed to
+     stop or go idle. Present only after the session has gone idle at least once, used for accurate
+     idle-billing reconciliation.
+    :vartype stopped_at: ~datetime.datetime
     """
 
     agent_session_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3011,6 +3015,10 @@ class AgentSessionResource(_Model):  # pylint: disable=docstring-keyword-should-
     expires_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
     """The Unix timestamp (in seconds) when the session expires (rolling, 30 days from last activity).
      Required."""
+    stopped_at: Optional[datetime.datetime] = rest_field(visibility=["read"], format="unix-timestamp")
+    """The Unix timestamp (in seconds) when the session sandbox was last observed to stop or go idle.
+     Present only after the session has gone idle at least once, used for accurate idle-billing
+     reconciliation."""
 
     @overload
     def __init__(

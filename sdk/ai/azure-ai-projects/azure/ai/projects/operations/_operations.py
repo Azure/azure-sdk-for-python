@@ -2072,7 +2072,6 @@ def build_beta_voice_agent_web_socket_connect_voice_agent_request(  # pylint: di
     transport: Optional[Union[str, _models.VoiceAgentTransport]] = None,
     store: Optional[bool] = None,
     structured_input: Optional[str] = None,
-    agent_version_override: Optional[str] = None,
     websocket_subprotocol: Optional[Union[str, _models.VoiceAgentWebSocketSubprotocol]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -2097,8 +2096,6 @@ def build_beta_voice_agent_web_socket_connect_voice_agent_request(  # pylint: di
         _params["store"] = _SERIALIZER.query("store", store, "bool")
     if structured_input is not None:
         _params["structured_input"] = _SERIALIZER.query("structured_input", structured_input, "str")
-    if agent_version_override is not None:
-        _params["x-agent-version-override"] = _SERIALIZER.query("agent_version_override", agent_version_override, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -13367,7 +13364,6 @@ class BetaVoiceAgentWebSocketOperations:  # pylint: disable=docstring-missing-pa
         transport: Optional[Union[str, _models.VoiceAgentTransport]] = None,
         store: Optional[bool] = None,
         structured_input: Optional[str] = None,
-        agent_version_override: Optional[str] = None,
         websocket_subprotocol: Optional[Union[str, _models.VoiceAgentWebSocketSubprotocol]] = None,
         **kwargs: Any
     ) -> None:
@@ -13428,17 +13424,13 @@ class BetaVoiceAgentWebSocketOperations:  # pylint: disable=docstring-missing-pa
         :paramtype store: bool
         :keyword structured_input: Per-session values for the voice agent's declared
          ``structured_inputs``, serialized as a JSON object and
-         URL-encoded as this query parameter. Supplied values override definition defaults when
-         rendering the
          agent's instructions and session-start greeting for this session only. The decoded value must
          be a JSON
          object no larger than 32 KiB with a maximum nesting depth of 16. Default value is None.
         :paramtype structured_input: str
-        :keyword agent_version_override: Selects a specific version of the voice agent for this
-         session. Default value is None.
-        :paramtype agent_version_override: str
-        :keyword websocket_subprotocol: The requested WebSocket subprotocol. Omit this header or
-         request exactly ``realtime``. "realtime" Default value is None.
+        :keyword websocket_subprotocol: Selects a specific version of the voice agent for this
+         session.The requested WebSocket subprotocol. Omit this header or request exactly ``realtime``.
+         "realtime" Default value is None.
         :paramtype websocket_subprotocol: str or
          ~azure.ai.projects.models.VoiceAgentWebSocketSubprotocol
         :return: None
@@ -13464,7 +13456,6 @@ class BetaVoiceAgentWebSocketOperations:  # pylint: disable=docstring-missing-pa
             transport=transport,
             store=store,
             structured_input=structured_input,
-            agent_version_override=agent_version_override,
             websocket_subprotocol=websocket_subprotocol,
             api_version=self._config.api_version,
             headers=_headers,
