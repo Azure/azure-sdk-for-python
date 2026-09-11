@@ -1,0 +1,3 @@
+-e ../../../eng/tools/azure-sdk-tools
+openai>=2.8.0
+pytest

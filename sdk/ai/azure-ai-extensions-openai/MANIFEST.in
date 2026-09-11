@@ -1,0 +1,5 @@
+include *.md
+include LICENSE
+include azure/ai/__init__.py
+include azure/ai/extensions/__init__.py
+include azure/ai/extensions/openai/py.typed
