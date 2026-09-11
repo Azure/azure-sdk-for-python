@@ -350,13 +350,40 @@ def _get_single_run_results(
     all_results: List[Any] = []
     next_cursor: Optional[str] = None
     limit = 100  # Max allowed by API
+    # Retry constants for transient 408 timeouts on the output-items list call.
+    # The eval run itself has already completed at this point; we are only fetching
+    # the results.  A 408 here is a transient service timeout, not a data error,
+    # so a short backoff and retry is safe and correct.
+    _LIST_MAX_RETRIES = 3
+    _LIST_RETRY_BASE_DELAY_SECONDS = 10
 
     while True:
         list_kwargs = {"eval_id": run_info["eval_group_id"], "run_id": run_info["eval_run_id"], "limit": limit}
         if next_cursor is not None:
             list_kwargs["after"] = next_cursor
 
-        raw_list_results = run_info["client"].evals.runs.output_items.list(**list_kwargs)
+        last_exc: Optional[Exception] = None
+        for attempt in range(_LIST_MAX_RETRIES):
+            try:
+                raw_list_results = run_info["client"].evals.runs.output_items.list(**list_kwargs)
+                last_exc = None
+                break
+            except Exception as exc:  # pylint: disable=broad-except
+                status_code = getattr(exc, "status_code", None)
+                if status_code == 408 and attempt < _LIST_MAX_RETRIES - 1:
+                    delay = _LIST_RETRY_BASE_DELAY_SECONDS * (2**attempt)
+                    LOGGER.warning(
+                        "AOAI: output_items.list() returned 408 on attempt %d/%d "
+                        "(run_id=%s, cursor=%s); retrying in %ds.",
+                        attempt + 1, _LIST_MAX_RETRIES,
+                        run_info["eval_run_id"], next_cursor, delay,
+                    )
+                    sleep(delay)
+                    last_exc = exc
+                else:
+                    raise
+        if last_exc is not None:
+            raise last_exc
 
         # Add current page results
         all_results.extend(raw_list_results.data)
