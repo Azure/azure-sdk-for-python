@@ -59,6 +59,9 @@ exclude = [
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
 
+[tool.azure-sdk-conda]
+in_bundle = false
+
 [tool.azure-sdk-build]
 pylint = true
 pyright = true
