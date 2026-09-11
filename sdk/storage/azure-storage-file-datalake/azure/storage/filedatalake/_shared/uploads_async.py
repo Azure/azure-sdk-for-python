@@ -17,7 +17,13 @@ from uuid import uuid4
 from . import encode_base64
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
-from .uploads import IterStreamer, SubStream  # pylint: disable=unused-import
+from .uploads import (  # pylint: disable=unused-import
+    IterStreamer,
+    SubStream,
+    _remove_parallel_access_conditions,
+    _update_append_position,
+    _update_etag,
+)
 
 
 async def _async_parallel_uploads(uploader, pending, running):
@@ -74,8 +80,7 @@ async def upload_data_chunks(
     parallel = max_concurrency > 1
     if parallel:
         # Access conditions do not work with parallelism
-        kwargs.pop("etag", None)
-        kwargs.pop("match_condition", None)
+        _remove_parallel_access_conditions(kwargs)
 
     uploader = uploader_class(
         service=service,
@@ -121,8 +126,7 @@ async def upload_substream_blocks(
     parallel = max_concurrency > 1
     if parallel:
         # Access conditions do not work with parallelism
-        kwargs.pop("etag", None)
-        kwargs.pop("match_condition", None)
+        _remove_parallel_access_conditions(kwargs)
     uploader = uploader_class(
         service=service,
         total_size=total_size,
@@ -344,8 +348,8 @@ class PageBlobChunkUploader(_ChunkUploader):
                 **self.request_options,
             )
 
-            if not self.parallel and self.request_options.get("etag"):
-                self.request_options["etag"] = self.response_headers["etag"]
+            if not self.parallel:
+                _update_etag(self.request_options, self.response_headers["etag"])
 
     async def _upload_substream_block(self, index, block_stream):
         pass
@@ -369,7 +373,7 @@ class AppendBlobChunkUploader(_ChunkUploader):
             )
             self.current_length = int(self.response_headers["blob_append_offset"])
         else:
-            self.request_options["append_position"] = self.current_length + chunk_offset
+            _update_append_position(self.request_options, self.current_length + chunk_offset)
             self.response_headers = await self.service.append_block(
                 body=chunk_data,
                 content_length=len(chunk_data),
@@ -396,8 +400,8 @@ class DataLakeFileChunkUploader(_ChunkUploader):
             **self.request_options,
         )
 
-        if not self.parallel and self.request_options.get("modified_access_conditions"):
-            self.request_options["modified_access_conditions"].if_match = self.response_headers["etag"]
+        if not self.parallel:
+            _update_etag(self.request_options, self.response_headers["etag"])
 
     async def _upload_substream_block(self, index, block_stream):
         try:
