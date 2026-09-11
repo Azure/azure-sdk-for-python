@@ -33,12 +33,36 @@ from devtools_testutils import (
     test_proxy,
     add_general_regex_sanitizer,
     add_header_regex_sanitizer,
+    add_uri_regex_sanitizer,
     set_default_session_settings,
     add_body_key_sanitizer,
     add_oauth_response_sanitizer,
     add_general_string_sanitizer,
 )
 from azure.communication.identity._shared.utils import parse_connection_str
+
+# The recorded sessions were captured against api-version 2023-10-01. This package now
+# defaults to 2026-09-23, so the request URI no longer matches the recording and every
+# recorded test fails with "Unable to find a record for the request".
+#
+# The two versions are functionally identical for these operations, so the recordings remain
+# valid; only the query string differs. Rewriting the request back to the recorded value lets
+# them match. This is deliberately narrow -- it maps one exact version to one other exact
+# version, so any other api-version still fails to match.
+#
+# Do NOT replace this with `ignored_query_parameters`: that substitutes a "Volatile" literal
+# on both sides, so *any* api-version would match *any* recording, removing all coverage of
+# the single field this release changes.
+#
+# Known limitation: sanitizers apply to both the recording and the incoming request, so the
+# two versions become mutually interchangeable and a regression back to 2023-10-01 would not
+# be caught here. tests/test_wire_contract.py asserts the exact api-version on the wire
+# against a literal, which covers that gap.
+#
+# This retires itself: once the cassettes are re-recorded at 2026-09-23 the regex matches
+# nothing and the sanitizer becomes inert.
+RECORDED_API_VERSION = "2023-10-01"
+CURRENT_API_VERSION = "2026-09-23"
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -52,6 +76,11 @@ def add_sanitizers(test_proxy):
         set_custom_default_matcher(ignored_headers=headers_to_ignore)
 
     add_oauth_response_sanitizer()
+
+    add_uri_regex_sanitizer(
+        regex=f"api-version={CURRENT_API_VERSION}",
+        value=f"api-version={RECORDED_API_VERSION}",
+    )
 
     connection_str = os.environ.get("COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING")
     if connection_str is not None:

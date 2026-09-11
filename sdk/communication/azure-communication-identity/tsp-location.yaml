@@ -1,0 +1,4 @@
+directory: specification/communication/data-plane/Identity
+commit: 1893171028aed5a757fc78c2d4aa439c14df4afc
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 

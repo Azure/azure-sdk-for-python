@@ -11,14 +11,21 @@ from azure.core.credentials import AccessToken
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.credentials import AzureKeyCredential
 from .._generated.aio._client import (
-    CommunicationIdentityClient as CommunicationIdentityClientGen,
+    IdentityClient as CommunicationIdentityClientGen,
 )
 from .._shared.auth_policy_utils import get_authentication_policy
 from .._shared.utils import parse_connection_str
 from .._shared.models import CommunicationUserIdentifier
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
-from .._utils import convert_timedelta_to_mins
+from .._utils import (
+    _ACCEPT_JSON,
+    BodylessCreateContentTypePolicy,
+    build_token_request_body,
+    extract_create_content_type,
+    merge_headers,
+    to_access_token,
+)
 from .._generated.models import CommunicationTokenScope
 
 
@@ -51,11 +58,14 @@ class CommunicationIdentityClient:
 
         self._endpoint = endpoint
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
+        per_call_policies = list(kwargs.pop("per_call_policies", None) or [])
+        per_call_policies.append(BodylessCreateContentTypePolicy())
         self._identity_service_client = CommunicationIdentityClientGen(
             self._endpoint,
             api_version=self._api_version,
             authentication_policy=get_authentication_policy(endpoint, credential, decode_url=True, is_async=True),
             sdk_moniker=SDK_MONIKER,
+            per_call_policies=per_call_policies,
             **kwargs
         )
 
@@ -81,13 +91,17 @@ class CommunicationIdentityClient:
         :return: CommunicationUserIdentifier
         :rtype: ~azure.communication.identity.CommunicationUserIdentifier
         """
-        identity_access_token = await self._identity_service_client.communication_identity.create(**kwargs)
+        identity_access_token = await self._identity_service_client.identity_operations.create(
+            **extract_create_content_type(kwargs)
+        )
 
         return CommunicationUserIdentifier(identity_access_token.identity.id, raw_id=identity_access_token.identity.id)
 
     @distributed_trace_async
     async def create_user_and_token(
-        self, scopes: List[Union[str, CommunicationTokenScope]], *,
+        self,
+        scopes: List[Union[str, CommunicationTokenScope]],
+        *,
         token_expires_in: Optional[timedelta] = None,
         **kwargs
     ) -> Tuple["CommunicationUserIdentifier", AccessToken]:
@@ -103,22 +117,15 @@ class CommunicationIdentityClient:
         :rtype:
             tuple of (~azure.communication.identity.CommunicationUserIdentifier, ~azure.core.credentials.AccessToken)
         """
-        request_body = {
-            "createTokenWithScopes": scopes,
-            "expiresInMinutes": convert_timedelta_to_mins(token_expires_in),
-        }
-
-        identity_access_token = await self._identity_service_client.communication_identity.create(
+        request_body = build_token_request_body("createTokenWithScopes", scopes, token_expires_in)
+        identity_access_token = await self._identity_service_client.identity_operations.create(
             body=request_body, **kwargs  # type: ignore
         )
 
         user_identifier = CommunicationUserIdentifier(
             identity_access_token.identity.id, raw_id=identity_access_token.identity.id
         )
-        access_token = AccessToken(
-            identity_access_token.access_token.token,
-            identity_access_token.access_token.expires_on,
-        )
+        access_token = to_access_token(identity_access_token["accessToken"])
 
         return user_identifier, access_token
 
@@ -132,12 +139,16 @@ class CommunicationIdentityClient:
         :return: None
         :rtype: None
         """
-        await self._identity_service_client.communication_identity.delete(user.properties["id"], **kwargs)
+        await self._identity_service_client.identity_operations.delete(
+            user.properties["id"], **merge_headers(kwargs, _ACCEPT_JSON)
+        )
 
     @distributed_trace_async
     async def get_token(
-        self, user: CommunicationUserIdentifier,
-        scopes: List[Union[str, CommunicationTokenScope]], *,
+        self,
+        user: CommunicationUserIdentifier,
+        scopes: List[Union[str, CommunicationTokenScope]],
+        *,
         token_expires_in: Optional[timedelta] = None,
         **kwargs
     ) -> AccessToken:
@@ -153,16 +164,13 @@ class CommunicationIdentityClient:
         :return: AccessToken
         :rtype: ~azure.core.credentials.AccessToken
         """
-        request_body = {
-            "scopes": scopes,
-            "expiresInMinutes": convert_timedelta_to_mins(token_expires_in),
-        }
+        request_body = build_token_request_body("scopes", scopes, token_expires_in)
 
-        access_token = await self._identity_service_client.communication_identity.issue_access_token(
+        access_token = await self._identity_service_client.identity_operations.issue_access_token(
             user.properties["id"], body=request_body, **kwargs  # type: ignore
         )
 
-        return AccessToken(access_token.token, access_token.expires_on)
+        return to_access_token(access_token)
 
     @distributed_trace_async
     async def revoke_tokens(self, user: CommunicationUserIdentifier, **kwargs) -> None:
@@ -173,8 +181,8 @@ class CommunicationIdentityClient:
         :return: None
         :rtype: None
         """
-        return await self._identity_service_client.communication_identity.revoke_access_tokens(
-            user.properties["id"] if user else None, **kwargs  # type: ignore
+        return await self._identity_service_client.identity_operations.revoke_access_tokens(
+            user.properties["id"] if user else None, **merge_headers(kwargs, _ACCEPT_JSON)  # type: ignore
         )
 
     @distributed_trace_async
@@ -204,11 +212,11 @@ class CommunicationIdentityClient:
             "appId": client_id,
             "userId": user_object_id,
         }
-        access_token = await self._identity_service_client.communication_identity.exchange_teams_user_access_token(
+        access_token = await self._identity_service_client.teams_user_operations.exchange_teams_user_access_token(
             body=request_body, **kwargs  # type: ignore
         )
 
-        return AccessToken(access_token.token, access_token.expires_on)
+        return to_access_token(access_token)
 
     async def __aenter__(self) -> "CommunicationIdentityClient":
         await self._identity_service_client.__aenter__()
