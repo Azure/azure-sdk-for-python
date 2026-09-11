@@ -171,6 +171,20 @@ class TestRequestBody:
             pass
         assert _sent_body(transport) == {}
 
+    def test_empty_body_still_sends_json_content_type(self, client, transport):
+        """An empty JSON body must still be typed as JSON.
+
+        The generated operation drops content_type whenever the body is falsy, and an empty
+        dict is falsy -- so without the policy azure-core falls back to text/plain. The
+        serialized body is the string "{}", which is truthy, so a body-presence check misses
+        this case entirely.
+        """
+        try:
+            client.create_user_and_token(None)
+        except Exception:  # pylint: disable=broad-except
+            pass
+        assert transport.requests[-1].headers["Content-Type"] == "application/json"
+
     def test_empty_scope_list_is_still_sent(self, client, transport):
         """An empty list is a value, not an absence, and must survive."""
         try:
