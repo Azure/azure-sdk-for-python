@@ -76,6 +76,9 @@ async def upload_data_chunks(
         # Access conditions do not work with parallelism
         kwargs.pop("etag", None)
         kwargs.pop("match_condition", None)
+        kwargs.pop("if_modified_since", None)
+        kwargs.pop("if_unmodified_since", None)
+        kwargs.pop("if_tags", None)
 
     uploader = uploader_class(
         service=service,
@@ -123,6 +126,9 @@ async def upload_substream_blocks(
         # Access conditions do not work with parallelism
         kwargs.pop("etag", None)
         kwargs.pop("match_condition", None)
+        kwargs.pop("if_modified_since", None)
+        kwargs.pop("if_unmodified_since", None)
+        kwargs.pop("if_tags", None)
     uploader = uploader_class(
         service=service,
         total_size=total_size,
@@ -396,8 +402,8 @@ class DataLakeFileChunkUploader(_ChunkUploader):
             **self.request_options,
         )
 
-        if not self.parallel and self.request_options.get("modified_access_conditions"):
-            self.request_options["modified_access_conditions"].if_match = self.response_headers["etag"]
+        if not self.parallel and self.request_options.get("etag"):
+            self.request_options["etag"] = self.response_headers["etag"]
 
     async def _upload_substream_block(self, index, block_stream):
         try:

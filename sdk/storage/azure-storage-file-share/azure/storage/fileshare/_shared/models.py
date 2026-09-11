@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-instance-attributes
 from enum import Enum
-from typing import Optional
+from typing import Any, Optional
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.configuration import Configuration
@@ -207,53 +207,53 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class DictMixin(object):
 
-    def __setitem__(self, key, item):
+    def __setitem__(self, key: str, item: Any) -> None:
         self.__dict__[key] = item
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> Any:
         return self.__dict__[key]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.keys())
 
-    def __delitem__(self, key):
+    def __delitem__(self, key: str) -> None:
         self.__dict__[key] = None
 
     # Compare objects by comparing all attributes.
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
         return False
 
     # Compare objects by comparing all attributes.
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str({k: v for k, v in self.__dict__.items() if not k.startswith("_")})
 
-    def __contains__(self, key):
+    def __contains__(self, key: object) -> bool:
         return key in self.__dict__
 
-    def has_key(self, k):
+    def has_key(self, k: object) -> bool:
         return k in self.__dict__
 
-    def update(self, *args, **kwargs):
-        return self.__dict__.update(*args, **kwargs)
+    def update(self, *args: Any, **kwargs: Any) -> None:
+        self.__dict__.update(*args, **kwargs)
 
-    def keys(self):
+    def keys(self) -> list[str]:
         return [k for k in self.__dict__ if not k.startswith("_")]
 
-    def values(self):
+    def values(self) -> list[Any]:
         return [v for k, v in self.__dict__.items() if not k.startswith("_")]
 
-    def items(self):
+    def items(self) -> list[tuple[str, Any]]:
         return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
 
-    def get(self, key, default=None):
+    def get(self, key: str, default: Any = None) -> Any:
         if key in self.__dict__:
             return self.__dict__[key]
         return default
