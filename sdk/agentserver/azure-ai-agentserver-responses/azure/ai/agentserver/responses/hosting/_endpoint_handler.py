@@ -13,6 +13,7 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 import contextvars
 import logging
+import os
 import threading
 from typing import TYPE_CHECKING, Any, cast
 
@@ -24,7 +25,9 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-in-module
     FoundryAgentRequestContext,
     flush_spans,
+    flush_spans_async,
     reset_request_context,
+    schedule_flush_spans,
     set_request_context,
 )
 from azure.ai.agentserver.core.tasks import (
@@ -185,6 +188,46 @@ def _get_scope_request_id(request: Request) -> str | None:
 _response_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("ResponseId", default="")
 _conversation_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("ConversationId", default="")
 _streaming_var: contextvars.ContextVar[str] = contextvars.ContextVar("Streaming", default="")
+
+
+_FLUSH_MODE_ENV = "AGENTSERVER_FLUSH_MODE"
+_DEFAULT_FLUSH_MODE = "async"
+
+
+async def _flush_spans_for_mode(mode: str) -> None:
+    """Dispatch span flushing according to *mode* (see ``AGENTSERVER_FLUSH_MODE``).
+
+    ``force_flush`` blocks the calling thread until the exporter drains; doing
+    that inline on this ``async`` handler blocks the event loop and serialises
+    concurrent requests behind one export.  The mode selects the strategy:
+
+    * ``"async"`` (default) -> :func:`flush_spans_async`: off the event loop;
+      same durability, no head-of-line blocking under concurrency.
+    * ``"background"`` -> :func:`schedule_flush_spans`: return the response
+      first and flush in the background (lowest latency, but needs the platform
+      to grant a brief drain window before freezing).
+    * ``"sync"`` -> :func:`flush_spans`: legacy blocking behaviour.
+
+    Any unrecognised value falls back to the ``"async"`` default (fail safe:
+    never silently drop telemetry).
+
+    :param mode: The flush mode; matched case-insensitively.
+    :type mode: str
+    """
+    normalized = (mode or "").strip().lower()
+    if normalized == "sync":
+        flush_spans()
+    elif normalized == "background":
+        schedule_flush_spans()
+    else:
+        if normalized and normalized != _DEFAULT_FLUSH_MODE:
+            logger.warning(
+                "Unrecognised %s=%r; falling back to %r flush mode.",
+                _FLUSH_MODE_ENV,
+                mode,
+                _DEFAULT_FLUSH_MODE,
+            )
+        await flush_spans_async()
 
 
 class _ResponseLogFilter(logging.Filter):
@@ -949,11 +992,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             _conversation_id_var.reset(cid_token)
             _streaming_var.reset(str_token)
             reset_request_context(platform_ctx_token)
-            # Flush pending spans before the response is sent.
-            # BatchSpanProcessor exports on a timer; in hosted sandboxes
-            # the platform may freeze the process after the HTTP response,
-            # losing any buffered spans (e.g. LangGraph per-node spans).
-            flush_spans()
+            # Flush pending spans before the process may be frozen.
+            # ``AGENTSERVER_FLUSH_MODE`` selects the strategy (see
+            # ``_flush_spans_for_mode``); the default keeps the flush off the
+            # event loop without dropping telemetry.
+            await _flush_spans_for_mode(
+                os.environ.get(_FLUSH_MODE_ENV, _DEFAULT_FLUSH_MODE)
+            )
             try:
                 _otel_context.detach(baggage_token)
             except ValueError:
