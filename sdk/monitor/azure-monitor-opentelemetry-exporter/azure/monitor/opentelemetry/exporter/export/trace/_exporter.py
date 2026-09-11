@@ -8,6 +8,11 @@ from typing import no_type_check, Any, Dict, List, Sequence, Optional
 from urllib.parse import urlparse
 
 from opentelemetry.semconv.attributes.client_attributes import CLIENT_ADDRESS
+from opentelemetry.semconv.attributes.db_attributes import (
+    DB_OPERATION_NAME,
+    DB_QUERY_TEXT,
+    DB_SYSTEM_NAME,
+)
 from opentelemetry.semconv.attributes.http_attributes import (
     HTTP_REQUEST_METHOD,
     HTTP_RESPONSE_STATUS_CODE,
@@ -420,8 +425,9 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 else:
                     status_code = 0
                 data.result_code = str(status_code)
-            elif SpanAttributes.DB_SYSTEM in span.attributes:  # Database
-                db_system = span.attributes[SpanAttributes.DB_SYSTEM]
+            elif DB_SYSTEM_NAME in span.attributes or SpanAttributes.DB_SYSTEM in span.attributes:  # Database
+                # Prefer the new stable `db.system.name`, fall back to the deprecated `db.system`.
+                db_system = span.attributes.get(DB_SYSTEM_NAME) or span.attributes.get(SpanAttributes.DB_SYSTEM)
                 if db_system == DbSystemValues.MYSQL.value:
                     data.type = "mysql"
                 elif db_system == DbSystemValues.POSTGRESQL.value:
@@ -435,8 +441,14 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 else:
                     data.type = db_system
                 # data is the full statement or operation
-                if SpanAttributes.DB_STATEMENT in span.attributes:
+                # Prefer new `db.query.text` / `db.operation.name`,
+                # fall back to deprecated `db.statement` / `db.operation`.
+                if DB_QUERY_TEXT in span.attributes:
+                    data.data = span.attributes[DB_QUERY_TEXT]
+                elif SpanAttributes.DB_STATEMENT in span.attributes:
                     data.data = span.attributes[SpanAttributes.DB_STATEMENT]
+                elif DB_OPERATION_NAME in span.attributes:
+                    data.data = span.attributes[DB_OPERATION_NAME]
                 elif SpanAttributes.DB_OPERATION in span.attributes:
                     data.data = span.attributes[SpanAttributes.DB_OPERATION]
                 # db specific logic for target

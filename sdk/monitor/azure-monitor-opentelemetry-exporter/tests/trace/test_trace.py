@@ -593,7 +593,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         start_time = 1575494316027613500
         end_time = start_time + 1001000000
 
-        # SpanKind.CLIENT Db
+        # SpanKind.CLIENT Db, deprecated semconv
         span = trace._Span(
             name="test",
             context=SpanContext(
@@ -660,6 +660,24 @@ class TestAzureTraceExporter(unittest.TestCase):
         }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "postgresql")
+
+        # Stable semconv
+        span._attributes = {
+            "db.system.name": "postgresql",
+            "db.query.text": "SELECT * from stable_test",
+            "db.namespace": "stableDb",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.type, "postgresql")
+        self.assertEqual(envelope.data.base_data.data, "SELECT * from stable_test")
+        self.assertEqual(envelope.data.base_data.target, "stableDb")
+
+        span._attributes = {
+            "db.system.name": "postgresql",
+            "db.operation.name": "SELECT",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.data, "SELECT")
 
         # Type
         span._attributes = {

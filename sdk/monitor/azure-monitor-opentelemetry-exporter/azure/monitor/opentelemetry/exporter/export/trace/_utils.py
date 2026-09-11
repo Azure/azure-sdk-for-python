@@ -7,6 +7,7 @@ import math
 
 from opentelemetry.semconv.attributes import (
     client_attributes,
+    db_attributes,
     server_attributes,
     url_attributes,
     user_agent_attributes,
@@ -159,9 +160,11 @@ def _get_target_for_dependency_from_peer(attributes: Attributes) -> Optional[str
                 port = attributes[SpanAttributes.NET_PEER_PORT]
                 # TODO: check default port for rpc
                 # This logic assumes default ports never conflict across dependency types
-                if port != _get_default_port_http(attributes) and port != _get_default_port_db(
-                    str(attributes.get(SpanAttributes.DB_SYSTEM))
-                ):
+                # Honor both the new stable `db.system.name` and the deprecated `db.system`.
+                db_system_for_port = attributes.get(db_attributes.DB_SYSTEM_NAME) or attributes.get(
+                    SpanAttributes.DB_SYSTEM
+                )
+                if port != _get_default_port_http(attributes) and port != _get_default_port_db(str(db_system_for_port)):
                     target = "{}:{}".format(target, port)
     return target
 
@@ -231,7 +234,8 @@ def _get_target_for_db_dependency(
     attributes: Attributes,
 ) -> Optional[str]:
     if attributes:
-        db_name = attributes.get(SpanAttributes.DB_NAME)
+        # Prefer new stable `db.namespace`, fall back to deprecated `db.name`.
+        db_name = attributes.get(db_attributes.DB_NAMESPACE) or attributes.get(SpanAttributes.DB_NAME)
         if db_name:
             if not target:
                 target = str(db_name)
