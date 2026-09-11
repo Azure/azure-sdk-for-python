@@ -4,7 +4,10 @@
 # ------------------------------------
 import functools
 import os
+import warnings
 from typing import Dict, Optional, Any
+
+import requests
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from azure.core.exceptions import ClientAuthenticationError
@@ -25,8 +28,28 @@ class ServiceFabricCredential(MsalManagedIdentityClient):
     def get_unavailable_message(self, desc: str = "") -> str:
         return f"Service Fabric managed identity configuration not found in environment. {desc}"
 
+    def _create_http_client(self, **kwargs: Any) -> requests.Session:
+        ignored_options = [
+            name
+            for name in ("transport", "raw_request_hook", "raw_response_hook", "retry_policy", "proxy_policy")
+            if kwargs.get(name) is not None
+        ]
+        if ignored_options:
+            warnings.warn(
+                "The following arguments are ignored for synchronous Service Fabric managed identity credential "
+                "because MSAL >= 1.38.0 requires a requests.Session and does not support Azure Core pipeline "
+                "customization: {}.".format(", ".join(ignored_options)),
+                UserWarning,
+                stacklevel=3,
+            )
+        return requests.Session()  # Service Fabric requires requests.Session for MSAL >= 1.38.0, temporary workaround
+
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        **kwargs: Any,
     ) -> AccessToken:
         if self._settings.get("client_id") or self._settings.get("identity_config"):
             raise ClientAuthenticationError(message=SERVICE_FABRIC_ERROR_MESSAGE)
@@ -56,5 +79,7 @@ def _get_client_args(**kwargs: Any) -> Optional[Dict]:
 
 def _get_request(url: str, scope: str, identity_config: Dict) -> HttpRequest:
     return HttpRequest(
-        "GET", url, params=dict({"api-version": "2019-07-01-preview", "resource": scope}, **identity_config)
+        "GET",
+        url,
+        params=dict({"api-version": "2019-07-01-preview", "resource": scope}, **identity_config),
     )

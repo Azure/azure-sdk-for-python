@@ -20,14 +20,10 @@ class AzureArcCredential(MsalManagedIdentityClient):
 
 
 def _get_request(url: str, scope: str, identity_config: Dict) -> HttpRequest:
-    if identity_config:
-        raise ClientAuthenticationError(
-            message="User assigned managed identities are not supported by Azure Arc. To authenticate with the system "
-            "assigned identity omit the client id when constructing the credential, and if authenticating with "
-            "DefaultAzureCredential ensure the AZURE_CLIENT_ID environment variable is not set."
-        )
-
-    return HttpRequest("GET", url, params=dict({"api-version": "2020-06-01", "resource": scope}, **identity_config))
+    params = {"api-version": "2020-06-01", "resource": scope}
+    # Azure Arc requires the IMDS msi_res_id spelling for resource ID requests
+    params.update({"msi_res_id" if name == "resource_id" else name: value for name, value in identity_config.items()})
+    return HttpRequest("GET", url, params=params)
 
 
 def _get_secret_key(response: PipelineResponse) -> str:
@@ -76,6 +72,32 @@ def _get_key_file_path() -> str:
             raise ValueError("PROGRAMDATA environment variable is not set or is empty.")
         return os.path.join(f"{program_data_path}", "AzureConnectedMachineAgent", "Tokens")
     raise ValueError(f"Azure Arc MSI is not supported on this platform {sys.platform}")
+
+
+def _validate_user_assigned_identity(identity_config: Dict, content: Dict) -> None:
+    """Validates that Azure Arc returned the requested user-assigned identity token.
+
+    :param dict identity_config: The configuration of the requested user-assigned identity.
+    :param dict content: The deserialized response content.
+    :raises ClientAuthenticationError: If the response content is invalid.
+    """
+    if not identity_config:
+        return
+
+    response_fields = {"client_id": "client_id", "object_id": "object_id", "resource_id": "msi_res_id"}
+
+    for identity_type, response_field in response_fields.items():
+        if identity_type not in identity_config:
+            continue
+        returned_id = content.get(response_field)
+        if identity_type == "resource_id":
+            returned_id = returned_id or content.get("mi_res_id")
+        if not returned_id or str(identity_config[identity_type]).lower() != returned_id.lower():
+            raise ClientAuthenticationError(
+                message="Azure Arc did not confirm the requested user-assigned managed identity "
+                "in the token response. The agent likely does not support user-assigned "
+                "managed identities and returned the system-assigned identity."
+            )
 
 
 def _validate_key_file(file_path: str) -> None:
