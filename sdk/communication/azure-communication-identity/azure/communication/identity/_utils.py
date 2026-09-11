@@ -63,12 +63,21 @@ def build_token_request_body(
     scopes: List[Union[str, Any]],
     token_expires_in: Optional[timedelta],
 ) -> Dict[str, Any]:
-    """Build a token request body, omitting the expiry when it was not requested.
+    """Build a token request body, omitting fields the caller did not supply.
 
-    ``expiresInMinutes`` is only included when the caller supplied a value. The previous
-    msrest-based layer dropped ``None`` fields during serialization, whereas the generated
-    code now forwards the request body as-is, which would put an explicit ``null`` on the
-    wire for a property the service constrains to [60, 1440].
+    The previous msrest-based layer dropped ``None`` fields during serialization, whereas the
+    generated code forwards the request body as-is. Both ``scopes`` and ``expiresInMinutes``
+    are therefore omitted when unset, so the request stays byte-identical to the previously
+    published SDK.
+
+    ``expiresInMinutes`` matters because the service constrains it to [60, 1440] and an
+    explicit ``null`` is not a valid value. ``scopes`` is omitted for the same reason the old
+    layer omitted it -- passing ``None`` for a required argument is a caller error either way,
+    but it must fail the way it always failed, with the same request on the wire.
+
+    Note this restores prior behaviour rather than adding validation: the AutoRest client did
+    not raise on a ``None`` scope list, and neither does this. The request is still sent and
+    the service still rejects it.
 
     :param scopes_key: Name of the scopes property expected by the service.
     :type scopes_key: str
@@ -79,7 +88,9 @@ def build_token_request_body(
     :return: The request body to send to the service.
     :rtype: dict[str, any]
     """
-    request_body: Dict[str, Any] = {scopes_key: scopes}
+    request_body: Dict[str, Any] = {}
+    if scopes is not None:
+        request_body[scopes_key] = scopes
     expires_in_minutes = convert_timedelta_to_mins(token_expires_in)
     if expires_in_minutes is not None:
         request_body["expiresInMinutes"] = expires_in_minutes
