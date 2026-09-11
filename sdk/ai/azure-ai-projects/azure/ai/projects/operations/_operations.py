@@ -1701,6 +1701,7 @@ def build_beta_agents_update_telephony_binding_request(  # pylint: disable=name-
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     if etag is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", etag, "str")
+
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1918,6 +1919,7 @@ def build_beta_agents_replace_telephony_transfer_targets_request(  # pylint: dis
     # Construct headers
     if etag is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", etag, "str")
+
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -2627,6 +2629,7 @@ def build_beta_agent_telephony_cancel_call_job_request(  # pylint: disable=name-
     # Construct headers
     if etag is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", etag, "str")
+
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)

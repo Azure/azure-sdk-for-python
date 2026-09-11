@@ -1261,10 +1261,12 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> TelephonyCallRecord: ...
 
-        @distributed_trace_async
+        @overload
         async def generate(
                 self, 
-                body: GenerateAgentRequest, 
+                body: GenerateVoiceAgentRequest, 
+                *, 
+                content_type: str = "application/json", 
                 **kwargs: Any
             ) -> AgentDetails: ...
 
@@ -11536,7 +11538,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.RealtimeServerEventSessionCreated(RealtimeServerEvent, discriminator='session.created'):
         conversation_id: Optional[str]
         event_id: str
-        session: VoiceAgentSessionResponse
+        session: VoiceAgentSessionResponseConfig
         type: Literal[RealtimeServerEventType.SESSION_CREATED]
 
         @overload
@@ -11545,7 +11547,7 @@ namespace azure.ai.projects.models
                 *, 
                 conversation_id: Optional[str] = ..., 
                 event_id: str, 
-                session: VoiceAgentSessionResponse
+                session: VoiceAgentSessionResponseConfig
             ) -> None: ...
 
         @overload
@@ -11554,7 +11556,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.RealtimeServerEventSessionUpdated(RealtimeServerEvent, discriminator='session.updated'):
         event_id: str
-        session: VoiceAgentSessionResponse
+        session: VoiceAgentSessionResponseConfig
         type: Literal[RealtimeServerEventType.SESSION_UPDATED]
 
         @overload
@@ -11562,7 +11564,7 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 event_id: str, 
-                session: VoiceAgentSessionResponse
+                session: VoiceAgentSessionResponseConfig
             ) -> None: ...
 
         @overload
@@ -15050,7 +15052,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.VoiceAgentClientEventSessionUpdate(_Model):
         event_id: Optional[str]
-        session: VoiceAgentSessionUpdate
+        session: VoiceAgentSessionUpdateConfig
         type: Literal[RealtimeClientEventType.SESSION_UPDATE]
 
         @overload
@@ -15058,7 +15060,7 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 event_id: Optional[str] = ..., 
-                session: VoiceAgentSessionUpdate, 
+                session: VoiceAgentSessionUpdateConfig, 
                 type: Literal[RealtimeClientEventType.SESSION_UPDATE]
             ) -> None: ...
 
@@ -17935,10 +17937,12 @@ namespace azure.ai.projects.operations
                 **kwargs: Any
             ) -> TelephonyCallRecord: ...
 
-        @distributed_trace
+        @overload
         def generate(
                 self, 
-                body: GenerateAgentRequest, 
+                body: GenerateVoiceAgentRequest, 
+                *, 
+                content_type: str = "application/json", 
                 **kwargs: Any
             ) -> AgentDetails: ...
 
