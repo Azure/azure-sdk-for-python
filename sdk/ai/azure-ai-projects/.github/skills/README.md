@@ -56,3 +56,7 @@ This skill compares a newly emitted or merged public API surface with its select
 ### azure-ai-projects-author-tests
 
 This skill updates existing pytest coverage and authors complete sync/async Test Proxy tests for new behavior. New recorded service tests remain enabled so missing-recording errors surface in PR validation and authors can contact the SDK maintainer for help.
+
+### azure-ai-projects-model-reference-graph
+
+This skill generates structured and readable graphs that trace every generated model through direct references, inheritance, runtime ownership, and public operation methods. It supports model-usage investigation and TypeSpec removal analysis without treating static reachability as proof that a model is safe to remove.

@@ -73,6 +73,63 @@ foreach ($line in $lines) {
 }
 Set-Content $f $out
 
+# Normalize generated reStructuredText bullet lists in model and enum docstrings.
+# Join incorrectly indented continuations, then reflow long bullets with valid continuation indentation.
+$files = 'azure\ai\projects\models\_models.py', 'azure\ai\projects\models\_enums.py'
+foreach ($f in $files) {
+    $lines = Get-Content $f
+    $out = @()
+    $inDocstring = $false
+    $inBulletList = $false
+    for ($i = 0; $i -lt $lines.Length; $i++) {
+        $line = $lines[$i]
+        $trimmed = $line.TrimStart()
+        $quoteCount = ([regex]::Matches($line, '"""')).Count
+        $isClosingQuote = $trimmed -eq '"""'
+        $isContinuation = $trimmed -match '^[a-z0-9`(]'
+        if ($inDocstring -and $inBulletList -and $isContinuation -and $line -match '^\s{4}\S') {
+            while ($out.Count -gt 0 -and -not $out[-1].Trim()) { $out = $out[0..($out.Count - 2)] }
+            if ($out.Count -gt 0) {
+                $out[-1] = $out[-1].TrimEnd() + ' ' + $trimmed
+                continue
+            }
+        }
+        if ($inDocstring -and $inBulletList -and $trimmed -match '^\:') {
+            if ($out.Count -gt 0 -and $out[-1].Trim()) { $out += '' }
+            $inBulletList = $false
+        }
+        $out += $line
+        if ($trimmed -match '^\*\s') { $inBulletList = $true }
+        if ($quoteCount % 2 -eq 1 -and -not $isClosingQuote) { $inDocstring = -not $inDocstring }
+        if ($isClosingQuote) { $inDocstring = $false; $inBulletList = $false }
+    }
+    $wrapped = @()
+    foreach ($line in $out) {
+        if ($line.Length -le 120 -or $line -notmatch '^(\s*)\*\s+(.+)$') {
+            $wrapped += $line
+            continue
+        }
+
+        $firstPrefix = $Matches[1] + '* '
+        $continuationPrefix = $Matches[1] + '  '
+        $prefix = $firstPrefix
+        $currentLine = $prefix
+        foreach ($word in $Matches[2] -split '\s+') {
+            if ($currentLine.Length -gt $prefix.Length -and $currentLine.Length + 1 + $word.Length -gt 120) {
+                $wrapped += $currentLine
+                $prefix = $continuationPrefix
+                $currentLine = $prefix + $word
+            }
+            else {
+                $separator = if ($currentLine.Length -eq $prefix.Length) { '' } else { ' ' }
+                $currentLine += $separator + $word
+            }
+        }
+        $wrapped += $currentLine
+    }
+    Set-Content $f $wrapped
+}
+
 # Fix Sphinx docutils warnings in get_session_log_stream docstrings (sync + async).
 # The emitter wraps bullet/code-block lines with insufficient indentation.
 $files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
@@ -86,8 +143,58 @@ foreach ($f in $files) {
     Set-Content $f $c -NoNewline
 }
 
-# Finishing by running 'black' tool to format code. 
-pip install black
+# Wrap forward-reference-only aliases in Union so they are valid runtime type aliases.
+$f = 'azure\ai\projects\_unions.py'
+$c = Get-Content $f -Raw
+$c = $c -replace '(?m)^([A-Za-z_][A-Za-z0-9_]*\s*=\s*)"([^"\r\n]+)"\s*$', '$1Union["$2"]'
+# Remove the duplicate VoiceAgentToolChoice alias emitted by some TypeSpec versions.
+$duplicateVoiceAgentToolChoice = '(?ms)\r?\nVoiceAgentToolChoice = Union\[\r?\n    Literal\["none"\], Literal\["auto"\], Literal\["required"\], "_models\.ToolChoiceFunction", "_models\.ToolChoiceMCP"\r?\n\]'
+$firstVoiceAgentToolChoice = [regex]::Match($c, $duplicateVoiceAgentToolChoice)
+if ($firstVoiceAgentToolChoice.Success) {
+    $secondStart = $firstVoiceAgentToolChoice.Index + $firstVoiceAgentToolChoice.Length
+    $second = [regex]::Match($c.Substring($secondStart), $duplicateVoiceAgentToolChoice)
+    if ($second.Success) {
+        $removeStart = $secondStart + $second.Index
+        $c = $c.Remove($removeStart, $second.Length)
+    }
+}
+Set-Content $f $c -NoNewline
+
+# Remove invalid single overload stubs for BetaAgentsOperations.generate.
+$files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
+foreach ($f in $files) {
+    $c = Get-Content $f -Raw
+    $c = $c -replace '(?ms)\r?\n    @overload\r?\n    (?:async )?def generate\(\r?\n        self, body: _models\.GenerateVoiceAgentRequest, \*, content_type: str = "application/json", \*\*kwargs: Any\r?\n    \) -> _models\.AgentDetails:\r?\n        """Generate an agent\..*?        """\r?\n\r?\n(?=    @distributed_trace)', "`r`n"
+    $c = $c -replace '(?ms)\r?\n    @overload\r?\n    async def generate\(\r?\n        self, body: _models\.GenerateVoiceAgentRequest, \*, content_type: str = "application/json", \*\*kwargs: Any\r?\n    \) -> _models\.AgentDetails:\r?\n        """Generate an agent\..*?        """\r?\n\r?\n(?=    @distributed_trace_async)', "`r`n"
+    Set-Content $f $c -NoNewline
+}
+
+# Fix generated If-Match headers for TypeSpec Azure.Core.eTag parameters.
+# The emitter generates prep_if_match(etag, match_condition), but this package's
+# public methods expose only the etag keyword and do not emit the helper/import.
+$f = 'azure\ai\projects\operations\_operations.py'
+$lines = Get-Content $f
+$matchCount = 0
+for ($i = 0; $i -lt $lines.Length - 2; $i++) {
+    if (
+        $lines[$i].Trim() -eq 'if_match = prep_if_match(etag, match_condition)' -and
+        $lines[$i + 1].Trim() -eq 'if if_match is not None:' -and
+        $lines[$i + 2].Trim() -eq '_headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")'
+    ) {
+        $indent = ([regex]::Match($lines[$i], '^\s*')).Value
+        $lines[$i] = $indent + 'if etag is not None:'
+        $lines[$i + 1] = $indent + '    _headers["If-Match"] = _SERIALIZER.header("if_match", etag, "str")'
+        $lines[$i + 2] = ''
+        $matchCount++
+        $i += 2
+    }
+}
+if ($matchCount -ne 4) {
+    throw "Expected to repair 4 generated If-Match blocks, but repaired $matchCount."
+}
+Set-Content $f $lines
+
+# Finishing by running 'black' tool to format code.
 black --config ../../../eng/black-pyproject.toml .
 
 # Regenerate API review artifacts and the public method inventory.
