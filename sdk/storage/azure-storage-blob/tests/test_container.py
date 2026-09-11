@@ -14,6 +14,7 @@ import requests
 from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
+from test_helpers import CaptureAuthHeader, _find_session_policy, _parse_session_token
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
@@ -33,6 +34,7 @@ from azure.storage.blob import (
     ResourceTypes,
     StandardBlobTier,
 )
+from azure.storage.blob._shared.session import ContainerSessionProvider
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = "container"
@@ -2744,3 +2746,174 @@ class TestStorageContainer(StorageRecordedTestCase):
         # Assert
         assert blobs is not None
         assert blobs == ["a/b/blob2", "a/b/blob3", "a/b/blob4", "a/blob1"]
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_create_session(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        credential = self.get_credential(BlobServiceClient)
+        capture_auth_header = CaptureAuthHeader()
+
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=credential,
+            use_session=True,
+            api_version="2026-10-06",
+        )
+        cache = _find_session_policy(service._pipeline)._session_provider._cache._entry
+        container1_name = self.get_resource_name("utcontainer1")
+        container1 = service.get_container_client(container1_name)
+        try:
+            container1.create_container()
+        except ResourceExistsError:
+            pass
+
+        blob1_name, blob1_data = self.get_resource_name("blob1"), b"abc123"
+        container1.upload_blob(
+            blob1_name, blob1_data, overwrite=True, raw_response_hook=capture_auth_header.hook("c1_upload")
+        )
+        assert capture_auth_header["c1_upload"].startswith("Bearer ")
+
+        blob1_actual = container1.download_blob(
+            blob1_name, raw_response_hook=capture_auth_header.hook("c1_download")
+        ).readall()
+        assert blob1_data == blob1_actual
+        assert capture_auth_header["c1_download"].startswith("Session ")
+        session1 = cache[container1_name]
+        # Recorded expiration is stale so pinning it to a future time to test caching
+        session1.expires_at = datetime.now(session1.expires_at.tzinfo) + timedelta(hours=1)
+
+        container2_name = self.get_resource_name("utcontainer2")
+        container2 = service.get_container_client(container2_name)
+        try:
+            container2.create_container()
+        except ResourceExistsError:
+            pass
+
+        blob2_name, blob2_data = self.get_resource_name("blob2"), b"def456"
+        container2.upload_blob(
+            blob2_name, blob2_data, overwrite=True, raw_response_hook=capture_auth_header.hook("c2_upload")
+        )
+        assert capture_auth_header["c2_upload"].startswith("Bearer ")
+
+        blob2_actual = container2.download_blob(
+            blob2_name, raw_response_hook=capture_auth_header.hook("c2_download")
+        ).readall()
+        assert blob2_data == blob2_actual
+        assert capture_auth_header["c2_download"].startswith("Session ")
+        session2 = cache[container2_name]
+        session2.expires_at = datetime.now(session2.expires_at.tzinfo) + timedelta(hours=1)
+
+        assert session1 is not session2
+
+        blob1_actual = container1.download_blob(
+            blob1_name, raw_response_hook=capture_auth_header.hook("c1_download2")
+        ).readall()
+        assert blob1_data == blob1_actual
+        assert capture_auth_header["c1_download2"].startswith("Session ")
+        assert cache[container1_name] is session1
+
+        blob2_actual = container2.download_blob(
+            blob2_name, raw_response_hook=capture_auth_header.hook("c2_download2")
+        ).readall()
+        assert blob2_data == blob2_actual
+        assert capture_auth_header["c2_download2"].startswith("Session ")
+        assert cache[container2_name] is session2
+
+        session1.expires_at = datetime.fromtimestamp(0, tz=session1.expires_at.tzinfo)
+
+        blob1_actual = container1.download_blob(
+            blob1_name, raw_response_hook=capture_auth_header.hook("c1_download3")
+        ).readall()
+        assert blob1_data == blob1_actual
+        assert capture_auth_header["c1_download3"].startswith("Session ")
+        assert cache[container1_name] is not session1
+        assert cache[container1_name] is not session2
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_sessions_disabled(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        credential = self.get_credential(BlobServiceClient)
+        capture_auth_header = CaptureAuthHeader()
+
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=credential,
+            use_session=False,
+            api_version="2026-10-06",
+        )
+        container = service.get_container_client(self.get_resource_name("utcontainer"))
+        try:
+            container.create_container()
+        except ResourceExistsError:
+            pass
+
+        blob_name, blob_data = self.get_resource_name("blob"), b"abc123"
+        container.upload_blob(
+            blob_name, blob_data, overwrite=True, raw_response_hook=capture_auth_header.hook("upload")
+        )
+        assert capture_auth_header["upload"].startswith("Bearer ")
+
+        blob_actual = container.download_blob(
+            blob_name, raw_response_hook=capture_auth_header.hook("download")
+        ).readall()
+        assert blob_data == blob_actual
+        assert capture_auth_header["download"].startswith("Bearer ")
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_create_session_with_session_provider(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        credential = self.get_credential(BlobServiceClient)
+        capture_auth_header = CaptureAuthHeader()
+        account_url = self.account_url(storage_account_name, "blob")
+
+        session_provider = ContainerSessionProvider(account_url, credential, api_version="2026-10-06")
+        cache = session_provider._cache._entry
+        service1 = BlobServiceClient(
+            account_url,
+            credential=credential,
+            use_session=True,
+            session_provider=session_provider,
+            api_version="2026-10-06",
+        )
+        service2 = BlobServiceClient(
+            account_url,
+            credential=credential,
+            use_session=True,
+            session_provider=session_provider,
+            api_version="2026-10-06",
+        )
+
+        assert _find_session_policy(service1._pipeline)._session_provider is session_provider
+        assert _find_session_policy(service2._pipeline)._session_provider is session_provider
+
+        container_name = self.get_resource_name("utcontainer")
+        container1 = service1.get_container_client(container_name)
+        try:
+            container1.create_container()
+        except ResourceExistsError:
+            pass
+
+        blob_name, blob_data = self.get_resource_name("blob"), b"abc123"
+        container1.upload_blob(blob_name, blob_data, overwrite=True)
+
+        blob_actual = container1.download_blob(
+            blob_name, raw_response_hook=capture_auth_header.hook("c1_download")
+        ).readall()
+        assert blob_data == blob_actual
+        assert capture_auth_header["c1_download"].startswith("Session ")
+        session = cache[container_name]
+        session.expires_at = datetime.now(session.expires_at.tzinfo) + timedelta(hours=1)
+
+        container2 = service2.get_container_client(container_name)
+        blob_actual = container2.download_blob(
+            blob_name, raw_response_hook=capture_auth_header.hook("c2_download")
+        ).readall()
+        assert blob_data == blob_actual
+        assert capture_auth_header["c2_download"].startswith("Session ")
+        assert cache[container_name] is session

@@ -64,6 +64,63 @@ def _create_file_share_oauth(
     return file_name, base_url
 
 
+def _parse_session_token(auth: str) -> str:
+    """Extract the token from a "Session {token}:{signature}" Authorization header.
+
+    :param str auth: The raw Authorization header value.
+    :return: The session token portion (before the ':').
+    :rtype: str
+    """
+    assert auth.startswith("Session ")
+    return auth[len("Session ") :].split(":", 1)[0]
+
+
+def _find_session_policy(pipeline: Any, policy_name: str = "StorageSessionPolicy") -> Any:
+    """Return the session policy instance on a client pipeline, matched by class name.
+
+    Matching by name avoids importing SDK internals into the test modules.
+
+    :param pipeline: The client pipeline to search (e.g. ``client._pipeline``).
+    :type pipeline: Any
+    :param str policy_name: The policy class name to find. Use "StorageSessionPolicy"
+        for the sync stack and "AsyncStorageSessionPolicy" for the async stack.
+    :return: The matching policy instance.
+    :rtype: Any
+    """
+    for policy in getattr(pipeline, "_impl_policies", []):
+        if type(policy).__name__ == policy_name:
+            return policy
+    raise AssertionError(f"{policy_name} not found on the pipeline")
+
+
+class CaptureAuthHeader:
+    """Captures per-label Authorization headers via ``raw_response_hook`` callbacks.
+
+    Encapsulates the captured-headers dict so the hook factory doesn't need a
+    closure over a test-local variable. Works for both sync and async clients,
+    since the response hook is invoked as a plain callable in both stacks.
+    """
+
+    def __init__(self) -> None:
+        self.captured: Dict[str, str] = {}
+
+    def hook(self, label: str):
+        """Return a ``raw_response_hook`` that records the request's Authorization header.
+
+        :param str label: The key under which to store the captured header.
+        :return: A callable suitable for ``raw_response_hook``.
+        :rtype: callable
+        """
+
+        def _hook(response):
+            self.captured[label] = response.http_request.headers.get("Authorization", "")
+
+        return _hook
+
+    def __getitem__(self, label: str) -> str:
+        return self.captured[label]
+
+
 class ProgressTracker:
     def __init__(self, total: int, step: int):
         self.total = total
