@@ -5,8 +5,18 @@
 # ------------------------------------
 import os
 import pytest
-from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, RecordedTransport
-from test_base import servicePreparer, fineTuningServicePreparer, modelsServicePreparer
+from devtools_testutils import (
+    recorded_by_proxy,
+    AzureRecordedTestCase,
+    RecordedTransport,
+    remove_batch_sanitizers,
+)
+from devtools_testutils.helpers import get_recording_id
+from test_base import (
+    fineTuningServicePreparer,
+    modelsServicePreparer,
+    servicePreparer,
+)
 from sample_executor import (
     AdditionalSampleTestDetail,
     SyncSampleExecutor,
@@ -15,6 +25,8 @@ from sample_executor import (
     SamplePathPasser,
 )
 from test_samples_helpers import get_sample_env_vars
+from agent_insights.sample_test_helpers import agentInsightsServicePreparer, assert_agent_insights_output
+from agent_insights.sanitizers import agent_insights_sample_sanitizers
 from test_fine_tuning_samples_helpers import get_fine_tuning_sample_env_vars
 
 
@@ -96,6 +108,34 @@ class TestSamples(AzureRecordedTestCase):
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
         executor.validate_print_calls_by_llm()
+
+    @pytest.mark.usefixtures("patch_sleep")
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "agent_insights",
+            samples_to_skip=[],
+        ),
+    )
+    @agentInsightsServicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
+    def test_agent_insights_samples(self, sample_path: str, **kwargs) -> None:
+        # Preserve Location for the final GET; existing URL rules still redact resource identifiers.
+        remove_batch_sanitizers(["AZSDK2003"], headers={"x-recording-id": get_recording_id()})
+        env_vars = get_sample_env_vars(kwargs)
+        # Record the fictional spans, not exporter health or remote configuration traffic.
+        env_vars.update(
+            FOUNDRY_AGENT_NAME="agent-insights-sample",
+            APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL="true",
+            APPLICATIONINSIGHTS_SDKSTATS_DISABLED="true",
+            APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED="true",
+        )
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        with agent_insights_sample_sanitizers():
+            executor.execute()
+        # These lifecycle and schedule checks do not require a second model call.
+        assert_agent_insights_output(sample_path, executor.print_output_calls)
 
     @pytest.mark.parametrize(
         "sample_path",
