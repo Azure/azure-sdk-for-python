@@ -852,7 +852,7 @@
 /eng/emitter-package-lock.json                                       @laiapat @iscai-msft @msyyc @ChenxiJiang333
 
 # TypeSpec Python generated tests and regeneration workflow
-/eng/tools/emitter/                                                  @tadelesh @laiapat @iscai-msft @xirzec @lirenhe @ChenxiJiang333
+/eng/tools/emitter/                                                  @tadelesh @msyyc @iscai-msft @xirzec @lirenhe @ChenxiJiang333
 
 /pylintrc                                                            @JennyPng @l0lawrence @danieljurek @laiapat
 /sdk/**/ci.yml                                                       @JennyPng @l0lawrence @msyyc @xirzec @danieljurek
