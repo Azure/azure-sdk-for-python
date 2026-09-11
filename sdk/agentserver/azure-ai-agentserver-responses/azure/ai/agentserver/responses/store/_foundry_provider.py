@@ -416,7 +416,7 @@ class FoundryStorageProvider:
         :type previous_response_id: str | None
         :param conversation_id: An explicit conversation scope identifier, if available.
         :type conversation_id: str | None
-        :param limit: Maximum number of item IDs to return.
+        :param limit: Maximum number of item IDs to return, or -1 for all items.
         :type limit: int
         :keyword context: Platform context for multi-tenant partitioning.
         :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
