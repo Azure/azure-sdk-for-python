@@ -3,6 +3,8 @@
 
 import os
 import shutil
+import tempfile
+import threading
 import unittest
 from unittest import mock
 from datetime import datetime, timedelta, timezone
@@ -1377,8 +1379,7 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmission_413_splits_batch(self):
-        """A 413 with more than one envelope should split the batch in half and
-        persist each half as a separate blob so they are retried at a smaller size."""
+        """A 413 persists every envelope in ordered sub-batches, including an odd tail."""
         exporter = BaseExporter(disable_offline_storage=True)
         exporter.storage = mock.Mock()
         exporter.storage.put.return_value = StorageExportResult.LOCAL_FILE_BLOB_SUCCESS
@@ -1387,12 +1388,16 @@ class TestBaseExporter(unittest.TestCase):
             TelemetryItem(name="Test2", time=datetime.now()),
             TelemetryItem(name="Test3", time=datetime.now()),
             TelemetryItem(name="Test4", time=datetime.now()),
+            TelemetryItem(name="Test5", time=datetime.now()),
         ]
         with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(413)):
             result = exporter._transmit(custom_envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
-        # Two separate blobs (one per half) so the halves are retried independently.
-        self.assertEqual(exporter.storage.put.call_count, 2)
+        expected_children = [
+            [envelope.as_dict() for envelope in custom_envelopes_to_export[:2]],
+            [envelope.as_dict() for envelope in custom_envelopes_to_export[2:]],
+        ]
+        self.assertEqual(exporter.storage.put.call_args_list, [mock.call(child) for child in expected_children])
 
     def test_transmission_413_single_envelope_dropped(self):
         """A 413 with a single envelope cannot be split further and should be dropped."""
@@ -1428,39 +1433,117 @@ class TestBaseExporter(unittest.TestCase):
         mock_track_dropped.assert_called_once_with(custom_envelopes_to_export, DropCode.CLIENT_STORAGE_DISABLED)
 
     def test_transmission_413_persists_and_retries(self):
-        """End-to-end with real on-disk storage: a 413 persists the split halves to
-        disk, and a later successful drain reads them back and retries them."""
-        import tempfile
-
+        """Split children retain a future lease and retry on a later successful export cycle."""
         with tempfile.TemporaryDirectory() as storage_directory:
-            exporter = BaseExporter(storage_directory=storage_directory)
+            exporter = BaseExporter(
+                storage_directory=storage_directory,
+                storage_maintenance_period=3600,
+                storage_min_retry_interval=60,
+            )
+            now = datetime(2026, 9, 10, tzinfo=timezone.utc)
             custom_envelopes_to_export = [
                 TelemetryItem(name="Test1", time=datetime.now()),
                 TelemetryItem(name="Test2", time=datetime.now()),
                 TelemetryItem(name="Test3", time=datetime.now()),
                 TelemetryItem(name="Test4", time=datetime.now()),
+                TelemetryItem(name="Test5", time=datetime.now()),
             ]
-            # First transmit gets a 413 -> the batch is split and each half is persisted.
-            with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(413)):
-                result = exporter._transmit(custom_envelopes_to_export)
-            self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
-            # Two separate blobs were written to disk (one per half).
-            blobs = [f for f in os.listdir(storage_directory) if ".blob" in f]
-            self.assertEqual(len(blobs), 2)
-            # Strip the retry lease so the freshly-persisted blobs are drainable now.
-            for name in os.listdir(storage_directory):
-                if name.endswith(".lock"):
-                    src = os.path.join(storage_directory, name)
-                    dst = os.path.join(storage_directory, name[: name.rindex("@")])
-                    os.rename(src, dst)
-            # Now the endpoint accepts data -> draining retries the persisted halves.
-            with mock.patch.object(AzureMonitorClient, "track") as post:
-                post.return_value = TrackResponse(items_received=2, items_accepted=2, errors=[])
-                exporter._transmit_from_storage()
-            # Both halves were re-sent and their blobs removed from disk.
-            self.assertEqual(post.call_count, 2)
-            remaining = [f for f in os.listdir(storage_directory) if ".blob" in f]
-            self.assertEqual(len(remaining), 0)
+            try:
+                with mock.patch("azure.monitor.opentelemetry.exporter._storage._now", return_value=now):
+                    with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(413)):
+                        result = exporter._transmit(custom_envelopes_to_export)
+                    self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+                    persisted = sorted(os.listdir(storage_directory))
+                    self.assertEqual(len(persisted), 2)
+                    self.assertTrue(all(name.endswith(".lock") for name in persisted))
+                    self.assertEqual(list(exporter.storage.gets()), [])
+
+                with mock.patch(
+                    "azure.monitor.opentelemetry.exporter._storage._now", return_value=now + timedelta(seconds=61)
+                ):
+                    with mock.patch.object(AzureMonitorClient, "track") as post:
+                        post.side_effect = lambda envelopes, **_kwargs: TrackResponse(
+                            items_received=len(envelopes), items_accepted=len(envelopes), errors=[]
+                        )
+                        exporter._handle_transmit_from_storage([], ExportResult.SUCCESS)
+
+                retried_names = [[envelope.name for envelope in call.args[0]] for call in post.call_args_list]
+                self.assertCountEqual(retried_names, [["Test1", "Test2"], ["Test3", "Test4", "Test5"]])
+                self.assertEqual(os.listdir(storage_directory), [])
+            finally:
+                exporter.storage.close()
+
+    def test_transmission_413_repeated_delayed_splitting_reaches_singletons(self):
+        """Later successful cycles repeatedly split leased children until singleton 413s are dropped."""
+        with tempfile.TemporaryDirectory() as storage_directory:
+            exporter = BaseExporter(
+                storage_directory=storage_directory,
+                storage_maintenance_period=3600,
+                storage_min_retry_interval=60,
+            )
+            now = datetime(2026, 9, 10, tzinfo=timezone.utc)
+            envelopes = [TelemetryItem(name=f"Test{index}", time=datetime.now()) for index in range(1, 6)]
+            transmitted_batches = []
+
+            def reject(envelopes_to_transmit, **_kwargs):
+                transmitted_batches.append([envelope.name for envelope in envelopes_to_transmit])
+                raise _make_http_response_error(413)
+
+            try:
+                with mock.patch.object(AzureMonitorClient, "track", side_effect=reject):
+                    with mock.patch("azure.monitor.opentelemetry.exporter._storage._now", return_value=now):
+                        exporter._transmit(envelopes)
+                    for cycle in range(1, 4):
+                        with mock.patch(
+                            "azure.monitor.opentelemetry.exporter._storage._now",
+                            return_value=now + timedelta(seconds=61 * cycle),
+                        ):
+                            exporter._handle_transmit_from_storage([], ExportResult.SUCCESS)
+
+                self.assertEqual(transmitted_batches[0], ["Test1", "Test2", "Test3", "Test4", "Test5"])
+                self.assertCountEqual(transmitted_batches[1:3], [["Test1", "Test2"], ["Test3", "Test4", "Test5"]])
+                self.assertCountEqual(transmitted_batches[3:7], [["Test1"], ["Test2"], ["Test3"], ["Test4", "Test5"]])
+                self.assertCountEqual(transmitted_batches[7:], [["Test4"], ["Test5"]])
+                self.assertEqual(os.listdir(storage_directory), [])
+            finally:
+                exporter.storage.close()
+
+    def test_concurrent_successful_cycles_do_not_transmit_stored_batch_twice(self):
+        """Atomic blob leasing lets only one concurrent successful cycle drain a stored batch."""
+        with tempfile.TemporaryDirectory() as storage_directory:
+            exporter = BaseExporter(storage_directory=storage_directory, storage_maintenance_period=3600)
+            stored_envelopes = [
+                TelemetryItem(name="Test1", time=datetime.now()),
+                TelemetryItem(name="Test2", time=datetime.now()),
+            ]
+            exporter.storage.put([envelope.as_dict() for envelope in stored_envelopes], lease_period=0)
+            start = threading.Barrier(3)
+            worker_errors = []
+
+            def drain_after_success():
+                try:
+                    start.wait(timeout=5)
+                    exporter._handle_transmit_from_storage([], ExportResult.SUCCESS)
+                except Exception as error:  # pylint: disable=broad-exception-caught
+                    worker_errors.append(error)
+
+            try:
+                with mock.patch.object(AzureMonitorClient, "track") as post:
+                    post.return_value = TrackResponse(items_received=2, items_accepted=2, errors=[])
+                    threads = [threading.Thread(target=drain_after_success) for _ in range(2)]
+                    for thread in threads:
+                        thread.start()
+                    start.wait(timeout=5)
+                    for thread in threads:
+                        thread.join(timeout=5)
+
+                self.assertFalse(any(thread.is_alive() for thread in threads))
+                self.assertEqual(worker_errors, [])
+                post.assert_called_once()
+                self.assertEqual([envelope.name for envelope in post.call_args.args[0]], ["Test1", "Test2"])
+                self.assertEqual(os.listdir(storage_directory), [])
+            finally:
+                exporter.storage.close()
 
     def test_transmission_413_sub_batch_persist_failure_drops_that_batch_only(self):
         """storage.put reports failure by return value (not by raising). If persisting one
@@ -1485,8 +1568,11 @@ class TestBaseExporter(unittest.TestCase):
             with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="DEBUG") as cm:
                 result = exporter._transmit(custom_envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
-        # Both sub-batches were attempted despite the first failing (loop did not abort).
-        self.assertEqual(exporter.storage.put.call_count, 2)
+        expected_children = [
+            [envelope.as_dict() for envelope in custom_envelopes_to_export[:2]],
+            [envelope.as_dict() for envelope in custom_envelopes_to_export[2:]],
+        ]
+        self.assertEqual(exporter.storage.put.call_args_list, [mock.call(child) for child in expected_children])
         # The failed sub-batch is reported via a warning.
         self.assertTrue(any("Failed to persist a split sub-batch" in line for line in cm.output))
 
