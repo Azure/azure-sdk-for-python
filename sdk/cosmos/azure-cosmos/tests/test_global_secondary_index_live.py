@@ -34,7 +34,7 @@ class TestGlobalSecondaryIndexLive(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         cls.client = CosmosClient(cls.host, cls.masterKey)
-        cls.test_db = cls.client.create_database(str(uuid.uuid4()))
+        cls.test_db = cls.client.create_database(test_config.unique_database_id("gsi"))
 
     @classmethod
     def tearDownClass(cls):

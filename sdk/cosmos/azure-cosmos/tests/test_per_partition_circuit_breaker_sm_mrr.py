@@ -1,6 +1,5 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-import os
 import unittest
 import uuid
 from time import sleep
@@ -155,7 +154,7 @@ class TestPerPartitionCircuitBreakerSmMrr:
         global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
         # lower minimum requests for testing
         _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 10
-        os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "80"
+        previous_env = test_config.set_environment_variables(AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED="80")
         try:
             # writes should fail but still be tracked and mark unavailable a partition after crossing threshold
             for i in range(10):
@@ -183,7 +182,7 @@ class TestPerPartitionCircuitBreakerSmMrr:
             validate_unhealthy_partitions(global_endpoint_manager, 0)
 
         finally:
-            os.environ["AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"] = "90"
+            test_config.restore_environment_variables(previous_env)
             # restore minimum requests
             _partition_health_tracker.MINIMUM_REQUESTS_FOR_FAILURE_RATE = 100
 
@@ -252,5 +251,3 @@ class TestPerPartitionCircuitBreakerSmMrr:
 
 if __name__ == '__main__':
     unittest.main()
-
-

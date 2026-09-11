@@ -1,0 +1,35 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+#
+# Reusable pre-deployment step that validates and selects one fixed Cosmos live-test account
+# from the single JSON secret. Selected credentials use a COSMOS_FIXED_ prefix so the ARM
+# deployment cannot overwrite them; sdk/cosmos/test-resources-post.ps1 rebinds them afterward.
+#
+# The account JSON lives in the ADO variable group secret referenced by AccountsJsonVar. That
+# variable group must be listed in the pipeline's VariableGroups, otherwise $(<AccountsJsonVar>)
+# expands to the literal macro text and the resolver fails with "not valid JSON".
+#
+# AccountSelector picks which logical account to use. It is normally the macro $(AccountSelector),
+# resolved per matrix leg from live-platform-matrix.json, but may also be a literal for a
+# single-account stage.
+#
+# Port of azure-sdk-for-java's sdk/cosmos/pipeline/resolve-test-account-steps.yml. The Java version
+# invokes a bash script because all of its Cosmos legs run on Linux; ours has to work on the
+# windows-2022 and macOS legs too, so it calls PowerShell instead.
+parameters:
+  - name: AccountSelector
+    type: string
+  - name: AccountsJsonVar
+    type: string
+    default: 'sub-config-cosmos-azure-cloud-test-resources'
+
+steps:
+  - pwsh: |
+      ./sdk/cosmos/pipeline/resolve-cosmos-test-account.ps1 -VariablePrefix 'COSMOS_FIXED_'
+    displayName: 'Resolve fixed Cosmos test account (${{ parameters.AccountSelector }})'
+    # Legs that still provision their own account (the AAD lanes, which need a per-tenant
+    # sqlRoleAssignment) do not set AccountSelector. Skip rather than fail for them.
+    condition: and(succeeded(), ne(variables['AccountSelector'], ''))
+    env:
+      COSMOS_TEST_ACCOUNTS_JSON: $(${{ parameters.AccountsJsonVar }})
+      COSMOS_ACCOUNT_SELECTOR: ${{ parameters.AccountSelector }}

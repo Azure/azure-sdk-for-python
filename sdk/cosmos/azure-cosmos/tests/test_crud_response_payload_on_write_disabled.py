@@ -151,7 +151,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         self.last_headers.clear()
 
     def test_database_crud(self):
-        database_id = str(uuid.uuid4())
+        database_id = test_config.unique_database_id()
         created_db = self.key_client.create_database(database_id)
         self.assertEqual(created_db.id, database_id)
         # Read databases after creation.
@@ -186,7 +186,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
     def test_database_level_offer_throughput(self):
         # Create a database with throughput
         offer_throughput = 1000
-        database_id = str(uuid.uuid4())
+        database_id = test_config.unique_database_id()
         created_db = self.key_client.create_database(
             id=database_id,
             offer_throughput=offer_throughput
@@ -205,8 +205,8 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
     def test_sql_query_crud(self):
         # create two databases.
-        db1 = self.key_client.create_database('database 1' + str(uuid.uuid4()))
-        db2 = self.key_client.create_database('database 2' + str(uuid.uuid4()))
+        db1 = self.key_client.create_database(test_config.unique_database_id("db1"))
+        db2 = self.key_client.create_database(test_config.unique_database_id("db2"))
 
         # query with parameters.
         databases = list(self.key_client.query_databases({
@@ -2506,10 +2506,9 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
             self.assertEqual('Id contains illegal chars.', e.args[0])
 
         # Id can begin with space
-        db = self.key_client.create_database(id=' id_begin_space' + str(uuid.uuid4()))
+        db = self.key_client.create_database(id=' ' + test_config.unique_database_id("id-begin-space"))
+        self.addCleanup(self.configs.try_delete_database_with_id, self.key_client, db.id)
         self.assertTrue(True)
-
-        self.key_client.delete_database(db.id)
 
     def test_get_resource_with_dictionary_and_object(self):
         created_db = self.databaseForTest

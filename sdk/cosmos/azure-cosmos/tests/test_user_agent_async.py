@@ -1,7 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-import os
 import unittest
 import uuid
 import re
@@ -47,10 +46,10 @@ class TestUserAgentAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_user_agent_with_features_async(self):
         async def _run_case(use_suffix: bool):
-            os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
             user_agent = "customString"
             mock_handler = test_config.MockHandler()
             logger = create_logger("testloggerdefault_async", mock_handler)
+            previous_env = test_config.set_environment_variables(AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER="True")
             try:
                 kwargs: dict[str, Any] = {"logger": logger}
                 if use_suffix:
@@ -63,7 +62,7 @@ class TestUserAgentAsync(unittest.IsolatedAsyncioTestCase):
                 await container.create_item(body={"id": "testItem" + str(uuid.uuid4()), "content": "testContent"})
                 await container.create_item(body={"id": "testItem" + str(uuid.uuid4()), "content": "testContent"})
             finally:
-                os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "False"
+                test_config.restore_environment_variables(previous_env)
 
             log_messages = mock_handler.messages
             for log_message in log_messages:

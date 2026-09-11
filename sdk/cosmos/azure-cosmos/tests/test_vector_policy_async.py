@@ -36,7 +36,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         cls.cosmos_sync_client = CosmosSyncClient(cls.host, cls.masterKey)
-        cls.test_db = cls.cosmos_sync_client.create_database(str(uuid.uuid4()))
+        cls.test_db = cls.cosmos_sync_client.create_database(test_config.unique_database_id("vector-policy"))
 
     @classmethod
     def tearDownClass(cls):
