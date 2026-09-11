@@ -131,7 +131,7 @@
 
 # ServiceLabel: %Communication - Common
 # PRLabel: %Communication - Common
-/sdk/communication/**/_shared/    @AikoBB @Azure/acs-identity-sdk @maximrytych-ms @mjafferi-msft
+/sdk/communication/**/_shared/    @Azure/acs-identity-sdk @anjulgarg @Joeleniqs @tsohoni-msft @JohnRFraser @alvinjiang-msft @jorge-beauregard @preetkaran20
 
 # ServiceLabel: %Communication - Email
 # PRLabel: %Communication - Email
@@ -139,7 +139,7 @@
 
 # ServiceLabel: %Communication - Identity
 # PRLabel: %Communication - Identity
-/sdk/communication/azure-communication-identity/    @AikoBB @Azure/acs-identity-sdk @maximrytych-ms @mjafferi-msft
+/sdk/communication/azure-communication-identity/    @anjulgarg @Joeleniqs @tsohoni-msft @JohnRFraser @alvinjiang-msft @jorge-beauregard @preetkaran20
 
 # ServiceLabel: %Communication - Job Router
 # PRLabel: %Communication - Job Router
