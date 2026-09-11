@@ -31,6 +31,7 @@ import json
 from datetime import timedelta
 
 import pytest
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import HttpTransport
 
 from azure.communication.identity import (
@@ -74,6 +75,63 @@ class _FakeResponse:
         pass
 
     def raise_for_status(self):
+        pass
+
+
+class _RawResponse:
+    """Returns a body verbatim, so non-JSON and malformed payloads can be exercised."""
+
+    def __init__(self, request, status_code, raw_body, content_type="application/json"):
+        self.request = request
+        self.status_code = status_code
+        self._body = raw_body
+        self.headers = {"content-type": content_type}
+        self.reason = "Error"
+        self.content_type = content_type
+        self.is_closed = True
+        self.is_stream_consumed = True
+
+    @property
+    def content(self):
+        return self._body
+
+    def text(self, encoding=None):
+        return self._body.decode("utf-8", "replace")
+
+    def json(self):
+        return json.loads(self._body)
+
+    def read(self):
+        return self._body
+
+    def close(self):
+        pass
+
+    def raise_for_status(self):
+        pass
+
+
+class _ErrorTransport(HttpTransport):
+    """Replies to every request with one canned error response."""
+
+    def __init__(self, status_code, raw_body, content_type="application/json"):
+        self.status_code = status_code
+        self.raw_body = raw_body
+        self.content_type = content_type
+
+    def send(self, request, **kwargs):
+        return _RawResponse(request, self.status_code, self.raw_body, self.content_type)
+
+    def open(self):
+        pass
+
+    def close(self):
+        pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
         pass
 
 
@@ -257,6 +315,50 @@ class TestRequestHeaders:
         """The policy must defer to a Content-Type already on the request."""
         client.create_user(headers={"Content-Type": "application/custom"})
         assert transport.requests[-1].headers["Content-Type"] == "application/custom"
+
+
+class TestErrorResponses:
+    """A non-envelope error body must still surface the real HTTP status.
+
+    Gateways, front doors, WAFs and throttling pages return HTML or non-envelope JSON on
+    failure, so this is triggered by infrastructure rather than by caller error. Customer
+    code branching on ``e.status_code`` (for example retrying on 429) depends on the status
+    surviving a body the deserializer cannot parse.
+
+    The equivalent JavaScript client raises a bare ``TypeError`` with no status in these
+    cases. Python is correct because the generated code raises
+    ``HttpResponseError(response=response, model=error)`` -- taking the status from the
+    response rather than the parsed model -- and ``_failsafe_deserialize`` swallows the parse
+    failure. These tests pin that black-box guarantee so a future emitter change cannot
+    regress it silently.
+
+    Assertions are deliberately limited to the exception type and status code. The internals
+    of ``_failsafe_deserialize`` are not asserted: they are the mechanism, not the contract.
+    """
+
+    @pytest.mark.parametrize(
+        "status_code,raw_body,content_type",
+        [
+            pytest.param(502, b"<html>Bad Gateway</html>", "text/html", id="html_body"),
+            pytest.param(500, b'{"message":"oops"}', "application/json", id="non_envelope_json"),
+            pytest.param(503, b"", "application/json", id="empty_body"),
+            pytest.param(429, b"<html>Too Many Requests</html>", "text/html", id="throttling_html"),
+        ],
+    )
+    def test_malformed_error_body_still_reports_status(self, status_code, raw_body, content_type):
+        client = CommunicationIdentityClient(
+            FAKE_ENDPOINT, FAKE_KEY, transport=_ErrorTransport(status_code, raw_body, content_type)
+        )
+        with pytest.raises(HttpResponseError) as caught:
+            client.get_token(CommunicationUserIdentifier("8:acs:u"), scopes=[CommunicationTokenScope.CHAT])
+        assert caught.value.status_code == status_code
+
+    def test_well_formed_error_envelope_still_reports_status(self):
+        body = b'{"error":{"code":"Unauthorized","message":"denied"}}'
+        client = CommunicationIdentityClient(FAKE_ENDPOINT, FAKE_KEY, transport=_ErrorTransport(401, body))
+        with pytest.raises(HttpResponseError) as caught:
+            client.get_token(CommunicationUserIdentifier("8:acs:u"), scopes=[CommunicationTokenScope.CHAT])
+        assert caught.value.status_code == 401
 
 
 class TestApiVersion:
