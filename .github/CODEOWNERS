@@ -24,7 +24,7 @@
 /sdk/core/azure-mgmt-core/                                           @msyyc
 
 # Smoke Tests
-/common/smoketest/                                                   @xirzec @mccoyp @shurd @southpolesteve
+/common/smoketest/                                                   @xirzec @laiapat @shurd @southpolesteve
 
 ####################
 # Client Libraries
@@ -822,39 +822,39 @@
 ###########
 /eng/                                                                @danieljurek @mikeharder @benbp
 /eng/common/                                                         @Azure/azure-sdk-eng
-/eng/tools/                                                          @danieljurek @mccoyp
+/eng/tools/                                                          @danieljurek @laiapat
 /.github/workflows/                                                  @Azure/azure-sdk-eng
 /.github/workflows/typespec-python-regenerate.yml                    @Azure/azure-sdk-eng @tadelesh @msyyc @iscai-msft @ChenxiJiang333
 /.github/CODEOWNERS                                                  @xirzec @kashifkhan @Azure/azure-sdk-eng
 /.github/copilot-instructions.md                                     @l0lawrence @praveenkuttappan @maririos
-/.github/prompts/                                                    @mccoyp @l0lawrence @benbp
-/.github/skills/                                                     @mccoyp @l0lawrence @benbp @Azure/azsdk-cli
+/.github/prompts/                                                    @laiapat @l0lawrence @benbp
+/.github/skills/                                                     @laiapat @l0lawrence @benbp @Azure/azsdk-cli
 /sdk/pullrequest.yml                                                 @danieljurek @mikeharder @benbp
 
 /.config/1espt/                                                      @benbp @mikeharder
-/.devcontainer/                                                      @danieljurek @mccoyp @benbp @mikeharder
-/.vscode/                                                            @danieljurek @mccoyp @benbp @mikeharder
+/.devcontainer/                                                      @danieljurek @laiapat @benbp @mikeharder
+/.vscode/                                                            @danieljurek @laiapat @benbp @mikeharder
 
-/scripts/                                                            @danieljurek @mccoyp
+/scripts/                                                            @danieljurek @laiapat
 /doc/                                                                @danieljurek @Azure/azure-python-sdk
 /conda/                                                              @danieljurek @JennyPng @xirzec
 
 /shared_requirements.txt                                             @azure/azure-sdk-eng @kashifkhan @xirzec
 
 # Add owners for notifications for specific pipelines
-/eng/pipelines/templates/jobs/tests-nightly-python.yml               @xirzec @mccoyp
-/eng/pipelines/aggregate-reports.yml                                 @xirzec @mccoyp
-/eng/common/pipelines/codeowners-linter.yml                          @xirzec @mccoyp
+/eng/pipelines/templates/jobs/tests-nightly-python.yml               @xirzec @laiapat
+/eng/pipelines/aggregate-reports.yml                                 @xirzec @laiapat
+/eng/common/pipelines/codeowners-linter.yml                          @xirzec @laiapat
 /eng/pipelines/docindex.yml                                          @danieljurek @benbp
 
 # Add approvers for typespec-python emitter version updates
-/eng/emitter-package.json                                            @mccoyp @iscai-msft @msyyc @ChenxiJiang333
-/eng/emitter-package-lock.json                                       @mccoyp @iscai-msft @msyyc @ChenxiJiang333
+/eng/emitter-package.json                                            @laiapat @iscai-msft @msyyc @ChenxiJiang333
+/eng/emitter-package-lock.json                                       @laiapat @iscai-msft @msyyc @ChenxiJiang333
 
 # TypeSpec Python generated tests and regeneration workflow
 /eng/tools/emitter/                                                  @tadelesh @msyyc @iscai-msft @xirzec @lirenhe @ChenxiJiang333
 
-/pylintrc                                                            @l0lawrence @danieljurek @mccoyp
+/pylintrc                                                            @l0lawrence @danieljurek @laiapat
 /sdk/**/ci.yml                                                       @msyyc @xirzec @danieljurek
 
 # Add Johnathan Walker as code owner for Event Hubs SDK
