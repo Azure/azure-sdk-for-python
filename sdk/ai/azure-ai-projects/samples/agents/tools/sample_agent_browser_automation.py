@@ -46,7 +46,7 @@ agent_name = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 
 
 tool = BrowserAutomationTool(
-    browser_automation_preview=BrowserAutomationToolParameters(
+    browser_automation=BrowserAutomationToolParameters(
         connection=BrowserAutomationToolConnectionParameters(
             project_connection_id=os.environ["BROWSER_AUTOMATION_PROJECT_CONNECTION_ID"],
         )
