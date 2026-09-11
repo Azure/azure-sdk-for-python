@@ -9,6 +9,12 @@ from unittest.mock import patch, Mock
 from opentelemetry._logs import LogRecord
 from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.semconv._incubating.attributes import gen_ai_attributes
+from opentelemetry.semconv.attributes.db_attributes import (
+    DB_NAMESPACE,
+    DB_OPERATION_NAME,
+    DB_QUERY_TEXT,
+    DB_SYSTEM_NAME,
+)
 from opentelemetry.semconv.attributes.http_attributes import (
     HTTP_REQUEST_METHOD,
     HTTP_RESPONSE_STATUS_CODE,
@@ -183,6 +189,26 @@ class TestDependencyData(unittest.TestCase):
         self.assertEqual(result.type, "mysql")
         self.assertEqual(result.data, "SELECT * FROM table")
         self.assertEqual(result.target, "mysql")
+
+    def test_db_dependency_stable_semconv(self):
+        self.span.kind = SpanKind.CLIENT
+        self.span.attributes = {
+            DB_SYSTEM_NAME: "postgresql",
+            DB_QUERY_TEXT: "SELECT * FROM table",
+            DB_NAMESPACE: "database",
+        }
+        result = _DependencyData._from_span(self.span)
+        self.assertEqual(result.type, "postgresql")
+        self.assertEqual(result.data, "SELECT * FROM table")
+        self.assertEqual(result.target, "database")
+
+        self.span.attributes = {
+            DB_SYSTEM_NAME: "postgresql",
+            DB_OPERATION_NAME: "SELECT",
+        }
+        result = _DependencyData._from_span(self.span)
+        self.assertEqual(result.data, "SELECT")
+        self.assertEqual(result.target, "postgresql")
 
     def test_messaging_dependency(self):
         self.span.kind = SpanKind.CLIENT

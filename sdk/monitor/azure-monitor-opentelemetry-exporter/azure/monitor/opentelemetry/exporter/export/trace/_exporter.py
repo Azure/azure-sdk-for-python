@@ -427,9 +427,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 data.result_code = str(status_code)
             elif DB_SYSTEM_NAME in span.attributes or SpanAttributes.DB_SYSTEM in span.attributes:  # Database
                 # Prefer the new stable `db.system.name`, fall back to the deprecated `db.system`.
-                print("Span attributes", span.attributes)
                 db_system = span.attributes.get(DB_SYSTEM_NAME) or span.attributes.get(SpanAttributes.DB_SYSTEM)
-                print(db_system)
                 if db_system == DbSystemValues.MYSQL.value:
                     data.type = "mysql"
                 elif db_system == DbSystemValues.POSTGRESQL.value:

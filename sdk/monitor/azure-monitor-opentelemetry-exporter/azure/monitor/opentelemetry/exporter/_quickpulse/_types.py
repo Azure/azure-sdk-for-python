@@ -7,6 +7,11 @@ from typing import Dict, no_type_check
 from opentelemetry._logs import LogRecord
 from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.semconv._incubating.attributes import gen_ai_attributes
+from opentelemetry.semconv.attributes.db_attributes import (
+    DB_OPERATION_NAME,
+    DB_QUERY_TEXT,
+    DB_SYSTEM_NAME,
+)
 from opentelemetry.semconv.attributes.http_attributes import (
     HTTP_REQUEST_METHOD,
     HTTP_RESPONSE_STATUS_CODE,
@@ -114,16 +119,20 @@ class _DependencyData(_TelemetryData):
                         url,
                     )
                     data = url
-                elif SpanAttributes.DB_SYSTEM in attributes:
-                    db_system = attributes[SpanAttributes.DB_SYSTEM]
+                elif DB_SYSTEM_NAME in attributes or SpanAttributes.DB_SYSTEM in attributes:
+                    db_system = attributes.get(DB_SYSTEM_NAME) or attributes.get(SpanAttributes.DB_SYSTEM)
                     dependency_type = db_system
                     target = trace_utils._get_target_for_db_dependency(
                         target,
                         db_system,
                         attributes,
                     )
-                    if SpanAttributes.DB_STATEMENT in attributes:
+                    if DB_QUERY_TEXT in attributes:
+                        data = attributes[DB_QUERY_TEXT]
+                    elif SpanAttributes.DB_STATEMENT in attributes:
                         data = attributes[SpanAttributes.DB_STATEMENT]
+                    elif DB_OPERATION_NAME in attributes:
+                        data = attributes[DB_OPERATION_NAME]
                     elif SpanAttributes.DB_OPERATION in attributes:
                         data = attributes[SpanAttributes.DB_OPERATION]
                 elif SpanAttributes.MESSAGING_SYSTEM in attributes:

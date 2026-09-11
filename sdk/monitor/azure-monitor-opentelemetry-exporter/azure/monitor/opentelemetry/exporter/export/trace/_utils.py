@@ -164,9 +164,7 @@ def _get_target_for_dependency_from_peer(attributes: Attributes) -> Optional[str
                 db_system_for_port = attributes.get(db_attributes.DB_SYSTEM_NAME) or attributes.get(
                     SpanAttributes.DB_SYSTEM
                 )
-                if port != _get_default_port_http(attributes) and port != _get_default_port_db(
-                    str(db_system_for_port)
-                ):
+                if port != _get_default_port_http(attributes) and port != _get_default_port_db(str(db_system_for_port)):
                     target = "{}:{}".format(target, port)
     return target
 
