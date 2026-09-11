@@ -7,12 +7,9 @@
 ### Breaking Changes
 
 ### Bugs Fixed
-- Recognize the new stable OpenTelemetry database semantic conventions
+- Update to the new stable OpenTelemetry database semantic conventions
   (`db.system.name`, `db.query.text`, `db.operation.name`, `db.namespace`) when
-  mapping `CLIENT` spans to `RemoteDependencyData`. Previously only the
-  deprecated attributes (`db.system`, `db.statement`, `db.operation`, `db.name`)
-  were recognized, causing dependency `Type` to be reported as `N/A` for spans
-  emitted with the newer conventions.
+  mapping `CLIENT` spans to `RemoteDependencyData`.
 
 ### Other Changes
 
