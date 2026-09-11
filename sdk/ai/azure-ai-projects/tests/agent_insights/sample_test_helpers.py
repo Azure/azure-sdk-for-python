@@ -16,7 +16,7 @@ agentInsightsServicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "",
     foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    agent_insights_application_insights_resource_id=(
+    app_insights_resource_id=(
         "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group"
         "/providers/Microsoft.Insights/components/sanitized-application-insights"
     ),

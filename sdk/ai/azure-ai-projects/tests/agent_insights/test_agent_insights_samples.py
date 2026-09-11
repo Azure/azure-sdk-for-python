@@ -28,7 +28,7 @@ from azure.monitor.query import LogsQueryStatus
 def _scheduled_sample(monkeypatch):
     path = Path(__file__).parents[2] / "samples" / "agent_insights" / "sample_agent_insights_scheduled.py"
     sample = runpy.run_path(str(path))
-    monkeypatch.setattr(sample["time"], "sleep", MagicMock())
+    monkeypatch.setattr(sample["cleanup"].__globals__["time"], "sleep", MagicMock())
     return sample
 
 
@@ -40,7 +40,7 @@ def _on_demand_sample():
 
 @pytest.fixture(name="cleanup_sample")
 def _cleanup_sample(scheduled_sample):
-    return scheduled_sample
+    return scheduled_sample["cleanup"].__globals__
 
 
 def test_cleanup_cancels_active_run(cleanup_sample):
@@ -50,7 +50,7 @@ def test_cleanup_cancels_active_run(cleanup_sample):
         [AgentInsightRun({"id": "run-test", "status": "cancelled"})],
     ]
 
-    cleanup_sample["_delete_monitor"](operations, "monitor-test")
+    cleanup_sample["delete_monitor"](operations, "monitor-test")
 
     assert operations.update.call_args.args[1].enabled is False
     operations.cancel_run.assert_called_once_with("monitor-test", "run-test")
@@ -70,7 +70,7 @@ def test_cleanup_has_bounded_wait(cleanup_sample):
     operations.list_runs.return_value = [SimpleNamespace(id="run-test", status="in_progress")]
 
     with pytest.raises(TimeoutError, match="could not be deleted"):
-        cleanup_sample["_delete_monitor"](operations, "monitor-test")
+        cleanup_sample["delete_monitor"](operations, "monitor-test")
 
     assert operations.list_runs.call_count == 12
     assert operations.cancel_run.call_args_list == [call("monitor-test", "run-test")] * 12
@@ -87,7 +87,7 @@ def test_cleanup_handles_run_dispatch_during_delete(cleanup_sample):
     ]
     operations.delete.side_effect = [ResourceExistsError(), None]
 
-    cleanup_sample["_delete_monitor"](operations, "monitor-test")
+    cleanup_sample["delete_monitor"](operations, "monitor-test")
 
     operations.cancel_run.assert_called_once_with("monitor-test", "run-test")
     assert operations.delete.call_count == 2
@@ -102,7 +102,7 @@ def test_cleanup_handles_run_finishing_during_cancel(cleanup_sample):
     ]
     operations.cancel_run.side_effect = ResourceExistsError()
 
-    cleanup_sample["_delete_monitor"](operations, "monitor-test")
+    cleanup_sample["delete_monitor"](operations, "monitor-test")
 
     operations.cancel_run.assert_called_once_with("monitor-test", "run-test")
     operations.get_run.assert_not_called()
@@ -116,7 +116,7 @@ def test_cleanup_repeated_delete_conflict_is_bounded(cleanup_sample):
     operations.delete.side_effect = error
 
     with pytest.raises(ResourceExistsError) as exc_info:
-        cleanup_sample["_delete_monitor"](operations, "monitor-test")
+        cleanup_sample["delete_monitor"](operations, "monitor-test")
 
     assert exc_info.value is error
     assert operations.list_runs.call_count == operations.delete.call_count == 12
@@ -160,10 +160,10 @@ def _on_demand_main(on_demand_sample, monkeypatch):
     monkeypatch.setitem(main.__globals__, "DefaultAzureCredential", MagicMock())
     monkeypatch.setitem(main.__globals__, "load_dotenv", MagicMock())
     monkeypatch.setitem(main.__globals__, "LogsQueryClient", MagicMock())
-    monkeypatch.setitem(main.__globals__, "_seed_traces", MagicMock(return_value=(10, 10, 10, 8)))
-    monkeypatch.setitem(main.__globals__, "_wait_for_ingestion", MagicMock())
+    monkeypatch.setitem(main.__globals__, "seed_traces", MagicMock(return_value=(10, 10, 10, 8)))
+    monkeypatch.setitem(main.__globals__, "wait_for_ingestion", MagicMock())
     monkeypatch.setenv("FOUNDRY_PROJECT_ENDPOINT", "https://example.test")
-    monkeypatch.setenv("AGENT_INSIGHTS_APPLICATION_INSIGHTS_RESOURCE_ID", "test-application-insights")
+    monkeypatch.setenv("APP_INSIGHTS_RESOURCE_ID", "test-application-insights")
     monkeypatch.setenv("FOUNDRY_MODEL_NAME", "test-model")
     return main, operations
 
@@ -253,13 +253,13 @@ def test_scheduled_sample_cleans_up_after_configuration_error(
         "DefaultAzureCredential",
         "load_dotenv",
         "LogsQueryClient",
-        "_seed_traces",
-        "_wait_for_ingestion",
+        "seed_traces",
+        "wait_for_ingestion",
     ):
         monkeypatch.setitem(main.__globals__, name, configured_main.__globals__[name])
     operations.update.side_effect = configuration_error
     cleanup = MagicMock()
-    monkeypatch.setitem(main.__globals__, "_delete_monitor", cleanup)
+    monkeypatch.setitem(main.__globals__["cleanup"].__globals__, "delete_monitor", cleanup)
     project = main.__globals__["AIProjectClient"].return_value.__enter__.return_value
     project.attach_mock(cleanup, "cleanup_monitor")
 
@@ -267,13 +267,13 @@ def test_scheduled_sample_cleans_up_after_configuration_error(
         main()
     assert exc_info.value is configuration_error
 
-    cleanup.assert_called_once_with(operations, "new-monitor")
+    cleanup.assert_called_once_with(operations, "new-monitor", scheduled=True)
     operations.list.assert_not_called()
     assert operations.create.call_args.args[0].enabled is False
     assert operations.update.call_args.args[1].run_interval_hours == 6
     assert operations.update.call_args.args[1].enabled is True
     project.agents.delete.assert_called_once_with("test-agent", force=True)
-    assert project.mock_calls.index(call.cleanup_monitor(operations, "new-monitor")) < project.mock_calls.index(
+    assert project.mock_calls.index(call.cleanup_monitor(operations, "new-monitor", scheduled=True)) < project.mock_calls.index(
         call.agents.delete("test-agent", force=True)
     )
 
@@ -286,8 +286,8 @@ def test_scheduled_creation_failure_leaves_existing_monitor(scheduled_sample, mo
         "DefaultAzureCredential",
         "load_dotenv",
         "LogsQueryClient",
-        "_seed_traces",
-        "_wait_for_ingestion",
+        "seed_traces",
+        "wait_for_ingestion",
     ):
         monkeypatch.setitem(main.__globals__, name, configured_main.__globals__[name])
     error = ResourceExistsError("Existing monitor")
@@ -315,13 +315,13 @@ def test_partial_setup_cleans_up_only_owned_agent(request, sample_fixture, on_de
         "DefaultAzureCredential",
         "load_dotenv",
         "LogsQueryClient",
-        "_seed_traces",
-        "_wait_for_ingestion",
+        "seed_traces",
+        "wait_for_ingestion",
     ):
         monkeypatch.setitem(main.__globals__, name, configured_main.__globals__[name])
     project = main.__globals__["AIProjectClient"].return_value.__enter__.return_value
     error = RuntimeError("Trace export failed")
-    main.__globals__["_seed_traces"].side_effect = error
+    main.__globals__["seed_traces"].side_effect = error
 
     with pytest.raises(RuntimeError, match="Trace export failed"):
         main()
@@ -355,7 +355,7 @@ def test_monitor_cleanup_failure_keeps_agent(on_demand_main, capsys):
 @pytest.mark.parametrize("sample_fixture", ["on_demand_sample", "scheduled_sample"])
 def test_fictional_trace_shape_and_complete_ingestion(request, sample_fixture, monkeypatch):
     sample = request.getfixturevalue(sample_fixture)
-    seed = sample["_seed_traces"]
+    seed = sample["seed_traces"]
     exporter = InMemorySpanExporter()
     factory = MagicMock()
     factory.from_connection_string.return_value = exporter
@@ -387,24 +387,24 @@ def test_fictional_trace_shape_and_complete_ingestion(request, sample_fixture, m
         SimpleNamespace(status=LogsQueryStatus.SUCCESS, tables=[SimpleNamespace(rows=[row])])
         for row in [(10, 10, 0, 0), (10, 10, 10, 0), counts]
     ]
-    monkeypatch.setattr(sample["time"], "sleep", MagicMock())
-    sample["_wait_for_ingestion"](logs, "resource-id", "unique-agent", counts)
+    monkeypatch.setattr(sample["wait_for_ingestion"].__globals__["time"], "sleep", MagicMock())
+    sample["wait_for_ingestion"](logs, "resource-id", "unique-agent", counts)
     assert logs.query_resource.call_count == 3
     query = logs.query_resource.call_args.args[1]
     assert "unique-agent" in query and "| distinct trace_id" in query and 'operation == "execute_tool"' in query
 
 
 def test_ingestion_timeout_and_query_failure(on_demand_sample, monkeypatch):
-    wait = on_demand_sample["_wait_for_ingestion"]
+    wait = on_demand_sample["wait_for_ingestion"]
     logs = MagicMock()
     logs.query_resource.return_value = SimpleNamespace(
         status=LogsQueryStatus.SUCCESS, tables=[SimpleNamespace(rows=[(10, 10, 10, 0)])]
     )
-    monkeypatch.setattr(on_demand_sample["time"], "monotonic", MagicMock(side_effect=[0, 1]))
+    monkeypatch.setattr(wait.__globals__["time"], "monotonic", MagicMock(side_effect=[0, 1]))
     with pytest.raises(TimeoutError, match="did not expose all spans"):
         wait(logs, "resource-id", "unique-agent", (10, 10, 10, 8), timeout_seconds=1)
 
-    monkeypatch.setattr(on_demand_sample["time"], "monotonic", MagicMock(return_value=0))
+    monkeypatch.setattr(wait.__globals__["time"], "monotonic", MagicMock(return_value=0))
     logs.query_resource.side_effect = PermissionError("Query access denied")
     with pytest.raises(PermissionError, match="Query access denied"):
         wait(logs, "resource-id", "unique-agent", (10, 10, 10, 8))
