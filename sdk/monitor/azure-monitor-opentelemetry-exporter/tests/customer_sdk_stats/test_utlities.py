@@ -286,7 +286,7 @@ class TestCustomerSdkStatsUtils(unittest.TestCase):
 
     def test_determine_client_retry_code_http_errors(self):
         """Test determining retry code for HTTP errors with status codes."""
-        test_status_codes = [401, 403, 408, 429, 500, 502, 503, 504]
+        test_status_codes = [401, 403, 408, 413, 429, 500, 502, 503, 504]
 
         for status_code in test_status_codes:
             with self.subTest(status_code=status_code):
