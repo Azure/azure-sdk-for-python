@@ -62,10 +62,7 @@ from azure.core.pipeline import AsyncPipeline
 
 from ._base import HttpRequest
 from ._base_async import AsyncHttpTransport, AsyncHttpResponse, _ResponseStopIteration
-from ...utils._pipeline_transport_rest_shared import (
-    _aiohttp_body_helper,
-    get_file_items,
-)
+from ...utils._pipeline_transport_rest_shared import get_file_items
 from .._tools import is_rest as _is_rest
 from .._tools_async import (
     handle_no_stream_rest_response as _handle_no_stream_rest_response,
@@ -80,6 +77,7 @@ if TYPE_CHECKING:
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
+_SUPPORTED_ACCEPT_ENCODING = "gzip, deflate"
 _LOGGER = logging.getLogger(__name__)
 
 try:
@@ -190,6 +188,7 @@ class AioHttpTransport(AsyncHttpTransport):
                     "trust_env": self._use_env_settings,
                     "cookie_jar": jar,
                     "auto_decompress": False,
+                    "headers": {"Accept-Encoding": _SUPPORTED_ACCEPT_ENCODING},
                 }
                 if self._loop is not None:
                     clientsession_kwargs["loop"] = self._loop
@@ -398,6 +397,42 @@ class AioHttpTransport(AsyncHttpTransport):
         except aiohttp.client_exceptions.ClientError as err:
             raise ServiceRequestError(err, error=err) from err
         return response
+
+
+def _aiohttp_body_helper(
+    response: Union["AioHttpTransportResponse", "RestAioHttpTransportResponse"],
+) -> bytes:
+    # pylint: disable=protected-access
+    """Helper for body method of Aiohttp responses.
+
+    Since aiohttp body methods need decompression work synchronously,
+    need to share this code across old and new aiohttp transport responses
+    for backcompat.
+
+    :param response: The response to decode
+    :type response: ~azure.core.pipeline.transport.AioHttpTransportResponse
+    :rtype: bytes
+    :return: The response's bytes
+    """
+    if response._content is None:
+        raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")
+    if not response._decompress:
+        return response._content
+    if response._decompressed_content:
+        return response._content
+    enc = response.headers.get("Content-Encoding")
+    if not enc:
+        return response._content
+    enc = enc.lower()
+    if enc in ("gzip", "deflate"):
+        import zlib
+
+        zlib_mode = (16 + zlib.MAX_WBITS) if enc == "gzip" else -zlib.MAX_WBITS
+        decompressor = zlib.decompressobj(wbits=zlib_mode)
+        response._content = decompressor.decompress(response._content)
+        response._decompressed_content = True
+        return response._content
+    return response._content
 
 
 class AioHttpStreamDownloadGenerator(AsyncIterator):
