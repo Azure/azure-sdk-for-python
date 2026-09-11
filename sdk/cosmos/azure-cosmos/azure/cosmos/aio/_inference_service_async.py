@@ -27,8 +27,9 @@ from urllib.parse import urlparse
 from urllib3.util.retry import Retry
 
 from azure.core import AsyncPipelineClient
+from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import DecodeError, ServiceRequestError, ServiceResponseError
-from azure.core.pipeline.policies import (AsyncHTTPPolicy, ContentDecodePolicy,
+from azure.core.pipeline.policies import (AsyncHTTPPolicy, AzureKeyCredentialPolicy, ContentDecodePolicy,
                                           DistributedTracingPolicy, HeadersPolicy,
                                           NetworkTraceLoggingPolicy, ProxyPolicy, UserAgentPolicy)
 from azure.core.pipeline.transport import HttpRequest
@@ -78,14 +79,31 @@ class _InferenceService:
         self._inference_request_timeout = self._client_connection.connection_policy.InferenceRequestTimeout
         self._inference_pipeline_client = self._create_inference_pipeline_client()
 
+    def _create_auth_policy(self):
+        """Create the authentication policy for inference requests.
+
+        When the ``AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_KEY`` environment variable is set, key-based
+        authentication is used and the key is sent in the ``Ocp-Apim-Subscription-Key`` header. Otherwise
+        the request is authenticated with the client's AAD credentials using a standard bearer token.
+
+        :returns: The authentication policy to use for inference requests.
+        :rtype: ~azure.core.pipeline.policies.AzureKeyCredentialPolicy or
+            ~azure.cosmos.aio._inference_auth_policy_async.AsyncInferenceServiceBearerTokenPolicy
+        """
+        inference_key = os.environ.get(Constants.SEMANTIC_RERANKER_INFERENCE_KEY)
+        if inference_key:
+            return AzureKeyCredentialPolicy(
+                AzureKeyCredential(inference_key), Constants.SEMANTIC_RERANKER_INFERENCE_KEY_HEADER
+            )
+        return AsyncInferenceServiceBearerTokenPolicy(self._aad_credentials, self._token_scope)
+
     def _create_inference_pipeline_client(self) -> AsyncPipelineClient:
         """Create a pipeline for inference requests.
 
         :returns: An AsyncPipelineClient configured for inference calls.
         :rtype: ~azure.core.AsyncPipelineClient
         """
-        access_token = self._aad_credentials
-        auth_policy = AsyncInferenceServiceBearerTokenPolicy(access_token, self._token_scope)
+        auth_policy = self._create_auth_policy()
 
         connection_policy = self._client_connection.connection_policy
 
