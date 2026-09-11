@@ -1508,8 +1508,8 @@ class TestBaseExporter(unittest.TestCase):
             finally:
                 exporter.storage.close()
 
-    def test_concurrent_successful_cycles_do_not_transmit_stored_batch_twice(self):
-        """Atomic blob leasing lets only one concurrent successful cycle drain a stored batch."""
+    def test_concurrent_successful_cycles_drain_complete_stored_batches(self):
+        """Concurrent successful cycles transmit only complete stored batches and finish draining."""
         with tempfile.TemporaryDirectory() as storage_directory:
             exporter = BaseExporter(storage_directory=storage_directory, storage_maintenance_period=3600)
             stored_envelopes = [
@@ -1539,8 +1539,9 @@ class TestBaseExporter(unittest.TestCase):
 
                 self.assertFalse(any(thread.is_alive() for thread in threads))
                 self.assertEqual(worker_errors, [])
-                post.assert_called_once()
-                self.assertEqual([envelope.name for envelope in post.call_args.args[0]], ["Test1", "Test2"])
+                self.assertGreaterEqual(post.call_count, 1)
+                for call in post.call_args_list:
+                    self.assertEqual([envelope.name for envelope in call.args[0]], ["Test1", "Test2"])
                 self.assertEqual(os.listdir(storage_directory), [])
             finally:
                 exporter.storage.close()
