@@ -9,7 +9,8 @@
 ### Bugs Fixed
 - Update to the new stable OpenTelemetry database semantic conventions
   (`db.system.name`, `db.query.text`, `db.operation.name`, `db.namespace`) when
-  mapping `CLIENT` spans to `RemoteDependencyData`.
+  mapping `CLIENT` spans to `RemoteDependencyData`
+  ([#48979](https://github.com/Azure/azure-sdk-for-python/pull/48979))
 
 ### Other Changes
 
