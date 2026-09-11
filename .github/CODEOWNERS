@@ -10,7 +10,7 @@
 
 # Core
 # PRLabel: %Core.Http
-/sdk/core/corehttp/                                                  @xirzec @johanste @iscai-msft @kashifkhan
+/sdk/core/corehttp/                                                  @xirzec @iscai-msft @kashifkhan
 
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Core.Http
@@ -19,8 +19,8 @@
 # ServiceLabel: %Azure.Core
 
 # PRLabel: %Azure.Core
-/sdk/core/                                                           @xirzec @johanste
-/sdk/core/azure-core/                                                @xirzec @johanste @iscai-msft @kashifkhan
+/sdk/core/                                                           @xirzec
+/sdk/core/azure-core/                                                @xirzec @iscai-msft @kashifkhan
 /sdk/core/azure-mgmt-core/                                           @msyyc
 
 # Smoke Tests
@@ -35,22 +35,22 @@
 /sdk/agrifood/azure-agrifood-farming/    @bhargav-kansagara
 
 # PRLabel: %AI
-/sdk/ai/    @dargilco @luigiw @needuv @singankit @trrwilson @howieleung
+/sdk/ai/    @dargilco @luigiw @needuv @singankit @howieleung
 
 # ServiceLabel: %AI
 # ServiceOwners: @luigiw @needuv @singankit
 
 # ServiceLabel: %AI Agents %Service Attention
 # PRLabel: %AI Agents
-/sdk/ai/azure-ai-agents/    @dargilco @glharper @howieleung @nick863 @trangevi @trrwilson
+/sdk/ai/azure-ai-agents/    @dargilco @glharper @howieleung @nick863 @trangevi
 
 # ServiceLabel: %AI Model Inference %Service Attention
 # PRLabel: %AI Model Inference
-/sdk/ai/azure-ai-inference/    @dargilco @trangevi @trrwilson
+/sdk/ai/azure-ai-inference/    @dargilco @trangevi
 
 # ServiceLabel: %AI Projects %Service Attention
 # PRLabel: %AI Projects
-/sdk/ai/azure-ai-projects/    @dargilco @glharper @howieleung @kingernupur @nick863 @trangevi @trrwilson @bobogogo1990
+/sdk/ai/azure-ai-projects/    @dargilco @glharper @howieleung @kingernupur @nick863 @trangevi @bobogogo1990
 
 # PRLabel: %App Configuration
 /sdk/appconfiguration/    @avanigupta @jimmyca15 @mrm9084 @yuanqu72
@@ -352,7 +352,7 @@
 /sdk/onlineexperimentation/    @Azure/azure-sdk-write-onlineexperimentation
 
 # PRLabel: %OpenAI
-/sdk/openai/    @kashifkhan @trrwilson
+/sdk/openai/    @kashifkhan
 
 # ServiceLabel: %OpenAI
 # ServiceOwners: @trrwilson
@@ -837,7 +837,7 @@
 
 /scripts/                                                            @danieljurek @mccoyp
 /doc/                                                                @danieljurek @Azure/azure-python-sdk
-/conda/                                                              @danieljurek @xiangyan99 @xirzec
+/conda/                                                              @danieljurek @JennyPng @xirzec
 
 /shared_requirements.txt                                             @azure/azure-sdk-eng @kashifkhan @xirzec
 
