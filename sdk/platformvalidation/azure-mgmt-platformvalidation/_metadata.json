@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-08-01-preview",
+  "apiVersions": {
+    "Microsoft.PlatformValidation": "2026-08-01-preview"
+  },
+  "commit": "395e3a029791a6e56c414fd2b136bc4d37f1b859",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/platformvalidation/resource-manager/Microsoft.PlatformValidation/PlatformValidation",
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
+}
