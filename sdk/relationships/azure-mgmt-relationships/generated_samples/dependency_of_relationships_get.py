@@ -28,6 +28,7 @@ from azure.mgmt.relationships import RelationshipsMgmtClient
 def main():
     client = RelationshipsMgmtClient(
         credential=DefaultAzureCredential(),
+        subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.dependency_of_relationships.get(
@@ -37,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2023-09-01-preview/DependencyOfRelationships_Get.json
+# x-ms-original-file: 2026-03-01-preview/DependencyOfRelationships_Get.json
 if __name__ == "__main__":
     main()

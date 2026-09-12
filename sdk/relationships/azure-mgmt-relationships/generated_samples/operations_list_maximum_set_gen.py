@@ -27,6 +27,7 @@ from azure.mgmt.relationships import RelationshipsMgmtClient
 def main():
     client = RelationshipsMgmtClient(
         credential=DefaultAzureCredential(),
+        subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.operations.list()
@@ -34,6 +35,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2023-09-01-preview/Operations_List_MaximumSet_Gen.json
+# x-ms-original-file: 2026-03-01-preview/Operations_List_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

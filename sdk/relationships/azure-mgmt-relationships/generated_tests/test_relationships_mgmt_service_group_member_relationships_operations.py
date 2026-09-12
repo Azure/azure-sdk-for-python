@@ -28,12 +28,12 @@ class TestRelationshipsMgmtServiceGroupMemberRelationshipsOperations(AzureMgmtRe
                 "id": "str",
                 "name": "str",
                 "properties": {
+                    "sourceId": "str",
                     "metadata": {"sourceType": "str", "targetType": "str"},
                     "originInformation": {"relationshipOriginType": "str", "discoveryEngine": "str"},
-                    "sourceId": "str",
-                    "targetId": "str",
                     "provisioningState": "str",
-                    "targetTenant": "str",
+                    "sourceTenant": "str",
+                    "targetId": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -69,5 +69,15 @@ class TestRelationshipsMgmtServiceGroupMemberRelationshipsOperations(AzureMgmtRe
             name="str",
         ).result()  # call '.result()' to poll until service return final result
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_service_group_member_relationships_list_by_parent(self, resource_group):
+        response = self.client.service_group_member_relationships.list_by_parent(
+            resource_uri="str",
+        )
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

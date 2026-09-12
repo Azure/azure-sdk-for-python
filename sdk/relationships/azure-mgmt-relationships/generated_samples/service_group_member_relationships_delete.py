@@ -28,6 +28,7 @@ from azure.mgmt.relationships import RelationshipsMgmtClient
 def main():
     client = RelationshipsMgmtClient(
         credential=DefaultAzureCredential(),
+        subscription_id="SUBSCRIPTION_ID",
     )
 
     client.service_group_member_relationships.begin_delete(
@@ -36,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2023-09-01-preview/ServiceGroupMemberRelationships_Delete.json
+# x-ms-original-file: 2026-03-01-preview/ServiceGroupMemberRelationships_Delete.json
 if __name__ == "__main__":
     main()
