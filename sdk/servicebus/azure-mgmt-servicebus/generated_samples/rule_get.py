@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-01/Rules/RuleGet.json
+# x-ms-original-file: 2026-07-01-preview/Rules/RuleGet.json
 if __name__ == "__main__":
     main()
