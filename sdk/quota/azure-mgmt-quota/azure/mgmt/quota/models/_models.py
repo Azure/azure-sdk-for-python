@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AllocatedQuotaToSubscriptionList(_Model):
+class AllocatedQuotaToSubscriptionList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Quota allocated to subscriptions.
 
     :ivar value: List of Group Quota Limit allocated to subscriptions.
@@ -48,7 +48,7 @@ class AllocatedQuotaToSubscriptionList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AllocatedToSubscription(_Model):
+class AllocatedToSubscription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SubscriptionIds and quota allocated to subscriptions from the GroupQuota.
 
     :ivar subscription_id: An Azure subscriptionId.
@@ -73,6 +73,87 @@ class AllocatedToSubscription(_Model):
         *,
         subscription_id: Optional[str] = None,
         quota_allocated: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApprovalRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Record of an approval action on a transfer.
+
+    :ivar comment: Optional free-text comment supplied by the approver.
+    :vartype comment: str
+    :ivar actor: Principal that performed the approval (typically a UPN or service principal id).
+     Required.
+    :vartype actor: str
+    :ivar occurred_at: Timestamp at which the approval was recorded. Required.
+    :vartype occurred_at: ~datetime.datetime
+    """
+
+    comment: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional free-text comment supplied by the approver."""
+    actor: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Principal that performed the approval (typically a UPN or service principal id). Required."""
+    occurred_at: datetime.datetime = rest_field(
+        name="occurredAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Timestamp at which the approval was recorded. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        actor: str,
+        occurred_at: datetime.datetime,
+        comment: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CancellationRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Record of a cancellation action on a transfer.
+
+    :ivar reason: Optional free-text reason supplied by the donor when cancelling.
+    :vartype reason: str
+    :ivar actor: Principal that performed the cancellation. Required.
+    :vartype actor: str
+    :ivar occurred_at: Timestamp at which the cancellation was recorded. Required.
+    :vartype occurred_at: ~datetime.datetime
+    """
+
+    reason: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional free-text reason supplied by the donor when cancelling."""
+    actor: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Principal that performed the cancellation. Required."""
+    occurred_at: datetime.datetime = rest_field(
+        name="occurredAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Timestamp at which the cancellation was recorded. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        actor: str,
+        occurred_at: datetime.datetime,
+        reason: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -131,7 +212,7 @@ class ExtensionResource(Resource):
     """
 
 
-class CurrentQuotaLimitBase(ExtensionResource):
+class CurrentQuotaLimitBase(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Quota limit.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -173,7 +254,7 @@ class CurrentQuotaLimitBase(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
-class CurrentUsagesBase(ExtensionResource):
+class CurrentUsagesBase(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource usage.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -258,7 +339,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -286,7 +367,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExceptionResponse(_Model):
+class ExceptionResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error.
 
     :ivar error: API error details.
@@ -314,7 +395,7 @@ class ExceptionResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GroupQuotaDetails(_Model):
+class GroupQuotaDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Group Quota details.
 
     :ivar resource_name: The resource name, such as SKU name.
@@ -393,7 +474,7 @@ class GroupQuotaDetails(_Model):
         if key in self.__flattened_items:
             if self.name is None:
                 self.name = self._attr_to_rest_field["name"]._class_type()
-            setattr(self.properties, key, value)
+            setattr(self.name, key, value)
         else:
             super().__setattr__(key, value)
 
@@ -414,7 +495,7 @@ class GroupQuotaDetailsName(_Model):
     """Resource display name."""
 
 
-class GroupQuotaLimit(_Model):
+class GroupQuotaLimit(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Group Quota limit.
 
     :ivar properties: Group Quota properties for the specified resource.
@@ -461,7 +542,7 @@ class ProxyResource(Resource):
     """
 
 
-class GroupQuotaLimitList(ProxyResource):
+class GroupQuotaLimitList(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of Group Quota Limit details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -501,7 +582,7 @@ class GroupQuotaLimitList(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class GroupQuotaLimitListProperties(_Model):
+class GroupQuotaLimitListProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GroupQuotaLimitListProperties.
 
     :ivar provisioning_state: Request status. Known values are: "Accepted", "Created", "Invalid",
@@ -543,7 +624,7 @@ class GroupQuotaLimitListProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GroupQuotaLimitProperties(GroupQuotaDetails):
+class GroupQuotaLimitProperties(GroupQuotaDetails):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Group Quota properties for the specified resource.
 
     :ivar resource_name: The resource name, such as SKU name.
@@ -600,12 +681,12 @@ class GroupQuotaLimitProperties(GroupQuotaDetails):
         if key in self.__flattened_items:
             if self.name is None:
                 self.name = self._attr_to_rest_field["name"]._class_type()
-            setattr(self.properties, key, value)
+            setattr(self.name, key, value)
         else:
             super().__setattr__(key, value)
 
 
-class GroupQuotaRequestBase(_Model):
+class GroupQuotaRequestBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The new GroupQuota limit requested.
 
     :ivar properties:
@@ -634,7 +715,7 @@ class GroupQuotaRequestBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GroupQuotaRequestBaseProperties(_Model):
+class GroupQuotaRequestBaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GroupQuotaRequestBaseProperties.
 
     :ivar limit: The new quota limit for the subscription. The incremental quota will be allocated
@@ -697,7 +778,7 @@ class GroupQuotaRequestBaseProperties(_Model):
         if key in self.__flattened_items:
             if self.name is None:
                 self.name = self._attr_to_rest_field["name"]._class_type()
-            setattr(self.properties, key, value)
+            setattr(self.name, key, value)
         else:
             super().__setattr__(key, value)
 
@@ -718,7 +799,7 @@ class GroupQuotaRequestBasePropertiesName(_Model):
     """Resource display name."""
 
 
-class GroupQuotasEnforcementStatus(ProxyResource):
+class GroupQuotasEnforcementStatus(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The GroupQuota Enforcement status for a Azure Location/Region.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -758,7 +839,7 @@ class GroupQuotasEnforcementStatus(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class GroupQuotasEnforcementStatusProperties(_Model):
+class GroupQuotasEnforcementStatusProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GroupQuotasEnforcementStatusProperties.
 
     :ivar enforcement_enabled: Is the GroupQuota Enforcement enabled for the Azure region. Known
@@ -806,7 +887,7 @@ class GroupQuotasEnforcementStatusProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GroupQuotasEntity(ProxyResource):
+class GroupQuotasEntity(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties and filters for ShareQuota. The request parameter is optional, if there are no
     filters specified.
 
@@ -848,7 +929,7 @@ class GroupQuotasEntity(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class GroupQuotasEntityBase(_Model):
+class GroupQuotasEntityBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties and filters for ShareQuota. The request parameter is optional, if there are no
     filters specified.
 
@@ -891,7 +972,7 @@ class GroupQuotasEntityBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GroupQuotasEntityBasePatch(_Model):
+class GroupQuotasEntityBasePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties and filters for ShareQuota. The request parameter is optional, if there are no
     filters specified.
 
@@ -930,7 +1011,7 @@ class GroupQuotasEntityBasePatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GroupQuotasEntityPatch(ProxyResource):
+class GroupQuotasEntityPatch(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties and filters for ShareQuota. The request parameter is optional, if there are no
     filters specified.
 
@@ -972,7 +1053,9 @@ class GroupQuotasEntityPatch(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class GroupQuotasEntityPatchProperties(GroupQuotasEntityBasePatch):
+class GroupQuotasEntityPatchProperties(
+    GroupQuotasEntityBasePatch
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties.
 
     :ivar display_name: Display name of the GroupQuota entity.
@@ -1000,7 +1083,7 @@ class GroupQuotasEntityPatchProperties(GroupQuotasEntityBasePatch):
         super().__init__(*args, **kwargs)
 
 
-class GroupQuotasEntityProperties(GroupQuotasEntityBase):
+class GroupQuotasEntityProperties(GroupQuotasEntityBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties.
 
     :ivar display_name: Display name of the GroupQuota entity.
@@ -1030,7 +1113,7 @@ class GroupQuotasEntityProperties(GroupQuotasEntityBase):
         super().__init__(*args, **kwargs)
 
 
-class GroupQuotaSubscriptionId(ProxyResource):
+class GroupQuotaSubscriptionId(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This represents a Azure subscriptionId that is associated with a GroupQuotasEntity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1070,7 +1153,7 @@ class GroupQuotaSubscriptionId(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class GroupQuotaSubscriptionIdProperties(_Model):
+class GroupQuotaSubscriptionIdProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GroupQuotaSubscriptionIdProperties.
 
     :ivar subscription_id: An Azure subscriptionId.
@@ -1110,7 +1193,7 @@ class GroupQuotaSubscriptionIdProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GroupQuotaSubscriptionRequestStatus(ProxyResource):
+class GroupQuotaSubscriptionRequestStatus(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The new quota limit request status.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1150,7 +1233,9 @@ class GroupQuotaSubscriptionRequestStatus(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class GroupQuotaSubscriptionRequestStatusProperties(_Model):  # pylint: disable=name-too-long
+class GroupQuotaSubscriptionRequestStatusProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """GroupQuotaSubscriptionRequestStatusProperties.
 
     :ivar subscription_id: The subscription Id.
@@ -1199,7 +1284,7 @@ class GroupQuotaSubscriptionRequestStatusProperties(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class GroupQuotaUsagesBase(_Model):
+class GroupQuotaUsagesBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource details with usages and GroupQuota.
 
     :ivar name: Name of the resource provided by the resource provider. This property is already
@@ -1268,12 +1353,12 @@ class GroupQuotaUsagesBase(_Model):
         if key in self.__flattened_items:
             if self.name is None:
                 self.name = self._attr_to_rest_field["name"]._class_type()
-            setattr(self.properties, key, value)
+            setattr(self.name, key, value)
         else:
             super().__setattr__(key, value)
 
 
-class GroupQuotaUsagesBaseName(_Model):
+class GroupQuotaUsagesBaseName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Name of the resource provided by the resource provider. This property is already included in
     the request URI, so it is a readonly property returned in the response.
 
@@ -1306,7 +1391,187 @@ class GroupQuotaUsagesBaseName(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LimitJsonObject(_Model):
+class IncomingQuotaTransfer(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Recipient-side projection of a quota transfer. The URI key ``{transferId}`` is the
+    server-generated GUID returned to the donor in the PUT response under
+    ``properties.transferId``. The resource is read-only from the recipient side; state changes
+    occur through the approve and reject actions.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.quota.models.SystemData
+    :ivar properties: Properties of the incoming quota transfer.
+    :vartype properties: ~azure.mgmt.quota.models.IncomingQuotaTransferProperties
+    :ivar etag: "If etag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.").
+    :vartype etag: str
+    """
+
+    properties: Optional["_models.IncomingQuotaTransferProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the incoming quota transfer."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """\"If etag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.\")."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.IncomingQuotaTransferProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IncomingQuotaTransferApproveRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request body for the recipient approve action.
+
+    :ivar comment: Optional free-text comment recorded on the transfer.
+    :vartype comment: str
+    """
+
+    comment: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional free-text comment recorded on the transfer."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        comment: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IncomingQuotaTransferProperties(_Model):
+    """Recipient-side projection properties of a quota transfer.
+
+    :ivar provisioning_state: The status of the underlying ARM resource operation. Known values
+     are: "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.quota.models.TransferProvisioningState
+    :ivar transfer_status: The business status of the transfer. Known values are: "Pending",
+     "Accepted", "Completed", "Cancelled", "Rejected", "Expired", and "Failed".
+    :vartype transfer_status: str or ~azure.mgmt.quota.models.TransferStatus
+    :ivar transfer_id: Server-generated identifier of the transfer (matches the URI key).
+    :vartype transfer_id: str
+    :ivar transfer_ref: Fully qualified ARM resource id of the donor-side quotaTransfers resource.
+    :vartype transfer_ref: str
+    :ivar source_subscription_id: Donor subscription id. The recipient subscription is the one in
+     the request URI.
+    :vartype source_subscription_id: str
+    :ivar source_tenant_id: Donor tenant id, resolved by the service from the donor subscription.
+    :vartype source_tenant_id: str
+    :ivar billing_account_id: Billing account id both donor and recipient subscriptions roll up to.
+    :vartype billing_account_id: str
+    :ivar resource_name: The quota dimension being moved.
+    :vartype resource_name: str
+    :ivar amount: Amount being transferred in the resource's native unit.
+    :vartype amount: int
+    :ivar source_etag: ETag of the donor-side source document at the time the inbox entry was
+     projected. Used as the If-Match value on approve and reject requests.
+    :vartype source_etag: str
+    :ivar approval: Approval record. Populated when ``transferStatus`` is ``Accepted`` or
+     ``Completed``. Mutually exclusive with ``rejection``.
+    :vartype approval: ~azure.mgmt.quota.models.ApprovalRecord
+    :ivar rejection: Rejection record. Populated when ``transferStatus`` is ``Rejected``. Mutually
+     exclusive with ``approval``.
+    :vartype rejection: ~azure.mgmt.quota.models.RejectionRecord
+    """
+
+    provisioning_state: Optional[Union[str, "_models.TransferProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the underlying ARM resource operation. Known values are: \"Succeeded\",
+     \"Failed\", and \"Canceled\"."""
+    transfer_status: Optional[Union[str, "_models.TransferStatus"]] = rest_field(
+        name="transferStatus", visibility=["read"]
+    )
+    """The business status of the transfer. Known values are: \"Pending\", \"Accepted\",
+     \"Completed\", \"Cancelled\", \"Rejected\", \"Expired\", and \"Failed\"."""
+    transfer_id: Optional[str] = rest_field(name="transferId", visibility=["read"])
+    """Server-generated identifier of the transfer (matches the URI key)."""
+    transfer_ref: Optional[str] = rest_field(name="transferRef", visibility=["read"])
+    """Fully qualified ARM resource id of the donor-side quotaTransfers resource."""
+    source_subscription_id: Optional[str] = rest_field(name="sourceSubscriptionId", visibility=["read"])
+    """Donor subscription id. The recipient subscription is the one in the request URI."""
+    source_tenant_id: Optional[str] = rest_field(name="sourceTenantId", visibility=["read"])
+    """Donor tenant id, resolved by the service from the donor subscription."""
+    billing_account_id: Optional[str] = rest_field(name="billingAccountId", visibility=["read"])
+    """Billing account id both donor and recipient subscriptions roll up to."""
+    resource_name: Optional[str] = rest_field(name="resourceName", visibility=["read"])
+    """The quota dimension being moved."""
+    amount: Optional[int] = rest_field(visibility=["read"])
+    """Amount being transferred in the resource's native unit."""
+    source_etag: Optional[str] = rest_field(name="sourceEtag", visibility=["read"])
+    """ETag of the donor-side source document at the time the inbox entry was projected. Used as the
+     If-Match value on approve and reject requests."""
+    approval: Optional["_models.ApprovalRecord"] = rest_field(visibility=["read"])
+    """Approval record. Populated when ``transferStatus`` is ``Accepted`` or ``Completed``. Mutually
+     exclusive with ``rejection``."""
+    rejection: Optional["_models.RejectionRecord"] = rest_field(visibility=["read"])
+    """Rejection record. Populated when ``transferStatus`` is ``Rejected``. Mutually exclusive with
+     ``approval``."""
+
+
+class IncomingQuotaTransferRejectRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request body for the recipient reject action.
+
+    :ivar reason: Optional free-text reason recorded on the transfer.
+    :vartype reason: str
+    """
+
+    reason: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional free-text reason recorded on the transfer."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        reason: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LimitJsonObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LimitJson abstract class.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1340,7 +1605,9 @@ class LimitJsonObject(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LimitObject(LimitJsonObject, discriminator="LimitValue"):
+class LimitObject(
+    LimitJsonObject, discriminator="LimitValue"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource quota limit value.
 
     :ivar value: The quota/limit value. Required.
@@ -1348,7 +1615,7 @@ class LimitObject(LimitJsonObject, discriminator="LimitValue"):
     :ivar limit_type: The quota or usages limit types. Known values are: "Independent" and
      "Shared".
     :vartype limit_type: str or ~azure.mgmt.quota.models.QuotaLimitTypes
-    :ivar limit_object_type: The limit object type. Required.
+    :ivar limit_object_type: The limit object type. Required. LIMIT_VALUE.
     :vartype limit_object_type: str or ~azure.mgmt.quota.models.LIMIT_VALUE
     """
 
@@ -1359,7 +1626,7 @@ class LimitObject(LimitJsonObject, discriminator="LimitValue"):
     )
     """The quota or usages limit types. Known values are: \"Independent\" and \"Shared\"."""
     limit_object_type: Literal[LimitType.LIMIT_VALUE] = rest_discriminator(name="limitObjectType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The limit object type. Required."""
+    """The limit object type. Required. LIMIT_VALUE."""
 
     @overload
     def __init__(
@@ -1381,7 +1648,7 @@ class LimitObject(LimitJsonObject, discriminator="LimitValue"):
         self.limit_object_type = LimitType.LIMIT_VALUE  # type: ignore
 
 
-class OperationDisplay(_Model):
+class OperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OperationDisplay.
 
     :ivar provider: Provider name.
@@ -1424,7 +1691,7 @@ class OperationDisplay(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationResponse(_Model):
+class OperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OperationResponse.
 
     :ivar name:
@@ -1461,7 +1728,7 @@ class OperationResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QuotaAllocationRequestBase(_Model):
+class QuotaAllocationRequestBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The new quota request allocated to subscription.
 
     :ivar properties:
@@ -1490,7 +1757,7 @@ class QuotaAllocationRequestBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QuotaAllocationRequestBaseProperties(_Model):
+class QuotaAllocationRequestBaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """QuotaAllocationRequestBaseProperties.
 
     :ivar limit: The new quota limit for the subscription. The incremental quota will be allocated
@@ -1546,7 +1813,7 @@ class QuotaAllocationRequestBaseProperties(_Model):
         if key in self.__flattened_items:
             if self.name is None:
                 self.name = self._attr_to_rest_field["name"]._class_type()
-            setattr(self.properties, key, value)
+            setattr(self.name, key, value)
         else:
             super().__setattr__(key, value)
 
@@ -1567,7 +1834,7 @@ class QuotaAllocationRequestBasePropertiesName(_Model):
     """Resource display name."""
 
 
-class QuotaAllocationRequestStatus(ProxyResource):
+class QuotaAllocationRequestStatus(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The subscription quota allocation status.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1627,7 +1894,7 @@ class QuotaAllocationRequestStatus(ProxyResource):
             super().__setattr__(key, value)
 
 
-class QuotaAllocationRequestStatusProperties(_Model):
+class QuotaAllocationRequestStatusProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """QuotaAllocationRequestStatusProperties.
 
     :ivar requested_resource: The new quota request allocated to subscription.
@@ -1677,7 +1944,7 @@ class QuotaAllocationRequestStatusProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QuotaProperties(_Model):
+class QuotaProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Quota properties for the specified resource.
 
     :ivar limit: Resource quota limit properties.
@@ -1691,11 +1958,8 @@ class QuotaProperties(_Model):
     :ivar resource_type: The name of the resource type. Optional field.
     :vartype resource_type: str
     :ivar quota_period: The time period over which the quota usage values are summarized. For
-     example:
-     *P1D (per one day)
-     *PT1M (per one minute)
-     *PT1S (per one second).
-     This parameter is optional because, for some resources like compute, the period is irrelevant.
+     example: *P1D (per one day) *PT1M (per one minute) *PT1S (per one second). This parameter is
+     optional because, for some resources like compute, the period is irrelevant.
     :vartype quota_period: str
     :ivar is_quota_applicable: States if quota can be requested for this resource.
     :vartype is_quota_applicable: bool
@@ -1715,11 +1979,9 @@ class QuotaProperties(_Model):
     )
     """The name of the resource type. Optional field."""
     quota_period: Optional[str] = rest_field(name="quotaPeriod", visibility=["read"])
-    """The time period over which the quota usage values are summarized. For example:
-     *P1D (per one day)
-     *PT1M (per one minute)
-     *PT1S (per one second).
-     This parameter is optional because, for some resources like compute, the period is irrelevant."""
+    """The time period over which the quota usage values are summarized. For example: *P1D (per one
+     day) *PT1M (per one minute) *PT1S (per one second). This parameter is optional because, for
+     some resources like compute, the period is irrelevant."""
     is_quota_applicable: Optional[bool] = rest_field(name="isQuotaApplicable", visibility=["read"])
     """States if quota can be requested for this resource."""
     properties: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1746,7 +2008,7 @@ class QuotaProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QuotaRequestDetails(ExtensionResource):
+class QuotaRequestDetails(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of quota requests with details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1807,7 +2069,7 @@ class QuotaRequestDetails(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class QuotaRequestProperties(_Model):
+class QuotaRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Quota request properties.
 
     :ivar provisioning_state: The quota request status. Known values are: "Accepted", "Invalid",
@@ -1862,7 +2124,257 @@ class QuotaRequestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceName(_Model):
+class QuotaTransfer(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A quota transfer authored on the donor side. The donor selects the URI segment
+    ``{transferName}``; the recipient addresses the same logical transfer via the server-generated
+    ``properties.transferId`` GUID on the ``incomingQuotaTransfers`` URI.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.quota.models.SystemData
+    :ivar properties: Properties of the quota transfer.
+    :vartype properties: ~azure.mgmt.quota.models.QuotaTransferProperties
+    :ivar etag: "If etag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.").
+    :vartype etag: str
+    """
+
+    properties: Optional["_models.QuotaTransferProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the quota transfer."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """\"If etag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.\")."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.QuotaTransferProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class QuotaTransferCancelRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request body for the donor cancel action.
+
+    :ivar reason: Optional free-text reason recorded on the transfer.
+    :vartype reason: str
+    """
+
+    reason: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional free-text reason recorded on the transfer."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        reason: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class QuotaTransferProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Donor-side properties of a quota transfer.
+
+    :ivar provisioning_state: The status of the underlying ARM resource operation. Known values
+     are: "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.quota.models.TransferProvisioningState
+    :ivar transfer_status: The business status of the transfer. Known values are: "Pending",
+     "Accepted", "Completed", "Cancelled", "Rejected", "Expired", and "Failed".
+    :vartype transfer_status: str or ~azure.mgmt.quota.models.TransferStatus
+    :ivar transfer_id: Server-generated identifier the recipient uses to address the transfer on
+     the incomingQuotaTransfers URI.
+    :vartype transfer_id: str
+    :ivar display_name: Human-friendly label surfaced on customer GET responses and recipient inbox
+     listings. Required.
+    :vartype display_name: str
+    :ivar comment: Donor-supplied free-text rationale captured at submit time.
+    :vartype comment: str
+    :ivar destination_subscription_id: Recipient subscription id. Must differ from the donor
+     subscription. Required.
+    :vartype destination_subscription_id: str
+    :ivar destination_tenant_id: Recipient tenant id, resolved by the service from the recipient
+     subscription.
+    :vartype destination_tenant_id: str
+    :ivar billing_account_id: Billing account id both donor and recipient subscriptions must roll
+     up to. Required.
+    :vartype billing_account_id: str
+    :ivar resource_name: The quota dimension being moved, scoped by the URI's target provider (for
+     example, ``standardDv5Family`` under Microsoft.Compute). Required.
+    :vartype resource_name: str
+    :ivar amount: Amount to transfer in the resource's native unit (e.g. vCPU count). Required.
+    :vartype amount: int
+    :ivar auto_approve: Same-tenant one-shot opt-in. When true, the donor PUT admission-checks
+     recipient-side RBAC and cap at submit time and drives the transfer to terminal Completed within
+     the same LRO, with no recipient approve required. The outcome is reflected by
+     ``transferStatus``: ``Completed`` means the auto path committed; ``Pending`` means it did not
+     (e.g. cross-tenant, missing RBAC, cap exceeded) and the recipient must approve.
+    :vartype auto_approve: bool
+    :ivar created_at: Time the transfer was created.
+    :vartype created_at: ~datetime.datetime
+    :ivar expires_at: Time at which a Pending transfer expires if the recipient has not approved or
+     rejected it.
+    :vartype expires_at: ~datetime.datetime
+    :ivar created_by: Principal that created the transfer.
+    :vartype created_by: str
+    :ivar approval: Approval record. Populated when ``transferStatus`` is ``Accepted`` or
+     ``Completed``. Mutually exclusive with ``cancellation``.
+    :vartype approval: ~azure.mgmt.quota.models.ApprovalRecord
+    :ivar cancellation: Cancellation record. Populated when ``transferStatus`` is ``Cancelled``.
+     Mutually exclusive with ``approval``.
+    :vartype cancellation: ~azure.mgmt.quota.models.CancellationRecord
+    """
+
+    provisioning_state: Optional[Union[str, "_models.TransferProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the underlying ARM resource operation. Known values are: \"Succeeded\",
+     \"Failed\", and \"Canceled\"."""
+    transfer_status: Optional[Union[str, "_models.TransferStatus"]] = rest_field(
+        name="transferStatus", visibility=["read"]
+    )
+    """The business status of the transfer. Known values are: \"Pending\", \"Accepted\",
+     \"Completed\", \"Cancelled\", \"Rejected\", \"Expired\", and \"Failed\"."""
+    transfer_id: Optional[str] = rest_field(name="transferId", visibility=["read"])
+    """Server-generated identifier the recipient uses to address the transfer on the
+     incomingQuotaTransfers URI."""
+    display_name: str = rest_field(name="displayName", visibility=["read", "create", "update", "delete", "query"])
+    """Human-friendly label surfaced on customer GET responses and recipient inbox listings. Required."""
+    comment: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Donor-supplied free-text rationale captured at submit time."""
+    destination_subscription_id: str = rest_field(
+        name="destinationSubscriptionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Recipient subscription id. Must differ from the donor subscription. Required."""
+    destination_tenant_id: Optional[str] = rest_field(name="destinationTenantId", visibility=["read"])
+    """Recipient tenant id, resolved by the service from the recipient subscription."""
+    billing_account_id: str = rest_field(
+        name="billingAccountId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Billing account id both donor and recipient subscriptions must roll up to. Required."""
+    resource_name: str = rest_field(name="resourceName", visibility=["read", "create", "update", "delete", "query"])
+    """The quota dimension being moved, scoped by the URI's target provider (for example,
+     ``standardDv5Family`` under Microsoft.Compute). Required."""
+    amount: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Amount to transfer in the resource's native unit (e.g. vCPU count). Required."""
+    auto_approve: Optional[bool] = rest_field(
+        name="autoApprove", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Same-tenant one-shot opt-in. When true, the donor PUT admission-checks recipient-side RBAC and
+     cap at submit time and drives the transfer to terminal Completed within the same LRO, with no
+     recipient approve required. The outcome is reflected by ``transferStatus``: ``Completed`` means
+     the auto path committed; ``Pending`` means it did not (e.g. cross-tenant, missing RBAC, cap
+     exceeded) and the recipient must approve."""
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """Time the transfer was created."""
+    expires_at: Optional[datetime.datetime] = rest_field(name="expiresAt", visibility=["read"], format="rfc3339")
+    """Time at which a Pending transfer expires if the recipient has not approved or rejected it."""
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
+    """Principal that created the transfer."""
+    approval: Optional["_models.ApprovalRecord"] = rest_field(visibility=["read"])
+    """Approval record. Populated when ``transferStatus`` is ``Accepted`` or ``Completed``. Mutually
+     exclusive with ``cancellation``."""
+    cancellation: Optional["_models.CancellationRecord"] = rest_field(visibility=["read"])
+    """Cancellation record. Populated when ``transferStatus`` is ``Cancelled``. Mutually exclusive
+     with ``approval``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: str,
+        destination_subscription_id: str,
+        billing_account_id: str,
+        resource_name: str,
+        amount: int,
+        comment: Optional[str] = None,
+        auto_approve: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RejectionRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Record of a rejection action on a transfer.
+
+    :ivar reason: Optional free-text reason supplied by the recipient when rejecting.
+    :vartype reason: str
+    :ivar actor: Principal that performed the rejection. Required.
+    :vartype actor: str
+    :ivar occurred_at: Timestamp at which the rejection was recorded. Required.
+    :vartype occurred_at: ~datetime.datetime
+    """
+
+    reason: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional free-text reason supplied by the recipient when rejecting."""
+    actor: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Principal that performed the rejection. Required."""
+    occurred_at: datetime.datetime = rest_field(
+        name="occurredAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Timestamp at which the rejection was recorded. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        actor: str,
+        occurred_at: datetime.datetime,
+        reason: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Name of the resource provided by the resource Provider. When requesting quota, use this
     property name.
 
@@ -1895,7 +2407,7 @@ class ResourceName(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceUsages(ProxyResource):
+class ResourceUsages(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource details with usages and GroupQuota.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1936,7 +2448,7 @@ class ResourceUsages(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ServiceError(_Model):
+class ServiceError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API error details.
 
     :ivar code: Error code.
@@ -1988,7 +2500,7 @@ class ServiceErrorDetail(_Model):
     """Error message."""
 
 
-class SubmittedResourceRequestStatus(ProxyResource):
+class SubmittedResourceRequestStatus(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Status of a single GroupQuota request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2028,7 +2540,7 @@ class SubmittedResourceRequestStatus(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SubmittedResourceRequestStatusProperties(_Model):
+class SubmittedResourceRequestStatusProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SubmittedResourceRequestStatusProperties.
 
     :ivar requested_resource: Requested Resource.
@@ -2078,7 +2590,7 @@ class SubmittedResourceRequestStatusProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubRequest(_Model):
+class SubRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request property.
 
     :ivar name: Resource name.
@@ -2138,7 +2650,7 @@ class SubRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionQuotaAllocations(_Model):
+class SubscriptionQuotaAllocations(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Quota allocated to a subscription for the specific Resource Provider, Location, ResourceName.
     This will include the GroupQuota and total quota allocated to the subscription. Only the Group
     quota allocated to the subscription can be allocated back to the MG Group Quota.
@@ -2170,7 +2682,9 @@ class SubscriptionQuotaAllocations(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionQuotaAllocationsList(ProxyResource):
+class SubscriptionQuotaAllocationsList(
+    ExtensionResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Subscription quota list.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2210,7 +2724,9 @@ class SubscriptionQuotaAllocationsList(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionQuotaAllocationsListProperties(_Model):  # pylint: disable=name-too-long
+class SubscriptionQuotaAllocationsListProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """SubscriptionQuotaAllocationsListProperties.
 
     :ivar provisioning_state: Request status. Known values are: "Accepted", "Created", "Invalid",
@@ -2252,7 +2768,7 @@ class SubscriptionQuotaAllocationsListProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionQuotaDetails(_Model):
+class SubscriptionQuotaDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Subscription Quota details.
 
     :ivar resource_name: The resource name, such as SKU name.
@@ -2312,12 +2828,14 @@ class SubscriptionQuotaDetails(_Model):
         if key in self.__flattened_items:
             if self.name is None:
                 self.name = self._attr_to_rest_field["name"]._class_type()
-            setattr(self.properties, key, value)
+            setattr(self.name, key, value)
         else:
             super().__setattr__(key, value)
 
 
-class SubscriptionQuotaAllocationsProperties(SubscriptionQuotaDetails):
+class SubscriptionQuotaAllocationsProperties(
+    SubscriptionQuotaDetails
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Quota properties for the specified resource.
 
     :ivar resource_name: The resource name, such as SKU name.
@@ -2365,7 +2883,7 @@ class SubscriptionQuotaAllocationsProperties(SubscriptionQuotaDetails):
         if key in self.__flattened_items:
             if self.name is None:
                 self.name = self._attr_to_rest_field["name"]._class_type()
-            setattr(self.properties, key, value)
+            setattr(self.name, key, value)
         else:
             super().__setattr__(key, value)
 
@@ -2386,7 +2904,7 @@ class SubscriptionQuotaDetailsName(_Model):
     """Resource display name."""
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -2453,7 +2971,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UsagesObject(_Model):
+class UsagesObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource usages value.
 
     :ivar value: The usages value. Required.
@@ -2489,7 +3007,7 @@ class UsagesObject(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UsagesProperties(_Model):
+class UsagesProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Usage properties for the specified resource.
 
     :ivar usages: The quota limit properties for this resource.
@@ -2503,10 +3021,8 @@ class UsagesProperties(_Model):
     :ivar resource_type: The name of the resource type. Optional field.
     :vartype resource_type: str
     :ivar quota_period: The time period for the summary of the quota usage values. For example:
-     *P1D (per one day)
-     *PT1M (per one minute)
-     *PT1S (per one second).
-     This parameter is optional because it is not relevant for all resources such as compute.
+     *P1D (per one day) *PT1M (per one minute) *PT1S (per one second). This parameter is optional
+     because it is not relevant for all resources such as compute.
     :vartype quota_period: str
     :ivar is_quota_applicable: States if quota can be requested for this resource.
     :vartype is_quota_applicable: bool
@@ -2526,11 +3042,9 @@ class UsagesProperties(_Model):
     )
     """The name of the resource type. Optional field."""
     quota_period: Optional[str] = rest_field(name="quotaPeriod", visibility=["read"])
-    """The time period for the summary of the quota usage values. For example:
-     *P1D (per one day)
-     *PT1M (per one minute)
-     *PT1S (per one second).
-     This parameter is optional because it is not relevant for all resources such as compute."""
+    """The time period for the summary of the quota usage values. For example: *P1D (per one day)
+     *PT1M (per one minute) *PT1S (per one second). This parameter is optional because it is not
+     relevant for all resources such as compute."""
     is_quota_applicable: Optional[bool] = rest_field(name="isQuotaApplicable", visibility=["read"])
     """States if quota can be requested for this resource."""
     properties: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
