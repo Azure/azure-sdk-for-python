@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01-preview/Get_NamespaceDeviceWithEndpointErrorStatus.json
+# x-ms-original-file: 2026-11-01/Get_NamespaceDeviceWithEndpointErrorStatus.json
 if __name__ == "__main__":
     main()

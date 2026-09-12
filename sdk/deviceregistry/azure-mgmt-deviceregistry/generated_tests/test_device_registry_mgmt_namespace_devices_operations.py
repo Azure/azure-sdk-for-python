@@ -80,7 +80,6 @@ class TestDeviceRegistryMgmtNamespaceDevicesOperations(AzureMgmtRecordedTestCase
                     "model": "str",
                     "operatingSystem": "str",
                     "operatingSystemVersion": "str",
-                    "policy": {"resourceId": "str"},
                     "provisioningState": "str",
                     "status": {
                         "config": {
@@ -101,7 +100,14 @@ class TestDeviceRegistryMgmtNamespaceDevicesOperations(AzureMgmtRecordedTestCase
                                             {"code": "str", "correlationId": "str", "info": "str", "message": "str"}
                                         ],
                                         "message": "str",
-                                    }
+                                    },
+                                    "healthState": {
+                                        "lastTransitionTime": "str",
+                                        "lastUpdateTime": "str",
+                                        "message": "str",
+                                        "reasonCode": "str",
+                                        "status": "str",
+                                    },
                                 }
                             }
                         },
@@ -164,7 +170,6 @@ class TestDeviceRegistryMgmtNamespaceDevicesOperations(AzureMgmtRecordedTestCase
                         },
                     },
                     "operatingSystemVersion": "str",
-                    "policy": {"resourceId": "str"},
                 },
                 "tags": {"str": "str"},
             },
@@ -187,24 +192,11 @@ class TestDeviceRegistryMgmtNamespaceDevicesOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_namespace_devices_list_by_resource_group(self, resource_group):
-        response = self.client.namespace_devices.list_by_resource_group(
+    def test_namespace_devices_list_by_namespace(self, resource_group):
+        response = self.client.namespace_devices.list_by_namespace(
             resource_group_name=resource_group.name,
             namespace_name="str",
         )
         result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_namespace_devices_begin_revoke(self, resource_group):
-        response = self.client.namespace_devices.begin_revoke(
-            resource_group_name=resource_group.name,
-            namespace_name="str",
-            device_name="str",
-            body={"disable": bool},
-        ).result()  # call '.result()' to poll until service return final result
-
         # please add some check logic here by yourself
         # ...

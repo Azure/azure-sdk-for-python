@@ -39,9 +39,9 @@ def main():
                 "endpoints": {
                     "outbound": {
                         "assigned": {
-                            "newIothubEndpoint": {
-                                "address": "https://iothub-for-dps.azure-devices.net",
-                                "endpointType": "Microsoft.Devices/IotHubs",
+                            "newEventGridEndpoint": {
+                                "address": "https://myneweventgridtopic.westeurope-1.eventgrid.azure.net/api/events",
+                                "endpointType": "Microsoft.Devices",
                             }
                         }
                     }
@@ -52,6 +52,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01-preview/Update_NamespaceDiscoveredDevice.json
+# x-ms-original-file: 2026-11-01/Update_NamespaceDiscoveredDevice.json
 if __name__ == "__main__":
     main()
