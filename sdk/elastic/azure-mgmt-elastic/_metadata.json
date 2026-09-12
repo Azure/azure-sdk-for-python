@@ -1,11 +1,11 @@
 {
-  "apiVersion": "2025-06-01",
+  "apiVersion": "2026-03-15-preview",
   "apiVersions": {
-    "Microsoft.Elastic": "2025-06-01"
+    "Microsoft.Elastic": "2026-03-15-preview"
   },
-  "commit": "653bc50e3f2aa8b45ae202276a04976177dfe216",
+  "commit": "f398d14cf518231c3512b317db36c431794d1a83",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/elastic/resource-manager/Microsoft.Elastic/Elastic",
-  "emitterVersion": "0.63.3",
-  "httpClientPythonVersion": "^0.34.2"
+  "emitterVersion": "0.63.6",
+  "httpClientPythonVersion": "^0.37.1"
 }

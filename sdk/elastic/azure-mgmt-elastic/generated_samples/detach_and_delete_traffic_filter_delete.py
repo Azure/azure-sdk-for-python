@@ -36,6 +36,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2025-06-01/DetachAndDeleteTrafficFilter_Delete.json
+# x-ms-original-file: 2026-03-15-preview/DetachAndDeleteTrafficFilter_Delete.json
 if __name__ == "__main__":
     main()
