@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -90,7 +90,6 @@ from .._configuration import KeyVaultManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
@@ -158,7 +157,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -292,7 +294,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.VaultCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VaultCreateOrUpdateParameters, _types.VaultCreateOrUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -396,7 +398,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: JSON,
+        parameters: _types.VaultCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -409,7 +411,7 @@ class VaultsOperations:
         :param vault_name: The name of the vault. Required.
         :type vault_name: str
         :param parameters: Parameters to create or update the vault. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.keyvault.types.VaultCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -452,7 +454,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.VaultCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VaultCreateOrUpdateParameters, _types.VaultCreateOrUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Vault]:
         """Create or update a key vault in the specified subscription.
@@ -462,10 +464,10 @@ class VaultsOperations:
         :type resource_group_name: str
         :param vault_name: The name of the vault. Required.
         :type vault_name: str
-        :param parameters: Parameters to create or update the vault. Is one of the following types:
-         VaultCreateOrUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.keyvault.models.VaultCreateOrUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Parameters to create or update the vault. Is either a
+         VaultCreateOrUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.models.VaultCreateOrUpdateParameters or
+         ~azure.mgmt.keyvault.types.VaultCreateOrUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Vault. The Vault is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.keyvault.models.Vault]
@@ -555,7 +557,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: JSON,
+        parameters: _types.VaultPatchParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -568,7 +570,7 @@ class VaultsOperations:
         :param vault_name: The name of the vault. Required.
         :type vault_name: str
         :param parameters: Parameters to patch the vault. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.keyvault.types.VaultPatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -609,7 +611,7 @@ class VaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.VaultPatchParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VaultPatchParameters, _types.VaultPatchParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Vault:
         """Update a key vault in the specified subscription.
@@ -619,9 +621,10 @@ class VaultsOperations:
         :type resource_group_name: str
         :param vault_name: The name of the vault. Required.
         :type vault_name: str
-        :param parameters: Parameters to patch the vault. Is one of the following types:
-         VaultPatchParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.keyvault.models.VaultPatchParameters or JSON or IO[bytes]
+        :param parameters: Parameters to patch the vault. Is either a VaultPatchParameters type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.models.VaultPatchParameters or
+         ~azure.mgmt.keyvault.types.VaultPatchParameters or IO[bytes]
         :return: Vault. The Vault is compatible with MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.Vault
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -808,7 +811,10 @@ class VaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -901,7 +907,10 @@ class VaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -981,7 +990,7 @@ class VaultsOperations:
         resource_group_name: str,
         vault_name: str,
         operation_kind: Union[str, _models.AccessPolicyUpdateKind],
-        parameters: JSON,
+        parameters: _types.VaultAccessPolicyParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -997,7 +1006,7 @@ class VaultsOperations:
          Required.
         :type operation_kind: str or ~azure.mgmt.keyvault.models.AccessPolicyUpdateKind
         :param parameters: Access policy to merge into the vault. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.keyvault.types.VaultAccessPolicyParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1045,7 +1054,7 @@ class VaultsOperations:
         resource_group_name: str,
         vault_name: str,
         operation_kind: Union[str, _models.AccessPolicyUpdateKind],
-        parameters: Union[_models.VaultAccessPolicyParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VaultAccessPolicyParameters, _types.VaultAccessPolicyParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.VaultAccessPolicyParameters:
         """Update access policies in a key vault in the specified subscription.
@@ -1058,9 +1067,10 @@ class VaultsOperations:
         :param operation_kind: Name of the operation. Known values are: "add", "replace", and "remove".
          Required.
         :type operation_kind: str or ~azure.mgmt.keyvault.models.AccessPolicyUpdateKind
-        :param parameters: Access policy to merge into the vault. Is one of the following types:
-         VaultAccessPolicyParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.keyvault.models.VaultAccessPolicyParameters or JSON or IO[bytes]
+        :param parameters: Access policy to merge into the vault. Is either a
+         VaultAccessPolicyParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.models.VaultAccessPolicyParameters or
+         ~azure.mgmt.keyvault.types.VaultAccessPolicyParameters or IO[bytes]
         :return: VaultAccessPolicyParameters. The VaultAccessPolicyParameters is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.VaultAccessPolicyParameters
@@ -1366,7 +1376,10 @@ class VaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1462,9 +1475,12 @@ class VaultsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = api_version
+                _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1529,12 +1545,16 @@ class VaultsOperations:
 
     @overload
     async def check_name_availability(
-        self, vault_name: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        vault_name: _types.VaultCheckNameAvailabilityParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
         """Checks that the vault name is valid and is not already in use.
 
         :param vault_name: The name of the vault. Required.
-        :type vault_name: JSON
+        :type vault_name: ~azure.mgmt.keyvault.types.VaultCheckNameAvailabilityParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1563,14 +1583,18 @@ class VaultsOperations:
 
     @distributed_trace_async
     async def check_name_availability(
-        self, vault_name: Union[_models.VaultCheckNameAvailabilityParameters, JSON, IO[bytes]], **kwargs: Any
+        self,
+        vault_name: Union[
+            _models.VaultCheckNameAvailabilityParameters, _types.VaultCheckNameAvailabilityParameters, IO[bytes]
+        ],
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
         """Checks that the vault name is valid and is not already in use.
 
-        :param vault_name: The name of the vault. Is one of the following types:
-         VaultCheckNameAvailabilityParameters, JSON, IO[bytes] Required.
-        :type vault_name: ~azure.mgmt.keyvault.models.VaultCheckNameAvailabilityParameters or JSON or
-         IO[bytes]
+        :param vault_name: The name of the vault. Is either a VaultCheckNameAvailabilityParameters type
+         or a IO[bytes] type. Required.
+        :type vault_name: ~azure.mgmt.keyvault.models.VaultCheckNameAvailabilityParameters or
+         ~azure.mgmt.keyvault.types.VaultCheckNameAvailabilityParameters or IO[bytes]
         :return: CheckNameAvailabilityResult. The CheckNameAvailabilityResult is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.CheckNameAvailabilityResult
@@ -1776,7 +1800,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         vault_name: str,
         private_endpoint_connection_name: str,
-        properties: JSON,
+        properties: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1792,7 +1816,7 @@ class PrivateEndpointConnectionsOperations:
          with the key vault. Required.
         :type private_endpoint_connection_name: str
         :param properties: The intended state of private endpoint connection. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.keyvault.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1840,7 +1864,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         vault_name: str,
         private_endpoint_connection_name: str,
-        properties: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        properties: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> _models.PrivateEndpointConnection:
         """Updates the specified private endpoint connection associated with the key vault.
@@ -1853,9 +1877,10 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: Name of the private endpoint connection associated
          with the key vault. Required.
         :type private_endpoint_connection_name: str
-        :param properties: The intended state of private endpoint connection. Is one of the following
-         types: PrivateEndpointConnection, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.keyvault.models.PrivateEndpointConnection or JSON or IO[bytes]
+        :param properties: The intended state of private endpoint connection. Is either a
+         PrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.keyvault.models.PrivateEndpointConnection or
+         ~azure.mgmt.keyvault.types.PrivateEndpointConnection or IO[bytes]
         :return: PrivateEndpointConnection. The PrivateEndpointConnection is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.PrivateEndpointConnection
@@ -2126,7 +2151,10 @@ class PrivateEndpointConnectionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2259,7 +2287,11 @@ class ManagedHsmsOperations:
         return deserialized  # type: ignore
 
     async def _create_or_update_initial(
-        self, resource_group_name: str, name: str, parameters: Union[_models.ManagedHsm, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        name: str,
+        parameters: Union[_models.ManagedHsm, _types.ManagedHsm, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2362,7 +2394,7 @@ class ManagedHsmsOperations:
         self,
         resource_group_name: str,
         name: str,
-        parameters: JSON,
+        parameters: _types.ManagedHsm,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2375,7 +2407,7 @@ class ManagedHsmsOperations:
         :param name: The name of the managed HSM Pool. Required.
         :type name: str
         :param parameters: Parameters to create or update the managed HSM Pool. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.keyvault.types.ManagedHsm
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2415,7 +2447,11 @@ class ManagedHsmsOperations:
 
     @distributed_trace_async
     async def begin_create_or_update(
-        self, resource_group_name: str, name: str, parameters: Union[_models.ManagedHsm, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        name: str,
+        parameters: Union[_models.ManagedHsm, _types.ManagedHsm, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedHsm]:
         """Create or update a managed HSM Pool in the specified subscription.
 
@@ -2424,9 +2460,10 @@ class ManagedHsmsOperations:
         :type resource_group_name: str
         :param name: The name of the managed HSM Pool. Required.
         :type name: str
-        :param parameters: Parameters to create or update the managed HSM Pool. Is one of the following
-         types: ManagedHsm, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.keyvault.models.ManagedHsm or JSON or IO[bytes]
+        :param parameters: Parameters to create or update the managed HSM Pool. Is either a ManagedHsm
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.models.ManagedHsm or
+         ~azure.mgmt.keyvault.types.ManagedHsm or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedHsm. The ManagedHsm is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.keyvault.models.ManagedHsm]
@@ -2485,7 +2522,11 @@ class ManagedHsmsOperations:
         )
 
     async def _update_initial(
-        self, resource_group_name: str, name: str, parameters: Union[_models.ManagedHsm, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        name: str,
+        parameters: Union[_models.ManagedHsm, _types.ManagedHsm, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2588,7 +2629,7 @@ class ManagedHsmsOperations:
         self,
         resource_group_name: str,
         name: str,
-        parameters: JSON,
+        parameters: _types.ManagedHsm,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2601,7 +2642,7 @@ class ManagedHsmsOperations:
         :param name: The name of the managed HSM Pool. Required.
         :type name: str
         :param parameters: Parameters to patch the managed HSM Pool. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.keyvault.types.ManagedHsm
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2641,7 +2682,11 @@ class ManagedHsmsOperations:
 
     @distributed_trace_async
     async def begin_update(
-        self, resource_group_name: str, name: str, parameters: Union[_models.ManagedHsm, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        name: str,
+        parameters: Union[_models.ManagedHsm, _types.ManagedHsm, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedHsm]:
         """Update a managed HSM Pool in the specified subscription.
 
@@ -2650,9 +2695,10 @@ class ManagedHsmsOperations:
         :type resource_group_name: str
         :param name: The name of the managed HSM Pool. Required.
         :type name: str
-        :param parameters: Parameters to patch the managed HSM Pool. Is one of the following types:
-         ManagedHsm, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.keyvault.models.ManagedHsm or JSON or IO[bytes]
+        :param parameters: Parameters to patch the managed HSM Pool. Is either a ManagedHsm type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.models.ManagedHsm or
+         ~azure.mgmt.keyvault.types.ManagedHsm or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedHsm. The ManagedHsm is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.keyvault.models.ManagedHsm]
@@ -2884,7 +2930,10 @@ class ManagedHsmsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2978,7 +3027,10 @@ class ManagedHsmsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3247,7 +3299,10 @@ class ManagedHsmsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3312,12 +3367,16 @@ class ManagedHsmsOperations:
 
     @overload
     async def check_mhsm_name_availability(
-        self, mhsm_name: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        mhsm_name: _types.CheckMhsmNameAvailabilityParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckMhsmNameAvailabilityResult:
         """Checks that the managed hsm name is valid and is not already in use.
 
         :param mhsm_name: The request body. Required.
-        :type mhsm_name: JSON
+        :type mhsm_name: ~azure.mgmt.keyvault.types.CheckMhsmNameAvailabilityParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3346,14 +3405,18 @@ class ManagedHsmsOperations:
 
     @distributed_trace_async
     async def check_mhsm_name_availability(
-        self, mhsm_name: Union[_models.CheckMhsmNameAvailabilityParameters, JSON, IO[bytes]], **kwargs: Any
+        self,
+        mhsm_name: Union[
+            _models.CheckMhsmNameAvailabilityParameters, _types.CheckMhsmNameAvailabilityParameters, IO[bytes]
+        ],
+        **kwargs: Any
     ) -> _models.CheckMhsmNameAvailabilityResult:
         """Checks that the managed hsm name is valid and is not already in use.
 
-        :param mhsm_name: The request body. Is one of the following types:
-         CheckMhsmNameAvailabilityParameters, JSON, IO[bytes] Required.
-        :type mhsm_name: ~azure.mgmt.keyvault.models.CheckMhsmNameAvailabilityParameters or JSON or
-         IO[bytes]
+        :param mhsm_name: The request body. Is either a CheckMhsmNameAvailabilityParameters type or a
+         IO[bytes] type. Required.
+        :type mhsm_name: ~azure.mgmt.keyvault.models.CheckMhsmNameAvailabilityParameters or
+         ~azure.mgmt.keyvault.types.CheckMhsmNameAvailabilityParameters or IO[bytes]
         :return: CheckMhsmNameAvailabilityResult. The CheckMhsmNameAvailabilityResult is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.CheckMhsmNameAvailabilityResult
@@ -3554,7 +3617,7 @@ class SecretsOperations:
         resource_group_name: str,
         vault_name: str,
         secret_name: str,
-        parameters: JSON,
+        parameters: _types.SecretCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3571,7 +3634,7 @@ class SecretsOperations:
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
         :param parameters: Parameters to create or update the secret. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.keyvault.types.SecretCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3618,7 +3681,7 @@ class SecretsOperations:
         resource_group_name: str,
         vault_name: str,
         secret_name: str,
-        parameters: Union[_models.SecretCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.SecretCreateOrUpdateParameters, _types.SecretCreateOrUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Secret:
         """Create or update a secret in a key vault in the specified subscription.  NOTE: This API is
@@ -3632,10 +3695,10 @@ class SecretsOperations:
         :type vault_name: str
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
-        :param parameters: Parameters to create or update the secret. Is one of the following types:
-         SecretCreateOrUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.keyvault.models.SecretCreateOrUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Parameters to create or update the secret. Is either a
+         SecretCreateOrUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.models.SecretCreateOrUpdateParameters or
+         ~azure.mgmt.keyvault.types.SecretCreateOrUpdateParameters or IO[bytes]
         :return: Secret. The Secret is compatible with MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.Secret
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3746,7 +3809,7 @@ class SecretsOperations:
         resource_group_name: str,
         vault_name: str,
         secret_name: str,
-        parameters: JSON,
+        parameters: _types.SecretPatchParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3763,7 +3826,7 @@ class SecretsOperations:
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
         :param parameters: Parameters to patch the secret. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.keyvault.types.SecretPatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3810,7 +3873,7 @@ class SecretsOperations:
         resource_group_name: str,
         vault_name: str,
         secret_name: str,
-        parameters: Union[_models.SecretPatchParameters, JSON, IO[bytes]],
+        parameters: Union[_models.SecretPatchParameters, _types.SecretPatchParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Secret:
         """Update a secret in the specified subscription.  NOTE: This API is intended for internal use in
@@ -3824,9 +3887,10 @@ class SecretsOperations:
         :type vault_name: str
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
-        :param parameters: Parameters to patch the secret. Is one of the following types:
-         SecretPatchParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.keyvault.models.SecretPatchParameters or JSON or IO[bytes]
+        :param parameters: Parameters to patch the secret. Is either a SecretPatchParameters type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.models.SecretPatchParameters or
+         ~azure.mgmt.keyvault.types.SecretPatchParameters or IO[bytes]
         :return: Secret. The Secret is compatible with MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.Secret
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3961,7 +4025,10 @@ class SecretsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4132,7 +4199,7 @@ class KeysOperations:
         resource_group_name: str,
         vault_name: str,
         key_name: str,
-        parameters: JSON,
+        parameters: _types.KeyCreateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4149,7 +4216,7 @@ class KeysOperations:
         :param key_name: The name of the key to be retrieved. Required.
         :type key_name: str
         :param parameters: The parameters used to create the specified key. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.keyvault.types.KeyCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4196,7 +4263,7 @@ class KeysOperations:
         resource_group_name: str,
         vault_name: str,
         key_name: str,
-        parameters: Union[_models.KeyCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.KeyCreateParameters, _types.KeyCreateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Key:
         """Creates the first version of a new key if it does not exist. If it already exists, then the
@@ -4210,9 +4277,10 @@ class KeysOperations:
         :type vault_name: str
         :param key_name: The name of the key to be retrieved. Required.
         :type key_name: str
-        :param parameters: The parameters used to create the specified key. Is one of the following
-         types: KeyCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.keyvault.models.KeyCreateParameters or JSON or IO[bytes]
+        :param parameters: The parameters used to create the specified key. Is either a
+         KeyCreateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.models.KeyCreateParameters or
+         ~azure.mgmt.keyvault.types.KeyCreateParameters or IO[bytes]
         :return: Key. The Key is compatible with MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.Key
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4340,7 +4408,10 @@ class KeysOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4522,7 +4593,10 @@ class KeysOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4697,7 +4771,7 @@ class ManagedHsmKeysOperations:
         resource_group_name: str,
         name: str,
         key_name: str,
-        parameters: JSON,
+        parameters: _types.ManagedHsmKeyCreateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4716,7 +4790,7 @@ class ManagedHsmKeysOperations:
          personally identifiable or sensitive information. Required.
         :type key_name: str
         :param parameters: The parameters used to create the specified key. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.keyvault.types.ManagedHsmKeyCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4765,7 +4839,7 @@ class ManagedHsmKeysOperations:
         resource_group_name: str,
         name: str,
         key_name: str,
-        parameters: Union[_models.ManagedHsmKeyCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedHsmKeyCreateParameters, _types.ManagedHsmKeyCreateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.ManagedHsmKey:
         """Creates the first version of a new key if it does not exist. If it already exists, then the
@@ -4781,10 +4855,10 @@ class ManagedHsmKeysOperations:
          globally for the purpose of running the service. The value provided should not include
          personally identifiable or sensitive information. Required.
         :type key_name: str
-        :param parameters: The parameters used to create the specified key. Is one of the following
-         types: ManagedHsmKeyCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.keyvault.models.ManagedHsmKeyCreateParameters or JSON or
-         IO[bytes]
+        :param parameters: The parameters used to create the specified key. Is either a
+         ManagedHsmKeyCreateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.keyvault.models.ManagedHsmKeyCreateParameters or
+         ~azure.mgmt.keyvault.types.ManagedHsmKeyCreateParameters or IO[bytes]
         :return: ManagedHsmKey. The ManagedHsmKey is compatible with MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.ManagedHsmKey
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4912,7 +4986,10 @@ class ManagedHsmKeysOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5096,7 +5173,10 @@ class ManagedHsmKeysOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5396,7 +5476,10 @@ class MHSMRegionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5571,7 +5654,7 @@ class MHSMPrivateEndpointConnectionsOperations:
         resource_group_name: str,
         name: str,
         private_endpoint_connection_name: str,
-        properties: JSON,
+        properties: _types.MHSMPrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5587,7 +5670,7 @@ class MHSMPrivateEndpointConnectionsOperations:
          with the managed hsm pool. Required.
         :type private_endpoint_connection_name: str
         :param properties: The intended state of private endpoint connection. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.keyvault.types.MHSMPrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5635,7 +5718,7 @@ class MHSMPrivateEndpointConnectionsOperations:
         resource_group_name: str,
         name: str,
         private_endpoint_connection_name: str,
-        properties: Union[_models.MHSMPrivateEndpointConnection, JSON, IO[bytes]],
+        properties: Union[_models.MHSMPrivateEndpointConnection, _types.MHSMPrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> _models.MHSMPrivateEndpointConnection:
         """Updates the specified private endpoint connection associated with the managed hsm pool.
@@ -5648,10 +5731,10 @@ class MHSMPrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: Name of the private endpoint connection associated
          with the managed hsm pool. Required.
         :type private_endpoint_connection_name: str
-        :param properties: The intended state of private endpoint connection. Is one of the following
-         types: MHSMPrivateEndpointConnection, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.keyvault.models.MHSMPrivateEndpointConnection or JSON or
-         IO[bytes]
+        :param properties: The intended state of private endpoint connection. Is either a
+         MHSMPrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.keyvault.models.MHSMPrivateEndpointConnection or
+         ~azure.mgmt.keyvault.types.MHSMPrivateEndpointConnection or IO[bytes]
         :return: MHSMPrivateEndpointConnection. The MHSMPrivateEndpointConnection is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.keyvault.models.MHSMPrivateEndpointConnection
@@ -5922,7 +6005,10 @@ class MHSMPrivateEndpointConnectionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(

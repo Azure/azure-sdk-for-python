@@ -15,13 +15,29 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.live_test_only
-class TestKeyVaultManagementOperationsAsync(AzureMgmtRecordedTestCase):
+class TestKeyVaultManagementManagedHsmsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(KeyVaultManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_operations_list(self, resource_group):
-        response = self.client.operations.list()
+    async def test_managed_hsms_list_by_resource_group(self, resource_group):
+        response = self.client.managed_hsms.list_by_resource_group(
+            resource_group_name=resource_group.name,
+        )
+        result = [r async for r in response]
+        assert len(result) == 0
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_managed_hsms_list_by_subscription(self, resource_group):
+        response = self.client.managed_hsms.list_by_subscription()
+        result = [r async for r in response]
+        assert len(result)
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_managed_hsms_list_deleted(self, resource_group):
+        response = self.client.managed_hsms.list_deleted()
         result = [r async for r in response]
         assert len(result)

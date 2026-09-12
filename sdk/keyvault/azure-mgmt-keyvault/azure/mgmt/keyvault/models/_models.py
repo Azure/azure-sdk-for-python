@@ -753,7 +753,7 @@ class KeyProperties(_Model):
     :ivar attributes: The attributes of the key.
     :vartype attributes: ~azure.mgmt.keyvault.models.KeyAttributes
     :ivar kty: The type of the key. For valid values, see JsonWebKeyType. Known values are: "EC",
-     "EC-HSM", "RSA", and "RSA-HSM".
+     "EC-HSM", "RSA", "RSA-HSM", and "oct-HSM".
     :vartype kty: str or ~azure.mgmt.keyvault.models.JsonWebKeyType
     :ivar key_ops:
     :vartype key_ops: list[str or ~azure.mgmt.keyvault.models.JsonWebKeyOperation]
@@ -784,7 +784,7 @@ class KeyProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of the key. For valid values, see JsonWebKeyType. Known values are: \"EC\",
-     \"EC-HSM\", \"RSA\", and \"RSA-HSM\"."""
+     \"EC-HSM\", \"RSA\", \"RSA-HSM\", and \"oct-HSM\"."""
     key_ops: Optional[list[Union[str, "_models.JsonWebKeyOperation"]]] = rest_field(
         name="keyOps", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1267,7 +1267,7 @@ class ManagedHsmKeyProperties(_Model):
     :ivar attributes: The attributes of the key.
     :vartype attributes: ~azure.mgmt.keyvault.models.ManagedHsmKeyAttributes
     :ivar kty: The type of the key. For valid values, see JsonWebKeyType. Known values are: "EC",
-     "EC-HSM", "RSA", and "RSA-HSM".
+     "EC-HSM", "RSA", "RSA-HSM", and "oct-HSM".
     :vartype kty: str or ~azure.mgmt.keyvault.models.JsonWebKeyType
     :ivar key_ops:
     :vartype key_ops: list[str or ~azure.mgmt.keyvault.models.JsonWebKeyOperation]
@@ -1298,7 +1298,7 @@ class ManagedHsmKeyProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of the key. For valid values, see JsonWebKeyType. Known values are: \"EC\",
-     \"EC-HSM\", \"RSA\", and \"RSA-HSM\"."""
+     \"EC-HSM\", \"RSA\", \"RSA-HSM\", and \"oct-HSM\"."""
     key_ops: Optional[list[Union[str, "_models.JsonWebKeyOperation"]]] = rest_field(
         name="keyOps", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1662,14 +1662,14 @@ class ManagedHsmSku(_Model):
     :vartype family: str or ~azure.mgmt.keyvault.models.ManagedHsmSkuFamily
     :ivar name: SKU of the managed HSM Pool. Required. Known values are: "Standard_B1",
      "Custom_B32", "Custom_B6", "Custom_C42", and "Custom_C10".
-    :vartype name: str or ~azure.mgmt.keyvault.models.ManagedHsmSkuName
+    :vartype name: str or ~azure.mgmt.keyvault.models.ManagedHsmSkuNameV2
     """
 
     family: Union[str, "_models.ManagedHsmSkuFamily"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """SKU Family of the managed HSM Pool. Required. Known values are: \"B\" and \"C\"."""
-    name: Union[str, "_models.ManagedHsmSkuName"] = rest_field(
+    name: Union[str, "_models.ManagedHsmSkuNameV2"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """SKU of the managed HSM Pool. Required. Known values are: \"Standard_B1\", \"Custom_B32\",
@@ -1680,7 +1680,7 @@ class ManagedHsmSku(_Model):
         self,
         *,
         family: Union[str, "_models.ManagedHsmSkuFamily"],
-        name: Union[str, "_models.ManagedHsmSkuName"],
+        name: Union[str, "_models.ManagedHsmSkuNameV2"],
     ) -> None: ...
 
     @overload
@@ -3578,6 +3578,52 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
+class TokenBindingParameters(_Model):
+    """Configuration for Token Binding for Entra tokens.
+
+    :ivar mode: This specifies whether token binding is disabled, enabled or enforced. Known values
+     are: "Enforced" and "NotEnforced".
+    :vartype mode: str or ~azure.mgmt.keyvault.models.TokenBindingMode
+    :ivar minimum_token_binding_strength: Must be one of the following values "NoValidation",
+     "Unattested", "AttestedTrustedLaunch", "AttestedConfidential". Strength of the token binding
+     increases with each value in that order. Known values are: "NoValidation", "Unattested",
+     "AttestedTrustedLaunch", and "AttestedConfidential".
+    :vartype minimum_token_binding_strength: str or
+     ~azure.mgmt.keyvault.models.TokenBindingStrength
+    """
+
+    mode: Optional[Union[str, "_models.TokenBindingMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """This specifies whether token binding is disabled, enabled or enforced. Known values are:
+     \"Enforced\" and \"NotEnforced\"."""
+    minimum_token_binding_strength: Optional[Union[str, "_models.TokenBindingStrength"]] = rest_field(
+        name="minimumTokenBindingStrength", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Must be one of the following values \"NoValidation\", \"Unattested\",
+     \"AttestedTrustedLaunch\", \"AttestedConfidential\". Strength of the token binding increases
+     with each value in that order. Known values are: \"NoValidation\", \"Unattested\",
+     \"AttestedTrustedLaunch\", and \"AttestedConfidential\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.TokenBindingMode"]] = None,
+        minimum_token_binding_strength: Optional[Union[str, "_models.TokenBindingStrength"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Trigger(_Model):
     """Trigger.
 
@@ -3918,6 +3964,8 @@ class VaultPatchProperties(_Model):
      originates from trusted services will be blocked. This will override the set firewall rules,
      meaning that even if the firewall rules are present we will not honor the rules.
     :vartype public_network_access: str
+    :ivar token_binding_parameters: Configuration for Token Binding for Entra tokens.
+    :vartype token_binding_parameters: ~azure.mgmt.keyvault.models.TokenBindingParameters
     """
 
     tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
@@ -3986,6 +4034,10 @@ class VaultPatchProperties(_Model):
      'disabled' all traffic except private endpoint traffic and that that originates from trusted
      services will be blocked. This will override the set firewall rules, meaning that even if the
      firewall rules are present we will not honor the rules."""
+    token_binding_parameters: Optional["_models.TokenBindingParameters"] = rest_field(
+        name="tokenBindingParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration for Token Binding for Entra tokens."""
 
     @overload
     def __init__(
@@ -4004,6 +4056,7 @@ class VaultPatchProperties(_Model):
         enable_purge_protection: Optional[bool] = None,
         network_acls: Optional["_models.NetworkRuleSet"] = None,
         public_network_access: Optional[str] = None,
+        token_binding_parameters: Optional["_models.TokenBindingParameters"] = None,
     ) -> None: ...
 
     @overload
@@ -4080,6 +4133,8 @@ class VaultProperties(_Model):
      originates from trusted services will be blocked. This will override the set firewall rules,
      meaning that even if the firewall rules are present we will not honor the rules.
     :vartype public_network_access: str
+    :ivar token_binding_parameters: Configuration for Token Binding for Entra tokens.
+    :vartype token_binding_parameters: ~azure.mgmt.keyvault.models.TokenBindingParameters
     """
 
     tenant_id: str = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
@@ -4163,6 +4218,10 @@ class VaultProperties(_Model):
      'disabled' all traffic except private endpoint traffic and that that originates from trusted
      services will be blocked. This will override the set firewall rules, meaning that even if the
      firewall rules are present we will not honor the rules."""
+    token_binding_parameters: Optional["_models.TokenBindingParameters"] = rest_field(
+        name="tokenBindingParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration for Token Binding for Entra tokens."""
 
     @overload
     def __init__(
@@ -4183,6 +4242,7 @@ class VaultProperties(_Model):
         network_acls: Optional["_models.NetworkRuleSet"] = None,
         provisioning_state: Optional[Union[str, "_models.VaultProvisioningState"]] = None,
         public_network_access: Optional[str] = None,
+        token_binding_parameters: Optional["_models.TokenBindingParameters"] = None,
     ) -> None: ...
 
     @overload

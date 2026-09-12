@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2026-02-01/managedHsmListKeys.json
+# x-ms-original-file: 2026-03-01-preview/managedHsmListKeys.json
 if __name__ == "__main__":
     main()
