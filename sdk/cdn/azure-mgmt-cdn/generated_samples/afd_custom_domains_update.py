@@ -45,6 +45,8 @@ def main():
                         "cipherSuiteSetForTls13": ["TLS_AES_128_GCM_SHA256", "TLS_AES_256_GCM_SHA384"],
                     },
                     "minimumTlsVersion": "TLS12",
+                    "serverTlsGroupPolicy": "Custom",
+                    "serverTlsGroups": ["X25519MLKEM768", "SecP256r1MLKEM768", "X25519", "prime256v1"],
                 },
             }
         },
@@ -52,6 +54,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-12-01/AFDCustomDomains_Update.json
+# x-ms-original-file: 2026-07-01/AFDCustomDomains_Update.json
 if __name__ == "__main__":
     main()

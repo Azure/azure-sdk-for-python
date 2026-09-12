@@ -1,5 +1,46 @@
 # Release History
 
+## 14.1.0 (2026-08-20)
+
+### Features Added
+
+  - Model `AFDDomainHttpsParameters` added property `server_tls_group_policy`
+  - Model `AFDDomainHttpsParameters` added property `server_tls_groups`
+  - Model `AFDDomainProperties` added property `mtls_settings`
+  - Model `AFDDomainUpdatePropertiesParameters` added property `mtls_settings`
+  - Model `AFDEndpointProperties` added property `enforce_mtls`
+  - Model `AFDEndpointPropertiesUpdateParameters` added property `enforce_mtls`
+  - Model `AFDOriginProperties` added property `certificate_name_check_validation_mode`
+  - Model `AFDOriginProperties` added property `custom_certificate_subjects`
+  - Model `AFDOriginUpdatePropertiesParameters` added property `certificate_name_check_validation_mode`
+  - Model `AFDOriginUpdatePropertiesParameters` added property `custom_certificate_subjects`
+  - Enum `DeliveryRuleActionEnum` added member `AFD_URL_SIGNING`
+  - Enum `DeliveryRuleActionEnum` added member `EDGE_ACTION`
+  - Enum `DeliveryRuleActionParametersType` added member `DELIVERY_RULE_EDGE_ACTION_PARAMETERS`
+  - Model `OriginAuthenticationProperties` added property `token_destination_header`
+  - Enum `SecretType` added member `MTLS_CERTIFICATE_CHAIN`
+  - Model `SecurityPolicyWebApplicationFirewallAssociation` added property `routes`
+  - Model `SecurityPolicyWebApplicationFirewallParameters` added property `is_profile_level`
+  - Added model `AFDDomainMtlsParameters`
+  - Added model `AfdSecretMtlsCertificateChain`
+  - Added enum `AfdServerTlsGroup`
+  - Added enum `AfdServerTlsGroupPolicy`
+  - Added model `AfdUrlSigningAction`
+  - Added model `AfdUrlSigningActionParameters`
+  - Added enum `CertificateNameCheckValidationMode`
+  - Added enum `CertificateRevocationCheckEnabledState`
+  - Added model `ClientCertificateRequiredAndOriginValidatesAdvancedSettings`
+  - Added model `ClientCertificateRequiredAndValidatedAdvancedSettings`
+  - Added model `ClientCertificateValidatedIfPresentedAdvancedSettings`
+  - Added model `CompleteMtlsPassthroughToOriginAdvancedSettings`
+  - Added model `DeliveryRuleEdgeActionParameters`
+  - Added model `EdgeAction`
+  - Added enum `EnforceMtlsEnabledState`
+  - Added enum `InvocationPoint`
+  - Added enum `MtlsScenarioType`
+  - Added enum `OriginAuthenticationTokenDestinationHeader`
+  - Added enum `TypeName`
+
 ## 14.0.0 (2026-07-13)
 
 ### Features Added
