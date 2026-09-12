@@ -13,7 +13,6 @@ from typing_extensions import Required, TypedDict
 if TYPE_CHECKING:
     from .models import (
         ActionEnum,
-        ActionType,
         BillingCycle,
         BooleanEnum,
         CreatedByType,
@@ -24,55 +23,18 @@ if TYPE_CHECKING:
         DecryptionRuleTypeEnum,
         DefaultMode,
         EgressNat,
-        EnableStatus,
         EnabledDNSType,
-        HealthStatus,
         LogOption,
         LogType,
         ManagedIdentityType,
         MarketplaceSubscriptionStatus,
         NetworkType,
-        Origin,
-        ProductSerialStatusValues,
         ProtocolType,
         ProvisioningState,
-        ReadOnlyProvisioningState,
-        RegistrationStatus,
         ScopeType,
-        ServerStatus,
         StateEnum,
         UsageType,
     )
-
-
-class AdvSecurityObjectListResponse(TypedDict, total=False):
-    """advanced security object.
-
-    :ivar value: response value. Required.
-    :vartype value: "AdvSecurityObjectModel"
-    :ivar next_link: next link.
-    :vartype next_link: str
-    """
-
-    value: Required["AdvSecurityObjectModel"]
-    """response value. Required."""
-    nextLink: str
-    """next link."""
-
-
-class AdvSecurityObjectModel(TypedDict, total=False):
-    """List of custom and predefined url category.
-
-    :ivar type: type of object.
-    :vartype type: str
-    :ivar entry: URL entry. Required.
-    :vartype entry: list["NameDescriptionObject"]
-    """
-
-    type: str
-    """type of object."""
-    entry: Required[list["NameDescriptionObject"]]
-    """URL entry. Required."""
 
 
 class ApplicationInsights(TypedDict, total=False):
@@ -90,68 +52,18 @@ class ApplicationInsights(TypedDict, total=False):
     """Application Insights key."""
 
 
-class AppSeenData(TypedDict, total=False):
-    """Data Type for App Seen.
-
-    :ivar count: number of rows. Required.
-    :vartype count: int
-    :ivar app_seen_list: array of appSeen. Required.
-    :vartype app_seen_list: list["AppSeenInfo"]
-    """
-
-    count: Required[int]
-    """number of rows. Required."""
-    appSeenList: Required[list["AppSeenInfo"]]
-    """array of appSeen. Required."""
-
-
-class AppSeenInfo(TypedDict, total=False):
-    """Definition for App Seen.
-
-    :ivar title: title. Required.
-    :vartype title: str
-    :ivar category: category. Required.
-    :vartype category: str
-    :ivar sub_category: subCategory. Required.
-    :vartype sub_category: str
-    :ivar risk: risk. Required.
-    :vartype risk: str
-    :ivar tag: tag. Required.
-    :vartype tag: str
-    :ivar technology: technology. Required.
-    :vartype technology: str
-    :ivar standard_ports: standardPorts. Required.
-    :vartype standard_ports: str
-    """
-
-    title: Required[str]
-    """title. Required."""
-    category: Required[str]
-    """category. Required."""
-    subCategory: Required[str]
-    """subCategory. Required."""
-    risk: Required[str]
-    """risk. Required."""
-    tag: Required[str]
-    """tag. Required."""
-    technology: Required[str]
-    """technology. Required."""
-    standardPorts: Required[str]
-    """standardPorts. Required."""
-
-
 class AzureResourceManagerManagedIdentityProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """The properties of the managed service identities assigned to this resource.
 
-    :ivar tenant_id: The Active Directory tenant id of the principal.
-    :vartype tenant_id: str
-    :ivar principal_id: The active directory identifier of this principal.
-    :vartype principal_id: str
+    :ivar tenantId: The Active Directory tenant id of the principal.
+    :vartype tenantId: str
+    :ivar principalId: The active directory identifier of this principal.
+    :vartype principalId: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
      "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
     :vartype type: Union[str, "ManagedIdentityType"]
-    :ivar user_assigned_identities: The identities assigned to this resource by the user.
-    :vartype user_assigned_identities: dict[str, "AzureResourceManagerUserAssignedIdentity"]
+    :ivar userAssignedIdentities: The identities assigned to this resource by the user.
+    :vartype userAssignedIdentities: dict[str, "AzureResourceManagerUserAssignedIdentity"]
     """
 
     tenantId: str
@@ -168,10 +80,10 @@ class AzureResourceManagerManagedIdentityProperties(TypedDict, total=False):  # 
 class AzureResourceManagerUserAssignedIdentity(TypedDict, total=False):
     """A managed identity assigned by the user.
 
-    :ivar client_id: The active directory client identifier for this principal.
-    :vartype client_id: str
-    :ivar principal_id: The active directory identifier for this principal.
-    :vartype principal_id: str
+    :ivar clientId: The active directory client identifier for this principal.
+    :vartype clientId: str
+    :ivar principalId: The active directory identifier for this principal.
+    :vartype principalId: str
     """
 
     clientId: str
@@ -183,8 +95,8 @@ class AzureResourceManagerUserAssignedIdentity(TypedDict, total=False):
 class Category(TypedDict, total=False):
     """URL/EDL to match.
 
-    :ivar url_custom: custom URL. Required.
-    :vartype url_custom: list[str]
+    :ivar urlCustom: custom URL. Required.
+    :vartype urlCustom: list[str]
     :ivar feeds: feed list. Required.
     :vartype feeds: list[str]
     """
@@ -198,22 +110,22 @@ class Category(TypedDict, total=False):
 class CertificateObject(TypedDict, total=False):
     """certificate used for inbound and outbound decryption.
 
-    :ivar certificate_signer_resource_id: Resource Id of certificate signer, to be populated only
-     when certificateSelfSigned is false.
-    :vartype certificate_signer_resource_id: str
-    :ivar certificate_self_signed: use certificate self signed. Required. Known values are: "TRUE"
+    :ivar certificateSignerResourceId: Resource Id of certificate signer, to be populated only when
+     certificateSelfSigned is false.
+    :vartype certificateSignerResourceId: str
+    :ivar certificateSelfSigned: use certificate self signed. Required. Known values are: "TRUE"
      and "FALSE".
-    :vartype certificate_self_signed: Union[str, "BooleanEnum"]
-    :ivar audit_comment: comment for this object.
-    :vartype audit_comment: str
+    :vartype certificateSelfSigned: Union[str, "BooleanEnum"]
+    :ivar auditComment: comment for this object.
+    :vartype auditComment: str
     :ivar description: user description for this object.
     :vartype description: str
     :ivar etag: read only string representing last create or update.
     :vartype etag: str
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     certificateSignerResourceId: str
@@ -242,9 +154,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -270,9 +182,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -287,9 +199,9 @@ class CertificateObjectGlobalRulestackResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource. Required.
     :vartype properties: "CertificateObject"
     """
@@ -309,9 +221,9 @@ class CertificateObjectLocalRulestackResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource. Required.
     :vartype properties: "CertificateObject"
     """
@@ -320,81 +232,21 @@ class CertificateObjectLocalRulestackResource(ProxyResource):
     """The resource-specific properties for this resource. Required."""
 
 
-class Changelog(TypedDict, total=False):
-    """Changelog list.
-
-    :ivar changes: list of changes. Required.
-    :vartype changes: list[str]
-    :ivar last_committed: lastCommitted timestamp.
-    :vartype last_committed: str
-    :ivar last_modified: lastModified timestamp.
-    :vartype last_modified: str
-    """
-
-    changes: Required[list[str]]
-    """list of changes. Required."""
-    lastCommitted: str
-    """lastCommitted timestamp."""
-    lastModified: str
-    """lastModified timestamp."""
-
-
-class CloudManagerTenantList(TypedDict, total=False):
-    """Cloud Manager Tenant.
-
-    :ivar value: List of Cloud Manager Tenants. Required.
-    :vartype value: list[str]
-    """
-
-    value: Required[list[str]]
-    """List of Cloud Manager Tenants. Required."""
-
-
-class CountriesResponse(TypedDict, total=False):
-    """Countries Response Object.
-
-    :ivar value: The Country items on this page. Required.
-    :vartype value: list["Country"]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: Required[list["Country"]]
-    """The Country items on this page. Required."""
-    nextLink: str
-    """The link to the next page of items."""
-
-
-class Country(TypedDict, total=False):
-    """Country Description.
-
-    :ivar code: country code. Required.
-    :vartype code: str
-    :ivar description: code description.
-    :vartype description: str
-    """
-
-    code: Required[str]
-    """country code. Required."""
-    description: str
-    """code description."""
-
-
 class CustomCaptureConfigurationsFilter(TypedDict, total=False):
     """A single packet-capture filter rule. sourcePort is OPTIONAL — when omitted, any source port
     matches.
 
     :ivar protocol: Network protocol — TCP or UDP. Required. Known values are: "TCP" and "UDP".
     :vartype protocol: Union[str, "CustomCaptureConfigurationsProtocol"]
-    :ivar source_ip_address: Source IPv4 address in dotted format (e.g., 10.0.0.5). Required.
-    :vartype source_ip_address: str
-    :ivar source_port: Source port number (1-65535). Optional — omit to match any source port.
-    :vartype source_port: int
-    :ivar destination_ip_address: Destination IPv4 address in dotted format (e.g., 52.39.204.87).
+    :ivar sourceIpAddress: Source IPv4 address in dotted format (e.g., 10.0.0.5). Required.
+    :vartype sourceIpAddress: str
+    :ivar sourcePort: Source port number (1-65535). Optional — omit to match any source port.
+    :vartype sourcePort: int
+    :ivar destinationIpAddress: Destination IPv4 address in dotted format (e.g., 52.39.204.87).
      Required.
-    :vartype destination_ip_address: str
-    :ivar destination_port: Destination port number (1-65535). Required. Required.
-    :vartype destination_port: int
+    :vartype destinationIpAddress: str
+    :ivar destinationPort: Destination port number (1-65535). Required. Required.
+    :vartype destinationPort: int
     """
 
     protocol: Required[Union[str, "CustomCaptureConfigurationsProtocol"]]
@@ -421,9 +273,9 @@ class CustomCaptureConfigurationsFirewallResource(ProxyResource):  # pylint: dis
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource. Required.
     :vartype properties: "CustomCaptureConfigurationsProperties"
     """
@@ -436,33 +288,33 @@ class CustomCaptureConfigurationsProperties(TypedDict, total=False):
     """Properties of a Custom Capture Configuration. NOTE: this is a sync proxy resource, NOT an LRO —
     there is intentionally no provisioningState field.
 
-    :ivar pcap_filter: List of filters to match packets against (1-4 entries). Required on PUT
+    :ivar pcapFilter: List of filters to match packets against (1-4 entries). Required on PUT
      (input). May be omitted in GET responses while pcapStatus is InProgress because the backend has
      not finalized echo-back yet; echoed in terminal Success responses.
-    :vartype pcap_filter: list["CustomCaptureConfigurationsFilter"]
-    :ivar pcap_stages: List of firewall stages where packets should be captured (1-4 entries).
+    :vartype pcapFilter: list["CustomCaptureConfigurationsFilter"]
+    :ivar pcapStages: List of firewall stages where packets should be captured (1-4 entries).
      Required on PUT (input). May be omitted in GET responses while pcapStatus is InProgress because
      the backend has not finalized echo-back yet; echoed in terminal Success responses.
-    :vartype pcap_stages: list[Union[str, "CustomCaptureConfigurationsStage"]]
-    :ivar duration_in_sec: Capture duration in seconds (1-180). Required on PUT (input). May be
+    :vartype pcapStages: list[Union[str, "CustomCaptureConfigurationsStage"]]
+    :ivar durationInSec: Capture duration in seconds (1-180). Required on PUT (input). May be
      omitted in GET responses while pcapStatus is InProgress because the backend has not finalized
      echo-back yet; echoed in terminal Success responses.
-    :vartype duration_in_sec: int
-    :ivar storage_account_resource_id: ARM resource ID of the customer's storage account where the
+    :vartype durationInSec: int
+    :ivar storageAccountResourceId: ARM resource ID of the customer's storage account where the
      capture file will be written. Required on PUT (input). May be omitted in GET responses while
      pcapStatus is InProgress because the backend has not finalized echo-back yet; echoed in
      terminal Success responses.
-    :vartype storage_account_resource_id: str
-    :ivar pcap_status: Current capture status. Read-only. Clients should poll GET until this is
+    :vartype storageAccountResourceId: str
+    :ivar pcapStatus: Current capture status. Read-only. Clients should poll GET until this is
      Success or Failed. Known values are: "InProgress", "Success", and "Failed".
-    :vartype pcap_status: Union[str, "CustomCaptureConfigurationsStatus"]
-    :ivar pcap_detail_reason: Detailed reason for the current status, populated by PAN. Typically
-     set when pcapStatus is Failed. Read-only.
-    :vartype pcap_detail_reason: str
-    :ivar next_check_in_seconds: Polling-cadence hint in seconds. Set on non-terminal responses
+    :vartype pcapStatus: Union[str, "CustomCaptureConfigurationsStatus"]
+    :ivar pcapDetailReason: Detailed reason for the current status, populated by PAN. Typically set
+     when pcapStatus is Failed. Read-only.
+    :vartype pcapDetailReason: str
+    :ivar nextCheckInSeconds: Polling-cadence hint in seconds. Set on non-terminal responses
      (pcapStatus = InProgress) so clients know how long to wait before the next GET. Omitted on
      terminal responses (Success / Failed). Read-only.
-    :vartype next_check_in_seconds: int
+    :vartype nextCheckInSeconds: int
     :ivar message: Human-readable status message for display in client UIs (Portal blade, CLI
      output, etc.). English only. Read-only.
     :vartype message: str
@@ -508,10 +360,10 @@ class DestinationAddr(TypedDict, total=False):
     :vartype countries: list[str]
     :ivar feeds: list of feeds.
     :vartype feeds: list[str]
-    :ivar prefix_lists: prefix list.
-    :vartype prefix_lists: list[str]
-    :ivar fqdn_lists: fqdn list.
-    :vartype fqdn_lists: list[str]
+    :ivar prefixLists: prefix list.
+    :vartype prefixLists: list[str]
+    :ivar fqdnLists: fqdn list.
+    :vartype fqdnLists: list[str]
     """
 
     cidrs: list[str]
@@ -529,14 +381,14 @@ class DestinationAddr(TypedDict, total=False):
 class DNSSettings(TypedDict, total=False):
     """DNS Proxy settings for Firewall.
 
-    :ivar enable_dns_proxy: Enable DNS proxy, disabled by default. Known values are: "DISABLED" and
+    :ivar enableDnsProxy: Enable DNS proxy, disabled by default. Known values are: "DISABLED" and
      "ENABLED".
-    :vartype enable_dns_proxy: Union[str, "DNSProxy"]
-    :ivar enabled_dns_type: Enabled DNS proxy type, disabled by default. Known values are: "CUSTOM"
+    :vartype enableDnsProxy: Union[str, "DNSProxy"]
+    :ivar enabledDnsType: Enabled DNS proxy type, disabled by default. Known values are: "CUSTOM"
      and "AZURE".
-    :vartype enabled_dns_type: Union[str, "EnabledDNSType"]
-    :ivar dns_servers: List of IPs associated with the Firewall.
-    :vartype dns_servers: list["IPAddress"]
+    :vartype enabledDnsType: Union[str, "EnabledDNSType"]
+    :ivar dnsServers: List of IPs associated with the Firewall.
+    :vartype dnsServers: list["IPAddress"]
     """
 
     enableDnsProxy: Union[str, "DNSProxy"]
@@ -562,72 +414,19 @@ class EndpointConfiguration(TypedDict, total=False):
     """Address Space. Required."""
 
 
-class ErrorAdditionalInfo(TypedDict, total=False):
-    """The resource management error additional info.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: Any
-    """
-
-    type: str
-    """The additional info type."""
-    info: Any
-    """The additional info."""
-
-
-class ErrorDetail(TypedDict, total=False):
-    """The error detail.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list["ErrorDetail"]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list["ErrorAdditionalInfo"]
-    """
-
-    code: str
-    """The error code."""
-    message: str
-    """The error message."""
-    target: str
-    """The error target."""
-    details: list["ErrorDetail"]
-    """The error details."""
-    additionalInfo: list["ErrorAdditionalInfo"]
-    """The error additional info."""
-
-
-class ErrorResponse(TypedDict, total=False):
-    """Error response.
-
-    :ivar error: The error object.
-    :vartype error: "ErrorDetail"
-    """
-
-    error: "ErrorDetail"
-    """The error object."""
-
-
 class EventHub(TypedDict, total=False):
     """EventHub configurations.
 
     :ivar id: Resource ID of EventHub.
     :vartype id: str
-    :ivar subscription_id: Subscription Id.
-    :vartype subscription_id: str
+    :ivar subscriptionId: Subscription Id.
+    :vartype subscriptionId: str
     :ivar name: EventHub name.
     :vartype name: str
-    :ivar name_space: EventHub namespace.
-    :vartype name_space: str
-    :ivar policy_name: EventHub policy name.
-    :vartype policy_name: str
+    :ivar nameSpace: EventHub namespace.
+    :vartype nameSpace: str
+    :ivar policyName: EventHub policy name.
+    :vartype policyName: str
     """
 
     id: str
@@ -645,37 +444,37 @@ class EventHub(TypedDict, total=False):
 class FirewallDeploymentProperties(TypedDict, total=False):
     """Properties specific to the Firewall resource deployment.
 
-    :ivar pan_etag: panEtag info.
-    :vartype pan_etag: str
-    :ivar firewall_sku: Firewall SKU type, Default will be STANDARD.
-    :vartype firewall_sku: str
-    :ivar network_profile: Network settings. Required.
-    :vartype network_profile: "NetworkProfile"
-    :ivar is_panorama_managed: Panorama Managed: Default is False. Default will be CloudSec
+    :ivar panEtag: panEtag info.
+    :vartype panEtag: str
+    :ivar firewallSku: Firewall SKU type, Default will be STANDARD.
+    :vartype firewallSku: str
+    :ivar networkProfile: Network settings. Required.
+    :vartype networkProfile: "NetworkProfile"
+    :ivar isPanoramaManaged: Panorama Managed: Default is False. Default will be CloudSec managed.
+     Known values are: "TRUE" and "FALSE".
+    :vartype isPanoramaManaged: Union[str, "BooleanEnum"]
+    :ivar isStrataCloudManaged: Strata Cloud Managed: Default is False. Default will be CloudSec
      managed. Known values are: "TRUE" and "FALSE".
-    :vartype is_panorama_managed: Union[str, "BooleanEnum"]
-    :ivar is_strata_cloud_managed: Strata Cloud Managed: Default is False. Default will be CloudSec
-     managed. Known values are: "TRUE" and "FALSE".
-    :vartype is_strata_cloud_managed: Union[str, "BooleanEnum"]
-    :ivar panorama_config: Panorama Configuration.
-    :vartype panorama_config: "PanoramaConfig"
-    :ivar strata_cloud_manager_config: Strata Cloud Manager Configuration, only applicable if
-     Strata Cloud Manager is selected.
-    :vartype strata_cloud_manager_config: "StrataCloudManagerConfig"
-    :ivar associated_rulestack: Associated Rulestack.
-    :vartype associated_rulestack: "RulestackDetails"
-    :ivar dns_settings: DNS settings for Firewall. Required.
-    :vartype dns_settings: "DNSSettings"
-    :ivar front_end_settings: Frontend settings for Firewall.
-    :vartype front_end_settings: list["FrontendSetting"]
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+    :vartype isStrataCloudManaged: Union[str, "BooleanEnum"]
+    :ivar panoramaConfig: Panorama Configuration.
+    :vartype panoramaConfig: "PanoramaConfig"
+    :ivar strataCloudManagerConfig: Strata Cloud Manager Configuration, only applicable if Strata
+     Cloud Manager is selected.
+    :vartype strataCloudManagerConfig: "StrataCloudManagerConfig"
+    :ivar associatedRulestack: Associated Rulestack.
+    :vartype associatedRulestack: "RulestackDetails"
+    :ivar dnsSettings: DNS settings for Firewall. Required.
+    :vartype dnsSettings: "DNSSettings"
+    :ivar frontEndSettings: Frontend settings for Firewall.
+    :vartype frontEndSettings: list["FrontendSetting"]
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar plan_data: Billing plan information. Required.
-    :vartype plan_data: "PlanData"
-    :ivar marketplace_details: Marketplace details. Required.
-    :vartype marketplace_details: "MarketplaceDetails"
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar planData: Billing plan information. Required.
+    :vartype planData: "PlanData"
+    :ivar marketplaceDetails: Marketplace details. Required.
+    :vartype marketplaceDetails: "MarketplaceDetails"
     """
 
     panEtag: str
@@ -720,9 +519,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -746,9 +545,9 @@ class FirewallResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -787,31 +586,31 @@ class FirewallResourceUpdate(TypedDict, total=False):
 class FirewallResourceUpdateProperties(TypedDict, total=False):
     """The updatable properties of the FirewallResource.
 
-    :ivar pan_etag: panEtag info.
-    :vartype pan_etag: str
-    :ivar network_profile: Network settings.
-    :vartype network_profile: "NetworkProfile"
-    :ivar is_panorama_managed: Panorama Managed: Default is False. Default will be CloudSec
+    :ivar panEtag: panEtag info.
+    :vartype panEtag: str
+    :ivar networkProfile: Network settings.
+    :vartype networkProfile: "NetworkProfile"
+    :ivar isPanoramaManaged: Panorama Managed: Default is False. Default will be CloudSec managed.
+     Known values are: "TRUE" and "FALSE".
+    :vartype isPanoramaManaged: Union[str, "BooleanEnum"]
+    :ivar isStrataCloudManaged: Strata Cloud Managed: Default is False. Default will be CloudSec
      managed. Known values are: "TRUE" and "FALSE".
-    :vartype is_panorama_managed: Union[str, "BooleanEnum"]
-    :ivar is_strata_cloud_managed: Strata Cloud Managed: Default is False. Default will be CloudSec
-     managed. Known values are: "TRUE" and "FALSE".
-    :vartype is_strata_cloud_managed: Union[str, "BooleanEnum"]
-    :ivar panorama_config: Panorama Configuration.
-    :vartype panorama_config: "PanoramaConfig"
-    :ivar strata_cloud_manager_config: Strata Cloud Manager Configuration, only applicable if
-     Strata Cloud Manager is selected.
-    :vartype strata_cloud_manager_config: "StrataCloudManagerConfig"
-    :ivar associated_rulestack: Associated Rulestack.
-    :vartype associated_rulestack: "RulestackDetails"
-    :ivar dns_settings: DNS settings for Firewall.
-    :vartype dns_settings: "DNSSettings"
-    :ivar front_end_settings: Frontend settings for Firewall.
-    :vartype front_end_settings: list["FrontendSetting"]
-    :ivar plan_data: Billing plan information.
-    :vartype plan_data: "PlanData"
-    :ivar marketplace_details: Marketplace details.
-    :vartype marketplace_details: "MarketplaceDetails"
+    :vartype isStrataCloudManaged: Union[str, "BooleanEnum"]
+    :ivar panoramaConfig: Panorama Configuration.
+    :vartype panoramaConfig: "PanoramaConfig"
+    :ivar strataCloudManagerConfig: Strata Cloud Manager Configuration, only applicable if Strata
+     Cloud Manager is selected.
+    :vartype strataCloudManagerConfig: "StrataCloudManagerConfig"
+    :ivar associatedRulestack: Associated Rulestack.
+    :vartype associatedRulestack: "RulestackDetails"
+    :ivar dnsSettings: DNS settings for Firewall.
+    :vartype dnsSettings: "DNSSettings"
+    :ivar frontEndSettings: Frontend settings for Firewall.
+    :vartype frontEndSettings: list["FrontendSetting"]
+    :ivar planData: Billing plan information.
+    :vartype planData: "PlanData"
+    :ivar marketplaceDetails: Marketplace details.
+    :vartype marketplaceDetails: "MarketplaceDetails"
     """
 
     panEtag: str
@@ -840,70 +639,6 @@ class FirewallResourceUpdateProperties(TypedDict, total=False):
     """Marketplace details."""
 
 
-class FirewallStatusProperty(TypedDict, total=False):
-    """Firewall Status.
-
-    :ivar is_panorama_managed: Panorama Managed: Default is False. Default will be CloudSec
-     managed. Known values are: "TRUE" and "FALSE".
-    :vartype is_panorama_managed: Union[str, "BooleanEnum"]
-    :ivar health_status: Current status of the Firewall. Known values are: "GREEN", "YELLOW",
-     "RED", and "INITIALIZING".
-    :vartype health_status: Union[str, "HealthStatus"]
-    :ivar health_reason: Detail description of current health of the Firewall.
-    :vartype health_reason: str
-    :ivar panorama_status: Panorama Status.
-    :vartype panorama_status: "PanoramaStatus"
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
-     "Failed", and "Deleted".
-    :vartype provisioning_state: Union[str, "ReadOnlyProvisioningState"]
-    :ivar is_strata_cloud_managed: Strata Cloud Manager. Known values are: "TRUE" and "FALSE".
-    :vartype is_strata_cloud_managed: Union[str, "BooleanEnum"]
-    :ivar strata_cloud_manager_info: This field is only present if Strata Cloud Manager is managing
-     the policy for this firewall.
-    :vartype strata_cloud_manager_info: "StrataCloudManagerInfo"
-    """
-
-    isPanoramaManaged: Union[str, "BooleanEnum"]
-    """Panorama Managed: Default is False. Default will be CloudSec managed. Known values are:
-     \"TRUE\" and \"FALSE\"."""
-    healthStatus: Union[str, "HealthStatus"]
-    """Current status of the Firewall. Known values are: \"GREEN\", \"YELLOW\", \"RED\", and
-     \"INITIALIZING\"."""
-    healthReason: str
-    """Detail description of current health of the Firewall."""
-    panoramaStatus: "PanoramaStatus"
-    """Panorama Status."""
-    provisioningState: Union[str, "ReadOnlyProvisioningState"]
-    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
-     \"Deleted\"."""
-    isStrataCloudManaged: Union[str, "BooleanEnum"]
-    """Strata Cloud Manager. Known values are: \"TRUE\" and \"FALSE\"."""
-    strataCloudManagerInfo: "StrataCloudManagerInfo"
-    """This field is only present if Strata Cloud Manager is managing the policy for this firewall."""
-
-
-class FirewallStatusResource(ProxyResource):
-    """Firewall Status.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The resource-specific properties for this resource. Required.
-    :vartype properties: "FirewallStatusProperty"
-    """
-
-    properties: Required["FirewallStatusProperty"]
-    """The resource-specific properties for this resource. Required."""
-
-
 class FqdnListGlobalRulestackResource(ProxyResource):
     """GlobalRulestack fqdnList.
 
@@ -915,9 +650,9 @@ class FqdnListGlobalRulestackResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource. Required.
     :vartype properties: "FqdnObject"
     """
@@ -937,9 +672,9 @@ class FqdnListLocalRulestackResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource. Required.
     :vartype properties: "FqdnObject"
     """
@@ -953,16 +688,16 @@ class FqdnObject(TypedDict, total=False):
 
     :ivar description: fqdn object description.
     :vartype description: str
-    :ivar fqdn_list: fqdn list. Required.
-    :vartype fqdn_list: list[str]
+    :ivar fqdnList: fqdn list. Required.
+    :vartype fqdnList: list[str]
     :ivar etag: etag info.
     :vartype etag: str
-    :ivar audit_comment: comment for this object.
-    :vartype audit_comment: str
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+    :ivar auditComment: comment for this object.
+    :vartype auditComment: str
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     description: str
@@ -985,10 +720,10 @@ class FrontendSetting(TypedDict, total=False):
     :vartype name: str
     :ivar protocol: Protocol Type. Required. Known values are: "TCP" and "UDP".
     :vartype protocol: Union[str, "ProtocolType"]
-    :ivar frontend_configuration: Frontend configurations. Required.
-    :vartype frontend_configuration: "EndpointConfiguration"
-    :ivar backend_configuration: Backend configurations. Required.
-    :vartype backend_configuration: "EndpointConfiguration"
+    :ivar frontendConfiguration: Frontend configurations. Required.
+    :vartype frontendConfiguration: "EndpointConfiguration"
+    :ivar backendConfiguration: Backend configurations. Required.
+    :vartype backendConfiguration: "EndpointConfiguration"
     """
 
     name: Required[str]
@@ -999,17 +734,6 @@ class FrontendSetting(TypedDict, total=False):
     """Frontend configurations. Required."""
     backendConfiguration: Required["EndpointConfiguration"]
     """Backend configurations. Required."""
-
-
-class GlobalRulestackInfo(TypedDict, total=False):
-    """PAN Rulestack Describe Object.
-
-    :ivar azure_id: rulestack description. Required.
-    :vartype azure_id: str
-    """
-
-    azureId: Required[str]
-    """rulestack description. Required."""
 
 
 class GlobalRulestackResource(ProxyResource):
@@ -1023,9 +747,9 @@ class GlobalRulestackResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource. Required.
     :vartype properties: "RulestackProperties"
     :ivar location: Global Location. Required.
@@ -1064,23 +788,23 @@ class GlobalRulestackResourceUpdate(TypedDict, total=False):
 class GlobalRulestackResourceUpdateProperties(TypedDict, total=False):
     """The updatable properties of the GlobalRulestackResource.
 
-    :ivar pan_etag: PanEtag info.
-    :vartype pan_etag: str
-    :ivar pan_location: Rulestack Location, Required for GlobalRulestacks, Not for LocalRulestacks.
-    :vartype pan_location: str
+    :ivar panEtag: PanEtag info.
+    :vartype panEtag: str
+    :ivar panLocation: Rulestack Location, Required for GlobalRulestacks, Not for LocalRulestacks.
+    :vartype panLocation: str
     :ivar scope: Rulestack Type. Known values are: "LOCAL" and "GLOBAL".
     :vartype scope: Union[str, "ScopeType"]
-    :ivar associated_subscriptions: subscription scope of global rulestack.
-    :vartype associated_subscriptions: list[str]
+    :ivar associatedSubscriptions: subscription scope of global rulestack.
+    :vartype associatedSubscriptions: list[str]
     :ivar description: rulestack description.
     :vartype description: str
-    :ivar default_mode: Mode for default rules creation. Known values are: "IPS", "FIREWALL", and
+    :ivar defaultMode: Mode for default rules creation. Known values are: "IPS", "FIREWALL", and
      "NONE".
-    :vartype default_mode: Union[str, "DefaultMode"]
-    :ivar min_app_id_version: minimum version.
-    :vartype min_app_id_version: str
-    :ivar security_services: Security Profile.
-    :vartype security_services: "SecurityServices"
+    :vartype defaultMode: Union[str, "DefaultMode"]
+    :ivar minAppIdVersion: minimum version.
+    :vartype minAppIdVersion: str
+    :ivar securityServices: Security Profile.
+    :vartype securityServices: "SecurityServices"
     """
 
     panEtag: str
@@ -1104,8 +828,8 @@ class GlobalRulestackResourceUpdateProperties(TypedDict, total=False):
 class IPAddress(TypedDict, total=False):
     """IP Address.
 
-    :ivar resource_id: Resource Id.
-    :vartype resource_id: str
+    :ivar resourceId: Resource Id.
+    :vartype resourceId: str
     :ivar address: Address value.
     :vartype address: str
     """
@@ -1119,45 +843,16 @@ class IPAddress(TypedDict, total=False):
 class IPAddressSpace(TypedDict, total=False):
     """IP Address Space.
 
-    :ivar resource_id: Resource Id.
-    :vartype resource_id: str
-    :ivar address_space: Address Space.
-    :vartype address_space: str
+    :ivar resourceId: Resource Id.
+    :vartype resourceId: str
+    :ivar addressSpace: Address Space.
+    :vartype addressSpace: str
     """
 
     resourceId: str
     """Resource Id."""
     addressSpace: str
     """Address Space."""
-
-
-class ListAppIdResponse(TypedDict, total=False):
-    """ListAppIdResponse.
-
-    :ivar value: Required.
-    :vartype value: list[str]
-    :ivar next_link:
-    :vartype next_link: str
-    """
-
-    value: Required[list[str]]
-    """Required."""
-    nextLink: str
-
-
-class ListFirewallsResponse(TypedDict, total=False):
-    """List firewalls response.
-
-    :ivar value: firewalls list. Required.
-    :vartype value: list[str]
-    :ivar next_link: next link.
-    :vartype next_link: str
-    """
-
-    value: Required[list[str]]
-    """firewalls list. Required."""
-    nextLink: str
-    """next link."""
 
 
 class LocalRulesResource(ProxyResource):
@@ -1171,9 +866,9 @@ class LocalRulesResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource. Required.
     :vartype properties: "RuleEntry"
     """
@@ -1193,9 +888,9 @@ class LocalRulestackResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1234,23 +929,23 @@ class LocalRulestackResourceUpdate(TypedDict, total=False):
 class LocalRulestackResourceUpdateProperties(TypedDict, total=False):
     """The updatable properties of the LocalRulestackResource.
 
-    :ivar pan_etag: PanEtag info.
-    :vartype pan_etag: str
-    :ivar pan_location: Rulestack Location, Required for GlobalRulestacks, Not for LocalRulestacks.
-    :vartype pan_location: str
+    :ivar panEtag: PanEtag info.
+    :vartype panEtag: str
+    :ivar panLocation: Rulestack Location, Required for GlobalRulestacks, Not for LocalRulestacks.
+    :vartype panLocation: str
     :ivar scope: Rulestack Type. Known values are: "LOCAL" and "GLOBAL".
     :vartype scope: Union[str, "ScopeType"]
-    :ivar associated_subscriptions: subscription scope of global rulestack.
-    :vartype associated_subscriptions: list[str]
+    :ivar associatedSubscriptions: subscription scope of global rulestack.
+    :vartype associatedSubscriptions: list[str]
     :ivar description: rulestack description.
     :vartype description: str
-    :ivar default_mode: Mode for default rules creation. Known values are: "IPS", "FIREWALL", and
+    :ivar defaultMode: Mode for default rules creation. Known values are: "IPS", "FIREWALL", and
      "NONE".
-    :vartype default_mode: Union[str, "DefaultMode"]
-    :ivar min_app_id_version: minimum version.
-    :vartype min_app_id_version: str
-    :ivar security_services: Security Profile.
-    :vartype security_services: "SecurityServices"
+    :vartype defaultMode: Union[str, "DefaultMode"]
+    :ivar minAppIdVersion: minimum version.
+    :vartype minAppIdVersion: str
+    :ivar securityServices: Security Profile.
+    :vartype securityServices: "SecurityServices"
     """
 
     panEtag: str
@@ -1274,12 +969,12 @@ class LocalRulestackResourceUpdateProperties(TypedDict, total=False):
 class LogDestination(TypedDict, total=False):
     """Log Destination.
 
-    :ivar storage_configurations: Storage account configurations.
-    :vartype storage_configurations: "StorageAccount"
-    :ivar event_hub_configurations: Event Hub configurations.
-    :vartype event_hub_configurations: "EventHub"
-    :ivar monitor_configurations: Monitor Log configurations.
-    :vartype monitor_configurations: "MonitorLog"
+    :ivar storageConfigurations: Storage account configurations.
+    :vartype storageConfigurations: "StorageAccount"
+    :ivar eventHubConfigurations: Event Hub configurations.
+    :vartype eventHubConfigurations: "EventHub"
+    :ivar monitorConfigurations: Monitor Log configurations.
+    :vartype monitorConfigurations: "MonitorLog"
     """
 
     storageConfigurations: "StorageAccount"
@@ -1290,25 +985,111 @@ class LogDestination(TypedDict, total=False):
     """Monitor Log configurations."""
 
 
+class LogDestinationV2(TypedDict, total=False):
+    """Log Destination for the Azure Monitor Log Ingestion (Data Collection Rule) method. Carries the
+    DCR-based ``monitorConfigurationsV2``.
+
+    :ivar storageConfigurations: Storage account configurations.
+    :vartype storageConfigurations: "StorageAccount"
+    :ivar eventHubConfigurations: Event Hub configurations.
+    :vartype eventHubConfigurations: "EventHub"
+    :ivar monitorConfigurationsV2: Azure Monitor Log Ingestion (Data Collection Rule) configuration
+     for this destination.
+    :vartype monitorConfigurationsV2: "MonitorLogV2"
+    """
+
+    storageConfigurations: "StorageAccount"
+    """Storage account configurations."""
+    eventHubConfigurations: "EventHub"
+    """Event Hub configurations."""
+    monitorConfigurationsV2: "MonitorLogV2"
+    """Azure Monitor Log Ingestion (Data Collection Rule) configuration for this destination."""
+
+
+class LogIngestionSettingsProperties(TypedDict, total=False):
+    """Log Ingestion Settings for a firewall (Azure Monitor Log Ingestion / Data Collection Rule
+    based).
+
+    :ivar logType: One of possible log type. Known values are: "TRAFFIC", "THREAT", "DECRYPTION",
+     "WILDFIRE", "DLP", and "AUDIT".
+    :vartype logType: Union[str, "LogType"]
+    :ivar logOption: Log option SAME/INDIVIDUAL. Known values are: "SAME_DESTINATION" and
+     "INDIVIDUAL_DESTINATION".
+    :vartype logOption: Union[str, "LogOption"]
+    :ivar applicationInsights: Application Insight details.
+    :vartype applicationInsights: "ApplicationInsights"
+    :ivar commonDestination: Common destination configurations.
+    :vartype commonDestination: "LogDestinationV2"
+    :ivar trafficLogDestination: Traffic destination configurations.
+    :vartype trafficLogDestination: "LogDestinationV2"
+    :ivar threatLogDestination: Threat destination configurations.
+    :vartype threatLogDestination: "LogDestinationV2"
+    :ivar decryptLogDestination: Decrypt destination configurations.
+    :vartype decryptLogDestination: "LogDestinationV2"
+    """
+
+    logType: Union[str, "LogType"]
+    """One of possible log type. Known values are: \"TRAFFIC\", \"THREAT\", \"DECRYPTION\",
+     \"WILDFIRE\", \"DLP\", and \"AUDIT\"."""
+    logOption: Union[str, "LogOption"]
+    """Log option SAME/INDIVIDUAL. Known values are: \"SAME_DESTINATION\" and
+     \"INDIVIDUAL_DESTINATION\"."""
+    applicationInsights: "ApplicationInsights"
+    """Application Insight details."""
+    commonDestination: "LogDestinationV2"
+    """Common destination configurations."""
+    trafficLogDestination: "LogDestinationV2"
+    """Traffic destination configurations."""
+    threatLogDestination: "LogDestinationV2"
+    """Threat destination configurations."""
+    decryptLogDestination: "LogDestinationV2"
+    """Decrypt destination configurations."""
+
+
+class LogIngestionSettingsResource(ProxyResource):
+    """Log Ingestion Settings on a firewall (singleton — the name is always 'default'). This is the
+    modern Azure Monitor Log Ingestion (Data Collection Rule based) surface that supersedes the
+    legacy getLogProfile/saveLogProfile actions. Sync child resource — PUT/GET/DELETE forward to
+    the partner synchronously; the caller does not poll a long-running operation.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource. Required.
+    :vartype properties: "LogIngestionSettingsProperties"
+    """
+
+    properties: Required["LogIngestionSettingsProperties"]
+    """The resource-specific properties for this resource. Required."""
+
+
 class LogSettings(TypedDict, total=False):
     """Log Settings for Firewall.
 
-    :ivar log_type: One of possible log type. Known values are: "TRAFFIC", "THREAT", "DECRYPTION",
+    :ivar logType: One of possible log type. Known values are: "TRAFFIC", "THREAT", "DECRYPTION",
      "WILDFIRE", "DLP", and "AUDIT".
-    :vartype log_type: Union[str, "LogType"]
-    :ivar log_option: Log option SAME/INDIVIDUAL. Known values are: "SAME_DESTINATION" and
+    :vartype logType: Union[str, "LogType"]
+    :ivar logOption: Log option SAME/INDIVIDUAL. Known values are: "SAME_DESTINATION" and
      "INDIVIDUAL_DESTINATION".
-    :vartype log_option: Union[str, "LogOption"]
-    :ivar application_insights: Application Insight details.
-    :vartype application_insights: "ApplicationInsights"
-    :ivar common_destination: Common destination configurations.
-    :vartype common_destination: "LogDestination"
-    :ivar traffic_log_destination: Traffic destination configurations.
-    :vartype traffic_log_destination: "LogDestination"
-    :ivar threat_log_destination: Threat destination configurations.
-    :vartype threat_log_destination: "LogDestination"
-    :ivar decrypt_log_destination: Decrypt destination configurations.
-    :vartype decrypt_log_destination: "LogDestination"
+    :vartype logOption: Union[str, "LogOption"]
+    :ivar applicationInsights: Application Insight details.
+    :vartype applicationInsights: "ApplicationInsights"
+    :ivar commonDestination: Common destination configurations.
+    :vartype commonDestination: "LogDestination"
+    :ivar trafficLogDestination: Traffic destination configurations.
+    :vartype trafficLogDestination: "LogDestination"
+    :ivar threatLogDestination: Threat destination configurations.
+    :vartype threatLogDestination: "LogDestination"
+    :ivar decryptLogDestination: Decrypt destination configurations.
+    :vartype decryptLogDestination: "LogDestination"
     """
 
     logType: Union[str, "LogType"]
@@ -1332,16 +1113,16 @@ class LogSettings(TypedDict, total=False):
 class MarketplaceDetails(TypedDict, total=False):
     """MarketplaceDetails of PAN Firewall resource.
 
-    :ivar marketplace_subscription_id: Marketplace Subscription Id.
-    :vartype marketplace_subscription_id: str
-    :ivar offer_id: Offer Id. Required.
-    :vartype offer_id: str
-    :ivar publisher_id: Publisher Id. Required.
-    :vartype publisher_id: str
-    :ivar marketplace_subscription_status: Marketplace Subscription Status. Known values are:
+    :ivar marketplaceSubscriptionId: Marketplace Subscription Id.
+    :vartype marketplaceSubscriptionId: str
+    :ivar offerId: Offer Id. Required.
+    :vartype offerId: str
+    :ivar publisherId: Publisher Id. Required.
+    :vartype publisherId: str
+    :ivar marketplaceSubscriptionStatus: Marketplace Subscription Status. Known values are:
      "PendingFulfillmentStart", "Subscribed", "Suspended", "Unsubscribed", "NotStarted", and
      "FulfillmentRequested".
-    :vartype marketplace_subscription_status: Union[str, "MarketplaceSubscriptionStatus"]
+    :vartype marketplaceSubscriptionStatus: Union[str, "MarketplaceSubscriptionStatus"]
     """
 
     marketplaceSubscriptionId: str
@@ -1358,17 +1139,17 @@ class MarketplaceDetails(TypedDict, total=False):
 class MetricsObject(TypedDict, total=False):
     """Config for Metrics for firewall metrics.
 
-    :ivar application_insights_resource_id: Resource Id of application insights resource. Required.
-    :vartype application_insights_resource_id: str
-    :ivar application_insights_connection_string: Connection string of application insights
-     resource. Required.
-    :vartype application_insights_connection_string: str
-    :ivar pan_etag: read only string representing last create or update.
-    :vartype pan_etag: str
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+    :ivar applicationInsightsResourceId: Resource Id of application insights resource. Required.
+    :vartype applicationInsightsResourceId: str
+    :ivar applicationInsightsConnectionString: Connection string of application insights resource.
+     Required.
+    :vartype applicationInsightsConnectionString: str
+    :ivar panEtag: read only string representing last create or update.
+    :vartype panEtag: str
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     applicationInsightsResourceId: Required[str]
@@ -1393,9 +1174,9 @@ class MetricsObjectFirewallResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource. Required.
     :vartype properties: "MetricsObject"
     """
@@ -1409,14 +1190,14 @@ class MonitorLog(TypedDict, total=False):
 
     :ivar id: Resource ID of MonitorLog.
     :vartype id: str
-    :ivar subscription_id: Subscription Id.
-    :vartype subscription_id: str
+    :ivar subscriptionId: Subscription Id.
+    :vartype subscriptionId: str
     :ivar workspace: MonitorLog workspace.
     :vartype workspace: str
-    :ivar primary_key: Primary Key value for Monitor.
-    :vartype primary_key: str
-    :ivar secondary_key: Secondary Key value for Monitor.
-    :vartype secondary_key: str
+    :ivar primaryKey: Primary Key value for Monitor.
+    :vartype primaryKey: str
+    :ivar secondaryKey: Secondary Key value for Monitor.
+    :vartype secondaryKey: str
     """
 
     id: str
@@ -1431,43 +1212,60 @@ class MonitorLog(TypedDict, total=False):
     """Secondary Key value for Monitor."""
 
 
-class NameDescriptionObject(TypedDict, total=False):
-    """object type info.
+class MonitorLogV2(TypedDict, total=False):
+    """Log collection using the Azure Monitor Log Ingestion API (Data Collection Rule based). This
+    supersedes the legacy HTTP Data Collector ``MonitorLog`` for firewalls that have migrated to
+    the modern DCR ingestion path. When this block is supplied, all four fields are required.
 
-    :ivar name: name value. Required.
-    :vartype name: str
-    :ivar description: description value.
-    :vartype description: str
+    :ivar dcrId: ARM resource ID of the Data Collection Rule (DCR) that governs how these logs are
+     transformed and routed. Required.
+    :vartype dcrId: str
+    :ivar logIngestionEndpoint: HTTPS logs ingestion endpoint that receives the data (the DCR's
+     logs ingestion endpoint or its Data Collection Endpoint). Required.
+    :vartype logIngestionEndpoint: str
+    :ivar dcrImmutableId: Immutable ID of the Data Collection Rule (the value that begins with
+     ``dcr-``). Required.
+    :vartype dcrImmutableId: str
+    :ivar streamName: DCR input stream that receives the data. For a custom table this is typically
+     ``Custom-<TableName>``. Required.
+    :vartype streamName: str
     """
 
-    name: Required[str]
-    """name value. Required."""
-    description: str
-    """description value."""
+    dcrId: Required[str]
+    """ARM resource ID of the Data Collection Rule (DCR) that governs how these logs are transformed
+     and routed. Required."""
+    logIngestionEndpoint: Required[str]
+    """HTTPS logs ingestion endpoint that receives the data (the DCR's logs ingestion endpoint or its
+     Data Collection Endpoint). Required."""
+    dcrImmutableId: Required[str]
+    """Immutable ID of the Data Collection Rule (the value that begins with ``dcr-``). Required."""
+    streamName: Required[str]
+    """DCR input stream that receives the data. For a custom table this is typically
+     ``Custom-<TableName>``. Required."""
 
 
 class NetworkProfile(TypedDict, total=False):
     """Network settings for Firewall.
 
-    :ivar vnet_configuration: Vnet configurations.
-    :vartype vnet_configuration: "VnetConfiguration"
-    :ivar vwan_configuration: Vwan configurations.
-    :vartype vwan_configuration: "VwanConfiguration"
-    :ivar network_type: vnet or vwan, cannot be updated. Required. Known values are: "VNET" and
+    :ivar vnetConfiguration: Vnet configurations.
+    :vartype vnetConfiguration: "VnetConfiguration"
+    :ivar vwanConfiguration: Vwan configurations.
+    :vartype vwanConfiguration: "VwanConfiguration"
+    :ivar networkType: vnet or vwan, cannot be updated. Required. Known values are: "VNET" and
      "VWAN".
-    :vartype network_type: Union[str, "NetworkType"]
-    :ivar public_ips: List of IPs associated with the Firewall. Required.
-    :vartype public_ips: list["IPAddress"]
-    :ivar enable_egress_nat: Enable egress NAT, enabled by default. Required. Known values are:
+    :vartype networkType: Union[str, "NetworkType"]
+    :ivar publicIps: List of IPs associated with the Firewall. Required.
+    :vartype publicIps: list["IPAddress"]
+    :ivar enableEgressNat: Enable egress NAT, enabled by default. Required. Known values are:
      "DISABLED" and "ENABLED".
-    :vartype enable_egress_nat: Union[str, "EgressNat"]
-    :ivar egress_nat_ip: Egress nat IP to use.
-    :vartype egress_nat_ip: list["IPAddress"]
-    :ivar trusted_ranges: Non-RFC 1918 address.
-    :vartype trusted_ranges: list[str]
-    :ivar private_source_nat_rules_destination: Array of ipv4 destination address for which source
-     NAT is to be performed.
-    :vartype private_source_nat_rules_destination: list[str]
+    :vartype enableEgressNat: Union[str, "EgressNat"]
+    :ivar egressNatIp: Egress nat IP to use.
+    :vartype egressNatIp: list["IPAddress"]
+    :ivar trustedRanges: Non-RFC 1918 address.
+    :vartype trustedRanges: list[str]
+    :ivar privateSourceNatRulesDestination: Array of ipv4 destination address for which source NAT
+     is to be performed.
+    :vartype privateSourceNatRulesDestination: list[str]
     """
 
     vnetConfiguration: "VnetConfiguration"
@@ -1489,96 +1287,27 @@ class NetworkProfile(TypedDict, total=False):
     """Array of ipv4 destination address for which source NAT is to be performed."""
 
 
-class Operation(TypedDict, total=False):
-    """REST API Operation.
-
-    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
-    :vartype name: str
-    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
-     data-plane operations and "false" for Azure Resource Manager/control-plane operations.
-    :vartype is_data_action: bool
-    :ivar display: Localized display information for this particular operation.
-    :vartype display: "OperationDisplay"
-    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
-     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
-     and "user,system".
-    :vartype origin: Union[str, "Origin"]
-    :ivar action_type: Extensible enum. Indicates the action type. "Internal" refers to actions
-     that are for internal only APIs. "Internal"
-    :vartype action_type: Union[str, "ActionType"]
-    """
-
-    name: str
-    """The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     \"Microsoft.Compute/virtualMachines/write\",
-     \"Microsoft.Compute/virtualMachines/capture/action\"."""
-    isDataAction: bool
-    """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
-     \"false\" for Azure Resource Manager/control-plane operations."""
-    display: "OperationDisplay"
-    """Localized display information for this particular operation."""
-    origin: Union[str, "Origin"]
-    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-     logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
-     \"user,system\"."""
-    actionType: Union[str, "ActionType"]
-    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
-     internal only APIs. \"Internal\""""
-
-
-class OperationDisplay(TypedDict, total=False):
-    """Localized display information for an operation.
-
-    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
-     Monitoring Insights" or "Microsoft Compute".
-    :vartype provider: str
-    :ivar resource: The localized friendly name of the resource type related to this operation.
-     E.g. "Virtual Machines" or "Job Schedule Collections".
-    :vartype resource: str
-    :ivar operation: The concise, localized friendly name for the operation; suitable for
-     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
-    :vartype operation: str
-    :ivar description: The short, localized friendly description of the operation; suitable for
-     tool tips and detailed views.
-    :vartype description: str
-    """
-
-    provider: str
-    """The localized friendly form of the resource provider name, e.g. \"Microsoft Monitoring
-     Insights\" or \"Microsoft Compute\"."""
-    resource: str
-    """The localized friendly name of the resource type related to this operation. E.g. \"Virtual
-     Machines\" or \"Job Schedule Collections\"."""
-    operation: str
-    """The concise, localized friendly name for the operation; suitable for dropdowns. E.g. \"Create
-     or Update Virtual Machine\", \"Restart Virtual Machine\"."""
-    description: str
-    """The short, localized friendly description of the operation; suitable for tool tips and detailed
-     views."""
-
-
 class PanoramaConfig(TypedDict, total=False):
     """Panorama Config.
 
-    :ivar config_string: Base64 encoded string representing Panorama parameters to be used by
+    :ivar configString: Base64 encoded string representing Panorama parameters to be used by
      Firewall to connect to Panorama. This string is generated via azure plugin in Panorama.
      Required.
-    :vartype config_string: str
-    :ivar vm_auth_key: VM auth key for panorama connectivity.
-    :vartype vm_auth_key: str
-    :ivar panorama_server: Primary Panorama Server IP address value in dotted format for IPv4.
-    :vartype panorama_server: str
-    :ivar panorama_server2: Secondary Panorama Server IP address value in dotted format for IPv4.
-    :vartype panorama_server2: str
-    :ivar dg_name: Panorama Device Group to join.
-    :vartype dg_name: str
-    :ivar tpl_name: Panorama Template Stack to join - (Once configured we can not edit the value).
-    :vartype tpl_name: str
-    :ivar cg_name: Panorama Collector Group to join - (Once configured we can not edit the value).
-    :vartype cg_name: str
-    :ivar host_name: Resource name(may be unique) for PN admin.
-    :vartype host_name: str
+    :vartype configString: str
+    :ivar vmAuthKey: VM auth key for panorama connectivity.
+    :vartype vmAuthKey: str
+    :ivar panoramaServer: Primary Panorama Server IP address value in dotted format for IPv4.
+    :vartype panoramaServer: str
+    :ivar panoramaServer2: Secondary Panorama Server IP address value in dotted format for IPv4.
+    :vartype panoramaServer2: str
+    :ivar dgName: Panorama Device Group to join.
+    :vartype dgName: str
+    :ivar tplName: Panorama Template Stack to join - (Once configured we can not edit the value).
+    :vartype tplName: str
+    :ivar cgName: Panorama Collector Group to join - (Once configured we can not edit the value).
+    :vartype cgName: str
+    :ivar hostName: Resource name(may be unique) for PN admin.
+    :vartype hostName: str
     """
 
     configString: Required[str]
@@ -1600,36 +1329,19 @@ class PanoramaConfig(TypedDict, total=False):
     """Resource name(may be unique) for PN admin."""
 
 
-class PanoramaStatus(TypedDict, total=False):
-    """Panorama connectivity information.
-
-    :ivar panorama_server_status: Primary Panorama connection status. Known values are: "UP" and
-     "DOWN".
-    :vartype panorama_server_status: Union[str, "ServerStatus"]
-    :ivar panorama_server2_status: Secondary Panorama connection status. Known values are: "UP" and
-     "DOWN".
-    :vartype panorama_server2_status: Union[str, "ServerStatus"]
-    """
-
-    panoramaServerStatus: Union[str, "ServerStatus"]
-    """Primary Panorama connection status. Known values are: \"UP\" and \"DOWN\"."""
-    panoramaServer2Status: Union[str, "ServerStatus"]
-    """Secondary Panorama connection status. Known values are: \"UP\" and \"DOWN\"."""
-
-
 class PlanData(TypedDict, total=False):
     """Billing plan information.
 
-    :ivar usage_type: different usage type like PAYG/COMMITTED. Known values are: "PAYG" and
+    :ivar usageType: different usage type like PAYG/COMMITTED. Known values are: "PAYG" and
      "COMMITTED".
-    :vartype usage_type: Union[str, "UsageType"]
-    :ivar billing_cycle: different billing cycles like MONTHLY/WEEKLY. Required. Known values are:
+    :vartype usageType: Union[str, "UsageType"]
+    :ivar billingCycle: different billing cycles like MONTHLY/WEEKLY. Required. Known values are:
      "WEEKLY" and "MONTHLY".
-    :vartype billing_cycle: Union[str, "BillingCycle"]
-    :ivar plan_id: plan id as published by Liftr.PAN. Required.
-    :vartype plan_id: str
-    :ivar effective_date: date when plan was applied.
-    :vartype effective_date: str
+    :vartype billingCycle: Union[str, "BillingCycle"]
+    :ivar planId: plan id as published by Liftr.PAN. Required.
+    :vartype planId: str
+    :ivar effectiveDate: date when plan was applied.
+    :vartype effectiveDate: str
     """
 
     usageType: Union[str, "UsageType"]
@@ -1654,45 +1366,15 @@ class PostRulesResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource. Required.
     :vartype properties: "RuleEntry"
     """
 
     properties: Required["RuleEntry"]
     """The resource-specific properties for this resource. Required."""
-
-
-class PredefinedUrlCategoriesResponse(TypedDict, total=False):
-    """predefined url categories response.
-
-    :ivar value: The PredefinedUrlCategory items on this page. Required.
-    :vartype value: list["PredefinedUrlCategory"]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: Required[list["PredefinedUrlCategory"]]
-    """The PredefinedUrlCategory items on this page. Required."""
-    nextLink: str
-    """The link to the next page of items."""
-
-
-class PredefinedUrlCategory(TypedDict, total=False):
-    """Predefined URL category object.
-
-    :ivar action: Required.
-    :vartype action: str
-    :ivar name: Required.
-    :vartype name: str
-    """
-
-    action: Required[str]
-    """Required."""
-    name: Required[str]
-    """Required."""
 
 
 class PrefixListGlobalRulestackResource(ProxyResource):
@@ -1706,9 +1388,9 @@ class PrefixListGlobalRulestackResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource. Required.
     :vartype properties: "PrefixObject"
     """
@@ -1728,9 +1410,9 @@ class PrefixListResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource. Required.
     :vartype properties: "PrefixObject"
     """
@@ -1744,16 +1426,16 @@ class PrefixObject(TypedDict, total=False):
 
     :ivar description: prefix description.
     :vartype description: str
-    :ivar prefix_list: prefix list. Required.
-    :vartype prefix_list: list[str]
+    :ivar prefixList: prefix list. Required.
+    :vartype prefixList: list[str]
     :ivar etag: etag info.
     :vartype etag: str
-    :ivar audit_comment: comment for this object.
-    :vartype audit_comment: str
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+    :ivar auditComment: comment for this object.
+    :vartype auditComment: str
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     description: str
@@ -1780,9 +1462,9 @@ class PreRulesResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource. Required.
     :vartype properties: "RuleEntry"
     """
@@ -1791,155 +1473,53 @@ class PreRulesResource(ProxyResource):
     """The resource-specific properties for this resource. Required."""
 
 
-class ProductSerialNumberRequestStatus(TypedDict, total=False):
-    """Create Product Serial Number Request status.
-
-    :ivar status: allocation status of the product serial number. Required.
-    :vartype status: str
-    """
-
-    status: Required[str]
-    """allocation status of the product serial number. Required."""
-
-
-class ProductSerialNumberStatus(TypedDict, total=False):
-    """Product serial and status for the service.
-
-    :ivar serial_number: product Serial associated with given resource.
-    :vartype serial_number: str
-    :ivar status: allocation status of the product serial number. Required. Known values are:
-     "Allocated" and "InProgress".
-    :vartype status: Union[str, "ProductSerialStatusValues"]
-    """
-
-    serialNumber: str
-    """product Serial associated with given resource."""
-    status: Required[Union[str, "ProductSerialStatusValues"]]
-    """allocation status of the product serial number. Required. Known values are: \"Allocated\" and
-     \"InProgress\"."""
-
-
-class RuleCounter(TypedDict, total=False):
-    """Rule counter.
-
-    :ivar priority: priority number. Required.
-    :vartype priority: str
-    :ivar rule_stack_name: rule Stack Name.
-    :vartype rule_stack_name: str
-    :ivar rule_list_name: rule list name.
-    :vartype rule_list_name: str
-    :ivar firewall_name: firewall name.
-    :vartype firewall_name: str
-    :ivar rule_name: rule name. Required.
-    :vartype rule_name: str
-    :ivar hit_count: hit count.
-    :vartype hit_count: int
-    :ivar app_seen: apps seen.
-    :vartype app_seen: "AppSeenData"
-    :ivar timestamp: timestamp of response.
-    :vartype timestamp: str
-    :ivar request_timestamp: timestamp of request.
-    :vartype request_timestamp: str
-    :ivar last_updated_timestamp: last updated timestamp.
-    :vartype last_updated_timestamp: str
-    """
-
-    priority: Required[str]
-    """priority number. Required."""
-    ruleStackName: str
-    """rule Stack Name."""
-    ruleListName: str
-    """rule list name."""
-    firewallName: str
-    """firewall name."""
-    ruleName: Required[str]
-    """rule name. Required."""
-    hitCount: int
-    """hit count."""
-    appSeen: "AppSeenData"
-    """apps seen."""
-    timestamp: str
-    """timestamp of response."""
-    requestTimestamp: str
-    """timestamp of request."""
-    lastUpdatedTimestamp: str
-    """last updated timestamp."""
-
-
-class RuleCounterReset(TypedDict, total=False):
-    """Rule counter reset.
-
-    :ivar priority: priority number.
-    :vartype priority: str
-    :ivar rule_stack_name: rule Stack Name.
-    :vartype rule_stack_name: str
-    :ivar rule_list_name: rule list name.
-    :vartype rule_list_name: str
-    :ivar firewall_name: firewall name.
-    :vartype firewall_name: str
-    :ivar rule_name: rule name.
-    :vartype rule_name: str
-    """
-
-    priority: str
-    """priority number."""
-    ruleStackName: str
-    """rule Stack Name."""
-    ruleListName: str
-    """rule list name."""
-    firewallName: str
-    """firewall name."""
-    ruleName: str
-    """rule name."""
-
-
 class RuleEntry(TypedDict, total=False):
     """definition of rule.
 
     :ivar etag: etag info.
     :vartype etag: str
-    :ivar rule_name: rule name. Required.
-    :vartype rule_name: str
+    :ivar ruleName: rule name. Required.
+    :vartype ruleName: str
     :ivar priority:
     :vartype priority: int
     :ivar description: rule description.
     :vartype description: str
-    :ivar rule_state: state of this rule. Known values are: "DISABLED" and "ENABLED".
-    :vartype rule_state: Union[str, "StateEnum"]
+    :ivar ruleState: state of this rule. Known values are: "DISABLED" and "ENABLED".
+    :vartype ruleState: Union[str, "StateEnum"]
     :ivar source: source address.
     :vartype source: "SourceAddr"
-    :ivar negate_source: cidr should not be 'any'. Known values are: "TRUE" and "FALSE".
-    :vartype negate_source: Union[str, "BooleanEnum"]
+    :ivar negateSource: cidr should not be 'any'. Known values are: "TRUE" and "FALSE".
+    :vartype negateSource: Union[str, "BooleanEnum"]
     :ivar destination: destination address.
     :vartype destination: "DestinationAddr"
-    :ivar negate_destination: cidr should not be 'any'. Known values are: "TRUE" and "FALSE".
-    :vartype negate_destination: Union[str, "BooleanEnum"]
+    :ivar negateDestination: cidr should not be 'any'. Known values are: "TRUE" and "FALSE".
+    :vartype negateDestination: Union[str, "BooleanEnum"]
     :ivar applications: array of rule applications.
     :vartype applications: list[str]
     :ivar category: rule category.
     :vartype category: "Category"
     :ivar protocol: any, application-default, TCP:number, UDP:number.
     :vartype protocol: str
-    :ivar protocol_port_list: prot port list.
-    :vartype protocol_port_list: list[str]
-    :ivar inbound_inspection_certificate: inbound Inspection Certificate.
-    :vartype inbound_inspection_certificate: str
-    :ivar audit_comment: rule comment.
-    :vartype audit_comment: str
-    :ivar action_type: rule action. Known values are: "Allow", "DenySilent", "DenyResetServer", and
+    :ivar protocolPortList: prot port list.
+    :vartype protocolPortList: list[str]
+    :ivar inboundInspectionCertificate: inbound Inspection Certificate.
+    :vartype inboundInspectionCertificate: str
+    :ivar auditComment: rule comment.
+    :vartype auditComment: str
+    :ivar actionType: rule action. Known values are: "Allow", "DenySilent", "DenyResetServer", and
      "DenyResetBoth".
-    :vartype action_type: Union[str, "ActionEnum"]
-    :ivar enable_logging: enable or disable logging. Known values are: "DISABLED" and "ENABLED".
-    :vartype enable_logging: Union[str, "StateEnum"]
-    :ivar decryption_rule_type: enable or disable decryption. Known values are:
+    :vartype actionType: Union[str, "ActionEnum"]
+    :ivar enableLogging: enable or disable logging. Known values are: "DISABLED" and "ENABLED".
+    :vartype enableLogging: Union[str, "StateEnum"]
+    :ivar decryptionRuleType: enable or disable decryption. Known values are:
      "SSLOutboundInspection", "SSLInboundInspection", and "None".
-    :vartype decryption_rule_type: Union[str, "DecryptionRuleTypeEnum"]
+    :vartype decryptionRuleType: Union[str, "DecryptionRuleTypeEnum"]
     :ivar tags: tag for rule.
     :vartype tags: list["TagInfo"]
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     etag: str
@@ -1989,10 +1569,10 @@ class RuleEntry(TypedDict, total=False):
 class RulestackDetails(TypedDict, total=False):
     """Associated rulestack details.
 
-    :ivar resource_id: Resource Id.
-    :vartype resource_id: str
-    :ivar rulestack_id: Associated rulestack Id.
-    :vartype rulestack_id: str
+    :ivar resourceId: Resource Id.
+    :vartype resourceId: str
+    :ivar rulestackId: Associated rulestack Id.
+    :vartype rulestackId: str
     :ivar location: Rulestack location.
     :vartype location: str
     """
@@ -2008,27 +1588,27 @@ class RulestackDetails(TypedDict, total=False):
 class RulestackProperties(TypedDict, total=False):
     """PAN Rulestack Describe Object.
 
-    :ivar pan_etag: PanEtag info.
-    :vartype pan_etag: str
-    :ivar pan_location: Rulestack Location, Required for GlobalRulestacks, Not for LocalRulestacks.
-    :vartype pan_location: str
+    :ivar panEtag: PanEtag info.
+    :vartype panEtag: str
+    :ivar panLocation: Rulestack Location, Required for GlobalRulestacks, Not for LocalRulestacks.
+    :vartype panLocation: str
     :ivar scope: Rulestack Type. Known values are: "LOCAL" and "GLOBAL".
     :vartype scope: Union[str, "ScopeType"]
-    :ivar associated_subscriptions: subscription scope of global rulestack.
-    :vartype associated_subscriptions: list[str]
+    :ivar associatedSubscriptions: subscription scope of global rulestack.
+    :vartype associatedSubscriptions: list[str]
     :ivar description: rulestack description.
     :vartype description: str
-    :ivar default_mode: Mode for default rules creation. Known values are: "IPS", "FIREWALL", and
+    :ivar defaultMode: Mode for default rules creation. Known values are: "IPS", "FIREWALL", and
      "NONE".
-    :vartype default_mode: Union[str, "DefaultMode"]
-    :ivar min_app_id_version: minimum version.
-    :vartype min_app_id_version: str
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+    :vartype defaultMode: Union[str, "DefaultMode"]
+    :ivar minAppIdVersion: minimum version.
+    :vartype minAppIdVersion: str
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar security_services: Security Profile.
-    :vartype security_services: "SecurityServices"
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar securityServices: Security Profile.
+    :vartype securityServices: "SecurityServices"
     """
 
     panEtag: str
@@ -2055,22 +1635,22 @@ class RulestackProperties(TypedDict, total=False):
 class SecurityServices(TypedDict, total=False):
     """security services.
 
-    :ivar vulnerability_profile: IPs Vulnerability Profile Data.
-    :vartype vulnerability_profile: str
-    :ivar anti_spyware_profile: Anti spyware Profile data.
-    :vartype anti_spyware_profile: str
-    :ivar anti_virus_profile: anti virus profile data.
-    :vartype anti_virus_profile: str
-    :ivar url_filtering_profile: URL filtering profile data.
-    :vartype url_filtering_profile: str
-    :ivar file_blocking_profile: File blocking profile data.
-    :vartype file_blocking_profile: str
-    :ivar dns_subscription: DNS Subscription profile data.
-    :vartype dns_subscription: str
-    :ivar outbound_un_trust_certificate: Untrusted Egress Decryption profile data.
-    :vartype outbound_un_trust_certificate: str
-    :ivar outbound_trust_certificate: Trusted Egress Decryption profile data.
-    :vartype outbound_trust_certificate: str
+    :ivar vulnerabilityProfile: IPs Vulnerability Profile Data.
+    :vartype vulnerabilityProfile: str
+    :ivar antiSpywareProfile: Anti spyware Profile data.
+    :vartype antiSpywareProfile: str
+    :ivar antiVirusProfile: anti virus profile data.
+    :vartype antiVirusProfile: str
+    :ivar urlFilteringProfile: URL filtering profile data.
+    :vartype urlFilteringProfile: str
+    :ivar fileBlockingProfile: File blocking profile data.
+    :vartype fileBlockingProfile: str
+    :ivar dnsSubscription: DNS Subscription profile data.
+    :vartype dnsSubscription: str
+    :ivar outboundUnTrustCertificate: Untrusted Egress Decryption profile data.
+    :vartype outboundUnTrustCertificate: str
+    :ivar outboundTrustCertificate: Trusted Egress Decryption profile data.
+    :vartype outboundTrustCertificate: str
     """
 
     vulnerabilityProfile: str
@@ -2091,36 +1671,6 @@ class SecurityServices(TypedDict, total=False):
     """Trusted Egress Decryption profile data."""
 
 
-class SecurityServicesResponse(TypedDict, total=False):
-    """Security services list response.
-
-    :ivar value: response value. Required.
-    :vartype value: "SecurityServicesTypeList"
-    :ivar next_link: next link.
-    :vartype next_link: str
-    """
-
-    value: Required["SecurityServicesTypeList"]
-    """response value. Required."""
-    nextLink: str
-    """next link."""
-
-
-class SecurityServicesTypeList(TypedDict, total=False):
-    """Security services type list.
-
-    :ivar type: security services type.
-    :vartype type: str
-    :ivar entry: list. Required.
-    :vartype entry: list["NameDescriptionObject"]
-    """
-
-    type: str
-    """security services type."""
-    entry: Required[list["NameDescriptionObject"]]
-    """list. Required."""
-
-
 class SourceAddr(TypedDict, total=False):
     """Address properties.
 
@@ -2130,8 +1680,8 @@ class SourceAddr(TypedDict, total=False):
     :vartype countries: list[str]
     :ivar feeds: list of feeds.
     :vartype feeds: list[str]
-    :ivar prefix_lists: prefix list.
-    :vartype prefix_lists: list[str]
+    :ivar prefixLists: prefix list.
+    :vartype prefixLists: list[str]
     """
 
     cidrs: list[str]
@@ -2149,10 +1699,10 @@ class StorageAccount(TypedDict, total=False):
 
     :ivar id: Resource ID of storage account.
     :vartype id: str
-    :ivar subscription_id: Subscription Id.
-    :vartype subscription_id: str
-    :ivar account_name: Storage account name.
-    :vartype account_name: str
+    :ivar subscriptionId: Subscription Id.
+    :vartype subscriptionId: str
+    :ivar accountName: Storage account name.
+    :vartype accountName: str
     """
 
     id: str
@@ -2166,175 +1716,32 @@ class StorageAccount(TypedDict, total=False):
 class StrataCloudManagerConfig(TypedDict, total=False):
     """This field is only present if Strata Cloud Manager is managing the policy for this firewall.
 
-    :ivar cloud_manager_name: Strata Cloud Manager name which is intended to manage the policy for
+    :ivar cloudManagerName: Strata Cloud Manager name which is intended to manage the policy for
      this firewall. Required.
-    :vartype cloud_manager_name: str
+    :vartype cloudManagerName: str
     """
 
     cloudManagerName: Required[str]
     """Strata Cloud Manager name which is intended to manage the policy for this firewall. Required."""
 
 
-class StrataCloudManagerInfo(TypedDict, total=False):
-    """Strata Cloud Manager Info.
-
-    :ivar folder_name: Strata Cloud Manager folder in which this firewall has been placed.
-    :vartype folder_name: str
-    :ivar hub_url: URL for Strata Cloud Manager.
-    :vartype hub_url: str
-    """
-
-    folderName: str
-    """Strata Cloud Manager folder in which this firewall has been placed."""
-    hubUrl: str
-    """URL for Strata Cloud Manager."""
-
-
-class SupportInfo(TypedDict, total=False):
-    """Support information for the resource.
-
-    :ivar product_sku: product SKU associated with given resource.
-    :vartype product_sku: str
-    :ivar product_serial: product Serial associated with given resource.
-    :vartype product_serial: str
-    :ivar account_registered: account registered in Customer Support Portal. Known values are:
-     "TRUE" and "FALSE".
-    :vartype account_registered: Union[str, "BooleanEnum"]
-    :ivar account_id: Support account associated with given resource.
-    :vartype account_id: str
-    :ivar user_domain_supported: user domain is supported in Customer Support Portal. Known values
-     are: "TRUE" and "FALSE".
-    :vartype user_domain_supported: Union[str, "BooleanEnum"]
-    :ivar user_registered: user registered in Customer Support Portal. Known values are: "TRUE" and
-     "FALSE".
-    :vartype user_registered: Union[str, "BooleanEnum"]
-    :ivar free_trial: Product usage is in free trial period. Known values are: "TRUE" and "FALSE".
-    :vartype free_trial: Union[str, "BooleanEnum"]
-    :ivar free_trial_days_left: Free trial days remaining.
-    :vartype free_trial_days_left: int
-    :ivar free_trial_credit_left: Free trial credit remaining.
-    :vartype free_trial_credit_left: int
-    :ivar help_url: URL for paloaltonetworks live community.
-    :vartype help_url: str
-    :ivar support_url: URL for paloaltonetworks Customer Service Portal.
-    :vartype support_url: str
-    :ivar register_url: URL for registering product in paloaltonetworks Customer Service Portal.
-    :vartype register_url: str
-    """
-
-    productSku: str
-    """product SKU associated with given resource."""
-    productSerial: str
-    """product Serial associated with given resource."""
-    accountRegistered: Union[str, "BooleanEnum"]
-    """account registered in Customer Support Portal. Known values are: \"TRUE\" and \"FALSE\"."""
-    accountId: str
-    """Support account associated with given resource."""
-    userDomainSupported: Union[str, "BooleanEnum"]
-    """user domain is supported in Customer Support Portal. Known values are: \"TRUE\" and \"FALSE\"."""
-    userRegistered: Union[str, "BooleanEnum"]
-    """user registered in Customer Support Portal. Known values are: \"TRUE\" and \"FALSE\"."""
-    freeTrial: Union[str, "BooleanEnum"]
-    """Product usage is in free trial period. Known values are: \"TRUE\" and \"FALSE\"."""
-    freeTrialDaysLeft: int
-    """Free trial days remaining."""
-    freeTrialCreditLeft: int
-    """Free trial credit remaining."""
-    helpURL: str
-    """URL for paloaltonetworks live community."""
-    supportURL: str
-    """URL for paloaltonetworks Customer Service Portal."""
-    registerURL: str
-    """URL for registering product in paloaltonetworks Customer Service Portal."""
-
-
-class SupportInfoModel(TypedDict, total=False):
-    """Support information for the service.
-
-    :ivar product_sku: product SKU associated with given resource.
-    :vartype product_sku: str
-    :ivar product_serial: product Serial associated with given resource.
-    :vartype product_serial: str
-    :ivar account_registration_status: account registered in Customer Support Portal. Known values
-     are: "Registered" and "Not Registered".
-    :vartype account_registration_status: Union[str, "RegistrationStatus"]
-    :ivar account_id: Support account associated with given resource.
-    :vartype account_id: str
-    :ivar free_trial: Product usage is in free trial period. Known values are: "Enabled" and
-     "Disabled".
-    :vartype free_trial: Union[str, "EnableStatus"]
-    :ivar free_trial_days_left: Free trial days remaining.
-    :vartype free_trial_days_left: int
-    :ivar free_trial_credit_left: Free trial credit remaining.
-    :vartype free_trial_credit_left: int
-    :ivar help_url: URL for paloaltonetworks live community.
-    :vartype help_url: str
-    :ivar support_url: URL for paloaltonetworks Customer Service Portal.
-    :vartype support_url: str
-    :ivar register_url: URL for registering product in paloaltonetworks Customer Service Portal.
-    :vartype register_url: str
-    :ivar hub_url: URL for Strata Cloud Manager.
-    :vartype hub_url: str
-    :ivar credits: credits purchased, unit per hour.
-    :vartype credits: int
-    :ivar monthly_credit_left: monthly credit is computed as credits * days in calendar month.
-    :vartype monthly_credit_left: int
-    :ivar start_date_for_credits: date in format yyyy-mm-dd.
-    :vartype start_date_for_credits: str
-    :ivar end_date_for_credits: date in format yyyy-mm-dd.
-    :vartype end_date_for_credits: str
-    """
-
-    productSku: str
-    """product SKU associated with given resource."""
-    productSerial: str
-    """product Serial associated with given resource."""
-    accountRegistrationStatus: Union[str, "RegistrationStatus"]
-    """account registered in Customer Support Portal. Known values are: \"Registered\" and \"Not
-     Registered\"."""
-    accountId: str
-    """Support account associated with given resource."""
-    freeTrial: Union[str, "EnableStatus"]
-    """Product usage is in free trial period. Known values are: \"Enabled\" and \"Disabled\"."""
-    freeTrialDaysLeft: int
-    """Free trial days remaining."""
-    freeTrialCreditLeft: int
-    """Free trial credit remaining."""
-    helpURL: str
-    """URL for paloaltonetworks live community."""
-    supportURL: str
-    """URL for paloaltonetworks Customer Service Portal."""
-    registerURL: str
-    """URL for registering product in paloaltonetworks Customer Service Portal."""
-    hubUrl: str
-    """URL for Strata Cloud Manager."""
-    credits: int
-    """credits purchased, unit per hour."""
-    monthlyCreditLeft: int
-    """monthly credit is computed as credits * days in calendar month."""
-    startDateForCredits: str
-    """date in format yyyy-mm-dd."""
-    endDateForCredits: str
-    """date in format yyyy-mm-dd."""
-
-
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -2373,12 +1780,12 @@ class VnetConfiguration(TypedDict, total=False):
 
     :ivar vnet: Azure Virtual Network. Required.
     :vartype vnet: "IPAddressSpace"
-    :ivar trust_subnet: Trust Subnet. Required.
-    :vartype trust_subnet: "IPAddressSpace"
-    :ivar un_trust_subnet: Untrust Subnet. Required.
-    :vartype un_trust_subnet: "IPAddressSpace"
-    :ivar ip_of_trust_subnet_for_udr: IP of trust subnet for UDR.
-    :vartype ip_of_trust_subnet_for_udr: "IPAddress"
+    :ivar trustSubnet: Trust Subnet. Required.
+    :vartype trustSubnet: "IPAddressSpace"
+    :ivar unTrustSubnet: Untrust Subnet. Required.
+    :vartype unTrustSubnet: "IPAddressSpace"
+    :ivar ipOfTrustSubnetForUdr: IP of trust subnet for UDR.
+    :vartype ipOfTrustSubnetForUdr: "IPAddress"
     """
 
     vnet: Required["IPAddressSpace"]
@@ -2394,16 +1801,16 @@ class VnetConfiguration(TypedDict, total=False):
 class VwanConfiguration(TypedDict, total=False):
     """VwanInfo for Firewall Networking.
 
-    :ivar network_virtual_appliance_id: Network Virtual Appliance resource ID.
-    :vartype network_virtual_appliance_id: str
-    :ivar v_hub: vHub Address. Required.
-    :vartype v_hub: "IPAddressSpace"
-    :ivar trust_subnet: Trust Subnet.
-    :vartype trust_subnet: "IPAddressSpace"
-    :ivar un_trust_subnet: Untrust Subnet.
-    :vartype un_trust_subnet: "IPAddressSpace"
-    :ivar ip_of_trust_subnet_for_udr: IP of trust subnet for UDR.
-    :vartype ip_of_trust_subnet_for_udr: "IPAddress"
+    :ivar networkVirtualApplianceId: Network Virtual Appliance resource ID.
+    :vartype networkVirtualApplianceId: str
+    :ivar vHub: vHub Address. Required.
+    :vartype vHub: "IPAddressSpace"
+    :ivar trustSubnet: Trust Subnet.
+    :vartype trustSubnet: "IPAddressSpace"
+    :ivar unTrustSubnet: Untrust Subnet.
+    :vartype unTrustSubnet: "IPAddressSpace"
+    :ivar ipOfTrustSubnetForUdr: IP of trust subnet for UDR.
+    :vartype ipOfTrustSubnetForUdr: "IPAddress"
     """
 
     networkVirtualApplianceId: str

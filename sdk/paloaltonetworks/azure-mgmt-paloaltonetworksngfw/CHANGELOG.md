@@ -1,5 +1,16 @@
 # Release History
 
+## 2.0.0b3 (2026-08-10)
+
+### Features Added
+
+  - Client `PaloAltoNetworksNgfwMgmtClient` added operation group `log_ingestion_settings_resources`
+  - Added model `LogDestinationV2`
+  - Added model `LogIngestionSettingsProperties`
+  - Added model `LogIngestionSettingsResource`
+  - Added model `MonitorLogV2`
+  - Added operation group `LogIngestionSettingsResourcesOperations`
+
 ## 2.0.0b2 (2026-07-07)
 
 ### Features Added
