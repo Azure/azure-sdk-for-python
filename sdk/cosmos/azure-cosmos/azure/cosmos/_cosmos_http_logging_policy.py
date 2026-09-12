@@ -58,6 +58,30 @@ HTTPResponseType = Union["LegacyHttpResponse", "HttpResponse", "LegacyAsyncHttpR
 "AsyncHttpResponse", "SansIOHttpResponse", "LegacySansIOHttpResponse"]
 
 
+def _redact_url(url: Optional[str]) -> Optional[str]:
+    """Redact all query-parameter values from a URL so it can be logged safely.
+
+    The success path (``on_request``) already logs a redacted URL; the error and exception
+    paths must apply the same redaction so query-parameter values are never logged in the clear.
+
+    :param url: The request URL to redact.
+    :type url: Optional[str]
+    :return: The URL with every query-parameter value replaced by the redaction placeholder.
+    :rtype: Optional[str]
+    """
+    if not url:
+        return url
+    try:
+        parsed = list(urllib.parse.urlparse(url))
+        query_pairs = urllib.parse.parse_qsl(parsed[4], keep_blank_values=True)
+        parsed[4] = "&".join(
+            f"{key}={HttpLoggingPolicy.REDACTED_PLACEHOLDER}" for key, _ in query_pairs
+        )
+        return urllib.parse.urlunparse(parsed)
+    except Exception:  # pylint: disable=broad-except
+        return HttpLoggingPolicy.REDACTED_PLACEHOLDER
+
+
 # These Helper functions are used to Log Diagnostics for the SDK outside on_request and on_response
 def _populate_logger_attributes(  # type: ignore[attr-defined, union-attr]
                             logger_attributes: Optional[dict[str, Any]] = None,
@@ -85,7 +109,7 @@ def _populate_logger_attributes(  # type: ignore[attr-defined, union-attr]
     if http_request:
         logger_attributes["activity_id"] = http_request.headers.get(HttpHeaders.ActivityId, "")
         logger_attributes["verb"] = http_request.method
-        logger_attributes["url"] = http_request.url
+        logger_attributes["url"] = _redact_url(http_request.url)
         logger_attributes["operation_type"] = http_request.headers.get(
             'x-ms-thinclient-proxy-operation-type')
         logger_attributes["resource_type"] = http_request.headers.get(
@@ -144,7 +168,7 @@ def _log_diagnostics_error(  # type: ignore[attr-defined, union-attr]
         log_string += _get_database_account_settings(global_endpoint_manager)
         http_request = request.http_request if request else None
         if http_request:
-            log_string += f"\nRequest URL: {http_request.url}"
+            log_string += f"\nRequest URL: {_redact_url(http_request.url)}"
             log_string += f"\nRequest method: {http_request.method}"
             log_string += "\nRequest Activity ID: {}".format(http_request.headers.get(HttpHeaders.ActivityId))
             log_string += "\nRequest headers:"
@@ -542,7 +566,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                 logger_attributes["duration"] = duration
                 logger_attributes["activity_id"] = request.http_request.headers.get(HttpHeaders.ActivityId, "")
                 logger_attributes["verb"] = request.http_request.method
-                logger_attributes["url"] = request.http_request.url
+                logger_attributes["url"] = _redact_url(request.http_request.url)
                 logger_attributes["operation_type"] = request.http_request.headers.get(
                     'x-ms-thinclient-proxy-operation-type')
                 logger_attributes["resource_type"] = request.http_request.headers.get(
