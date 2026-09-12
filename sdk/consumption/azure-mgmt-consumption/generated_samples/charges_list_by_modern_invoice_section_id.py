@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-08-01/ChargesListByModernInvoiceSectionId.json
+# x-ms-original-file: 2026-06-01/ChargesListByModernInvoiceSectionId.json
 if __name__ == "__main__":
     main()

@@ -386,12 +386,14 @@ namespace azure.mgmt.consumption.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
+        @api_version_validation(params_added_on={'2026-06-01': ['management_group_id']}, api_versions_list=['2024-08-01', '2026-06-01'])
         async def get(
                 self, 
                 resource_scope: str, 
                 *, 
                 filter: Optional[str] = ..., 
                 look_back_period: Union[str, LookBackPeriod], 
+                management_group_id: Optional[str] = ..., 
                 product: str, 
                 region: str, 
                 scope: Union[str, Scope], 
@@ -1080,6 +1082,34 @@ namespace azure.mgmt.consumption.models
         usage_start: Optional[str]
 
 
+    class azure.mgmt.consumption.models.LegacyManagementGroupScopeReservationRecommendationProperties(LegacyReservationRecommendationProperties, discriminator='ManagementGroup'):
+        cost_with_no_reserved_instances: Decimal
+        first_usage_date: datetime
+        instance_flexibility_group: str
+        instance_flexibility_ratio: float
+        last_usage_date: datetime
+        look_back_period: str
+        management_group_id: str
+        meter_id: str
+        net_savings: Decimal
+        normalized_size: str
+        recommended_quantity: Decimal
+        recommended_quantity_normalized: float
+        resource_type: str
+        scope: Literal["ManagementGroup"]
+        sku_properties: list[SkuProperty]
+        tenant_id: str
+        term: str
+        total_cost_with_reserved_instances: Decimal
+        total_hours: int
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.consumption.models.LegacyReservationRecommendation(ReservationRecommendation, discriminator='legacy'):
         etag: str
         id: str
@@ -1528,6 +1558,36 @@ namespace azure.mgmt.consumption.models
         subscription_id: Optional[str]
         usage_end: Optional[str]
         usage_start: Optional[str]
+
+
+    class azure.mgmt.consumption.models.ModernManagementGroupScopeReservationRecommendationProperties(ModernReservationRecommendationProperties, discriminator='ManagementGroup'):
+        cost_with_no_reserved_instances: Amount
+        first_usage_date: datetime
+        instance_flexibility_group: str
+        instance_flexibility_ratio: float
+        last_usage_date: datetime
+        location: str
+        look_back_period: int
+        management_group_id: str
+        meter_id: str
+        net_savings: Amount
+        normalized_size: str
+        recommended_quantity: Decimal
+        recommended_quantity_normalized: float
+        resource_type: str
+        scope: Literal["ManagementGroup"]
+        sku_name: str
+        sku_properties: list[SkuProperty]
+        tenant_id: str
+        term: str
+        total_cost_with_reserved_instances: Amount
+        total_hours: int
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.consumption.models.ModernReservationRecommendation(ReservationRecommendation, discriminator='modern'):
@@ -2074,12 +2134,19 @@ namespace azure.mgmt.consumption.models
             ) -> None: ...
 
 
+    class azure.mgmt.consumption.models.ReservationRecommendationDetailsProjectedUsageProperties(_Model):
+        total_retail_usage_in_c_us: Optional[float]
+
+
     class azure.mgmt.consumption.models.ReservationRecommendationDetailsProperties(_Model):
         currency: Optional[str]
+        management_group_id: Optional[str]
+        projected_usage: Optional[ReservationRecommendationDetailsProjectedUsageProperties]
         resource: Optional[ReservationRecommendationDetailsResourceProperties]
         resource_group: Optional[str]
         savings: Optional[ReservationRecommendationDetailsSavingsProperties]
         scope: Optional[str]
+        tenant_id: Optional[str]
         usage: Optional[ReservationRecommendationDetailsUsageProperties]
 
 
@@ -2211,6 +2278,7 @@ namespace azure.mgmt.consumption.models
 
 
     class azure.mgmt.consumption.models.Scope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MANAGEMENT_GROUP = "ManagementGroup"
         SHARED = "Shared"
         SINGLE = "Single"
 
@@ -2657,12 +2725,14 @@ namespace azure.mgmt.consumption.operations
             ) -> None: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-06-01': ['management_group_id']}, api_versions_list=['2024-08-01', '2026-06-01'])
         def get(
                 self, 
                 resource_scope: str, 
                 *, 
                 filter: Optional[str] = ..., 
                 look_back_period: Union[str, LookBackPeriod], 
+                management_group_id: Optional[str] = ..., 
                 product: str, 
                 region: str, 
                 scope: Union[str, Scope], 
@@ -2851,11 +2921,11 @@ namespace azure.mgmt.consumption.types
         key "properties": ForwardRef('BudgetProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        e_tag: str
+        eTag: str
         id: str
         name: str
         properties: BudgetProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2865,14 +2935,13 @@ namespace azure.mgmt.consumption.types
         key "values": Required[list[str]]
         name: str
         operator: Union[str, BudgetOperatorType]
-        values_property: list[str]
+        values: list[str]
 
 
     class azure.mgmt.consumption.types.BudgetFilter(TypedDict):
         key "dimensions": ForwardRef('BudgetComparisonExpression', module='types')
         key "tags": ForwardRef('BudgetComparisonExpression', module='types')
         and: list[BudgetFilterProperties]
-        and_property: list[BudgetFilterProperties]
         dimensions: BudgetComparisonExpression
         tags: BudgetComparisonExpression
 
@@ -2894,19 +2963,19 @@ namespace azure.mgmt.consumption.types
         key "timePeriod": Required[BudgetTimePeriod]
         amount: float
         category: Union[str, CategoryType]
-        current_spend: CurrentSpend
+        currentSpend: CurrentSpend
         filter: BudgetFilter
-        forecast_spend: ForecastSpend
+        forecastSpend: ForecastSpend
         notifications: dict[str, Notification]
-        time_grain: Union[str, TimeGrainType]
-        time_period: BudgetTimePeriod
+        timeGrain: Union[str, TimeGrainType]
+        timePeriod: BudgetTimePeriod
 
 
     class azure.mgmt.consumption.types.BudgetTimePeriod(TypedDict, total=False):
         key "endDate": str
         key "startDate": Required[str]
-        end_date: str
-        start_date: str
+        endDate: str
+        startDate: str
 
 
     class azure.mgmt.consumption.types.CurrentSpend(TypedDict, total=False):
@@ -2923,7 +2992,7 @@ namespace azure.mgmt.consumption.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2941,16 +3010,14 @@ namespace azure.mgmt.consumption.types
         key "operator": Required[Union[str, OperatorType]]
         key "threshold": Required[float]
         key "thresholdType": Union[str, ThresholdType]
+        contactEmails: list[str]
         contactGroups: list[str]
         contactRoles: list[str]
-        contact_emails: list[str]
-        contact_groups: list[str]
-        contact_roles: list[str]
         enabled: bool
         locale: Union[str, CultureCode]
         operator: Union[str, OperatorType]
         threshold: float
-        threshold_type: Union[str, ThresholdType]
+        thresholdType: Union[str, ThresholdType]
 
 
     class azure.mgmt.consumption.types.Resource(TypedDict, total=False):
@@ -2960,7 +3027,7 @@ namespace azure.mgmt.consumption.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2971,12 +3038,12 @@ namespace azure.mgmt.consumption.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
 ```

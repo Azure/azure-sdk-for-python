@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2024-08-01/ReservationSummariesDailyWithReservationId.json
+# x-ms-original-file: 2026-06-01/ReservationSummariesDailyWithReservationId.json
 if __name__ == "__main__":
     main()
