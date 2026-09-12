@@ -9,16 +9,15 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_field
+from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AADProfileProperties(_model_base.Model):
+class AADProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The AAD Profile.
 
     :ivar server_id: The arc ingress gateway server app id. Required.
@@ -51,7 +50,7 @@ class AADProfileProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AwsCloudProfile(_model_base.Model):
+class AwsCloudProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """cloud profile for AWS.
 
     :ivar account_id: Account id for the AWS account. Required.
@@ -66,7 +65,7 @@ class AwsCloudProfile(_model_base.Model):
 
     account_id: str = rest_field(name="accountId", visibility=["read", "create"])
     """Account id for the AWS account. Required."""
-    excluded_accounts: Optional[List[str]] = rest_field(
+    excluded_accounts: Optional[list[str]] = rest_field(
         name="excludedAccounts", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of AWS accounts which need to be excluded."""
@@ -81,7 +80,7 @@ class AwsCloudProfile(_model_base.Model):
         self,
         *,
         account_id: str,
-        excluded_accounts: Optional[List[str]] = None,
+        excluded_accounts: Optional[list[str]] = None,
         is_organizational_account: Optional[bool] = None,
     ) -> None: ...
 
@@ -96,14 +95,14 @@ class AwsCloudProfile(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AwsCloudProfileUpdate(_model_base.Model):
+class AwsCloudProfileUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """cloud profile for AWS.
 
     :ivar excluded_accounts: List of AWS accounts which need to be excluded.
     :vartype excluded_accounts: list[str]
     """
 
-    excluded_accounts: Optional[List[str]] = rest_field(
+    excluded_accounts: Optional[list[str]] = rest_field(
         name="excludedAccounts", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of AWS accounts which need to be excluded."""
@@ -112,7 +111,7 @@ class AwsCloudProfileUpdate(_model_base.Model):
     def __init__(
         self,
         *,
-        excluded_accounts: Optional[List[str]] = None,
+        excluded_accounts: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -126,7 +125,7 @@ class AwsCloudProfileUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointAccessResource(_model_base.Model):
+class EndpointAccessResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The endpoint access for the target resource.
 
     :ivar relay: Azure relay hybrid connection access properties.
@@ -178,12 +177,12 @@ class EndpointAccessResource(_model_base.Model):
         if key in self.__flattened_items:
             if self.relay is None:
                 self.relay = self._attr_to_rest_field["relay"]._class_type()
-            setattr(self.properties, key, value)
+            setattr(self.relay, key, value)
         else:
             super().__setattr__(key, value)
 
 
-class EndpointProperties(_model_base.Model):
+class EndpointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Endpoint details.
 
     :ivar type: The type of endpoint. Required. Known values are: "default" and "custom".
@@ -222,8 +221,8 @@ class EndpointProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Resource(_model_base.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
+class Resource(_Model):
+    """Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -267,7 +266,7 @@ class ExtensionResource(Resource):
     """
 
 
-class EndpointResource(ExtensionResource):
+class EndpointResource(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The endpoint for the target resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -308,7 +307,7 @@ class EndpointResource(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
-class ErrorAdditionalInfo(_model_base.Model):
+class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
     :ivar type: The additional info type.
@@ -323,7 +322,7 @@ class ErrorAdditionalInfo(_model_base.Model):
     """The additional info."""
 
 
-class ErrorDetail(_model_base.Model):
+class ErrorDetail(_Model):
     """The error detail.
 
     :ivar code: The error code.
@@ -344,17 +343,16 @@ class ErrorDetail(_model_base.Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
 
 
-class ErrorResponse(_model_base.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Error response.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.hybridconnectivity.models.ErrorDetail
@@ -381,28 +379,31 @@ class ErrorResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class GenerateAwsTemplateRequest(_model_base.Model):
-    """ConnectorId and SolutionTypes and their properties to Generate AWS CFT Template.
+class GcpCloudProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """cloud profile for GCP.
 
-    :ivar connector_id: The name of public cloud connector. Required.
-    :vartype connector_id: str
-    :ivar solution_types: The list of solution types and their settings.
-    :vartype solution_types: list[~azure.mgmt.hybridconnectivity.models.SolutionTypeSettings]
+    :ivar project_properties: The project properties of the GCP project.
+    :vartype project_properties: ~azure.mgmt.hybridconnectivity.models.GcpProjectProperties
+    :ivar organization_properties: The organization properties of the GCP organization.
+    :vartype organization_properties:
+     ~azure.mgmt.hybridconnectivity.models.GcpOrganizationProperties
     """
 
-    connector_id: str = rest_field(name="connectorId", visibility=["read", "create", "update", "delete", "query"])
-    """The name of public cloud connector. Required."""
-    solution_types: Optional[List["_models.SolutionTypeSettings"]] = rest_field(
-        name="solutionTypes", visibility=["read", "create", "update", "delete", "query"]
+    project_properties: Optional["_models.GcpProjectProperties"] = rest_field(
+        name="projectProperties", visibility=["read", "create"]
     )
-    """The list of solution types and their settings."""
+    """The project properties of the GCP project."""
+    organization_properties: Optional["_models.GcpOrganizationProperties"] = rest_field(
+        name="organizationProperties", visibility=["read", "create"]
+    )
+    """The organization properties of the GCP organization."""
 
     @overload
     def __init__(
         self,
         *,
-        connector_id: str,
-        solution_types: Optional[List["_models.SolutionTypeSettings"]] = None,
+        project_properties: Optional["_models.GcpProjectProperties"] = None,
+        organization_properties: Optional["_models.GcpOrganizationProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -416,7 +417,254 @@ class GenerateAwsTemplateRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class IngressGatewayResource(_model_base.Model):
+class GcpCloudProfileUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """cloud profile for GCP.
+
+    :ivar organization_properties: The organization properties of the GCP organization.
+    :vartype organization_properties:
+     ~azure.mgmt.hybridconnectivity.models.GcpOrganizationPropertiesUpdate
+    """
+
+    organization_properties: Optional["_models.GcpOrganizationPropertiesUpdate"] = rest_field(
+        name="organizationProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The organization properties of the GCP organization."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        organization_properties: Optional["_models.GcpOrganizationPropertiesUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GcpOrganizationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """GCP organization properties.
+
+    :ivar organization_id: The organization id of the GCP organization. Required.
+    :vartype organization_id: str
+    :ivar management_project_number: The project number of the management project under the GCP
+     organization. Required.
+    :vartype management_project_number: str
+    :ivar management_project_id: The project Id of the management project under the GCP
+     organization. Required.
+    :vartype management_project_id: str
+    :ivar excluded_project_numbers: List of GCP projects which need to be excluded.
+    :vartype excluded_project_numbers: list[str]
+    :ivar excluded_folder_ids: List of GCP folders which need to be excluded.
+    :vartype excluded_folder_ids: list[str]
+    """
+
+    organization_id: str = rest_field(name="organizationId", visibility=["read", "create"])
+    """The organization id of the GCP organization. Required."""
+    management_project_number: str = rest_field(name="managementProjectNumber", visibility=["read", "create"])
+    """The project number of the management project under the GCP organization. Required."""
+    management_project_id: str = rest_field(name="managementProjectId", visibility=["read", "create"])
+    """The project Id of the management project under the GCP organization. Required."""
+    excluded_project_numbers: Optional[list[str]] = rest_field(
+        name="excludedProjectNumbers", visibility=["read", "create"]
+    )
+    """List of GCP projects which need to be excluded."""
+    excluded_folder_ids: Optional[list[str]] = rest_field(name="excludedFolderIds", visibility=["read", "create"])
+    """List of GCP folders which need to be excluded."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        organization_id: str,
+        management_project_number: str,
+        management_project_id: str,
+        excluded_project_numbers: Optional[list[str]] = None,
+        excluded_folder_ids: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GcpOrganizationPropertiesUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """GCP organization properties for update.
+
+    :ivar excluded_project_numbers: List of GCP projects which need to be excluded.
+    :vartype excluded_project_numbers: list[str]
+    :ivar excluded_folder_ids: List of GCP folders which need to be excluded.
+    :vartype excluded_folder_ids: list[str]
+    """
+
+    excluded_project_numbers: Optional[list[str]] = rest_field(
+        name="excludedProjectNumbers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of GCP projects which need to be excluded."""
+    excluded_folder_ids: Optional[list[str]] = rest_field(
+        name="excludedFolderIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of GCP folders which need to be excluded."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        excluded_project_numbers: Optional[list[str]] = None,
+        excluded_folder_ids: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GcpProjectProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """GCP project properties.
+
+    :ivar project_number: The project number of the GCP project. Required.
+    :vartype project_number: str
+    :ivar project_id: The project id of the GCP project. Required.
+    :vartype project_id: str
+    """
+
+    project_number: str = rest_field(name="projectNumber", visibility=["read", "create"])
+    """The project number of the GCP project. Required."""
+    project_id: str = rest_field(name="projectId", visibility=["read", "create"])
+    """The project id of the GCP project. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_number: str,
+        project_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GenerateAwsTemplateRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """ConnectorId and SolutionTypes and their properties to Generate AWS CFT Template.
+
+    :ivar connector_id: The name of public cloud connector. Required.
+    :vartype connector_id: str
+    :ivar solution_types: The list of solution types and their settings.
+    :vartype solution_types: list[~azure.mgmt.hybridconnectivity.models.SolutionTypeSettings]
+    """
+
+    connector_id: str = rest_field(name="connectorId", visibility=["read", "create", "update", "delete", "query"])
+    """The name of public cloud connector. Required."""
+    solution_types: Optional[list["_models.SolutionTypeSettings"]] = rest_field(
+        name="solutionTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of solution types and their settings."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connector_id: str,
+        solution_types: Optional[list["_models.SolutionTypeSettings"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GenerateAwsTemplateResponse(_Model):
+    """The HybridConnectivity post operation response."""
+
+
+class GenerateGcpTemplateRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """ConnectorId and SolutionTypes and their properties to Generate GCP Access Control Template.
+
+    :ivar connector_id: The name of public cloud connector. Required.
+    :vartype connector_id: str
+    :ivar solution_types: The list of solution types and their settings.
+    :vartype solution_types: list[~azure.mgmt.hybridconnectivity.models.SolutionTypeSettings]
+    :ivar gcp_cloud_profile: The GCP cloud profile.
+    :vartype gcp_cloud_profile: ~azure.mgmt.hybridconnectivity.models.GcpCloudProfile
+    :ivar gcp_template_format: Optional template output format. Defaults to 'terraform' if not
+     provided. Known values are: "terraform" and "shellscript".
+    :vartype gcp_template_format: str or ~azure.mgmt.hybridconnectivity.models.GcpTemplateFormat
+    """
+
+    connector_id: str = rest_field(name="connectorId", visibility=["read", "create", "update", "delete", "query"])
+    """The name of public cloud connector. Required."""
+    solution_types: Optional[list["_models.SolutionTypeSettings"]] = rest_field(
+        name="solutionTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of solution types and their settings."""
+    gcp_cloud_profile: Optional["_models.GcpCloudProfile"] = rest_field(
+        name="gcpCloudProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The GCP cloud profile."""
+    gcp_template_format: Optional[Union[str, "_models.GcpTemplateFormat"]] = rest_field(
+        name="gcpTemplateFormat", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional template output format. Defaults to 'terraform' if not provided. Known values are:
+     \"terraform\" and \"shellscript\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connector_id: str,
+        solution_types: Optional[list["_models.SolutionTypeSettings"]] = None,
+        gcp_cloud_profile: Optional["_models.GcpCloudProfile"] = None,
+        gcp_template_format: Optional[Union[str, "_models.GcpTemplateFormat"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GenerateGcpTemplateResponse(_Model):
+    """The HybridConnectivity post operation response."""
+
+
+class IngressGatewayResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ingress gateway access credentials.
 
     :ivar relay: Azure relay hybrid connection access properties.
@@ -475,12 +723,12 @@ class IngressGatewayResource(_model_base.Model):
         if key in self.__flattened_items:
             if self.relay is None:
                 self.relay = self._attr_to_rest_field["relay"]._class_type()
-            setattr(self.properties, key, value)
+            setattr(self.relay, key, value)
         else:
             super().__setattr__(key, value)
 
 
-class IngressProfileProperties(_model_base.Model):
+class IngressProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Ingress gateway profile.
 
     :ivar hostname: The ingress hostname. Required.
@@ -530,12 +778,12 @@ class IngressProfileProperties(_model_base.Model):
         if key in self.__flattened_items:
             if self.aad_profile is None:
                 self.aad_profile = self._attr_to_rest_field["aad_profile"]._class_type()
-            setattr(self.properties, key, value)
+            setattr(self.aad_profile, key, value)
         else:
             super().__setattr__(key, value)
 
 
-class InventoryProperties(_model_base.Model):
+class InventoryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of inventory.
 
     :ivar cloud_native_type: Gets or sets the cloud native resource type. "ec2"
@@ -604,8 +852,7 @@ class InventoryProperties(_model_base.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
+    """Proxy Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -621,7 +868,7 @@ class ProxyResource(Resource):
     """
 
 
-class InventoryResource(ProxyResource):
+class InventoryResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -663,7 +910,7 @@ class InventoryResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ListCredentialsRequest(_model_base.Model):
+class ListCredentialsRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The details of the service for which credentials needs to be returned.
 
     :ivar service_name: The name of the service. If not provided, the request will by pass the
@@ -695,7 +942,7 @@ class ListCredentialsRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ListIngressGatewayCredentialsRequest(_model_base.Model):
+class ListIngressGatewayCredentialsRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represent ListIngressGatewayCredentials Request object.
 
     :ivar service_name: The name of the service. If not provided, the request will by pass the
@@ -727,7 +974,7 @@ class ListIngressGatewayCredentialsRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedProxyRequest(_model_base.Model):
+class ManagedProxyRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represent ManageProxy Request object.
 
     :ivar service: The name of the service. Required.
@@ -769,7 +1016,7 @@ class ManagedProxyRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedProxyResource(_model_base.Model):
+class ManagedProxyResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed Proxy.
 
     :ivar proxy: The short lived proxy name. Required.
@@ -802,8 +1049,8 @@ class ManagedProxyResource(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_model_base.Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -859,8 +1106,8 @@ class Operation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_model_base.Model):
-    """Localized display information for and operation.
+class OperationDisplay(_Model):
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -890,7 +1137,7 @@ class OperationDisplay(_model_base.Model):
      views."""
 
 
-class OperationStatusResult(_model_base.Model):
+class OperationStatusResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The current status of an async operation.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -932,7 +1179,7 @@ class OperationStatusResult(_model_base.Model):
         name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The end time of the operation."""
-    operations: Optional[List["_models.OperationStatusResult"]] = rest_field(
+    operations: Optional[list["_models.OperationStatusResult"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The operations list."""
@@ -951,7 +1198,7 @@ class OperationStatusResult(_model_base.Model):
         percent_complete: Optional[float] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        operations: Optional[List["_models.OperationStatusResult"]] = None,
+        operations: Optional[list["_models.OperationStatusResult"]] = None,
         error: Optional["_models.ErrorDetail"] = None,
     ) -> None: ...
 
@@ -966,9 +1213,8 @@ class OperationStatusResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -987,7 +1233,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -997,7 +1243,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1011,7 +1257,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class PublicCloudConnector(TrackedResource):
+class PublicCloudConnector(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Public Cloud Connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1031,19 +1277,23 @@ class PublicCloudConnector(TrackedResource):
     :vartype location: str
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.hybridconnectivity.models.PublicCloudConnectorProperties
+    :ivar kind: The kind of the public cloud connector. Known values are: "AWS" and "GCP".
+    :vartype kind: str or ~azure.mgmt.hybridconnectivity.models.HostType
     """
 
     properties: Optional["_models.PublicCloudConnectorProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource."""
+    kind: Optional[Union[str, "_models.HostType"]] = rest_field(visibility=["read"])
+    """The kind of the public cloud connector. Known values are: \"AWS\" and \"GCP\"."""
 
     @overload
     def __init__(
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.PublicCloudConnectorProperties"] = None,
     ) -> None: ...
 
@@ -1058,12 +1308,15 @@ class PublicCloudConnector(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class PublicCloudConnectorProperties(_model_base.Model):
+class PublicCloudConnectorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of public cloud connectors.
 
-    :ivar aws_cloud_profile: Cloud profile for AWS. Required.
+    :ivar aws_cloud_profile: Cloud profile for AWS.
     :vartype aws_cloud_profile: ~azure.mgmt.hybridconnectivity.models.AwsCloudProfile
-    :ivar host_type: Host cloud the public cloud connector. Required. "AWS"
+    :ivar gcp_cloud_profile: Cloud profile for GCP.
+    :vartype gcp_cloud_profile: ~azure.mgmt.hybridconnectivity.models.GcpCloudProfile
+    :ivar host_type: Host cloud the public cloud connector. Required. Known values are: "AWS" and
+     "GCP".
     :vartype host_type: str or ~azure.mgmt.hybridconnectivity.models.HostType
     :ivar provisioning_state: The resource provisioning state. Known values are: "Succeeded",
      "Failed", and "Canceled".
@@ -1073,12 +1326,16 @@ class PublicCloudConnectorProperties(_model_base.Model):
     :vartype connector_primary_identifier: str
     """
 
-    aws_cloud_profile: "_models.AwsCloudProfile" = rest_field(
+    aws_cloud_profile: Optional["_models.AwsCloudProfile"] = rest_field(
         name="awsCloudProfile", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Cloud profile for AWS. Required."""
+    """Cloud profile for AWS."""
+    gcp_cloud_profile: Optional["_models.GcpCloudProfile"] = rest_field(
+        name="gcpCloudProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Cloud profile for GCP."""
     host_type: Union[str, "_models.HostType"] = rest_field(name="hostType", visibility=["read", "create"])
-    """Host cloud the public cloud connector. Required. \"AWS\""""
+    """Host cloud the public cloud connector. Required. Known values are: \"AWS\" and \"GCP\"."""
     provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -1090,8 +1347,9 @@ class PublicCloudConnectorProperties(_model_base.Model):
     def __init__(
         self,
         *,
-        aws_cloud_profile: "_models.AwsCloudProfile",
         host_type: Union[str, "_models.HostType"],
+        aws_cloud_profile: Optional["_models.AwsCloudProfile"] = None,
+        gcp_cloud_profile: Optional["_models.GcpCloudProfile"] = None,
     ) -> None: ...
 
     @overload
@@ -1105,23 +1363,30 @@ class PublicCloudConnectorProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PublicCloudConnectorPropertiesUpdate(_model_base.Model):
+class PublicCloudConnectorPropertiesUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of public cloud connectors.
 
     :ivar aws_cloud_profile: Cloud profile for AWS.
     :vartype aws_cloud_profile: ~azure.mgmt.hybridconnectivity.models.AwsCloudProfileUpdate
+    :ivar gcp_cloud_profile: Cloud profile for GCP.
+    :vartype gcp_cloud_profile: ~azure.mgmt.hybridconnectivity.models.GcpCloudProfileUpdate
     """
 
     aws_cloud_profile: Optional["_models.AwsCloudProfileUpdate"] = rest_field(
         name="awsCloudProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Cloud profile for AWS."""
+    gcp_cloud_profile: Optional["_models.GcpCloudProfileUpdate"] = rest_field(
+        name="gcpCloudProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Cloud profile for GCP."""
 
     @overload
     def __init__(
         self,
         *,
         aws_cloud_profile: Optional["_models.AwsCloudProfileUpdate"] = None,
+        gcp_cloud_profile: Optional["_models.GcpCloudProfileUpdate"] = None,
     ) -> None: ...
 
     @overload
@@ -1135,7 +1400,7 @@ class PublicCloudConnectorPropertiesUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResourceUpdate(Resource):
+class TrackedResourceUpdate(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource model definition for an Azure Resource Manager tracked top level resource which
     has 'tags' and a 'location'.
 
@@ -1154,14 +1419,14 @@ class TrackedResourceUpdate(Resource):
     :vartype tags: dict[str, str]
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1175,7 +1440,7 @@ class TrackedResourceUpdate(Resource):
         super().__init__(*args, **kwargs)
 
 
-class PublicCloudConnectorUpdate(TrackedResourceUpdate):
+class PublicCloudConnectorUpdate(TrackedResourceUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Public Cloud Connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1204,7 +1469,7 @@ class PublicCloudConnectorUpdate(TrackedResourceUpdate):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.PublicCloudConnectorPropertiesUpdate"] = None,
     ) -> None: ...
 
@@ -1219,7 +1484,7 @@ class PublicCloudConnectorUpdate(TrackedResourceUpdate):
         super().__init__(*args, **kwargs)
 
 
-class RelayNamespaceAccessProperties(_model_base.Model):
+class RelayNamespaceAccessProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure relay hybrid connection access properties.
 
     :ivar namespace_name: The namespace name. Required.
@@ -1277,7 +1542,7 @@ class RelayNamespaceAccessProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceConfigurationProperties(_model_base.Model):
+class ServiceConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Service configuration details.
 
     :ivar service_name: Name of the service. Required. Known values are: "SSH" and "WAC".
@@ -1327,7 +1592,7 @@ class ServiceConfigurationProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceConfigurationPropertiesPatch(_model_base.Model):
+class ServiceConfigurationPropertiesPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Service configuration details.
 
     :ivar port: The port on which service is enabled.
@@ -1355,7 +1620,7 @@ class ServiceConfigurationPropertiesPatch(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceConfigurationResource(ExtensionResource):
+class ServiceConfigurationResource(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The service configuration details associated with the target resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1416,7 +1681,7 @@ class ServiceConfigurationResource(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class ServiceConfigurationResourcePatch(_model_base.Model):
+class ServiceConfigurationResourcePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The service details under service configuration for the target endpoint resource.
 
     :ivar properties: The service configuration properties.
@@ -1466,7 +1731,7 @@ class ServiceConfigurationResourcePatch(_model_base.Model):
             super().__setattr__(key, value)
 
 
-class SolutionConfiguration(ExtensionResource):
+class SolutionConfiguration(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Solution Configuration.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1507,7 +1772,7 @@ class SolutionConfiguration(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
-class SolutionConfigurationProperties(_model_base.Model):
+class SolutionConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Solution configuration resource.
 
     :ivar provisioning_state: The resource provisioning state. Known values are: "Succeeded",
@@ -1564,7 +1829,7 @@ class SolutionConfigurationProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SolutionConfigurationPropertiesUpdate(_model_base.Model):
+class SolutionConfigurationPropertiesUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Solution configuration resource.
 
     :ivar solution_type: The type of the solution.
@@ -1601,7 +1866,7 @@ class SolutionConfigurationPropertiesUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SolutionConfigurationUpdate(ProxyResource):
+class SolutionConfigurationUpdate(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Solution Configuration.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1643,11 +1908,11 @@ class SolutionConfigurationUpdate(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SolutionSettings(_model_base.Model):
+class SolutionSettings(_Model):
     """Solution settings."""
 
 
-class SolutionTypeProperties(_model_base.Model):
+class SolutionTypeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of Solution type resource.
 
     :ivar solution_type: The name of the solution type.
@@ -1656,6 +1921,8 @@ class SolutionTypeProperties(_model_base.Model):
     :vartype description: str
     :ivar supported_azure_regions: The locations this solution is supported in.
     :vartype supported_azure_regions: list[str]
+    :ivar host_types: The supported host types for the current solution type.
+    :vartype host_types: list[str or ~azure.mgmt.hybridconnectivity.models.HostType]
     :ivar solution_settings: Array of solution settings and its description.
     :vartype solution_settings:
      list[~azure.mgmt.hybridconnectivity.models.SolutionTypeSettingsProperties]
@@ -1667,11 +1934,15 @@ class SolutionTypeProperties(_model_base.Model):
     """The name of the solution type."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Short description of solution type."""
-    supported_azure_regions: Optional[List[str]] = rest_field(
+    supported_azure_regions: Optional[list[str]] = rest_field(
         name="supportedAzureRegions", visibility=["read", "create", "update", "delete", "query"]
     )
     """The locations this solution is supported in."""
-    solution_settings: Optional[List["_models.SolutionTypeSettingsProperties"]] = rest_field(
+    host_types: Optional[list[Union[str, "_models.HostType"]]] = rest_field(
+        name="hostTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The supported host types for the current solution type."""
+    solution_settings: Optional[list["_models.SolutionTypeSettingsProperties"]] = rest_field(
         name="solutionSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Array of solution settings and its description."""
@@ -1682,8 +1953,9 @@ class SolutionTypeProperties(_model_base.Model):
         *,
         solution_type: Optional[str] = None,
         description: Optional[str] = None,
-        supported_azure_regions: Optional[List[str]] = None,
-        solution_settings: Optional[List["_models.SolutionTypeSettingsProperties"]] = None,
+        supported_azure_regions: Optional[list[str]] = None,
+        host_types: Optional[list[Union[str, "_models.HostType"]]] = None,
+        solution_settings: Optional[list["_models.SolutionTypeSettingsProperties"]] = None,
     ) -> None: ...
 
     @overload
@@ -1697,7 +1969,7 @@ class SolutionTypeProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SolutionTypeResource(ProxyResource):
+class SolutionTypeResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -1739,7 +2011,7 @@ class SolutionTypeResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SolutionTypeSettings(_model_base.Model):
+class SolutionTypeSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of Solution Type.
 
     :ivar solution_type: The type of the solution. Required.
@@ -1774,7 +2046,7 @@ class SolutionTypeSettings(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SolutionTypeSettingsProperties(_model_base.Model):
+class SolutionTypeSettingsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represent Solution settings properties description array.
 
     :ivar name: The name of the solution setting property. Required.
@@ -1787,6 +2059,8 @@ class SolutionTypeSettingsProperties(_model_base.Model):
     :vartype description: str
     :ivar allowed_values: Array of allowed values for this solution settings property. Required.
     :vartype allowed_values: list[str]
+    :ivar host_types: The supported host types for the current solution setting. Required.
+    :vartype host_types: list[str or ~azure.mgmt.hybridconnectivity.models.HostType]
     :ivar default_value: Default value for this solution settings property. Required.
     :vartype default_value: str
     """
@@ -1799,10 +2073,14 @@ class SolutionTypeSettingsProperties(_model_base.Model):
     """Type of the solution setting property, represented as a string. Required."""
     description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Description of solution setting property. Required."""
-    allowed_values: List[str] = rest_field(
+    allowed_values: list[str] = rest_field(
         name="allowedValues", visibility=["read", "create", "update", "delete", "query"]
     )
     """Array of allowed values for this solution settings property. Required."""
+    host_types: list[Union[str, "_models.HostType"]] = rest_field(
+        name="hostTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The supported host types for the current solution setting. Required."""
     default_value: str = rest_field(name="defaultValue", visibility=["read", "create", "update", "delete", "query"])
     """Default value for this solution settings property. Required."""
 
@@ -1814,7 +2092,8 @@ class SolutionTypeSettingsProperties(_model_base.Model):
         display_name: str,
         type: str,
         description: str,
-        allowed_values: List[str],
+        allowed_values: list[str],
+        host_types: list[Union[str, "_models.HostType"]],
         default_value: str,
     ) -> None: ...
 
@@ -1829,7 +2108,7 @@ class SolutionTypeSettingsProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_model_base.Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
