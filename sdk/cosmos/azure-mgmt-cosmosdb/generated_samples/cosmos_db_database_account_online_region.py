@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-03-15/CosmosDBDatabaseAccountOnlineRegion.json
+# x-ms-original-file: 2026-04-01-preview/CosmosDBDatabaseAccountOnlineRegion.json
 if __name__ == "__main__":
     main()

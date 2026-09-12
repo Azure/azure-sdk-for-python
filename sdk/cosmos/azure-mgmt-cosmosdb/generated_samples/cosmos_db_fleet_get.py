@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-15/fleet/CosmosDBFleetGet.json
+# x-ms-original-file: 2026-04-01-preview/fleet/CosmosDBFleetGet.json
 if __name__ == "__main__":
     main()

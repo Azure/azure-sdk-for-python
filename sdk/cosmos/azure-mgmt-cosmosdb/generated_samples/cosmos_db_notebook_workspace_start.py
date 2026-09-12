@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-03-15/CosmosDBNotebookWorkspaceStart.json
+# x-ms-original-file: 2026-04-01-preview/CosmosDBNotebookWorkspaceStart.json
 if __name__ == "__main__":
     main()
