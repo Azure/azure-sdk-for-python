@@ -15,7 +15,7 @@ from azure.mgmt.devopsinfrastructure import DevOpsInfrastructureMgmtClient
     pip install azure-identity
     pip install azure-mgmt-devopsinfrastructure
 # USAGE
-    python list_pools_by_subscription_and_resource_group.py
+    python update_pool.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,31 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.pools.list_by_resource_group(
+    response = client.pools.begin_update(
         resource_group_name="rg",
-    )
-    for item in response:
-        print(item)
+        pool_name="pool",
+        properties={
+            "identity": {
+                "type": "str",
+                "principalId": "str",
+                "tenantId": "str",
+                "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+            },
+            "properties": {
+                "agentProfile": agent_profile,
+                "devCenterProjectResourceId": "str",
+                "fabricProfile": fabric_profile,
+                "maximumConcurrency": 0,
+                "organizationProfile": organization_profile,
+                "provisioningState": "str",
+                "runtimeConfiguration": {"workFolder": "str"},
+            },
+            "tags": {"str": "str"},
+        },
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-07-03-preview/ListPoolsBySubscriptionAndResourceGroup.json
+# x-ms-original-file: 2026-07-03-preview/UpdatePool.json
 if __name__ == "__main__":
     main()

@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-07-03-preview",
+  "apiVersions": {
+    "Microsoft.DevOpsInfrastructure": "2026-07-03-preview"
+  },
+  "commit": "0e55128a206a1be3feb030e748074722e98e5dcf",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/devopsinfrastructure/resource-manager/Microsoft.DevOpsInfrastructure/DevOpsInfrastructure",
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.34.2"
+}

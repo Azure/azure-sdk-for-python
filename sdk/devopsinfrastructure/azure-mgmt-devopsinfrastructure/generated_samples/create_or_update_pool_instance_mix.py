@@ -16,7 +16,7 @@ from azure.mgmt.devopsinfrastructure import DevOpsInfrastructureMgmtClient
     pip install azure-identity
     pip install azure-mgmt-devopsinfrastructure
 # USAGE
-    python create_or_update_pool.py
+    python create_or_update_pool_instance_mix.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -42,7 +42,7 @@ def main():
                 "fabricProfile": {
                     "images": [
                         {
-                            "ephemeralType": "NVMeDisk",
+                            "ephemeralType": "Automatic",
                             "provisioningScriptEntryPoint": "scripts/setup-agent.ps1",
                             "provisioningScriptManagedIdentityClientId": "0f8fad5b-d9cb-469f-a165-70867728950e",
                             "provisioningScriptShouldRestart": True,
@@ -62,7 +62,7 @@ def main():
                             "observedCertificates": ["https://abc.vault.azure.net/secrets/one"],
                         }
                     },
-                    "sku": {"name": "Standard_D4ads_v5"},
+                    "sku": {"name": "Mix", "vmSizes": [{"name": "Standard_E2ads_v5"}, {"name": "Standard_D2ads_v5"}]},
                 },
                 "maximumConcurrency": 10,
                 "organizationProfile": {
@@ -78,6 +78,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-03-preview/CreateOrUpdatePool.json
+# x-ms-original-file: 2026-07-03-preview/CreateOrUpdatePool_InstanceMix.json
 if __name__ == "__main__":
     main()
