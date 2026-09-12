@@ -34,17 +34,10 @@ def main():
         service_group_name="sampleServiceGroupName",
         drill_name="drill1",
         drill_run_name="ca92602e-53bf-43d2-ae62-d3fc940474b3",
-        body={
-            "autoFailover": "Enable",
-            "failoverProperties": {
-                "failoverDirection": "FromSpecificLocations",
-                "failoverRequestProperties": {"sourceLocations": ["westus"]},
-            },
-        },
         operation_id="qmn",
     ).result()
 
 
-# x-ms-original-file: 2026-04-01-preview/DrillRuns_FailOver_MaximumSet_Gen.json
+# x-ms-original-file: 2026-08-31-preview/DrillRuns_FailOver_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -540,6 +540,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/RecoveryPlans_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-08-31-preview/RecoveryPlans_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

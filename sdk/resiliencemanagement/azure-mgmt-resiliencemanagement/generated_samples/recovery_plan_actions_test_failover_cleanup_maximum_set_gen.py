@@ -34,11 +34,11 @@ def main():
         service_group_name="sampleServiceGroupName",
         recovery_plan_name="samplePlanName",
         body={"comments": "Test failover clean-up comments"},
-        operation_id="str",
+        operation_id="qmn",
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/RecoveryPlanActions_TestFailoverCleanup_MaximumSet_Gen.json
+# x-ms-original-file: 2026-08-31-preview/RecoveryPlanActions_TestFailoverCleanup_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

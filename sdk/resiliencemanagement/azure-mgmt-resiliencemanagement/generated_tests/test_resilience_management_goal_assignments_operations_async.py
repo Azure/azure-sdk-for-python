@@ -41,8 +41,6 @@ class TestResilienceManagementGoalAssignmentsOperationsAsync(AzureMgmtRecordedTe
                     "id": "str",
                     "name": "str",
                     "properties": {
-                        "goalAssignmentType": "str",
-                        "goalTemplateId": "str",
                         "errorDetails": {
                             "additionalInfo": [{"info": {}, "type": "str"}],
                             "code": "str",
@@ -50,7 +48,10 @@ class TestResilienceManagementGoalAssignmentsOperationsAsync(AzureMgmtRecordedTe
                             "message": "str",
                             "target": "str",
                         },
+                        "goalAssignmentType": "str",
+                        "goalTemplateId": "str",
                         "provisioningState": "str",
+                        "requireZonalResiliency": bool,
                         "serviceLevelResources": [
                             {"serviceLevelIndicatorResourceId": "str", "serviceLevelObjectiveResourceId": "str"}
                         ],
@@ -82,8 +83,6 @@ class TestResilienceManagementGoalAssignmentsOperationsAsync(AzureMgmtRecordedTe
                     "id": "str",
                     "name": "str",
                     "properties": {
-                        "goalAssignmentType": "str",
-                        "goalTemplateId": "str",
                         "errorDetails": {
                             "additionalInfo": [{"info": {}, "type": "str"}],
                             "code": "str",
@@ -91,7 +90,10 @@ class TestResilienceManagementGoalAssignmentsOperationsAsync(AzureMgmtRecordedTe
                             "message": "str",
                             "target": "str",
                         },
+                        "goalAssignmentType": "str",
+                        "goalTemplateId": "str",
                         "provisioningState": "str",
+                        "requireZonalResiliency": bool,
                         "serviceLevelResources": [
                             {"serviceLevelIndicatorResourceId": "str", "serviceLevelObjectiveResourceId": "str"}
                         ],
@@ -125,13 +127,13 @@ class TestResilienceManagementGoalAssignmentsOperationsAsync(AzureMgmtRecordedTe
                             "id": "str",
                             "name": "str",
                             "properties": {
-                                "highAvailabilityAttestationStatus": "str",
-                                "highAvailabilityGoalParticipation": "str",
                                 "resourceArmId": "str",
                                 "disasterRecoveryAttestationStatus": "str",
                                 "disasterRecoveryGoalParticipation": "str",
                                 "exclusionReasonForDisasterRecoveryGoals": "str",
                                 "exclusionReasonForHighAvailabilityGoals": "str",
+                                "highAvailabilityAttestationStatus": "str",
+                                "highAvailabilityGoalParticipation": "str",
                                 "provisioningState": "str",
                                 "serviceGroupMemberships": [{"membershipType": "str", "serviceGroupId": "str"}],
                                 "userConfirmationForHighAvailability": [
@@ -141,6 +143,18 @@ class TestResilienceManagementGoalAssignmentsOperationsAsync(AzureMgmtRecordedTe
                                         "reasonForRequestingConfirmation": "str",
                                     }
                                 ],
+                                "zonalResiliency": {
+                                    "attestationStatus": "str",
+                                    "exclusionReason": "str",
+                                    "goalParticipation": "str",
+                                    "userConfirmation": [
+                                        {
+                                            "confirmationStatus": "str",
+                                            "solutionDisplayName": "str",
+                                            "reasonForRequestingConfirmation": "str",
+                                        }
+                                    ],
+                                },
                             },
                             "systemData": {
                                 "createdAt": "2020-02-20 00:00:00",
