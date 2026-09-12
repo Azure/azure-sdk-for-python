@@ -15,7 +15,7 @@ from azure.mgmt.mongocluster import MongoClusterMgmtClient
     pip install azure-identity
     pip install azure-mgmt-mongocluster
 # USAGE
-    python mongo_clusters_replica_list.py
+    python mongo_clusters_planned_promote_replica.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.replicas.list_by_parent(
+    client.mongo_clusters.begin_promote(
         resource_group_name="TestGroup",
         mongo_cluster_name="myMongoCluster",
-    )
-    for item in response:
-        print(item)
+        body={"mode": "Switchover", "promoteOption": "Planned"},
+    ).result()
 
 
-# x-ms-original-file: 2026-06-15-preview/MongoClusters_ReplicaList.json
+# x-ms-original-file: 2026-06-15-preview/MongoClusters_PlannedPromoteReplica.json
 if __name__ == "__main__":
     main()
