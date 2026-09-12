@@ -87,6 +87,12 @@ class TestOracleDatabaseMgmtCloudExadataInfrastructuresOperations(AzureMgmtRecor
                     "ociUrl": "str",
                     "ocid": "str",
                     "provisioningState": "str",
+                    "proximityPlacementGroup": {
+                        "entityTypeIntendedToUse": "str",
+                        "proximityPlacementGroupId": "str",
+                        "proximityAnchorId": "str",
+                    },
+                    "resourceAnchorId": "str",
                     "storageCount": 0,
                     "storageServerType": "str",
                     "storageServerVersion": "str",
