@@ -45,8 +45,11 @@ def main():
                 "copyMode": "Additive",
                 "description": "Example Job Definition Description",
                 "jobType": "OnPremToCloud",
+                "moverSyncedUntil": "2026-05-01T00:00:00Z",
+                "preservePermissions": False,
                 "sourceName": "examples-sourceEndpointName",
                 "sourceSubpath": "/",
+                "syncMode": "FullScan",
                 "targetName": "examples-targetEndpointName",
                 "targetSubpath": "/",
             }
@@ -55,6 +58,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-12-01/JobDefinitions_CreateOrUpdate.json
+# x-ms-original-file: 2026-05-01/JobDefinitions_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
