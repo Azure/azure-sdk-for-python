@@ -14,6 +14,11 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    AiAgentsGroup,
+    AiAgentsGroupAccessToken,
+    AiAgentsGroupNetworkProfile,
+    AiAgentsGroupProperties,
+    AiAgentsGroupTagsUpdate,
     ApiEntityReference,
     ApplicationGateway,
     ApplicationGatewayBackendAddressPool,
@@ -96,11 +101,6 @@ from ._models import (  # type: ignore
     ResourceLimits,
     ResourceRequests,
     ResourceRequirements,
-    SandboxGroup,
-    SandboxGroupAccessToken,
-    SandboxGroupNetworkProfile,
-    SandboxGroupProperties,
-    SandboxGroupTagsUpdate,
     SecretReference,
     SecurityContextCapabilitiesDefinition,
     SecurityContextDefinition,
@@ -120,6 +120,7 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
+    AiAgentsGroupProvisioningState,
     AzureFileShareAccessTier,
     AzureFileShareAccessType,
     ContainerGroupIpAddressType,
@@ -139,7 +140,6 @@ from ._enums import (  # type: ignore
     NGroupUpdateMode,
     OperatingSystemTypes,
     ResourceIdentityType,
-    SandboxGroupProvisioningState,
     Scheme,
 )
 from ._patch import __all__ as _patch_all
@@ -147,6 +147,11 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AiAgentsGroup",
+    "AiAgentsGroupAccessToken",
+    "AiAgentsGroupNetworkProfile",
+    "AiAgentsGroupProperties",
+    "AiAgentsGroupTagsUpdate",
     "ApiEntityReference",
     "ApplicationGateway",
     "ApplicationGatewayBackendAddressPool",
@@ -229,11 +234,6 @@ __all__ = [
     "ResourceLimits",
     "ResourceRequests",
     "ResourceRequirements",
-    "SandboxGroup",
-    "SandboxGroupAccessToken",
-    "SandboxGroupNetworkProfile",
-    "SandboxGroupProperties",
-    "SandboxGroupTagsUpdate",
     "SecretReference",
     "SecurityContextCapabilitiesDefinition",
     "SecurityContextDefinition",
@@ -250,6 +250,7 @@ __all__ = [
     "UserAssignedIdentity",
     "Volume",
     "VolumeMount",
+    "AiAgentsGroupProvisioningState",
     "AzureFileShareAccessTier",
     "AzureFileShareAccessType",
     "ContainerGroupIpAddressType",
@@ -269,7 +270,6 @@ __all__ = [
     "NGroupUpdateMode",
     "OperatingSystemTypes",
     "ResourceIdentityType",
-    "SandboxGroupProvisioningState",
     "Scheme",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

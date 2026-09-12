@@ -16,7 +16,7 @@ from ._operations import Operations  # type: ignore
 from ._operations import ContainerGroupsOperations  # type: ignore
 from ._operations import NGroupsOperations  # type: ignore
 from ._operations import CGProfileOperations  # type: ignore
-from ._operations import SandboxGroupsOperations  # type: ignore
+from ._operations import AiAgentsGroupsOperations  # type: ignore
 from ._operations import ContainersOperations  # type: ignore
 from ._operations import CGProfilesOperations  # type: ignore
 from ._operations import LocationOperations  # type: ignore
@@ -31,7 +31,7 @@ __all__ = [
     "ContainerGroupsOperations",
     "NGroupsOperations",
     "CGProfileOperations",
-    "SandboxGroupsOperations",
+    "AiAgentsGroupsOperations",
     "ContainersOperations",
     "CGProfilesOperations",
     "LocationOperations",
