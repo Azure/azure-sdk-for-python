@@ -614,9 +614,11 @@ from ._enums import (  # type: ignore
     IncidentStatus,
     IncidentTaskStatus,
     IngestionMode,
+    JobProvisioningState,
     KillChainIntent,
     Kind,
     MatchingMethod,
+    MetadataDependencyOperator,
     MicrosoftSecurityProductName,
     Mode,
     MtpProvider,
@@ -630,6 +632,7 @@ from ._enums import (  # type: ignore
     ProviderName,
     ProviderPermissionsScope,
     ProvisioningState,
+    PullRequestState,
     RegistryHive,
     RegistryValueKind,
     RepoType,
@@ -656,6 +659,7 @@ from ._enums import (  # type: ignore
     UebaDataSources,
     Version,
     WarningCode,
+    WatchlistProvisioningState,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -1258,9 +1262,11 @@ __all__ = [
     "IncidentStatus",
     "IncidentTaskStatus",
     "IngestionMode",
+    "JobProvisioningState",
     "KillChainIntent",
     "Kind",
     "MatchingMethod",
+    "MetadataDependencyOperator",
     "MicrosoftSecurityProductName",
     "Mode",
     "MtpProvider",
@@ -1274,6 +1280,7 @@ __all__ = [
     "ProviderName",
     "ProviderPermissionsScope",
     "ProvisioningState",
+    "PullRequestState",
     "RegistryHive",
     "RegistryValueKind",
     "RepoType",
@@ -1300,6 +1307,7 @@ __all__ = [
     "UebaDataSources",
     "Version",
     "WarningCode",
+    "WatchlistProvisioningState",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

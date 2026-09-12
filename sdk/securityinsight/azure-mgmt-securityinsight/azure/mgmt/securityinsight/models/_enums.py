@@ -1115,6 +1115,19 @@ class IngestionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Unspecified."""
 
 
+class JobProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the workspace manager job."""
+
+    SUCCEEDED = "Succeeded"
+    """Succeeded."""
+    IN_PROGRESS = "InProgress"
+    """InProgress."""
+    CANCELED = "Canceled"
+    """Canceled."""
+    FAILED = "Failed"
+    """Failed."""
+
+
 class KillChainIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intent of the alert."""
 
@@ -1250,6 +1263,15 @@ class MatchingMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SELECTED = "Selected"
     """Grouping alerts into a single incident if the selected entities, custom details and alert
     details match."""
+
+
+class MetadataDependencyOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operator used for list of dependencies in criteria array."""
+
+    AND = "AND"
+    """AND."""
+    OR = "OR"
+    """OR."""
 
 
 class MicrosoftSecurityProductName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1457,6 +1479,15 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Failed."""
     CANCELED = "Canceled"
     """Canceled."""
+
+
+class PullRequestState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the pull request."""
+
+    OPEN = "Open"
+    """Open."""
+    CLOSED = "Closed"
+    """Closed."""
 
 
 class RegistryHive(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1783,3 +1814,22 @@ class WarningCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SourceControlWarning_DeleteRoleAssignment."""
     SOURCE_CONTROL_DELETED_WITH_WARNINGS = "SourceControl_DeletedWithWarnings"
     """SourceControl_DeletedWithWarnings."""
+
+
+class WatchlistProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the watchlist."""
+
+    NEW = "New"
+    """New."""
+    IN_PROGRESS = "InProgress"
+    """InProgress."""
+    UPLOADING = "Uploading"
+    """Uploading."""
+    DELETING = "Deleting"
+    """Deleting."""
+    SUCCEEDED = "Succeeded"
+    """Succeeded."""
+    FAILED = "Failed"
+    """Failed."""
+    CANCELED = "Canceled"
+    """Canceled."""

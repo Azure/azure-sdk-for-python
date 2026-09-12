@@ -1,5 +1,19 @@
 # Release History
 
+## 2.0.0b4 (2026-08-19)
+
+### Features Added
+
+  - Added enum `JobProvisioningState`
+  - Added enum `MetadataDependencyOperator`
+  - Added enum `PullRequestState`
+  - Added enum `WatchlistProvisioningState`
+
+### Breaking Changes
+
+  - Method `AlertRuleOperations.begin_trigger_rule_run` changed return type from `LROPoller[AlertRule]` to `LROPoller[None]`
+  - Method `WatchlistsOperations.begin_delete` changed return type from `LROPoller[None]` to `LROPoller[Watchlist]`
+
 ## 2.0.0b3 (2026-05-27)
 
 ### Features Added

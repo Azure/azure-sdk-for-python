@@ -37,6 +37,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2025-07-01-preview/dataConnectors/DisconnectAPIPolling.json
+# x-ms-original-file: 2025-10-01-preview/dataConnectors/DisconnectAPIPolling.json
 if __name__ == "__main__":
     main()
