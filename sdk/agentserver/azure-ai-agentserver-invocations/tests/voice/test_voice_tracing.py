@@ -1328,6 +1328,7 @@ def test_voice_diagnostics_are_content_free(monkeypatch, caplog, spans):
         assert record.exc_info is None
     connection = _span_by_name(exporter, "agentserver.connection")
     assert "private session sentinel" not in repr(connection.attributes)
+    assert all("private session sentinel" not in repr(span.attributes) for span in exporter.get_finished_spans())
 
 
 def test_connection_span_carries_safe_session_and_protocol_attributes(monkeypatch, spans):
