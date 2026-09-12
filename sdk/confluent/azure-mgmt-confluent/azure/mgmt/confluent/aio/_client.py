@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -21,15 +21,22 @@ from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ConfluentManagementClientConfiguration
 from .operations import (
     AccessOperations,
+    AccessPointResourcesOperations,
     ClusterOperations,
     ConnectorOperations,
     EnvironmentOperations,
     MarketplaceAgreementsOperations,
+    NetworkGatewayResourcesOperations,
     OrganizationOperations,
     OrganizationOperationsOperations,
     TopicsOperations,
     ValidationsOperations,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
@@ -39,6 +46,12 @@ if TYPE_CHECKING:
 class ConfluentManagementClient:  # pylint: disable=too-many-instance-attributes
     """ConfluentManagementClient.
 
+    :ivar network_gateway_resources: NetworkGatewayResourcesOperations operations
+    :vartype network_gateway_resources:
+     azure.mgmt.confluent.aio.operations.NetworkGatewayResourcesOperations
+    :ivar access_point_resources: AccessPointResourcesOperations operations
+    :vartype access_point_resources:
+     azure.mgmt.confluent.aio.operations.AccessPointResourcesOperations
     :ivar organization_operations: OrganizationOperationsOperations operations
     :vartype organization_operations:
      azure.mgmt.confluent.aio.operations.OrganizationOperationsOperations
@@ -68,8 +81,9 @@ class ConfluentManagementClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-08-18-preview". Note that overriding this default value may result in unsupported
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-06-02-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -125,6 +139,12 @@ class ConfluentManagementClient:  # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
+        self.network_gateway_resources = NetworkGatewayResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.access_point_resources = AccessPointResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.organization_operations = OrganizationOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

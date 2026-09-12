@@ -45,11 +45,9 @@ def main():
                     "privateOfferId": "goshpcnjukfzfhubmynjxiulurrwplzcjpjstebtsiigbkovchcrlfmgoymqfuayhihnxruthwjywtedlcsqqsgaelqthvfzvafyjhsfzfjwotsiajpcogwrwylgcphxfhvvwemynoyovnvqcetftiofkthgdzfvybvhpviqlwlslaupndcxlvjssdap",
                     "privateOfferIds": ["nrbzkbcpvsakewlgubfmej"],
                     "publisherId": "jvmchwpbqvavlgmuwquhqrnacgpvlobkkavwppwvhjfqcy",
-                    "status": "Started",
                     "termId": "vujdve",
                     "termUnit": "ipefrkgclpjaswyxpyjkppo",
                 },
-                "provisioningState": "Accepted",
                 "userDetail": {
                     "aadEmail": "swugcwecfnkp",
                     "emailAddress": "user@example.com",
@@ -64,6 +62,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-08-18-preview/Validations_ValidateOrganizationV2_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-02-preview/Validations_ValidateOrganizationV2_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

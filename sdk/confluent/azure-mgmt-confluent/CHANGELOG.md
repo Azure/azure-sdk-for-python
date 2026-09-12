@@ -1,5 +1,27 @@
 # Release History
 
+## 3.0.0b2 (2026-07-16)
+
+### Features Added
+
+  - Client `ConfluentManagementClient` added operation group `access_point_resources`
+  - Client `ConfluentManagementClient` added operation group `network_gateway_resources`
+  - Added model `AccessPointProperties`
+  - Added model `AccessPointResource`
+  - Added model `ActivateSaaSParameterRequest`
+  - Added model `KeyValuePair`
+  - Added model `LatestLinkedSaaSResponse`
+  - Added model `NetworkGatewayProperties`
+  - Added model `NetworkGatewayResource`
+  - Added model `SaaSData`
+  - Added model `SaaSResourceDetailsResponse`
+  - Added model `VnetInjectionDetails`
+  - Operation group `OrganizationOperations` added method `begin_activate_resource`
+  - Operation group `OrganizationOperations` added method `begin_link_saa_s`
+  - Operation group `OrganizationOperations` added method `latest_linked_saa_s`
+  - Added operation group `AccessPointResourcesOperations`
+  - Added operation group `NetworkGatewayResourcesOperations`
+
 ## 3.0.0b1 (2026-03-16)
 
 ### Features Added
