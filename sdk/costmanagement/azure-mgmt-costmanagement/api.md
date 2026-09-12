@@ -16,6 +16,7 @@ namespace azure.mgmt.costmanagement
         generate_detailed_cost_report_operation_results: GenerateDetailedCostReportOperationResultsOperations
         generate_detailed_cost_report_operation_status: GenerateDetailedCostReportOperationStatusOperations
         generate_reservation_details_report: GenerateReservationDetailsReportOperations
+        markup_rules: MarkupRulesOperations
         operations: Operations
         price_sheet: PriceSheetOperations
         query: QueryOperations
@@ -62,6 +63,7 @@ namespace azure.mgmt.costmanagement.aio
         generate_detailed_cost_report_operation_results: GenerateDetailedCostReportOperationResultsOperations
         generate_detailed_cost_report_operation_status: GenerateDetailedCostReportOperationStatusOperations
         generate_reservation_details_report: GenerateReservationDetailsReportOperations
+        markup_rules: MarkupRulesOperations
         operations: Operations
         price_sheet: PriceSheetOperations
         query: QueryOperations
@@ -959,6 +961,80 @@ namespace azure.mgmt.costmanagement.aio.operations
                 start_date: str, 
                 **kwargs: Any
             ) -> AsyncLROPoller[OperationStatus]: ...
+
+
+    class azure.mgmt.costmanagement.aio.operations.MarkupRulesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                billing_account_id: str, 
+                billing_profile_id: str, 
+                rule_name: str, 
+                resource: MarkupRule, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MarkupRule: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                billing_account_id: str, 
+                billing_profile_id: str, 
+                rule_name: str, 
+                resource: MarkupRule, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MarkupRule: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                billing_account_id: str, 
+                billing_profile_id: str, 
+                rule_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MarkupRule: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'billing_account_id', 'billing_profile_id', 'rule_name']}, api_versions_list=['2026-06-01'])
+        async def delete(
+                self, 
+                billing_account_id: str, 
+                billing_profile_id: str, 
+                rule_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'billing_account_id', 'billing_profile_id', 'rule_name', 'accept']}, api_versions_list=['2026-06-01'])
+        async def get(
+                self, 
+                billing_account_id: str, 
+                billing_profile_id: str, 
+                rule_name: str, 
+                **kwargs: Any
+            ) -> MarkupRule: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'billing_account_id', 'billing_profile_id', 'accept']}, api_versions_list=['2026-06-01'])
+        def list(
+                self, 
+                billing_account_id: str, 
+                billing_profile_id: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[MarkupRule]: ...
 
 
     class azure.mgmt.costmanagement.aio.operations.Operations:
@@ -2400,6 +2476,22 @@ namespace azure.mgmt.costmanagement.models
         unit: Optional[str]
 
 
+    class azure.mgmt.costmanagement.models.CustomerMetadata(_Model):
+        billing_account_id: str
+        billing_profile_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                billing_account_id: str, 
+                billing_profile_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.costmanagement.models.DataOverwriteBehaviorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         CREATE_NEW_REPORT = "CreateNewReport"
         OVERWRITE_PREVIOUS_REPORT = "OverwritePreviousReport"
@@ -3452,6 +3544,78 @@ namespace azure.mgmt.costmanagement.models
         unit_price: Optional[str]
 
 
+    class azure.mgmt.costmanagement.models.ManagementGroupScopeBenefitRecommendationProperties(BenefitRecommendationProperties, discriminator='ManagementGroup'):
+        all_recommendation_details: AllSavingsList
+        arm_sku_name: str
+        commitment_granularity: Union[str, Grain]
+        cost_without_benefit: Decimal
+        currency_code: str
+        first_consumption_date: datetime
+        last_consumption_date: datetime
+        look_back_period: Union[str, LookBackPeriod]
+        management_group_id: Optional[str]
+        recommendation_details: AllSavingsBenefitDetails
+        scope: Literal[Scope.MANAGEMENT_GROUP]
+        tenant_id: Optional[str]
+        term: Union[str, Term]
+        total_hours: int
+        usage: RecommendationUsageDetails
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                commitment_granularity: Optional[Union[str, Grain]] = ..., 
+                look_back_period: Optional[Union[str, LookBackPeriod]] = ..., 
+                recommendation_details: Optional[AllSavingsBenefitDetails] = ..., 
+                term: Optional[Union[str, Term]] = ..., 
+                usage: Optional[RecommendationUsageDetails] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.costmanagement.models.MarkupRule(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[MarkupRuleProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[MarkupRuleProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.costmanagement.models.MarkupRuleProperties(_Model):
+        customer_details: CustomerMetadata
+        description: Optional[str]
+        end_date: Optional[datetime]
+        percentage: float
+        start_date: datetime
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                customer_details: CustomerMetadata, 
+                description: Optional[str] = ..., 
+                end_date: Optional[datetime] = ..., 
+                percentage: float, 
+                start_date: datetime
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.costmanagement.models.MetricType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ACTUAL_COST = "ActualCost"
         AHUB = "AHUB"
@@ -4299,6 +4463,7 @@ namespace azure.mgmt.costmanagement.models
 
 
     class azure.mgmt.costmanagement.models.Scope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MANAGEMENT_GROUP = "ManagementGroup"
         SHARED = "Shared"
         SINGLE = "Single"
 
@@ -5501,6 +5666,80 @@ namespace azure.mgmt.costmanagement.operations
             ) -> LROPoller[OperationStatus]: ...
 
 
+    class azure.mgmt.costmanagement.operations.MarkupRulesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                billing_account_id: str, 
+                billing_profile_id: str, 
+                rule_name: str, 
+                resource: MarkupRule, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MarkupRule: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                billing_account_id: str, 
+                billing_profile_id: str, 
+                rule_name: str, 
+                resource: MarkupRule, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MarkupRule: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                billing_account_id: str, 
+                billing_profile_id: str, 
+                rule_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MarkupRule: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'billing_account_id', 'billing_profile_id', 'rule_name']}, api_versions_list=['2026-06-01'])
+        def delete(
+                self, 
+                billing_account_id: str, 
+                billing_profile_id: str, 
+                rule_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'billing_account_id', 'billing_profile_id', 'rule_name', 'accept']}, api_versions_list=['2026-06-01'])
+        def get(
+                self, 
+                billing_account_id: str, 
+                billing_profile_id: str, 
+                rule_name: str, 
+                **kwargs: Any
+            ) -> MarkupRule: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'billing_account_id', 'billing_profile_id', 'accept']}, api_versions_list=['2026-06-01'])
+        def list(
+                self, 
+                billing_account_id: str, 
+                billing_profile_id: str, 
+                **kwargs: Any
+            ) -> ItemPaged[MarkupRule]: ...
+
+
     class azure.mgmt.costmanagement.operations.Operations:
 
         def __init__(
@@ -6013,17 +6252,17 @@ namespace azure.mgmt.costmanagement.types
         key "status": Union[str, AlertStatus]
         key "statusModificationTime": str
         key "statusModificationUserName": str
-        close_time: str
-        cost_entity_id: str
-        creation_time: str
+        closeTime: str
+        costEntityId: str
+        creationTime: str
         definition: AlertPropertiesDefinition
         description: str
         details: AlertPropertiesDetails
-        modification_time: str
+        modificationTime: str
         source: Union[str, AlertSource]
         status: Union[str, AlertStatus]
-        status_modification_time: str
-        status_modification_user_name: str
+        statusModificationTime: str
+        statusModificationUserName: str
 
 
     class azure.mgmt.costmanagement.types.AlertPropertiesDefinition(TypedDict, total=False):
@@ -6053,32 +6292,26 @@ namespace azure.mgmt.costmanagement.types
         key "triggeredBy": str
         key "unit": str
         amount: float
-        company_name: str
+        companyName: str
         contactEmails: list[str]
         contactGroups: list[str]
         contactRoles: list[str]
-        contact_emails: list[str]
-        contact_groups: list[str]
-        contact_roles: list[str]
-        current_spend: float
-        department_name: str
-        enrollment_end_date: str
-        enrollment_number: str
-        enrollment_start_date: str
-        invoicing_threshold: float
+        currentSpend: float
+        departmentName: str
+        enrollmentEndDate: str
+        enrollmentNumber: str
+        enrollmentStartDate: str
+        invoicingThreshold: float
         meterFilter: list[Any]
-        meter_filter: list[Any]
         operator: Union[str, AlertOperator]
-        overriding_alert: str
-        period_start_date: str
+        overridingAlert: str
+        periodStartDate: str
         resourceFilter: list[Any]
         resourceGroupFilter: list[Any]
-        resource_filter: list[Any]
-        resource_group_filter: list[Any]
-        tag_filter: Any
+        tagFilter: Any
         threshold: float
-        time_grain_type: Union[str, AlertTimeGrainType]
-        triggered_by: str
+        timeGrainType: Union[str, AlertTimeGrainType]
+        triggeredBy: str
         unit: str
 
 
@@ -6091,14 +6324,14 @@ namespace azure.mgmt.costmanagement.types
         key "grain": Required[Union[str, Grain]]
         key "kind": Union[str, BenefitKind]
         key "startDate": Required[str]
-        benefit_id: str
-        benefit_order_id: str
-        billing_account_id: str
-        billing_profile_id: str
-        end_date: str
+        benefitId: str
+        benefitOrderId: str
+        billingAccountId: str
+        billingProfileId: str
+        endDate: str
         grain: Union[str, Grain]
         kind: Union[str, BenefitKind]
-        start_date: str
+        startDate: str
 
 
     class azure.mgmt.costmanagement.types.Budget(ExtensionResource):
@@ -6108,11 +6341,11 @@ namespace azure.mgmt.costmanagement.types
         key "properties": ForwardRef('BudgetProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        e_tag: str
+        eTag: str
         id: str
         name: str
         properties: BudgetProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6122,14 +6355,13 @@ namespace azure.mgmt.costmanagement.types
         key "values": Required[list[str]]
         name: str
         operator: Union[str, BudgetOperatorType]
-        values_property: list[str]
+        values: list[str]
 
 
     class azure.mgmt.costmanagement.types.BudgetFilter(TypedDict):
         key "dimensions": ForwardRef('BudgetComparisonExpression', module='types')
         key "tags": ForwardRef('BudgetComparisonExpression', module='types')
         and: list[BudgetFilterProperties]
-        and_property: list[BudgetFilterProperties]
         dimensions: BudgetComparisonExpression
         tags: BudgetComparisonExpression
 
@@ -6151,19 +6383,19 @@ namespace azure.mgmt.costmanagement.types
         key "timePeriod": Required[BudgetTimePeriod]
         amount: float
         category: Union[str, CategoryType]
-        current_spend: CurrentSpend
+        currentSpend: CurrentSpend
         filter: BudgetFilter
-        forecast_spend: ForecastSpend
+        forecastSpend: ForecastSpend
         notifications: dict[str, Notification]
-        time_grain: Union[str, TimeGrainType]
-        time_period: BudgetTimePeriod
+        timeGrain: Union[str, TimeGrainType]
+        timePeriod: BudgetTimePeriod
 
 
     class azure.mgmt.costmanagement.types.BudgetTimePeriod(TypedDict, total=False):
         key "endDate": str
         key "startDate": Required[str]
-        end_date: str
-        start_date: str
+        endDate: str
+        startDate: str
 
 
     class azure.mgmt.costmanagement.types.CheckNameAvailabilityRequest(TypedDict, total=False):
@@ -6184,16 +6416,16 @@ namespace azure.mgmt.costmanagement.types
         key "partitionData": bool
         key "runHistory": ForwardRef('ExportExecutionListResult', module='types')
         key "systemSuspensionContext": ForwardRef('ExportSuspensionContext', module='types')
-        compression_mode: Union[str, CompressionModeType]
-        data_overwrite_behavior: Union[str, DataOverwriteBehaviorType]
+        compressionMode: Union[str, CompressionModeType]
+        dataOverwriteBehavior: Union[str, DataOverwriteBehaviorType]
         definition: ExportDefinition
-        delivery_info: ExportDeliveryInfo
-        export_description: str
+        deliveryInfo: ExportDeliveryInfo
+        exportDescription: str
         format: Union[str, FormatType]
-        next_run_time_estimate: str
-        partition_data: bool
-        run_history: ExportExecutionListResult
-        system_suspension_context: ExportSuspensionContext
+        nextRunTimeEstimate: str
+        partitionData: bool
+        runHistory: ExportExecutionListResult
+        systemSuspensionContext: ExportSuspensionContext
 
 
     class azure.mgmt.costmanagement.types.CostAllocationProportion(TypedDict, total=False):
@@ -6207,7 +6439,7 @@ namespace azure.mgmt.costmanagement.types
         key "name": Required[str]
         key "resourceType": Required[Union[str, CostAllocationResourceType]]
         name: str
-        resource_type: Union[str, CostAllocationResourceType]
+        resourceType: Union[str, CostAllocationResourceType]
 
 
     class azure.mgmt.costmanagement.types.CostAllocationRuleCheckNameAvailabilityRequest(TypedDict, total=False):
@@ -6226,15 +6458,13 @@ namespace azure.mgmt.costmanagement.types
         id: str
         name: str
         properties: CostAllocationRuleProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.costmanagement.types.CostAllocationRuleDetails(TypedDict, total=False):
         sourceResources: list[SourceCostAllocationResource]
-        source_resources: list[SourceCostAllocationResource]
         targetResources: list[TargetCostAllocationResource]
-        target_resources: list[TargetCostAllocationResource]
 
 
     class azure.mgmt.costmanagement.types.CostAllocationRuleProperties(TypedDict, total=False):
@@ -6243,11 +6473,11 @@ namespace azure.mgmt.costmanagement.types
         key "details": Required[CostAllocationRuleDetails]
         key "status": Required[Union[str, RuleStatus]]
         key "updatedDate": str
-        created_date: str
+        createdDate: str
         description: str
         details: CostAllocationRuleDetails
         status: Union[str, RuleStatus]
-        updated_date: str
+        updatedDate: str
 
 
     class azure.mgmt.costmanagement.types.CostDetailsTimePeriod(TypedDict, total=False):
@@ -6262,7 +6492,7 @@ namespace azure.mgmt.costmanagement.types
         key "id": str
         key "name": str
         key "type": str
-        e_tag: str
+        eTag: str
         id: str
         name: str
         type: str
@@ -6273,6 +6503,13 @@ namespace azure.mgmt.costmanagement.types
         key "unit": str
         amount: float
         unit: str
+
+
+    class azure.mgmt.costmanagement.types.CustomerMetadata(TypedDict, total=False):
+        key "billingAccountId": Required[str]
+        key "billingProfileId": Required[str]
+        billingAccountId: str
+        billingProfileId: str
 
 
     class azure.mgmt.costmanagement.types.DismissAlertPayload(TypedDict, total=False):
@@ -6296,13 +6533,13 @@ namespace azure.mgmt.costmanagement.types
         key "properties": ForwardRef('ExportProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        e_tag: str
+        eTag: str
         id: str
         identity: SystemAssignedServiceIdentity
         location: str
         name: str
         properties: ExportProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6316,7 +6553,7 @@ namespace azure.mgmt.costmanagement.types
     class azure.mgmt.costmanagement.types.ExportDatasetConfiguration(TypedDict, total=False):
         key "dataVersion": str
         columns: list[str]
-        data_version: str
+        dataVersion: str
         filters: list[FilterItems]
 
 
@@ -6325,8 +6562,8 @@ namespace azure.mgmt.costmanagement.types
         key "timePeriod": ForwardRef('ExportTimePeriod', module='types')
         key "timeframe": Required[Union[str, TimeframeType]]
         key "type": Required[Union[str, ExportType]]
-        data_set: ExportDataset
-        time_period: ExportTimePeriod
+        dataSet: ExportDataset
+        timePeriod: ExportTimePeriod
         timeframe: Union[str, TimeframeType]
         type: Union[str, ExportType]
 
@@ -6339,10 +6576,10 @@ namespace azure.mgmt.costmanagement.types
         key "storageAccount": str
         key "type": Union[str, DestinationType]
         container: str
-        resource_id: str
-        root_folder_path: str
-        sas_token: str
-        storage_account: str
+        resourceId: str
+        rootFolderPath: str
+        sasToken: str
+        storageAccount: str
         type: Union[str, DestinationType]
 
 
@@ -6367,23 +6604,23 @@ namespace azure.mgmt.costmanagement.types
         key "runHistory": ForwardRef('ExportExecutionListResult', module='types')
         key "schedule": ForwardRef('ExportSchedule', module='types')
         key "systemSuspensionContext": ForwardRef('ExportSuspensionContext', module='types')
-        compression_mode: Union[str, CompressionModeType]
-        data_overwrite_behavior: Union[str, DataOverwriteBehaviorType]
+        compressionMode: Union[str, CompressionModeType]
+        dataOverwriteBehavior: Union[str, DataOverwriteBehaviorType]
         definition: ExportDefinition
-        delivery_info: ExportDeliveryInfo
-        export_description: str
+        deliveryInfo: ExportDeliveryInfo
+        exportDescription: str
         format: Union[str, FormatType]
-        next_run_time_estimate: str
-        partition_data: bool
-        run_history: ExportExecutionListResult
+        nextRunTimeEstimate: str
+        partitionData: bool
+        runHistory: ExportExecutionListResult
         schedule: ExportSchedule
-        system_suspension_context: ExportSuspensionContext
+        systemSuspensionContext: ExportSuspensionContext
 
 
     class azure.mgmt.costmanagement.types.ExportRecurrencePeriod(TypedDict):
         key "from": Required[str]
         key "to": str
-        from_property: str
+        from: str
         to: str
 
 
@@ -6393,7 +6630,7 @@ namespace azure.mgmt.costmanagement.types
         key "name": str
         key "properties": ForwardRef('ExportRunProperties', module='types')
         key "type": str
-        e_tag: str
+        eTag: str
         id: str
         name: str
         properties: ExportRunProperties
@@ -6413,23 +6650,23 @@ namespace azure.mgmt.costmanagement.types
         key "status": Union[str, ExecutionStatus]
         key "submittedBy": str
         key "submittedTime": str
-        end_date: str
+        endDate: str
         error: ErrorDetails
-        execution_type: Union[str, ExecutionType]
-        file_name: str
-        manifest_file: str
-        processing_end_time: str
-        processing_start_time: str
-        run_settings: CommonExportProperties
-        start_date: str
+        executionType: Union[str, ExecutionType]
+        fileName: str
+        manifestFile: str
+        processingEndTime: str
+        processingStartTime: str
+        runSettings: CommonExportProperties
+        startDate: str
         status: Union[str, ExecutionStatus]
-        submitted_by: str
-        submitted_time: str
+        submittedBy: str
+        submittedTime: str
 
 
     class azure.mgmt.costmanagement.types.ExportRunRequest(TypedDict, total=False):
         key "timePeriod": ForwardRef('ExportTimePeriod', module='types')
-        time_period: ExportTimePeriod
+        timePeriod: ExportTimePeriod
 
 
     class azure.mgmt.costmanagement.types.ExportSchedule(TypedDict, total=False):
@@ -6437,7 +6674,7 @@ namespace azure.mgmt.costmanagement.types
         key "recurrencePeriod": ForwardRef('ExportRecurrencePeriod', module='types')
         key "status": Union[str, StatusType]
         recurrence: Union[str, RecurrenceType]
-        recurrence_period: ExportRecurrencePeriod
+        recurrencePeriod: ExportRecurrencePeriod
         status: Union[str, StatusType]
 
 
@@ -6445,15 +6682,15 @@ namespace azure.mgmt.costmanagement.types
         key "suspensionCode": str
         key "suspensionReason": str
         key "suspensionTime": str
-        suspension_code: str
-        suspension_reason: str
-        suspension_time: str
+        suspensionCode: str
+        suspensionReason: str
+        suspensionTime: str
 
 
     class azure.mgmt.costmanagement.types.ExportTimePeriod(TypedDict):
         key "from": Required[str]
         key "to": Required[str]
-        from_property: str
+        from: str
         to: str
 
 
@@ -6464,13 +6701,12 @@ namespace azure.mgmt.costmanagement.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.costmanagement.types.FileDestination(TypedDict, total=False):
         fileFormats: list[Union[str, FileFormat]]
-        file_formats: list[Union[str, FileFormat]]
 
 
     class azure.mgmt.costmanagement.types.FilterItems(TypedDict, total=False):
@@ -6493,7 +6729,7 @@ namespace azure.mgmt.costmanagement.types
         key "values": Required[list[str]]
         name: str
         operator: Union[str, ForecastOperatorType]
-        values_property: list[str]
+        values: list[str]
 
 
     class azure.mgmt.costmanagement.types.ForecastDataset(TypedDict, total=False):
@@ -6519,9 +6755,9 @@ namespace azure.mgmt.costmanagement.types
         key "timeframe": Required[Union[str, ForecastTimeframe]]
         key "type": Required[Union[str, ForecastType]]
         dataset: ForecastDataset
-        include_actual_cost: bool
-        include_fresh_partial_cost: bool
-        time_period: ForecastTimePeriod
+        includeActualCost: bool
+        includeFreshPartialCost: bool
+        timePeriod: ForecastTimePeriod
         timeframe: Union[str, ForecastTimeframe]
         type: Union[str, ForecastType]
 
@@ -6530,10 +6766,8 @@ namespace azure.mgmt.costmanagement.types
         key "dimensions": ForwardRef('ForecastComparisonExpression', module='types')
         key "tags": ForwardRef('ForecastComparisonExpression', module='types')
         and: list[ForecastFilter]
-        and_property: list[ForecastFilter]
         dimensions: ForecastComparisonExpression
         or: list[ForecastFilter]
-        or_property: list[ForecastFilter]
         tags: ForecastComparisonExpression
 
 
@@ -6547,7 +6781,7 @@ namespace azure.mgmt.costmanagement.types
     class azure.mgmt.costmanagement.types.ForecastTimePeriod(TypedDict):
         key "from": Required[str]
         key "to": Required[str]
-        from_property: str
+        from: str
         to: str
 
 
@@ -6556,10 +6790,10 @@ namespace azure.mgmt.costmanagement.types
         key "invoiceId": str
         key "metric": Union[str, CostDetailsMetricType]
         key "timePeriod": ForwardRef('CostDetailsTimePeriod', module='types')
-        billing_period: str
-        invoice_id: str
+        billingPeriod: str
+        invoiceId: str
         metric: Union[str, CostDetailsMetricType]
-        time_period: CostDetailsTimePeriod
+        timePeriod: CostDetailsTimePeriod
 
 
     class azure.mgmt.costmanagement.types.GenerateDetailedCostReportDefinition(TypedDict, total=False):
@@ -6568,11 +6802,11 @@ namespace azure.mgmt.costmanagement.types
         key "invoiceId": str
         key "metric": Union[str, GenerateDetailedCostReportMetricType]
         key "timePeriod": ForwardRef('GenerateDetailedCostReportTimePeriod', module='types')
-        billing_period: str
-        customer_id: str
-        invoice_id: str
+        billingPeriod: str
+        customerId: str
+        invoiceId: str
         metric: Union[str, GenerateDetailedCostReportMetricType]
-        time_period: GenerateDetailedCostReportTimePeriod
+        timePeriod: GenerateDetailedCostReportTimePeriod
 
 
     class azure.mgmt.costmanagement.types.GenerateDetailedCostReportTimePeriod(TypedDict, total=False):
@@ -6591,6 +6825,32 @@ namespace azure.mgmt.costmanagement.types
         type: Union[str, KpiType]
 
 
+    class azure.mgmt.costmanagement.types.MarkupRule(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('MarkupRuleProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: MarkupRuleProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.costmanagement.types.MarkupRuleProperties(TypedDict, total=False):
+        key "customerDetails": Required[CustomerMetadata]
+        key "description": str
+        key "endDate": str
+        key "percentage": Required[float]
+        key "startDate": Required[str]
+        customerDetails: CustomerMetadata
+        description: str
+        endDate: str
+        percentage: float
+        startDate: str
+
+
     class azure.mgmt.costmanagement.types.Notification(TypedDict, total=False):
         key "contactEmails": Required[list[str]]
         key "enabled": Required[bool]
@@ -6599,17 +6859,15 @@ namespace azure.mgmt.costmanagement.types
         key "operator": Required[Union[str, BudgetNotificationOperatorType]]
         key "threshold": Required[float]
         key "thresholdType": Union[str, ThresholdType]
+        contactEmails: list[str]
         contactGroups: list[str]
         contactRoles: list[str]
-        contact_emails: list[str]
-        contact_groups: list[str]
-        contact_roles: list[str]
         enabled: bool
         frequency: Union[str, Frequency]
         locale: Union[str, CultureCode]
         operator: Union[str, BudgetNotificationOperatorType]
         threshold: float
-        threshold_type: Union[str, ThresholdType]
+        thresholdType: Union[str, ThresholdType]
 
 
     class azure.mgmt.costmanagement.types.NotificationProperties(TypedDict, total=False):
@@ -6620,7 +6878,7 @@ namespace azure.mgmt.costmanagement.types
         key "to": Required[list[str]]
         language: str
         message: str
-        regional_format: str
+        regionalFormat: str
         subject: str
         to: list[str]
 
@@ -6639,7 +6897,7 @@ namespace azure.mgmt.costmanagement.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6656,7 +6914,7 @@ namespace azure.mgmt.costmanagement.types
         key "values": Required[list[str]]
         name: str
         operator: Union[str, QueryOperatorType]
-        values_property: list[str]
+        values: list[str]
 
 
     class azure.mgmt.costmanagement.types.QueryDataset(TypedDict, total=False):
@@ -6680,7 +6938,7 @@ namespace azure.mgmt.costmanagement.types
         key "timeframe": Required[Union[str, TimeframeType]]
         key "type": Required[Union[str, ExportType]]
         dataset: QueryDataset
-        time_period: QueryTimePeriod
+        timePeriod: QueryTimePeriod
         timeframe: Union[str, TimeframeType]
         type: Union[str, ExportType]
 
@@ -6689,10 +6947,8 @@ namespace azure.mgmt.costmanagement.types
         key "dimensions": ForwardRef('QueryComparisonExpression', module='types')
         key "tags": ForwardRef('QueryComparisonExpression', module='types')
         and: list[QueryFilter]
-        and_property: list[QueryFilter]
         dimensions: QueryComparisonExpression
         or: list[QueryFilter]
-        or_property: list[QueryFilter]
         tags: QueryComparisonExpression
 
 
@@ -6706,7 +6962,7 @@ namespace azure.mgmt.costmanagement.types
     class azure.mgmt.costmanagement.types.QueryTimePeriod(TypedDict):
         key "from": Required[str]
         key "to": Required[str]
-        from_property: str
+        from: str
         to: str
 
 
@@ -6723,7 +6979,7 @@ namespace azure.mgmt.costmanagement.types
         key "values": Required[list[str]]
         name: str
         operator: Union[str, OperatorType]
-        values_property: list[str]
+        values: list[str]
 
 
     class azure.mgmt.costmanagement.types.ReportConfigDataset(TypedDict, total=False):
@@ -6748,9 +7004,9 @@ namespace azure.mgmt.costmanagement.types
         key "timePeriod": ForwardRef('ReportConfigTimePeriod', module='types')
         key "timeframe": Required[Union[str, ReportTimeframeType]]
         key "type": Required[Union[str, ReportType]]
-        data_set: ReportConfigDataset
-        include_monetary_commitment: bool
-        time_period: ReportConfigTimePeriod
+        dataSet: ReportConfigDataset
+        includeMonetaryCommitment: bool
+        timePeriod: ReportConfigTimePeriod
         timeframe: Union[str, ReportTimeframeType]
         type: Union[str, ReportType]
 
@@ -6759,10 +7015,8 @@ namespace azure.mgmt.costmanagement.types
         key "dimensions": ForwardRef('ReportConfigComparisonExpression', module='types')
         key "tags": ForwardRef('ReportConfigComparisonExpression', module='types')
         and: list[ReportConfigFilter]
-        and_property: list[ReportConfigFilter]
         dimensions: ReportConfigComparisonExpression
         or: list[ReportConfigFilter]
-        or_property: list[ReportConfigFilter]
         tags: ReportConfigComparisonExpression
 
 
@@ -6783,7 +7037,7 @@ namespace azure.mgmt.costmanagement.types
     class azure.mgmt.costmanagement.types.ReportConfigTimePeriod(TypedDict):
         key "from": Required[str]
         key "to": Required[str]
-        from_property: str
+        from: str
         to: str
 
 
@@ -6794,7 +7048,7 @@ namespace azure.mgmt.costmanagement.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6804,15 +7058,13 @@ namespace azure.mgmt.costmanagement.types
         key "frequency": Required[Union[str, ScheduleFrequency]]
         key "hourOfDay": int
         key "startDate": Required[str]
-        day_of_month: int
+        dayOfMonth: int
         daysOfWeek: list[Union[str, DaysOfWeek]]
-        days_of_week: list[Union[str, DaysOfWeek]]
-        end_date: str
+        endDate: str
         frequency: Union[str, ScheduleFrequency]
-        hour_of_day: int
-        start_date: str
+        hourOfDay: int
+        startDate: str
         weeksOfMonth: list[Union[str, WeeksOfMonth]]
-        weeks_of_month: list[Union[str, WeeksOfMonth]]
 
 
     class azure.mgmt.costmanagement.types.ScheduledAction(ProxyResource):
@@ -6823,12 +7075,12 @@ namespace azure.mgmt.costmanagement.types
         key "properties": ForwardRef('ScheduledActionProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        e_tag: str
+        eTag: str
         id: str
         kind: Union[str, ScheduledActionKind]
         name: str
         properties: ScheduledActionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6841,14 +7093,14 @@ namespace azure.mgmt.costmanagement.types
         key "scope": str
         key "status": Required[Union[str, ScheduledActionStatus]]
         key "viewId": Required[str]
-        display_name: str
-        file_destination: FileDestination
+        displayName: str
+        fileDestination: FileDestination
         notification: NotificationProperties
-        notification_email: str
+        notificationEmail: str
         schedule: ScheduleProperties
         scope: str
         status: Union[str, ScheduledActionStatus]
-        view_id: str
+        viewId: str
 
 
     class azure.mgmt.costmanagement.types.Setting(TypedDict, total=False):
@@ -6862,7 +7114,7 @@ namespace azure.mgmt.costmanagement.types
         kind: Literal[SettingsKind.TAGINHERITANCE]
         name: str
         properties: TagInheritanceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6875,16 +7127,16 @@ namespace azure.mgmt.costmanagement.types
         key "resourceType": Required[Union[str, CostAllocationResourceType]]
         key "values": Required[list[str]]
         name: str
-        resource_type: Union[str, CostAllocationResourceType]
-        values_property: list[str]
+        resourceType: Union[str, CostAllocationResourceType]
+        values: list[str]
 
 
     class azure.mgmt.costmanagement.types.SystemAssignedServiceIdentity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, SystemAssignedServiceIdentityType]]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, SystemAssignedServiceIdentityType]
 
 
@@ -6895,17 +7147,17 @@ namespace azure.mgmt.costmanagement.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.costmanagement.types.TagInheritanceProperties(TypedDict, total=False):
         key "preferContainerTags": Required[bool]
-        prefer_container_tags: bool
+        preferContainerTags: bool
 
 
     class azure.mgmt.costmanagement.types.TagInheritanceSetting(TypedDict, total=False):
@@ -6919,7 +7171,7 @@ namespace azure.mgmt.costmanagement.types
         kind: Literal[SettingsKind.TAGINHERITANCE]
         name: str
         properties: TagInheritanceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6929,9 +7181,9 @@ namespace azure.mgmt.costmanagement.types
         key "resourceType": Required[Union[str, CostAllocationResourceType]]
         key "values": Required[list[CostAllocationProportion]]
         name: str
-        policy_type: Union[str, CostAllocationPolicyType]
-        resource_type: Union[str, CostAllocationResourceType]
-        values_property: list[CostAllocationProportion]
+        policyType: Union[str, CostAllocationPolicyType]
+        resourceType: Union[str, CostAllocationResourceType]
+        values: list[CostAllocationProportion]
 
 
     class azure.mgmt.costmanagement.types.View(ProxyResource):
@@ -6941,11 +7193,11 @@ namespace azure.mgmt.costmanagement.types
         key "properties": ForwardRef('ViewProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        e_tag: str
+        eTag: str
         id: str
         name: str
         properties: ViewProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6962,13 +7214,13 @@ namespace azure.mgmt.costmanagement.types
         key "scope": str
         accumulated: Union[str, AccumulatedType]
         chart: Union[str, ChartType]
-        created_on: str
+        createdOn: str
         currency: str
-        date_range: str
-        display_name: str
+        dateRange: str
+        displayName: str
         kpis: list[KpiProperties]
         metric: Union[str, MetricType]
-        modified_on: str
+        modifiedOn: str
         pivots: list[PivotProperties]
         query: ReportConfigDefinition
         scope: str

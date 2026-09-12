@@ -36,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-03-01/Budgets/List/EA/BillingAccountBudgetsList-EA-CategoryTypeFilter.json
+# x-ms-original-file: 2026-06-01/Budgets/List/EA/BillingAccountBudgetsList-EA-CategoryTypeFilter.json
 if __name__ == "__main__":
     main()
