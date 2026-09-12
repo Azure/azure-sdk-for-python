@@ -23,6 +23,7 @@ from ._operations import PasswordHashesOperations  # type: ignore
 from ._operations import SbomComponentsOperations  # type: ignore
 from ._operations import SummariesOperations  # type: ignore
 from ._operations import UsageMetricsOperations  # type: ignore
+from ._operations import UnsafeFunctionCallsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -40,6 +41,7 @@ __all__ = [
     "SbomComponentsOperations",
     "SummariesOperations",
     "UsageMetricsOperations",
+    "UnsafeFunctionCallsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
