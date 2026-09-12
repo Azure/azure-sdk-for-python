@@ -15,7 +15,7 @@ from azure.mgmt.storagecache import StorageCacheManagementClient
     pip install azure-identity
     pip install azure-mgmt-storagecache
 # USAGE
-    python usage_models_list.py
+    python rebalance_jobs_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,11 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.usage_models.list()
-    for item in response:
-        print(item)
+    response = client.rebalance_jobs.get(
+        resource_group_name="scgroup",
+        aml_filesystem_name="fs1",
+        rebalance_job_name="expansionjob1-rebalance",
+    )
+    print(response)
 
 
-# x-ms-original-file: 2026-08-01/UsageModels_List.json
+# x-ms-original-file: 2026-08-01/RebalanceJobs_Get.json
 if __name__ == "__main__":
     main()
