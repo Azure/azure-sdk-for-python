@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -26,12 +26,17 @@ from .operations import (
     PlaywrightWorkspacesOperations,
 )
 
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
+
 if TYPE_CHECKING:
     from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class PlaywrightMgmtClient:
+class PlaywrightMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Playwright Service Management API provides access to Playwright workspace resources and their
     operations through Azure Resource Manager.
 
@@ -55,8 +60,9 @@ class PlaywrightMgmtClient:
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-02-01-preview". Default value is "2026-02-01-preview". Note that overriding this default
-     value may result in unsupported behavior.
+     "2026-08-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
