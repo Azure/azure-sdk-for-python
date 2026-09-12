@@ -32,11 +32,11 @@ def main():
 
     response = client.managed_ops.begin_update(
         managed_ops_name="default",
-        properties={"properties": {"desiredConfiguration": {"defenderCspm": "Enable", "defenderForServers": "Enable"}}},
+        properties={"properties": {"desiredConfiguration": {"defenderCspm": "str", "defenderForServers": "str"}}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-07-28-preview/ManagedOps_Update.json
+# x-ms-original-file: 2026-01-06-preview/ManagedOps_Update.json
 if __name__ == "__main__":
     main()
