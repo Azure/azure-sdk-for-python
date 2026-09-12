@@ -35,9 +35,10 @@ def main():
         location="eastus",
         name="00000000-0000-0000-0000-000000000102",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-08-06-preview/BulkCreateCustom_VirtualMachinesGetOperationStatus_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-06-preview/BulkCreateCustom_VirtualMachinesGetOperationStatus_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

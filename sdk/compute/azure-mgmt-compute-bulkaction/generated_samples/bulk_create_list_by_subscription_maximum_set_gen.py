@@ -15,7 +15,7 @@ from azure.mgmt.compute.bulkaction import ComputeBulkActionsMgmtClient
     pip install azure-identity
     pip install azure-mgmt-compute-bulkaction
 # USAGE
-    python virtual_machine_bulk_operations_bulk_create_minimum_set_gen.py
+    python bulk_create_list_by_subscription_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.virtual_machine_bulk_operations.bulk_create_operation(
-        resource_group_name="rgBulkactions",
-        location="useast2euap",
-        request_body={"executionParameters": {}, "resourceConfigParameters": {"resourceCount": 23}},
+    response = client.bulk_create.list_by_subscription(
+        location="eastus",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-08-06-preview/VirtualMachineBulkOperations_BulkCreate_MinimumSet_Gen.json
+# x-ms-original-file: 2026-09-06-preview/BulkCreate_ListBySubscription_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
