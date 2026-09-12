@@ -37,6 +37,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2026-04-01/QueueOperationDelete.json
+# x-ms-original-file: 2026-06-01/QueueOperationDelete.json
 if __name__ == "__main__":
     main()

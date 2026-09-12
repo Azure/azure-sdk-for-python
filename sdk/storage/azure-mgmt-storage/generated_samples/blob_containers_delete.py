@@ -37,6 +37,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2026-04-01/BlobContainersDelete.json
+# x-ms-original-file: 2026-06-01/BlobContainersDelete.json
 if __name__ == "__main__":
     main()
