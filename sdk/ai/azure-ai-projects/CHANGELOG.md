@@ -6,6 +6,7 @@
 
 * Added `sample_agent_insights_on_demand.py` and `sample_agent_insights_scheduled.py` under `samples/agent_insights/` to demonstrate on-demand analysis, insight lifecycle updates, and scheduled monitor setup with temporary external agents, fictional traces, and owned-resource cleanup.
 * Added `sample_agent_web_iq.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using the `WebIQPreviewTool`.
+* Renamed toolbox tool-search samples `sample_toolboxes_with_search.py` and `sample_toolboxes_with_search_async.py` to `sample_toolbox_with_search.py` and `sample_toolbox_with_search_async.py`.
 
 ### Bugs Fixed
 

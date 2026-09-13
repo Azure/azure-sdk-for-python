@@ -20,7 +20,7 @@ DESCRIPTION:
     'project_client.toolboxes'.
 
 USAGE:
-    python sample_toolboxes_with_search_async.py
+    python sample_toolbox_with_search_async.py
 
     Before running the sample:
 
