@@ -22,7 +22,7 @@ from azure.core.utils import case_insensitive_dict
 from ._generated import models as _models
 from ._generated._utils.serialization import Serializer
 from ._generated.operations import CallRecordingOperations
-from ._shared.recording_url_validator import validate_recording_url
+from .recording_url_validator import validate_recording_url
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
