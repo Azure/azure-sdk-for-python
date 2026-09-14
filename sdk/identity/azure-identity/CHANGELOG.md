@@ -5,18 +5,20 @@
 ### Features Added
 
 - Credential HTTP pipeline policies can now be overridden via the `headers_policy`, `logging_policy`, `http_logging_policy`, `proxy_policy`, `user_agent_policy`, `custom_hook_policy`, and `retry_policy` keyword arguments when constructing credentials. The `per_retry_policies` and `per_call_policies` are also now supported. This allows users to inject custom policies or override settings of built-in policies. ([#46072](https://github.com/Azure/azure-sdk-for-python/pull/46072))
+- `ManagedIdentityCredential` now supports user-assigned managed identities on Azure Arc-enabled servers. An identity can be selected by client ID, object ID, or resource ID. Token responses that do not confirm the requested identity are rejected.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 - Fixed `AzureDeveloperCliCredential` to correctly parse error messages from Azure Developer CLI v1.23.7 and later, which previously caused raw JSON to surface in `ClientAuthenticationError` instead of the underlying error text.
+- Fixed synchronous Service Fabric managed identity authentication with MSAL 1.38.0 and later. Service Fabric now uses a `requests.Session`; a supplied `transport` is ignored with a warning.
 
 ### Other Changes
 
 - Added `RequestIdPolicy` to the default pipeline policies to ensure a unique `x-ms-client-request-id` header is sent with each request. ([#46070](https://github.com/Azure/azure-sdk-for-python/pull/46070))
 - `CertificateCredential` now passes the PEM private_key to MSAL as a str rather than bytes, matching MSAL's documented `client_credential` contract. ([#46801](https://github.com/Azure/azure-sdk-for-python/pull/46801))
-- Temporarily constrained `msal` to `<1.38.0` because MSAL 1.38 is incompatible with the Azure Core-backed transport used by synchronous Service Fabric managed identity authentication.
+- Bumped the minimum dependency on `msal` to `>=1.38.0`.
 
 ## 1.25.3 (2026-03-12)
 
