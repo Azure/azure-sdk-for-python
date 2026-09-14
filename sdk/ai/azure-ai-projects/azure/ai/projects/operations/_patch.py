@@ -22,8 +22,6 @@ from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
 from ._patch_models import BetaModelsOperations
 from ._operations import (
-    BetaAgentEndpointConversationsOperations,
-    BetaAgentTelephonyOperations,
     BetaEvaluationTaxonomiesOperations,
     BetaInsightsOperations,
     BetaOperations as GeneratedBetaOperations,
@@ -31,7 +29,10 @@ from ._operations import (
     BetaRoutinesOperations,
     BetaSchedulesOperations,
     BetaSkillsOperations,
-    BetaVoiceAgentWebSocketOperations,
+    BetaVoiceAgentsConversationsOperations,
+    BetaVoiceAgentsOperations,
+    BetaVoiceAgentsRealtimeOperations,
+    BetaVoiceAgentsTelephonyOperations,
 )
 
 
@@ -54,13 +55,38 @@ class _OperationMethodHeaderProxy:
     """Proxy that injects the Foundry-Features header into public operation method calls."""
 
     def __init__(self, operation: Any, foundry_features_value: str):
+        """Wrap an operation and its nested operation groups with the same header value.
+
+        For example, ``.beta.voice_agents`` stores ``conversations`` and ``telephony`` as nested
+        operation groups. Wrapping them with the parent proxy ensures every call under
+        ``.beta.voice_agents.conversations`` and ``.beta.voice_agents.telephony`` receives the
+        ``Foundry-Features: VoiceAgents=V1Preview`` header.
+        """
         object.__setattr__(self, "_operation", operation)
         object.__setattr__(self, "_foundry_features_value", foundry_features_value)
+        for name, attribute in vars(operation).items():
+            # Generated operation groups share these fields; ordinary public attributes do not.
+            if (
+                not name.startswith("_")
+                and not isinstance(attribute, _OperationMethodHeaderProxy)
+                and hasattr(attribute, "_client")
+                and hasattr(attribute, "_config")
+            ):
+                setattr(operation, name, _OperationMethodHeaderProxy(attribute, foundry_features_value))
 
     def __getattr__(self, name: str) -> Any:
         attribute = getattr(self._operation, name)
 
-        if name.startswith("_") or not callable(attribute) or not _method_accepts_keyword_headers(attribute):
+        if name.startswith("_"):
+            return attribute
+        if not callable(attribute):
+            if isinstance(attribute, _OperationMethodHeaderProxy):
+                return attribute
+            # Also wrap an operation group that was assigned after this proxy was initialized.
+            if hasattr(attribute, "_client") and hasattr(attribute, "_config"):
+                return _OperationMethodHeaderProxy(attribute, self._foundry_features_value)
+            return attribute
+        if not _method_accepts_keyword_headers(attribute):
             return attribute
 
         @wraps(attribute)
@@ -100,12 +126,8 @@ class BetaOperations(GeneratedBetaOperations):
 
     agents: BetaAgentsOperations
     """:class:`~azure.ai.projects.operations.BetaAgentsOperations` operations"""
-    agent_endpoint_conversations: BetaAgentEndpointConversationsOperations
-    """:class:`~azure.ai.projects.operations.BetaAgentEndpointConversationsOperations` operations"""
     agent_insight_monitors: BetaAgentInsightMonitorsOperations
     """:class:`~azure.ai.projects.operations.BetaAgentInsightMonitorsOperations` operations"""
-    agent_telephony: BetaAgentTelephonyOperations
-    """:class:`~azure.ai.projects.operations.BetaAgentTelephonyOperations` operations"""
     evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
     """:class:`~azure.ai.projects.operations.BetaEvaluationTaxonomiesOperations` operations"""
     evaluators: BetaEvaluatorsOperations
@@ -126,8 +148,8 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.operations.BetaSkillsOperations` operations"""
     datasets: BetaDatasetsOperations
     """:class:`~azure.ai.projects.operations.BetaDatasetsOperations` operations"""
-    voice_agent_web_socket: BetaVoiceAgentWebSocketOperations
-    """:class:`~azure.ai.projects.operations.BetaVoiceAgentWebSocketOperations` operations"""
+    voice_agents: BetaVoiceAgentsOperations
+    """:class:`~azure.ai.projects.operations.BetaVoiceAgentsOperations` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -156,9 +178,7 @@ class BetaOperations(GeneratedBetaOperations):
 
 __all__: List[str] = [
     "AgentsOperations",
-    "BetaAgentEndpointConversationsOperations",
     "BetaAgentInsightMonitorsOperations",
-    "BetaAgentTelephonyOperations",
     "BetaAgentsOperations",
     "BetaDatasetsOperations",
     "BetaEvaluationTaxonomiesOperations",
@@ -171,7 +191,10 @@ __all__: List[str] = [
     "BetaRoutinesOperations",
     "BetaSchedulesOperations",
     "BetaSkillsOperations",
-    "BetaVoiceAgentWebSocketOperations",
+    "BetaVoiceAgentsConversationsOperations",
+    "BetaVoiceAgentsOperations",
+    "BetaVoiceAgentsRealtimeOperations",
+    "BetaVoiceAgentsTelephonyOperations",
     "ConnectionsOperations",
     "DatasetsOperations",
     "EvaluationRulesOperations",
