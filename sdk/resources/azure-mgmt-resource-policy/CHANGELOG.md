@@ -8,7 +8,7 @@
   - Model `Selector` added property `progress`
   - Enum `SelectorKind` added member `RESOURCE_ROLLOUT_PERCENTAGE`
   - Added enum `ComplianceState`
-  - Model `PolicyTokensOperations` added method `acquire_at_resource_group`
+  - Operation groups `PolicyTokensOperations` added method `acquire_at_resource_group`
 
 ### Breaking Changes
 
@@ -38,7 +38,7 @@
   - Deleted or renamed model `VariableValuesOperations`
   - Deleted or renamed model `VariablesOperations`
 
-## 1.0.0b4 (2026-08-30)
+## 1.0.0b4 (2026-08-31)
 
 ### Features Added
 
