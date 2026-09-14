@@ -1,18 +1,35 @@
 import base64
+from html.parser import HTMLParser
 import json
 import logging
 import os
 import re
+import sys
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
+from packaging.specifiers import InvalidSpecifier, SpecifierSet
+from packaging.utils import InvalidSdistFilename, InvalidWheelFilename, parse_sdist_filename, parse_wheel_filename
 from packaging.version import Version, InvalidVersion, parse
 from urllib3 import PoolManager, Retry
+from urllib3.exceptions import HTTPError
 
 
 def pep503_normalize(name: str) -> str:
     return re.sub(r"[-_.]+", "-", name).lower()
+
+
+class _SimpleIndexParser(HTMLParser):
+    """Collect package-file links and their PEP 503 metadata."""
+
+    def __init__(self):
+        super().__init__()
+        self.links: List[Dict[str, Optional[str]]] = []
+
+    def handle_starttag(self, tag: str, attrs: List[tuple[str, Optional[str]]]) -> None:
+        if tag == "a":
+            self.links.append(dict(attrs))
 
 
 @dataclass(frozen=True)
@@ -166,6 +183,70 @@ class AzureArtifactsClient:
 
         out.sort()
         return out
+
+    @staticmethod
+    def _version_from_link(href: str) -> Optional[Version]:
+        """Extract a normalized version from a wheel or source archive link."""
+        filename = os.path.basename(urlparse(href).path)
+        filename = unquote(filename)
+        try:
+            if filename.endswith(".whl"):
+                return parse_wheel_filename(filename)[1]
+            return parse_sdist_filename(filename)[1]
+        except (InvalidSdistFilename, InvalidWheelFilename):
+            return None
+
+    def get_python_compatible_versions(self, package_name: str) -> List[Version]:
+        """Return feed versions with at least one file compatible with this interpreter.
+
+        Azure Artifacts' package REST response lists versions but does not include
+        ``Requires-Python``. The PEP 503 simple index exposes that constraint on
+        each distribution link, allowing minimum-dependency selection to skip
+        releases that cannot run on the current interpreter.
+
+        :param str package_name: The package whose versions should be listed.
+        :return: Sorted versions compatible with the running Python interpreter.
+        :rtype: list[packaging.version.Version]
+        """
+        package = pep503_normalize(package_name)
+        url = f"{self._pkgs_base_url}/{self._path_prefix()}" f"/_packaging/{self._cfg.feed}/pypi/simple/{package}/"
+        response = self._http.request("GET", url, headers={"Accept": "text/html", **self._auth_header()})
+        if response.status == 404:
+            return []
+        if not 200 <= response.status < 300:
+            raise HTTPError(f"Azure Artifacts returned HTTP {response.status} for package {package_name!r}")
+
+        parser = _SimpleIndexParser()
+        parser.feed(response.data.decode("utf-8"))
+
+        compatible_versions = set()
+        current_python = Version(".".join(map(str, sys.version_info[:3])))
+        for link in parser.links:
+            href = link.get("href")
+            if not href or "data-yanked" in link:
+                continue
+
+            # Compatibility is file-specific: one release can publish several
+            # distributions with different Python constraints.
+            requires_python = link.get("data-requires-python")
+            if requires_python:
+                try:
+                    if current_python not in SpecifierSet(requires_python):
+                        continue
+                except InvalidSpecifier:
+                    logging.warning(
+                        "Invalid python_requires %r for package %s",
+                        requires_python,
+                        package_name,
+                    )
+                    continue
+
+            version = self._version_from_link(href)
+            if version is not None:
+                # Several compatible wheels can represent the same release.
+                compatible_versions.add(version)
+
+        return sorted(compatible_versions)
 
     def _head_ok(self, url: str) -> bool:
         """Return True if a HEAD request to *url* resolves successfully (2xx)."""

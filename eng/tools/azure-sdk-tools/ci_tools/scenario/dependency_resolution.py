@@ -148,7 +148,7 @@ def install_dependent_packages(
         with open(pkgs_file_path, "w", encoding="utf-8") as pkgs_file:
             for package in released_packages:
                 pkgs_file.write(package + "\n")
-        logger.info("Created file %s to track azure packages found on PyPI", pkgs_file_path)
+        logger.info("Created file %s to track packages selected from the configured index", pkgs_file_path)
 
 
 def check_pkg_against_overrides(pkg_specifier: str) -> List[str]:
@@ -239,7 +239,7 @@ def process_requirement(req: str, dependency_type: str, orig_pkg_name: str) -> s
 
     client = PyPIClient()
     versions = [str(v) for v in client.get_ordered_versions(pkg_name, True)]
-    logger.info("Versions available on PyPI for %s: %s", pkg_name, versions)
+    logger.info("Versions available from the configured index for %s: %s", pkg_name, versions)
 
     # prepass filter before choosing a latest or minimum, eliminate prerelease versions if they are not allowed based on the specifier
     if not allows_prereleases:
@@ -263,7 +263,7 @@ def process_requirement(req: str, dependency_type: str, orig_pkg_name: str) -> s
             )
             return pkg_name + "==" + version
 
-    logger.error("No version is found on PyPI for package %s that matches specifier %s", pkg_name, spec)
+    logger.error("No version is found on the configured index for package %s that matches specifier %s", pkg_name, spec)
     return ""
 
 
