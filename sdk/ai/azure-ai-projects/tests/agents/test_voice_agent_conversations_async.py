@@ -7,7 +7,7 @@
 
 """
 Recorded tests covering the read-only voice-agent conversation REST API surface exposed through
-``project_client.beta.agent_endpoint_conversations`` (async client).
+``project_client.beta.voice_agents.conversations`` (async client).
 
 Async counterpart of ``test_voice_agent_conversations.py``. See that module's docstring for the
 overall rationale (live-only setup to obtain a real conversation id, sanitized to a fixed
@@ -82,7 +82,7 @@ async def _create_live_conversation(project_client, model: str) -> str:
     )
 
     conversation_id: Optional[str] = None
-    async with project_client.beta.realtime.connect(agent_name=_AGENT_NAME) as conn:
+    async with project_client.beta.voice_agents.realtime.connect(agent_name=_AGENT_NAME) as conn:
         session_created = await asyncio.wait_for(conn.recv(), timeout=30)
         assert isinstance(session_created, RealtimeServerEventSessionCreated)
         conversation_id = session_created.conversation_id
@@ -111,10 +111,10 @@ async def _create_live_conversation(project_client, model: str) -> str:
 class TestVoiceAgentConversationsAsync(TestBase):
     """
     Recorded tests covering the read-only voice-agent conversation REST API surface exposed
-    through ``project_client.beta.agent_endpoint_conversations`` (conversation envelope,
+    through ``project_client.beta.voice_agents.conversations`` (conversation envelope,
     responses, items, and audio), using the async client.
 
-    NOTE: The ``beta.agent_endpoint_conversations.get_item_generated_audio*``
+    NOTE: The ``beta.voice_agents.conversations.get_generated_audio_item*``
     methods are intentionally NOT covered here: they return the played-back-interrupted
     subordinate "generated" audio, which requires deliberately barging in mid-reply during a
     live session to produce -- not exercised by the simple single-turn conversation created
@@ -136,7 +136,7 @@ class TestVoiceAgentConversationsAsync(TestBase):
         """
         print("\n")
         project_client = self.create_async_client(operation_group="agents", allow_preview=True, **kwargs)
-        conversations = project_client.beta.agent_endpoint_conversations
+        conversations = project_client.beta.voice_agents.conversations
 
         async with project_client:
             if is_live():
@@ -203,14 +203,14 @@ class TestVoiceAgentConversationsAsync(TestBase):
 
                 # A single item's audio, if any item has one. Setup guarantees at least one audio
                 # item exists, so at least one retrieval must succeed -- otherwise a fully-broken
-                # get_item_audio/download_item_audio route would tolerate every 404 and still pass.
+                # get_audio_item/download_audio_item route would tolerate every 404 and still pass.
                 found_item_audio = False
                 for item in items:
                     item_id = item.get("id")
                     if not item_id:
                         continue
                     try:
-                        item_audio = await conversations.get_item_audio(_AGENT_NAME, conversation_id, item_id)
+                        item_audio = await conversations.get_audio_item(_AGENT_NAME, conversation_id, item_id)
                     except HttpResponseError as e:
                         if e.status_code == 404:
                             continue
@@ -220,7 +220,7 @@ class TestVoiceAgentConversationsAsync(TestBase):
                     if not item_audio.blob_uri:
                         item_audio_chunks = [
                             chunk
-                            async for chunk in await conversations.download_item_audio(
+                            async for chunk in await conversations.download_audio_item(
                                 _AGENT_NAME, conversation_id, item_id
                             )
                         ]

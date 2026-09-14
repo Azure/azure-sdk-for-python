@@ -16,6 +16,16 @@ from azure.storage.blob._shared.uploads import SubStream
 
 class StorageBlobUploadChunkingTest(unittest.TestCase):
 
+    def test_sub_stream_can_close_after_constructor_failure(self):
+        wrapped_stream = BytesIO()
+        wrapped_stream.close()
+        substream = SubStream.__new__(SubStream)
+
+        with self.assertRaisesRegex(ValueError, "Wrapped stream must support seek"):
+            substream.__init__(wrapped_stream, stream_begin_index=0, length=1, lockObj=None)
+
+        substream.close()
+
     # this is a white box test that's designed to make sure _Substream behaves properly
     # when the buffer needs to be swapped out at least once
     def test_sub_stream_with_length_larger_than_buffer(self):

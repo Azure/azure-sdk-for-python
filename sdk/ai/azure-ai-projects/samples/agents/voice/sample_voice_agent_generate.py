@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     This sample demonstrates guided authoring: generating and creating a voice
-    agent through `POST /agents:generate` (`project_client.beta.agents.generate`)
+    agent through `POST /agents:create-from-prompt` (`project_client.beta.agents.create_from_prompt`)
     with `kind="voice"`. The service creates a voice agent with a
     service-selected starter definition, which is fully editable afterward
     through the standard create_version/update flow.
@@ -58,7 +58,9 @@ with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
 ):
-    agent = project_client.beta.agents.generate(GenerateVoiceAgentRequest(kind=AgentKind.VOICE, name=agent_name))
+    agent = project_client.beta.agents.create_from_prompt(
+        GenerateVoiceAgentRequest(kind=AgentKind.VOICE, name=agent_name)
+    )
     print(f"Generated voice agent: {agent.name}")
     _safe_print(f"Instructions:\n{agent.versions.latest.definition.instructions}")  # type: ignore[attr-defined]
 

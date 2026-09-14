@@ -22,13 +22,13 @@ from azure.ai.projects.models import (
 class TestVoiceAgentTelephonyCampaignAsync(TestBase):
     """
     Recorded tests covering the outbound telephony call-job/campaign REST API surface exposed
-    through the top-level `project_client.beta.agent_telephony.*` operation group (added in the
+    through the top-level `project_client.beta.voice_agents.telephony.*` operation group (added in the
     "batch 2" Voice Agents TypeSpec, distinct from the existing `project_client.agents.*`
     telephony binding/call methods).
 
     NOTE: All tests in this file are currently marked `skip`:
       - Probing this environment's live Voice Agents test resource with
-        `agent_telephony.get_operation` (api-version "v1", the SDK's only known
+        `voice_agents.telephony.get_operation` (api-version "v1", the SDK's only known
         version) returns `400 UnsupportedApiVersion` with a message identifying the resolved
         route (".../agents/{agent_name}/telephony/operations/{operation_id}") but rejecting
         "v1" for it - unlike the routing-layer empty-body 404s seen for the batch-1
@@ -39,13 +39,14 @@ class TestVoiceAgentTelephonyCampaignAsync(TestBase):
 
     Further NOTE: the following are intentionally NOT covered here at all since they require real
     infrastructure this test environment does not have:
-      - `create_call_job`/`create_campaign` need a real, working
-        `telephony_binding_id` from a provisioned Teams Phone/Twilio telephony binding (same
-        real-provider limitation documented for `create_telephony_binding` in
-        `test_voice_agent_telephony_async.py`).
+      - `create_call_job`/`create_campaign` need a real, working `connection_name` (and, for
+        campaigns, a `source` caller identity) pointing at a provisioned Teams Phone/Twilio
+        Foundry connection -- outbound calls originate directly from the connection, so no
+        pre-existing telephony binding is required (same real-provider limitation documented for
+        `create_binding` in `test_voice_agent_telephony_async.py`).
       - `begin_import_campaign_recipients`/`begin_publish_campaign`/
         `begin_validate_campaign` are long-running operations on a real campaign with
-        actual recipients, which in turn requires the real telephony binding above.
+        actual recipients, which in turn requires the real connection above.
     Once these are fixed/deployed service-side and real provider credentials are available,
     tests can be added/enabled for them.
     """
@@ -64,7 +65,7 @@ class TestVoiceAgentTelephonyCampaignAsync(TestBase):
     # To run only this test:
     # pytest tests\agents\test_voice_agent_telephony_campaign_async.py::TestVoiceAgentTelephonyCampaignAsync::test_telephony_call_job_not_found -s
     @pytest.mark.skip(
-        reason="agent_telephony routes are registered but return 400 UnsupportedApiVersion for "
+        reason="voice_agents.telephony routes are registered but return 400 UnsupportedApiVersion for "
         "api-version 'v1' on the live test service. Un-skip once the service supports 'v1' for "
         "this operation group."
     )
@@ -80,8 +81,8 @@ class TestVoiceAgentTelephonyCampaignAsync(TestBase):
         Action REST API Route                                                  Client Method
         ------+-------------------------------------------------------------+-----------------------------------------------
         POST   /agents/{agent_name}/versions                                  project_client.agents.create_version()
-        GET    /agents/{agent_name}/telephony/call_jobs/{call_job_id}         project_client.beta.agent_telephony.get_call_job()
-        POST   /agents/{agent_name}/telephony/call_jobs/{call_job_id}:cancel  project_client.beta.agent_telephony.cancel_call_job()
+        GET    /agents/{agent_name}/telephony/call_jobs/{call_job_id}         project_client.beta.voice_agents.telephony.get_call_job()
+        POST   /agents/{agent_name}/telephony/call_jobs/{call_job_id}:cancel  project_client.beta.voice_agents.telephony.cancel_call_job()
         DELETE /agents/{agent_name}                                          project_client.agents.delete()
         """
         print("\n")
@@ -105,9 +106,9 @@ class TestVoiceAgentTelephonyCampaignAsync(TestBase):
 
         fake_call_job_id = "nonexistent-call-job-id"
         with pytest.raises(ResourceNotFoundError):
-            await project_client.beta.agent_telephony.get_call_job(agent_name=agent_name, call_job_id=fake_call_job_id)
+            await project_client.beta.voice_agents.telephony.get_call_job(agent_name=agent_name, call_job_id=fake_call_job_id)
         with pytest.raises(ResourceNotFoundError):
-            await project_client.beta.agent_telephony.cancel_call_job(
+            await project_client.beta.voice_agents.telephony.cancel_call_job(
                 agent_name=agent_name,
                 call_job_id=fake_call_job_id,
                 etag=None,
@@ -121,7 +122,7 @@ class TestVoiceAgentTelephonyCampaignAsync(TestBase):
     # To run only this test:
     # pytest tests\agents\test_voice_agent_telephony_campaign_async.py::TestVoiceAgentTelephonyCampaignAsync::test_telephony_campaign_not_found -s
     @pytest.mark.skip(
-        reason="agent_telephony routes are registered but return 400 UnsupportedApiVersion for "
+        reason="voice_agents.telephony routes are registered but return 400 UnsupportedApiVersion for "
         "api-version 'v1' on the live test service. Un-skip once the service supports 'v1' for "
         "this operation group."
     )
@@ -137,12 +138,12 @@ class TestVoiceAgentTelephonyCampaignAsync(TestBase):
         Action REST API Route                                                          Client Method
         ------+-------------------------------------------------------------------+-----------------------------------------------
         POST   /agents/{agent_name}/versions                                          project_client.agents.create_version()
-        GET    /agents/{agent_name}/telephony/campaigns/{campaign_id}                  project_client.beta.agent_telephony.get_campaign()
-        POST   /agents/{agent_name}/telephony/campaigns/{campaign_id}:cancel           project_client.beta.agent_telephony.cancel_campaign()
-        POST   /agents/{agent_name}/telephony/campaigns/{campaign_id}:pause           project_client.beta.agent_telephony.pause_campaign()
-        POST   /agents/{agent_name}/telephony/campaigns/{campaign_id}:resume          project_client.beta.agent_telephony.resume_campaign()
+        GET    /agents/{agent_name}/telephony/campaigns/{campaign_id}                  project_client.beta.voice_agents.telephony.get_campaign()
+        POST   /agents/{agent_name}/telephony/campaigns/{campaign_id}:cancel           project_client.beta.voice_agents.telephony.cancel_campaign()
+        POST   /agents/{agent_name}/telephony/campaigns/{campaign_id}:pause           project_client.beta.voice_agents.telephony.pause_campaign()
+        POST   /agents/{agent_name}/telephony/campaigns/{campaign_id}:resume          project_client.beta.voice_agents.telephony.resume_campaign()
         GET    /agents/{agent_name}/telephony/campaigns/{campaign_id}/recipient_imports/{import_id}
-                                                                                       project_client.beta.agent_telephony.get_campaign_recipient_import()
+                                                                                       project_client.beta.voice_agents.telephony.get_campaign_recipient_import()
         DELETE /agents/{agent_name}                                                   project_client.agents.delete()
         """
         print("\n")
@@ -166,23 +167,23 @@ class TestVoiceAgentTelephonyCampaignAsync(TestBase):
 
         fake_campaign_id = "nonexistent-campaign-id"
         with pytest.raises(ResourceNotFoundError):
-            await project_client.beta.agent_telephony.get_campaign(agent_name=agent_name, campaign_id=fake_campaign_id)
+            await project_client.beta.voice_agents.telephony.get_campaign(agent_name=agent_name, campaign_id=fake_campaign_id)
         with pytest.raises(ResourceNotFoundError):
-            await project_client.beta.agent_telephony.cancel_campaign(
+            await project_client.beta.voice_agents.telephony.cancel_campaign(
                 agent_name=agent_name, campaign_id=fake_campaign_id
             )
         with pytest.raises(ResourceNotFoundError):
-            await project_client.beta.agent_telephony.pause_campaign(
+            await project_client.beta.voice_agents.telephony.pause_campaign(
                 agent_name=agent_name, campaign_id=fake_campaign_id
             )
         with pytest.raises(ResourceNotFoundError):
-            await project_client.beta.agent_telephony.resume_campaign(
+            await project_client.beta.voice_agents.telephony.resume_campaign(
                 agent_name=agent_name, campaign_id=fake_campaign_id
             )
 
         fake_import_id = "nonexistent-import-id"
         with pytest.raises(ResourceNotFoundError):
-            await project_client.beta.agent_telephony.get_campaign_recipient_import(
+            await project_client.beta.voice_agents.telephony.get_campaign_recipient_import(
                 agent_name=agent_name,
                 campaign_id=fake_campaign_id,
                 import_id=fake_import_id,
@@ -195,7 +196,7 @@ class TestVoiceAgentTelephonyCampaignAsync(TestBase):
     # To run only this test:
     # pytest tests\agents\test_voice_agent_telephony_campaign_async.py::TestVoiceAgentTelephonyCampaignAsync::test_telephony_operation_not_found -s
     @pytest.mark.skip(
-        reason="agent_telephony routes are registered but return 400 UnsupportedApiVersion for "
+        reason="voice_agents.telephony routes are registered but return 400 UnsupportedApiVersion for "
         "api-version 'v1' on the live test service. Un-skip once the service supports 'v1' for "
         "this operation group."
     )
@@ -213,7 +214,7 @@ class TestVoiceAgentTelephonyCampaignAsync(TestBase):
         Action REST API Route                                              Client Method
         ------+-------------------------------------------------------------+-----------------------------------------------
         POST   /agents/{agent_name}/versions                                project_client.agents.create_version()
-        GET    /agents/{agent_name}/telephony/operations/{operation_id}     project_client.beta.agent_telephony.get_operation()
+        GET    /agents/{agent_name}/telephony/operations/{operation_id}     project_client.beta.voice_agents.telephony.get_operation()
         DELETE /agents/{agent_name}                                        project_client.agents.delete()
         """
         print("\n")
@@ -237,7 +238,7 @@ class TestVoiceAgentTelephonyCampaignAsync(TestBase):
 
         fake_operation_id = "nonexistent-operation-id"
         with pytest.raises(ResourceNotFoundError):
-            await project_client.beta.agent_telephony.get_operation(
+            await project_client.beta.voice_agents.telephony.get_operation(
                 agent_name=agent_name, operation_id=fake_operation_id
             )
 

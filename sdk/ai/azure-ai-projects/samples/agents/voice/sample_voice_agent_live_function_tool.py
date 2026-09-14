@@ -97,7 +97,7 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
     :type agent_name: str
     :type prompt: str
     """
-    with client.beta.realtime.connect(agent_name=agent_name) as conn:
+    with client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
         conn.conversation.item.create(
             item=RealtimeConversationItemMessageUser(
                 type=RealtimeConversationItemType.MESSAGE,

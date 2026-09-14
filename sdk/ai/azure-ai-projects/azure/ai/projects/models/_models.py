@@ -2991,6 +2991,10 @@ class AgentSessionResource(_Model):  # pylint: disable=docstring-keyword-should-
     :ivar expires_at: The Unix timestamp (in seconds) when the session expires (rolling, 30 days
      from last activity). Required.
     :vartype expires_at: ~datetime.datetime
+    :ivar stopped_at: The Unix timestamp (in seconds) when the session sandbox was last observed to
+     stop or go idle. Present only after the session has gone idle at least once, used for accurate
+     idle-billing reconciliation.
+    :vartype stopped_at: ~datetime.datetime
     """
 
     agent_session_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3011,6 +3015,10 @@ class AgentSessionResource(_Model):  # pylint: disable=docstring-keyword-should-
     expires_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
     """The Unix timestamp (in seconds) when the session expires (rolling, 30 days from last activity).
      Required."""
+    stopped_at: Optional[datetime.datetime] = rest_field(visibility=["read"], format="unix-timestamp")
+    """The Unix timestamp (in seconds) when the session sandbox was last observed to stop or go idle.
+     Present only after the session has gone idle at least once, used for accurate idle-billing
+     reconciliation."""
 
     @overload
     def __init__(
@@ -6257,8 +6265,8 @@ class CreateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
     :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extension" and
      "twilio".
     :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
-    :ivar connection: The Foundry connection name for the telephony provider. Required.
-    :vartype connection: str
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
     :ivar label: An optional display label for the binding.
     :vartype label: str
     """
@@ -6266,7 +6274,7 @@ class CreateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
     __mapping__: dict[str, _Model] = {}
     provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
     """The telephony provider. Required. Known values are: \"teams_phone_extension\" and \"twilio\"."""
-    connection: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Foundry connection name for the telephony provider. Required."""
     label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An optional display label for the binding."""
@@ -6276,7 +6284,7 @@ class CreateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
         self,
         *,
         provider: str,
-        connection: str,
+        connection_name: str,
         label: Optional[str] = None,
     ) -> None: ...
 
@@ -6296,8 +6304,8 @@ class CreateTeamsPhoneExtensionTelephonyBindingRequest(
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The request to create a Microsoft Teams Phone Extension binding.
 
-    :ivar connection: The Foundry connection name for the telephony provider. Required.
-    :vartype connection: str
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
     :ivar label: An optional display label for the binding.
     :vartype label: str
     :ivar provider: The Microsoft Teams Phone Extension provider. Required. Microsoft Teams Phone
@@ -6321,7 +6329,7 @@ class CreateTeamsPhoneExtensionTelephonyBindingRequest(
     def __init__(
         self,
         *,
-        connection: str,
+        connection_name: str,
         resource_account_object_id: str,
         label: Optional[str] = None,
         phone_number: Optional[str] = None,
@@ -6344,9 +6352,15 @@ class CreateTelephonyCallJobRequest(_Model):  # pylint: disable=docstring-keywor
 
     :ivar destination: The phone destination to call. Required.
     :vartype destination: ~azure.ai.projects.models.TelephonyOutboundDestination
-    :ivar telephony_binding_id: The active agent telephony binding used to originate the call.
-     Required.
-    :vartype telephony_binding_id: str
+    :ivar connection_name: The Foundry connection name in the current project used to originate the
+     call. Its category selects Twilio or Azure Communication Services / Teams Phone Extension. No
+     inbound telephony binding is required. Required.
+    :vartype connection_name: str
+    :ivar source: The caller identity used to originate the call. For a Twilio connection, provide
+     an authorized E.164 phone number. For an Azure Communication Services / Teams Phone Extension
+     connection, provide the Teams Resource Account object ID. The identity type is inferred from
+     the connection category; originating does not change inbound routing. Required.
+    :vartype source: str
     :ivar purpose: An optional customer-declared purpose for placing the call.
     :vartype purpose: str
     :ivar structured_inputs: Structured input values available to the agent and greeting for this
@@ -6365,8 +6379,15 @@ class CreateTelephonyCallJobRequest(_Model):  # pylint: disable=docstring-keywor
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The phone destination to call. Required."""
-    telephony_binding_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The active agent telephony binding used to originate the call. Required."""
+    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Foundry connection name in the current project used to originate the call. Its category
+     selects Twilio or Azure Communication Services / Teams Phone Extension. No inbound telephony
+     binding is required. Required."""
+    source: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The caller identity used to originate the call. For a Twilio connection, provide an authorized
+     E.164 phone number. For an Azure Communication Services / Teams Phone Extension connection,
+     provide the Teams Resource Account object ID. The identity type is inferred from the connection
+     category; originating does not change inbound routing. Required."""
     purpose: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An optional customer-declared purpose for placing the call."""
     structured_inputs: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6388,7 +6409,8 @@ class CreateTelephonyCallJobRequest(_Model):  # pylint: disable=docstring-keywor
         self,
         *,
         destination: "_models.TelephonyOutboundDestination",
-        telephony_binding_id: str,
+        connection_name: str,
+        source: str,
         purpose: Optional[str] = None,
         structured_inputs: Optional[dict[str, Any]] = None,
         schedule: Optional["_models.TelephonyCallJobSchedule"] = None,
@@ -6411,9 +6433,15 @@ class CreateTelephonyCampaignRequest(_Model):  # pylint: disable=docstring-keywo
 
     :ivar display_name: A customer-visible name for the campaign. Required.
     :vartype display_name: str
-    :ivar telephony_binding_id: The active agent telephony binding used to originate campaign
-     calls. Required.
-    :vartype telephony_binding_id: str
+    :ivar connection_name: The Foundry connection name in the current project used to originate
+     campaign calls. Its category selects Twilio or Azure Communication Services / Teams Phone
+     Extension. No inbound telephony binding is required. Required.
+    :vartype connection_name: str
+    :ivar source: The caller identity used to originate campaign calls. For a Twilio connection,
+     provide an authorized E.164 phone number. For an Azure Communication Services / Teams Phone
+     Extension connection, provide the Teams Resource Account object ID. The identity type is
+     inferred from the connection category; originating does not change inbound routing. Required.
+    :vartype source: str
     :ivar purpose: An optional customer-declared purpose for campaign calls.
     :vartype purpose: str
     :ivar schedule: When the published campaign becomes eligible to dispatch calls.
@@ -6424,8 +6452,15 @@ class CreateTelephonyCampaignRequest(_Model):  # pylint: disable=docstring-keywo
 
     display_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A customer-visible name for the campaign. Required."""
-    telephony_binding_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The active agent telephony binding used to originate campaign calls. Required."""
+    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Foundry connection name in the current project used to originate campaign calls. Its
+     category selects Twilio or Azure Communication Services / Teams Phone Extension. No inbound
+     telephony binding is required. Required."""
+    source: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The caller identity used to originate campaign calls. For a Twilio connection, provide an
+     authorized E.164 phone number. For an Azure Communication Services / Teams Phone Extension
+     connection, provide the Teams Resource Account object ID. The identity type is inferred from
+     the connection category; originating does not change inbound routing. Required."""
     purpose: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An optional customer-declared purpose for campaign calls."""
     schedule: Optional["_models.TelephonyCampaignSchedule"] = rest_field(
@@ -6442,7 +6477,8 @@ class CreateTelephonyCampaignRequest(_Model):  # pylint: disable=docstring-keywo
         self,
         *,
         display_name: str,
-        telephony_binding_id: str,
+        connection_name: str,
+        source: str,
         purpose: Optional[str] = None,
         schedule: Optional["_models.TelephonyCampaignSchedule"] = None,
         retry_policy: Optional["_models.TelephonyOutboundRetryPolicy"] = None,
@@ -6496,8 +6532,8 @@ class CreateTwilioTelephonyBindingRequest(
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request to create a Twilio binding.
 
-    :ivar connection: The Foundry connection name for the telephony provider. Required.
-    :vartype connection: str
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
     :ivar label: An optional display label for the binding.
     :vartype label: str
     :ivar provider: The Twilio provider. Required. Twilio Programmable Voice.
@@ -6515,7 +6551,7 @@ class CreateTwilioTelephonyBindingRequest(
     def __init__(
         self,
         *,
-        connection: str,
+        connection_name: str,
         phone_number: str,
         label: Optional[str] = None,
     ) -> None: ...
@@ -17226,8 +17262,12 @@ class RealtimeServerEventConversationItemAdded(
     several cases:
 
     * When the client sends a `conversation.item.create` event.
-    * When the input audio buffer is committed. In this case the item will be a user message containing the audio from the buffer.
-    * When the model is generating a Response. In this case the `conversation.item.added` event will be sent when the model starts generating a specific Item, and thus it will not yet have any content (and `status` will be `in_progress`). The event will include the full content of the Item (except when model is generating a Response) except for audio data, which can be retrieved separately with a `conversation.item.retrieve` event if necessary.
+    * When the input audio buffer is committed. In this case the item will be a user message containing the audio from
+      the buffer.
+    * When the model is generating a Response. In this case the `conversation.item.added` event will be sent when the
+      model starts generating a specific Item, and thus it will not yet have any content (and `status` will be
+      `in_progress`). The event will include the full content of the Item (except when model is generating a Response)
+      except for audio data, which can be retrieved separately with a `conversation.item.retrieve` event if necessary.
 
     :ivar event_id: The unique ID of the server event. Required.
     :vartype event_id: str
@@ -17275,8 +17315,10 @@ class RealtimeServerEventConversationItemCreated(
     """Returned when a conversation item is created. There are several scenarios that produce this
     event:
 
-    * The server is generating a Response, which if successful will produce either one or two Items, which will be of type `message` (role `assistant`) or type `function_call`.
-    * The input audio buffer has been committed, either by the client or the server (in `server_vad` mode). The server will take the content of the input audio buffer and add it to a new user message Item.
+    * The server is generating a Response, which if successful will produce either one or two Items, which will be of
+      type `message` (role `assistant`) or type `function_call`.
+    * The input audio buffer has been committed, either by the client or the server (in `server_vad` mode). The server
+      will take the content of the input audio buffer and add it to a new user message Item.
     * The client has sent a `conversation.item.create` event to add a new Item to the Conversation.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -21645,8 +21687,8 @@ class TelephonyBinding(_Model):  # pylint: disable=docstring-keyword-should-matc
     :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extension" and
      "twilio".
     :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
-    :ivar connection: The Foundry connection name for the telephony provider. Required.
-    :vartype connection: str
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
     :ivar label: The optional display label for the binding.
     :vartype label: str
     :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
@@ -21661,7 +21703,7 @@ class TelephonyBinding(_Model):  # pylint: disable=docstring-keyword-should-matc
     """The service-generated binding identifier. Required."""
     provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
     """The telephony provider. Required. Known values are: \"teams_phone_extension\" and \"twilio\"."""
-    connection: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Foundry connection name for the telephony provider. Required."""
     label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The optional display label for the binding."""
@@ -21678,7 +21720,7 @@ class TelephonyBinding(_Model):  # pylint: disable=docstring-keyword-should-matc
         *,
         id: str,  # pylint: disable=redefined-builtin
         provider: str,
-        connection: str,
+        connection_name: str,
         status: Union[str, "_models.TelephonyBindingStatus"],
         incoming_call_url: str,
         label: Optional[str] = None,
@@ -21702,8 +21744,8 @@ class TeamsPhoneExtensionTelephonyBinding(
 
     :ivar id: The service-generated binding identifier. Required.
     :vartype id: str
-    :ivar connection: The Foundry connection name for the telephony provider. Required.
-    :vartype connection: str
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
     :ivar label: The optional display label for the binding.
     :vartype label: str
     :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
@@ -21733,7 +21775,7 @@ class TeamsPhoneExtensionTelephonyBinding(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        connection: str,
+        connection_name: str,
         status: Union[str, "_models.TelephonyBindingStatus"],
         incoming_call_url: str,
         resource_account_object_id: str,
@@ -21764,8 +21806,8 @@ class TelephonyBindingListItem(_Model):  # pylint: disable=docstring-keyword-sho
     :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extension" and
      "twilio".
     :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
-    :ivar connection: The Foundry connection name for the telephony provider. Required.
-    :vartype connection: str
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
     :ivar label: The optional display label for the binding.
     :vartype label: str
     :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
@@ -21783,7 +21825,7 @@ class TelephonyBindingListItem(_Model):  # pylint: disable=docstring-keyword-sho
     """The service-generated binding identifier. Required."""
     provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
     """The telephony provider. Required. Known values are: \"teams_phone_extension\" and \"twilio\"."""
-    connection: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Foundry connection name for the telephony provider. Required."""
     label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The optional display label for the binding."""
@@ -21803,7 +21845,7 @@ class TelephonyBindingListItem(_Model):  # pylint: disable=docstring-keyword-sho
         *,
         id: str,  # pylint: disable=redefined-builtin
         provider: str,
-        connection: str,
+        connection_name: str,
         status: Union[str, "_models.TelephonyBindingStatus"],
         incoming_call_url: str,
         label: Optional[str] = None,
@@ -21827,8 +21869,8 @@ class TeamsPhoneExtensionTelephonyBindingListItem(
 
     :ivar id: The service-generated binding identifier. Required.
     :vartype id: str
-    :ivar connection: The Foundry connection name for the telephony provider. Required.
-    :vartype connection: str
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
     :ivar label: The optional display label for the binding.
     :vartype label: str
     :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
@@ -21861,7 +21903,7 @@ class TeamsPhoneExtensionTelephonyBindingListItem(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        connection: str,
+        connection_name: str,
         status: Union[str, "_models.TelephonyBindingStatus"],
         incoming_call_url: str,
         resource_account_object_id: str,
@@ -21953,9 +21995,15 @@ class TelephonyCallJob(_Model):  # pylint: disable=docstring-keyword-should-matc
 
     :ivar destination: The phone destination to call. Required.
     :vartype destination: ~azure.ai.projects.models.TelephonyOutboundDestination
-    :ivar telephony_binding_id: The active agent telephony binding used to originate the call.
-     Required.
-    :vartype telephony_binding_id: str
+    :ivar connection_name: The Foundry connection name in the current project used to originate the
+     call. Its category selects Twilio or Azure Communication Services / Teams Phone Extension. No
+     inbound telephony binding is required. Required.
+    :vartype connection_name: str
+    :ivar source: The caller identity used to originate the call. For a Twilio connection, provide
+     an authorized E.164 phone number. For an Azure Communication Services / Teams Phone Extension
+     connection, provide the Teams Resource Account object ID. The identity type is inferred from
+     the connection category; originating does not change inbound routing. Required.
+    :vartype source: str
     :ivar purpose: An optional customer-declared purpose for placing the call.
     :vartype purpose: str
     :ivar structured_inputs: Structured input values available to the agent and greeting for this
@@ -21984,8 +22032,19 @@ class TelephonyCallJob(_Model):  # pylint: disable=docstring-keyword-should-matc
     :vartype attempt_count: int
     :ivar next_attempt_at: The Unix timestamp in seconds at which the next retry becomes eligible.
     :vartype next_attempt_at: ~datetime.datetime
-    :ivar terminal_reason: The stable reason for the terminal status, when available.
-    :vartype terminal_reason: str
+    :ivar terminal_reason: The stable service-generated reason for the overall outbound call job,
+     which can span multiple provider attempts, when available. Interpret this with ``status``: a
+     queued job can retain a temporary dispatch-deferral reason. Additional string codes may be
+     returned. Known values are: "no_answer", "no_answer_timeout", "answer_failed",
+     "bridge_cancelled", "bridge_failed", "voice_session_configuration_invalid",
+     "connection_project_mismatch", "outbound_connection_changed",
+     "outbound_connection_unavailable", "telephony_binding_invalid", "telephony_binding_not_found",
+     "telephony_binding_inactive", "telephony_binding_changed", "campaign_not_found",
+     "campaign_cancelled", "campaign_completed", "campaign_failed",
+     "origination_fence_not_recorded", "origination_reconciliation_timeout",
+     "cancellation_reconciliation_timeout", and
+     "provider_callback_timeout_cancellation_reconciliation_timeout".
+    :vartype terminal_reason: str or ~azure.ai.projects.models.TelephonyCallJobTerminalReason
     :ivar revision: The monotonically increasing optimistic-concurrency revision. Required.
     :vartype revision: int
     :ivar created_at: The Unix timestamp in seconds when the call job was created. Required.
@@ -21998,8 +22057,15 @@ class TelephonyCallJob(_Model):  # pylint: disable=docstring-keyword-should-matc
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The phone destination to call. Required."""
-    telephony_binding_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The active agent telephony binding used to originate the call. Required."""
+    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Foundry connection name in the current project used to originate the call. Its category
+     selects Twilio or Azure Communication Services / Teams Phone Extension. No inbound telephony
+     binding is required. Required."""
+    source: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The caller identity used to originate the call. For a Twilio connection, provide an authorized
+     E.164 phone number. For an Azure Communication Services / Teams Phone Extension connection,
+     provide the Teams Resource Account object ID. The identity type is inferred from the connection
+     category; originating does not change inbound routing. Required."""
     purpose: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An optional customer-declared purpose for placing the call."""
     structured_inputs: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -22039,8 +22105,20 @@ class TelephonyCallJob(_Model):  # pylint: disable=docstring-keyword-should-matc
         visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
     )
     """The Unix timestamp in seconds at which the next retry becomes eligible."""
-    terminal_reason: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The stable reason for the terminal status, when available."""
+    terminal_reason: Optional[Union[str, "_models.TelephonyCallJobTerminalReason"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The stable service-generated reason for the overall outbound call job, which can span multiple
+     provider attempts, when available. Interpret this with ``status``: a queued job can retain a
+     temporary dispatch-deferral reason. Additional string codes may be returned. Known values are:
+     \"no_answer\", \"no_answer_timeout\", \"answer_failed\", \"bridge_cancelled\",
+     \"bridge_failed\", \"voice_session_configuration_invalid\", \"connection_project_mismatch\",
+     \"outbound_connection_changed\", \"outbound_connection_unavailable\",
+     \"telephony_binding_invalid\", \"telephony_binding_not_found\", \"telephony_binding_inactive\",
+     \"telephony_binding_changed\", \"campaign_not_found\", \"campaign_cancelled\",
+     \"campaign_completed\", \"campaign_failed\", \"origination_fence_not_recorded\",
+     \"origination_reconciliation_timeout\", \"cancellation_reconciliation_timeout\", and
+     \"provider_callback_timeout_cancellation_reconciliation_timeout\"."""
     revision: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The monotonically increasing optimistic-concurrency revision. Required."""
     created_at: datetime.datetime = rest_field(
@@ -22057,7 +22135,8 @@ class TelephonyCallJob(_Model):  # pylint: disable=docstring-keyword-should-matc
         self,
         *,
         destination: "_models.TelephonyOutboundDestination",
-        telephony_binding_id: str,
+        connection_name: str,
+        source: str,
         id: str,  # pylint: disable=redefined-builtin
         agent_name: str,
         status: Union[str, "_models.TelephonyCallJobStatus"],
@@ -22071,7 +22150,7 @@ class TelephonyCallJob(_Model):  # pylint: disable=docstring-keyword-should-matc
         schedule: Optional["_models.TelephonyCallJobSchedule"] = None,
         cancellation: Optional["_models.TelephonyCallJobCancellation"] = None,
         next_attempt_at: Optional[datetime.datetime] = None,
-        terminal_reason: Optional[str] = None,
+        terminal_reason: Optional[Union[str, "_models.TelephonyCallJobTerminalReason"]] = None,
     ) -> None: ...
 
     @overload
@@ -22194,8 +22273,18 @@ class TelephonyCallLifecycleEvent(_Model):  # pylint: disable=docstring-keyword-
     :ivar timestamp_source: The source of the event timestamp. Required. Known values are:
      "provider", "gateway", and "derived".
     :vartype timestamp_source: str or ~azure.ai.projects.models.TelephonyCallTimestampSource
-    :ivar reason: A stable service-generated reason associated with the event.
-    :vartype reason: str
+    :ivar reason: A stable service-generated reason associated with this lifecycle event, not
+     necessarily the final outcome of the call. Additional string codes may be returned. Known
+     values are: "invalid_webhook_payload", "webhook_validation_failed", "binding_not_found",
+     "binding_suspended", "admission_rejected", "admission_check_failed", "route_agent_mismatch",
+     "invalid_binding_configuration", "credential_resolution_failed", "provider_resource_mismatch",
+     "endpoint_resolution_failed", "ingress_setup_failed", "live_call_conflict",
+     "live_call_persistence_failed", "answer_failed", "provider_disconnected", "provider_busy",
+     "provider_no_answer", "provider_cancelled", "provider_failed", "provider_stream_error",
+     "provider_stream_stopped", "agent_session_connect_failed", "media_stream_ended",
+     "bridge_cancelled", "bridge_failed", "managed_hangup", "managed_transfer",
+     "manage_hangup_failed", and "manage_transfer_failed".
+    :vartype reason: str or ~azure.ai.projects.models.TelephonyCallLifecycleEventReason
     :ivar provider_event_id: The provider event identifier used for idempotency, when supplied.
     :vartype provider_event_id: str
     :ivar provider_sequence: The provider event sequence, when supplied.
@@ -22240,8 +22329,21 @@ class TelephonyCallLifecycleEvent(_Model):  # pylint: disable=docstring-keyword-
     )
     """The source of the event timestamp. Required. Known values are: \"provider\", \"gateway\", and
      \"derived\"."""
-    reason: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A stable service-generated reason associated with the event."""
+    reason: Optional[Union[str, "_models.TelephonyCallLifecycleEventReason"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A stable service-generated reason associated with this lifecycle event, not necessarily the
+     final outcome of the call. Additional string codes may be returned. Known values are:
+     \"invalid_webhook_payload\", \"webhook_validation_failed\", \"binding_not_found\",
+     \"binding_suspended\", \"admission_rejected\", \"admission_check_failed\",
+     \"route_agent_mismatch\", \"invalid_binding_configuration\", \"credential_resolution_failed\",
+     \"provider_resource_mismatch\", \"endpoint_resolution_failed\", \"ingress_setup_failed\",
+     \"live_call_conflict\", \"live_call_persistence_failed\", \"answer_failed\",
+     \"provider_disconnected\", \"provider_busy\", \"provider_no_answer\", \"provider_cancelled\",
+     \"provider_failed\", \"provider_stream_error\", \"provider_stream_stopped\",
+     \"agent_session_connect_failed\", \"media_stream_ended\", \"bridge_cancelled\",
+     \"bridge_failed\", \"managed_hangup\", \"managed_transfer\", \"manage_hangup_failed\", and
+     \"manage_transfer_failed\"."""
     provider_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The provider event identifier used for idempotency, when supplied."""
     provider_sequence: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -22261,7 +22363,7 @@ class TelephonyCallLifecycleEvent(_Model):  # pylint: disable=docstring-keyword-
         observed_at: datetime.datetime,
         timestamp_source: Union[str, "_models.TelephonyCallTimestampSource"],
         occurred_at: Optional[datetime.datetime] = None,
-        reason: Optional[str] = None,
+        reason: Optional[Union[str, "_models.TelephonyCallLifecycleEventReason"]] = None,
         provider_event_id: Optional[str] = None,
         provider_sequence: Optional[int] = None,
         provider_status_code: Optional[int] = None,
@@ -22316,8 +22418,18 @@ class TelephonyCallRecord(_Model):  # pylint: disable=docstring-keyword-should-m
     :vartype ended_at: ~datetime.datetime
     :ivar duration_ms: The call duration.
     :vartype duration_ms: ~datetime.timedelta
-    :ivar end_reason: The service-generated reason that the call ended.
-    :vartype end_reason: str
+    :ivar end_reason: The service-generated reason that this single call ended, rather than the
+     outcome of an overall outbound call job. Additional string codes may be returned. Known values
+     are: "invalid_webhook_payload", "webhook_validation_failed", "binding_not_found",
+     "binding_suspended", "admission_rejected", "admission_check_failed", "route_agent_mismatch",
+     "invalid_binding_configuration", "credential_resolution_failed", "provider_resource_mismatch",
+     "endpoint_resolution_failed", "ingress_setup_failed", "live_call_conflict",
+     "live_call_persistence_failed", "answer_failed", "provider_disconnected", "provider_busy",
+     "provider_no_answer", "provider_cancelled", "provider_failed", "provider_stream_error",
+     "provider_stream_stopped", "agent_session_connect_failed", "media_stream_ended",
+     "bridge_cancelled", "bridge_failed", "managed_hangup", "managed_transfer",
+     "manage_hangup_failed", and "manage_transfer_failed".
+    :vartype end_reason: str or ~azure.ai.projects.models.TelephonyCallEndReason
     :ivar provider_status_code: The provider status code associated with the terminal result.
     :vartype provider_status_code: int
     :ivar provider_sub_code: The provider subcode associated with the terminal result.
@@ -22383,8 +22495,21 @@ class TelephonyCallRecord(_Model):  # pylint: disable=docstring-keyword-should-m
         visibility=["read", "create", "update", "delete", "query"], format="duration-milliseconds-int"
     )
     """The call duration."""
-    end_reason: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The service-generated reason that the call ended."""
+    end_reason: Optional[Union[str, "_models.TelephonyCallEndReason"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The service-generated reason that this single call ended, rather than the outcome of an overall
+     outbound call job. Additional string codes may be returned. Known values are:
+     \"invalid_webhook_payload\", \"webhook_validation_failed\", \"binding_not_found\",
+     \"binding_suspended\", \"admission_rejected\", \"admission_check_failed\",
+     \"route_agent_mismatch\", \"invalid_binding_configuration\", \"credential_resolution_failed\",
+     \"provider_resource_mismatch\", \"endpoint_resolution_failed\", \"ingress_setup_failed\",
+     \"live_call_conflict\", \"live_call_persistence_failed\", \"answer_failed\",
+     \"provider_disconnected\", \"provider_busy\", \"provider_no_answer\", \"provider_cancelled\",
+     \"provider_failed\", \"provider_stream_error\", \"provider_stream_stopped\",
+     \"agent_session_connect_failed\", \"media_stream_ended\", \"bridge_cancelled\",
+     \"bridge_failed\", \"managed_hangup\", \"managed_transfer\", \"manage_hangup_failed\", and
+     \"manage_transfer_failed\"."""
     provider_status_code: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The provider status code associated with the terminal result."""
     provider_sub_code: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -22424,7 +22549,7 @@ class TelephonyCallRecord(_Model):  # pylint: disable=docstring-keyword-should-m
         agent_session_ready_at: Optional[datetime.datetime] = None,
         ended_at: Optional[datetime.datetime] = None,
         duration_ms: Optional[datetime.timedelta] = None,
-        end_reason: Optional[str] = None,
+        end_reason: Optional[Union[str, "_models.TelephonyCallEndReason"]] = None,
         provider_status_code: Optional[int] = None,
         provider_sub_code: Optional[int] = None,
         provider_message: Optional[str] = None,
@@ -22479,8 +22604,18 @@ class TelephonyCallSummary(_Model):  # pylint: disable=docstring-keyword-should-
     :vartype ended_at: ~datetime.datetime
     :ivar duration_ms: The call duration.
     :vartype duration_ms: ~datetime.timedelta
-    :ivar end_reason: The service-generated reason that the call ended.
-    :vartype end_reason: str
+    :ivar end_reason: The service-generated reason that this single call ended, rather than the
+     outcome of an overall outbound call job. Additional string codes may be returned. Known values
+     are: "invalid_webhook_payload", "webhook_validation_failed", "binding_not_found",
+     "binding_suspended", "admission_rejected", "admission_check_failed", "route_agent_mismatch",
+     "invalid_binding_configuration", "credential_resolution_failed", "provider_resource_mismatch",
+     "endpoint_resolution_failed", "ingress_setup_failed", "live_call_conflict",
+     "live_call_persistence_failed", "answer_failed", "provider_disconnected", "provider_busy",
+     "provider_no_answer", "provider_cancelled", "provider_failed", "provider_stream_error",
+     "provider_stream_stopped", "agent_session_connect_failed", "media_stream_ended",
+     "bridge_cancelled", "bridge_failed", "managed_hangup", "managed_transfer",
+     "manage_hangup_failed", and "manage_transfer_failed".
+    :vartype end_reason: str or ~azure.ai.projects.models.TelephonyCallEndReason
     :ivar provider_status_code: The provider status code associated with the terminal result.
     :vartype provider_status_code: int
     :ivar provider_sub_code: The provider subcode associated with the terminal result.
@@ -22537,8 +22672,21 @@ class TelephonyCallSummary(_Model):  # pylint: disable=docstring-keyword-should-
         visibility=["read", "create", "update", "delete", "query"], format="duration-milliseconds-int"
     )
     """The call duration."""
-    end_reason: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The service-generated reason that the call ended."""
+    end_reason: Optional[Union[str, "_models.TelephonyCallEndReason"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The service-generated reason that this single call ended, rather than the outcome of an overall
+     outbound call job. Additional string codes may be returned. Known values are:
+     \"invalid_webhook_payload\", \"webhook_validation_failed\", \"binding_not_found\",
+     \"binding_suspended\", \"admission_rejected\", \"admission_check_failed\",
+     \"route_agent_mismatch\", \"invalid_binding_configuration\", \"credential_resolution_failed\",
+     \"provider_resource_mismatch\", \"endpoint_resolution_failed\", \"ingress_setup_failed\",
+     \"live_call_conflict\", \"live_call_persistence_failed\", \"answer_failed\",
+     \"provider_disconnected\", \"provider_busy\", \"provider_no_answer\", \"provider_cancelled\",
+     \"provider_failed\", \"provider_stream_error\", \"provider_stream_stopped\",
+     \"agent_session_connect_failed\", \"media_stream_ended\", \"bridge_cancelled\",
+     \"bridge_failed\", \"managed_hangup\", \"managed_transfer\", \"manage_hangup_failed\", and
+     \"manage_transfer_failed\"."""
     provider_status_code: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The provider status code associated with the terminal result."""
     provider_sub_code: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -22563,7 +22711,7 @@ class TelephonyCallSummary(_Model):  # pylint: disable=docstring-keyword-should-
         agent_session_ready_at: Optional[datetime.datetime] = None,
         ended_at: Optional[datetime.datetime] = None,
         duration_ms: Optional[datetime.timedelta] = None,
-        end_reason: Optional[str] = None,
+        end_reason: Optional[Union[str, "_models.TelephonyCallEndReason"]] = None,
         provider_status_code: Optional[int] = None,
         provider_sub_code: Optional[int] = None,
         provider_message: Optional[str] = None,
@@ -22762,9 +22910,15 @@ class TelephonyCampaign(_Model):  # pylint: disable=docstring-keyword-should-mat
 
     :ivar display_name: A customer-visible name for the campaign. Required.
     :vartype display_name: str
-    :ivar telephony_binding_id: The active agent telephony binding used to originate campaign
-     calls. Required.
-    :vartype telephony_binding_id: str
+    :ivar connection_name: The Foundry connection name in the current project used to originate
+     campaign calls. Its category selects Twilio or Azure Communication Services / Teams Phone
+     Extension. No inbound telephony binding is required. Required.
+    :vartype connection_name: str
+    :ivar source: The caller identity used to originate campaign calls. For a Twilio connection,
+     provide an authorized E.164 phone number. For an Azure Communication Services / Teams Phone
+     Extension connection, provide the Teams Resource Account object ID. The identity type is
+     inferred from the connection category; originating does not change inbound routing. Required.
+    :vartype source: str
     :ivar purpose: An optional customer-declared purpose for campaign calls.
     :vartype purpose: str
     :ivar schedule: When the published campaign becomes eligible to dispatch calls.
@@ -22802,8 +22956,15 @@ class TelephonyCampaign(_Model):  # pylint: disable=docstring-keyword-should-mat
 
     display_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A customer-visible name for the campaign. Required."""
-    telephony_binding_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The active agent telephony binding used to originate campaign calls. Required."""
+    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Foundry connection name in the current project used to originate campaign calls. Its
+     category selects Twilio or Azure Communication Services / Teams Phone Extension. No inbound
+     telephony binding is required. Required."""
+    source: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The caller identity used to originate campaign calls. For a Twilio connection, provide an
+     authorized E.164 phone number. For an Azure Communication Services / Teams Phone Extension
+     connection, provide the Teams Resource Account object ID. The identity type is inferred from
+     the connection category; originating does not change inbound routing. Required."""
     purpose: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An optional customer-declared purpose for campaign calls."""
     schedule: Optional["_models.TelephonyCampaignSchedule"] = rest_field(
@@ -22856,7 +23017,8 @@ class TelephonyCampaign(_Model):  # pylint: disable=docstring-keyword-should-mat
         self,
         *,
         display_name: str,
-        telephony_binding_id: str,
+        connection_name: str,
+        source: str,
         id: str,  # pylint: disable=redefined-builtin
         agent_name: str,
         configuration_status: Union[str, "_models.TelephonyCampaignConfigurationStatus"],
@@ -25323,8 +25485,8 @@ class TwilioTelephonyBinding(
 
     :ivar id: The service-generated binding identifier. Required.
     :vartype id: str
-    :ivar connection: The Foundry connection name for the telephony provider. Required.
-    :vartype connection: str
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
     :ivar label: The optional display label for the binding.
     :vartype label: str
     :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
@@ -25348,7 +25510,7 @@ class TwilioTelephonyBinding(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        connection: str,
+        connection_name: str,
         status: Union[str, "_models.TelephonyBindingStatus"],
         incoming_call_url: str,
         phone_number: str,
@@ -25374,8 +25536,8 @@ class TwilioTelephonyBindingListItem(
 
     :ivar id: The service-generated binding identifier. Required.
     :vartype id: str
-    :ivar connection: The Foundry connection name for the telephony provider. Required.
-    :vartype connection: str
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
     :ivar label: The optional display label for the binding.
     :vartype label: str
     :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
@@ -25402,7 +25564,7 @@ class TwilioTelephonyBindingListItem(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        connection: str,
+        connection_name: str,
         status: Union[str, "_models.TelephonyBindingStatus"],
         incoming_call_url: str,
         phone_number: str,
@@ -25463,9 +25625,9 @@ class UpdateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
     :ivar label: The replacement display label. Omit it to preserve the current value; use null to
      clear it.
     :vartype label: str
-    :ivar connection: The replacement Foundry connection name. This property is valid only for a
-     Teams Phone Extension binding; a Twilio binding's connection is immutable.
-    :vartype connection: str
+    :ivar connection_name: The replacement Foundry connection name. This property is valid only for
+     a Teams Phone Extension binding; a Twilio binding's connection is immutable.
+    :vartype connection_name: str
     :ivar phone_number: The replacement Teams Phone Extension display phone number. Omit it to
      preserve the current value; use null to clear it. This property is valid only for a Teams Phone
      Extension binding.
@@ -25478,7 +25640,7 @@ class UpdateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
     """The new lifecycle status. Known values are: \"active\" and \"suspended\"."""
     label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The replacement display label. Omit it to preserve the current value; use null to clear it."""
-    connection: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    connection_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The replacement Foundry connection name. This property is valid only for a Teams Phone
      Extension binding; a Twilio binding's connection is immutable."""
     phone_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -25491,7 +25653,7 @@ class UpdateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
         *,
         status: Optional[Union[str, "_models.TelephonyBindingStatus"]] = None,
         label: Optional[str] = None,
-        connection: Optional[str] = None,
+        connection_name: Optional[str] = None,
         phone_number: Optional[str] = None,
     ) -> None: ...
 
@@ -25818,11 +25980,14 @@ class VoiceAgentAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-
     Provider-specific fields are selected by ``voice_type``:
 
     * `openai`: `voice` and `speed`.
-    * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`, `custom_lexicon_url`, `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
+    * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`, `custom_lexicon_url`,
+      `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
     * `azure-custom`: all `azure-standard` fields except `style`, plus `custom_voice_endpoint_id`.
     * `azure-personal`: all `azure-standard` fields except `style`, plus `personal_voice_model`.
-    * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus `personal_voice_model`; the voice name is derived from the avatar.
-    * `azure-realtime-native`: `voice` and `speed`. `format` and `output_audio_timestamp_types` apply to every voice type.
+    * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus `personal_voice_model`; the
+      voice name is derived from the avatar.
+    * `azure-realtime-native`: `voice` and `speed`. `format` and `output_audio_timestamp_types` apply to every voice
+      type.
 
     :ivar format: The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz
      PCM.
@@ -29738,6 +29903,98 @@ class VoiceAgentTranscriptionWord(_Model):  # pylint: disable=docstring-keyword-
         super().__init__(*args, **kwargs)
 
 
+class VoiceAudioItemResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Metadata for a single conversation item's audio segment. For bring-your-own-storage (BYOS), the
+    response includes ``blob_uri``, a direct customer-storage URI without a SAS token, that the
+    customer accesses with their own credentials. For Foundry-managed storage, ``blob_uri`` is
+    absent and the bytes are streamed through the item's ``/audio/content`` route.
+
+    :ivar conversation_id: The id of the conversation the item belongs to. Required.
+    :vartype conversation_id: str
+    :ivar item_id: The id of the item this audio belongs to. Required.
+    :vartype item_id: str
+    :ivar role: The role the audio belongs to. Known values are: "user" and "agent".
+    :vartype role: str or ~azure.ai.projects.models.VoiceAudioRole
+    :ivar format: The container format of the audio. "wav"
+    :vartype format: str or ~azure.ai.projects.models.VoiceAudioContainerFormat
+    :ivar codec: The audio codec. Known values are: "pcm16", "pcmu", and "pcma".
+    :vartype codec: str or ~azure.ai.projects.models.VoiceAudioCodec
+    :ivar sample_rate: The sample rate in Hz.
+    :vartype sample_rate: int
+    :ivar channels: The number of audio channels.
+    :vartype channels: int
+    :ivar start_offset_ms: The offset from the session start at which this segment begins.
+    :vartype start_offset_ms: ~datetime.timedelta
+    :ivar duration_ms: The duration of the audio segment.
+    :vartype duration_ms: ~datetime.timedelta
+    :ivar blob_uri: For bring-your-own-storage (BYOS) recordings only: the URI of the recording in
+     the customer's own storage, without a SAS token. The customer downloads it using their own
+     storage credentials. Absent for Foundry-managed storage, where the bytes are streamed via the
+     item's ``/audio/content`` route instead.
+    :vartype blob_uri: str
+    """
+
+    conversation_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The id of the conversation the item belongs to. Required."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The id of the item this audio belongs to. Required."""
+    role: Optional[Union[str, "_models.VoiceAudioRole"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The role the audio belongs to. Known values are: \"user\" and \"agent\"."""
+    format: Optional[Union[str, "_models.VoiceAudioContainerFormat"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The container format of the audio. \"wav\""""
+    codec: Optional[Union[str, "_models.VoiceAudioCodec"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The audio codec. Known values are: \"pcm16\", \"pcmu\", and \"pcma\"."""
+    sample_rate: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The sample rate in Hz."""
+    channels: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of audio channels."""
+    start_offset_ms: Optional[datetime.timedelta] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-milliseconds-int"
+    )
+    """The offset from the session start at which this segment begins."""
+    duration_ms: Optional[datetime.timedelta] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-milliseconds-int"
+    )
+    """The duration of the audio segment."""
+    blob_uri: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """For bring-your-own-storage (BYOS) recordings only: the URI of the recording in the customer's
+     own storage, without a SAS token. The customer downloads it using their own storage
+     credentials. Absent for Foundry-managed storage, where the bytes are streamed via the item's
+     ``/audio/content`` route instead."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        conversation_id: str,
+        item_id: str,
+        role: Optional[Union[str, "_models.VoiceAudioRole"]] = None,
+        format: Optional[Union[str, "_models.VoiceAudioContainerFormat"]] = None,
+        codec: Optional[Union[str, "_models.VoiceAudioCodec"]] = None,
+        sample_rate: Optional[int] = None,
+        channels: Optional[int] = None,
+        start_offset_ms: Optional[datetime.timedelta] = None,
+        duration_ms: Optional[datetime.timedelta] = None,
+        blob_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class VoiceConversation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A persisted voice conversation. The Foundry envelope that owns a voice agent's stored
     transcript, responses, per-turn metrics, and audio. It is the parent, retention, and delete
@@ -29859,7 +30116,7 @@ class VoiceConversationEngine(_Model):  # pylint: disable=docstring-keyword-shou
         super().__init__(*args, **kwargs)
 
 
-class VoiceGeneratedItemAudioResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class VoiceGeneratedAudioItemResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata for a conversation item's generated audio. For bring-your-own-storage (BYOS), the
     response includes ``blob_uri``, a direct customer-storage URI without a SAS token, that the
     customer accesses with their own credentials. For Foundry-managed storage, ``blob_uri`` is
@@ -29998,98 +30255,6 @@ class VoiceHostedAgentConversationEngine(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = "hosted_agent"  # type: ignore
-
-
-class VoiceItemAudioResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Metadata for a single conversation item's audio segment. For bring-your-own-storage (BYOS), the
-    response includes ``blob_uri``, a direct customer-storage URI without a SAS token, that the
-    customer accesses with their own credentials. For Foundry-managed storage, ``blob_uri`` is
-    absent and the bytes are streamed through the item's ``/audio/content`` route.
-
-    :ivar conversation_id: The id of the conversation the item belongs to. Required.
-    :vartype conversation_id: str
-    :ivar item_id: The id of the item this audio belongs to. Required.
-    :vartype item_id: str
-    :ivar role: The role the audio belongs to. Known values are: "user" and "agent".
-    :vartype role: str or ~azure.ai.projects.models.VoiceAudioRole
-    :ivar format: The container format of the audio. "wav"
-    :vartype format: str or ~azure.ai.projects.models.VoiceAudioContainerFormat
-    :ivar codec: The audio codec. Known values are: "pcm16", "pcmu", and "pcma".
-    :vartype codec: str or ~azure.ai.projects.models.VoiceAudioCodec
-    :ivar sample_rate: The sample rate in Hz.
-    :vartype sample_rate: int
-    :ivar channels: The number of audio channels.
-    :vartype channels: int
-    :ivar start_offset_ms: The offset from the session start at which this segment begins.
-    :vartype start_offset_ms: ~datetime.timedelta
-    :ivar duration_ms: The duration of the audio segment.
-    :vartype duration_ms: ~datetime.timedelta
-    :ivar blob_uri: For bring-your-own-storage (BYOS) recordings only: the URI of the recording in
-     the customer's own storage, without a SAS token. The customer downloads it using their own
-     storage credentials. Absent for Foundry-managed storage, where the bytes are streamed via the
-     item's ``/audio/content`` route instead.
-    :vartype blob_uri: str
-    """
-
-    conversation_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The id of the conversation the item belongs to. Required."""
-    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The id of the item this audio belongs to. Required."""
-    role: Optional[Union[str, "_models.VoiceAudioRole"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The role the audio belongs to. Known values are: \"user\" and \"agent\"."""
-    format: Optional[Union[str, "_models.VoiceAudioContainerFormat"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The container format of the audio. \"wav\""""
-    codec: Optional[Union[str, "_models.VoiceAudioCodec"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The audio codec. Known values are: \"pcm16\", \"pcmu\", and \"pcma\"."""
-    sample_rate: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The sample rate in Hz."""
-    channels: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The number of audio channels."""
-    start_offset_ms: Optional[datetime.timedelta] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"], format="duration-milliseconds-int"
-    )
-    """The offset from the session start at which this segment begins."""
-    duration_ms: Optional[datetime.timedelta] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"], format="duration-milliseconds-int"
-    )
-    """The duration of the audio segment."""
-    blob_uri: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """For bring-your-own-storage (BYOS) recordings only: the URI of the recording in the customer's
-     own storage, without a SAS token. The customer downloads it using their own storage
-     credentials. Absent for Foundry-managed storage, where the bytes are streamed via the item's
-     ``/audio/content`` route instead."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        conversation_id: str,
-        item_id: str,
-        role: Optional[Union[str, "_models.VoiceAudioRole"]] = None,
-        format: Optional[Union[str, "_models.VoiceAudioContainerFormat"]] = None,
-        codec: Optional[Union[str, "_models.VoiceAudioCodec"]] = None,
-        sample_rate: Optional[int] = None,
-        channels: Optional[int] = None,
-        start_offset_ms: Optional[datetime.timedelta] = None,
-        duration_ms: Optional[datetime.timedelta] = None,
-        blob_uri: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class VoiceRecordingChannelLayout(_Model):  # pylint: disable=docstring-missing-param

@@ -239,7 +239,7 @@ class TestRealtimeConnectionManagerEnter:
     def test_enter_sends_structured_inputs_as_query_parameter(self):
         # Regression test: structured_inputs used to be serialized into a custom
         # "x-ms-voice-structured-inputs" header, but the generated request builder
-        # (build_beta_voice_agent_web_socket_connect_voice_agent_request) defines this as the
+        # (build_beta_voice_agents_realtime_connect_voice_agent_request) defines this as the
         # "structured_input" query parameter -- the service never actually read the header.
         fake_connection = MagicMock()
         with patch("websockets.sync.client.connect", return_value=fake_connection) as mock_connect:

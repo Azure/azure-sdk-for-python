@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     End-to-end hands-free, bidirectional voice conversation using the
-    ``client.beta.realtime`` namespace added on top of the generated
+    ``client.beta.voice_agents.realtime`` namespace added on top of the generated
     azure-ai-projects client (see ``azure.ai.projects.aio.operations.AsyncRealtime``).
     This mirrors the ergonomics of the OpenAI Python realtime client.
 
@@ -325,7 +325,7 @@ async def _run_audio_conversation(client: AIProjectClient, agent_name: str) -> O
     response_active = False
 
     # Open the realtime session on the voice agent's dedicated route.
-    async with client.beta.realtime.connect(agent_name=agent_name) as conn:
+    async with client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
         # A voice agent owns its model, instructions, voice, turn detection, and
         # noise suppression server-side, so this client sends no ``session.update``.
         ap = _AudioProcessor(conn)
@@ -398,7 +398,7 @@ async def _read_conversation(client: AIProjectClient, agent_name: str, conversat
     :type agent_name: str
     :type conversation_id: str
     """
-    conversations = client.beta.agent_endpoint_conversations
+    conversations = client.beta.voice_agents.conversations
 
     conversation = await conversations.get(agent_name, conversation_id)
     print(f"Conversation {conversation.id}: status={conversation.status}, created_at={conversation.created_at}")
@@ -453,14 +453,14 @@ async def audio_conversation() -> None:
                 except HttpResponseError as e:
                     print(f"Could not read conversation: {e.status_code} {e.reason}")
                 # To fetch this session's audio afterward, use
-                # `project_client.beta.agent_endpoint_conversations`:
+                # `project_client.beta.voice_agents.conversations`:
                 #   - get_audio(agent_name, conversation_id) for the merged
                 #     whole-call stereo recording's metadata, then
                 #     download_audio(agent_name, conversation_id) to stream
                 #     the WAV bytes.
-                #   - get_item_audio(agent_name, conversation_id, item_id) for a
+                #   - get_audio_item(agent_name, conversation_id, item_id) for a
                 #     single turn's audio metadata, then
-                #     download_item_audio(agent_name, conversation_id, item_id)
+                #     download_audio_item(agent_name, conversation_id, item_id)
                 #     to stream that turn's bytes.
                 # See sample_voice_agent_read_conversation_audio.py for a full example.
             else:

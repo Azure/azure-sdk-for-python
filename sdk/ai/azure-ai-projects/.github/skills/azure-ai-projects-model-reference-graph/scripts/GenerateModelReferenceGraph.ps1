@@ -253,12 +253,12 @@ for path in python_files(package_root):
 # absent from their Python signatures: WebSocket messages flow over the upgraded
 # connection, and the memory update result is consumed by a custom polling method.
 runtime_operation_owners = {
-    "RealtimeClientEvent": "azure/ai/projects/operations/_operations.py::BetaVoiceAgentWebSocketOperations.connect_voice_agent",
-    "RealtimeServerEvent": "azure/ai/projects/operations/_operations.py::BetaVoiceAgentWebSocketOperations.connect_voice_agent",
-    "RealtimeServerEventError": "azure/ai/projects/operations/_operations.py::BetaVoiceAgentWebSocketOperations.connect_voice_agent",
-    "VoiceAgentClientEventSessionUpdate": "azure/ai/projects/operations/_operations.py::BetaVoiceAgentWebSocketOperations.connect_voice_agent",
-    "VoiceAgentSessionResponseConfig": "azure/ai/projects/operations/_operations.py::BetaVoiceAgentWebSocketOperations.connect_voice_agent",
-    "VoiceAgentSessionUpdateConfig": "azure/ai/projects/operations/_operations.py::BetaVoiceAgentWebSocketOperations.connect_voice_agent",
+    "RealtimeClientEvent": "azure/ai/projects/operations/_operations.py::BetaVoiceAgentsRealtimeOperations._connect_voice_agent",
+    "RealtimeServerEvent": "azure/ai/projects/operations/_operations.py::BetaVoiceAgentsRealtimeOperations._connect_voice_agent",
+    "RealtimeServerEventError": "azure/ai/projects/operations/_operations.py::BetaVoiceAgentsRealtimeOperations._connect_voice_agent",
+    "VoiceAgentClientEventSessionUpdate": "azure/ai/projects/operations/_operations.py::BetaVoiceAgentsRealtimeOperations._connect_voice_agent",
+    "VoiceAgentSessionResponseConfig": "azure/ai/projects/operations/_operations.py::BetaVoiceAgentsRealtimeOperations._connect_voice_agent",
+    "VoiceAgentSessionUpdateConfig": "azure/ai/projects/operations/_operations.py::BetaVoiceAgentsRealtimeOperations._connect_voice_agent",
     "MemoryStoreUpdateResult": "azure/ai/projects/operations/_patch_memories.py::BetaMemoryStoresOperations.begin_update_memories",
     "UpdateToolboxRequest": "azure/ai/projects/operations/_operations.py::ToolboxesOperations.update",
 }

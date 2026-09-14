@@ -126,7 +126,7 @@ def upload_substream_blocks(
     else:
         range_ids = [uploader.process_substream_block(b) for b in uploader.get_substream_blocks()]
     if any(range_ids):
-        return [r[1] for r in sorted(range_ids, key=lambda r: r[0])]
+        return [block_id for _, block_id in sorted(range_ids, key=lambda r: r[0])]
     return []
 
 
@@ -374,8 +374,8 @@ class DataLakeFileChunkUploader(_ChunkUploader):
             **self.request_options,
         )
 
-        if not self.parallel and self.request_options.get("modified_access_conditions"):
-            self.request_options["modified_access_conditions"].if_match = self.response_headers["etag"]
+        if not self.parallel and self.request_options.get("etag"):
+            self.request_options["etag"] = self.response_headers["etag"]
 
     def _upload_substream_block(self, index, block_stream):
         try:
@@ -415,6 +415,8 @@ class FileChunkUploader(_ChunkUploader):
 class SubStream(IOBase):
 
     def __init__(self, wrapped_stream, stream_begin_index, length, lockObj):
+        super(SubStream, self).__init__()
+
         # Python 2.7: file-like objects created with open() typically support seek(), but are not
         # derivations of io.IOBase and thus do not implement seekable().
         # Python > 3.0: file-like objects created with open() are derived from io.IOBase.
@@ -438,13 +440,12 @@ class SubStream(IOBase):
         )
         self._current_buffer_start = 0
         self._current_buffer_size = 0
-        super(SubStream, self).__init__()
 
     def __len__(self):
         return self._length
 
     def close(self):
-        if self._buffer:
+        if hasattr(self, "_buffer"):
             self._buffer.close()
         self._wrapped_stream = None
         IOBase.close(self)

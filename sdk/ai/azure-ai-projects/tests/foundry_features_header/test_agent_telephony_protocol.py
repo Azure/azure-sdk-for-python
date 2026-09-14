@@ -3,9 +3,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Mocked protocol-level tests for the `agent_telephony` (batch 2) call-job/campaign operation
-group, covering request construction (HTTP method + URL path) without depending on the live test
-service's currently-unavailable API-version support for these routes (see
+"""Mocked protocol-level tests for the `voice_agents.telephony` (batch 2) call-job/campaign
+operation group, covering request construction (HTTP method + URL path) without depending on the
+live test service's currently-unavailable API-version support for these routes (see
 `tests/agents/test_voice_agent_telephony_campaign.py`, whose recorded tests are all skipped for
 that reason).
 
@@ -88,7 +88,7 @@ _TELEPHONY_PROTOCOL_CASES: List[Tuple[str, str, str]] = [
 
 
 class TestAgentTelephonyProtocol(FoundryFeaturesHeaderTestBase):
-    """Verify each `agent_telephony` method builds the correct HTTP method and URL path."""
+    """Verify each `voice_agents.telephony` method builds the correct HTTP method and URL path."""
 
     @staticmethod
     def _capture(call: Any) -> Any:
@@ -115,7 +115,7 @@ class TestAgentTelephonyProtocol(FoundryFeaturesHeaderTestBase):
         expected_http_method: str,
         expected_path: str,
     ) -> None:
-        method = getattr(client.beta.agent_telephony, method_name)
+        method = getattr(client.beta.voice_agents.telephony, method_name)
         request = self._capture(self._make_fake_call(method))
         assert (
             request.method == expected_http_method

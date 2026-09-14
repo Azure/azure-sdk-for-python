@@ -78,15 +78,15 @@ class DeviceProvisioningClient(
         try:
             if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
-        except AttributeError:
-            raise ValueError("Endpoint URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Endpoint URL must be a string.") from exc
         endpoint = endpoint.rstrip("/")
 
         # Validate api-version
         try:
             api_version = ApiVersion(api_version).value
-        except ValueError:
-            raise ValueError(f"Invalid api-version {api_version} specified")
+        except ValueError as exc:
+            raise ValueError(f"Invalid api-version {api_version} specified") from exc
 
         # Generate base client
         super().__init__(

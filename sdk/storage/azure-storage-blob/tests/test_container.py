@@ -1583,6 +1583,15 @@ class TestStorageContainer(StorageRecordedTestCase):
         blob_list = []
         container_client.delete_blobs(*blob_list)
 
+    @pytest.mark.parametrize("value", ["\r", "\n", "\r\n"])
+    def test_batch_delete_blobs_rejects_crlf_in_header(self, value):
+        container_client = ContainerClient("https://mystorageaccount.blob.core.windows.net", "container")
+
+        with pytest.raises(ValueError):
+            container_client.delete_blobs(
+                "blob1", if_tags_match_condition=f"\"tag1\"='first{value}x-ms-lease-id: injected'"
+            )
+
     @pytest.mark.live_test_only
     @BlobPreparer()
     def test_delete_blobs_simple(self, **kwargs):

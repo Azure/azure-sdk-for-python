@@ -79,7 +79,7 @@ _TELEPHONY_PROTOCOL_CASES: List[Tuple[str, str, str]] = [
 
 
 class TestAgentTelephonyProtocolAsync(FoundryFeaturesHeaderTestBase):
-    """Verify each async `agent_telephony` method builds the correct HTTP method and URL path."""
+    """Verify each async `voice_agents.telephony` method builds the correct HTTP method and URL path."""
 
     @staticmethod
     async def _capture(call: Any) -> Any:
@@ -111,7 +111,7 @@ class TestAgentTelephonyProtocolAsync(FoundryFeaturesHeaderTestBase):
         expected_http_method: str,
         expected_path: str,
     ) -> None:
-        method = getattr(async_client.beta.agent_telephony, method_name)
+        method = getattr(async_client.beta.voice_agents.telephony, method_name)
         request = await self._capture(self._make_fake_call(method))
         assert (
             request.method == expected_http_method

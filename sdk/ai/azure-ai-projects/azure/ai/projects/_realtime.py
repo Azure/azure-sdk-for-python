@@ -66,7 +66,7 @@ class _ConfigProvider(Protocol):
     :class:`~azure.ai.projects.AIProjectClient` and its ``.beta`` sub-client
     (:class:`~azure.ai.projects.operations.BetaOperations`) both satisfy this: operation groups
     are constructed with the same shared configuration instance as the top-level client, so
-    ``client.beta.realtime`` can reuse the endpoint/credential wiring without needing a
+    ``client.beta.voice_agents.realtime`` can reuse the endpoint/credential wiring without needing a
     back-reference to the top-level client itself.
     """
 
@@ -553,7 +553,7 @@ class RealtimeConnection:  # pylint: disable=too-many-instance-attributes
     Iterate over the connection to receive strongly-typed server events, and use the
     sub-namespaces to send strongly-typed client events::
 
-        with client.beta.realtime.connect(agent_name="my-agent") as conn:
+        with client.beta.voice_agents.realtime.connect(agent_name="my-agent") as conn:
             for event in conn:
                 if event.type == RealtimeServerEventType.RESPONSE_DONE:
                     break
@@ -679,7 +679,7 @@ class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
     """Context manager that opens a :class:`RealtimeConnection`.
 
     Returned by :meth:`Realtime.connect`; you normally use it as
-    ``with client.beta.realtime.connect(...) as conn:``.
+    ``with client.beta.voice_agents.realtime.connect(...) as conn:``.
     """
 
     def __init__(  # pylint: disable=too-many-arguments
@@ -691,7 +691,6 @@ class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
         api_version: str,
         agent_name: str,
         agent_session_id: Optional[str] = None,
-        agent_version_override: Optional[str] = None,
         structured_inputs: Optional[Mapping[str, Any]] = None,
         connection_url: Optional[str] = None,
         extra_query: Optional[Mapping[str, str]] = None,
@@ -704,7 +703,6 @@ class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
         self._api_version = api_version
         self._agent_name = agent_name
         self._agent_session_id = agent_session_id
-        self._agent_version_override = agent_version_override
         self._structured_inputs = structured_inputs
         self._connection_url = connection_url
         self._extra_query = dict(extra_query or {})
@@ -744,11 +742,9 @@ class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
         params: Dict[str, str] = {"api-version": self._api_version, "x-ms-client-sdk": _USER_AGENT}
         if self._agent_session_id is not None:
             params["agent_session_id"] = self._agent_session_id
-        if self._agent_version_override is not None:
-            params["x-agent-version-override"] = self._agent_version_override
         if self._structured_inputs is not None:
             # The service reads this from the `structured_input` query parameter (see the
-            # generated `build_beta_voice_agent_web_socket_connect_voice_agent_request`), not a
+            # generated `build_beta_voice_agents_realtime_connect_voice_agent_request`), not a
             # header -- it must be serialized and appended to the URL below, not sent as one.
             params["structured_input"] = json.dumps(self._structured_inputs, cls=SdkJSONEncoder)
         params.update(self._extra_query)
@@ -809,7 +805,7 @@ class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
 
 
 class Realtime:  # pylint: disable=too-few-public-methods
-    """Realtime streaming entry point, exposed as ``client.beta.realtime``.
+    """Realtime streaming entry point, exposed as ``client.beta.voice_agents.realtime``.
 
     Follows the OpenAI Python realtime surface: obtain it from the HTTP client and open a
     connection with :meth:`connect`::
@@ -818,7 +814,7 @@ class Realtime:  # pylint: disable=too-few-public-methods
         from azure.identity import DefaultAzureCredential
 
         client = AIProjectClient(endpoint, DefaultAzureCredential())
-        with client.beta.realtime.connect(agent_name="my-agent") as conn:
+        with client.beta.voice_agents.realtime.connect(agent_name="my-agent") as conn:
             conn.input_audio_buffer.append(audio=chunk)
             conn.input_audio_buffer.commit()
             conn.response.create()
@@ -827,9 +823,10 @@ class Realtime:  # pylint: disable=too-few-public-methods
                     break
 
     :param client: The object whose endpoint and credential are reused for the realtime
-     handshake -- either the top-level client or its ``.beta`` sub-client, since both share the
-     same underlying configuration.
-    :type client: ~azure.ai.projects.AIProjectClient or ~azure.ai.projects.operations.BetaOperations
+     handshake -- either the top-level client or its ``.beta.voice_agents`` sub-client, since
+     both share the same underlying configuration.
+    :type client: ~azure.ai.projects.AIProjectClient or
+     ~azure.ai.projects.operations.BetaVoiceAgentsOperations
     """
 
     def __init__(self, client: "_ConfigProvider") -> None:
@@ -840,7 +837,6 @@ class Realtime:  # pylint: disable=too-few-public-methods
         *,
         agent_name: str,
         agent_session_id: Optional[str] = None,
-        agent_version_override: Optional[str] = None,
         structured_inputs: Optional[Mapping[str, Any]] = None,
         connection_url: Optional[str] = None,
         api_version: Optional[str] = None,
@@ -855,9 +851,6 @@ class Realtime:  # pylint: disable=too-few-public-methods
         :keyword agent_session_id: An optional identifier used to correlate the voice session.
          Default value is None.
         :paramtype agent_session_id: str or None
-        :keyword agent_version_override: Selects a specific version of the voice agent for this
-         session. Default value is None.
-        :paramtype agent_version_override: str or None
         :keyword structured_inputs: A mapping of structured-input names to their values for this
          session (see :attr:`~azure.ai.projects.models.CreateTelephonyCallJobRequest.structured_inputs`
          for the analogous shape used elsewhere). Serialized to JSON on the wire. Default value is
@@ -888,7 +881,6 @@ class Realtime:  # pylint: disable=too-few-public-methods
             api_version=api_version or self._config.api_version,
             agent_name=agent_name,
             agent_session_id=agent_session_id,
-            agent_version_override=agent_version_override,
             structured_inputs=structured_inputs,
             connection_url=connection_url,
             extra_query=extra_query,
