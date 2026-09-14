@@ -1,10 +1,11 @@
 {
-  "apiVersion": "2025-12-01",
+  "apiVersion": "2026-05-01",
   "apiVersions": {
-    "Microsoft.StorageMover": "2025-12-01"
+    "Microsoft.StorageMover": "2026-05-01"
   },
-  "commit": "55fc3e7d12df68485d19b10847f24c95579a06f4",
+  "commit": "f89d3d95044e14c679785fa9e0d28c7c97af870a",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "typespec_src": "specification/storagemover/StorageMover.Management",
-  "emitterVersion": "0.61.2"
+  "typespec_src": "specification/storagemover/resource-manager/Microsoft.StorageMover/StorageMover",
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.34.2"
 }

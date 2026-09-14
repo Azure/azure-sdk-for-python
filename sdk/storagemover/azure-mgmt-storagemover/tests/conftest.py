@@ -43,8 +43,7 @@ def add_sanitizers(test_proxy):
     # sanitized zero-GUID in recordings, matching the value the test sources
     # build their cross-sub resource IDs from at playback time.
     storagemover_synthetics_subscription_id = (
-        os.environ.get("STORAGEMOVER_SYNTHETICS_SUBSCRIPTION_ID")
-        or "00000000-0000-0000-0000-000000000000"
+        os.environ.get("STORAGEMOVER_SYNTHETICS_SUBSCRIPTION_ID") or "00000000-0000-0000-0000-000000000000"
     )
     add_general_regex_sanitizer(
         regex=storagemover_synthetics_subscription_id,

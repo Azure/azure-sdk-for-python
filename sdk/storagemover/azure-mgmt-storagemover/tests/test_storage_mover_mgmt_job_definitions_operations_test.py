@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,6 +14,7 @@ Also implements cross-language matrix row #31
 private-bucket CloudToCloud E2E using the shared `test-pls-wcs` PLS, mirroring
 RP `Storage-XDataMove-RP/test/E2ETest/C2CTest/StartJobTest.cs::StartC2CJobWithPrivateSourceAsyncSuccessPathTest`.
 """
+
 import os
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -36,6 +38,7 @@ try:
     from azure.mgmt.storage import StorageManagementClient
     import azure.mgmt.network.aio  # noqa: F401  (modernization signal)
     import azure.mgmt.storage.aio  # noqa: F401  (modernization signal)
+
     _CROSS_SUB_CLIENTS_MODERN = True
 except ImportError:
     AuthorizationManagementClient = None  # type: ignore[assignment]
@@ -70,38 +73,46 @@ FAKE_STORAGE_ACCOUNT_ID = (
 # The subscription id is read from the environment for live runs and defaults to
 # the sanitized zero-GUID so the real subscription is never committed.
 SYNTHETICS_SUBSCRIPTION_ID = (
-    os.environ.get("STORAGEMOVER_SYNTHETICS_SUBSCRIPTION_ID")
-    or "00000000-0000-0000-0000-000000000000"
+    os.environ.get("STORAGEMOVER_SYNTHETICS_SUBSCRIPTION_ID") or "00000000-0000-0000-0000-000000000000"
 )
 
 PLS_RESOURCE_GROUP = "E2E-Management-RGsyn"
 PLS_NAME = "test-pls-wcs"
 REAL_PRIVATE_LINK_SERVICE_ID = (
-    "/subscriptions/" + SYNTHETICS_SUBSCRIPTION_ID
-    + "/resourceGroups/" + PLS_RESOURCE_GROUP
-    + "/providers/Microsoft.Network/privateLinkServices/" + PLS_NAME
+    "/subscriptions/"
+    + SYNTHETICS_SUBSCRIPTION_ID
+    + "/resourceGroups/"
+    + PLS_RESOURCE_GROUP
+    + "/providers/Microsoft.Network/privateLinkServices/"
+    + PLS_NAME
 )
 
 STORAGE_ACCOUNT_RG = "CP_Mover_IN_WCUS"
 STORAGE_ACCOUNT_NAME = "cpmoveraccount"
 STORAGE_ACCOUNT_ID = (
-    "/subscriptions/" + SYNTHETICS_SUBSCRIPTION_ID
-    + "/resourceGroups/" + STORAGE_ACCOUNT_RG
-    + "/providers/Microsoft.Storage/storageAccounts/" + STORAGE_ACCOUNT_NAME
+    "/subscriptions/"
+    + SYNTHETICS_SUBSCRIPTION_ID
+    + "/resourceGroups/"
+    + STORAGE_ACCOUNT_RG
+    + "/providers/Microsoft.Storage/storageAccounts/"
+    + STORAGE_ACCOUNT_NAME
 )
 
 MULTI_CLOUD_CONNECTOR_ID = (
-    "/subscriptions/" + SYNTHETICS_SUBSCRIPTION_ID
+    "/subscriptions/"
+    + SYNTHETICS_SUBSCRIPTION_ID
     + "/resourceGroups/E2E-Management-RGsyn"
     + "/providers/Microsoft.HybridConnectivity/publicCloudConnectors/e2e-sm-rp-connector"
 )
 PRIVATE_S3_BUCKET_ID = (
-    "/subscriptions/" + SYNTHETICS_SUBSCRIPTION_ID
+    "/subscriptions/"
+    + SYNTHETICS_SUBSCRIPTION_ID
     + "/resourceGroups/aws_640698235822"
     + "/providers/Microsoft.AWSConnector/s3Buckets/e2e-sm-rp-private-bucket"
 )
 AWS_PUBLIC_S3_BUCKET_ID = (
-    "/subscriptions/" + SYNTHETICS_SUBSCRIPTION_ID
+    "/subscriptions/"
+    + SYNTHETICS_SUBSCRIPTION_ID
     + "/resourceGroups/aws_640698235822"
     + "/providers/Microsoft.AWSConnector/s3Buckets/e2e-sm-rp-bucket"
 )
@@ -110,35 +121,47 @@ AWS_PUBLIC_S3_BUCKET_ID = (
 STORAGE_BLOB_DATA_CONTRIBUTOR_ROLE_DEF_GUID = "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
 
 
+@pytest.mark.live_test_only
 class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(StorageMoverMgmtClient)
 
     def _provision_parents(self, rg, sm_name, project_name, source_endpoint, target_endpoint):
         self.client.storage_movers.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"location": AZURE_LOCATION},
         )
         self.client.projects.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
             project={},
         )
         self.client.endpoints.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=source_endpoint,
-            endpoint={"properties": {
-                "endpointType": "NfsMount",
-                "host": "10.0.0.1",
-                "export": "/",
-                "nfsVersion": "NFSv3",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=source_endpoint,
+            endpoint={
+                "properties": {
+                    "endpointType": "NfsMount",
+                    "host": "10.0.0.1",
+                    "export": "/",
+                    "nfsVersion": "NFSv3",
+                }
+            },
         )
         self.client.endpoints.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=target_endpoint,
-            endpoint={"properties": {
-                "endpointType": "AzureStorageBlobContainer",
-                "storageAccountResourceId": FAKE_STORAGE_ACCOUNT_ID,
-                "blobContainerName": "testcontainer",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=target_endpoint,
+            endpoint={
+                "properties": {
+                    "endpointType": "AzureStorageBlobContainer",
+                    "storageAccountResourceId": FAKE_STORAGE_ACCOUNT_ID,
+                    "blobContainerName": "testcontainer",
+                }
+            },
         )
 
     # ----- JobDefinitionJobRunTests.JobDefinitionJobRunTest (matrix row #10) -----
@@ -175,47 +198,56 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
         role_assignment_name = variables.setdefault("role_assignment_id", str(uuid.uuid4()))
 
         storage_client = self.create_client_from_credential(
-            StorageManagementClient, self.get_credential(StorageManagementClient),
+            StorageManagementClient,
+            self.get_credential(StorageManagementClient),
             subscription_id=SYNTHETICS_SUBSCRIPTION_ID,
             api_version="2025-06-01",
         )
         authorization_client = self.create_client_from_credential(
-            AuthorizationManagementClient, self.get_credential(AuthorizationManagementClient),
+            AuthorizationManagementClient,
+            self.get_credential(AuthorizationManagementClient),
             subscription_id=SYNTHETICS_SUBSCRIPTION_ID,
         )
 
         container_created = False
         rbac_created = False
-        container_scope = (
-            STORAGE_ACCOUNT_ID + "/blobServices/default/containers/" + container_name
-        )
+        container_scope = STORAGE_ACCOUNT_ID + "/blobServices/default/containers/" + container_name
 
         try:
             # Provision mover + project (WCUS — required by cpmoveraccount).
             self.client.storage_movers.create_or_update(
-                resource_group_name=rg, storage_mover_name=sm_name,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
                 storage_mover={"location": WCUS_LOCATION},
             )
             self.client.projects.create_or_update(
-                resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                project_name=project_name,
                 project={},
             )
 
             # Source MCC endpoint over the PUBLIC AWS S3 bucket.
             self.client.endpoints.create_or_update(
-                resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=source_endpoint,
-                endpoint={"properties": {
-                    "endpointType": "AzureMultiCloudConnector",
-                    "multiCloudConnectorId": MULTI_CLOUD_CONNECTOR_ID,
-                    "awsS3BucketId": AWS_PUBLIC_S3_BUCKET_ID,
-                    "endpointKind": "Source",
-                    "description": "publicMccSourceForJobRun",
-                }},
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                endpoint_name=source_endpoint,
+                endpoint={
+                    "properties": {
+                        "endpointType": "AzureMultiCloudConnector",
+                        "multiCloudConnectorId": MULTI_CLOUD_CONNECTOR_ID,
+                        "awsS3BucketId": AWS_PUBLIC_S3_BUCKET_ID,
+                        "endpointKind": "Source",
+                        "description": "publicMccSourceForJobRun",
+                    }
+                },
             )
 
             # Target blob endpoint with explicit SystemAssigned MSI.
             target = self.client.endpoints.create_or_update(
-                resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=target_endpoint,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                endpoint_name=target_endpoint,
                 endpoint={
                     "identity": {"type": "SystemAssigned"},
                     "properties": {
@@ -226,47 +258,57 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
                     },
                 },
             )
-            assert target.identity is not None and target.identity.principal_id, (
-                "Target blob endpoint did not get an auto-assigned MSI principalId"
-            )
+            assert (
+                target.identity is not None and target.identity.principal_id
+            ), "Target blob endpoint did not get an auto-assigned MSI principalId"
             target_msi_principal_id = target.identity.principal_id
 
             # Cross-sub: create target container.
             storage_client.blob_containers.create(
-                resource_group_name=STORAGE_ACCOUNT_RG, account_name=STORAGE_ACCOUNT_NAME,
-                container_name=container_name, blob_container={},
+                resource_group_name=STORAGE_ACCOUNT_RG,
+                account_name=STORAGE_ACCOUNT_NAME,
+                container_name=container_name,
+                blob_container={},
             )
             container_created = True
 
             # Cross-sub: grant target MSI Storage Blob Data Contributor on container scope.
             role_definition_id = (
-                "/subscriptions/" + SYNTHETICS_SUBSCRIPTION_ID
+                "/subscriptions/"
+                + SYNTHETICS_SUBSCRIPTION_ID
                 + "/providers/Microsoft.Authorization/roleDefinitions/"
                 + STORAGE_BLOB_DATA_CONTRIBUTOR_ROLE_DEF_GUID
             )
             authorization_client.role_assignments.create(
-                scope=container_scope, role_assignment_name=role_assignment_name,
-                parameters={"properties": {
-                    "roleDefinitionId": role_definition_id,
-                    "principalId": target_msi_principal_id,
-                    "principalType": "ServicePrincipal",
-                }},
+                scope=container_scope,
+                role_assignment_name=role_assignment_name,
+                parameters={
+                    "properties": {
+                        "roleDefinitionId": role_definition_id,
+                        "principalId": target_msi_principal_id,
+                        "principalType": "ServicePrincipal",
+                    }
+                },
             )
             rbac_created = True
 
             # Create the job definition (C2C, no `connections` since no PLS).
             jd = self.client.job_definitions.create_or_update(
-                resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                project_name=project_name,
                 job_definition_name=jd_name,
-                job_definition={"properties": {
-                    "copyMode": "Additive",
-                    "sourceName": source_endpoint,
-                    "targetName": target_endpoint,
-                    "jobType": "CloudToCloud",
-                    "sourceSubpath": "/",
-                    "targetSubpath": "/",
-                    "description": "JobDefForJobRunTest",
-                }},
+                job_definition={
+                    "properties": {
+                        "copyMode": "Additive",
+                        "sourceName": source_endpoint,
+                        "targetName": target_endpoint,
+                        "jobType": "CloudToCloud",
+                        "sourceSubpath": "/",
+                        "targetSubpath": "/",
+                        "description": "JobDefForJobRunTest",
+                    }
+                },
             )
             # CRUD assertions (mirrors .NET matrix #10 spec).
             assert jd.name == jd_name
@@ -275,20 +317,28 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
             assert jd.properties.copy_mode == "Additive"
 
             jd_get = self.client.job_definitions.get(
-                resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                project_name=project_name,
                 job_definition_name=jd_name,
             )
             assert jd_get.id == jd.id
 
-            items = list(self.client.job_definitions.list(
-                resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
-            ))
+            items = list(
+                self.client.job_definitions.list(
+                    resource_group_name=rg,
+                    storage_mover_name=sm_name,
+                    project_name=project_name,
+                )
+            )
             assert len(items) >= 1
             assert jd_name in [j.name for j in items]
 
             # Start the job.
             start_result = self.client.job_definitions.start_job(
-                resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                project_name=project_name,
                 job_definition_name=jd_name,
             )
             assert start_result.job_run_resource_id, "start_job did not return jobRunResourceId"
@@ -299,26 +349,26 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
             final_status = None
             for _ in range(60):
                 run = self.client.job_runs.get(
-                    resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
-                    job_definition_name=jd_name, job_run_name=job_run_name,
+                    resource_group_name=rg,
+                    storage_mover_name=sm_name,
+                    project_name=project_name,
+                    job_definition_name=jd_name,
+                    job_run_name=job_run_name,
                 )
-                current_status = (
-                    getattr(run.properties, "status", None) if run.properties is not None else None
-                )
+                current_status = getattr(run.properties, "status", None) if run.properties is not None else None
                 if current_status in terminal_states:
                     final_status = current_status
                     break
                 self.sleep(30)
-            assert final_status is not None, (
-                "Job run did not reach a terminal state within 30 min"
-            )
-            assert final_status == "Succeeded", (
-                "Expected job-run to Succeed with public bucket + target MSI RBAC, "
-                "got: " + str(final_status)
-            )
+            assert final_status is not None, "Job run did not reach a terminal state within 30 min"
+            assert (
+                final_status == "Succeeded"
+            ), "Expected job-run to Succeed with public bucket + target MSI RBAC, " "got: " + str(final_status)
 
             self.client.job_definitions.begin_delete(
-                resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                project_name=project_name,
                 job_definition_name=jd_name,
             ).result()
 
@@ -326,14 +376,16 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
             if rbac_created:
                 try:
                     authorization_client.role_assignments.delete(
-                        scope=container_scope, role_assignment_name=role_assignment_name,
+                        scope=container_scope,
+                        role_assignment_name=role_assignment_name,
                     )
                 except Exception:  # noqa: BLE001
                     pass
             if container_created:
                 try:
                     storage_client.blob_containers.delete(
-                        resource_group_name=STORAGE_ACCOUNT_RG, account_name=STORAGE_ACCOUNT_NAME,
+                        resource_group_name=STORAGE_ACCOUNT_RG,
+                        account_name=STORAGE_ACCOUNT_NAME,
                         container_name=container_name,
                     )
                 except Exception:  # noqa: BLE001
@@ -356,31 +408,32 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
         jd_name = "jobdef-sched-wk"
         variables = kwargs.pop("variables", {})
         now = datetime.now(timezone.utc)
-        start_date = variables.setdefault(
-            "schedule_start", (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
-        )
-        end_date = variables.setdefault(
-            "schedule_end", (now + timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%SZ")
-        )
-        body = {"properties": {
-            "copyMode": "Additive",
-            "sourceName": source_endpoint,
-            "targetName": target_endpoint,
-            "description": "Job definition with weekly schedule",
-            "dataIntegrityValidation": "SaveVerifyFileMD5",
-            "schedule": {
-                "frequency": "Weekly",
-                "isActive": True,
-                "executionTime": {"hour": 2},
-                "startDate": start_date,
-                "endDate": end_date,
-                "daysOfWeek": ["Monday", "Wednesday", "Friday"],
-            },
-        }}
+        start_date = variables.setdefault("schedule_start", (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ"))
+        end_date = variables.setdefault("schedule_end", (now + timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%SZ"))
+        body = {
+            "properties": {
+                "copyMode": "Additive",
+                "sourceName": source_endpoint,
+                "targetName": target_endpoint,
+                "description": "Job definition with weekly schedule",
+                "dataIntegrityValidation": "SaveVerifyFileMD5",
+                "schedule": {
+                    "frequency": "Weekly",
+                    "isActive": True,
+                    "executionTime": {"hour": 2},
+                    "startDate": start_date,
+                    "endDate": end_date,
+                    "daysOfWeek": ["Monday", "Wednesday", "Friday"],
+                },
+            }
+        }
 
         jd = self.client.job_definitions.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
-            job_definition_name=jd_name, job_definition=body,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
+            job_definition_name=jd_name,
+            job_definition=body,
         )
         assert jd.name == jd_name
         assert jd.properties.source_name == source_endpoint
@@ -395,13 +448,17 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
         assert len(jd.properties.schedule.days_of_week) == 3
 
         jd = self.client.job_definitions.get(
-            resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
             job_definition_name=jd_name,
         )
         assert jd.properties.schedule.frequency == "Weekly"
 
         self.client.job_definitions.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
             job_definition_name=jd_name,
         ).result()
 
@@ -422,31 +479,32 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
         jd_name = "jobdef-sched-daily"
         variables = kwargs.pop("variables", {})
         now = datetime.now(timezone.utc)
-        start_date = variables.setdefault(
-            "schedule_start", (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
-        )
-        end_date = variables.setdefault(
-            "schedule_end", (now + timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%SZ")
-        )
-        body = {"properties": {
-            "copyMode": "Mirror",
-            "sourceName": source_endpoint,
-            "targetName": target_endpoint,
-            "description": "Job definition with daily schedule",
-            "dataIntegrityValidation": "None",
-            "preservePermissions": True,
-            "schedule": {
-                "frequency": "Daily",
-                "isActive": True,
-                "executionTime": {"hour": 0},
-                "startDate": start_date,
-                "endDate": end_date,
-            },
-        }}
+        start_date = variables.setdefault("schedule_start", (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ"))
+        end_date = variables.setdefault("schedule_end", (now + timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%SZ"))
+        body = {
+            "properties": {
+                "copyMode": "Mirror",
+                "sourceName": source_endpoint,
+                "targetName": target_endpoint,
+                "description": "Job definition with daily schedule",
+                "dataIntegrityValidation": "None",
+                "preservePermissions": True,
+                "schedule": {
+                    "frequency": "Daily",
+                    "isActive": True,
+                    "executionTime": {"hour": 0},
+                    "startDate": start_date,
+                    "endDate": end_date,
+                },
+            }
+        }
 
         jd = self.client.job_definitions.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
-            job_definition_name=jd_name, job_definition=body,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
+            job_definition_name=jd_name,
+            job_definition=body,
         )
         assert jd.name == jd_name
         assert jd.properties.copy_mode == "Mirror"
@@ -455,7 +513,9 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
         assert jd.properties.schedule.is_active is True
 
         self.client.job_definitions.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
             job_definition_name=jd_name,
         ).result()
 
@@ -476,25 +536,28 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
         jd_name = "jobdef-sched-once"
         variables = kwargs.pop("variables", {})
         now = datetime.now(timezone.utc)
-        start_date = variables.setdefault(
-            "schedule_start", (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
-        )
-        body = {"properties": {
-            "copyMode": "Additive",
-            "sourceName": source_endpoint,
-            "targetName": target_endpoint,
-            "description": "Job definition with one-time schedule",
-            "schedule": {
-                "frequency": "Onetime",
-                "isActive": True,
-                "executionTime": {"hour": 10},
-                "startDate": start_date,
-            },
-        }}
+        start_date = variables.setdefault("schedule_start", (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ"))
+        body = {
+            "properties": {
+                "copyMode": "Additive",
+                "sourceName": source_endpoint,
+                "targetName": target_endpoint,
+                "description": "Job definition with one-time schedule",
+                "schedule": {
+                    "frequency": "Onetime",
+                    "isActive": True,
+                    "executionTime": {"hour": 10},
+                    "startDate": start_date,
+                },
+            }
+        }
 
         jd = self.client.job_definitions.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
-            job_definition_name=jd_name, job_definition=body,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
+            job_definition_name=jd_name,
+            job_definition=body,
         )
         assert jd.name == jd_name
         assert jd.properties.schedule is not None
@@ -502,7 +565,9 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
         assert jd.properties.schedule.is_active is True
 
         self.client.job_definitions.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
             job_definition_name=jd_name,
         ).result()
 
@@ -567,29 +632,34 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
         connection_created = False
         container_created = False
         rbac_created = False
-        container_scope = (
-            STORAGE_ACCOUNT_ID + "/blobServices/default/containers/" + container_name
-        )
+        container_scope = STORAGE_ACCOUNT_ID + "/blobServices/default/containers/" + container_name
 
         try:
             # 1. Self-provision storage mover + project.
             self.client.storage_movers.create_or_update(
-                resource_group_name=rg, storage_mover_name=sm_name,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
                 storage_mover={"location": WCUS_LOCATION},
             )
             self.client.projects.create_or_update(
-                resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                project_name=project_name,
                 project={},
             )
 
             # 2. Create the Storage Mover Connection. The RP synchronously provisions
             #    a private endpoint on the PLS in Pending state and returns its id.
             connection = self.client.connections.create_or_update(
-                resource_group_name=rg, storage_mover_name=sm_name, connection_name=connection_name,
-                connection={"properties": {
-                    "privateLinkServiceId": REAL_PRIVATE_LINK_SERVICE_ID,
-                    "description": "ConnectionForPrivateBucketJobRun",
-                }},
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                connection_name=connection_name,
+                connection={
+                    "properties": {
+                        "privateLinkServiceId": REAL_PRIVATE_LINK_SERVICE_ID,
+                        "description": "ConnectionForPrivateBucketJobRun",
+                    }
+                },
             )
             connection_created = True
             pe_resource_id = connection.properties.private_endpoint_resource_id
@@ -600,7 +670,8 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
             pe_connection_name = None
             for _ in range(10):
                 for pec in network_client.private_link_services.list_private_endpoint_connections(
-                    resource_group_name=PLS_RESOURCE_GROUP, service_name=PLS_NAME,
+                    resource_group_name=PLS_RESOURCE_GROUP,
+                    service_name=PLS_NAME,
                 ):
                     pec_pe_id = (pec.private_endpoint.id if pec.private_endpoint else "") or ""
                     if pec_pe_id.lower() == pe_resource_id.lower():
@@ -609,22 +680,24 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
                 if pe_connection_name:
                     break
                 self.sleep(15)
-            assert pe_connection_name, (
-                "PE-connection for {} did not appear on PLS {} within 150s".format(
-                    pe_resource_id, PLS_NAME,
-                )
+            assert pe_connection_name, "PE-connection for {} did not appear on PLS {} within 150s".format(
+                pe_resource_id,
+                PLS_NAME,
             )
 
             network_client.private_link_services.update_private_endpoint_connection(
-                resource_group_name=PLS_RESOURCE_GROUP, service_name=PLS_NAME,
+                resource_group_name=PLS_RESOURCE_GROUP,
+                service_name=PLS_NAME,
                 pe_connection_name=pe_connection_name,
-                parameters={"properties": {
-                    "privateLinkServiceConnectionState": {
-                        "status": "Approved",
-                        "description": "approved by storage-mover SDK live test",
-                        "actionsRequired": "None",
-                    },
-                }},
+                parameters={
+                    "properties": {
+                        "privateLinkServiceConnectionState": {
+                            "status": "Approved",
+                            "description": "approved by storage-mover SDK live test",
+                            "actionsRequired": "None",
+                        },
+                    }
+                },
             )
 
             # 4. Poll Storage Mover Connection until connection_status == Approved.
@@ -632,11 +705,14 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
             approved = False
             for _ in range(10):
                 conn_show = self.client.connections.get(
-                    resource_group_name=rg, storage_mover_name=sm_name,
+                    resource_group_name=rg,
+                    storage_mover_name=sm_name,
                     connection_name=connection_name,
                 )
-                if (conn_show.properties is not None
-                        and getattr(conn_show.properties, "connection_status", None) == "Approved"):
+                if (
+                    conn_show.properties is not None
+                    and getattr(conn_show.properties, "connection_status", None) == "Approved"
+                ):
                     approved = True
                     break
                 self.sleep(30)
@@ -647,7 +723,9 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
             #    (which auto-injects identity), the raw SDK PUT does not set identity
             #    by default. Capture principalId so we can grant data-plane RBAC.
             target = self.client.endpoints.create_or_update(
-                resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=target_endpoint,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                endpoint_name=target_endpoint,
                 endpoint={
                     "identity": {"type": "SystemAssigned"},
                     "properties": {
@@ -658,66 +736,82 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
                     },
                 },
             )
-            assert target.identity is not None and target.identity.principal_id, (
-                "Target blob endpoint did not get an auto-assigned MSI principalId"
-            )
+            assert (
+                target.identity is not None and target.identity.principal_id
+            ), "Target blob endpoint did not get an auto-assigned MSI principalId"
             target_msi_principal_id = target.identity.principal_id
 
             # 6. Cross-sub: create the target blob container under cpmoveraccount.
             storage_client.blob_containers.create(
-                resource_group_name=STORAGE_ACCOUNT_RG, account_name=STORAGE_ACCOUNT_NAME,
-                container_name=container_name, blob_container={},
+                resource_group_name=STORAGE_ACCOUNT_RG,
+                account_name=STORAGE_ACCOUNT_NAME,
+                container_name=container_name,
+                blob_container={},
             )
             container_created = True
 
             # 7. Cross-sub: grant the endpoint MSI Storage Blob Data Contributor on
             #    the container scope.
             role_definition_id = (
-                "/subscriptions/" + SYNTHETICS_SUBSCRIPTION_ID
+                "/subscriptions/"
+                + SYNTHETICS_SUBSCRIPTION_ID
                 + "/providers/Microsoft.Authorization/roleDefinitions/"
                 + STORAGE_BLOB_DATA_CONTRIBUTOR_ROLE_DEF_GUID
             )
             authorization_client.role_assignments.create(
-                scope=container_scope, role_assignment_name=role_assignment_name,
-                parameters={"properties": {
-                    "roleDefinitionId": role_definition_id,
-                    "principalId": target_msi_principal_id,
-                    "principalType": "ServicePrincipal",
-                }},
+                scope=container_scope,
+                role_assignment_name=role_assignment_name,
+                parameters={
+                    "properties": {
+                        "roleDefinitionId": role_definition_id,
+                        "principalId": target_msi_principal_id,
+                        "principalType": "ServicePrincipal",
+                    }
+                },
             )
             rbac_created = True
 
             # 8. Source MCC endpoint over the PRIVATE AWS S3 bucket.
             self.client.endpoints.create_or_update(
-                resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=source_endpoint,
-                endpoint={"properties": {
-                    "endpointType": "AzureMultiCloudConnector",
-                    "multiCloudConnectorId": MULTI_CLOUD_CONNECTOR_ID,
-                    "awsS3BucketId": PRIVATE_S3_BUCKET_ID,
-                    "endpointKind": "Source",
-                    "description": "privateMccSourceForJobRunWait",
-                }},
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                endpoint_name=source_endpoint,
+                endpoint={
+                    "properties": {
+                        "endpointType": "AzureMultiCloudConnector",
+                        "multiCloudConnectorId": MULTI_CLOUD_CONNECTOR_ID,
+                        "awsS3BucketId": PRIVATE_S3_BUCKET_ID,
+                        "endpointKind": "Source",
+                        "description": "privateMccSourceForJobRunWait",
+                    }
+                },
             )
 
             # 9. C2C job definition wired to the approved connection.
             self.client.job_definitions.create_or_update(
-                resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                project_name=project_name,
                 job_definition_name=job_definition_name,
-                job_definition={"properties": {
-                    "copyMode": "Additive",
-                    "sourceName": source_endpoint,
-                    "targetName": target_endpoint,
-                    "jobType": "CloudToCloud",
-                    "sourceSubpath": "/",
-                    "targetSubpath": "/",
-                    "connections": [connection.id],
-                    "description": "JobDefForJobRunWaitTest",
-                }},
+                job_definition={
+                    "properties": {
+                        "copyMode": "Additive",
+                        "sourceName": source_endpoint,
+                        "targetName": target_endpoint,
+                        "jobType": "CloudToCloud",
+                        "sourceSubpath": "/",
+                        "targetSubpath": "/",
+                        "connections": [connection.id],
+                        "description": "JobDefForJobRunWaitTest",
+                    }
+                },
             )
 
             # 10. Start the job. The RP returns the job-run resource id; extract basename.
             start_result = self.client.job_definitions.start_job(
-                resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                project_name=project_name,
                 job_definition_name=job_definition_name,
             )
             assert start_result.job_run_resource_id, "start_job did not return jobRunResourceId"
@@ -728,27 +822,27 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
             final_status = None
             for _ in range(60):
                 run = self.client.job_runs.get(
-                    resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
-                    job_definition_name=job_definition_name, job_run_name=job_run_name,
+                    resource_group_name=rg,
+                    storage_mover_name=sm_name,
+                    project_name=project_name,
+                    job_definition_name=job_definition_name,
+                    job_run_name=job_run_name,
                 )
-                current_status = (
-                    getattr(run.properties, "status", None) if run.properties is not None else None
-                )
+                current_status = getattr(run.properties, "status", None) if run.properties is not None else None
                 if current_status in terminal_states:
                     final_status = current_status
                     break
                 self.sleep(30)
-            assert final_status is not None, (
-                "Job run did not reach a terminal state within 30 min"
-            )
-            assert final_status == "Succeeded", (
-                "Expected job-run to Succeed with approved connection + target MSI RBAC, "
-                "got: " + str(final_status)
-            )
+            assert final_status is not None, "Job run did not reach a terminal state within 30 min"
+            assert (
+                final_status == "Succeeded"
+            ), "Expected job-run to Succeed with approved connection + target MSI RBAC, " "got: " + str(final_status)
 
             # Cleanup the job definition (other resources rolled back in finally).
             self.client.job_definitions.begin_delete(
-                resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                project_name=project_name,
                 job_definition_name=job_definition_name,
             ).result()
 
@@ -759,14 +853,16 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
             if rbac_created:
                 try:
                     authorization_client.role_assignments.delete(
-                        scope=container_scope, role_assignment_name=role_assignment_name,
+                        scope=container_scope,
+                        role_assignment_name=role_assignment_name,
                     )
                 except Exception:  # noqa: BLE001
                     pass
             if container_created:
                 try:
                     storage_client.blob_containers.delete(
-                        resource_group_name=STORAGE_ACCOUNT_RG, account_name=STORAGE_ACCOUNT_NAME,
+                        resource_group_name=STORAGE_ACCOUNT_RG,
+                        account_name=STORAGE_ACCOUNT_NAME,
                         container_name=container_name,
                     )
                 except Exception:  # noqa: BLE001
@@ -774,7 +870,8 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
             if connection_created:
                 try:
                     self.client.connections.begin_delete(
-                        resource_group_name=rg, storage_mover_name=sm_name,
+                        resource_group_name=rg,
+                        storage_mover_name=sm_name,
                         connection_name=connection_name,
                     ).result()
                 except Exception:  # noqa: BLE001
