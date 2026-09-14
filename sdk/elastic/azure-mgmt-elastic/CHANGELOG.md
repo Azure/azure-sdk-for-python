@@ -4,7 +4,7 @@
 
 ### Features Added
 
-  - Model `MonitorsOperations` added parameter `soft_delete` in method `begin_delete`
+  - Operation group `MonitorsOperations` added parameter `soft_delete` in method `begin_delete`
 
 ## 3.0.0 (2026-07-29)
 
