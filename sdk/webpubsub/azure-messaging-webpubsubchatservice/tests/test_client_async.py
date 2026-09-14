@@ -43,8 +43,8 @@ async def _capture_list_roles_request(client):
 @pytest.mark.asyncio
 async def test_async_connection_string_and_key_request_match_sync_behavior():
     client = WebPubSubChatServiceClient.from_connection_string(
-        f"Endpoint={ENDPOINT};AccessKey={ACCESS_KEY};Port=8443;Version=1.0;",
-        HUB,
+        conn_str=f"Endpoint={ENDPOINT};AccessKey={ACCESS_KEY};Port=8443;Version=1.0;",
+        hub=HUB,
     )
     try:
         request = await _capture_list_roles_request(client)

@@ -58,10 +58,10 @@ def test_constructor_validation(endpoint, hub, credential):
         WebPubSubChatServiceClient(endpoint=endpoint, hub=hub, credential=credential)
 
 
-@pytest.mark.parametrize("connection_string", [None, ""])
-def test_connection_string_validation(connection_string):
+@pytest.mark.parametrize("conn_str", [None, ""])
+def test_connection_string_validation(conn_str):
     with pytest.raises(ValueError):
-        WebPubSubChatServiceClient.from_connection_string(connection_string, HUB)
+        WebPubSubChatServiceClient.from_connection_string(conn_str=conn_str, hub=HUB)
 
 
 def test_malformed_connection_string_does_not_expose_input():

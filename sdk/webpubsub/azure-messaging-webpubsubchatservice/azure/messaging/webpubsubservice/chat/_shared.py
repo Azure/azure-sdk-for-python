@@ -59,7 +59,7 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
         request.http_request.headers["Authorization"] = "Bearer " + self._encode(url)
         return super(JwtCredentialPolicy, self).on_request(request)
 
-    def _encode(self, url: AzureKeyCredential) -> str:
+    def _encode(self, url: str) -> str:
         data = {
             "aud": url,
             "exp": datetime.now(tz=timezone.utc) + timedelta(seconds=60),

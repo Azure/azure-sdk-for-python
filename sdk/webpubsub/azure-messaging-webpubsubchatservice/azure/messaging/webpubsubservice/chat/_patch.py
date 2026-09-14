@@ -80,19 +80,19 @@ class WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated):
         )
 
     @classmethod
-    def from_connection_string(cls, connection_string: str, hub: str, **kwargs: Any) -> "WebPubSubChatServiceClient":
+    def from_connection_string(cls, conn_str: str, hub: str, **kwargs: Any) -> "WebPubSubChatServiceClient":
         """Create a client from a Web PubSub connection string.
 
-        :param connection_string: Web PubSub connection string.
-        :type connection_string: str
+        :param conn_str: Web PubSub connection string.
+        :type conn_str: str
         :param hub: Target hub name.
         :type hub: str
         :return: A Web PubSub Chat service client.
         :rtype: ~azure.messaging.webpubsubservice.chat.WebPubSubChatServiceClient
         """
-        if not connection_string:
-            raise ValueError("Parameter 'connection_string' must not be empty.")
-        parsed = _parse_connection_string(connection_string, **kwargs)
+        if not conn_str:
+            raise ValueError("Parameter 'conn_str' must not be empty.")
+        parsed = _parse_connection_string(conn_str, **kwargs)
         credential = AzureKeyCredential(parsed.pop("accesskey"))
         return cls(hub=hub, credential=credential, **parsed)
 
