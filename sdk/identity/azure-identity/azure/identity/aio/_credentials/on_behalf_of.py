@@ -117,9 +117,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
             # This credential hasn't yet exchanged its assertion, so its account isn't established. A cache shared
             # with other accounts must not satisfy this credential's first token request.
             return None
-        return self._client.get_cached_access_token(
-            scopes, home_account_id=self._client.last_home_account_id, **kwargs
-        )
+        return self._client.get_cached_access_token(scopes, home_account_id=self._client.last_home_account_id, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
         if self._client.token_exchanged:
