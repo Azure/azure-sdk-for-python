@@ -3,6 +3,10 @@
 ## 1.0.0b58 (Unreleased)
 
 ### Features Added
+- Handle `413 Payload Too Large` responses by splitting the batch and persisting each batch to
+  local storage for retry at a smaller size, instead of dropping the entire batch. A single
+  envelope that is too large to split is dropped.
+  ([#48548](https://github.com/Azure/azure-sdk-for-python/pull/48548))
 
 ### Breaking Changes
 
