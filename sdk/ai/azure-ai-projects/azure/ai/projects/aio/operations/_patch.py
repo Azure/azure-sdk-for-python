@@ -20,9 +20,9 @@ from ._patch_memories_async import BetaMemoryStoresOperations
 from ._patch_models_async import BetaModelsOperations
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
 from .._realtime import (
-    AsyncRealtime,
-    AsyncRealtimeConnection,
-    AsyncRealtimeConnectionManager,
+    AsyncBetaRealtime,
+    AsyncBetaRealtimeConnection,
+    AsyncBetaRealtimeConnectionManager,
     ClientEvent,
     ConversationItem,
     ServerEvent,
@@ -56,8 +56,8 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
     """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsConversationsOperations` operations"""
     telephony: BetaVoiceAgentsTelephonyOperations
     """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsTelephonyOperations` operations"""
-    realtime: AsyncRealtime
-    """:class:`~azure.ai.projects.aio.operations.AsyncRealtime` operations"""
+    realtime: AsyncBetaRealtime
+    """:class:`~azure.ai.projects.aio.operations.AsyncBetaRealtime` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -65,7 +65,7 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
         # discards a WebSocket upgrade, since azure-core's HTTP pipeline has no way to keep the
         # resulting socket alive -- with our hand-written client that manages a real,
         # long-lived connection.
-        self.realtime = AsyncRealtime(self)
+        self.realtime = AsyncBetaRealtime(self)
 
 
 class BetaOperations(GeneratedBetaOperations):
@@ -134,9 +134,9 @@ class BetaOperations(GeneratedBetaOperations):
 
 __all__: List[str] = [
     "AgentsOperations",
-    "AsyncRealtime",
-    "AsyncRealtimeConnection",
-    "AsyncRealtimeConnectionManager",
+    "AsyncBetaRealtime",
+    "AsyncBetaRealtimeConnection",
+    "AsyncBetaRealtimeConnectionManager",
     "BetaAgentInsightMonitorsOperations",
     "BetaAgentsOperations",
     "BetaDatasetsOperations",

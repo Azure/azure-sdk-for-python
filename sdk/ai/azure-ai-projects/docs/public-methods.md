@@ -42,7 +42,7 @@ There are a total of 198 unique public methods:
 | `beta.schedules` | BetaSchedulesOperations | 6 |
 | `beta.skills` | BetaSkillsOperations | 11 |
 | `beta.voice_agents.conversations` | BetaVoiceAgentsConversationsOperations | 14 |
-| `beta.voice_agents.realtime` | Realtime | 1 |
+| `beta.voice_agents.realtime` | BetaRealtime | 1 |
 | `beta.voice_agents.telephony` | BetaVoiceAgentsTelephonyOperations | 24 |
 
 ## Stable methods on the client

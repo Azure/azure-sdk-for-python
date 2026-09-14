@@ -8,7 +8,7 @@
 DESCRIPTION:
     End-to-end typed conversation using the ``client.beta.voice_agents.realtime`` namespace added
     on top of the generated azure-ai-projects client (see
-    ``azure.ai.projects.aio.operations.AsyncRealtime``).
+    ``azure.ai.projects.aio.operations.AsyncBetaRealtime``).
 
       1. Create a voice agent with conversation persistence enabled
          (`store=True`) so the conversation can be read back afterward.
@@ -48,10 +48,10 @@ from dotenv import load_dotenv
 from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
 
-# AsyncRealtimeConnection is re-exported dynamically via aio/operations/_patch.py's `__all__`;
+# AsyncBetaRealtimeConnection is re-exported dynamically via aio/operations/_patch.py's `__all__`;
 # pylint's static import resolution cannot trace that, but the symbol is valid (verified by
 # Pyright/mypy).
-from azure.ai.projects.aio.operations import AsyncRealtimeConnection  # pylint: disable=no-name-in-module
+from azure.ai.projects.aio.operations import AsyncBetaRealtimeConnection  # pylint: disable=no-name-in-module
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     RealtimeConversationItemMessageUser,
@@ -185,7 +185,7 @@ class _CancellationNotConfirmed(Exception):
     ``_RESPONSE_TIMEOUT``, leaving the stream in an unknown state."""
 
 
-async def _drain_cancelled_response(conn: "AsyncRealtimeConnection", response_id: Optional[str]) -> None:
+async def _drain_cancelled_response(conn: "AsyncBetaRealtimeConnection", response_id: Optional[str]) -> None:
     """Wait (bounded) for a just-cancelled response's terminal event, discarding it and any of
     its trailing content events, so the next turn's ``pump()`` doesn't mistake this stale
     completion for its own.
@@ -194,7 +194,7 @@ async def _drain_cancelled_response(conn: "AsyncRealtimeConnection", response_id
     :param response_id: The id of the response that was just cancelled, if it was captured from
      that response's ``response.created`` event. If None, the first terminal event seen is
      accepted, since there is nothing more specific to correlate against.
-    :type conn: ~azure.ai.projects.aio.AsyncRealtimeConnection
+    :type conn: ~azure.ai.projects.aio.AsyncBetaRealtimeConnection
     :type response_id: str or None
     :raises _CancellationNotConfirmed: If no matching terminal event arrives in time.
     """

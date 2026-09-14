@@ -22,7 +22,7 @@ from azure.core.credentials import AccessToken
 from websockets.typing import Subprotocol
 
 from azure.ai.projects._realtime import (
-    RealtimeConnectionManager,
+    BetaRealtimeConnectionManager,
     _assert_trusted_connection_url,
     _to_ws_url,
     _USER_AGENT,
@@ -46,7 +46,7 @@ class _FakeCredential:
         return AccessToken(self._token, 9_999_999_999)
 
 
-def _make_manager(**overrides) -> RealtimeConnectionManager:
+def _make_manager(**overrides) -> BetaRealtimeConnectionManager:
     kwargs = {
         "endpoint": _ENDPOINT,
         "credential": _FakeCredential(),
@@ -55,7 +55,7 @@ def _make_manager(**overrides) -> RealtimeConnectionManager:
         "agent_name": "my-agent",
     }
     kwargs.update(overrides)
-    return RealtimeConnectionManager(**kwargs)
+    return BetaRealtimeConnectionManager(**kwargs)
 
 
 class TestToWsUrl:
@@ -70,7 +70,7 @@ class TestToWsUrl:
 
     def test_non_https_endpoint_scheme_is_left_unchanged(self):
         # Regression test: _to_ws_url used to translate "http://" to "ws://", but
-        # RealtimeConnectionManager.enter() unconditionally rejects any non-"wss://" URL to
+        # BetaRealtimeConnectionManager.enter() unconditionally rejects any non-"wss://" URL to
         # protect the live Authorization token in transit, so that translated "ws://" URL could
         # never actually be used to connect. Leaving the scheme untouched here means the
         # downstream "wss://" check surfaces a clear error instead of an unreachable "ws://" path.
@@ -113,7 +113,7 @@ class TestAssertTrustedConnectionUrl:
 
 
 class TestRealtimeConnectionManagerEnter:
-    """Unit tests for ``RealtimeConnectionManager.enter()``: URL/header construction and errors."""
+    """Unit tests for ``BetaRealtimeConnectionManager.enter()``: URL/header construction and errors."""
 
     def test_enter_builds_bearer_auth_and_query(self):
         fake_connection = MagicMock()
@@ -189,7 +189,7 @@ class TestRealtimeConnectionManagerEnter:
         # a different (less safe) path. This inspects the actual source of `enter()` so a partial
         # revert -- one that drops the case-insensitive guard, say, while keeping the header value
         # correct for the common case -- is caught directly, independent of the tests above.
-        source = inspect.getsource(RealtimeConnectionManager.enter)
+        source = inspect.getsource(BetaRealtimeConnectionManager.enter)
         assert "_USER_AGENT" in source
         assert "_has_header_case_insensitive" in source
         assert "x-ms-client-sdk" in source
@@ -292,7 +292,7 @@ class TestRealtimeConnectionManagerEnter:
 
 
 class TestRealtimeConnectionRecv:
-    """Unit tests for ``RealtimeConnection.recv()``: event dispatch and error/timeout handling."""
+    """Unit tests for ``BetaRealtimeConnection.recv()``: event dispatch and error/timeout handling."""
 
     def test_recv_dispatches_known_event_type(self, request):
         fake_connection = MagicMock()
@@ -396,7 +396,7 @@ class TestRealtimeConnectionRecv:
 
 
 class TestRealtimeConnectionSend:
-    """Unit tests for ``RealtimeConnection.send()``: model/str/mapping serialization."""
+    """Unit tests for ``BetaRealtimeConnection.send()``: model/str/mapping serialization."""
 
     def test_send_serializes_typed_model(self, request):
         fake_connection = MagicMock()

@@ -13,9 +13,9 @@ import inspect
 from typing import Any, Callable, List
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _BETA_OPERATION_FEATURE_HEADERS, _has_header_case_insensitive
 from .._realtime import (
-    Realtime,
-    RealtimeConnection,
-    RealtimeConnectionManager,
+    BetaRealtime,
+    BetaRealtimeConnection,
+    BetaRealtimeConnectionManager,
     ClientEvent,
     ConversationItem,
     ServerEvent,
@@ -136,8 +136,8 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
     """:class:`~azure.ai.projects.operations.BetaVoiceAgentsConversationsOperations` operations"""
     telephony: BetaVoiceAgentsTelephonyOperations
     """:class:`~azure.ai.projects.operations.BetaVoiceAgentsTelephonyOperations` operations"""
-    realtime: Realtime
-    """:class:`~azure.ai.projects.operations.Realtime` operations"""
+    realtime: BetaRealtime
+    """:class:`~azure.ai.projects.operations.BetaRealtime` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -145,7 +145,7 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
         # discards a WebSocket upgrade, since azure-core's HTTP pipeline has no way to keep the
         # resulting socket alive -- with our hand-written client that manages a real,
         # long-lived connection.
-        self.realtime = Realtime(self)
+        self.realtime = BetaRealtime(self)
 
 
 class BetaOperations(GeneratedBetaOperations):
@@ -236,9 +236,9 @@ __all__: List[str] = [
     "ConversationItem",
     "DatasetsOperations",
     "EvaluationRulesOperations",
-    "Realtime",
-    "RealtimeConnection",
-    "RealtimeConnectionManager",
+    "BetaRealtime",
+    "BetaRealtimeConnection",
+    "BetaRealtimeConnectionManager",
     "ServerEvent",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level

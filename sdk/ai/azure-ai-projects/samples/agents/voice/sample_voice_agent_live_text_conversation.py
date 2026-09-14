@@ -8,7 +8,7 @@
 DESCRIPTION:
     End-to-end typed conversation using the ``client.beta.voice_agents.realtime`` namespace added
     on top of the generated azure-ai-projects client (see
-    ``azure.ai.projects.operations.Realtime``).
+    ``azure.ai.projects.operations.BetaRealtime``).
 
       1. Create a voice agent with conversation persistence enabled
          (`store=True`) so the conversation can be read back afterward.
@@ -71,7 +71,7 @@ from azure.ai.projects.models import (
 )
 
 if TYPE_CHECKING:
-    from azure.ai.projects.operations import RealtimeConnection
+    from azure.ai.projects.operations import BetaRealtimeConnection
 
 
 load_dotenv()
@@ -187,7 +187,7 @@ class _CancellationNotConfirmed(Exception):
     ``_RESPONSE_TIMEOUT``, leaving the stream in an unknown state."""
 
 
-def _drain_cancelled_response(conn: "RealtimeConnection", response_id: Optional[str]) -> None:
+def _drain_cancelled_response(conn: "BetaRealtimeConnection", response_id: Optional[str]) -> None:
     """Wait (bounded) for a just-cancelled response's terminal event, discarding it and any of
     its trailing content events, so the next turn's ``pump()`` doesn't mistake this stale
     completion for its own.
@@ -196,7 +196,7 @@ def _drain_cancelled_response(conn: "RealtimeConnection", response_id: Optional[
     :param response_id: The id of the response that was just cancelled, if it was captured from
      that response's ``response.created`` event. If None, the first terminal event seen is
      accepted, since there is nothing more specific to correlate against.
-    :type conn: ~azure.ai.projects.RealtimeConnection
+    :type conn: ~azure.ai.projects.BetaRealtimeConnection
     :type response_id: str or None
     :raises _CancellationNotConfirmed: If no matching terminal event arrives in time.
     """

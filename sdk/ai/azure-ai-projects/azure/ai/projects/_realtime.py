@@ -74,9 +74,9 @@ class _ConfigProvider(Protocol):
 
 
 __all__ = [
-    "Realtime",
-    "RealtimeConnection",
-    "RealtimeConnectionManager",
+    "BetaRealtime",
+    "BetaRealtimeConnection",
+    "BetaRealtimeConnectionManager",
     "ClientEvent",
     "ConversationItem",
     "ServerEvent",
@@ -136,7 +136,7 @@ _SERVER_EVENT_TYPES: Dict[str, Type[_Model]] = {
     ),
     "conversation.item.retrieved": _models.RealtimeServerEventConversationItemRetrieved,
     "conversation.item.truncated": _models.RealtimeServerEventConversationItemTruncated,
-    # Shared OpenAI-style Realtime error event (not voice-agent specific in this package).
+    # Shared OpenAI-style BetaRealtime error event (not voice-agent specific in this package).
     "error": _models.RealtimeServerEventError,
     "input_audio_buffer.cleared": _models.RealtimeServerEventInputAudioBufferCleared,
     "input_audio_buffer.committed": _models.RealtimeServerEventInputAudioBufferCommitted,
@@ -255,7 +255,7 @@ def _to_ws_url(endpoint: str, agent_name: str) -> str:
     """Build the realtime WebSocket URL from the HTTPS project endpoint.
 
     Only the ``https://`` scheme is translated (to ``wss://``); any other scheme is left
-    unchanged so that :meth:`RealtimeConnectionManager.enter`'s ``wss://``-only check rejects
+    unchanged so that :meth:`BetaRealtimeConnectionManager.enter`'s ``wss://``-only check rejects
     it with a clear error instead of silently producing an unencrypted ``ws://`` URL that would
     also send the live Authorization token in plain text.
 
@@ -322,7 +322,7 @@ def _assert_trusted_connection_url(connection_url: str, endpoint: str) -> None:
 class _BaseResource:  # pylint: disable=too-few-public-methods
     """Base helper that forwards typed helpers to the parent connection."""
 
-    def __init__(self, connection: "RealtimeConnection") -> None:
+    def __init__(self, connection: "BetaRealtimeConnection") -> None:
         self._connection = connection
 
     def _send(self, event: ClientEvent) -> None:
@@ -501,7 +501,7 @@ class ConversationItemResource(_BaseResource):
 class ConversationResource(_BaseResource):  # pylint: disable=too-few-public-methods
     """Send ``conversation.*`` client events."""
 
-    def __init__(self, connection: "RealtimeConnection") -> None:
+    def __init__(self, connection: "BetaRealtimeConnection") -> None:
         super().__init__(connection)
         self.item: ConversationItemResource = ConversationItemResource(connection)
 
@@ -547,7 +547,7 @@ class ResponseResource(_BaseResource):
         )
 
 
-class RealtimeConnection:  # pylint: disable=too-many-instance-attributes
+class BetaRealtimeConnection:  # pylint: disable=too-many-instance-attributes
     """An open realtime WebSocket connection to a voice agent.
 
     Iterate over the connection to receive strongly-typed server events, and use the
@@ -568,7 +568,7 @@ class RealtimeConnection:  # pylint: disable=too-many-instance-attributes
         self.conversation: ConversationResource = ConversationResource(self)
         self.response: ResponseResource = ResponseResource(self)
 
-    def __enter__(self) -> "RealtimeConnection":
+    def __enter__(self) -> "BetaRealtimeConnection":
         return self
 
     def __exit__(self, *exc_details: Any) -> None:
@@ -576,7 +576,7 @@ class RealtimeConnection:  # pylint: disable=too-many-instance-attributes
 
     def __repr__(self) -> str:
         state = "closed" if self.closed else "open"
-        return f"<RealtimeConnection [{state}]>"
+        return f"<BetaRealtimeConnection [{state}]>"
 
     @property
     def closed(self) -> bool:
@@ -675,10 +675,10 @@ class RealtimeConnection:  # pylint: disable=too-many-instance-attributes
             self._closed = True
 
 
-class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
-    """Context manager that opens a :class:`RealtimeConnection`.
+class BetaRealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
+    """Context manager that opens a :class:`BetaRealtimeConnection`.
 
-    Returned by :meth:`Realtime.connect`; you normally use it as
+    Returned by :meth:`BetaRealtime.connect`; you normally use it as
     ``with client.beta.voice_agents.realtime.connect(...) as conn:``.
     """
 
@@ -708,16 +708,16 @@ class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
         self._extra_query = dict(extra_query or {})
         self._extra_headers = dict(extra_headers or {})
         self._kwargs = kwargs
-        self._connection: Optional[RealtimeConnection] = None
+        self._connection: Optional[BetaRealtimeConnection] = None
 
-    def __enter__(self) -> RealtimeConnection:
+    def __enter__(self) -> BetaRealtimeConnection:
         return self.enter()
 
-    def enter(self) -> RealtimeConnection:  # pylint: disable=too-many-locals
+    def enter(self) -> BetaRealtimeConnection:  # pylint: disable=too-many-locals
         """Open the connection.
 
         :return: The live realtime connection.
-        :rtype: ~azure.ai.projects.RealtimeConnection
+        :rtype: ~azure.ai.projects.BetaRealtimeConnection
         :raises RuntimeError: If ``websockets`` is not installed.
         :raises ValueError: If the computed or supplied WebSocket URL does not use ``wss://``.
         :raises ConnectionError: If the WebSocket upgrade handshake fails (for example, a
@@ -795,7 +795,7 @@ class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
                 f"Failed to open the realtime WebSocket connection to voice agent "
                 f"'{self._agent_name}' at '{url}': {exc}"
             ) from exc
-        self._connection = RealtimeConnection(connection)
+        self._connection = BetaRealtimeConnection(connection)
         return self._connection
 
     def __exit__(self, *exc_details: Any) -> None:
@@ -804,8 +804,8 @@ class RealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
             self._connection = None
 
 
-class Realtime:  # pylint: disable=too-few-public-methods
-    """Realtime streaming entry point, exposed as ``client.beta.voice_agents.realtime``.
+class BetaRealtime:  # pylint: disable=too-few-public-methods
+    """BetaRealtime streaming entry point, exposed as ``client.beta.voice_agents.realtime``.
 
     Follows the OpenAI Python realtime surface: obtain it from the HTTP client and open a
     connection with :meth:`connect`::
@@ -843,7 +843,7 @@ class Realtime:  # pylint: disable=too-few-public-methods
         extra_query: Optional[Mapping[str, str]] = None,
         extra_headers: Optional[Mapping[str, str]] = None,
         **kwargs: Any,
-    ) -> RealtimeConnectionManager:
+    ) -> BetaRealtimeConnectionManager:
         """Open a realtime WebSocket connection to a voice agent.
 
         :keyword str agent_name: The name of the voice agent to connect to.
@@ -870,10 +870,10 @@ class Realtime:  # pylint: disable=too-few-public-methods
          ``{"Foundry-Features": "..."}`` here to override the ``VoiceAgents=V1Preview`` value
          this method always sends by default.
         :paramtype extra_headers: Mapping[str, str] or None
-        :return: A context manager yielding a :class:`RealtimeConnection`.
-        :rtype: ~azure.ai.projects.RealtimeConnectionManager
+        :return: A context manager yielding a :class:`BetaRealtimeConnection`.
+        :rtype: ~azure.ai.projects.BetaRealtimeConnectionManager
         """
-        return RealtimeConnectionManager(
+        return BetaRealtimeConnectionManager(
             endpoint=self._config.endpoint,
             credential=self._config.credential,
             credential_scopes=credential_scopes or self._config.credential_scopes,

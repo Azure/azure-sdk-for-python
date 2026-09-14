@@ -6,15 +6,15 @@
 # --------------------------------------------------------------------------
 """Hand-written async realtime (WebSocket) streaming client for voice agents.
 
-Realtime uses a fundamentally different transport (a persistent WebSocket) than the
+BetaRealtime uses a fundamentally different transport (a persistent WebSocket) than the
 request/response HTTP surface generated from the service's TypeSpec definition, so it is
 hand-written and exposed as the ``AIProjectClient.beta.voice_agents.realtime`` namespace.
 
 The connection ergonomics follow the OpenAI Python realtime client so that developers moving
 between the libraries get a familiar surface:
 
-* :meth:`AsyncRealtime.connect` returns an async context manager.
-* Entering the context yields an :class:`AsyncRealtimeConnection`.
+* :meth:`AsyncBetaRealtime.connect` returns an async context manager.
+* Entering the context yields an :class:`AsyncBetaRealtimeConnection`.
 * The connection is async-iterable over inbound, strongly-typed server events and exposes
   sub-namespaces (``session``, ``input_audio_buffer``, ``output_audio_buffer``,
   ``conversation``, ``response``) for sending strongly-typed outbound client events.
@@ -88,9 +88,9 @@ class _ConfigProvider(Protocol):
 
 
 __all__ = [
-    "AsyncRealtime",
-    "AsyncRealtimeConnection",
-    "AsyncRealtimeConnectionManager",
+    "AsyncBetaRealtime",
+    "AsyncBetaRealtimeConnection",
+    "AsyncBetaRealtimeConnectionManager",
     "ClientEvent",
     "ConversationItem",
     "ServerEvent",
@@ -150,7 +150,7 @@ _SERVER_EVENT_TYPES: Dict[str, Type[_Model]] = {
     ),
     "conversation.item.retrieved": _models.RealtimeServerEventConversationItemRetrieved,
     "conversation.item.truncated": _models.RealtimeServerEventConversationItemTruncated,
-    # Shared OpenAI-style Realtime error event (not voice-agent specific in this package).
+    # Shared OpenAI-style BetaRealtime error event (not voice-agent specific in this package).
     "error": _models.RealtimeServerEventError,
     "input_audio_buffer.cleared": _models.RealtimeServerEventInputAudioBufferCleared,
     "input_audio_buffer.committed": _models.RealtimeServerEventInputAudioBufferCommitted,
@@ -269,7 +269,7 @@ def _to_ws_url(endpoint: str, agent_name: str) -> str:
     """Build the realtime WebSocket URL from the HTTPS project endpoint.
 
     Only the ``https://`` scheme is translated (to ``wss://``); any other scheme is left
-    unchanged so that :meth:`AsyncRealtimeConnectionManager.enter`'s ``wss://``-only check
+    unchanged so that :meth:`AsyncBetaRealtimeConnectionManager.enter`'s ``wss://``-only check
     rejects it with a clear error instead of silently producing an unencrypted ``ws://`` URL
     that would also send the live Authorization token in plain text.
 
@@ -336,7 +336,7 @@ def _assert_trusted_connection_url(connection_url: str, endpoint: str) -> None:
 class _BaseResource:  # pylint: disable=too-few-public-methods
     """Base helper that forwards typed helpers to the parent connection."""
 
-    def __init__(self, connection: "AsyncRealtimeConnection") -> None:
+    def __init__(self, connection: "AsyncBetaRealtimeConnection") -> None:
         self._connection = connection
 
     async def _send(self, event: ClientEvent) -> None:
@@ -517,7 +517,7 @@ class ConversationItemResource(_BaseResource):
 class ConversationResource(_BaseResource):  # pylint: disable=too-few-public-methods
     """Send ``conversation.*`` client events."""
 
-    def __init__(self, connection: "AsyncRealtimeConnection") -> None:
+    def __init__(self, connection: "AsyncBetaRealtimeConnection") -> None:
         super().__init__(connection)
         self.item: ConversationItemResource = ConversationItemResource(connection)
 
@@ -565,11 +565,11 @@ class ResponseResource(_BaseResource):
 
 class _AbnormalWebSocketClosure(Exception):
     """Internal marker chained onto :exc:`ConnectionResetError` for a non-graceful WebSocket
-    closure (an abnormal close code), so :meth:`AsyncRealtimeConnection._iter` can tell it apart
+    closure (an abnormal close code), so :meth:`AsyncBetaRealtimeConnection._iter` can tell it apart
     from a normal end of stream, which chains no cause."""
 
 
-class AsyncRealtimeConnection:  # pylint: disable=too-many-instance-attributes
+class AsyncBetaRealtimeConnection:  # pylint: disable=too-many-instance-attributes
     """An open realtime WebSocket connection to a voice agent.
 
     Iterate over the connection to receive strongly-typed server events, and use the
@@ -593,7 +593,7 @@ class AsyncRealtimeConnection:  # pylint: disable=too-many-instance-attributes
         self.conversation: ConversationResource = ConversationResource(self)
         self.response: ResponseResource = ResponseResource(self)
 
-    async def __aenter__(self) -> "AsyncRealtimeConnection":
+    async def __aenter__(self) -> "AsyncBetaRealtimeConnection":
         return self
 
     async def __aexit__(self, *exc_details: Any) -> None:
@@ -601,7 +601,7 @@ class AsyncRealtimeConnection:  # pylint: disable=too-many-instance-attributes
 
     def __repr__(self) -> str:
         state = "closed" if self.closed else "open"
-        return f"<AsyncRealtimeConnection [{state}]>"
+        return f"<AsyncBetaRealtimeConnection [{state}]>"
 
     @property
     def closed(self) -> bool:
@@ -701,10 +701,10 @@ class AsyncRealtimeConnection:  # pylint: disable=too-many-instance-attributes
             await self._session.close()
 
 
-class AsyncRealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
-    """Async context manager that opens an :class:`AsyncRealtimeConnection`.
+class AsyncBetaRealtimeConnectionManager:  # pylint: disable=too-many-instance-attributes
+    """Async context manager that opens an :class:`AsyncBetaRealtimeConnection`.
 
-    Returned by :meth:`AsyncRealtime.connect`; you normally use it as
+    Returned by :meth:`AsyncBetaRealtime.connect`; you normally use it as
     ``async with client.beta.voice_agents.realtime.connect(...) as conn:``.
     """
 
@@ -734,16 +734,16 @@ class AsyncRealtimeConnectionManager:  # pylint: disable=too-many-instance-attri
         self._extra_query = dict(extra_query or {})
         self._extra_headers = dict(extra_headers or {})
         self._kwargs = kwargs
-        self._connection: Optional[AsyncRealtimeConnection] = None
+        self._connection: Optional[AsyncBetaRealtimeConnection] = None
 
-    async def __aenter__(self) -> AsyncRealtimeConnection:
+    async def __aenter__(self) -> AsyncBetaRealtimeConnection:
         return await self.enter()
 
-    async def enter(self) -> AsyncRealtimeConnection:  # pylint: disable=too-many-locals
+    async def enter(self) -> AsyncBetaRealtimeConnection:  # pylint: disable=too-many-locals
         """Open the connection.
 
         :return: The live realtime connection.
-        :rtype: ~azure.ai.projects.aio.AsyncRealtimeConnection
+        :rtype: ~azure.ai.projects.aio.AsyncBetaRealtimeConnection
         :raises RuntimeError: If ``aiohttp`` is not installed.
         :raises ValueError: If the computed or supplied WebSocket URL does not use ``wss://``.
         :raises ConnectionError: If the WebSocket upgrade handshake fails (for example, a
@@ -806,7 +806,7 @@ class AsyncRealtimeConnectionManager:  # pylint: disable=too-many-instance-attri
                 f"Failed to open the realtime WebSocket connection to voice agent "
                 f"'{self._agent_name}' at '{url}': {exc}"
             ) from exc
-        self._connection = AsyncRealtimeConnection(cast("ClientWebSocketResponse", connection), session)
+        self._connection = AsyncBetaRealtimeConnection(cast("ClientWebSocketResponse", connection), session)
         return self._connection
 
     async def __aexit__(self, *exc_details: Any) -> None:
@@ -815,8 +815,8 @@ class AsyncRealtimeConnectionManager:  # pylint: disable=too-many-instance-attri
             self._connection = None
 
 
-class AsyncRealtime:  # pylint: disable=too-few-public-methods
-    """Realtime streaming entry point, exposed as ``client.beta.voice_agents.realtime``.
+class AsyncBetaRealtime:  # pylint: disable=too-few-public-methods
+    """BetaRealtime streaming entry point, exposed as ``client.beta.voice_agents.realtime``.
 
     Follows the OpenAI Python realtime surface: obtain it from the HTTP client and open a
     connection with :meth:`connect`::
@@ -854,7 +854,7 @@ class AsyncRealtime:  # pylint: disable=too-few-public-methods
         extra_query: Optional[Mapping[str, str]] = None,
         extra_headers: Optional[Mapping[str, str]] = None,
         **kwargs: Any,
-    ) -> AsyncRealtimeConnectionManager:
+    ) -> AsyncBetaRealtimeConnectionManager:
         """Open a realtime WebSocket connection to a voice agent.
 
         :keyword str agent_name: The name of the voice agent to connect to.
@@ -881,10 +881,10 @@ class AsyncRealtime:  # pylint: disable=too-few-public-methods
          ``{"Foundry-Features": "..."}`` here to override the ``VoiceAgents=V1Preview`` value
          this method always sends by default.
         :paramtype extra_headers: Mapping[str, str] or None
-        :return: An async context manager yielding an :class:`AsyncRealtimeConnection`.
-        :rtype: ~azure.ai.projects.aio.AsyncRealtimeConnectionManager
+        :return: An async context manager yielding an :class:`AsyncBetaRealtimeConnection`.
+        :rtype: ~azure.ai.projects.aio.AsyncBetaRealtimeConnectionManager
         """
-        return AsyncRealtimeConnectionManager(
+        return AsyncBetaRealtimeConnectionManager(
             endpoint=self._config.endpoint,
             credential=self._config.credential,
             credential_scopes=credential_scopes or self._config.credential_scopes,

@@ -20,7 +20,7 @@ from urllib.parse import parse_qs, urlparse
 import pytest
 from azure.core.credentials import AccessToken
 
-from azure.ai.projects.aio._realtime import AsyncRealtimeConnectionManager, _USER_AGENT
+from azure.ai.projects.aio._realtime import AsyncBetaRealtimeConnectionManager, _USER_AGENT
 from azure.ai.projects._version import VERSION
 from azure.ai.projects.models import (
     RealtimeClientEventResponseCreate,
@@ -42,7 +42,7 @@ class _AsyncFakeCredential:
         return AccessToken(self._token, 9_999_999_999)
 
 
-def _make_manager(**overrides) -> AsyncRealtimeConnectionManager:
+def _make_manager(**overrides) -> AsyncBetaRealtimeConnectionManager:
     kwargs = {
         "endpoint": _ENDPOINT,
         "credential": _AsyncFakeCredential(),
@@ -51,7 +51,7 @@ def _make_manager(**overrides) -> AsyncRealtimeConnectionManager:
         "agent_name": "my-agent",
     }
     kwargs.update(overrides)
-    return AsyncRealtimeConnectionManager(**kwargs)
+    return AsyncBetaRealtimeConnectionManager(**kwargs)
 
 
 def _make_fake_msg(msg_type, data=None):
@@ -77,7 +77,7 @@ def _patch_client_session(fake_ws_connection):
 
 
 class TestAsyncRealtimeConnectionManagerEnter:
-    """Unit tests for ``AsyncRealtimeConnectionManager.enter()``: URL/header construction and errors."""
+    """Unit tests for ``AsyncBetaRealtimeConnectionManager.enter()``: URL/header construction and errors."""
 
     async def test_enter_builds_bearer_auth_and_query(self):
         fake_ws = _make_fake_ws()
@@ -169,7 +169,7 @@ class TestAsyncRealtimeConnectionManagerEnter:
         # a different (less safe) path. This inspects the actual source of `enter()` so a partial
         # revert -- one that drops the case-insensitive guard, say, while keeping the header value
         # correct for the common case -- is caught directly, independent of the tests above.
-        source = inspect.getsource(AsyncRealtimeConnectionManager.enter)
+        source = inspect.getsource(AsyncBetaRealtimeConnectionManager.enter)
         assert "_USER_AGENT" in source
         assert "_has_header_case_insensitive" in source
         assert "x-ms-client-sdk" in source
@@ -226,7 +226,7 @@ class TestAsyncRealtimeConnectionManagerEnter:
 
 
 class TestAsyncRealtimeConnectionRecv:
-    """Unit tests for ``AsyncRealtimeConnection.recv()``: event dispatch and non-text frames."""
+    """Unit tests for ``AsyncBetaRealtimeConnection.recv()``: event dispatch and non-text frames."""
 
     async def test_recv_dispatches_known_event_type(self):
         import aiohttp
@@ -373,7 +373,7 @@ class TestAsyncRealtimeConnectionRecv:
 
 
 class TestAsyncRealtimeConnectionSend:
-    """Unit tests for ``AsyncRealtimeConnection.send()``: model/str/mapping serialization."""
+    """Unit tests for ``AsyncBetaRealtimeConnection.send()``: model/str/mapping serialization."""
 
     async def test_send_serializes_typed_model(self):
         fake_ws = _make_fake_ws()

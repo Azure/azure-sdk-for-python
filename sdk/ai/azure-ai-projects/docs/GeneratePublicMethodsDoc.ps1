@@ -56,8 +56,8 @@ def unwrap_operation(value: Any) -> Any:
 
 # Hand-written sub-client classes that don't follow the generated *Operations naming
 # convention but are still part of the public surface and should be discovered/counted the
-# same way, e.g. `beta.voice_agents.realtime` (`Realtime`/`AsyncRealtime`).
-_HANDWRITTEN_SUBCLIENT_CLASS_NAMES = {"Realtime", "AsyncRealtime"}
+# same way, e.g. `beta.voice_agents.realtime` (`BetaRealtime`/`AsyncBetaRealtime`).
+_HANDWRITTEN_SUBCLIENT_CLASS_NAMES = {"BetaRealtime", "AsyncBetaRealtime"}
 
 
 def _is_operation_group(value: Any) -> bool:

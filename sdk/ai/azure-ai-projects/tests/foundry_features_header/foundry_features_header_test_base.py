@@ -78,7 +78,7 @@ EXCLUDED_BETA_METHODS: dict[str, frozenset] = {
 # which excludes specific methods on an otherwise-testable sub-client).
 #
 # `realtime` is a hand-written WebSocket entry point (azure/ai/projects/_realtime.py):
-# `Realtime.connect(...)` synchronously builds and returns a RealtimeConnectionManager without
+# `BetaRealtime.connect(...)` synchronously builds and returns a BetaRealtimeConnectionManager without
 # performing any I/O -- the actual WebSocket handshake (which carries its own dedicated
 # Foundry-Features header) only happens later, on `__enter__`/`__aenter__`. So it never triggers
 # CapturingTransport, and doesn't have an EXPECTED_FOUNDRY_FEATURES entry. Its header behavior is

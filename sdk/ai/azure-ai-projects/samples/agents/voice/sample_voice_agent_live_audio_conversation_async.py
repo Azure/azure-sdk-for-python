@@ -8,7 +8,7 @@
 DESCRIPTION:
     End-to-end hands-free, bidirectional voice conversation using the
     ``client.beta.voice_agents.realtime`` namespace added on top of the generated
-    azure-ai-projects client (see ``azure.ai.projects.aio.operations.AsyncRealtime``).
+    azure-ai-projects client (see ``azure.ai.projects.aio.operations.AsyncBetaRealtime``).
     This mirrors the ergonomics of the OpenAI Python realtime client.
 
       1. Create a voice agent with conversation persistence enabled
@@ -56,10 +56,10 @@ from dotenv import load_dotenv
 from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
 
-# AsyncRealtimeConnection is re-exported dynamically via aio/operations/_patch.py's `__all__`;
+# AsyncBetaRealtimeConnection is re-exported dynamically via aio/operations/_patch.py's `__all__`;
 # pylint's static import resolution cannot trace that, but the symbol is valid (verified by
 # Pyright/mypy).
-from azure.ai.projects.aio.operations import AsyncRealtimeConnection  # pylint: disable=no-name-in-module
+from azure.ai.projects.aio.operations import AsyncBetaRealtimeConnection  # pylint: disable=no-name-in-module
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     RealtimeServerEventConversationItemInputAudioTranscriptionCompleted,
@@ -135,7 +135,7 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
       a barge-in is dropped, stopping playback the instant the user speaks.
     """
 
-    def __init__(self, connection: "AsyncRealtimeConnection") -> None:
+    def __init__(self, connection: "AsyncBetaRealtimeConnection") -> None:
         self._conn = connection
         self._loop: Optional[asyncio.AbstractEventLoop] = None
         self._audio = pyaudio.PyAudio()
