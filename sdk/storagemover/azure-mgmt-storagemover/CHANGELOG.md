@@ -27,7 +27,7 @@
   - Model `SmbMountEndpointProperties` added property `source_type`
   - Added enum `NfsMountSourceType`
   - Added enum `SmbMountSourceType`
-  - Model `JobDefinitionsOperations` added method `reconcile_job`
+  - Operation group `JobDefinitionsOperations` added method `reconcile_job`
 
 ## 3.1.0 (2026-04-06)
 
