@@ -113,14 +113,16 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         await self._client.close()
 
     async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
-        if not self._client.token_exchanged:
-            # This credential hasn't yet exchanged its assertion, so its account isn't established. A cache shared
-            # with other accounts must not satisfy this credential's first token request.
+        if not self._client.token_exchanged or not self._client.last_home_account_id:
+            # Either this credential hasn't yet exchanged its assertion, so its account isn't established, or it
+            # did but the STS response didn't let us determine the resulting account's identity. In both cases, a
+            # cache shared with other accounts must not satisfy this credential's token request because doing so
+            # risks returning another account's token.
             return None
         return self._client.get_cached_access_token(scopes, home_account_id=self._client.last_home_account_id, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
-        if self._client.token_exchanged:
+        if self._client.token_exchanged and self._client.last_home_account_id:
             # Note we assume the cache has tokens for one user only. That's okay because each instance of this class
             # is locked to a single user (assertion). This assumption will become unsafe if this class allows
             # applications to change an instance's assertion.
