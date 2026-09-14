@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.iothub import IotHubClient
     pip install azure-identity
     pip install azure-mgmt-iothub
 # USAGE
-    python iothub_create_or_update.py
+    python create_or_replace_iot_hub.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -35,7 +36,6 @@ def main():
         resource_name="testHub",
         iot_hub_description={
             "etag": "AAAAAAFD6M4=",
-            "identity": {"type": "SystemAssigned"},
             "location": "centraluseuap",
             "properties": {
                 "cloudToDevice": {
@@ -69,18 +69,6 @@ def main():
                 "routing": {
                     "endpoints": {
                         "eventHubs": [],
-                        "eventStreams": [
-                            {
-                                "authenticationType": "identityBased",
-                                "endpointUri": "sb://eventstreamcustomsourceehns.azure.servicebus.net",
-                                "entityPath": "eventstreamcustomsourceeh",
-                                "eventStreamId": "22222222-2222-2222-2222-222222222222",
-                                "messagePayloadFormat": "DOObservationV1",
-                                "name": "eventstreamendpoint1",
-                                "sourceId": "33333333-3333-3333-3333-333333333333",
-                                "workspaceId": "11111111-1111-1111-1111-111111111111",
-                            }
-                        ],
                         "serviceBusQueues": [],
                         "serviceBusTopics": [],
                         "storageContainers": [],
@@ -92,7 +80,16 @@ def main():
                         "name": "$fallback",
                         "source": "DeviceMessages",
                     },
-                    "routes": [],
+                    "routes": [
+                        {
+                            "condition": "true",
+                            "dataSchema": "aio-sr://aiosaalkopkedev/62a24af1d7db61cd44b2ad6b6c3f4ab7312be447f89ff3401d18357d0d05ce3a:1",
+                            "endpointNames": ["events"],
+                            "isEnabled": True,
+                            "name": "Routeid",
+                            "source": "DeviceMessages",
+                        }
+                    ],
                 },
                 "storageEndpoints": {
                     "$default": {"connectionString": "", "containerName": "", "sasTtlAsIso8601": "PT1H"}
@@ -105,6 +102,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-10-01-preview/iothub_createOrUpdate.json
+# x-ms-original-file: 2026-10-01-preview/CreateOrReplace_IotHub.json
 if __name__ == "__main__":
     main()

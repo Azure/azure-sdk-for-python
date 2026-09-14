@@ -15,7 +15,7 @@ from azure.mgmt.iothub import IotHubClient
     pip install azure-identity
     pip install azure-mgmt-iothub
 # USAGE
-    python iothub_deleteprivateendpointconnection.py
+    python get_iot_hub_with_device_registry_linking_error.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.private_endpoint_connections.begin_delete(
+    response = client.iot_hub_resource.get(
         resource_group_name="myResourceGroup",
         resource_name="testHub",
-        private_endpoint_connection_name="myPrivateEndpointConnection",
-    ).result()
+    )
     print(response)
 
 
-# x-ms-original-file: 2026-10-01-preview/iothub_deleteprivateendpointconnection.json
+# x-ms-original-file: 2026-10-01-preview/Get_IotHub_With_DeviceRegistry_Linking_Error.json
 if __name__ == "__main__":
     main()
