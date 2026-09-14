@@ -1,11 +1,11 @@
 {
-  "apiVersion": "2025-10-01",
+  "apiVersion": "2026-04-01",
   "apiVersions": {
-    "Microsoft.Network": "2025-10-01"
+    "Microsoft.Network": "2026-04-01"
   },
-  "commit": "12be16fab6dbfd11c55daefb35c28548f34c3f5c",
+  "commit": "530ebfb31d6cf1b28f2c475013b0657d1a01c2a6",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/frontdoor/resource-manager/Microsoft.Network/FrontDoor",
-  "emitterVersion": "0.63.2",
-  "httpClientPythonVersion": "^0.33.0"
+  "emitterVersion": "0.63.7",
+  "httpClientPythonVersion": "^0.37.2"
 }

@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-10-01/NetworkExperimentGetPreconfiguredEndpoints.json
+# x-ms-original-file: 2026-04-01/NetworkExperimentGetPreconfiguredEndpoints.json
 if __name__ == "__main__":
     main()

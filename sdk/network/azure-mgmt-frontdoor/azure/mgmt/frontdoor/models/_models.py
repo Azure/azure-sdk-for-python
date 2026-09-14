@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Backend(_Model):
+class Backend(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backend address of a frontDoor load balancer.
 
     :ivar address: Location of the backend (IP address or FQDN).
@@ -128,7 +128,7 @@ class Backend(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubResource(_Model):
+class SubResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reference to another subresource.
 
     :ivar id: Resource ID.
@@ -156,7 +156,7 @@ class SubResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackendPool(SubResource):
+class BackendPool(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A backend pool is a collection of backends that can be routed to.
 
     :ivar id: Resource ID.
@@ -218,7 +218,7 @@ class BackendPool(SubResource):
             super().__setattr__(key, value)
 
 
-class BackendPoolUpdateParameters(_Model):
+class BackendPoolUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A collection of backends that can be routed to.
 
     :ivar backends: The set of backends for this pool.
@@ -260,7 +260,7 @@ class BackendPoolUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackendPoolProperties(BackendPoolUpdateParameters):
+class BackendPoolProperties(BackendPoolUpdateParameters):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties required to create a Backend Pool.
 
     :ivar backends: The set of backends for this pool.
@@ -302,7 +302,7 @@ class BackendPoolProperties(BackendPoolUpdateParameters):
         super().__init__(*args, **kwargs)
 
 
-class BackendPoolsSettings(_Model):
+class BackendPoolsSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings that apply to all backend pools.
 
     :ivar enforce_certificate_name_check: Whether to enforce certificate name check on HTTPS
@@ -364,7 +364,7 @@ class BasicResource(_Model):
     """Resource type."""
 
 
-class BasicResourceWithSettableIDName(_Model):
+class BasicResourceWithSettableIDName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Common resource representation.
 
     :ivar id: Resource ID.
@@ -401,7 +401,7 @@ class BasicResourceWithSettableIDName(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CacheConfiguration(_Model):
+class CacheConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Caching settings for a caching-type route. To disable caching, do not provide a
     cacheConfiguration object.
 
@@ -463,7 +463,7 @@ class CacheConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityInput(_Model):
+class CheckNameAvailabilityInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input of CheckNameAvailability API.
 
     :ivar name: The resource name to validate. Required.
@@ -520,7 +520,7 @@ class CheckNameAvailabilityOutput(_Model):
     """The detailed error message describing why the name is not available."""
 
 
-class CustomHttpsConfiguration(_Model):
+class CustomHttpsConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Https settings for a domain.
 
     :ivar certificate_source: Defines the source of the SSL certificate. Required. Known values
@@ -611,7 +611,7 @@ class CustomHttpsConfiguration(_Model):
             super().__setattr__(key, value)
 
 
-class CustomRule(_Model):
+class CustomRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines contents of a web application rule.
 
     :ivar name: Describes the name of the rule.
@@ -699,7 +699,7 @@ class CustomRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomRuleList(_Model):
+class CustomRuleList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines contents of custom rules.
 
     :ivar rules: List of rules.
@@ -727,7 +727,7 @@ class CustomRuleList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefaultErrorResponse(_Model):
+class DefaultErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response indicates Front Door service is not able to process the incoming request. The
     reason is provided in the error message.
 
@@ -773,7 +773,7 @@ class DefaultErrorResponseError(_Model):
     """Error message indicating why the operation failed."""
 
 
-class Endpoint(_Model):
+class Endpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the endpoint properties.
 
     :ivar name: The name of the endpoint.
@@ -822,7 +822,7 @@ class ErrorResponse(_Model):
     """Error message indicating why the operation failed."""
 
 
-class Resource(_Model):
+class Resource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Common resource representation.
 
     :ivar id: Resource ID.
@@ -867,7 +867,7 @@ class Resource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Experiment(Resource):
+class Experiment(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the properties of an Experiment.
 
     :ivar id: Resource ID.
@@ -937,7 +937,7 @@ class Experiment(Resource):
             super().__setattr__(key, value)
 
 
-class ExperimentProperties(_Model):
+class ExperimentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the properties of an experiment.
 
     :ivar description: The description of the details or intents of the Experiment.
@@ -1002,7 +1002,7 @@ class ExperimentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExperimentUpdateModel(_Model):
+class ExperimentUpdateModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines modifiable attributes of an Experiment.
 
     :ivar tags: Resource tags.
@@ -1057,7 +1057,7 @@ class ExperimentUpdateModel(_Model):
             super().__setattr__(key, value)
 
 
-class ExperimentUpdateProperties(_Model):
+class ExperimentUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the properties of an experiment.
 
     :ivar description: The description of the intent or details of the Experiment.
@@ -1092,7 +1092,7 @@ class ExperimentUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RouteConfiguration(_Model):
+class RouteConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for all types of Route.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1126,7 +1126,7 @@ class RouteConfiguration(_Model):
 
 class ForwardingConfiguration(
     RouteConfiguration, discriminator="#Microsoft.Azure.FrontDoor.Models.FrontdoorForwardingConfiguration"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes Forwarding Route.
 
     :ivar custom_forwarding_path: A custom path used to rewrite resource paths matched by this
@@ -1188,7 +1188,7 @@ class ForwardingConfiguration(
         self.odata_type = "#Microsoft.Azure.FrontDoor.Models.FrontdoorForwardingConfiguration"  # type: ignore
 
 
-class FrontDoor(Resource):
+class FrontDoor(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Front Door represents a collection of backend endpoints to route traffic to along with rules
     that specify how traffic is sent there.
 
@@ -1266,7 +1266,7 @@ class FrontDoor(Resource):
             super().__setattr__(key, value)
 
 
-class FrontDoorCertificateSourceParameters(_Model):
+class FrontDoorCertificateSourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters required for enabling SSL with Front Door-managed certificates.
 
     :ivar certificate_type: Defines the type of the certificate used for secure connections to a
@@ -1298,7 +1298,7 @@ class FrontDoorCertificateSourceParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FrontDoorUpdateParameters(_Model):
+class FrontDoorUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties needed to update a Front Door.
 
     :ivar friendly_name: A friendly name for the frontDoor.
@@ -1380,7 +1380,7 @@ class FrontDoorUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FrontDoorProperties(FrontDoorUpdateParameters):
+class FrontDoorProperties(FrontDoorUpdateParameters):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties required to create an endpoint.
 
     :ivar friendly_name: A friendly name for the frontDoor.
@@ -1459,7 +1459,7 @@ class FrontDoorProperties(FrontDoorUpdateParameters):
         super().__init__(*args, **kwargs)
 
 
-class FrontendEndpoint(BasicResourceWithSettableIDName):
+class FrontendEndpoint(BasicResourceWithSettableIDName):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A frontend endpoint used for routing.
 
     :ivar id: Resource ID.
@@ -1526,7 +1526,7 @@ class FrontendEndpoint(BasicResourceWithSettableIDName):
             super().__setattr__(key, value)
 
 
-class FrontendEndpointLink(_Model):
+class FrontendEndpointLink(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the Resource ID for a Frontend Endpoint.
 
     :ivar id: Resource ID.
@@ -1554,7 +1554,7 @@ class FrontendEndpointLink(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FrontendEndpointUpdateParameters(_Model):
+class FrontendEndpointUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Frontend endpoint used in routing rule.
 
     :ivar host_name: The host name of the frontendEndpoint. Must be a domain name.
@@ -1612,7 +1612,9 @@ class FrontendEndpointUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FrontendEndpointProperties(FrontendEndpointUpdateParameters):
+class FrontendEndpointProperties(
+    FrontendEndpointUpdateParameters
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties required to create a frontend endpoint.
 
     :ivar host_name: The host name of the frontendEndpoint. Must be a domain name.
@@ -1697,7 +1699,9 @@ class FrontendEndpointProperties(FrontendEndpointUpdateParameters):
         super().__init__(*args, **kwargs)
 
 
-class FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink(_Model):  # pylint: disable=name-too-long
+class FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Defines the Web Application Firewall policy for each host (if applicable).
 
     :ivar id: Resource ID.
@@ -1725,11 +1729,11 @@ class FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink(_Model): 
         super().__init__(*args, **kwargs)
 
 
-class GroupByVariable(_Model):
+class GroupByVariable(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the variables available to group the rate limit requests.
 
     :ivar variable_name: Describes the supported variable for group by. Required. Known values are:
-     "SocketAddr", "GeoLocation", and "None".
+     "SocketAddr", "GeoLocation", "None", "Asn", and "Ja4".
     :vartype variable_name: str or ~azure.mgmt.frontdoor.models.VariableName
     """
 
@@ -1737,7 +1741,7 @@ class GroupByVariable(_Model):
         name="variableName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Describes the supported variable for group by. Required. Known values are: \"SocketAddr\",
-     \"GeoLocation\", and \"None\"."""
+     \"GeoLocation\", \"None\", \"Asn\", and \"Ja4\"."""
 
     @overload
     def __init__(
@@ -1757,7 +1761,7 @@ class GroupByVariable(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HeaderAction(_Model):
+class HeaderAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An action that can manipulate an http header.
 
     :ivar header_action_type: Which type of manipulation to apply to the header. Required. Known
@@ -1801,7 +1805,7 @@ class HeaderAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthProbeSettingsModel(SubResource):
+class HealthProbeSettingsModel(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Load balancing settings for a backend pool.
 
     :ivar id: Resource ID.
@@ -1870,7 +1874,7 @@ class HealthProbeSettingsModel(SubResource):
             super().__setattr__(key, value)
 
 
-class HealthProbeSettingsUpdateParameters(_Model):
+class HealthProbeSettingsUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """L7 health probe settings for a backend pool.
 
     :ivar path: The path to use for the health probe. Default is /.
@@ -1932,7 +1936,9 @@ class HealthProbeSettingsUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthProbeSettingsProperties(HealthProbeSettingsUpdateParameters):
+class HealthProbeSettingsProperties(
+    HealthProbeSettingsUpdateParameters
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties required to create a health probe settings.
 
     :ivar path: The path to use for the health probe. Default is /.
@@ -1983,7 +1989,7 @@ class HealthProbeSettingsProperties(HealthProbeSettingsUpdateParameters):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultCertificateSourceParameters(_Model):
+class KeyVaultCertificateSourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters required for bring-your-own-certification via Key Vault.
 
     :ivar vault: The Key Vault containing the SSL certificate.
@@ -2028,7 +2034,7 @@ class KeyVaultCertificateSourceParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultCertificateSourceParametersVault(_Model):
+class KeyVaultCertificateSourceParametersVault(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Key Vault containing the SSL certificate.
 
     :ivar id: Resource ID.
@@ -2103,7 +2109,7 @@ class LatencyMetric(_Model):
     """The upper end of the 95% confidence interval for endpoint B."""
 
 
-class LatencyScorecard(Resource):
+class LatencyScorecard(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the LatencyScorecard.
 
     :ivar id: Resource ID.
@@ -2175,7 +2181,7 @@ class LatencyScorecard(Resource):
             super().__setattr__(key, value)
 
 
-class LatencyScorecardProperties(_Model):
+class LatencyScorecardProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a the properties of a Latency Scorecard.
 
     :ivar id: The unique identifier of the Latency Scorecard.
@@ -2245,7 +2251,7 @@ class LatencyScorecardProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LoadBalancingSettingsModel(SubResource):
+class LoadBalancingSettingsModel(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Load balancing settings for a backend pool.
 
     :ivar id: Resource ID.
@@ -2312,7 +2318,7 @@ class LoadBalancingSettingsModel(SubResource):
             super().__setattr__(key, value)
 
 
-class LoadBalancingSettingsUpdateParameters(_Model):
+class LoadBalancingSettingsUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Round-Robin load balancing settings for a backend pool.
 
     :ivar sample_size: The number of samples to consider for load balancing decisions.
@@ -2358,7 +2364,9 @@ class LoadBalancingSettingsUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LoadBalancingSettingsProperties(LoadBalancingSettingsUpdateParameters):
+class LoadBalancingSettingsProperties(
+    LoadBalancingSettingsUpdateParameters
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties required to create load balancing settings.
 
     :ivar sample_size: The number of samples to consider for load balancing decisions.
@@ -2419,6 +2427,10 @@ class ManagedRuleDefinition(_Model):
     :vartype default_sensitivity: str or ~azure.mgmt.frontdoor.models.SensitivityType
     :ivar description: Describes the functionality of the managed rule.
     :vartype description: str
+    :ivar paranoia_level: Describes the paranoia level of the managed rule. Applicable only for DRS
+     rules. Omitted for Bot Manager, DDoS, and AI rules. Known values are: "PL1", "PL2", "PL3", and
+     "PL4".
+    :vartype paranoia_level: str or ~azure.mgmt.frontdoor.models.ParanoiaLevel
     """
 
     rule_id: Optional[str] = rest_field(name="ruleId", visibility=["read"])
@@ -2439,9 +2451,14 @@ class ManagedRuleDefinition(_Model):
      are: \"Low\", \"Medium\", and \"High\"."""
     description: Optional[str] = rest_field(visibility=["read"])
     """Describes the functionality of the managed rule."""
+    paranoia_level: Optional[Union[str, "_models.ParanoiaLevel"]] = rest_field(
+        name="paranoiaLevel", visibility=["read"]
+    )
+    """Describes the paranoia level of the managed rule. Applicable only for DRS rules. Omitted for
+     Bot Manager, DDoS, and AI rules. Known values are: \"PL1\", \"PL2\", \"PL3\", and \"PL4\"."""
 
 
-class ManagedRuleExclusion(_Model):
+class ManagedRuleExclusion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Exclude variables from managed rule evaluation.
 
     :ivar match_variable: The variable type to be excluded. Required. Known values are:
@@ -2512,7 +2529,7 @@ class ManagedRuleGroupDefinition(_Model):
     """List of rules within the managed rule group."""
 
 
-class ManagedRuleGroupOverride(_Model):
+class ManagedRuleGroupOverride(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a managed rule group override setting.
 
     :ivar rule_group_name: Describes the managed rule group to override. Required.
@@ -2556,7 +2573,7 @@ class ManagedRuleGroupOverride(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedRuleOverride(_Model):
+class ManagedRuleOverride(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a managed rule group override setting.
 
     :ivar rule_id: Identifier for the managed rule. Required.
@@ -2618,7 +2635,7 @@ class ManagedRuleOverride(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedRuleSet(_Model):
+class ManagedRuleSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a managed rule set.
 
     :ivar rule_set_type: Defines the rule set type to use. Required.
@@ -2674,7 +2691,7 @@ class ManagedRuleSet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedRuleSetDefinition(Resource):
+class ManagedRuleSetDefinition(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the a managed rule set definition.
 
     :ivar id: Resource ID.
@@ -2696,7 +2713,15 @@ class ManagedRuleSetDefinition(Resource):
     )
     """Properties for a managed rule set definition."""
 
-    __flattened_items = ["provisioning_state", "rule_set_id", "rule_set_type", "rule_set_version", "rule_groups"]
+    __flattened_items = [
+        "provisioning_state",
+        "rule_set_id",
+        "rule_set_type",
+        "rule_set_version",
+        "rule_groups",
+        "display_name",
+        "status",
+    ]
 
     @overload
     def __init__(
@@ -2749,6 +2774,12 @@ class ManagedRuleSetDefinitionProperties(_Model):
     :vartype rule_set_version: str
     :ivar rule_groups: Rule groups of the managed rule set.
     :vartype rule_groups: list[~azure.mgmt.frontdoor.models.ManagedRuleGroupDefinition]
+    :ivar display_name: Human-readable display name for the managed rule set version (e.g.,
+     'Default Ruleset 2.2 (Latest, Recommended)').
+    :vartype display_name: str
+    :ivar status: Describes the lifecycle status of the managed rule set version. Known values are:
+     "Preview", "GA", "Deprecated", and "Supported".
+    :vartype status: str or ~azure.mgmt.frontdoor.models.ManagedRuleSetStatus
     """
 
     provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
@@ -2763,25 +2794,69 @@ class ManagedRuleSetDefinitionProperties(_Model):
         name="ruleGroups", visibility=["read"]
     )
     """Rule groups of the managed rule set."""
+    display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
+    """Human-readable display name for the managed rule set version (e.g., 'Default Ruleset 2.2
+     (Latest, Recommended)')."""
+    status: Optional[Union[str, "_models.ManagedRuleSetStatus"]] = rest_field(visibility=["read"])
+    """Describes the lifecycle status of the managed rule set version. Known values are: \"Preview\",
+     \"GA\", \"Deprecated\", and \"Supported\"."""
 
 
-class ManagedRuleSetList(_Model):
-    """Defines the list of managed rule sets for the policy.
+class ManagedRuleSetException(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Excludes whole requests from managed rule evaluation according to match conditions.
 
-    :ivar managed_rule_sets: List of rule sets.
-    :vartype managed_rule_sets: list[~azure.mgmt.frontdoor.models.ManagedRuleSet]
+    :ivar match_variable: The variable to be evaluated for excluding the request. Required. Known
+     values are: "RequestUri", "SocketAddr", and "RequestHeaderNames".
+    :vartype match_variable: str or ~azure.mgmt.frontdoor.models.ExceptionMatchVariable
+    :ivar selector_match_operator: Comparison operator to apply to the selector when specifying
+     which elements in the collection this exception applies to. "Equals"
+    :vartype selector_match_operator: str or
+     ~azure.mgmt.frontdoor.models.ExceptionSelectorMatchOperator
+    :ivar selector: When matchVariable is a collection, operator used to specify which elements in
+     the collection this exception applies to. Currently supported only for RequestHeaderNames.
+    :vartype selector: str
+    :ivar value_match_operator: Comparison operator to apply to the value to be matched. Required.
+     Known values are: "Equals", "Contains", "StartsWith", "EndsWith", "EqualsAny", and "IPMatch".
+    :vartype value_match_operator: str or ~azure.mgmt.frontdoor.models.ExceptionValueMatchOperator
+    :ivar match_values: List of values to be matched with. Required.
+    :vartype match_values: list[str]
+    :ivar scopes: Scope(s) of the exception. Required.
+    :vartype scopes: list[~azure.mgmt.frontdoor.models.ManagedRuleSetScope]
     """
 
-    managed_rule_sets: Optional[list["_models.ManagedRuleSet"]] = rest_field(
-        name="managedRuleSets", visibility=["read", "create", "update", "delete", "query"]
+    match_variable: Union[str, "_models.ExceptionMatchVariable"] = rest_field(
+        name="matchVariable", visibility=["read", "create", "update", "delete", "query"]
     )
-    """List of rule sets."""
+    """The variable to be evaluated for excluding the request. Required. Known values are:
+     \"RequestUri\", \"SocketAddr\", and \"RequestHeaderNames\"."""
+    selector_match_operator: Optional[Union[str, "_models.ExceptionSelectorMatchOperator"]] = rest_field(
+        name="selectorMatchOperator", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Comparison operator to apply to the selector when specifying which elements in the collection
+     this exception applies to. \"Equals\""""
+    selector: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """When matchVariable is a collection, operator used to specify which elements in the collection
+     this exception applies to. Currently supported only for RequestHeaderNames."""
+    value_match_operator: Union[str, "_models.ExceptionValueMatchOperator"] = rest_field(
+        name="valueMatchOperator", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Comparison operator to apply to the value to be matched. Required. Known values are:
+     \"Equals\", \"Contains\", \"StartsWith\", \"EndsWith\", \"EqualsAny\", and \"IPMatch\"."""
+    match_values: list[str] = rest_field(name="matchValues", visibility=["read", "create", "update", "delete", "query"])
+    """List of values to be matched with. Required."""
+    scopes: list["_models.ManagedRuleSetScope"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Scope(s) of the exception. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        managed_rule_sets: Optional[list["_models.ManagedRuleSet"]] = None,
+        match_variable: Union[str, "_models.ExceptionMatchVariable"],
+        value_match_operator: Union[str, "_models.ExceptionValueMatchOperator"],
+        match_values: list[str],
+        scopes: list["_models.ManagedRuleSetScope"],
+        selector_match_operator: Optional[Union[str, "_models.ExceptionSelectorMatchOperator"]] = None,
+        selector: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2795,20 +2870,132 @@ class ManagedRuleSetList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MatchCondition(_Model):
+class ManagedRuleSetExceptionList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Defines the list of exceptions for the managed rule sets.
+
+    :ivar exceptions: List of exceptions.
+    :vartype exceptions: list[~azure.mgmt.frontdoor.models.ManagedRuleSetException]
+    """
+
+    exceptions: Optional[list["_models.ManagedRuleSetException"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of exceptions."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        exceptions: Optional[list["_models.ManagedRuleSetException"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedRuleSetList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Defines the list of managed rule sets for the policy.
+
+    :ivar managed_rule_sets: List of rule sets.
+    :vartype managed_rule_sets: list[~azure.mgmt.frontdoor.models.ManagedRuleSet]
+    :ivar exceptions_list: List of exceptions applied on the managed rule sets.
+    :vartype exceptions_list: ~azure.mgmt.frontdoor.models.ManagedRuleSetExceptionList
+    """
+
+    managed_rule_sets: Optional[list["_models.ManagedRuleSet"]] = rest_field(
+        name="managedRuleSets", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of rule sets."""
+    exceptions_list: Optional["_models.ManagedRuleSetExceptionList"] = rest_field(
+        name="exceptionsList", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of exceptions applied on the managed rule sets."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        managed_rule_sets: Optional[list["_models.ManagedRuleSet"]] = None,
+        exceptions_list: Optional["_models.ManagedRuleSetExceptionList"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedRuleSetScope(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Defines the scope of the managed rules.
+
+    :ivar rule_set_type: Defines the rule set type. Examples: DefaultRuleSet,
+     Microsoft_DefaultRuleSet, Microsoft_BotManagerRuleSet, Microsoft_HTTPDDoSRuleSet,
+     BotProtection. Required.
+    :vartype rule_set_type: str
+    :ivar rule_set_version: Defines the version of the rule set. Required.
+    :vartype rule_set_version: str
+    :ivar rule_group_scopes: List of rule group scopes.
+    :vartype rule_group_scopes: list[~azure.mgmt.frontdoor.models.RuleGroupScope]
+    """
+
+    rule_set_type: str = rest_field(name="ruleSetType", visibility=["read", "create", "update", "delete", "query"])
+    """Defines the rule set type. Examples: DefaultRuleSet, Microsoft_DefaultRuleSet,
+     Microsoft_BotManagerRuleSet, Microsoft_HTTPDDoSRuleSet, BotProtection. Required."""
+    rule_set_version: str = rest_field(
+        name="ruleSetVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines the version of the rule set. Required."""
+    rule_group_scopes: Optional[list["_models.RuleGroupScope"]] = rest_field(
+        name="ruleGroupScopes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of rule group scopes."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rule_set_type: str,
+        rule_set_version: str,
+        rule_group_scopes: Optional[list["_models.RuleGroupScope"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MatchCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Define a match condition.
 
     :ivar match_variable: Request variable to compare with. Required. Known values are:
      "RemoteAddr", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
-     "RequestBody", "Cookies", and "SocketAddr".
+     "RequestBody", "Cookies", "SocketAddr", and "JA4".
     :vartype match_variable: str or ~azure.mgmt.frontdoor.models.MatchVariable
     :ivar selector: Match against a specific key from the QueryString, PostArgs, RequestHeader or
      Cookies variables. Default is null.
     :vartype selector: str
     :ivar operator: Comparison type to use for matching with the variable value. Required. Known
      values are: "Any", "IPMatch", "GeoMatch", "Equal", "Contains", "LessThan", "GreaterThan",
-     "LessThanOrEqual", "GreaterThanOrEqual", "BeginsWith", "EndsWith", "RegEx", and
-     "ServiceTagMatch".
+     "LessThanOrEqual", "GreaterThanOrEqual", "BeginsWith", "EndsWith", "RegEx", "ServiceTagMatch",
+     "AsnMatch", and "ClientFingerprint".
     :vartype operator: str or ~azure.mgmt.frontdoor.models.Operator
     :ivar negate_condition: Describes if the result of this condition should be negated.
     :vartype negate_condition: bool
@@ -2823,15 +3010,15 @@ class MatchCondition(_Model):
     )
     """Request variable to compare with. Required. Known values are: \"RemoteAddr\",
      \"RequestMethod\", \"QueryString\", \"PostArgs\", \"RequestUri\", \"RequestHeader\",
-     \"RequestBody\", \"Cookies\", and \"SocketAddr\"."""
+     \"RequestBody\", \"Cookies\", \"SocketAddr\", and \"JA4\"."""
     selector: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Match against a specific key from the QueryString, PostArgs, RequestHeader or Cookies
      variables. Default is null."""
     operator: Union[str, "_models.Operator"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Comparison type to use for matching with the variable value. Required. Known values are:
      \"Any\", \"IPMatch\", \"GeoMatch\", \"Equal\", \"Contains\", \"LessThan\", \"GreaterThan\",
-     \"LessThanOrEqual\", \"GreaterThanOrEqual\", \"BeginsWith\", \"EndsWith\", \"RegEx\", and
-     \"ServiceTagMatch\"."""
+     \"LessThanOrEqual\", \"GreaterThanOrEqual\", \"BeginsWith\", \"EndsWith\", \"RegEx\",
+     \"ServiceTagMatch\", \"AsnMatch\", and \"ClientFingerprint\"."""
     negate_condition: Optional[bool] = rest_field(
         name="negateCondition", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2866,7 +3053,7 @@ class MatchCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicySettings(_Model):
+class PolicySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines top-level WebApplicationFirewallPolicy configuration settings.
 
     :ivar enabled_state: Describes if the policy is in enabled or disabled state. Defaults to
@@ -2991,7 +3178,7 @@ class PolicySettings(_Model):
             super().__setattr__(key, value)
 
 
-class PolicySettingsLogScrubbing(_Model):
+class PolicySettingsLogScrubbing(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines rules that scrub sensitive fields in the Web Application Firewall logs.
 
     :ivar state: State of the log scrubbing config. Default value is Enabled. Known values are:
@@ -3032,7 +3219,7 @@ class PolicySettingsLogScrubbing(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourcewithSettableName(_Model):
+class ResourcewithSettableName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Common resource representation.
 
     :ivar id: Resource ID.
@@ -3077,7 +3264,7 @@ class ResourcewithSettableName(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PreconfiguredEndpoint(ResourcewithSettableName):
+class PreconfiguredEndpoint(ResourcewithSettableName):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the properties of a preconfigured endpoint.
 
     :ivar id: Resource ID.
@@ -3139,7 +3326,7 @@ class PreconfiguredEndpoint(ResourcewithSettableName):
             super().__setattr__(key, value)
 
 
-class PreconfiguredEndpointProperties(_Model):
+class PreconfiguredEndpointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the properties of a preconfigured endpoint.
 
     :ivar description: The description of the endpoint.
@@ -3185,7 +3372,7 @@ class PreconfiguredEndpointProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Profile(ResourcewithSettableName):
+class Profile(ResourcewithSettableName):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines an Network Experiment Profile and lists of Experiments.
 
     :ivar id: Resource ID.
@@ -3252,7 +3439,7 @@ class Profile(ResourcewithSettableName):
             super().__setattr__(key, value)
 
 
-class ProfileProperties(_Model):
+class ProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the properties of an experiment.
 
     :ivar resource_state: Resource status. Known values are: "Creating", "Enabling", "Enabled",
@@ -3290,7 +3477,7 @@ class ProfileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProfileUpdateModel(_Model):
+class ProfileUpdateModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines modifiable attributes of a Profile.
 
     :ivar properties: The properties of a Profile.
@@ -3345,7 +3532,7 @@ class ProfileUpdateModel(_Model):
             super().__setattr__(key, value)
 
 
-class ProfileUpdateProperties(_Model):
+class ProfileUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the properties of an experiment.
 
     :ivar enabled_state: The enabled state of the Profile. Known values are: "Enabled" and
@@ -3376,7 +3563,7 @@ class ProfileUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PurgeParameters(_Model):
+class PurgeParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters required for content purge.
 
     :ivar content_paths: The path to the content to be purged. Can describe a file path or a wild
@@ -3410,7 +3597,7 @@ class PurgeParameters(_Model):
 
 class RedirectConfiguration(
     RouteConfiguration, discriminator="#Microsoft.Azure.FrontDoor.Models.FrontdoorRedirectConfiguration"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes Redirect Route.
 
     :ivar redirect_type: The redirect type the rule will use when redirecting traffic. Known values
@@ -3498,7 +3685,7 @@ class RedirectConfiguration(
         self.odata_type = "#Microsoft.Azure.FrontDoor.Models.FrontdoorRedirectConfiguration"  # type: ignore
 
 
-class RoutingRule(SubResource):
+class RoutingRule(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A routing rule represents a specification for traffic to treat and where to send it, along with
     health probe information.
 
@@ -3570,7 +3757,7 @@ class RoutingRule(SubResource):
             super().__setattr__(key, value)
 
 
-class RoutingRuleLink(_Model):
+class RoutingRuleLink(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the Resource ID for a Routing Rule.
 
     :ivar id: Resource ID.
@@ -3598,7 +3785,7 @@ class RoutingRuleLink(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutingRuleUpdateParameters(_Model):
+class RoutingRuleUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Routing rules to apply to an endpoint.
 
     :ivar frontend_endpoints: Frontend endpoints associated with this rule.
@@ -3677,7 +3864,7 @@ class RoutingRuleUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutingRuleProperties(RoutingRuleUpdateParameters):
+class RoutingRuleProperties(RoutingRuleUpdateParameters):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties required to create a routing rule.
 
     :ivar frontend_endpoints: Frontend endpoints associated with this rule.
@@ -3737,7 +3924,9 @@ class RoutingRuleProperties(RoutingRuleUpdateParameters):
         super().__init__(*args, **kwargs)
 
 
-class RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink(_Model):  # pylint: disable=name-too-long
+class RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Defines the Web Application Firewall policy for each routing rule (if applicable).
 
     :ivar id: Resource ID.
@@ -3765,7 +3954,70 @@ class RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink(_Model):  # py
         super().__init__(*args, **kwargs)
 
 
-class RulesEngine(BasicResource):
+class RuleGroupScope(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Defines the scope of the rule group.
+
+    :ivar rule_group_name: Defines the rule group name. Required.
+    :vartype rule_group_name: str
+    :ivar rule_scopes: List of rule scopes.
+    :vartype rule_scopes: list[~azure.mgmt.frontdoor.models.RuleScope]
+    """
+
+    rule_group_name: str = rest_field(name="ruleGroupName", visibility=["read", "create", "update", "delete", "query"])
+    """Defines the rule group name. Required."""
+    rule_scopes: Optional[list["_models.RuleScope"]] = rest_field(
+        name="ruleScopes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of rule scopes."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rule_group_name: str,
+        rule_scopes: Optional[list["_models.RuleScope"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RuleScope(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Defines the scope of the rule.
+
+    :ivar rule_id: Defines the rule id. Required.
+    :vartype rule_id: str
+    """
+
+    rule_id: str = rest_field(name="ruleId", visibility=["read", "create", "update", "delete", "query"])
+    """Defines the rule id. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rule_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RulesEngine(BasicResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A rules engine configuration containing a list of rules that will run to modify the runtime
     behavior of the request and response.
 
@@ -3822,7 +4074,7 @@ class RulesEngine(BasicResource):
             super().__setattr__(key, value)
 
 
-class RulesEngineAction(_Model):
+class RulesEngineAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """One or more actions that will execute, modifying the request and/or response.
 
     :ivar request_header_actions: A list of header actions to apply from the request from AFD to
@@ -3868,7 +4120,7 @@ class RulesEngineAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RulesEngineMatchCondition(_Model):
+class RulesEngineMatchCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Define a match condition.
 
     :ivar rules_engine_match_variable: Match Variable. Required. Known values are: "IsMobile",
@@ -3945,7 +4197,7 @@ class RulesEngineMatchCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RulesEngineUpdateParameters(_Model):
+class RulesEngineUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rules Engine Configuration to apply to a Routing Rule.
 
     :ivar rules: A list of rules that define a particular Rules Engine Configuration.
@@ -3975,7 +4227,7 @@ class RulesEngineUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RulesEngineProperties(RulesEngineUpdateParameters):
+class RulesEngineProperties(RulesEngineUpdateParameters):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JSON object that contains the properties required to create a Rules Engine Configuration.
 
     :ivar rules: A list of rules that define a particular Rules Engine Configuration.
@@ -4011,7 +4263,7 @@ class RulesEngineProperties(RulesEngineUpdateParameters):
         super().__init__(*args, **kwargs)
 
 
-class RulesEngineRule(_Model):
+class RulesEngineRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains a list of match conditions, and an action on how to modify the request/response. If
     multiple rules match, the actions from one rule that conflict with a previous rule overwrite
     for a singular action, or append in the case of headers manipulation.
@@ -4072,7 +4324,7 @@ class RulesEngineRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityPolicyLink(_Model):
+class SecurityPolicyLink(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the Resource ID for a Security Policy.
 
     :ivar id: Resource ID.
@@ -4100,7 +4352,7 @@ class SecurityPolicyLink(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The pricing tier of the web application firewall policy.
 
     :ivar name: Name of the pricing tier. Known values are: "Classic_AzureFrontDoor",
@@ -4132,7 +4384,7 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagsObject(_Model):
+class TagsObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tags object for patch operations.
 
     :ivar tags: Resource tags.
@@ -4160,7 +4412,7 @@ class TagsObject(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Timeseries(Resource):
+class Timeseries(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the Timeseries.
 
     :ivar id: Resource ID.
@@ -4230,7 +4482,7 @@ class Timeseries(Resource):
             super().__setattr__(key, value)
 
 
-class TimeseriesDataPoint(_Model):
+class TimeseriesDataPoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a timeseries datapoint used in a timeseries.
 
     :ivar date_time_utc: The DateTime of the Timeseries data point in UTC.
@@ -4265,7 +4517,7 @@ class TimeseriesDataPoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TimeseriesProperties(_Model):
+class TimeseriesProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the properties of a timeseries.
 
     :ivar endpoint: The endpoint associated with the Timeseries data point.
@@ -4340,7 +4592,7 @@ class TimeseriesProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidateCustomDomainInput(_Model):
+class ValidateCustomDomainInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input of the custom domain to be validated for DNS mapping.
 
     :ivar host_name: The host name of the custom domain. Must be a domain name. Required.
@@ -4387,7 +4639,7 @@ class ValidateCustomDomainOutput(_Model):
     """Error message describing why the custom domain is not valid."""
 
 
-class WebApplicationFirewallPolicy(Resource):
+class WebApplicationFirewallPolicy(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines web application firewall policy.
 
     :ivar id: Resource ID.
@@ -4470,7 +4722,7 @@ class WebApplicationFirewallPolicy(Resource):
             super().__setattr__(key, value)
 
 
-class WebApplicationFirewallPolicyProperties(_Model):
+class WebApplicationFirewallPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines web application firewall policy properties.
 
     :ivar policy_settings: Describes settings for the policy.
@@ -4547,7 +4799,7 @@ class WebApplicationFirewallPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebApplicationFirewallScrubbingRules(_Model):
+class WebApplicationFirewallScrubbingRules(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the contents of the log scrubbing rules.
 
     :ivar match_variable: The variable to be scrubbed from the logs. Required. Known values are:
