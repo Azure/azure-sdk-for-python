@@ -149,25 +149,29 @@ class TestVoiceAgentTelephonyAsync(TestBase):
         assert replaced_targets.transfer_targets[0].destination.kind == "pstn"
 
         # Confirm the change persisted.
-        confirmed_targets: TelephonyTransferTargets = await project_client.beta.voice_agents.telephony.get_transfer_targets(
-            agent_name=agent_name
+        confirmed_targets: TelephonyTransferTargets = (
+            await project_client.beta.voice_agents.telephony.get_transfer_targets(agent_name=agent_name)
         )
         assert len(confirmed_targets.transfer_targets) == 1
         assert confirmed_targets.transfer_targets[0].name == "sales_desk"
 
         # Clear the transfer targets (empty array clears all targets).
-        cleared_targets: TelephonyTransferTargets = await project_client.beta.voice_agents.telephony.replace_transfer_targets(
-            agent_name=agent_name,
-            transfer_targets=[],
-            etag=None,
-            match_condition=MatchConditions.Unconditionally,
+        cleared_targets: TelephonyTransferTargets = (
+            await project_client.beta.voice_agents.telephony.replace_transfer_targets(
+                agent_name=agent_name,
+                transfer_targets=[],
+                etag=None,
+                match_condition=MatchConditions.Unconditionally,
+            )
         )
         assert len(cleared_targets.transfer_targets) == 0
 
         # A nonexistent telephony binding returns 404 on get/update/delete.
         fake_binding_id = "nonexistent-binding-id"
         with pytest.raises(ResourceNotFoundError):
-            await project_client.beta.voice_agents.telephony.get_binding(agent_name=agent_name, binding_id=fake_binding_id)
+            await project_client.beta.voice_agents.telephony.get_binding(
+                agent_name=agent_name, binding_id=fake_binding_id
+            )
         with pytest.raises(ResourceNotFoundError):
             await project_client.beta.voice_agents.telephony.update_binding(
                 agent_name=agent_name,

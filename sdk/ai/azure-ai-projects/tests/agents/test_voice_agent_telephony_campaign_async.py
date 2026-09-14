@@ -106,7 +106,9 @@ class TestVoiceAgentTelephonyCampaignAsync(TestBase):
 
         fake_call_job_id = "nonexistent-call-job-id"
         with pytest.raises(ResourceNotFoundError):
-            await project_client.beta.voice_agents.telephony.get_call_job(agent_name=agent_name, call_job_id=fake_call_job_id)
+            await project_client.beta.voice_agents.telephony.get_call_job(
+                agent_name=agent_name, call_job_id=fake_call_job_id
+            )
         with pytest.raises(ResourceNotFoundError):
             await project_client.beta.voice_agents.telephony.cancel_call_job(
                 agent_name=agent_name,
@@ -167,7 +169,9 @@ class TestVoiceAgentTelephonyCampaignAsync(TestBase):
 
         fake_campaign_id = "nonexistent-campaign-id"
         with pytest.raises(ResourceNotFoundError):
-            await project_client.beta.voice_agents.telephony.get_campaign(agent_name=agent_name, campaign_id=fake_campaign_id)
+            await project_client.beta.voice_agents.telephony.get_campaign(
+                agent_name=agent_name, campaign_id=fake_campaign_id
+            )
         with pytest.raises(ResourceNotFoundError):
             await project_client.beta.voice_agents.telephony.cancel_campaign(
                 agent_name=agent_name, campaign_id=fake_campaign_id

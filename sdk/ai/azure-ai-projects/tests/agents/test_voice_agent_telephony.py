@@ -136,11 +136,13 @@ class TestVoiceAgentTelephony(TestBase):
             description="Transfers to the sales desk for pricing questions.",
             destination=PSTNTelephonyTransferDestination(value="+14255550123"),
         )
-        replaced_targets: TelephonyTransferTargets = project_client.beta.voice_agents.telephony.replace_transfer_targets(
-            agent_name=agent_name,
-            transfer_targets=[new_target],
-            etag=None,
-            match_condition=MatchConditions.Unconditionally,
+        replaced_targets: TelephonyTransferTargets = (
+            project_client.beta.voice_agents.telephony.replace_transfer_targets(
+                agent_name=agent_name,
+                transfer_targets=[new_target],
+                etag=None,
+                match_condition=MatchConditions.Unconditionally,
+            )
         )
         assert len(replaced_targets.transfer_targets) == 1
         assert replaced_targets.transfer_targets[0].name == "sales_desk"

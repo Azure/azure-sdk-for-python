@@ -63,11 +63,11 @@ if TYPE_CHECKING:
 class _ConfigProvider(Protocol):
     """Anything exposing the shared client configuration (endpoint, credential, etc.).
 
-    :class:`~azure.ai.projects.AIProjectClient` and its ``.beta`` sub-client
-    (:class:`~azure.ai.projects.operations.BetaOperations`) both satisfy this: operation groups
-    are constructed with the same shared configuration instance as the top-level client, so
-    ``client.beta.voice_agents.realtime`` can reuse the endpoint/credential wiring without needing a
-    back-reference to the top-level client itself.
+    :class:`~azure.ai.projects.operations.BetaVoiceAgentsOperations` (accessed as
+    ``client.beta.voice_agents``) satisfies this: it is constructed with the same shared
+    configuration instance as the top-level client, so ``client.beta.voice_agents.realtime`` can
+    reuse the endpoint/credential wiring without needing a back-reference to the top-level client
+    itself.
     """
 
     _config: "AIProjectClientConfiguration"
@@ -823,10 +823,9 @@ class Realtime:  # pylint: disable=too-few-public-methods
                     break
 
     :param client: The object whose endpoint and credential are reused for the realtime
-     handshake -- either the top-level client or its ``.beta.voice_agents`` sub-client, since
-     both share the same underlying configuration.
-    :type client: ~azure.ai.projects.AIProjectClient or
-     ~azure.ai.projects.operations.BetaVoiceAgentsOperations
+     handshake -- the ``.beta.voice_agents`` sub-client, which shares the same underlying
+     configuration as the top-level client.
+    :type client: ~azure.ai.projects.operations.BetaVoiceAgentsOperations
     """
 
     def __init__(self, client: "_ConfigProvider") -> None:

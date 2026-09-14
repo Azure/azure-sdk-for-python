@@ -169,11 +169,17 @@ class TestVoiceAgentTelephonyCampaign(TestBase):
         with pytest.raises(ResourceNotFoundError):
             project_client.beta.voice_agents.telephony.get_campaign(agent_name=agent_name, campaign_id=fake_campaign_id)
         with pytest.raises(ResourceNotFoundError):
-            project_client.beta.voice_agents.telephony.cancel_campaign(agent_name=agent_name, campaign_id=fake_campaign_id)
+            project_client.beta.voice_agents.telephony.cancel_campaign(
+                agent_name=agent_name, campaign_id=fake_campaign_id
+            )
         with pytest.raises(ResourceNotFoundError):
-            project_client.beta.voice_agents.telephony.pause_campaign(agent_name=agent_name, campaign_id=fake_campaign_id)
+            project_client.beta.voice_agents.telephony.pause_campaign(
+                agent_name=agent_name, campaign_id=fake_campaign_id
+            )
         with pytest.raises(ResourceNotFoundError):
-            project_client.beta.voice_agents.telephony.resume_campaign(agent_name=agent_name, campaign_id=fake_campaign_id)
+            project_client.beta.voice_agents.telephony.resume_campaign(
+                agent_name=agent_name, campaign_id=fake_campaign_id
+            )
 
         fake_import_id = "nonexistent-import-id"
         with pytest.raises(ResourceNotFoundError):
@@ -232,7 +238,9 @@ class TestVoiceAgentTelephonyCampaign(TestBase):
 
         fake_operation_id = "nonexistent-operation-id"
         with pytest.raises(ResourceNotFoundError):
-            project_client.beta.voice_agents.telephony.get_operation(agent_name=agent_name, operation_id=fake_operation_id)
+            project_client.beta.voice_agents.telephony.get_operation(
+                agent_name=agent_name, operation_id=fake_operation_id
+            )
 
         # Delete the voice agent.
         result = project_client.agents.delete(agent_name=agent_name)
