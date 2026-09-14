@@ -12,6 +12,8 @@ from opentelemetry.semconv.attributes import (
     url_attributes,
     user_agent_attributes,
 )
+
+from opentelemetry.semconv._incubating.attributes import db_attributes as db_attributes_incubating
 from opentelemetry.context import Context
 from opentelemetry.trace import get_current_span
 from opentelemetry.sdk.trace.sampling import (
@@ -39,16 +41,16 @@ def _get_default_port_db(db_system: str) -> int:
         return 9042
     if db_system in (DbSystemValues.MARIADB.value, DbSystemValues.MYSQL.value):
         return 3306
-    if db_system == DbSystemValues.MSSQL.value:
+    if db_system == DbSystemValues.MSSQL.value or db_system == db_attributes.DbSystemNameValues.MICROSOFT_SQL_SERVER.value:
         return 1433
     # TODO: Add in memcached
     if db_system == "memcached":
         return 11211
-    if db_system == DbSystemValues.DB2.value:
+    if db_system == DbSystemValues.DB2.value or db_system == db_attributes_incubating.DbSystemNameValues.IBM_DB2.value:
         return 50000
-    if db_system == DbSystemValues.ORACLE.value:
+    if db_system == DbSystemValues.ORACLE.value or db_system == db_attributes_incubating.DbSystemNameValues.ORACLE_DB.value:
         return 1521
-    if db_system == DbSystemValues.H2.value:
+    if db_system == DbSystemValues.H2.value or db_system == db_attributes_incubating.DbSystemNameValues.H2DATABASE.value:
         return 8082
     if db_system == DbSystemValues.DERBY.value:
         return 1527
@@ -69,15 +71,19 @@ def _get_default_port_http(attributes: Attributes) -> int:
 def _is_sql_db(db_system: str) -> bool:
     return db_system in (
         DbSystemValues.DB2.value,
+        db_attributes_incubating.DbSystemNameValues.IBM_DB2.value,
         DbSystemValues.DERBY.value,
         DbSystemValues.MARIADB.value,
         DbSystemValues.MSSQL.value,
+        db_attributes.DbSystemNameValues.MICROSOFT_SQL_SERVER.value,
         DbSystemValues.ORACLE.value,
+        db_attributes_incubating.DbSystemNameValues.ORACLE_DB.value,
         DbSystemValues.SQLITE.value,
         DbSystemValues.OTHER_SQL.value,
         # spell-checker:ignore HSQLDB
         DbSystemValues.HSQLDB.value,
         DbSystemValues.H2.value,
+        db_attributes_incubating.DbSystemNameValues.H2DATABASE.value,
     )
 
 
