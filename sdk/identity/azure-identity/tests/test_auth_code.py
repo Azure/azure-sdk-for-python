@@ -91,7 +91,9 @@ def test_auth_code_credential(get_token_method, enable_cae):
     expected_refresh_token = "refresh"
     expected_scope = "scope"
 
-    auth_response = build_aad_response(access_token=expected_access_token, refresh_token=expected_refresh_token)
+    auth_response = build_aad_response(
+        access_token=expected_access_token, refresh_token=expected_refresh_token, uid="uid", utid="utid"
+    )
     transport = validating_transport(
         requests=[
             Request(  # first call should redeem the auth code
@@ -171,7 +173,9 @@ def test_multitenant_authentication(get_token_method):
         tenant = parsed.path.split("/")[1]
         assert tenant in (first_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
         token = first_token if tenant == first_tenant else second_token
-        return mock_response(json_payload=build_aad_response(access_token=token, refresh_token="**"))
+        return mock_response(
+            json_payload=build_aad_response(access_token=token, refresh_token="**", uid="uid", utid="utid")
+        )
 
     credential = AuthorizationCodeCredential(
         first_tenant,
@@ -213,7 +217,9 @@ def test_multitenant_authentication_not_allowed(get_token_method):
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
         token = expected_token if tenant == expected_tenant else expected_token * 2
-        return mock_response(json_payload=build_aad_response(access_token=token, refresh_token="**"))
+        return mock_response(
+            json_payload=build_aad_response(access_token=token, refresh_token="**", uid="uid", utid="utid")
+        )
 
     credential = AuthorizationCodeCredential(
         expected_tenant,
@@ -397,6 +403,8 @@ def test_no_cross_user_token_without_client_info(get_token_method):
     token_a = getattr(credential_a, get_token_method)("scope")
     assert token_a.token == "ACCESS-TOKEN-A"
     assert a_redeemed
+    # the fallback must have parsed "subject-a" from the ID token's "sub" claim, not left the account unbound
+    assert credential_a._client.last_home_account_id == "subject-a"
 
     b_redeemed = []
     credential_b = AuthorizationCodeCredential(
@@ -411,3 +419,10 @@ def test_no_cross_user_token_without_client_info(get_token_method):
 
     assert token_b.token == "ACCESS-TOKEN-B", "credential returned another account's cached token"
     assert b_redeemed, "credential did not redeem its own authorization code"
+    # confirms the ID-token fallback, not merely the "auth code still unredeemed" gate, established B's identity
+    assert credential_b._client.last_home_account_id == "subject-b"
+
+    # a subsequent call must use B's account-scoped cache entry, not A's, proving the fallback identity is honored
+    token_b_second = getattr(credential_b, get_token_method)("scope")
+    assert token_b_second.token == "ACCESS-TOKEN-B"
+    assert len(b_redeemed) == 1, "second call should have used the cache, not redeemed a new code"

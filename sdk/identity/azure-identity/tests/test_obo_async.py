@@ -141,7 +141,7 @@ async def test_multitenant_authentication(get_token_method):
         tenant = parsed.path.split("/")[1]
         assert tenant in (first_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
         token = first_token if tenant == first_tenant else second_token
-        return mock_response(json_payload=build_aad_response(access_token=token))
+        return mock_response(json_payload=build_aad_response(access_token=token, uid="uid", utid="utid"))
 
     transport = Mock(send=Mock(wraps=send))
     credential = OnBehalfOfCredential(
@@ -267,7 +267,9 @@ async def test_refresh_token(get_token_method, enable_cae):
         if requests == 1:
             assert "refresh_token" not in request.body
             return mock_response(
-                json_payload=build_aad_response(access_token=first_token, refresh_token=refresh_token, expires_in=0)
+                json_payload=build_aad_response(
+                    access_token=first_token, refresh_token=refresh_token, expires_in=0, uid="uid", utid="utid"
+                )
             )
         if requests == 2:
             assert request.body["refresh_token"] == refresh_token
