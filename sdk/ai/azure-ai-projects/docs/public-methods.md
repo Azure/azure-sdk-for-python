@@ -6,11 +6,11 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 ## Summary
 
-There are a total of 198 unique public methods:
+There are a total of 197 unique public methods:
 
 - 5 stable methods on the client
 - 59 stable methods on top-level sub-clients
-- 134 beta methods on nested beta sub-clients
+- 133 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 
@@ -29,10 +29,8 @@ There are a total of 198 unique public methods:
 
 | Subclient | Class Name | Methods Count |
 | --- | --- | --- |
-| `beta.agent_endpoint_conversations` | BetaAgentEndpointConversationsOperations | 14 |
 | `beta.agent_insight_monitors` | BetaAgentInsightMonitorsOperations | 13 |
-| `beta.agent_telephony` | BetaAgentTelephonyOperations | 13 |
-| `beta.agents` | BetaAgentsOperations | 17 |
+| `beta.agents` | BetaAgentsOperations | 6 |
 | `beta.datasets` | BetaDatasetsOperations | 5 |
 | `beta.evaluation_taxonomies` | BetaEvaluationTaxonomiesOperations | 5 |
 | `beta.evaluators` | BetaEvaluatorsOperations | 13 |
@@ -43,7 +41,9 @@ There are a total of 198 unique public methods:
 | `beta.routines` | BetaRoutinesOperations | 8 |
 | `beta.schedules` | BetaSchedulesOperations | 6 |
 | `beta.skills` | BetaSkillsOperations | 11 |
-| `beta.voice_agent_web_socket` | BetaVoiceAgentWebSocketOperations | 1 |
+| `beta.voice_agents.conversations` | BetaVoiceAgentsConversationsOperations | 14 |
+| `beta.voice_agents.realtime` | BetaVoiceAgentsRealtimeOperations | 0 |
+| `beta.voice_agents.telephony` | BetaVoiceAgentsTelephonyOperations | 24 |
 
 ## Stable methods on the client
 
@@ -135,21 +135,6 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 Alphabetically sorted. An asterisk at the end of the method name means it is a hand-written method.
 
 ```text
-.beta.agent_endpoint_conversations.delete
-.beta.agent_endpoint_conversations.download_audio
-.beta.agent_endpoint_conversations.download_item_audio
-.beta.agent_endpoint_conversations.download_item_generated_audio
-.beta.agent_endpoint_conversations.get
-.beta.agent_endpoint_conversations.get_audio
-.beta.agent_endpoint_conversations.get_item
-.beta.agent_endpoint_conversations.get_item_audio
-.beta.agent_endpoint_conversations.get_item_generated_audio
-.beta.agent_endpoint_conversations.get_response
-.beta.agent_endpoint_conversations.list
-.beta.agent_endpoint_conversations.list_items
-.beta.agent_endpoint_conversations.list_response_items
-.beta.agent_endpoint_conversations.list_responses
-
 .beta.agent_insight_monitors.begin_create_run*
 .beta.agent_insight_monitors.cancel_run
 .beta.agent_insight_monitors.create
@@ -164,37 +149,12 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.agent_insight_monitors.update
 .beta.agent_insight_monitors.update_insight
 
-.beta.agent_telephony.begin_import_campaign_recipients
-.beta.agent_telephony.begin_publish_campaign
-.beta.agent_telephony.begin_validate_campaign
-.beta.agent_telephony.cancel_call_job
-.beta.agent_telephony.cancel_campaign
-.beta.agent_telephony.create_call_job
-.beta.agent_telephony.create_campaign
-.beta.agent_telephony.get_call_job
-.beta.agent_telephony.get_campaign
-.beta.agent_telephony.get_campaign_recipient_import
-.beta.agent_telephony.get_operation
-.beta.agent_telephony.pause_campaign
-.beta.agent_telephony.resume_campaign
-
 .beta.agents.begin_create_optimization_job*
 .beta.agents.cancel_optimization_job
-.beta.agents.create_telephony_binding
+.beta.agents.create_from_prompt
 .beta.agents.delete_optimization_job
-.beta.agents.delete_telephony_binding
-.beta.agents.end_telephony_call
-.beta.agents.generate
 .beta.agents.get_optimization_job
-.beta.agents.get_telephony_binding
-.beta.agents.get_telephony_call
-.beta.agents.get_telephony_transfer_targets
 .beta.agents.list_optimization_jobs
-.beta.agents.list_telephony_bindings
-.beta.agents.list_telephony_calls
-.beta.agents.replace_telephony_transfer_targets
-.beta.agents.transfer_telephony_call
-.beta.agents.update_telephony_binding
 
 .beta.datasets.begin_create_generation_job*
 .beta.datasets.cancel_generation_job
@@ -282,5 +242,44 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.skills.list_versions
 .beta.skills.update
 
-.beta.voice_agent_web_socket.connect_voice_agent
+.beta.voice_agents.conversations.delete
+.beta.voice_agents.conversations.download_audio
+.beta.voice_agents.conversations.download_audio_item
+.beta.voice_agents.conversations.download_generated_audio_item
+.beta.voice_agents.conversations.get
+.beta.voice_agents.conversations.get_audio
+.beta.voice_agents.conversations.get_audio_item
+.beta.voice_agents.conversations.get_generated_audio_item
+.beta.voice_agents.conversations.get_item
+.beta.voice_agents.conversations.get_response
+.beta.voice_agents.conversations.list
+.beta.voice_agents.conversations.list_items
+.beta.voice_agents.conversations.list_response_items
+.beta.voice_agents.conversations.list_responses
+
+
+.beta.voice_agents.telephony.begin_import_campaign_recipients
+.beta.voice_agents.telephony.begin_publish_campaign
+.beta.voice_agents.telephony.begin_validate_campaign
+.beta.voice_agents.telephony.cancel_call_job
+.beta.voice_agents.telephony.cancel_campaign
+.beta.voice_agents.telephony.create_binding
+.beta.voice_agents.telephony.create_call_job
+.beta.voice_agents.telephony.create_campaign
+.beta.voice_agents.telephony.delete_binding
+.beta.voice_agents.telephony.end_call
+.beta.voice_agents.telephony.get_binding
+.beta.voice_agents.telephony.get_call
+.beta.voice_agents.telephony.get_call_job
+.beta.voice_agents.telephony.get_campaign
+.beta.voice_agents.telephony.get_campaign_recipient_import
+.beta.voice_agents.telephony.get_operation
+.beta.voice_agents.telephony.get_transfer_targets
+.beta.voice_agents.telephony.list_bindings
+.beta.voice_agents.telephony.list_calls
+.beta.voice_agents.telephony.pause_campaign
+.beta.voice_agents.telephony.replace_transfer_targets
+.beta.voice_agents.telephony.resume_campaign
+.beta.voice_agents.telephony.transfer_call
+.beta.voice_agents.telephony.update_binding
 ```

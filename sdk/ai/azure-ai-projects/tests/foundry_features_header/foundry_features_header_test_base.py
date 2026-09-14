@@ -35,9 +35,7 @@ FOUNDRY_FEATURES_HEADER = "Foundry-Features"
 # If a new sub-client is added to .beta and is missing from this mapping, the test will
 # fail at collection time with a message asking you to add it here.
 EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
-    "agent_endpoint_conversations": "VoiceAgents=V1Preview",
     "agent_insight_monitors": "AgentInsights=V1Preview",
-    "agent_telephony": "VoiceAgents=V1Preview",
     "evaluation_taxonomies": "Evaluations=V1Preview",
     "evaluators": "Evaluations=V1Preview",
     "insights": "Insights=V1Preview",
@@ -47,7 +45,7 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "routines": "Routines=V2Preview",
     "schedules": "Schedules=V1Preview",
     "skills": "Skills=V1Preview",
-    "voice_agent_web_socket": "VoiceAgents=V1Preview",
+    "voice_agents": "VoiceAgents=V1Preview",
     "datasets": "DataGenerationJobs=V1Preview",
     "agents": "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,VoiceAgents=V1Preview,DigitalWorker=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
 }

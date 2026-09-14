@@ -54,7 +54,12 @@ def unwrap_operation(value: Any) -> Any:
     return getattr(value, "_operation", value)
 
 
-def operation_instances(container: Any, *, exclude: set[str] | None = None) -> dict[str, Any]:
+def operation_instances(
+    container: Any,
+    *,
+    exclude: set[str] | None = None,
+    prefix: str = "",
+) -> dict[str, Any]:
     excluded = exclude or set()
     operations: dict[str, Any] = {}
     for name, value in vars(container).items():
@@ -62,7 +67,11 @@ def operation_instances(container: Any, *, exclude: set[str] | None = None) -> d
             continue
         operation = unwrap_operation(value)
         if type(operation).__name__.endswith("Operations"):
-            operations[name] = operation
+            operation_name = f"{prefix}.{name}" if prefix else name
+            nested_operations = operation_instances(operation, prefix=operation_name)
+            if public_methods(operation) or not nested_operations:
+                operations[operation_name] = operation
+            operations.update(nested_operations)
     return operations
 
 
