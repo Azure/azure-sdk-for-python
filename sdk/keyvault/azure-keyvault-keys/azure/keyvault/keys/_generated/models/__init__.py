@@ -50,6 +50,7 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
+    AKPAlgorithm,
     DeletionRecoveryLevel,
     JsonWebKeyCurveName,
     JsonWebKeyEncryptionAlgorithm,
@@ -98,6 +99,7 @@ __all__ = [
     "SecureKeyOperationResult",
     "SecureKeyUnWrapOperationParameters",
     "SecureKeyWrapOperationParameters",
+    "AKPAlgorithm",
     "DeletionRecoveryLevel",
     "JsonWebKeyCurveName",
     "JsonWebKeyEncryptionAlgorithm",

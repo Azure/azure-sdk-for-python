@@ -28,7 +28,7 @@ class BackupKeyResult(_Model):
     """The backup blob containing the backed up key."""
 
 
-class DeletedKeyBundle(_Model):
+class DeletedKeyBundle(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A DeletedKeyBundle consisting of a WebKey plus its Attributes and deletion info.
 
     :ivar key: The Json web key.
@@ -101,7 +101,7 @@ class DeletedKeyBundle(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeletedKeyItem(_Model):
+class DeletedKeyItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The deleted key item containing the deleted key metadata and information about deletion.
 
     :ivar kid: Key identifier.
@@ -167,7 +167,7 @@ class DeletedKeyItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExternalKey(_Model):
+class ExternalKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """External Key parameters.
 
     :ivar id: The external key identifier. The valid id can only contain characters in the set
@@ -197,7 +197,7 @@ class ExternalKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetRandomBytesRequest(_Model):
+class GetRandomBytesRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The get random bytes request object.
 
     :ivar count: The requested number of random bytes. Required.
@@ -225,7 +225,7 @@ class GetRandomBytesRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JsonWebKey(_Model):
+class JsonWebKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """As of `http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18
     <http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18>`_.
 
@@ -233,8 +233,8 @@ class JsonWebKey(_Model):
     :vartype kid: str
     :ivar kty: JsonWebKey Key Type (kty), as defined in
      `https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
-     <https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40>`_. Known values are: "EC",
-     "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
+     <https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40>`_. Known values are:
+     "AKP", "AKP-HSM", "EC", "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
     :vartype kty: str or ~azure.keyvault.keys._generated.models.JsonWebKeyType
     :ivar key_ops: Json web key operations. For more information on possible key operations, see
      JsonWebKeyOperation.
@@ -266,6 +266,11 @@ class JsonWebKey(_Model):
     :vartype x: bytes
     :ivar y: Y component of an EC public key.
     :vartype y: bytes
+    :ivar alg: The algorithm identifier. This parameter is required when kty is AKP. Known values
+     are: "ML-DSA-44", "ML-DSA-65", and "ML-DSA-87".
+    :vartype alg: str or ~azure.keyvault.keys._generated.models.AKPAlgorithm
+    :ivar pub: The public key for Algorithm Key Pair (AKP) keys.
+    :vartype pub: bytes
     """
 
     kid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -276,7 +281,7 @@ class JsonWebKey(_Model):
     """JsonWebKey Key Type (kty), as defined in
      `https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
      <https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40>`_. Known values are:
-     \"EC\", \"EC-HSM\", \"RSA\", \"RSA-HSM\", \"oct\", and \"oct-HSM\"."""
+     \"AKP\", \"AKP-HSM\", \"EC\", \"EC-HSM\", \"RSA\", \"RSA-HSM\", \"oct\", and \"oct-HSM\"."""
     key_ops: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Json web key operations. For more information on possible key operations, see
      JsonWebKeyOperation."""
@@ -311,6 +316,13 @@ class JsonWebKey(_Model):
     """X component of an EC public key."""
     y: Optional[bytes] = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
     """Y component of an EC public key."""
+    alg: Optional[Union[str, "_models.AKPAlgorithm"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The algorithm identifier. This parameter is required when kty is AKP. Known values are:
+     \"ML-DSA-44\", \"ML-DSA-65\", and \"ML-DSA-87\"."""
+    pub: Optional[bytes] = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
+    """The public key for Algorithm Key Pair (AKP) keys."""
 
     @overload
     def __init__(
@@ -332,6 +344,8 @@ class JsonWebKey(_Model):
         crv: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
         x: Optional[bytes] = None,
         y: Optional[bytes] = None,
+        alg: Optional[Union[str, "_models.AKPAlgorithm"]] = None,
+        pub: Optional[bytes] = None,
     ) -> None: ...
 
     @overload
@@ -345,7 +359,7 @@ class JsonWebKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyAttestation(_Model):
+class KeyAttestation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The key attestation information.
 
     :ivar certificate_pem_file: A base64url-encoded string containing certificates in PEM format,
@@ -399,7 +413,7 @@ class KeyAttestation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyAttributes(_Model):
+class KeyAttributes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The attributes of a key managed by the key vault service.
 
     :ivar enabled: Determines whether the object is enabled.
@@ -498,7 +512,7 @@ class KeyAttributes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyBundle(_Model):
+class KeyBundle(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A KeyBundle consisting of a WebKey plus its attributes.
 
     :ivar key: The Json web key.
@@ -551,11 +565,11 @@ class KeyBundle(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyCreateParameters(_Model):
+class KeyCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The key create parameters.
 
     :ivar kty: The type of key to create. For valid values, see JsonWebKeyType. Required. Known
-     values are: "EC", "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
+     values are: "AKP", "AKP-HSM", "EC", "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
     :vartype kty: str or ~azure.keyvault.keys._generated.models.JsonWebKeyType
     :ivar key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
     :vartype key_size: int
@@ -573,11 +587,14 @@ class KeyCreateParameters(_Model):
     :vartype curve: str or ~azure.keyvault.keys._generated.models.JsonWebKeyCurveName
     :ivar release_policy: The policy rules under which the key can be exported.
     :vartype release_policy: ~azure.keyvault.keys._generated.models.KeyReleasePolicy
+    :ivar alg: The algorithm for Algorithm Key Pair (AKP) keys. For valid values, see AKPAlgorithm.
+     Known values are: "ML-DSA-44", "ML-DSA-65", and "ML-DSA-87".
+    :vartype alg: str or ~azure.keyvault.keys._generated.models.AKPAlgorithm
     """
 
     kty: Union[str, "_models.JsonWebKeyType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of key to create. For valid values, see JsonWebKeyType. Required. Known values are:
-     \"EC\", \"EC-HSM\", \"RSA\", \"RSA-HSM\", \"oct\", and \"oct-HSM\"."""
+     \"AKP\", \"AKP-HSM\", \"EC\", \"EC-HSM\", \"RSA\", \"RSA-HSM\", \"oct\", and \"oct-HSM\"."""
     key_size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The key size in bits. For example: 2048, 3072, or 4096 for RSA."""
     public_exponent: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -602,6 +619,11 @@ class KeyCreateParameters(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The policy rules under which the key can be exported."""
+    alg: Optional[Union[str, "_models.AKPAlgorithm"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The algorithm for Algorithm Key Pair (AKP) keys. For valid values, see AKPAlgorithm. Known
+     values are: \"ML-DSA-44\", \"ML-DSA-65\", and \"ML-DSA-87\"."""
 
     @overload
     def __init__(
@@ -615,6 +637,7 @@ class KeyCreateParameters(_Model):
         tags: Optional[dict[str, str]] = None,
         curve: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
         release_policy: Optional["_models.KeyReleasePolicy"] = None,
+        alg: Optional[Union[str, "_models.AKPAlgorithm"]] = None,
     ) -> None: ...
 
     @overload
@@ -628,7 +651,7 @@ class KeyCreateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyImportParameters(_Model):
+class KeyImportParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The key import parameters.
 
     :ivar hsm: Whether to import as a hardware key (HSM) or software key.
@@ -680,7 +703,7 @@ class KeyImportParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyItem(_Model):
+class KeyItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The key item containing key metadata.
 
     :ivar kid: Key identifier.
@@ -757,7 +780,7 @@ class KeyOperationResult(_Model):
      algorithms."""
 
 
-class KeyOperationsParameters(_Model):
+class KeyOperationsParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The key operations parameters.
 
     :ivar algorithm: algorithm identifier. Required. Known values are: "RSA-OAEP", "RSA-OAEP-256",
@@ -816,7 +839,7 @@ class KeyOperationsParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyReleaseParameters(_Model):
+class KeyReleaseParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The release key parameters.
 
     :ivar target_attestation_token: The attestation assertion for the target of the key release.
@@ -861,7 +884,7 @@ class KeyReleaseParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyReleasePolicy(_Model):
+class KeyReleasePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy rules under which the key can be exported.
 
     :ivar content_type: Content type and version of key release policy.
@@ -918,7 +941,7 @@ class KeyReleaseResult(_Model):
     """A signed object containing the released key."""
 
 
-class KeyRestoreParameters(_Model):
+class KeyRestoreParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The key restore parameters.
 
     :ivar key_bundle_backup: The backup blob associated with a key bundle. Required.
@@ -948,7 +971,7 @@ class KeyRestoreParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyRotationPolicy(_Model):
+class KeyRotationPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Management policy for a key.
 
     :ivar id: The key policy id.
@@ -993,7 +1016,7 @@ class KeyRotationPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyRotationPolicyAttributes(_Model):
+class KeyRotationPolicyAttributes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The key rotation policy attributes.
 
     :ivar expiry_time: The expiryTime will be applied on the new key version. It should be at least
@@ -1035,34 +1058,55 @@ class KeyRotationPolicyAttributes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeySignParameters(_Model):
+class KeySignParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The key operations parameters.
 
     :ivar algorithm: The signing/verification algorithm identifier. For more information on
-     possible algorithm types, see JsonWebKeySignatureAlgorithm. Required. Known values are:
-     "PS256", "PS384", "PS512", "RS256", "RS384", "RS512", "HS256", "HS384", "HS512", "RSNULL",
-     "ES256", "ES384", "ES512", and "ES256K".
+     possible algorithm types, see JsonWebKeySignatureAlgorithm. Known values are: "PS256", "PS384",
+     "PS512", "RS256", "RS384", "RS512", "HS256", "HS384", "HS512", "RSNULL", "ES256", "ES384",
+     "ES512", and "ES256K".
     :vartype algorithm: str or ~azure.keyvault.keys._generated.models.JsonWebKeySignatureAlgorithm
-    :ivar value: The value to operate on. Required.
+    :ivar value: The value to operate on.
     :vartype value: bytes
+    :ivar external_mu: The pre-computed mu value for ML-DSA external mu mode (FIPS 204 Section
+     6.2). Must be exactly 64 bytes. When specified, the algorithm and value fields must not be set.
+     Only supported for ML-DSA (AKP) keys.
+    :vartype external_mu: bytes
+    :ivar context: The application context string for ML-DSA signing (FIPS 204 Section 5.2). Must
+     be 0-255 bytes. Must not be set when external_mu is specified. Only supported for ML-DSA (AKP)
+     keys.
+    :vartype context: bytes
     """
 
-    algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"] = rest_field(
+    algorithm: Optional[Union[str, "_models.JsonWebKeySignatureAlgorithm"]] = rest_field(
         name="alg", visibility=["read", "create", "update", "delete", "query"]
     )
     """The signing/verification algorithm identifier. For more information on possible algorithm
-     types, see JsonWebKeySignatureAlgorithm. Required. Known values are: \"PS256\", \"PS384\",
-     \"PS512\", \"RS256\", \"RS384\", \"RS512\", \"HS256\", \"HS384\", \"HS512\", \"RSNULL\",
-     \"ES256\", \"ES384\", \"ES512\", and \"ES256K\"."""
-    value: bytes = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
-    """The value to operate on. Required."""
+     types, see JsonWebKeySignatureAlgorithm. Known values are: \"PS256\", \"PS384\", \"PS512\",
+     \"RS256\", \"RS384\", \"RS512\", \"HS256\", \"HS384\", \"HS512\", \"RSNULL\", \"ES256\",
+     \"ES384\", \"ES512\", and \"ES256K\"."""
+    value: Optional[bytes] = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
+    """The value to operate on."""
+    external_mu: Optional[bytes] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="base64url"
+    )
+    """The pre-computed mu value for ML-DSA external mu mode (FIPS 204 Section 6.2). Must be exactly
+     64 bytes. When specified, the algorithm and value fields must not be set. Only supported for
+     ML-DSA (AKP) keys."""
+    context: Optional[bytes] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="base64url"
+    )
+    """The application context string for ML-DSA signing (FIPS 204 Section 5.2). Must be 0-255 bytes.
+     Must not be set when external_mu is specified. Only supported for ML-DSA (AKP) keys."""
 
     @overload
     def __init__(
         self,
         *,
-        algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"],
-        value: bytes,
+        algorithm: Optional[Union[str, "_models.JsonWebKeySignatureAlgorithm"]] = None,
+        value: Optional[bytes] = None,
+        external_mu: Optional[bytes] = None,
+        context: Optional[bytes] = None,
     ) -> None: ...
 
     @overload
@@ -1076,7 +1120,7 @@ class KeySignParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyUpdateParameters(_Model):
+class KeyUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The key update parameters.
 
     :ivar key_ops: Json web key operations. For more information on possible key operations, see
@@ -1157,41 +1201,61 @@ class KeyVaultErrorError(_Model):
     """The key vault server error."""
 
 
-class KeyVerifyParameters(_Model):
+class KeyVerifyParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The key verify parameters.
 
     :ivar algorithm: The signing/verification algorithm. For more information on possible algorithm
-     types, see JsonWebKeySignatureAlgorithm. Required. Known values are: "PS256", "PS384", "PS512",
-     "RS256", "RS384", "RS512", "HS256", "HS384", "HS512", "RSNULL", "ES256", "ES384", "ES512", and
-     "ES256K".
+     types, see JsonWebKeySignatureAlgorithm. Known values are: "PS256", "PS384", "PS512", "RS256",
+     "RS384", "RS512", "HS256", "HS384", "HS512", "RSNULL", "ES256", "ES384", "ES512", and "ES256K".
     :vartype algorithm: str or ~azure.keyvault.keys._generated.models.JsonWebKeySignatureAlgorithm
-    :ivar digest: The digest used for signing. Required.
+    :ivar digest: The digest used for signing.
     :vartype digest: bytes
     :ivar signature: The signature to be verified. Required.
     :vartype signature: bytes
+    :ivar external_mu: The pre-computed mu value for ML-DSA external mu mode (FIPS 204 Section
+     6.2). Must be exactly 64 bytes. When specified, the algorithm and digest fields must not be
+     set. Only supported for ML-DSA (AKP) keys.
+    :vartype external_mu: bytes
+    :ivar context: The application context string for ML-DSA verification (FIPS 204 Section 5.2).
+     Must be 0-255 bytes. Must not be set when external_mu is specified. Only supported for ML-DSA
+     (AKP) keys.
+    :vartype context: bytes
     """
 
-    algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"] = rest_field(
+    algorithm: Optional[Union[str, "_models.JsonWebKeySignatureAlgorithm"]] = rest_field(
         name="alg", visibility=["read", "create", "update", "delete", "query"]
     )
     """The signing/verification algorithm. For more information on possible algorithm types, see
-     JsonWebKeySignatureAlgorithm. Required. Known values are: \"PS256\", \"PS384\", \"PS512\",
-     \"RS256\", \"RS384\", \"RS512\", \"HS256\", \"HS384\", \"HS512\", \"RSNULL\", \"ES256\",
-     \"ES384\", \"ES512\", and \"ES256K\"."""
-    digest: bytes = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
-    """The digest used for signing. Required."""
+     JsonWebKeySignatureAlgorithm. Known values are: \"PS256\", \"PS384\", \"PS512\", \"RS256\",
+     \"RS384\", \"RS512\", \"HS256\", \"HS384\", \"HS512\", \"RSNULL\", \"ES256\", \"ES384\",
+     \"ES512\", and \"ES256K\"."""
+    digest: Optional[bytes] = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
+    """The digest used for signing."""
     signature: bytes = rest_field(
         name="value", visibility=["read", "create", "update", "delete", "query"], format="base64url"
     )
     """The signature to be verified. Required."""
+    external_mu: Optional[bytes] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="base64url"
+    )
+    """The pre-computed mu value for ML-DSA external mu mode (FIPS 204 Section 6.2). Must be exactly
+     64 bytes. When specified, the algorithm and digest fields must not be set. Only supported for
+     ML-DSA (AKP) keys."""
+    context: Optional[bytes] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="base64url"
+    )
+    """The application context string for ML-DSA verification (FIPS 204 Section 5.2). Must be 0-255
+     bytes. Must not be set when external_mu is specified. Only supported for ML-DSA (AKP) keys."""
 
     @overload
     def __init__(
         self,
         *,
-        algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"],
-        digest: bytes,
         signature: bytes,
+        algorithm: Optional[Union[str, "_models.JsonWebKeySignatureAlgorithm"]] = None,
+        digest: Optional[bytes] = None,
+        external_mu: Optional[bytes] = None,
+        context: Optional[bytes] = None,
     ) -> None: ...
 
     @overload
@@ -1216,7 +1280,7 @@ class KeyVerifyResult(_Model):
     """True if the signature is verified, otherwise false."""
 
 
-class LifetimeActions(_Model):
+class LifetimeActions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Action and its trigger that will be performed by Key Vault over the lifetime of a key.
 
     :ivar trigger: The condition that will execute the action.
@@ -1253,7 +1317,7 @@ class LifetimeActions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LifetimeActionsTrigger(_Model):
+class LifetimeActionsTrigger(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A condition to be satisfied for an action to be executed.
 
     :ivar time_after_create: Time after creation to attempt to rotate. It only applies to rotate.
@@ -1294,7 +1358,7 @@ class LifetimeActionsTrigger(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LifetimeActionsType(_Model):
+class LifetimeActionsType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The action that will be executed.
 
     :ivar type: The type of the action. The value should be compared case-insensitively. Known
@@ -1326,7 +1390,7 @@ class LifetimeActionsType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RandomBytes(_Model):
+class RandomBytes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The get random bytes response object containing the bytes.
 
     :ivar value: The bytes encoded as a base64url string. Required.
@@ -1354,13 +1418,13 @@ class RandomBytes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecureKeyOperationResult(_Model):
+class SecureKeyOperationResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The secure key wrap operation result.
 
     :ivar kid: Key identifier. Required.
     :vartype kid: str
     :ivar algorithm: The algorithm used for the operation. Required. Known values are:
-     "RSA-OAEP-256", "A128KW", "A192KW", "A256KW", "A256KWPAD", "A128KWPAD", "A192KWPAD",
+     "RSA-OAEP-256", "A128KW", "A192KW", "A256KW", "A128KWPAD", "A192KWPAD", "A256KWPAD",
      "CKM_AES_KEY_WRAP", and "CKM_AES_KEY_WRAP_PAD".
     :vartype algorithm: str or ~azure.keyvault.keys._generated.models.JsonWebKeyWrapAlgorithm
     :ivar value: The result of the operation. Required.
@@ -1373,7 +1437,7 @@ class SecureKeyOperationResult(_Model):
         name="alg", visibility=["read", "create", "update", "delete", "query"]
     )
     """The algorithm used for the operation. Required. Known values are: \"RSA-OAEP-256\", \"A128KW\",
-     \"A192KW\", \"A256KW\", \"A256KWPAD\", \"A128KWPAD\", \"A192KWPAD\", \"CKM_AES_KEY_WRAP\", and
+     \"A192KW\", \"A256KW\", \"A128KWPAD\", \"A192KWPAD\", \"A256KWPAD\", \"CKM_AES_KEY_WRAP\", and
      \"CKM_AES_KEY_WRAP_PAD\"."""
     value: bytes = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
     """The result of the operation. Required."""
@@ -1398,11 +1462,11 @@ class SecureKeyOperationResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecureKeyUnWrapOperationParameters(_Model):
+class SecureKeyUnWrapOperationParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Secure Key unwrap attributes.
 
     :ivar algorithm: algorithm identifier. Required. Known values are: "RSA-OAEP-256", "A128KW",
-     "A192KW", "A256KW", "A256KWPAD", "A128KWPAD", "A192KWPAD", "CKM_AES_KEY_WRAP", and
+     "A192KW", "A256KW", "A128KWPAD", "A192KWPAD", "A256KWPAD", "CKM_AES_KEY_WRAP", and
      "CKM_AES_KEY_WRAP_PAD".
     :vartype algorithm: str or ~azure.keyvault.keys._generated.models.JsonWebKeyWrapAlgorithm
     :ivar value: The value to operate on. Required.
@@ -1416,7 +1480,7 @@ class SecureKeyUnWrapOperationParameters(_Model):
         name="alg", visibility=["read", "create", "update", "delete", "query"]
     )
     """algorithm identifier. Required. Known values are: \"RSA-OAEP-256\", \"A128KW\", \"A192KW\",
-     \"A256KW\", \"A256KWPAD\", \"A128KWPAD\", \"A192KWPAD\", \"CKM_AES_KEY_WRAP\", and
+     \"A256KW\", \"A128KWPAD\", \"A192KWPAD\", \"A256KWPAD\", \"CKM_AES_KEY_WRAP\", and
      \"CKM_AES_KEY_WRAP_PAD\"."""
     value: bytes = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
     """The value to operate on. Required."""
@@ -1445,11 +1509,11 @@ class SecureKeyUnWrapOperationParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecureKeyWrapOperationParameters(_Model):
+class SecureKeyWrapOperationParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Secure Key wrap attributes.
 
     :ivar algorithm: algorithm identifier. Required. Known values are: "RSA-OAEP-256", "A128KW",
-     "A192KW", "A256KW", "A256KWPAD", "A128KWPAD", "A192KWPAD", "CKM_AES_KEY_WRAP", and
+     "A192KW", "A256KW", "A128KWPAD", "A192KWPAD", "A256KWPAD", "CKM_AES_KEY_WRAP", and
      "CKM_AES_KEY_WRAP_PAD".
     :vartype algorithm: str or ~azure.keyvault.keys._generated.models.JsonWebKeyWrapAlgorithm
     """
@@ -1458,7 +1522,7 @@ class SecureKeyWrapOperationParameters(_Model):
         name="alg", visibility=["read", "create", "update", "delete", "query"]
     )
     """algorithm identifier. Required. Known values are: \"RSA-OAEP-256\", \"A128KW\", \"A192KW\",
-     \"A256KW\", \"A256KWPAD\", \"A128KWPAD\", \"A192KWPAD\", \"CKM_AES_KEY_WRAP\", and
+     \"A256KW\", \"A128KWPAD\", \"A192KWPAD\", \"A256KWPAD\", \"CKM_AES_KEY_WRAP\", and
      \"CKM_AES_KEY_WRAP_PAD\"."""
 
     @overload
