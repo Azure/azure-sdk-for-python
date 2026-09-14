@@ -438,6 +438,16 @@ with `Unverified`. For `Unverified`, state the specific evidence needed to resol
 Link only to immutable commit, tag-object, or release URLs. Do not claim candidate replacements are
 proven mappings without source evidence connecting them.
 
+For every file-based evidence link or finding location, use a GitHub blob permalink pinned to the
+full commit SHA with a verified 1-based line anchor (`#L42`) or minimal relevant range
+(`#L42-L48`). Link to the exact definition, decorator, configuration value, or release-note entry
+supporting the claim, not merely the file. Verify line numbers against the complete file at that
+same revision; never infer them from a diff, truncated excerpt, or another revision. Link each
+changelog entry using its `startLine` and `endLine` at `latestRevision`. When comparing old and new
+code, anchor each link independently at its respective revision. If exact lines cannot be verified,
+state that limitation alongside the immutable file link rather than inventing an anchor. Non-file
+commit and release pages do not require code-line anchors.
+
 Attribution is explanatory. Do not create or escalate a rule-violation finding solely because a
 breaking change is classified, including `Unverified`.
 
@@ -456,7 +466,7 @@ Then provide findings ordered by severity:
 
 | Severity | Finding | Location | Evidence | Rule | Remediation |
 | --- | --- | --- | --- | --- | --- |
-| `Blocking`, `Warning`, or `Suggestion` | Concise title | File and line when available | Observed evidence | Authoritative rule heading | Specific remediation |
+| `Blocking`, `Warning`, or `Suggestion` | Concise title | Immutable file link with verified line anchor | Observed evidence | Authoritative rule heading | Specific remediation |
 ```
 
 Use one finding per row. Preserve full revision and API-version values. Requirement violations
@@ -491,7 +501,7 @@ Then include a distinct attribution section after unverified checks:
 
 | Package / release | Changelog entry | Cause | Evidence and explanation | Confidence |
 | --- | --- | --- | --- | --- |
-| Package and release heading | Full introduced or modified entry | `TypeSpec/API`, `Emitter/toolchain`, `Mixed`, or `Unverified` | Immutable links, baseline, concise explanation, and specific missing evidence when unverified | `High`, `Medium`, or `Low` with rationale |
+| Package and release heading | Full introduced or modified entry linked to its changelog lines | `TypeSpec/API`, `Emitter/toolchain`, `Mixed`, or `Unverified` | Immutable links with verified line anchors, baseline, concise explanation, and specific missing evidence when unverified | `High`, `Medium`, or `Low` with rationale |
 ```
 
 Use one row per introduced entry. Preserve multiline entry meaning while converting line breaks to
