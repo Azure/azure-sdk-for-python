@@ -40,6 +40,42 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
         return
 
     @recorded_by_proxy
+    def test_list_participants(self):
+        caller = self.identity_client.create_user()
+        target = self.identity_client.create_user()
+        unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target)
+
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        assert participant_updated_event is not None, "Caller ParticipantsUpdated event is None"
+
+        participants = list(call_connection.list_participants())
+        participant_ids = {participant.identifier.raw_id for participant in participants}
+
+        assert caller.raw_id in participant_ids, "Caller is missing from the call participants"
+        assert target.raw_id in participant_ids, "Target is missing from the call participants"
+
+        self.terminate_call(unique_id)
+
+    @recorded_by_proxy
+    def test_get_participant(self):
+        caller = self.identity_client.create_user()
+        target = self.identity_client.create_user()
+        unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target)
+
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        assert participant_updated_event is not None, "Caller ParticipantsUpdated event is None"
+
+        participant = call_connection.get_participant(target)
+
+        assert participant.identifier.raw_id == target.raw_id, "Unexpected participant returned"
+
+        self.terminate_call(unique_id)
+
+    @recorded_by_proxy
     def test_add_participant_then_cancel_request(self):
         # try to establish the call
         caller = self.identity_client.create_user()
