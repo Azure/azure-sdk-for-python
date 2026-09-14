@@ -118,7 +118,9 @@ async def test_auth_code_credential(get_token_method):
     expected_refresh_token = "refresh"
     expected_scope = "scope"
 
-    auth_response = build_aad_response(access_token=expected_access_token, refresh_token=expected_refresh_token)
+    auth_response = build_aad_response(
+        access_token=expected_access_token, refresh_token=expected_refresh_token, uid="uid", utid="utid"
+    )
     transport = async_validating_transport(
         requests=[
             Request(  # first call should redeem the auth code
@@ -190,7 +192,9 @@ async def test_multitenant_authentication(get_token_method):
         tenant = parsed.path.split("/")[1]
         assert tenant in (first_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
         token = first_token if tenant == first_tenant else second_token
-        return mock_response(json_payload=build_aad_response(access_token=token, refresh_token="**"))
+        return mock_response(
+            json_payload=build_aad_response(access_token=token, refresh_token="**", uid="uid", utid="utid")
+        )
 
     credential = AuthorizationCodeCredential(
         first_tenant,
@@ -232,7 +236,9 @@ async def test_multitenant_authentication_not_allowed(get_token_method):
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
         token = expected_token if tenant == expected_tenant else expected_token * 2
-        return mock_response(json_payload=build_aad_response(access_token=token, refresh_token="**"))
+        return mock_response(
+            json_payload=build_aad_response(access_token=token, refresh_token="**", uid="uid", utid="utid")
+        )
 
     credential = AuthorizationCodeCredential(
         expected_tenant,

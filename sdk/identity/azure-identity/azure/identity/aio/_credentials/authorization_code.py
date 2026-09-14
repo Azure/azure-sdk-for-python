@@ -122,10 +122,12 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
         )
 
     async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
-        if self._authorization_code:
-            # The authorization code hasn't been redeemed yet, so this credential's account isn't established.
-            # A cache shared with other accounts (e.g. a persistent cache shared by several
-            # AuthorizationCodeCredential instances) must not satisfy this credential's first token request.
+        if self._authorization_code or not self._client.last_home_account_id:
+            # Either the authorization code hasn't been redeemed yet, so this credential's account isn't
+            # established, or it was redeemed but the STS response didn't let us determine the resulting
+            # account's identity. In both cases, a cache shared with other accounts (e.g. a persistent cache
+            # shared by several AuthorizationCodeCredential instances) must not satisfy this credential's
+            # token request because doing so risks returning another account's token.
             return None
         return self._client.get_cached_access_token(scopes, home_account_id=self._client.last_home_account_id, **kwargs)
 
@@ -138,13 +140,14 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
             return token
 
         token = cast(AccessTokenInfo, None)
-        for refresh_token in self._client.get_cached_refresh_tokens(
-            scopes, home_account_id=self._client.last_home_account_id, **kwargs
-        ):
-            if "secret" in refresh_token:
-                token = await self._client.obtain_token_by_refresh_token(scopes, refresh_token["secret"], **kwargs)
-                if token:
-                    break
+        if self._client.last_home_account_id:
+            for refresh_token in self._client.get_cached_refresh_tokens(
+                scopes, home_account_id=self._client.last_home_account_id, **kwargs
+            ):
+                if "secret" in refresh_token:
+                    token = await self._client.obtain_token_by_refresh_token(scopes, refresh_token["secret"], **kwargs)
+                    if token:
+                        break
 
         if not token:
             raise ClientAuthenticationError(
