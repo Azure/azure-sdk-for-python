@@ -55,8 +55,24 @@ class _OperationMethodHeaderProxy:
     """Proxy that injects the Foundry-Features header into public operation method calls."""
 
     def __init__(self, operation: Any, foundry_features_value: str):
+        """Wrap an operation and its nested operation groups with the same header value.
+
+        For example, ``.beta.voice_agents`` stores ``conversations`` and ``telephony`` as nested
+        operation groups. Wrapping them with the parent proxy ensures every call under
+        ``.beta.voice_agents.conversations`` and ``.beta.voice_agents.telephony`` receives the
+        ``Foundry-Features: VoiceAgents=V1Preview`` header.
+        """
         object.__setattr__(self, "_operation", operation)
         object.__setattr__(self, "_foundry_features_value", foundry_features_value)
+        for name, attribute in vars(operation).items():
+            # Generated operation groups share these fields; ordinary public attributes do not.
+            if (
+                not name.startswith("_")
+                and not isinstance(attribute, _OperationMethodHeaderProxy)
+                and hasattr(attribute, "_client")
+                and hasattr(attribute, "_config")
+            ):
+                setattr(operation, name, _OperationMethodHeaderProxy(attribute, foundry_features_value))
 
     def __getattr__(self, name: str) -> Any:
         attribute = getattr(self._operation, name)
@@ -64,6 +80,9 @@ class _OperationMethodHeaderProxy:
         if name.startswith("_"):
             return attribute
         if not callable(attribute):
+            if isinstance(attribute, _OperationMethodHeaderProxy):
+                return attribute
+            # Also wrap an operation group that was assigned after this proxy was initialized.
             if hasattr(attribute, "_client") and hasattr(attribute, "_config"):
                 return _OperationMethodHeaderProxy(attribute, self._foundry_features_value)
             return attribute
