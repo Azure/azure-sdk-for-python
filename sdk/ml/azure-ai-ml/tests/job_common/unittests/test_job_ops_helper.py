@@ -12,6 +12,7 @@ from azure.ai.ml._restclient.runhistory.models import RunDetails, RunDetailsWarn
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.operations._job_ops_helper import (
     _get_sorted_filtered_logs,
+    get_job_output_uris_from_dataplane,
     has_pat_token,
     _incremental_print,
     list_logs,
@@ -73,6 +74,97 @@ class TestJobOpsHelper:
         assert has_pat_token("https://mypattoken@dev.azure.com/<organization>/<project>/_git/<repo>")
         assert not has_pat_token("https://dev.azure.com/organization/project/_apis/pipelines/1/runs")
         assert not has_pat_token("https://learn.microsoft.com/en-us/ai/?tabs=developer")
+
+    @pytest.mark.parametrize(
+        "data_type,model_type",
+        [
+            # RunHistory reports PascalCase, the ARM contract reports snake_case. Both must resolve.
+            ("UriFolder", "MLFlowModel"),
+            ("uri_folder", "mlflow_model"),
+        ],
+    )
+    def test_get_job_output_uris_from_dataplane_matches_both_type_spellings(self, data_type, model_type) -> None:
+        run_outputs = {
+            "forecast_data": Mock(asset_id="data-asset-id", type=data_type),
+            "trained_model": Mock(asset_id="model-asset-id", type=model_type),
+        }
+        run_operations = Mock()
+        run_operations.get_run_data.return_value.run_metadata.outputs = run_outputs
+
+        dataset_dataplane_operations = Mock()
+        dataset_dataplane_operations.get_batch_dataset_uris.return_value.values_property = {
+            "data-asset-id": Mock(uri="azureml://datastores/ds/paths/forecast_data")
+        }
+
+        model_dataplane_operations = Mock()
+        model_dataplane_operations.get_batch_model_uris.return_value.values = {
+            "model-asset-id": Mock(path="azureml://datastores/ds/paths/trained_model")
+        }
+
+        uris = get_job_output_uris_from_dataplane(
+            "job-name",
+            run_operations,
+            dataset_dataplane_operations,
+            model_dataplane_operations,
+        )
+
+        dataset_dataplane_operations.get_batch_dataset_uris.assert_called_once_with(["data-asset-id"])
+        model_dataplane_operations.get_batch_model_uris.assert_called_once_with(["model-asset-id"])
+        assert uris == {
+            "forecast_data": "azureml://datastores/ds/paths/forecast_data",
+            "trained_model": "azureml://datastores/ds/paths/trained_model",
+        }
+
+    @pytest.mark.parametrize(
+        "datastore_credential,expects_datastore_logs",
+        [
+            # Account key / SAS token: a signable string, so the datastore fast path is used.
+            ("fake-account-key", True),
+            # Identity-based datastore: a TokenCredential cannot sign a SAS, so fall back to RunHistory.
+            (Mock(name="ChainedTokenCredential"), False),
+            (None, False),
+        ],
+    )
+    def test_stream_logs_falls_back_to_run_history_for_unsignable_datastore(
+        self, datastore_credential, expects_datastore_logs
+    ) -> None:
+        job_resource = Mock()
+        job_resource.name = "job-name"
+        job_resource.properties.job_type = "Command"
+        job_resource.properties.properties = {}
+        job_resource.properties.services = {}
+        job_resource.properties.outputs = {
+            "default": Mock(
+                job_output_type="uri_folder",
+                uri="azureml://.../datastores/workspaceblobstore/paths/azureml/job-name/",
+            )
+        }
+
+        run_operations = Mock()
+        run_operations.get_run_details.side_effect = [
+            RunDetails(status="Running", log_files={}),
+            RunDetails(status="Completed", log_files={}),
+        ]
+
+        ds_info = {"credential": datastore_credential, "storage_type": "AzureBlob"}
+
+        with patch("azure.ai.ml.operations._job_ops_helper.get_datastore_info", return_value=ds_info), patch(
+            "azure.ai.ml.operations._job_ops_helper.list_logs_in_datastore", return_value={}
+        ) as mock_list_logs_in_datastore, patch(
+            "azure.ai.ml.operations._job_ops_helper.create_requests_pipeline_with_retry"
+        ), patch(
+            "azure.ai.ml.operations._job_ops_helper.time.sleep"
+        ):
+            stream_logs_until_completion(
+                run_operations,
+                job_resource,
+                datastore_operations=Mock(),
+                requests_pipeline=Mock(),
+            )
+
+        # Regression guard for the 1.35.0 `TypeError: ... not 'ChainedTokenCredential'`: a non-signable
+        # credential must never reach the SAS-generating datastore log reader.
+        assert mock_list_logs_in_datastore.called is expects_datastore_logs
 
 
 @pytest.mark.skip("TODO 1907352: Relies on a missing VCR.py recording + test suite needs to be reworked")
