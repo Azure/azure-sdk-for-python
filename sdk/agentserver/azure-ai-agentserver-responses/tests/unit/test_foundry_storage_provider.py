@@ -400,18 +400,19 @@ async def test_get_items__preserves_input_order(credential: Any, settings: Found
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("limit", [-1, 10, 1000])
 async def test_get_history_item_ids__gets_to_history_endpoint(
-    credential: Any, settings: FoundryStorageSettings
+    credential: Any, settings: FoundryStorageSettings, limit: int
 ) -> None:
     provider = _make_provider(credential, settings, _make_response(200, ["item_h1", "item_h2"]))
 
-    await provider.get_history_item_ids(None, None, limit=10)
+    await provider.get_history_item_ids(None, None, limit=limit)
 
     request = provider._client.send_request.call_args[0][0]
     assert request.method == "GET"
     assert "history/item_ids" in request.url
     assert "api-version=v1" in request.url
-    assert "limit=10" in request.url
+    assert f"limit={limit}" in request.url
 
 
 @pytest.mark.asyncio

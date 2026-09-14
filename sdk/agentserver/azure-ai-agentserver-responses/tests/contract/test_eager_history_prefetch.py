@@ -64,6 +64,34 @@ class TestEagerHistoryPrefetchValidation:
     """Verify that invalid conversation references are rejected before
     the handler runs."""
 
+    @pytest.mark.parametrize("limit", [None, 10])
+    def test_history_limit_across_stored_turns(self, limit: int | None) -> None:
+        """The default retains more than 100 items through prefetch and persistence."""
+        histories: list[list[Any]] = []
+
+        async def handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
+            histories.append(list(await context.get_history()))
+            return await _simple_handler(request, context, cancellation_signal)
+
+        options = ResponsesServerOptions() if limit is None else ResponsesServerOptions(default_fetch_history_count=limit)
+        app = ResponsesAgentServerHost(options=options, store=InMemoryResponseProvider())
+        app.response_handler(handler)
+        inputs = [{"role": "user", "content": f"message {index}"} for index in range(120)]
+        with TestClient(app) as client:
+            first = client.post("/responses", json={"model": "m", "input": inputs, "store": True})
+            assert first.status_code == 200
+            previous_id = first.json()["id"]
+            for _ in range(2):
+                response = client.post(
+                    "/responses",
+                    json={"model": "m", "input": "next", "previous_response_id": previous_id, "store": True},
+                )
+                assert response.status_code == 200
+                previous_id = response.json()["id"]
+        assert [len(history) for history in histories] == ([0, 120, 121] if limit is None else [0, 10, 10])
+        if limit is None:
+            assert histories[2][:120] == histories[1]
+
     def test_nonexistent_previous_response_id_returns_404(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """POST with a nonexistent previous_response_id should return
         404 when the provider raises FoundryResourceNotFoundError."""
