@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.App": "2026-07-01"
   },
-  "commit": "e8aafa60c2ab7015e3871549d244df4aa3457fb8",
+  "commit": "8e6d0efd932fdbbcb930527b82b0b985102798f9",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/app/resource-manager/Microsoft.App/ContainerApps",
   "emitterVersion": "0.63.5",
