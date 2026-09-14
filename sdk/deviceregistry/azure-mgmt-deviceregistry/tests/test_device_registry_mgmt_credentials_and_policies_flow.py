@@ -36,7 +36,7 @@ import pytest
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.mgmt.deviceregistry import DeviceRegistryMgmtClient
 from azure.mgmt.deviceregistry.models import (
-    ActivateBringYourOwnRootRequest,
+    ActivateCertificateAuthorityRequest,
     CertificateAuthorityConfiguration,
     CertificateConfiguration,
     Credential,
@@ -410,7 +410,7 @@ class TestDeviceRegistryMgmtCredentialsAndPoliciesFlow(AzureMgmtRecordedTestCase
                 resource_group_name=RESOURCE_GROUP_NAME,
                 namespace_name=NAMESPACE_NAME,
                 policy_name=BYOR_POLICY_NAME,
-                body=ActivateBringYourOwnRootRequest(certificate_chain=fake_cert_chain),
+                body=ActivateCertificateAuthorityRequest(certificate_chain=fake_cert_chain),
             ).result()
 
         # Verify BYOR state unchanged after failed activation
