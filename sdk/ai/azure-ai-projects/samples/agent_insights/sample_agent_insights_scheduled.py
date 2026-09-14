@@ -52,7 +52,6 @@ from azure.monitor.query import LogsQueryClient
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import AgentInsightMonitorCreate, AgentInsightMonitorUpdate
 
-
 ANALYSIS_INTERVAL_HOURS = 6
 
 
