@@ -1,6 +1,7 @@
 import importlib.util
 import json
 from pathlib import Path
+import textwrap
 import unittest
 
 
@@ -8,6 +9,29 @@ SCRIPT = Path(__file__).parents[1] / "scripts" / "mgmt_sdk_review_context.py"
 SPEC = importlib.util.spec_from_file_location("mgmt_sdk_review_context", SCRIPT)
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
+
+
+class WorkflowBootstrapTests(unittest.TestCase):
+    def test_single_trusted_collector_has_valid_python(self):
+        workflow = (SCRIPT.parents[1] / "mgmt-sdk-pr-review.md").read_text(encoding="utf-8")
+        blocks = workflow.split("python - <<'PY'")[1:]
+        self.assertEqual(1, len(blocks))
+        source = textwrap.dedent(blocks[0].split("\n      PY", 1)[0])
+        compile(source, "collector-bootstrap", "exec")
+        self.assertIn('revision = os.environ["TRUSTED_BASE_SHA"]', source)
+        self.assertIn("TRUSTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}", workflow)
+        self.assertEqual(1, workflow.count("      python mgmt_sdk_review_context.py"))
+
+    def test_generated_bootstrap_has_valid_python(self):
+        workflow = (SCRIPT.parents[1] / "mgmt-sdk-pr-review.lock.yml").read_text(encoding="utf-8")
+        runs = [
+            json.loads(line.strip().removeprefix("run: "))
+            for line in workflow.splitlines()
+            if line.strip().startswith('run: "python - ')
+        ]
+        self.assertEqual(1, len(runs))
+        source = runs[0].split("python - <<'PY'\n", 1)[1].split("\nPY\n", 1)[0]
+        compile(source, "generated-collector-bootstrap", "exec")
 
 
 class BreakingChangeParserTests(unittest.TestCase):
@@ -192,6 +216,35 @@ class ProvenanceTests(unittest.TestCase):
 
 
 class FailureHandlingTests(unittest.TestCase):
+    def test_drift_reports_missing_or_invalid_api_version(self):
+        for metadata in ({}, [], None, {"apiVersion": ""}, {"apiVersion": 42}):
+            with self.subTest(metadata=metadata):
+                provenance = MODULE.summarize_provenance(
+                    [{"status": "available", "path": "pkg/_metadata.json", "content": json.dumps(metadata)}]
+                )
+                result = MODULE.api_version_drift("pkg", "a" * 40, "b" * 40, provenance, provenance)
+
+                self.assertEqual("unverified", result["status"])
+                self.assertIn(f"first revision {'a' * 40}", result["error"])
+                self.assertIn(f"latest revision {'b' * 40}", result["error"])
+                self.assertIn("non-empty string apiVersion", result["error"])
+                self.assertEqual([], provenance["issues"])
+
+    def test_drift_preserves_valid_comparisons_and_failure_details(self):
+        first = {"metadata": {"apiVersion": {"value": "2026-01-01"}}, "issues": []}
+        latest = {"metadata": {"apiVersion": {"value": "2026-02-01"}}, "issues": []}
+        for provenance, expected in ((first, "unchanged"), (latest, "changed")):
+            result = MODULE.api_version_drift("pkg", "a" * 40, "b" * 40, first, provenance)
+            self.assertEqual(expected, result["status"])
+            self.assertIsNone(result["error"])
+
+        result = MODULE.api_version_drift(
+            "pkg", "a" * 40, "b" * 40, first, {"metadata": None, "issues": ["rate limited"]}
+        )
+        self.assertEqual("unverified", result["status"])
+        self.assertIn("rate limited", result["error"])
+        self.assertNotIn("first revision", result["error"])
+
     def test_invalid_repository_is_rejected(self):
         with self.assertRaises(ValueError):
             MODULE.GitHubClient("https://github.com/Azure/repo", "token")

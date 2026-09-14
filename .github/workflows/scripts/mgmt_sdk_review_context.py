@@ -379,6 +379,35 @@ def collect_provenance(client, package_path, revision):
     return summarize_provenance(files)
 
 
+def api_version_drift(package_path, first_revision, latest_revision, first_provenance, latest_provenance):
+    first_api_version = metadata_api_version(first_provenance)
+    latest_api_version = metadata_api_version(latest_provenance)
+    drift_errors = first_provenance["issues"] + latest_provenance["issues"]
+    for label, revision, version in (
+        ("first", first_revision, first_api_version),
+        ("latest", latest_revision, latest_api_version),
+    ):
+        if not version:
+            drift_errors.append(
+                f"{package_path}/_metadata.json at {label} revision {revision} "
+                "does not contain a non-empty string apiVersion"
+            )
+    return {
+        "packagePath": package_path,
+        "metadataPath": f"{package_path}/_metadata.json",
+        "status": (
+            "unverified"
+            if not first_api_version or not latest_api_version
+            else "unchanged" if first_api_version == latest_api_version else "changed"
+        ),
+        "firstRevision": first_revision,
+        "firstApiVersion": first_api_version,
+        "latestRevision": latest_revision,
+        "latestApiVersion": latest_api_version,
+        "error": "; ".join(drift_errors) if (not first_api_version or not latest_api_version) else None,
+    }
+
+
 def latest_release_version(parsed_changelog):
     for release in parsed_changelog.get("releases", []):
         version = release["heading"].split()[0]
@@ -506,24 +535,8 @@ def collect():
     for package_path in package_paths:
         first_provenance = collect_provenance(client, package_path, first_revision)
         latest_provenance = collect_provenance(client, package_path, latest_revision)
-        first_api_version = metadata_api_version(first_provenance)
-        latest_api_version = metadata_api_version(latest_provenance)
-        drift_errors = first_provenance["issues"] + latest_provenance["issues"]
         drift_results.append(
-            {
-                "packagePath": package_path,
-                "metadataPath": f"{package_path}/_metadata.json",
-                "status": (
-                    "unverified"
-                    if not first_api_version or not latest_api_version
-                    else "unchanged" if first_api_version == latest_api_version else "changed"
-                ),
-                "firstRevision": first_revision,
-                "firstApiVersion": first_api_version,
-                "latestRevision": latest_revision,
-                "latestApiVersion": latest_api_version,
-                "error": "; ".join(drift_errors) if (not first_api_version or not latest_api_version) else None,
-            }
+            api_version_drift(package_path, first_revision, latest_revision, first_provenance, latest_provenance)
         )
 
         head_changelog_path = f"{package_path}/CHANGELOG.md"
