@@ -66,6 +66,17 @@ class AadClientBase(abc.ABC):
             self._custom_cache = False
         self._is_adfs = self._tenant_id.lower() == "adfs"
 
+        # True once this client has completed a token exchange (authorization code redemption or on-behalf-of
+        # assertion exchange). Callers use this to withhold silent/cached lookups until this specific client
+        # instance has established its own identity, so a cache shared with other accounts can't satisfy a
+        # credential's first token request with an unrelated account's token.
+        self.token_exchanged = False
+
+        # Set after a successful authorization code or on-behalf-of token exchange, to the "home_account_id" of the
+        # account that exchange established, if Microsoft Entra ID's response included it. Callers use this to
+        # constrain later cache lookups to that account specifically.
+        self.last_home_account_id: Optional[str] = None
+
     def _get_cache(self, **kwargs: Any) -> TokenCache:
         cache = self._cae_cache if kwargs.get("enable_cae") else self._cache
         if not cache:
@@ -85,7 +96,9 @@ class AadClientBase(abc.ABC):
                 self._cache = TokenCache()
         return cast(TokenCache, self._cae_cache if is_cae else self._cache)
 
-    def get_cached_access_token(self, scopes: Iterable[str], **kwargs: Any) -> Optional[AccessTokenInfo]:
+    def get_cached_access_token(
+        self, scopes: Iterable[str], home_account_id: Optional[str] = None, **kwargs: Any
+    ) -> Optional[AccessTokenInfo]:
         # Do not return a cached token if claims are provided.
         if kwargs.get("claims"):
             return None
@@ -93,12 +106,19 @@ class AadClientBase(abc.ABC):
             self._tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
 
+        query: Dict[str, Any] = {"client_id": self._client_id, "realm": tenant}
+        if home_account_id:
+            # Constrain the search to the account established by this credential, so a cache shared by multiple
+            # accounts (e.g. a persistent cache shared by several `AuthorizationCodeCredential` instances) can't
+            # satisfy this request with another account's token.
+            query["home_account_id"] = home_account_id
+
         cache = self._get_cache(**kwargs)
         now = int(time.time())
         for token in cache.search(
             TokenCache.CredentialType.ACCESS_TOKEN,
             target=list(scopes),
-            query={"client_id": self._client_id, "realm": tenant},
+            query=query,
         ):
             expires_on = int(token["expires_on"])
             if expires_on > now:
@@ -118,10 +138,17 @@ class AadClientBase(abc.ABC):
                 )
         return None
 
-    def get_cached_refresh_tokens(self, scopes: Iterable[str], **kwargs) -> List[Dict]:
-        # Assumes all cached refresh tokens belong to the same user
+    def get_cached_refresh_tokens(
+        self, scopes: Iterable[str], home_account_id: Optional[str] = None, **kwargs
+    ) -> List[Dict]:
         cache = self._get_cache(**kwargs)
-        return list(cache.search(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes)))
+        query: Dict[str, Any] = {"client_id": self._client_id}
+        if home_account_id:
+            # Constrain the search to the account established by this credential, so a cache shared by multiple
+            # accounts (e.g. a persistent cache shared by several `AuthorizationCodeCredential` instances) can't
+            # satisfy this request with another account's refresh token.
+            query["home_account_id"] = home_account_id
+        return list(cache.search(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes), query=query))
 
     @abc.abstractmethod
     def obtain_token_by_authorization_code(self, scopes, code, redirect_uri, client_secret=None, **kwargs):
@@ -207,6 +234,12 @@ class AadClientBase(abc.ABC):
             content["access_token"], expires_on, token_type=content.get("token_type", "Bearer"), refresh_on=refresh_on
         )
 
+        # Record which account this exchange established, if Microsoft Entra ID included that information. Callers
+        # (e.g. AuthorizationCodeCredential) use this to bind later cache lookups to this account. Extract it before
+        # 'cache.add' below, which mutates 'content'.
+        self.token_exchanged = True
+        self.last_home_account_id = _get_home_account_id(content)
+
         # caching is the final step because 'add' mutates 'content'
         cache.add(
             event={
@@ -229,6 +262,7 @@ class AadClientBase(abc.ABC):
             "grant_type": "authorization_code",
             "redirect_uri": redirect_uri,
             "scope": " ".join(scopes),
+            "client_info": 1,  # request Microsoft Entra ID include home_account_id in its response
         }
 
         claims = _merge_claims_challenge_and_capabilities(
@@ -323,6 +357,7 @@ class AadClientBase(abc.ABC):
             "grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
             "requested_token_use": "on_behalf_of",
             "scope": " ".join(scopes),
+            "client_info": 1,  # request Microsoft Entra ID include home_account_id in its response
         }
 
         claims = _merge_claims_challenge_and_capabilities(
@@ -421,6 +456,44 @@ class AadClientBase(abc.ABC):
         if not self._custom_cache:
             self._cache = None
             self._cae_cache = None
+
+
+def _get_home_account_id(content: Dict) -> Optional[str]:
+    """Extract the "home_account_id" of the account a token response belongs to, if possible.
+
+    Prefers the "client_info" field (present when the request included "client_info": 1 and Microsoft Entra ID
+    supports it). Falls back to the "sub" claim of an included ID token, mirroring MSAL's own behavior for STS
+    responses that don't include "client_info" (for example, some ADFS configurations). Returns None if neither is
+    available or usable, in which case callers must not rely on account-bound cache lookups.
+
+    :param dict content: a Microsoft Entra ID token response
+    :return: the account's home_account_id, or None if it can't be determined
+    :rtype: str or None
+    """
+
+    client_info = content.get("client_info")
+    if client_info:
+        try:
+            padded = client_info + "=" * (-len(client_info) % 4)
+            decoded = base64.urlsafe_b64decode(padded).decode("utf-8")
+            info = json.loads(decoded)
+            return "{uid}.{utid}".format(**info)
+        except (TypeError, ValueError, KeyError):
+            pass  # fall through to the id_token-based fallback below
+
+    id_token = content.get("id_token")
+    if id_token:
+        try:
+            # an id_token is a JWT; its middle segment is a base64url-encoded JSON payload
+            payload = id_token.split(".")[1]
+            padded = payload + "=" * (-len(payload) % 4)
+            claims = json.loads(base64.urlsafe_b64decode(padded).decode("utf-8"))
+            # MSAL uses the subject claim as home_account_id when the STS doesn't provide client_info
+            return cast(str, claims["sub"])
+        except (IndexError, TypeError, ValueError, KeyError):
+            pass
+
+    return None
 
 
 def _merge_claims_challenge_and_capabilities(capabilities, claims_challenge):

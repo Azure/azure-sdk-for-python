@@ -113,24 +113,34 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         await self._client.close()
 
     async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
-        return self._client.get_cached_access_token(scopes, **kwargs)
+        if not self._client.token_exchanged:
+            # This credential hasn't yet exchanged its assertion, so its account isn't established. A cache shared
+            # with other accounts must not satisfy this credential's first token request.
+            return None
+        return self._client.get_cached_access_token(
+            scopes, home_account_id=self._client.last_home_account_id, **kwargs
+        )
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
-        # Note we assume the cache has tokens for one user only. That's okay because each instance of this class is
-        # locked to a single user (assertion). This assumption will become unsafe if this class allows applications
-        # to change an instance's assertion.
-        refresh_tokens = self._client.get_cached_refresh_tokens(scopes, **kwargs)
-        if len(refresh_tokens) == 1:  # there should be only one
-            try:
-                refresh_token = refresh_tokens[0]["secret"]
-                return await self._client.obtain_token_by_refresh_token_on_behalf_of(
-                    scopes, self._client_credential, refresh_token, **kwargs
-                )
-            except ClientAuthenticationError as ex:
-                _LOGGER.debug("silent authentication failed: %s", ex, exc_info=True)
-            except (IndexError, KeyError, TypeError) as ex:
-                # this is purely defensive, hasn't been observed in practice
-                _LOGGER.debug("silent authentication failed due to malformed refresh token: %s", ex, exc_info=True)
+        if self._client.token_exchanged:
+            # Note we assume the cache has tokens for one user only. That's okay because each instance of this class
+            # is locked to a single user (assertion). This assumption will become unsafe if this class allows
+            # applications to change an instance's assertion.
+            refresh_tokens = self._client.get_cached_refresh_tokens(
+                scopes, home_account_id=self._client.last_home_account_id, **kwargs
+            )
+            if len(refresh_tokens) == 1:  # there should be only one
+                try:
+                    refresh_token = refresh_tokens[0]["secret"]
+                    return await self._client.obtain_token_by_refresh_token_on_behalf_of(
+                        scopes, self._client_credential, refresh_token, **kwargs
+                    )
+                except ClientAuthenticationError as ex:
+                    _LOGGER.debug("silent authentication failed: %s", ex, exc_info=True)
+                except (IndexError, KeyError, TypeError) as ex:
+                    # this is purely defensive, hasn't been observed in practice
+                    _LOGGER.debug("silent authentication failed due to malformed refresh token: %s", ex, exc_info=True)
 
-        # we don't have a refresh token, or silent auth failed: acquire a new token from the assertion
+        # we don't have a refresh token bound to this credential's account, or silent auth failed:
+        # acquire a new token from the assertion
         return await self._client.obtain_token_on_behalf_of(scopes, self._client_credential, self._assertion, **kwargs)
