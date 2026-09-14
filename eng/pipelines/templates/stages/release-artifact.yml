@@ -45,7 +45,9 @@ parameters:
     default: ''
 
 stages:
-  - stage: 'Release_${{parameters.Artifact.safename}}'
+  # Property lookups on a declared object parameter are case sensitive, unlike the loop variable
+  # this stage was extracted from, so this must match the `safeName` spelling used in ci.yml.
+  - stage: 'Release_${{parameters.Artifact.safeName}}'
     displayName: 'Release: ${{parameters.Artifact.name}}'
     dependsOn:
       - ${{ parameters.DependsOn }}
@@ -57,7 +59,7 @@ stages:
     # Auto-release CI: only release when the shared prepare stage flagged this artifact as changed.
     # Manual runs: every declared artifact remains eligible (existing behavior).
     ${{ if and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
-      condition: and(succeeded(), eq(dependencies.AutoReleasePrepare.outputs['ResolveAutoReleasePackages.resolve.ReleaseArtifact_${{ parameters.Artifact.safename }}'], 'true'), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
+      condition: and(succeeded(), eq(dependencies.AutoReleasePrepare.outputs['ResolveAutoReleasePackages.resolve.ReleaseArtifact_${{ parameters.Artifact.safeName }}'], 'true'), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
     ${{ else }}:
       condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
     jobs:
