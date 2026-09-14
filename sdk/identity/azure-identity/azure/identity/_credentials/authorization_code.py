@@ -116,7 +116,12 @@ class AuthorizationCodeCredential(GetTokenMixin):
         )
 
     def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessTokenInfo]:
-        return self._client.get_cached_access_token(scopes, **kwargs)
+        if self._authorization_code:
+            # The authorization code hasn't been redeemed yet, so this credential's account isn't established.
+            # A cache shared with other accounts (e.g. a persistent cache shared by several
+            # AuthorizationCodeCredential instances) must not satisfy this credential's first token request.
+            return None
+        return self._client.get_cached_access_token(scopes, home_account_id=self._client.last_home_account_id, **kwargs)
 
     def _request_token(self, *scopes: str, **kwargs) -> AccessTokenInfo:
         if self._authorization_code:
@@ -127,7 +132,9 @@ class AuthorizationCodeCredential(GetTokenMixin):
             return token
 
         token = None
-        for refresh_token in self._client.get_cached_refresh_tokens(scopes, **kwargs):
+        for refresh_token in self._client.get_cached_refresh_tokens(
+            scopes, home_account_id=self._client.last_home_account_id, **kwargs
+        ):
             if "secret" in refresh_token:
                 token = self._client.obtain_token_by_refresh_token(scopes, refresh_token["secret"], **kwargs)
                 if token:
