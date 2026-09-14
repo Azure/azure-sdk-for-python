@@ -23,7 +23,7 @@ class ModelDataplaneOperations(_ScopeDependentOperations):
         self._operation = service_client.models
 
     def get_batch_model_uris(self, model_ids: List[str]) -> BatchModelPathResponseDto:
-        batch_uri_request = BatchGetResolvedUrisDto(values=model_ids)
+        batch_uri_request = BatchGetResolvedUrisDto(values_property=model_ids)
         return self._operation.batch_get_resolved_uris(
             self._operation_scope.subscription_id,
             self._operation_scope.resource_group_name,

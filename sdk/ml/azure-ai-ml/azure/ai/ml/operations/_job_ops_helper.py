@@ -450,6 +450,30 @@ def has_pat_token(url: Optional[str]) -> bool:
     return re.search(pat_regex, url) is not None
 
 
+def _normalize_asset_type(asset_type: Optional[str]) -> str:
+    """Normalize an asset type so that it can be compared regardless of casing and separators.
+
+    A job output's asset type is reported by the RunHistory dataplane in PascalCase (for example
+    "UriFolder" or "MLFlowModel"), while the control plane enums spell the same types in snake_case
+    (for example "uri_folder" or "mlflow_model"). Normalizing both sides lets the two spellings of the
+    same type compare equal.
+
+    :param asset_type: The asset type to normalize.
+    :type asset_type: Optional[str]
+    :return: The normalized asset type, or an empty string if no asset type was provided.
+    :rtype: str
+    """
+    return asset_type.lower().replace("_", "") if asset_type else ""
+
+
+# Asset types of job outputs that are resolved through the dataset dataplane, and the ones resolved
+# through the model dataplane. Both are normalized so that either wire spelling is recognized.
+_DATA_ASSET_TYPES = frozenset(_normalize_asset_type(data_type.value) for data_type in DataType)
+_MODEL_ASSET_TYPES = frozenset(
+    _normalize_asset_type(model_type) for model_type in ("CustomModel", "MLFlowModel", "TritonModel")
+)
+
+
 def get_job_output_uris_from_dataplane(
     job_name: Optional[str],
     run_operations: RunOperations,
@@ -495,14 +519,14 @@ def get_job_output_uris_from_dataplane(
     dataset_ids = [
         run_outputs[output_name].asset_id
         for output_name in output_names
-        if run_outputs[output_name].type in [o.value for o in DataType]
+        if _normalize_asset_type(run_outputs[output_name].type) in _DATA_ASSET_TYPES
     ]
 
     # Collect all output ids that correspond to models
     model_ids = [
         run_outputs[output_name].asset_id
         for output_name in output_names
-        if run_outputs[output_name].type in ["CustomModel", "MLFlowModel", "TritonModel"]
+        if _normalize_asset_type(run_outputs[output_name].type) in _MODEL_ASSET_TYPES
     ]
 
     output_name_to_dataset_uri = {}
@@ -525,6 +549,6 @@ def get_job_output_uris_from_dataplane(
             else None
         )
         output_name_to_model_uri = {
-            asset_id_to_output_name[k]: v.path for k, v in model_uris.values.items()  # type: ignore
+            asset_id_to_output_name[k]: v.path for k, v in model_uris.values_property.items()  # type: ignore
         }
     return {**output_name_to_dataset_uri, **output_name_to_model_uri}
