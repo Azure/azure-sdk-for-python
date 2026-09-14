@@ -50,28 +50,28 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
     `dsl.fl_scatter_gather()` or when loading a serialized version of this node from YAML.
     Please do not manually initialize this class.
 
-    :param silo_configs: List of federated learning silo configurations.
-    :type silo_configs: List[~azure.ai.ml.entities._assets.federated_learning_silo.FederatedLearningSilo]
-    :param silo_component: Component representing the silo for federated learning.
-    :type silo_component: ~azure.ai.ml.entities.Component
-    :param aggregation_component: Component representing the aggregation step.
-    :type aggregation_component: ~azure.ai.ml.entities.Component
-    :param aggregation_compute: The compute resource for the aggregation step.
-    :type aggregation_compute: str
-    :param aggregation_datastore: The datastore for the aggregation step.
-    :type aggregation_datastore: str
-    :param shared_silo_kwargs: Keyword arguments shared across all silos.
-    :type shared_silo_kwargs: dict
-    :param aggregation_kwargs: Keyword arguments specific to the aggregation step.
-    :type aggregation_kwargs: dict
-    :param silo_to_aggregation_argument_map: Mapping of silo to aggregation arguments.
-    :type silo_to_aggregation_argument_map: dict
-    :param aggregation_to_silo_argument_map: Mapping of aggregation to silo arguments.
-    :type aggregation_to_silo_argument_map: dict
-    :param max_iterations: The maximum number of iterations for the scatter-gather loop.
-    :type max_iterations: int
-    :param create_default_mappings_if_needed: Whether to create default argument mappings if needed.
-    :type create_default_mappings_if_needed: bool
+    :keyword silo_configs: List of federated learning silo configurations.
+    :paramtype silo_configs: List[~azure.ai.ml.entities._assets.federated_learning_silo.FederatedLearningSilo]
+    :keyword silo_component: Component representing the silo for federated learning.
+    :paramtype silo_component: ~azure.ai.ml.entities.Component
+    :keyword aggregation_component: Component representing the aggregation step.
+    :paramtype aggregation_component: ~azure.ai.ml.entities.Component
+    :keyword aggregation_compute: The compute resource for the aggregation step.
+    :paramtype aggregation_compute: str
+    :keyword aggregation_datastore: The datastore for the aggregation step.
+    :paramtype aggregation_datastore: str
+    :keyword shared_silo_kwargs: Keyword arguments shared across all silos.
+    :paramtype shared_silo_kwargs: dict
+    :keyword aggregation_kwargs: Keyword arguments specific to the aggregation step.
+    :paramtype aggregation_kwargs: dict
+    :keyword silo_to_aggregation_argument_map: Mapping of silo to aggregation arguments.
+    :paramtype silo_to_aggregation_argument_map: dict
+    :keyword aggregation_to_silo_argument_map: Mapping of aggregation to silo arguments.
+    :paramtype aggregation_to_silo_argument_map: dict
+    :keyword max_iterations: The maximum number of iterations for the scatter-gather loop.
+    :paramtype max_iterations: int
+    :keyword create_default_mappings_if_needed: Whether to create default argument mappings if needed.
+    :paramtype create_default_mappings_if_needed: bool
     """
 
     # See node class for input descriptions, no point maintaining

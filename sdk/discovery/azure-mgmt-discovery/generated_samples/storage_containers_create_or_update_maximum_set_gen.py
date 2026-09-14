@@ -33,21 +33,22 @@ def main():
 
     response = client.storage_containers.begin_create_or_update(
         resource_group_name="rgdiscovery",
-        storage_container_name="23ae33a54872c83164",
+        storage_container_name="49af599cddb38a473b",
         resource={
             "location": "uksouth",
             "properties": {
                 "storageStore": {
                     "kind": "AzureStorageBlob",
+                    "mountProtocol": "NFS",
                     "storageAccountId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/storageaccount",
                 }
             },
-            "tags": {"key9976": "waghigmzxlvfqwribpxamwx"},
+            "tags": {"key4240": "omppnvnqh"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/StorageContainers_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/StorageContainers_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

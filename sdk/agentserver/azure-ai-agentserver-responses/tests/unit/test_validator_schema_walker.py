@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from scripts.validator_schema_walker import SchemaWalker, discover_post_request_roots, resolve_ref
+from _scripts.validator_schema_walker import SchemaWalker, discover_post_request_roots, resolve_ref
 
 
 def test_resolve_ref_extracts_schema_name() -> None:

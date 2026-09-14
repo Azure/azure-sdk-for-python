@@ -32,12 +32,12 @@ def main():
 
     response = client.storage_containers.begin_update(
         resource_group_name="rgdiscovery",
-        storage_container_name="5c26ac8738c893ec11",
-        properties={"properties": {}, "tags": {"key5909": "hdhfnp"}},
+        storage_container_name="75bd98e50f6a2edc55",
+        properties={"properties": {}, "tags": {"key7594": "mpcdmayekmfvvgxevqnpybjoiwnkt"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/StorageContainers_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/StorageContainers_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

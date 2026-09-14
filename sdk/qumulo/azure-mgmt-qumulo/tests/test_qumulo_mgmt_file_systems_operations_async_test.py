@@ -8,22 +8,19 @@
 import pytest
 from azure.mgmt.qumulo.aio import QumuloMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
+
 
 @pytest.mark.live_test_only
 class TestQumuloMgmtFileSystemsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(QumuloMgmtClient, is_async=True)
 
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
-        response = self.client.file_systems.list_by_resource_group(
-            resource_group_name=resource_group.name,
-        )
+    async def test_list_by_subscription(self):
+        response = self.client.file_systems.list_by_subscription()
         result = [r async for r in response]
-        assert result == []
-        
+        assert len(result)

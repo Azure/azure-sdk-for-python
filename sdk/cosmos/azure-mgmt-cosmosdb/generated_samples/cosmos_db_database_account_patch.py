@@ -48,12 +48,11 @@ def main():
                     "periodicModeProperties": {
                         "backupIntervalInMinutes": 240,
                         "backupRetentionIntervalInHours": 720,
-                        "backupStorageRedundancy": "Geo",
+                        "backupStorageRedundancy": "Local",
                     },
                     "type": "Periodic",
                 },
                 "capacity": {"totalThroughputLimit": 2000},
-                "capacityMode": "Provisioned",
                 "consistencyPolicy": {
                     "defaultConsistencyLevel": "BoundedStaleness",
                     "maxIntervalInSeconds": 10,
@@ -61,13 +60,13 @@ def main():
                 },
                 "defaultIdentity": "FirstPartyIdentity",
                 "defaultPriorityLevel": "Low",
-                "diagnosticLogSettings": {"enableFullTextQuery": "True"},
                 "enableAnalyticalStorage": True,
                 "enableBurstCapacity": True,
                 "enableFreeTier": False,
                 "enablePartitionMerge": True,
                 "enablePerRegionPerPartitionAutoscale": True,
                 "enablePriorityBasedExecution": True,
+                "enforceHierarchicalPartitionKeyIdLastLevel": False,
                 "ipRules": [{"ipAddressOrRange": "23.43.230.120"}, {"ipAddressOrRange": "110.12.240.0/12"}],
                 "isVirtualNetworkFilterEnabled": True,
                 "minimalTlsVersion": "Tls",
@@ -88,6 +87,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/CosmosDBDatabaseAccountPatch.json
+# x-ms-original-file: 2026-03-15/CosmosDBDatabaseAccountPatch.json
 if __name__ == "__main__":
     main()

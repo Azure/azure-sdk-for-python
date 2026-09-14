@@ -49,7 +49,7 @@ def main():
                 "databaseAccountOfferType": "Standard",
                 "enableAnalyticalStorage": True,
                 "enableFreeTier": False,
-                "enableMaterializedViews": False,
+                "enforceHierarchicalPartitionKeyIdLastLevel": False,
                 "keyVaultKeyUri": "https://myKeyVault.vault.azure.net",
                 "locations": [{"failoverPriority": 0, "isZoneRedundant": False, "locationName": "southcentralus"}],
                 "minimalTlsVersion": "Tls",
@@ -59,7 +59,7 @@ def main():
                         {"collectionNames": ["collection3", "collection4"], "databaseName": "db2"},
                     ],
                     "restoreMode": "PointInTime",
-                    "restoreSource": "/subscriptions/00000000-1111-2222-3333-444444444444/providers/Microsoft.DocumentDB/locations/westus/restorableDatabaseAccounts/1a97b4bb-f6a0-430e-ade1-638d781830cc",
+                    "restoreSource": "/subscriptions/subid/providers/Microsoft.DocumentDB/locations/westus/restorableDatabaseAccounts/1a97b4bb-f6a0-430e-ade1-638d781830cc",
                     "restoreTimestampInUtc": "2021-03-11T22:05:09Z",
                     "restoreWithTtlDisabled": False,
                     "sourceBackupLocation": "westus",
@@ -71,6 +71,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/CosmosDBRestoreDatabaseAccountCreateUpdate.json
+# x-ms-original-file: 2026-03-15/CosmosDBRestoreDatabaseAccountCreateUpdate.json
 if __name__ == "__main__":
     main()

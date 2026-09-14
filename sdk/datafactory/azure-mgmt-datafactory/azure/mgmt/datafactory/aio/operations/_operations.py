@@ -34,7 +34,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -147,7 +147,6 @@ from .._configuration import DataFactoryManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
@@ -414,7 +413,7 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        factory: JSON,
+        factory: _types.Factory,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -429,7 +428,7 @@ class FactoriesOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param factory: Factory resource definition. Required.
-        :type factory: JSON
+        :type factory: ~azure.mgmt.datafactory.types.Factory
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -482,7 +481,7 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        factory: Union[_models.Factory, JSON, IO[bytes]],
+        factory: Union[_models.Factory, _types.Factory, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -495,9 +494,10 @@ class FactoriesOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param factory: Factory resource definition. Is one of the following types: Factory, JSON,
-         IO[bytes] Required.
-        :type factory: ~azure.mgmt.datafactory.models.Factory or JSON or IO[bytes]
+        :param factory: Factory resource definition. Is either a Factory type or a IO[bytes] type.
+         Required.
+        :type factory: ~azure.mgmt.datafactory.models.Factory or ~azure.mgmt.datafactory.types.Factory
+         or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -614,7 +614,7 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        factory_update_parameters: JSON,
+        factory_update_parameters: _types.FactoryUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -627,7 +627,7 @@ class FactoriesOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param factory_update_parameters: The parameters for updating a factory. Required.
-        :type factory_update_parameters: JSON
+        :type factory_update_parameters: ~azure.mgmt.datafactory.types.FactoryUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -668,7 +668,7 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        factory_update_parameters: Union[_models.FactoryUpdateParameters, JSON, IO[bytes]],
+        factory_update_parameters: Union[_models.FactoryUpdateParameters, _types.FactoryUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Factory:
         """Updates a factory.
@@ -678,10 +678,10 @@ class FactoriesOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param factory_update_parameters: The parameters for updating a factory. Is one of the
-         following types: FactoryUpdateParameters, JSON, IO[bytes] Required.
-        :type factory_update_parameters: ~azure.mgmt.datafactory.models.FactoryUpdateParameters or JSON
-         or IO[bytes]
+        :param factory_update_parameters: The parameters for updating a factory. Is either a
+         FactoryUpdateParameters type or a IO[bytes] type. Required.
+        :type factory_update_parameters: ~azure.mgmt.datafactory.models.FactoryUpdateParameters or
+         ~azure.mgmt.datafactory.types.FactoryUpdateParameters or IO[bytes]
         :return: Factory. The Factory is compatible with MutableMapping
         :rtype: ~azure.mgmt.datafactory.models.Factory
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1033,7 +1033,7 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        git_hub_access_token_request: JSON,
+        git_hub_access_token_request: _types.GitHubAccessTokenRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1046,7 +1046,7 @@ class FactoriesOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param git_hub_access_token_request: Get GitHub access token request definition. Required.
-        :type git_hub_access_token_request: JSON
+        :type git_hub_access_token_request: ~azure.mgmt.datafactory.types.GitHubAccessTokenRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1089,7 +1089,9 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        git_hub_access_token_request: Union[_models.GitHubAccessTokenRequest, JSON, IO[bytes]],
+        git_hub_access_token_request: Union[
+            _models.GitHubAccessTokenRequest, _types.GitHubAccessTokenRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.GitHubAccessTokenResponse:
         """Get GitHub Access Token.
@@ -1099,10 +1101,10 @@ class FactoriesOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param git_hub_access_token_request: Get GitHub access token request definition. Is one of the
-         following types: GitHubAccessTokenRequest, JSON, IO[bytes] Required.
+        :param git_hub_access_token_request: Get GitHub access token request definition. Is either a
+         GitHubAccessTokenRequest type or a IO[bytes] type. Required.
         :type git_hub_access_token_request: ~azure.mgmt.datafactory.models.GitHubAccessTokenRequest or
-         JSON or IO[bytes]
+         ~azure.mgmt.datafactory.types.GitHubAccessTokenRequest or IO[bytes]
         :return: GitHubAccessTokenResponse. The GitHubAccessTokenResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.datafactory.models.GitHubAccessTokenResponse
@@ -1207,7 +1209,7 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        policy: JSON,
+        policy: _types.UserAccessPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1220,7 +1222,7 @@ class FactoriesOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param policy: Data Plane user access policy definition. Required.
-        :type policy: JSON
+        :type policy: ~azure.mgmt.datafactory.types.UserAccessPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1261,7 +1263,7 @@ class FactoriesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        policy: Union[_models.UserAccessPolicy, JSON, IO[bytes]],
+        policy: Union[_models.UserAccessPolicy, _types.UserAccessPolicy, IO[bytes]],
         **kwargs: Any
     ) -> _models.AccessPolicyResponse:
         """Get Data Plane access.
@@ -1271,9 +1273,10 @@ class FactoriesOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param policy: Data Plane user access policy definition. Is one of the following types:
-         UserAccessPolicy, JSON, IO[bytes] Required.
-        :type policy: ~azure.mgmt.datafactory.models.UserAccessPolicy or JSON or IO[bytes]
+        :param policy: Data Plane user access policy definition. Is either a UserAccessPolicy type or a
+         IO[bytes] type. Required.
+        :type policy: ~azure.mgmt.datafactory.models.UserAccessPolicy or
+         ~azure.mgmt.datafactory.types.UserAccessPolicy or IO[bytes]
         :return: AccessPolicyResponse. The AccessPolicyResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.datafactory.models.AccessPolicyResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1370,14 +1373,19 @@ class FactoriesOperations:
 
     @overload
     async def configure_factory_repo(
-        self, location_id: str, factory_repo_update: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location_id: str,
+        factory_repo_update: _types.FactoryRepoUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Factory:
         """Updates a factory's repo information.
 
         :param location_id: The location identifier. Required.
         :type location_id: str
         :param factory_repo_update: The request body. Required.
-        :type factory_repo_update: JSON
+        :type factory_repo_update: ~azure.mgmt.datafactory.types.FactoryRepoUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1406,16 +1414,19 @@ class FactoriesOperations:
 
     @distributed_trace_async
     async def configure_factory_repo(
-        self, location_id: str, factory_repo_update: Union[_models.FactoryRepoUpdate, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location_id: str,
+        factory_repo_update: Union[_models.FactoryRepoUpdate, _types.FactoryRepoUpdate, IO[bytes]],
+        **kwargs: Any
     ) -> _models.Factory:
         """Updates a factory's repo information.
 
         :param location_id: The location identifier. Required.
         :type location_id: str
-        :param factory_repo_update: The request body. Is one of the following types: FactoryRepoUpdate,
-         JSON, IO[bytes] Required.
-        :type factory_repo_update: ~azure.mgmt.datafactory.models.FactoryRepoUpdate or JSON or
-         IO[bytes]
+        :param factory_repo_update: The request body. Is either a FactoryRepoUpdate type or a IO[bytes]
+         type. Required.
+        :type factory_repo_update: ~azure.mgmt.datafactory.models.FactoryRepoUpdate or
+         ~azure.mgmt.datafactory.types.FactoryRepoUpdate or IO[bytes]
         :return: Factory. The Factory is compatible with MutableMapping
         :rtype: ~azure.mgmt.datafactory.models.Factory
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1538,7 +1549,7 @@ class ExposureControlOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        exposure_control_request: JSON,
+        exposure_control_request: _types.ExposureControlRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1551,7 +1562,7 @@ class ExposureControlOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param exposure_control_request: The exposure control request. Required.
-        :type exposure_control_request: JSON
+        :type exposure_control_request: ~azure.mgmt.datafactory.types.ExposureControlRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1592,7 +1603,7 @@ class ExposureControlOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        exposure_control_request: Union[_models.ExposureControlRequest, JSON, IO[bytes]],
+        exposure_control_request: Union[_models.ExposureControlRequest, _types.ExposureControlRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.ExposureControlResponse:
         """Get exposure control feature for specific factory.
@@ -1602,10 +1613,10 @@ class ExposureControlOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param exposure_control_request: The exposure control request. Is one of the following types:
-         ExposureControlRequest, JSON, IO[bytes] Required.
-        :type exposure_control_request: ~azure.mgmt.datafactory.models.ExposureControlRequest or JSON
-         or IO[bytes]
+        :param exposure_control_request: The exposure control request. Is either a
+         ExposureControlRequest type or a IO[bytes] type. Required.
+        :type exposure_control_request: ~azure.mgmt.datafactory.models.ExposureControlRequest or
+         ~azure.mgmt.datafactory.types.ExposureControlRequest or IO[bytes]
         :return: ExposureControlResponse. The ExposureControlResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.datafactory.models.ExposureControlResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1712,7 +1723,7 @@ class ExposureControlOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        exposure_control_batch_request: JSON,
+        exposure_control_batch_request: _types.ExposureControlBatchRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1726,7 +1737,7 @@ class ExposureControlOperations:
         :type factory_name: str
         :param exposure_control_batch_request: The exposure control request for list of features.
          Required.
-        :type exposure_control_batch_request: JSON
+        :type exposure_control_batch_request: ~azure.mgmt.datafactory.types.ExposureControlBatchRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1770,7 +1781,9 @@ class ExposureControlOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        exposure_control_batch_request: Union[_models.ExposureControlBatchRequest, JSON, IO[bytes]],
+        exposure_control_batch_request: Union[
+            _models.ExposureControlBatchRequest, _types.ExposureControlBatchRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ExposureControlBatchResponse:
         """Get list of exposure control features for specific factory.
@@ -1781,9 +1794,10 @@ class ExposureControlOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param exposure_control_batch_request: The exposure control request for list of features. Is
-         one of the following types: ExposureControlBatchRequest, JSON, IO[bytes] Required.
+         either a ExposureControlBatchRequest type or a IO[bytes] type. Required.
         :type exposure_control_batch_request:
-         ~azure.mgmt.datafactory.models.ExposureControlBatchRequest or JSON or IO[bytes]
+         ~azure.mgmt.datafactory.models.ExposureControlBatchRequest or
+         ~azure.mgmt.datafactory.types.ExposureControlBatchRequest or IO[bytes]
         :return: ExposureControlBatchResponse. The ExposureControlBatchResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.datafactory.models.ExposureControlBatchResponse
@@ -1881,14 +1895,19 @@ class ExposureControlOperations:
 
     @overload
     async def get_feature_value(
-        self, location_id: str, exposure_control_request: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location_id: str,
+        exposure_control_request: _types.ExposureControlRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.ExposureControlResponse:
         """Get exposure control feature for specific location.
 
         :param location_id: The location identifier. Required.
         :type location_id: str
         :param exposure_control_request: The request body. Required.
-        :type exposure_control_request: JSON
+        :type exposure_control_request: ~azure.mgmt.datafactory.types.ExposureControlRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1924,17 +1943,17 @@ class ExposureControlOperations:
     async def get_feature_value(
         self,
         location_id: str,
-        exposure_control_request: Union[_models.ExposureControlRequest, JSON, IO[bytes]],
+        exposure_control_request: Union[_models.ExposureControlRequest, _types.ExposureControlRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.ExposureControlResponse:
         """Get exposure control feature for specific location.
 
         :param location_id: The location identifier. Required.
         :type location_id: str
-        :param exposure_control_request: The request body. Is one of the following types:
-         ExposureControlRequest, JSON, IO[bytes] Required.
-        :type exposure_control_request: ~azure.mgmt.datafactory.models.ExposureControlRequest or JSON
-         or IO[bytes]
+        :param exposure_control_request: The request body. Is either a ExposureControlRequest type or a
+         IO[bytes] type. Required.
+        :type exposure_control_request: ~azure.mgmt.datafactory.models.ExposureControlRequest or
+         ~azure.mgmt.datafactory.types.ExposureControlRequest or IO[bytes]
         :return: ExposureControlResponse. The ExposureControlResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.datafactory.models.ExposureControlResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2058,7 +2077,7 @@ class PipelineRunsOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        filter_parameters: JSON,
+        filter_parameters: _types.RunFilterParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2071,7 +2090,7 @@ class PipelineRunsOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param filter_parameters: Parameters to filter the pipeline run. Required.
-        :type filter_parameters: JSON
+        :type filter_parameters: ~azure.mgmt.datafactory.types.RunFilterParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2114,7 +2133,7 @@ class PipelineRunsOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        filter_parameters: Union[_models.RunFilterParameters, JSON, IO[bytes]],
+        filter_parameters: Union[_models.RunFilterParameters, _types.RunFilterParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.PipelineRunsQueryResponse:
         """Query pipeline runs in the factory based on input filter conditions.
@@ -2124,10 +2143,10 @@ class PipelineRunsOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param filter_parameters: Parameters to filter the pipeline run. Is one of the following types:
-         RunFilterParameters, JSON, IO[bytes] Required.
-        :type filter_parameters: ~azure.mgmt.datafactory.models.RunFilterParameters or JSON or
-         IO[bytes]
+        :param filter_parameters: Parameters to filter the pipeline run. Is either a
+         RunFilterParameters type or a IO[bytes] type. Required.
+        :type filter_parameters: ~azure.mgmt.datafactory.models.RunFilterParameters or
+         ~azure.mgmt.datafactory.types.RunFilterParameters or IO[bytes]
         :return: PipelineRunsQueryResponse. The PipelineRunsQueryResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.datafactory.models.PipelineRunsQueryResponse
@@ -2402,7 +2421,7 @@ class ActivityRunsOperations:
         resource_group_name: str,
         factory_name: str,
         run_id: str,
-        filter_parameters: JSON,
+        filter_parameters: _types.RunFilterParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2417,7 +2436,7 @@ class ActivityRunsOperations:
         :param run_id: The pipeline run identifier. Required.
         :type run_id: str
         :param filter_parameters: Parameters to filter the activity runs. Required.
-        :type filter_parameters: JSON
+        :type filter_parameters: ~azure.mgmt.datafactory.types.RunFilterParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2464,7 +2483,7 @@ class ActivityRunsOperations:
         resource_group_name: str,
         factory_name: str,
         run_id: str,
-        filter_parameters: Union[_models.RunFilterParameters, JSON, IO[bytes]],
+        filter_parameters: Union[_models.RunFilterParameters, _types.RunFilterParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.ActivityRunsQueryResponse:
         """Query activity runs based on input filter conditions.
@@ -2476,10 +2495,10 @@ class ActivityRunsOperations:
         :type factory_name: str
         :param run_id: The pipeline run identifier. Required.
         :type run_id: str
-        :param filter_parameters: Parameters to filter the activity runs. Is one of the following
-         types: RunFilterParameters, JSON, IO[bytes] Required.
-        :type filter_parameters: ~azure.mgmt.datafactory.models.RunFilterParameters or JSON or
-         IO[bytes]
+        :param filter_parameters: Parameters to filter the activity runs. Is either a
+         RunFilterParameters type or a IO[bytes] type. Required.
+        :type filter_parameters: ~azure.mgmt.datafactory.models.RunFilterParameters or
+         ~azure.mgmt.datafactory.types.RunFilterParameters or IO[bytes]
         :return: ActivityRunsQueryResponse. The ActivityRunsQueryResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.datafactory.models.ActivityRunsQueryResponse
@@ -2605,7 +2624,7 @@ class TriggersOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        filter_parameters: JSON,
+        filter_parameters: _types.TriggerFilterParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2618,7 +2637,7 @@ class TriggersOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param filter_parameters: Parameters to filter the triggers. Required.
-        :type filter_parameters: JSON
+        :type filter_parameters: ~azure.mgmt.datafactory.types.TriggerFilterParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2659,7 +2678,7 @@ class TriggersOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        filter_parameters: Union[_models.TriggerFilterParameters, JSON, IO[bytes]],
+        filter_parameters: Union[_models.TriggerFilterParameters, _types.TriggerFilterParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.TriggerQueryResponse:
         """Query triggers.
@@ -2669,10 +2688,10 @@ class TriggersOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param filter_parameters: Parameters to filter the triggers. Is one of the following types:
-         TriggerFilterParameters, JSON, IO[bytes] Required.
-        :type filter_parameters: ~azure.mgmt.datafactory.models.TriggerFilterParameters or JSON or
-         IO[bytes]
+        :param filter_parameters: Parameters to filter the triggers. Is either a
+         TriggerFilterParameters type or a IO[bytes] type. Required.
+        :type filter_parameters: ~azure.mgmt.datafactory.models.TriggerFilterParameters or
+         ~azure.mgmt.datafactory.types.TriggerFilterParameters or IO[bytes]
         :return: TriggerQueryResponse. The TriggerQueryResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.datafactory.models.TriggerQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2884,7 +2903,7 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        trigger: JSON,
+        trigger: _types.TriggerResource,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -2901,7 +2920,7 @@ class TriggersOperations:
         :param trigger_name: The trigger name. Required.
         :type trigger_name: str
         :param trigger: Trigger resource definition. Required.
-        :type trigger: JSON
+        :type trigger: ~azure.mgmt.datafactory.types.TriggerResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2958,7 +2977,7 @@ class TriggersOperations:
         resource_group_name: str,
         factory_name: str,
         trigger_name: str,
-        trigger: Union[_models.TriggerResource, JSON, IO[bytes]],
+        trigger: Union[_models.TriggerResource, _types.TriggerResource, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -2973,9 +2992,10 @@ class TriggersOperations:
         :type factory_name: str
         :param trigger_name: The trigger name. Required.
         :type trigger_name: str
-        :param trigger: Trigger resource definition. Is one of the following types: TriggerResource,
-         JSON, IO[bytes] Required.
-        :type trigger: ~azure.mgmt.datafactory.models.TriggerResource or JSON or IO[bytes]
+        :param trigger: Trigger resource definition. Is either a TriggerResource type or a IO[bytes]
+         type. Required.
+        :type trigger: ~azure.mgmt.datafactory.models.TriggerResource or
+         ~azure.mgmt.datafactory.types.TriggerResource or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -3858,7 +3878,7 @@ class TriggerRunsOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        filter_parameters: JSON,
+        filter_parameters: _types.RunFilterParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3871,7 +3891,7 @@ class TriggerRunsOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param filter_parameters: Parameters to filter the pipeline run. Required.
-        :type filter_parameters: JSON
+        :type filter_parameters: ~azure.mgmt.datafactory.types.RunFilterParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3914,7 +3934,7 @@ class TriggerRunsOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        filter_parameters: Union[_models.RunFilterParameters, JSON, IO[bytes]],
+        filter_parameters: Union[_models.RunFilterParameters, _types.RunFilterParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.TriggerRunsQueryResponse:
         """Query trigger runs.
@@ -3924,10 +3944,10 @@ class TriggerRunsOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param filter_parameters: Parameters to filter the pipeline run. Is one of the following types:
-         RunFilterParameters, JSON, IO[bytes] Required.
-        :type filter_parameters: ~azure.mgmt.datafactory.models.RunFilterParameters or JSON or
-         IO[bytes]
+        :param filter_parameters: Parameters to filter the pipeline run. Is either a
+         RunFilterParameters type or a IO[bytes] type. Required.
+        :type filter_parameters: ~azure.mgmt.datafactory.models.RunFilterParameters or
+         ~azure.mgmt.datafactory.types.RunFilterParameters or IO[bytes]
         :return: TriggerRunsQueryResponse. The TriggerRunsQueryResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.datafactory.models.TriggerRunsQueryResponse
@@ -4154,7 +4174,7 @@ class DataFlowDebugSessionOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        request: Union[_models.CreateDataFlowDebugSessionRequest, JSON, IO[bytes]],
+        request: Union[_models.CreateDataFlowDebugSessionRequest, _types.CreateDataFlowDebugSessionRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4259,7 +4279,7 @@ class DataFlowDebugSessionOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        request: JSON,
+        request: _types.CreateDataFlowDebugSessionRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4272,7 +4292,7 @@ class DataFlowDebugSessionOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param request: Data flow debug session definition. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.datafactory.types.CreateDataFlowDebugSessionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4317,7 +4337,7 @@ class DataFlowDebugSessionOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        request: Union[_models.CreateDataFlowDebugSessionRequest, JSON, IO[bytes]],
+        request: Union[_models.CreateDataFlowDebugSessionRequest, _types.CreateDataFlowDebugSessionRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CreateDataFlowDebugSessionResponse]:
         """Creates a data flow debug session.
@@ -4327,10 +4347,10 @@ class DataFlowDebugSessionOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param request: Data flow debug session definition. Is one of the following types:
-         CreateDataFlowDebugSessionRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.datafactory.models.CreateDataFlowDebugSessionRequest or JSON or
-         IO[bytes]
+        :param request: Data flow debug session definition. Is either a
+         CreateDataFlowDebugSessionRequest type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.datafactory.models.CreateDataFlowDebugSessionRequest or
+         ~azure.mgmt.datafactory.types.CreateDataFlowDebugSessionRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CreateDataFlowDebugSessionResponse. The
          CreateDataFlowDebugSessionResponse is compatible with MutableMapping
         :rtype:
@@ -4525,7 +4545,7 @@ class DataFlowDebugSessionOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        request: JSON,
+        request: _types.DataFlowDebugPackage,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4538,7 +4558,7 @@ class DataFlowDebugSessionOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param request: Data flow debug session definition with debug content. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.datafactory.types.DataFlowDebugPackage
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4581,7 +4601,7 @@ class DataFlowDebugSessionOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        request: Union[_models.DataFlowDebugPackage, JSON, IO[bytes]],
+        request: Union[_models.DataFlowDebugPackage, _types.DataFlowDebugPackage, IO[bytes]],
         **kwargs: Any
     ) -> _models.AddDataFlowToDebugSessionResponse:
         """Add a data flow into debug session.
@@ -4591,9 +4611,10 @@ class DataFlowDebugSessionOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param request: Data flow debug session definition with debug content. Is one of the following
-         types: DataFlowDebugPackage, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.datafactory.models.DataFlowDebugPackage or JSON or IO[bytes]
+        :param request: Data flow debug session definition with debug content. Is either a
+         DataFlowDebugPackage type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.datafactory.models.DataFlowDebugPackage or
+         ~azure.mgmt.datafactory.types.DataFlowDebugPackage or IO[bytes]
         :return: AddDataFlowToDebugSessionResponse. The AddDataFlowToDebugSessionResponse is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.datafactory.models.AddDataFlowToDebugSessionResponse
@@ -4698,7 +4719,7 @@ class DataFlowDebugSessionOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        request: JSON,
+        request: _types.DeleteDataFlowDebugSessionRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4711,7 +4732,7 @@ class DataFlowDebugSessionOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param request: Data flow debug session definition for deletion. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.datafactory.types.DeleteDataFlowDebugSessionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4752,7 +4773,7 @@ class DataFlowDebugSessionOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        request: Union[_models.DeleteDataFlowDebugSessionRequest, JSON, IO[bytes]],
+        request: Union[_models.DeleteDataFlowDebugSessionRequest, _types.DeleteDataFlowDebugSessionRequest, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Deletes a data flow debug session.
@@ -4762,10 +4783,10 @@ class DataFlowDebugSessionOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param request: Data flow debug session definition for deletion. Is one of the following types:
-         DeleteDataFlowDebugSessionRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.datafactory.models.DeleteDataFlowDebugSessionRequest or JSON or
-         IO[bytes]
+        :param request: Data flow debug session definition for deletion. Is either a
+         DeleteDataFlowDebugSessionRequest type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.datafactory.models.DeleteDataFlowDebugSessionRequest or
+         ~azure.mgmt.datafactory.types.DeleteDataFlowDebugSessionRequest or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4828,7 +4849,7 @@ class DataFlowDebugSessionOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        request: Union[_models.DataFlowDebugCommandRequest, JSON, IO[bytes]],
+        request: Union[_models.DataFlowDebugCommandRequest, _types.DataFlowDebugCommandRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4933,7 +4954,7 @@ class DataFlowDebugSessionOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        request: JSON,
+        request: _types.DataFlowDebugCommandRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4946,7 +4967,7 @@ class DataFlowDebugSessionOperations:
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :param request: Data flow debug command definition. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.datafactory.types.DataFlowDebugCommandRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4991,7 +5012,7 @@ class DataFlowDebugSessionOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        request: Union[_models.DataFlowDebugCommandRequest, JSON, IO[bytes]],
+        request: Union[_models.DataFlowDebugCommandRequest, _types.DataFlowDebugCommandRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DataFlowDebugCommandResponse]:
         """Execute a data flow debug command.
@@ -5001,9 +5022,10 @@ class DataFlowDebugSessionOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param request: Data flow debug command definition. Is one of the following types:
-         DataFlowDebugCommandRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.datafactory.models.DataFlowDebugCommandRequest or JSON or IO[bytes]
+        :param request: Data flow debug command definition. Is either a DataFlowDebugCommandRequest
+         type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.datafactory.models.DataFlowDebugCommandRequest or
+         ~azure.mgmt.datafactory.types.DataFlowDebugCommandRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DataFlowDebugCommandResponse. The
          DataFlowDebugCommandResponse is compatible with MutableMapping
         :rtype:
@@ -5317,7 +5339,7 @@ class IntegrationRuntimesOperations:
         resource_group_name: str,
         factory_name: str,
         integration_runtime_name: str,
-        integration_runtime: JSON,
+        integration_runtime: _types.IntegrationRuntimeResource,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -5334,7 +5356,7 @@ class IntegrationRuntimesOperations:
         :param integration_runtime_name: The integration runtime name. Required.
         :type integration_runtime_name: str
         :param integration_runtime: Integration runtime resource definition. Required.
-        :type integration_runtime: JSON
+        :type integration_runtime: ~azure.mgmt.datafactory.types.IntegrationRuntimeResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5393,7 +5415,7 @@ class IntegrationRuntimesOperations:
         resource_group_name: str,
         factory_name: str,
         integration_runtime_name: str,
-        integration_runtime: Union[_models.IntegrationRuntimeResource, JSON, IO[bytes]],
+        integration_runtime: Union[_models.IntegrationRuntimeResource, _types.IntegrationRuntimeResource, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -5408,10 +5430,10 @@ class IntegrationRuntimesOperations:
         :type factory_name: str
         :param integration_runtime_name: The integration runtime name. Required.
         :type integration_runtime_name: str
-        :param integration_runtime: Integration runtime resource definition. Is one of the following
-         types: IntegrationRuntimeResource, JSON, IO[bytes] Required.
-        :type integration_runtime: ~azure.mgmt.datafactory.models.IntegrationRuntimeResource or JSON or
-         IO[bytes]
+        :param integration_runtime: Integration runtime resource definition. Is either a
+         IntegrationRuntimeResource type or a IO[bytes] type. Required.
+        :type integration_runtime: ~azure.mgmt.datafactory.models.IntegrationRuntimeResource or
+         ~azure.mgmt.datafactory.types.IntegrationRuntimeResource or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -5537,7 +5559,7 @@ class IntegrationRuntimesOperations:
         resource_group_name: str,
         factory_name: str,
         integration_runtime_name: str,
-        update_integration_runtime_request: JSON,
+        update_integration_runtime_request: _types.UpdateIntegrationRuntimeRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5553,7 +5575,8 @@ class IntegrationRuntimesOperations:
         :type integration_runtime_name: str
         :param update_integration_runtime_request: The parameters for updating an integration runtime.
          Required.
-        :type update_integration_runtime_request: JSON
+        :type update_integration_runtime_request:
+         ~azure.mgmt.datafactory.types.UpdateIntegrationRuntimeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5601,7 +5624,9 @@ class IntegrationRuntimesOperations:
         resource_group_name: str,
         factory_name: str,
         integration_runtime_name: str,
-        update_integration_runtime_request: Union[_models.UpdateIntegrationRuntimeRequest, JSON, IO[bytes]],
+        update_integration_runtime_request: Union[
+            _models.UpdateIntegrationRuntimeRequest, _types.UpdateIntegrationRuntimeRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.IntegrationRuntimeResource:
         """Updates an integration runtime.
@@ -5614,9 +5639,10 @@ class IntegrationRuntimesOperations:
         :param integration_runtime_name: The integration runtime name. Required.
         :type integration_runtime_name: str
         :param update_integration_runtime_request: The parameters for updating an integration runtime.
-         Is one of the following types: UpdateIntegrationRuntimeRequest, JSON, IO[bytes] Required.
+         Is either a UpdateIntegrationRuntimeRequest type or a IO[bytes] type. Required.
         :type update_integration_runtime_request:
-         ~azure.mgmt.datafactory.models.UpdateIntegrationRuntimeRequest or JSON or IO[bytes]
+         ~azure.mgmt.datafactory.models.UpdateIntegrationRuntimeRequest or
+         ~azure.mgmt.datafactory.types.UpdateIntegrationRuntimeRequest or IO[bytes]
         :return: IntegrationRuntimeResource. The IntegrationRuntimeResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeResource
@@ -6127,7 +6153,7 @@ class IntegrationRuntimesOperations:
         resource_group_name: str,
         factory_name: str,
         integration_runtime_name: str,
-        regenerate_key_parameters: JSON,
+        regenerate_key_parameters: _types.IntegrationRuntimeRegenerateKeyParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6143,7 +6169,8 @@ class IntegrationRuntimesOperations:
         :type integration_runtime_name: str
         :param regenerate_key_parameters: The parameters for regenerating integration runtime
          authentication key. Required.
-        :type regenerate_key_parameters: JSON
+        :type regenerate_key_parameters:
+         ~azure.mgmt.datafactory.types.IntegrationRuntimeRegenerateKeyParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6191,7 +6218,11 @@ class IntegrationRuntimesOperations:
         resource_group_name: str,
         factory_name: str,
         integration_runtime_name: str,
-        regenerate_key_parameters: Union[_models.IntegrationRuntimeRegenerateKeyParameters, JSON, IO[bytes]],
+        regenerate_key_parameters: Union[
+            _models.IntegrationRuntimeRegenerateKeyParameters,
+            _types.IntegrationRuntimeRegenerateKeyParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> _models.IntegrationRuntimeAuthKeys:
         """Regenerates the authentication key for an integration runtime.
@@ -6204,10 +6235,11 @@ class IntegrationRuntimesOperations:
         :param integration_runtime_name: The integration runtime name. Required.
         :type integration_runtime_name: str
         :param regenerate_key_parameters: The parameters for regenerating integration runtime
-         authentication key. Is one of the following types: IntegrationRuntimeRegenerateKeyParameters,
-         JSON, IO[bytes] Required.
+         authentication key. Is either a IntegrationRuntimeRegenerateKeyParameters type or a IO[bytes]
+         type. Required.
         :type regenerate_key_parameters:
-         ~azure.mgmt.datafactory.models.IntegrationRuntimeRegenerateKeyParameters or JSON or IO[bytes]
+         ~azure.mgmt.datafactory.models.IntegrationRuntimeRegenerateKeyParameters or
+         ~azure.mgmt.datafactory.types.IntegrationRuntimeRegenerateKeyParameters or IO[bytes]
         :return: IntegrationRuntimeAuthKeys. The IntegrationRuntimeAuthKeys is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeys
@@ -6855,7 +6887,7 @@ class IntegrationRuntimesOperations:
         resource_group_name: str,
         factory_name: str,
         integration_runtime_name: str,
-        linked_integration_runtime_request: JSON,
+        linked_integration_runtime_request: _types.LinkedIntegrationRuntimeRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6872,7 +6904,8 @@ class IntegrationRuntimesOperations:
         :type integration_runtime_name: str
         :param linked_integration_runtime_request: The data factory name for the linked integration
          runtime. Required.
-        :type linked_integration_runtime_request: JSON
+        :type linked_integration_runtime_request:
+         ~azure.mgmt.datafactory.types.LinkedIntegrationRuntimeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6919,7 +6952,9 @@ class IntegrationRuntimesOperations:
         resource_group_name: str,
         factory_name: str,
         integration_runtime_name: str,
-        linked_integration_runtime_request: Union[_models.LinkedIntegrationRuntimeRequest, JSON, IO[bytes]],
+        linked_integration_runtime_request: Union[
+            _models.LinkedIntegrationRuntimeRequest, _types.LinkedIntegrationRuntimeRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> None:
         """Remove all linked integration runtimes under specific data factory in a self-hosted integration
@@ -6933,10 +6968,10 @@ class IntegrationRuntimesOperations:
         :param integration_runtime_name: The integration runtime name. Required.
         :type integration_runtime_name: str
         :param linked_integration_runtime_request: The data factory name for the linked integration
-         runtime. Is one of the following types: LinkedIntegrationRuntimeRequest, JSON, IO[bytes]
-         Required.
+         runtime. Is either a LinkedIntegrationRuntimeRequest type or a IO[bytes] type. Required.
         :type linked_integration_runtime_request:
-         ~azure.mgmt.datafactory.models.LinkedIntegrationRuntimeRequest or JSON or IO[bytes]
+         ~azure.mgmt.datafactory.models.LinkedIntegrationRuntimeRequest or
+         ~azure.mgmt.datafactory.types.LinkedIntegrationRuntimeRequest or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7035,7 +7070,7 @@ class IntegrationRuntimesOperations:
         resource_group_name: str,
         factory_name: str,
         integration_runtime_name: str,
-        create_linked_integration_runtime_request: JSON,
+        create_linked_integration_runtime_request: _types.CreateLinkedIntegrationRuntimeRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7051,7 +7086,8 @@ class IntegrationRuntimesOperations:
         :type integration_runtime_name: str
         :param create_linked_integration_runtime_request: The linked integration runtime properties.
          Required.
-        :type create_linked_integration_runtime_request: JSON
+        :type create_linked_integration_runtime_request:
+         ~azure.mgmt.datafactory.types.CreateLinkedIntegrationRuntimeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7100,7 +7136,7 @@ class IntegrationRuntimesOperations:
         factory_name: str,
         integration_runtime_name: str,
         create_linked_integration_runtime_request: Union[
-            _models.CreateLinkedIntegrationRuntimeRequest, JSON, IO[bytes]
+            _models.CreateLinkedIntegrationRuntimeRequest, _types.CreateLinkedIntegrationRuntimeRequest, IO[bytes]
         ],
         **kwargs: Any
     ) -> _models.IntegrationRuntimeStatusResponse:
@@ -7114,9 +7150,10 @@ class IntegrationRuntimesOperations:
         :param integration_runtime_name: The integration runtime name. Required.
         :type integration_runtime_name: str
         :param create_linked_integration_runtime_request: The linked integration runtime properties. Is
-         one of the following types: CreateLinkedIntegrationRuntimeRequest, JSON, IO[bytes] Required.
+         either a CreateLinkedIntegrationRuntimeRequest type or a IO[bytes] type. Required.
         :type create_linked_integration_runtime_request:
-         ~azure.mgmt.datafactory.models.CreateLinkedIntegrationRuntimeRequest or JSON or IO[bytes]
+         ~azure.mgmt.datafactory.models.CreateLinkedIntegrationRuntimeRequest or
+         ~azure.mgmt.datafactory.types.CreateLinkedIntegrationRuntimeRequest or IO[bytes]
         :return: IntegrationRuntimeStatusResponse. The IntegrationRuntimeStatusResponse is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse
@@ -7380,7 +7417,7 @@ class IntegrationRuntimeObjectMetadataOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         factory_name: str,
         integration_runtime_name: str,
-        get_metadata_request: Optional[JSON] = None,
+        get_metadata_request: Optional[_types.GetSsisObjectMetadataRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7397,7 +7434,7 @@ class IntegrationRuntimeObjectMetadataOperations:  # pylint: disable=name-too-lo
         :type integration_runtime_name: str
         :param get_metadata_request: The parameters for getting a SSIS object metadata. Default value
          is None.
-        :type get_metadata_request: JSON
+        :type get_metadata_request: ~azure.mgmt.datafactory.types.GetSsisObjectMetadataRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7446,7 +7483,9 @@ class IntegrationRuntimeObjectMetadataOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         factory_name: str,
         integration_runtime_name: str,
-        get_metadata_request: Optional[Union[_models.GetSsisObjectMetadataRequest, JSON, IO[bytes]]] = None,
+        get_metadata_request: Optional[
+            Union[_models.GetSsisObjectMetadataRequest, _types.GetSsisObjectMetadataRequest, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> _models.SsisObjectMetadataListResponse:
         """Get a SSIS integration runtime object metadata by specified path. The return is pageable
@@ -7459,10 +7498,10 @@ class IntegrationRuntimeObjectMetadataOperations:  # pylint: disable=name-too-lo
         :type factory_name: str
         :param integration_runtime_name: The integration runtime name. Required.
         :type integration_runtime_name: str
-        :param get_metadata_request: The parameters for getting a SSIS object metadata. Is one of the
-         following types: GetSsisObjectMetadataRequest, JSON, IO[bytes] Default value is None.
-        :type get_metadata_request: ~azure.mgmt.datafactory.models.GetSsisObjectMetadataRequest or JSON
-         or IO[bytes]
+        :param get_metadata_request: The parameters for getting a SSIS object metadata. Is either a
+         GetSsisObjectMetadataRequest type or a IO[bytes] type. Default value is None.
+        :type get_metadata_request: ~azure.mgmt.datafactory.models.GetSsisObjectMetadataRequest or
+         ~azure.mgmt.datafactory.types.GetSsisObjectMetadataRequest or IO[bytes]
         :return: SsisObjectMetadataListResponse. The SsisObjectMetadataListResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.datafactory.models.SsisObjectMetadataListResponse
@@ -7747,7 +7786,7 @@ class IntegrationRuntimeNodesOperations:
         factory_name: str,
         integration_runtime_name: str,
         node_name: str,
-        update_integration_runtime_node_request: JSON,
+        update_integration_runtime_node_request: _types.UpdateIntegrationRuntimeNodeRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7765,7 +7804,8 @@ class IntegrationRuntimeNodesOperations:
         :type node_name: str
         :param update_integration_runtime_node_request: The parameters for updating an integration
          runtime node. Required.
-        :type update_integration_runtime_node_request: JSON
+        :type update_integration_runtime_node_request:
+         ~azure.mgmt.datafactory.types.UpdateIntegrationRuntimeNodeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7817,7 +7857,9 @@ class IntegrationRuntimeNodesOperations:
         factory_name: str,
         integration_runtime_name: str,
         node_name: str,
-        update_integration_runtime_node_request: Union[_models.UpdateIntegrationRuntimeNodeRequest, JSON, IO[bytes]],
+        update_integration_runtime_node_request: Union[
+            _models.UpdateIntegrationRuntimeNodeRequest, _types.UpdateIntegrationRuntimeNodeRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.SelfHostedIntegrationRuntimeNode:
         """Updates a self-hosted integration runtime node.
@@ -7832,10 +7874,11 @@ class IntegrationRuntimeNodesOperations:
         :param node_name: The integration runtime node name. Required.
         :type node_name: str
         :param update_integration_runtime_node_request: The parameters for updating an integration
-         runtime node. Is one of the following types: UpdateIntegrationRuntimeNodeRequest, JSON,
-         IO[bytes] Required.
+         runtime node. Is either a UpdateIntegrationRuntimeNodeRequest type or a IO[bytes] type.
+         Required.
         :type update_integration_runtime_node_request:
-         ~azure.mgmt.datafactory.models.UpdateIntegrationRuntimeNodeRequest or JSON or IO[bytes]
+         ~azure.mgmt.datafactory.models.UpdateIntegrationRuntimeNodeRequest or
+         ~azure.mgmt.datafactory.types.UpdateIntegrationRuntimeNodeRequest or IO[bytes]
         :return: SelfHostedIntegrationRuntimeNode. The SelfHostedIntegrationRuntimeNode is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.datafactory.models.SelfHostedIntegrationRuntimeNode
@@ -8014,7 +8057,9 @@ class IntegrationRuntimeOperations:
         resource_group_name: str,
         factory_name: str,
         integration_runtime_name: str,
-        enable_interactive_query_request: Union[_models.EnableInteractiveQueryRequest, JSON, IO[bytes]],
+        enable_interactive_query_request: Union[
+            _models.EnableInteractiveQueryRequest, _types.EnableInteractiveQueryRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8129,7 +8174,7 @@ class IntegrationRuntimeOperations:
         resource_group_name: str,
         factory_name: str,
         integration_runtime_name: str,
-        enable_interactive_query_request: JSON,
+        enable_interactive_query_request: _types.EnableInteractiveQueryRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8145,7 +8190,8 @@ class IntegrationRuntimeOperations:
         :type integration_runtime_name: str
         :param enable_interactive_query_request: The enable interactive authoring integration runtime
          properties. Required.
-        :type enable_interactive_query_request: JSON
+        :type enable_interactive_query_request:
+         ~azure.mgmt.datafactory.types.EnableInteractiveQueryRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8195,7 +8241,9 @@ class IntegrationRuntimeOperations:
         resource_group_name: str,
         factory_name: str,
         integration_runtime_name: str,
-        enable_interactive_query_request: Union[_models.EnableInteractiveQueryRequest, JSON, IO[bytes]],
+        enable_interactive_query_request: Union[
+            _models.EnableInteractiveQueryRequest, _types.EnableInteractiveQueryRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.IntegrationRuntimeResource]:
         """Enable interactive authoring of Managed Virtual Network integration runtime.
@@ -8208,10 +8256,10 @@ class IntegrationRuntimeOperations:
         :param integration_runtime_name: The integration runtime name. Required.
         :type integration_runtime_name: str
         :param enable_interactive_query_request: The enable interactive authoring integration runtime
-         properties. Is one of the following types: EnableInteractiveQueryRequest, JSON, IO[bytes]
-         Required.
+         properties. Is either a EnableInteractiveQueryRequest type or a IO[bytes] type. Required.
         :type enable_interactive_query_request:
-         ~azure.mgmt.datafactory.models.EnableInteractiveQueryRequest or JSON or IO[bytes]
+         ~azure.mgmt.datafactory.models.EnableInteractiveQueryRequest or
+         ~azure.mgmt.datafactory.types.EnableInteractiveQueryRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns IntegrationRuntimeResource. The
          IntegrationRuntimeResource is compatible with MutableMapping
         :rtype:
@@ -8580,7 +8628,7 @@ class LinkedServicesOperations:
         resource_group_name: str,
         factory_name: str,
         linked_service_name: str,
-        linked_service: JSON,
+        linked_service: _types.LinkedServiceResource,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -8597,7 +8645,7 @@ class LinkedServicesOperations:
         :param linked_service_name: The linked service name. Required.
         :type linked_service_name: str
         :param linked_service: Linked service resource definition. Required.
-        :type linked_service: JSON
+        :type linked_service: ~azure.mgmt.datafactory.types.LinkedServiceResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8654,7 +8702,7 @@ class LinkedServicesOperations:
         resource_group_name: str,
         factory_name: str,
         linked_service_name: str,
-        linked_service: Union[_models.LinkedServiceResource, JSON, IO[bytes]],
+        linked_service: Union[_models.LinkedServiceResource, _types.LinkedServiceResource, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -8669,9 +8717,10 @@ class LinkedServicesOperations:
         :type factory_name: str
         :param linked_service_name: The linked service name. Required.
         :type linked_service_name: str
-        :param linked_service: Linked service resource definition. Is one of the following types:
-         LinkedServiceResource, JSON, IO[bytes] Required.
-        :type linked_service: ~azure.mgmt.datafactory.models.LinkedServiceResource or JSON or IO[bytes]
+        :param linked_service: Linked service resource definition. Is either a LinkedServiceResource
+         type or a IO[bytes] type. Required.
+        :type linked_service: ~azure.mgmt.datafactory.models.LinkedServiceResource or
+         ~azure.mgmt.datafactory.types.LinkedServiceResource or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -9082,7 +9131,7 @@ class DatasetsOperations:
         resource_group_name: str,
         factory_name: str,
         dataset_name: str,
-        dataset: JSON,
+        dataset: _types.DatasetResource,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -9099,7 +9148,7 @@ class DatasetsOperations:
         :param dataset_name: The dataset name. Required.
         :type dataset_name: str
         :param dataset: Dataset resource definition. Required.
-        :type dataset: JSON
+        :type dataset: ~azure.mgmt.datafactory.types.DatasetResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9156,7 +9205,7 @@ class DatasetsOperations:
         resource_group_name: str,
         factory_name: str,
         dataset_name: str,
-        dataset: Union[_models.DatasetResource, JSON, IO[bytes]],
+        dataset: Union[_models.DatasetResource, _types.DatasetResource, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -9171,9 +9220,10 @@ class DatasetsOperations:
         :type factory_name: str
         :param dataset_name: The dataset name. Required.
         :type dataset_name: str
-        :param dataset: Dataset resource definition. Is one of the following types: DatasetResource,
-         JSON, IO[bytes] Required.
-        :type dataset: ~azure.mgmt.datafactory.models.DatasetResource or JSON or IO[bytes]
+        :param dataset: Dataset resource definition. Is either a DatasetResource type or a IO[bytes]
+         type. Required.
+        :type dataset: ~azure.mgmt.datafactory.models.DatasetResource or
+         ~azure.mgmt.datafactory.types.DatasetResource or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -9581,7 +9631,7 @@ class PipelinesOperations:
         resource_group_name: str,
         factory_name: str,
         pipeline_name: str,
-        pipeline: JSON,
+        pipeline: _types.PipelineResource,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -9598,7 +9648,7 @@ class PipelinesOperations:
         :param pipeline_name: The pipeline name. Required.
         :type pipeline_name: str
         :param pipeline: Pipeline resource definition. Required.
-        :type pipeline: JSON
+        :type pipeline: ~azure.mgmt.datafactory.types.PipelineResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9655,7 +9705,7 @@ class PipelinesOperations:
         resource_group_name: str,
         factory_name: str,
         pipeline_name: str,
-        pipeline: Union[_models.PipelineResource, JSON, IO[bytes]],
+        pipeline: Union[_models.PipelineResource, _types.PipelineResource, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -9670,9 +9720,10 @@ class PipelinesOperations:
         :type factory_name: str
         :param pipeline_name: The pipeline name. Required.
         :type pipeline_name: str
-        :param pipeline: Pipeline resource definition. Is one of the following types: PipelineResource,
-         JSON, IO[bytes] Required.
-        :type pipeline: ~azure.mgmt.datafactory.models.PipelineResource or JSON or IO[bytes]
+        :param pipeline: Pipeline resource definition. Is either a PipelineResource type or a IO[bytes]
+         type. Required.
+        :type pipeline: ~azure.mgmt.datafactory.models.PipelineResource or
+         ~azure.mgmt.datafactory.types.PipelineResource or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -10297,7 +10348,7 @@ class DataFlowsOperations:
         resource_group_name: str,
         factory_name: str,
         data_flow_name: str,
-        data_flow: JSON,
+        data_flow: _types.DataFlowResource,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -10314,7 +10365,7 @@ class DataFlowsOperations:
         :param data_flow_name: The data flow name. Required.
         :type data_flow_name: str
         :param data_flow: Data flow resource definition. Required.
-        :type data_flow: JSON
+        :type data_flow: ~azure.mgmt.datafactory.types.DataFlowResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10371,7 +10422,7 @@ class DataFlowsOperations:
         resource_group_name: str,
         factory_name: str,
         data_flow_name: str,
-        data_flow: Union[_models.DataFlowResource, JSON, IO[bytes]],
+        data_flow: Union[_models.DataFlowResource, _types.DataFlowResource, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -10386,9 +10437,10 @@ class DataFlowsOperations:
         :type factory_name: str
         :param data_flow_name: The data flow name. Required.
         :type data_flow_name: str
-        :param data_flow: Data flow resource definition. Is one of the following types:
-         DataFlowResource, JSON, IO[bytes] Required.
-        :type data_flow: ~azure.mgmt.datafactory.models.DataFlowResource or JSON or IO[bytes]
+        :param data_flow: Data flow resource definition. Is either a DataFlowResource type or a
+         IO[bytes] type. Required.
+        :type data_flow: ~azure.mgmt.datafactory.models.DataFlowResource or
+         ~azure.mgmt.datafactory.types.DataFlowResource or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -10797,7 +10849,7 @@ class ManagedVirtualNetworksOperations:
         resource_group_name: str,
         factory_name: str,
         managed_virtual_network_name: str,
-        managed_virtual_network: JSON,
+        managed_virtual_network: _types.ManagedVirtualNetworkResource,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -10814,7 +10866,7 @@ class ManagedVirtualNetworksOperations:
         :param managed_virtual_network_name: Managed virtual network name. Required.
         :type managed_virtual_network_name: str
         :param managed_virtual_network: Managed Virtual Network resource definition. Required.
-        :type managed_virtual_network: JSON
+        :type managed_virtual_network: ~azure.mgmt.datafactory.types.ManagedVirtualNetworkResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10873,7 +10925,9 @@ class ManagedVirtualNetworksOperations:
         resource_group_name: str,
         factory_name: str,
         managed_virtual_network_name: str,
-        managed_virtual_network: Union[_models.ManagedVirtualNetworkResource, JSON, IO[bytes]],
+        managed_virtual_network: Union[
+            _models.ManagedVirtualNetworkResource, _types.ManagedVirtualNetworkResource, IO[bytes]
+        ],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -10888,10 +10942,10 @@ class ManagedVirtualNetworksOperations:
         :type factory_name: str
         :param managed_virtual_network_name: Managed virtual network name. Required.
         :type managed_virtual_network_name: str
-        :param managed_virtual_network: Managed Virtual Network resource definition. Is one of the
-         following types: ManagedVirtualNetworkResource, JSON, IO[bytes] Required.
+        :param managed_virtual_network: Managed Virtual Network resource definition. Is either a
+         ManagedVirtualNetworkResource type or a IO[bytes] type. Required.
         :type managed_virtual_network: ~azure.mgmt.datafactory.models.ManagedVirtualNetworkResource or
-         JSON or IO[bytes]
+         ~azure.mgmt.datafactory.types.ManagedVirtualNetworkResource or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -11249,7 +11303,7 @@ class ManagedPrivateEndpointsOperations:
         factory_name: str,
         managed_virtual_network_name: str,
         managed_private_endpoint_name: str,
-        managed_private_endpoint: JSON,
+        managed_private_endpoint: _types.ManagedPrivateEndpointResource,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -11268,7 +11322,7 @@ class ManagedPrivateEndpointsOperations:
         :param managed_private_endpoint_name: Managed private endpoint name. Required.
         :type managed_private_endpoint_name: str
         :param managed_private_endpoint: Managed private endpoint resource definition. Required.
-        :type managed_private_endpoint: JSON
+        :type managed_private_endpoint: ~azure.mgmt.datafactory.types.ManagedPrivateEndpointResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11331,7 +11385,9 @@ class ManagedPrivateEndpointsOperations:
         factory_name: str,
         managed_virtual_network_name: str,
         managed_private_endpoint_name: str,
-        managed_private_endpoint: Union[_models.ManagedPrivateEndpointResource, JSON, IO[bytes]],
+        managed_private_endpoint: Union[
+            _models.ManagedPrivateEndpointResource, _types.ManagedPrivateEndpointResource, IO[bytes]
+        ],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -11348,10 +11404,10 @@ class ManagedPrivateEndpointsOperations:
         :type managed_virtual_network_name: str
         :param managed_private_endpoint_name: Managed private endpoint name. Required.
         :type managed_private_endpoint_name: str
-        :param managed_private_endpoint: Managed private endpoint resource definition. Is one of the
-         following types: ManagedPrivateEndpointResource, JSON, IO[bytes] Required.
+        :param managed_private_endpoint: Managed private endpoint resource definition. Is either a
+         ManagedPrivateEndpointResource type or a IO[bytes] type. Required.
         :type managed_private_endpoint: ~azure.mgmt.datafactory.models.ManagedPrivateEndpointResource
-         or JSON or IO[bytes]
+         or ~azure.mgmt.datafactory.types.ManagedPrivateEndpointResource or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -11775,7 +11831,7 @@ class CredentialOperationsOperations:
         resource_group_name: str,
         factory_name: str,
         credential_name: str,
-        credential: JSON,
+        credential: _types.CredentialResource,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -11792,7 +11848,7 @@ class CredentialOperationsOperations:
         :param credential_name: Credential name. Required.
         :type credential_name: str
         :param credential: Credential resource definition. Required.
-        :type credential: JSON
+        :type credential: ~azure.mgmt.datafactory.types.CredentialResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11849,7 +11905,7 @@ class CredentialOperationsOperations:
         resource_group_name: str,
         factory_name: str,
         credential_name: str,
-        credential: Union[_models.CredentialResource, JSON, IO[bytes]],
+        credential: Union[_models.CredentialResource, _types.CredentialResource, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -11864,9 +11920,10 @@ class CredentialOperationsOperations:
         :type factory_name: str
         :param credential_name: Credential name. Required.
         :type credential_name: str
-        :param credential: Credential resource definition. Is one of the following types:
-         CredentialResource, JSON, IO[bytes] Required.
-        :type credential: ~azure.mgmt.datafactory.models.CredentialResource or JSON or IO[bytes]
+        :param credential: Credential resource definition. Is either a CredentialResource type or a
+         IO[bytes] type. Required.
+        :type credential: ~azure.mgmt.datafactory.models.CredentialResource or
+         ~azure.mgmt.datafactory.types.CredentialResource or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -12276,7 +12333,7 @@ class PrivateEndpointConnectionOperations:
         resource_group_name: str,
         factory_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_wrapper: JSON,
+        private_endpoint_wrapper: _types.PrivateLinkConnectionApprovalRequestResource,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -12293,7 +12350,8 @@ class PrivateEndpointConnectionOperations:
         :param private_endpoint_connection_name: The private endpoint connection name. Required.
         :type private_endpoint_connection_name: str
         :param private_endpoint_wrapper: Required.
-        :type private_endpoint_wrapper: JSON
+        :type private_endpoint_wrapper:
+         ~azure.mgmt.datafactory.types.PrivateLinkConnectionApprovalRequestResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12352,7 +12410,11 @@ class PrivateEndpointConnectionOperations:
         resource_group_name: str,
         factory_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_wrapper: Union[_models.PrivateLinkConnectionApprovalRequestResource, JSON, IO[bytes]],
+        private_endpoint_wrapper: Union[
+            _models.PrivateLinkConnectionApprovalRequestResource,
+            _types.PrivateLinkConnectionApprovalRequestResource,
+            IO[bytes],
+        ],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -12367,11 +12429,11 @@ class PrivateEndpointConnectionOperations:
         :type factory_name: str
         :param private_endpoint_connection_name: The private endpoint connection name. Required.
         :type private_endpoint_connection_name: str
-        :param private_endpoint_wrapper: Is one of the following types:
-         PrivateLinkConnectionApprovalRequestResource, JSON, IO[bytes] Required.
+        :param private_endpoint_wrapper: Is either a PrivateLinkConnectionApprovalRequestResource type
+         or a IO[bytes] type. Required.
         :type private_endpoint_wrapper:
-         ~azure.mgmt.datafactory.models.PrivateLinkConnectionApprovalRequestResource or JSON or
-         IO[bytes]
+         ~azure.mgmt.datafactory.models.PrivateLinkConnectionApprovalRequestResource or
+         ~azure.mgmt.datafactory.types.PrivateLinkConnectionApprovalRequestResource or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -12774,7 +12836,7 @@ class GlobalParametersOperations:
         resource_group_name: str,
         factory_name: str,
         global_parameter_name: str,
-        default: JSON,
+        default: _types.GlobalParameterResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12789,7 +12851,7 @@ class GlobalParametersOperations:
         :param global_parameter_name: The global parameter name. Required.
         :type global_parameter_name: str
         :param default: Global parameter resource definition. Required.
-        :type default: JSON
+        :type default: ~azure.mgmt.datafactory.types.GlobalParameterResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12834,7 +12896,7 @@ class GlobalParametersOperations:
         resource_group_name: str,
         factory_name: str,
         global_parameter_name: str,
-        default: Union[_models.GlobalParameterResource, JSON, IO[bytes]],
+        default: Union[_models.GlobalParameterResource, _types.GlobalParameterResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.GlobalParameterResource:
         """Creates or updates a Global parameter.
@@ -12846,9 +12908,10 @@ class GlobalParametersOperations:
         :type factory_name: str
         :param global_parameter_name: The global parameter name. Required.
         :type global_parameter_name: str
-        :param default: Global parameter resource definition. Is one of the following types:
-         GlobalParameterResource, JSON, IO[bytes] Required.
-        :type default: ~azure.mgmt.datafactory.models.GlobalParameterResource or JSON or IO[bytes]
+        :param default: Global parameter resource definition. Is either a GlobalParameterResource type
+         or a IO[bytes] type. Required.
+        :type default: ~azure.mgmt.datafactory.models.GlobalParameterResource or
+         ~azure.mgmt.datafactory.types.GlobalParameterResource or IO[bytes]
         :return: GlobalParameterResource. The GlobalParameterResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.datafactory.models.GlobalParameterResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13246,7 +13309,7 @@ class ChangeDataCaptureOperations:
         resource_group_name: str,
         factory_name: str,
         change_data_capture_name: str,
-        change_data_capture: JSON,
+        change_data_capture: _types.ChangeDataCaptureResource,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -13263,7 +13326,7 @@ class ChangeDataCaptureOperations:
         :param change_data_capture_name: The change data capture name. Required.
         :type change_data_capture_name: str
         :param change_data_capture: Change data capture resource definition. Required.
-        :type change_data_capture: JSON
+        :type change_data_capture: ~azure.mgmt.datafactory.types.ChangeDataCaptureResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13322,7 +13385,7 @@ class ChangeDataCaptureOperations:
         resource_group_name: str,
         factory_name: str,
         change_data_capture_name: str,
-        change_data_capture: Union[_models.ChangeDataCaptureResource, JSON, IO[bytes]],
+        change_data_capture: Union[_models.ChangeDataCaptureResource, _types.ChangeDataCaptureResource, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -13337,10 +13400,10 @@ class ChangeDataCaptureOperations:
         :type factory_name: str
         :param change_data_capture_name: The change data capture name. Required.
         :type change_data_capture_name: str
-        :param change_data_capture: Change data capture resource definition. Is one of the following
-         types: ChangeDataCaptureResource, JSON, IO[bytes] Required.
-        :type change_data_capture: ~azure.mgmt.datafactory.models.ChangeDataCaptureResource or JSON or
-         IO[bytes]
+        :param change_data_capture: Change data capture resource definition. Is either a
+         ChangeDataCaptureResource type or a IO[bytes] type. Required.
+        :type change_data_capture: ~azure.mgmt.datafactory.models.ChangeDataCaptureResource or
+         ~azure.mgmt.datafactory.types.ChangeDataCaptureResource or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str

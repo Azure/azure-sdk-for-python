@@ -7,6 +7,7 @@ Unit tests for azure-mgmt-discovery client.
 
 These tests verify client configuration without making HTTP calls.
 """
+
 from azure.mgmt.discovery import DiscoveryMgmtClient
 
 
@@ -48,4 +49,4 @@ class TestDiscoveryMgmtClientUnit:
         )
 
         # Verify API version is set
-        assert client._config.api_version == "2026-02-01-preview"
+        assert client._config.api_version == "2026-06-01"

@@ -6,7 +6,6 @@ import json
 import math
 import re
 import os
-from itertools import chain
 from typing import Dict, Optional, TypeVar, Union, List
 
 if os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true":
@@ -20,6 +19,17 @@ from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
+
+# The message-preprocessing helpers now live in ``azure.ai.evaluation._common.utils`` (single source of
+# truth). They are imported here so this module can use them and so callers that historically imported
+# them from this module keep working. ``_drop_mcp_approval_messages`` / ``_normalize_function_call_types``
+# are re-exported only (used indirectly via ``_preprocess_messages``).
+from ..._common.utils import (  # pylint: disable=unused-import
+    _is_intermediate_response,
+    _drop_mcp_approval_messages,
+    _normalize_function_call_types,
+    _preprocess_messages,
+)
 from . import EvaluatorBase
 
 try:
@@ -33,71 +43,6 @@ except ImportError:
 
 
 T = TypeVar("T")
-
-
-def _is_intermediate_response(response):
-    """Check if response is intermediate (last content item is function_call or mcp_approval_request)."""
-    if isinstance(response, list) and len(response) > 0:
-        last_msg = response[-1]
-        if isinstance(last_msg, dict) and last_msg.get("role") == "assistant":
-            content = last_msg.get("content", [])
-            if isinstance(content, list) and len(content) > 0:
-                last_content = content[-1]
-                if isinstance(last_content, dict) and last_content.get("type") in (
-                    "function_call",
-                    "mcp_approval_request",
-                ):
-                    return True
-    return False
-
-
-def _drop_mcp_approval_messages(messages):
-    """Remove MCP approval request/response messages."""
-    if not isinstance(messages, list):
-        return messages
-    return [
-        msg
-        for msg in messages
-        if not (
-            isinstance(msg, dict)
-            and isinstance(msg.get("content"), list)
-            and (
-                (
-                    msg.get("role") == "assistant"
-                    and any(isinstance(c, dict) and c.get("type") == "mcp_approval_request" for c in msg["content"])
-                )
-                or (
-                    msg.get("role") == "tool"
-                    and any(isinstance(c, dict) and c.get("type") == "mcp_approval_response" for c in msg["content"])
-                )
-            )
-        )
-    ]
-
-
-def _normalize_function_call_types(messages):
-    """Normalize function_call/function_call_output types to tool_call/tool_result."""
-    if not isinstance(messages, list):
-        return messages
-    for msg in messages:
-        if isinstance(msg, dict) and isinstance(msg.get("content"), list):
-            for item in msg["content"]:
-                if isinstance(item, dict) and item.get("type") == "function_call":
-                    item["type"] = "tool_call"
-                    if "function_call" in item:
-                        item["tool_call"] = item.pop("function_call")
-                elif isinstance(item, dict) and item.get("type") == "function_call_output":
-                    item["type"] = "tool_result"
-                    if "function_call_output" in item:
-                        item["tool_result"] = item.pop("function_call_output")
-    return messages
-
-
-def _preprocess_messages(messages):
-    """Drop MCP approval messages and normalize function call types."""
-    messages = _drop_mcp_approval_messages(messages)
-    messages = _normalize_function_call_types(messages)
-    return messages
 
 
 class PromptyEvaluatorBase(EvaluatorBase[T]):
@@ -370,13 +315,18 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         built_in_definitions = self._get_needed_built_in_tool_definitions(tool_calls)
         needed_tool_definitions.extend(built_in_definitions)
 
-        # OpenAPI tool is a collection of functions, so we need to expand it
-        tool_definitions_expanded = list(
-            chain.from_iterable(
-                tool.get("functions", []) if tool.get("type") == "openapi" else [tool]
-                for tool in needed_tool_definitions
-            )
-        )
+        # An OpenAPI tool is a collection of functions. When an OpenAPI tool
+        # definition exposes its nested functions, expand it into those functions
+        # so tool calls referencing a nested function name can be matched. If an
+        # OpenAPI tool definition has no nested functions, keep the OpenAPI tool
+        # definition as is for backward compatibility.
+        tool_definitions_expanded = []
+        for tool in needed_tool_definitions:
+            openapi_functions = tool.get("functions") if tool.get("type") == "openapi" else None
+            if openapi_functions:
+                tool_definitions_expanded.extend(openapi_functions)
+            else:
+                tool_definitions_expanded.append(tool)
 
         # Validate that all tool calls have corresponding definitions
         for tool_call in tool_calls:

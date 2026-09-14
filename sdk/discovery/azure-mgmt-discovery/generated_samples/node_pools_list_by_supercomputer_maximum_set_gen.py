@@ -32,12 +32,12 @@ def main():
 
     response = client.node_pools.list_by_supercomputer(
         resource_group_name="rgdiscovery",
-        supercomputer_name="7cc28f3db7c8fa0087",
+        supercomputer_name="a4d55e3b47501e6fe1",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2026-02-01-preview/NodePools_ListBySupercomputer_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/NodePools_ListBySupercomputer_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

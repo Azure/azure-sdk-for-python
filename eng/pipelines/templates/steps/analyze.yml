@@ -144,11 +144,14 @@ steps:
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
-  - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+  - template: /eng/common/pipelines/templates/steps/create-apiview-revision.yml
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
       GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
       ArtifactName: "packages_extended"
+      PackageInfoFiles:
+        - ${{ each artifact in parameters.Artifacts }}:
+          - $(Build.ArtifactStagingDirectory)/PackageInfo/${{ artifact.name }}.json
 
   - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
     parameters:

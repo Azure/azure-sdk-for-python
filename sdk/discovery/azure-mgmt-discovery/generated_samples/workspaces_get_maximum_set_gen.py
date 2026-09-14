@@ -32,11 +32,11 @@ def main():
 
     response = client.workspaces.get(
         resource_group_name="rgdiscovery",
-        workspace_name="0e6a06e55e7efe8f07",
+        workspace_name="7c14ca107f929876a0",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/Workspaces_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/Workspaces_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

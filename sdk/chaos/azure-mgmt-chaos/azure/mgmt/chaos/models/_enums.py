@@ -54,6 +54,33 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
+class ConnectionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of connection, indicating the actor type authorized to reach the Chaos Studio data
+    plane for the workspace and target.
+    """
+
+    AKS_EXTENSION = "AksExtension"
+    """A connection backed by the Chaos AKS cluster extension."""
+    CHAOS_AGENT = "ChaosAgent"
+    """A connection backed by the Chaos agent installed on the target resource."""
+    CSFI = "Csfi"
+    """A connection backed by Cloud Service Fault Injection (CSFI)."""
+
+
+class ConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of a connection."""
+
+    PENDING = "Pending"
+    """The connection has been created but is not yet sending heartbeats; the trust relationship is
+    not yet established."""
+    CONNECTED = "Connected"
+    """The connection is established and actively heartbeating."""
+    DISCONNECTED = "Disconnected"
+    """The connection's heartbeat has gone stale; heartbeats are no longer being received."""
+    REVOKED = "Revoked"
+    """The connection's credentials have been revoked."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -318,6 +345,23 @@ class TargetReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CHAOS_TARGET = "ChaosTarget"
     """Chaos target reference type."""
+
+
+class WorkspaceDiscoveryStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum of the workspace discovery status."""
+
+    PENDING = "Pending"
+    """The discovery is pending and has not started."""
+    QUEUED = "Queued"
+    """The discovery has been accepted and is queued for execution."""
+    IN_PROGRESS = "InProgress"
+    """The discovery is in progress."""
+    SUCCEEDED = "Succeeded"
+    """The discovery completed successfully."""
+    FAILED = "Failed"
+    """The discovery failed."""
+    CANCELED = "Canceled"
+    """The discovery was canceled."""
 
 
 class WorkspaceEvaluationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -39,8 +39,6 @@ Paired removal and addition entries showing naming changes from words to numbers
 - Enum `Minute` added member `ENUM_30`
 ```
 
-**Reason**: Swagger automatically converts numeric names to words during code generation, while TypeSpec preserves the original naming. This affects all type names, including enums, models, and operations.
-
 **Spec Pattern**:
 
 Find the type definition by examining the names from the addition entries in the changelog (pattern: `Enum '<type name>' added member xxx`):
@@ -52,6 +50,10 @@ union Minute {
   `30`: 30,
 }
 ```
+
+**Breaking**: Enum members are renamed (e.g. `ZERO` becomes `ENUM_0`, `THIRTY` becomes `ENUM_30`), so existing code referencing the old members breaks.
+
+**Reason**: Emitter change. The Swagger emitter automatically converts numeric names to words during code generation, while the TypeSpec emitter preserves the original naming. This affects all type names, including enums, models, and operations.
 
 **Resolution**:
 
@@ -73,8 +75,6 @@ Removal of an operation and addition of a similarly named operation for the same
 - Removed operation StorageTaskAssignmentOperations.list
 ```
 
-**Reason**: TypeSpec may generate different operation names than Swagger to avoid naming collisions.
-
 **Spec Pattern**:
 
 Locate the interface and operation using the name from the addition entries.
@@ -84,6 +84,10 @@ interface StorageTaskAssignment {
   op storageTaskAssignmentList(xxx): xxx;
 }
 ```
+
+**Breaking**: An operation method is renamed (e.g. `list` becomes `storage_task_assignment_list`), so existing calls to the old method name break.
+
+**Reason**: Emitter change. The TypeSpec emitter may generate different operation names than Swagger to avoid naming collisions.
 
 **Resolution**:
 
@@ -114,8 +118,6 @@ directive:
   to: 'ResourceInfo'
 ```
 
-**Reason**: Swagger has directive ways to change the naming.
-
 **Spec Pattern**:
 
 Find the type definition by examining the names from the addition entries in the changelog (pattern: `Added model '<type name>'`):
@@ -125,6 +127,10 @@ model RedisResource {
   ...
 }
 ```
+
+**Breaking**: A model is renamed (e.g. `ResourceInfo` becomes `RedisResource`), so existing code referencing the old model name breaks.
+
+**Reason**: Spec directive. Swagger applied a `rename-model` directive in the legacy `readme.python.md` config; TypeSpec uses the original spec name unless the same rename is re-applied.
 
 **Resolution**:
 
@@ -144,8 +150,6 @@ Removal entry showing naming change of the client:
 - Deleted or renamed client `IotDpsClient`
 ```
 
-**Reason**: TypeSpec generates client names based on the `namespace` name rather than the title annotation in the `@service` decorator.
-
 **Spec Pattern**:
 
 Find the name from namespace:
@@ -154,6 +158,10 @@ Find the name from namespace:
 @service(#{ title: "iotDpsClient" })
 namespace Microsoft.Devices;
 ```
+
+**Breaking**: The client class is renamed (e.g. `IotDpsClient` is removed), so existing code constructing the old client breaks.
+
+**Reason**: Naming convention difference. TypeSpec generates client names based on the `namespace` name rather than the title annotation in the `@service` decorator.
 
 **Resolution**:
 
@@ -165,13 +173,13 @@ Update it to the correct client name using `@@clientName`:
 
 ## 5. Reorder of Parameters
 
+**Changelog Pattern**:
+
 Entry showing the parameters get re-ordered for an operation:
 
 ```md
 - Method `IotDpsResourceOperations.get` re-ordered its parameters from `['self', 'provisioning_service_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'provisioning_service_name', 'kwargs']`
 ```
-
-**Reason**: TypeSpec generally uses generic to generate operations. An unified parameters' order will be widely shared in one operation group, and may make difference comparing to what defined in swagger.
 
 **Spec Pattern**:
 
@@ -183,6 +191,10 @@ interface ProvisioningServiceDescriptions {
   get is ArmResourceRead<ProvisioningServiceDescription, Error = ErrorDetails>;
 }
 ```
+
+**Breaking**: The positional order of method parameters changes, so existing positional calls bind arguments to the wrong parameters.
+
+**Reason**: Operation design change. TypeSpec generally uses generics to generate operations. A unified parameter order is widely shared within an operation group and may differ from what is defined in Swagger.
 
 **Resolution**:
 
@@ -215,7 +227,9 @@ Multiple changes related to common infrastructure types such as `SystemData` and
 - Deleted or renamed model `IdentityType`
 ```
 
-**Reason**: Common types are upgraded to their latest versions during TypeSpec migration.
+**Breaking**: A common infrastructure type is renamed or removed, so code referencing the old type breaks.
+
+**Reason**: Common types upgrade. Common types are upgraded to their latest versions during TypeSpec migration.
 
 **Impact**: Low impact since these are common infrastructure types rarely used directly by users.
 
@@ -232,7 +246,9 @@ Multiple removals of unreferenced models that are typically not used in the SDK:
 - Deleted or renamed model `Resource`
 ```
 
-**Reason**: Unreferenced models are removed during TypeSpec migration.
+**Breaking**: Unreferenced models are removed from the SDK, so code referencing them breaks.
+
+**Reason**: Spec structure change. Unreferenced models are removed during TypeSpec migration.
 
 **Impact**: Low impact since these models are typically not used directly by users.
 
@@ -252,7 +268,9 @@ Multiple removals of pageable models. A pageable model is a response wrapper for
 - Deleted or renamed model `VolumeList`
 ```
 
-**Reason**: Python will not expose pageable models for list APIs.
+**Breaking**: Pageable wrapper models are no longer generated, so code referencing them breaks.
+
+**Reason**: Emitter change. Python will not expose pageable models for list APIs.
 
 **Impact**: Low impact since these models are typically not used directly by users.
 
@@ -268,7 +286,9 @@ Entries showing the usage of passing parameters positionally is disabled:
 - Method `DpsCertificateOperations.delete` changed its parameter `certificate_name1` from `positional_or_keyword` to `keyword_only`
 ```
 
-**Reason**: Query and header parameters in operation methods have been changed from positional to keyword-only by the new operation design.
+**Breaking**: Query and header parameters can no longer be passed positionally, so existing positional calls break.
+
+**Reason**: Operation design change. Query and header parameters in operation methods have been changed from positional to keyword-only by the new operation design.
 
 **Impact**: Users should convert all positional parameters to keyword arguments
 
@@ -286,7 +306,9 @@ Removal of parameter `if_match` and addition of `etag/match_condition` for the s
 - Method `DpsCertificateOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
 ```
 
-**Reason**: Header signatures `if_match/if_none_match` is replaced by `etag/match_condition` by the new operation design.
+**Breaking**: The parameter `if_match` is removed and replaced by `etag`/`match_condition`, so existing calls passing `if_match` break.
+
+**Reason**: Operation design change. The header signatures `if_match`/`if_none_match` are replaced by `etag`/`match_condition` by the new operation design.
 
 **Impact**: Replace `if_match="<specific etag>"` with `etag="<specific etag>", match_condition=MatchConditions.IfNotModified`.
 
@@ -306,7 +328,9 @@ Removal of multiple parameters and addition of parameters `properties` entries f
 - Model `VaultExtendedInfoResource` deleted or renamed its instance variable `algorithm`
 ```
 
-**Reason**: Typespec no longer supports multi-level flattening and will always preserve the actual REST API hierarchy. For more detailed information about model hierarchy, please refer to https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/hybrid_model_migration.md#model-hierarchy-reflects-rest-api-structure
+**Breaking**: Flattened convenience properties are removed and replaced by a single `properties` property, so code accessing the flattened properties directly breaks.
+
+**Reason**: Spec structure change. TypeSpec no longer supports multi-level flattening and will always preserve the actual REST API hierarchy. For more detailed information about model hierarchy, please refer to https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/hybrid_model_migration.md#model-hierarchy-reflects-rest-api-structure
 
 **Impact**: Users can only get the property following the actual model structure which matches the REST API documentation.
 
@@ -323,7 +347,9 @@ Removal of a property and addition of a corresponding property with `_property` 
 - Model `ExceptionEntry` added property `values_property`
 ```
 
-**Reason**: In the base model class of TypeSpec-based SDKs, the following names are native method names: `keys`, `items`, `values`, `popitem`, `clear`, `update`, `setdefault`, `pop`, `get`, `copy`. To avoid name conflicts, properties using any of these names are automatically renamed with a `_property` suffix (e.g., `values` becomes `values_property`, `items` becomes `items_property`).
+**Breaking**: A property is renamed with a `_property` suffix (e.g. `values` becomes `values_property`), so existing code accessing the original property name breaks.
+
+**Reason**: Emitter change. In the base model class of TypeSpec-based SDKs, the following names are native method names: `keys`, `items`, `values`, `popitem`, `clear`, `update`, `setdefault`, `pop`, `get`, `copy`. To avoid name conflicts, properties using any of these names are automatically renamed with a `_property` suffix (e.g., `values` becomes `values_property`, `items` becomes `items_property`).
 
 **Impact**: Users need to update property access to use the `_property` suffix (e.g., `.values` to `.values_property`, `.keys` to `.keys_property`, `.items` to `.items_property`).
 
@@ -340,8 +366,6 @@ Entries showing a model or enum has been renamed:
 - Renamed enum `OldEnumName` to `NewEnumName`
 ```
 
-**Reason**: TypeSpec may produce different model or enum names than Swagger (for example, due to namespace changes or naming convention differences).
-
 **Spec Pattern**:
 
 Find the type definition by examining the new name from the changelog entry:
@@ -356,6 +380,10 @@ union NewEnumName {
   ...
 }
 ```
+
+**Breaking**: A model or enum is renamed (e.g. `OldModelName` becomes `NewModelName`), so existing code referencing the old name breaks.
+
+**Reason**: Naming convention difference. TypeSpec may produce different model or enum names than Swagger (for example, due to namespace changes or naming convention differences).
 
 **Resolution**:
 

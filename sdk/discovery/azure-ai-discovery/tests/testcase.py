@@ -6,9 +6,10 @@
 Base test classes for azure-ai-discovery recorded tests.
 
 Provides AzureRecordedTestCase subclasses for recorded/playback testing
-and helper methods for client creation.
+(sync and async) and helper methods for client creation.
 """
-from devtools_testutils import AzureRecordedTestCase
+
+from devtools_testutils import AzureRecordedTestCase, is_live
 from .constants import (
     WORKSPACE_ENDPOINT,
     PROJECT_NAME,
@@ -34,12 +35,23 @@ class DiscoveryWorkspaceTestCase(AzureRecordedTestCase):
         self.workspace_endpoint = WORKSPACE_ENDPOINT
 
     def create_workspace_client(self, endpoint=None, **kwargs):
-        """Create a WorkspaceClient for testing."""
+        """Create a sync WorkspaceClient for testing."""
         from azure.ai.discovery import WorkspaceClient
 
         return WorkspaceClient(
             endpoint=endpoint or self.workspace_endpoint,
             credential=self.get_credential(WorkspaceClient),
+            credential_scopes=[DISCOVERY_SCOPE],
+            **kwargs,
+        )
+
+    def create_async_workspace_client(self, endpoint=None, **kwargs):
+        """Create an async WorkspaceClient for testing."""
+        from azure.ai.discovery.aio import WorkspaceClient as AsyncWorkspaceClient
+
+        return AsyncWorkspaceClient(
+            endpoint=endpoint or self.workspace_endpoint,
+            credential=self.get_credential(AsyncWorkspaceClient, is_async=True),
             credential_scopes=[DISCOVERY_SCOPE],
             **kwargs,
         )
@@ -59,12 +71,29 @@ class DiscoveryBookshelfTestCase(AzureRecordedTestCase):
         self.bookshelf_endpoint = BOOKSHELF_ENDPOINT
 
     def create_bookshelf_client(self, **kwargs):
-        """Create a BookshelfClient for testing."""
+        """Create a sync BookshelfClient for testing."""
         from azure.ai.discovery import BookshelfClient
 
+        # During playback the recorded poll responses return instantly, so use a
+        # zero polling interval to keep recorded LRO tests fast.
+        if not is_live():
+            kwargs.setdefault("polling_interval", 0)
         return BookshelfClient(
             endpoint=self.bookshelf_endpoint,
             credential=self.get_credential(BookshelfClient),
+            credential_scopes=[DISCOVERY_SCOPE],
+            **kwargs,
+        )
+
+    def create_async_bookshelf_client(self, **kwargs):
+        """Create an async BookshelfClient for testing."""
+        from azure.ai.discovery.aio import BookshelfClient as AsyncBookshelfClient
+
+        if not is_live():
+            kwargs.setdefault("polling_interval", 0)
+        return AsyncBookshelfClient(
+            endpoint=self.bookshelf_endpoint,
+            credential=self.get_credential(AsyncBookshelfClient, is_async=True),
             credential_scopes=[DISCOVERY_SCOPE],
             **kwargs,
         )

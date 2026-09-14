@@ -80,6 +80,7 @@
         "azure.mgmt.resource.policy.models.ParameterType": "Microsoft.Authorization.ParameterType",
         "azure.mgmt.resource.policy.models.AssignmentScopeValidation": "Microsoft.Authorization.AssignmentScopeValidation",
         "azure.mgmt.resource.policy.models.ExemptionCategory": "Microsoft.Authorization.ExemptionCategory",
+        "azure.mgmt.resource.policy.models.ExemptionManagementMode": "Microsoft.Authorization.ExemptionManagementMode",
         "azure.mgmt.resource.policy.models.PolicyTokenResult": "Microsoft.Authorization.PolicyTokenResult",
         "azure.mgmt.resource.policy.models.ExternalEndpointResult": "Microsoft.Authorization.ExternalEndpointResult",
         "azure.mgmt.resource.policy.models.PolicyAction": "Microsoft.Authorization.PolicyAction",
@@ -272,5 +273,5 @@
         "azure.mgmt.resource.policy.operations.PolicyTokensOperations.acquire_at_management_group": "Microsoft.Authorization.PolicyTokensOperationGroup.acquireAtManagementGroup",
         "azure.mgmt.resource.policy.aio.operations.PolicyTokensOperations.acquire_at_management_group": "Microsoft.Authorization.PolicyTokensOperationGroup.acquireAtManagementGroup"
     },
-    "CrossLanguageVersion": "11055b5de797"
+    "CrossLanguageVersion": "7407b4669921"
 }

@@ -5,13 +5,13 @@ import yaml
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_job
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     InputDeliveryMode,
     JobInputType,
     JobOutputType,
     OutputDeliveryMode,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.arm_ml_service.models import UriFolderJobOutput as RestUriFolderJobOutput
 from azure.ai.ml._schema import CommandJobSchema
 from azure.ai.ml._utils.utils import is_valid_uuid, load_yaml
 from azure.ai.ml.constants._common import ANONYMOUS_ENV_NAME, BASE_PATH_CONTEXT_KEY, AssetTypes, InputOutputModes
@@ -96,7 +96,10 @@ class TestCommandJob:
             internal_representation: CommandJob = CommandJob(**schema.load(cfg))
         source = internal_representation._to_rest_object()
         assert source.properties.inputs["test1"].uri == target["inputs"]["test1"]["path"]
-        assert source.properties.environment_variables == target["environment_variables"]
+        # environment_variables is Dict[str, str] on the REST contract; the shared client coerces
+        # all values to strings, so compare against the stringified expected values.
+        expected_env_vars = {k: str(v) for k, v in target["environment_variables"].items()}
+        assert source.properties.environment_variables == expected_env_vars
 
     def test_deserialize_inputs_dataset_short_form(self):
         test_path = "./tests/test_configs/command_job/command_job_inputs_dataset_short_form_test.yml"

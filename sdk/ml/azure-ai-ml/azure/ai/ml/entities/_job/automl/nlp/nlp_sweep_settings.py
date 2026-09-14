@@ -2,10 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional, Union
+from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import NlpSweepSettings as RestNlpSweepSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.arm_ml_service.models import EarlyTerminationPolicy as RestEarlyTerminationPolicy
+from azure.ai.ml._restclient.arm_ml_service.models import SamplingAlgorithmType
+from azure.ai.ml.entities._job._input_output_helpers import to_hybrid_rest_model
 from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -14,12 +15,12 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class NlpSweepSettings(RestTranslatableMixin):
     """Sweep settings for all AutoML NLP tasks.
 
-    :param sampling_algorithm: Required. Specifies type of hyperparameter sampling algorithm.
+    :keyword sampling_algorithm: Required. Specifies type of hyperparameter sampling algorithm.
         Possible values include: "Grid", "Random", and "Bayesian".
-    :type sampling_algorithm: Union[str, ~azure.ai.ml.automl.SamplingAlgorithmType]
-    :param early_termination: Early termination policy to end poorly performing training candidates,
+    :paramtype sampling_algorithm: Union[str, ~azure.ai.ml.automl.SamplingAlgorithmType]
+    :keyword early_termination: Early termination policy to end poorly performing training candidates,
         defaults to None.
-    :type early_termination: Optional[~azure.mgmt.machinelearningservices.models.EarlyTerminationPolicy]
+    :paramtype early_termination: Optional[~azure.mgmt.machinelearningservices.models.EarlyTerminationPolicy]
 
     .. admonition:: Example:
 
@@ -40,18 +41,25 @@ class NlpSweepSettings(RestTranslatableMixin):
         self.sampling_algorithm = sampling_algorithm
         self.early_termination = early_termination
 
-    def _to_rest_object(self) -> RestNlpSweepSettings:
-        return RestNlpSweepSettings(
-            sampling_algorithm=self.sampling_algorithm,
-            early_termination=self.early_termination._to_rest_object() if self.early_termination else None,
-        )
+    def _to_rest_object(self) -> Dict[str, Any]:
+        # ``NlpSweepSettings`` was dropped from the arm_ml_service (2025-12) model set; emit the
+        # camelCase wire dict directly so it round-trips through ``SdkJSONEncoder``.
+        rest_obj: Dict[str, Any] = {"samplingAlgorithm": self.sampling_algorithm}
+        if self.early_termination is not None:
+            # ``early_termination_policy`` is a shared msrest boundary helper; convert its msrest
+            # rest object to the arm_ml_service hybrid equivalent so ``SdkJSONEncoder`` can serialize it.
+            rest_obj["earlyTermination"] = to_hybrid_rest_model(
+                self.early_termination._to_rest_object(), RestEarlyTerminationPolicy
+            )
+        return rest_obj
 
     @classmethod
-    def _from_rest_object(cls, obj: RestNlpSweepSettings) -> "NlpSweepSettings":
+    def _from_rest_object(cls, obj: Dict[str, Any]) -> "NlpSweepSettings":
+        early_termination = obj.get("earlyTermination")
         return cls(
-            sampling_algorithm=obj.sampling_algorithm,
+            sampling_algorithm=obj.get("samplingAlgorithm"),
             early_termination=(
-                EarlyTerminationPolicy._from_rest_object(obj.early_termination) if obj.early_termination else None
+                EarlyTerminationPolicy._from_rest_object(early_termination) if early_termination else None
             ),
         )
 

@@ -3,8 +3,9 @@
   "apiVersions": {
     "Microsoft.Communication": "2025-09-01"
   },
-  "commit": "1bb32d7aaddc51af16d9e563d910ecec6921fae0",
+  "commit": "1523f9e8e89437d84d69a6651f09d74a7ae65ed3",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/communication/Communication.Management",
-  "emitterVersion": "0.60.2"
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.33.0"
 }

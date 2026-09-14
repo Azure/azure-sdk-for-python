@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2024-03-01-preview",
+  "apiVersions": {
+    "Microsoft.Help": "2024-03-01-preview"
+  },
+  "commit": "88976ab9ea9fb7f69533fbd465540060bd1f225a",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/help/resource-manager/Microsoft.Help/Help",
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.0"
+}

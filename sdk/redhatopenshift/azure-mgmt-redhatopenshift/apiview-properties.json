@@ -69,5 +69,5 @@
         "azure.mgmt.redhatopenshift.operations.PlatformWorkloadIdentityRoleSetOperations.get": "Microsoft.RedHatOpenShift.PlatformWorkloadIdentityRoleSets.get",
         "azure.mgmt.redhatopenshift.aio.operations.PlatformWorkloadIdentityRoleSetOperations.get": "Microsoft.RedHatOpenShift.PlatformWorkloadIdentityRoleSets.get"
     },
-    "CrossLanguageVersion": "3e80fdafe9b7"
+    "CrossLanguageVersion": "52ce5d65cb6b"
 }

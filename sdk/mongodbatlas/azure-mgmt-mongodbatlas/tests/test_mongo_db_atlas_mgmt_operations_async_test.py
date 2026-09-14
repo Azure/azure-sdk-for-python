@@ -19,9 +19,8 @@ class TestMongoDBAtlasMgmtOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(MongoDBAtlasMgmtClient, is_async=True)
 
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_operations_list(self, resource_group):
+    async def test_operations_list(self):
         response = self.client.operations.list()
         result = [r async for r in response]
         assert result

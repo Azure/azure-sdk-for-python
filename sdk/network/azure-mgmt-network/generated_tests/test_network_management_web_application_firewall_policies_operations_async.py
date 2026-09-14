@@ -26,7 +26,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
         response = await self.client.web_application_firewall_policies.get(
             resource_group_name=resource_group.name,
             policy_name="str",
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -237,6 +237,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                             "name": "str",
                                                             "properties": {
                                                                 "ddosSettings": {
+                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                     "protectionMode": "str",
                                                                 },
@@ -501,6 +502,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                     "type": "str",
                                                                                                                 }
                                                                                                             ],
+                                                                                                            "billingSku": "str",
                                                                                                             "customDnsConfigs": [
                                                                                                                 {
                                                                                                                     "fqdn": "str",
@@ -620,6 +622,12 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "ddosSettings": {
+                                                                                                                            "ddosCustomPolicy": {
+                                                                                                                                "id": "str"
+                                                                                                                            }
+                                                                                                                        },
+                                                                                                                        "enableConnectionTracking": bool,
                                                                                                                         "gatewayLoadBalancer": {
                                                                                                                             "id": "str"
                                                                                                                         },
@@ -695,6 +703,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                                         "type": "str",
                                                                                                                                     }
                                                                                                                                 ],
+                                                                                                                                "billingSku": "str",
                                                                                                                                 "customDnsConfigs": [
                                                                                                                                     {
                                                                                                                                         "fqdn": "str",
@@ -813,6 +822,12 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                             "id": "str",
                                                                                                                             "name": "str",
                                                                                                                             "properties": {
+                                                                                                                                "ddosSettings": {
+                                                                                                                                    "ddosCustomPolicy": {
+                                                                                                                                        "id": "str"
+                                                                                                                                    }
+                                                                                                                                },
+                                                                                                                                "enableConnectionTracking": bool,
                                                                                                                                 "gatewayLoadBalancer": {
                                                                                                                                     "id": "str"
                                                                                                                                 },
@@ -977,6 +992,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     "type": "str",
                                                                                                 }
                                                                                             ],
+                                                                                            "billingSku": "str",
                                                                                             "customDnsConfigs": [
                                                                                                 {
                                                                                                     "fqdn": "str",
@@ -1304,6 +1320,12 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "ddosSettings": {
+                                                                                                                                "ddosCustomPolicy": {
+                                                                                                                                    "id": "str"
+                                                                                                                                }
+                                                                                                                            },
+                                                                                                                            "enableConnectionTracking": bool,
                                                                                                                             "gatewayLoadBalancer": {
                                                                                                                                 "id": "str"
                                                                                                                             },
@@ -1397,6 +1419,12 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                                 "id": "str",
                                                                                                                                 "name": "str",
                                                                                                                                 "properties": {
+                                                                                                                                    "ddosSettings": {
+                                                                                                                                        "ddosCustomPolicy": {
+                                                                                                                                            "id": "str"
+                                                                                                                                        }
+                                                                                                                                    },
+                                                                                                                                    "enableConnectionTracking": bool,
                                                                                                                                     "gatewayLoadBalancer": {
                                                                                                                                         "id": "str"
                                                                                                                                     },
@@ -1515,6 +1543,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "disableBgpRoutePropagation": bool,
+                                                                                        "disablePeeringRoute": "str",
                                                                                         "provisioningState": "str",
                                                                                         "resourceGuid": "str",
                                                                                         "routes": [
@@ -1526,6 +1555,11 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     "nextHopType": "str",
                                                                                                     "addressPrefix": "str",
                                                                                                     "hasBgpOverride": bool,
+                                                                                                    "nextHop": {
+                                                                                                        "nextHopIpAddresses": [
+                                                                                                            "str"
+                                                                                                        ]
+                                                                                                    },
                                                                                                     "nextHopIpAddress": "str",
                                                                                                     "provisioningState": "str",
                                                                                                 },
@@ -1605,7 +1639,13 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                         },
                                                                     },
                                                                 },
-                                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                "ipTags": [
+                                                                    {
+                                                                        "firstPartyServiceTagId": "str",
+                                                                        "ipTagType": "str",
+                                                                        "tag": "str",
+                                                                    }
+                                                                ],
                                                                 "linkedPublicIPAddress": ...,
                                                                 "migrationPhase": "str",
                                                                 "natGateway": {
@@ -1615,6 +1655,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "idleTimeoutInMinutes": 0,
+                                                                        "nat64": "str",
                                                                         "provisioningState": "str",
                                                                         "publicIpAddresses": [{"id": "str"}],
                                                                         "publicIpAddressesV6": [{"id": "str"}],
@@ -1636,6 +1677,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                 "publicIPPrefix": {"id": "str"},
                                                                 "resourceGuid": "str",
                                                                 "servicePublicIPAddress": ...,
+                                                                "upgradedToV2": bool,
                                                             },
                                                             "sku": {"name": "str", "tier": "str"},
                                                             "tags": {"str": "str"},
@@ -1708,6 +1750,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -1725,6 +1770,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                     "ipConfiguration": ...,
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -1738,6 +1784,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -1771,6 +1818,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -1955,6 +2003,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     "type": "str",
                                                                                                 }
                                                                                             ],
+                                                                                            "billingSku": "str",
                                                                                             "customDnsConfigs": [
                                                                                                 {
                                                                                                     "fqdn": "str",
@@ -2066,6 +2115,12 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            }
+                                                                                                        },
+                                                                                                        "enableConnectionTracking": bool,
                                                                                                         "gatewayLoadBalancer": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -2104,6 +2159,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "ddosSettings": {
+                                                                                                                    "ddosCustomPolicy": {
+                                                                                                                        "id": "str"
+                                                                                                                    },
                                                                                                                     "ddosProtectionPlan": {
                                                                                                                         "id": "str"
                                                                                                                     },
@@ -2132,6 +2190,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                 },
                                                                                                                 "ipTags": [
                                                                                                                     {
+                                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                                         "ipTagType": "str",
                                                                                                                         "tag": "str",
                                                                                                                     }
@@ -2145,6 +2204,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
                                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                                        "nat64": "str",
                                                                                                                         "provisioningState": "str",
                                                                                                                         "publicIpAddresses": [
                                                                                                                             {
@@ -2198,6 +2258,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                 },
                                                                                                                 "resourceGuid": "str",
                                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                                "upgradedToV2": bool,
                                                                                                             },
                                                                                                             "sku": {
                                                                                                                 "name": "str",
@@ -2254,6 +2315,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "type": "str",
                                                                                                                     }
                                                                                                                 ],
+                                                                                                                "billingSku": "str",
                                                                                                                 "customDnsConfigs": [
                                                                                                                     {
                                                                                                                         "fqdn": "str",
@@ -2368,6 +2430,12 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "ddosSettings": {
+                                                                                                                    "ddosCustomPolicy": {
+                                                                                                                        "id": "str"
+                                                                                                                    }
+                                                                                                                },
+                                                                                                                "enableConnectionTracking": bool,
                                                                                                                 "gatewayLoadBalancer": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -2406,6 +2474,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
                                                                                                                         "ddosSettings": {
+                                                                                                                            "ddosCustomPolicy": {
+                                                                                                                                "id": "str"
+                                                                                                                            },
                                                                                                                             "ddosProtectionPlan": {
                                                                                                                                 "id": "str"
                                                                                                                             },
@@ -2434,6 +2505,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         },
                                                                                                                         "ipTags": [
                                                                                                                             {
+                                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                                 "ipTagType": "str",
                                                                                                                                 "tag": "str",
                                                                                                                             }
@@ -2447,6 +2519,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                             "name": "str",
                                                                                                                             "properties": {
                                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                                "nat64": "str",
                                                                                                                                 "provisioningState": "str",
                                                                                                                                 "publicIpAddresses": [
                                                                                                                                     {
@@ -2500,6 +2573,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         },
                                                                                                                         "resourceGuid": "str",
                                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                                        "upgradedToV2": bool,
                                                                                                                     },
                                                                                                                     "sku": {
                                                                                                                         "name": "str",
@@ -2635,6 +2709,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                     "type": "str",
                                                                                 }
                                                                             ],
+                                                                            "billingSku": "str",
                                                                             "customDnsConfigs": [
                                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                                             ],
@@ -2943,6 +3018,12 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "ddosSettings": {
+                                                                                                                "ddosCustomPolicy": {
+                                                                                                                    "id": "str"
+                                                                                                                }
+                                                                                                            },
+                                                                                                            "enableConnectionTracking": bool,
                                                                                                             "gatewayLoadBalancer": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -2981,6 +3062,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
                                                                                                                     "ddosSettings": {
+                                                                                                                        "ddosCustomPolicy": {
+                                                                                                                            "id": "str"
+                                                                                                                        },
                                                                                                                         "ddosProtectionPlan": {
                                                                                                                             "id": "str"
                                                                                                                         },
@@ -3009,6 +3093,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                     },
                                                                                                                     "ipTags": [
                                                                                                                         {
+                                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                                             "ipTagType": "str",
                                                                                                                             "tag": "str",
                                                                                                                         }
@@ -3022,6 +3107,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
                                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                                            "nat64": "str",
                                                                                                                             "provisioningState": "str",
                                                                                                                             "publicIpAddresses": [
                                                                                                                                 {
@@ -3075,6 +3161,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                     },
                                                                                                                     "resourceGuid": "str",
                                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                                    "upgradedToV2": bool,
                                                                                                                 },
                                                                                                                 "sku": {
                                                                                                                     "name": "str",
@@ -3151,6 +3238,12 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "ddosSettings": {
+                                                                                                                        "ddosCustomPolicy": {
+                                                                                                                            "id": "str"
+                                                                                                                        }
+                                                                                                                    },
+                                                                                                                    "enableConnectionTracking": bool,
                                                                                                                     "gatewayLoadBalancer": {
                                                                                                                         "id": "str"
                                                                                                                     },
@@ -3189,6 +3282,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
                                                                                                                             "ddosSettings": {
+                                                                                                                                "ddosCustomPolicy": {
+                                                                                                                                    "id": "str"
+                                                                                                                                },
                                                                                                                                 "ddosProtectionPlan": {
                                                                                                                                     "id": "str"
                                                                                                                                 },
@@ -3217,6 +3313,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                             },
                                                                                                                             "ipTags": [
                                                                                                                                 {
+                                                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                                                     "ipTagType": "str",
                                                                                                                                     "tag": "str",
                                                                                                                                 }
@@ -3230,6 +3327,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                                 "name": "str",
                                                                                                                                 "properties": {
                                                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                                                    "nat64": "str",
                                                                                                                                     "provisioningState": "str",
                                                                                                                                     "publicIpAddresses": [
                                                                                                                                         {
@@ -3283,6 +3381,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                             },
                                                                                                                             "resourceGuid": "str",
                                                                                                                             "servicePublicIPAddress": ...,
+                                                                                                                            "upgradedToV2": bool,
                                                                                                                         },
                                                                                                                         "sku": {
                                                                                                                             "name": "str",
@@ -3380,6 +3479,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "disableBgpRoutePropagation": bool,
+                                                                        "disablePeeringRoute": "str",
                                                                         "provisioningState": "str",
                                                                         "resourceGuid": "str",
                                                                         "routes": [
@@ -3391,6 +3491,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                     "nextHopType": "str",
                                                                                     "addressPrefix": "str",
                                                                                     "hasBgpOverride": bool,
+                                                                                    "nextHop": {
+                                                                                        "nextHopIpAddresses": ["str"]
+                                                                                    },
                                                                                     "nextHopIpAddress": "str",
                                                                                     "provisioningState": "str",
                                                                                 },
@@ -3476,6 +3579,10 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"}
+                                                                            },
+                                                                            "enableConnectionTracking": bool,
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -3496,6 +3603,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -3778,6 +3888,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                                         "type": "str",
                                                                                                                                     }
                                                                                                                                 ],
+                                                                                                                                "billingSku": "str",
                                                                                                                                 "customDnsConfigs": [
                                                                                                                                     {
                                                                                                                                         "fqdn": "str",
@@ -3930,6 +4041,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                                                             "type": "str",
                                                                                                                                                         }
                                                                                                                                                     ],
+                                                                                                                                                    "billingSku": "str",
                                                                                                                                                     "customDnsConfigs": [
                                                                                                                                                         {
                                                                                                                                                             "fqdn": "str",
@@ -4157,6 +4269,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "type": "str",
                                                                                                                     }
                                                                                                                 ],
+                                                                                                                "billingSku": "str",
                                                                                                                 "customDnsConfigs": [
                                                                                                                     {
                                                                                                                         "fqdn": "str",
@@ -4594,6 +4707,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "disableBgpRoutePropagation": bool,
+                                                                                                            "disablePeeringRoute": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "resourceGuid": "str",
                                                                                                             "routes": [
@@ -4605,6 +4719,11 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "nextHopType": "str",
                                                                                                                         "addressPrefix": "str",
                                                                                                                         "hasBgpOverride": bool,
+                                                                                                                        "nextHop": {
+                                                                                                                            "nextHopIpAddresses": [
+                                                                                                                                "str"
+                                                                                                                            ]
+                                                                                                                        },
                                                                                                                         "nextHopIpAddress": "str",
                                                                                                                         "provisioningState": "str",
                                                                                                                     },
@@ -4700,6 +4819,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -4713,6 +4833,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -4746,6 +4867,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -4819,6 +4941,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            },
                                                                                                             "ddosProtectionPlan": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -4836,6 +4961,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         "ipConfiguration": ...,
                                                                                                         "ipTags": [
                                                                                                             {
+                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                 "ipTagType": "str",
                                                                                                                 "tag": "str",
                                                                                                             }
@@ -4849,6 +4975,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                "nat64": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                                 "publicIpAddresses": [
                                                                                                                     {
@@ -4902,6 +5029,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         },
                                                                                                         "resourceGuid": "str",
                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                        "upgradedToV2": bool,
                                                                                                     },
                                                                                                     "sku": {
                                                                                                         "name": "str",
@@ -5115,6 +5243,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "type": "str",
                                                                                                                     }
                                                                                                                 ],
+                                                                                                                "billingSku": "str",
                                                                                                                 "customDnsConfigs": [
                                                                                                                     {
                                                                                                                         "fqdn": "str",
@@ -5267,6 +5396,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                                             "type": "str",
                                                                                                                                         }
                                                                                                                                     ],
+                                                                                                                                    "billingSku": "str",
                                                                                                                                     "customDnsConfigs": [
                                                                                                                                         {
                                                                                                                                             "fqdn": "str",
@@ -5490,6 +5620,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         "type": "str",
                                                                                                     }
                                                                                                 ],
+                                                                                                "billingSku": "str",
                                                                                                 "customDnsConfigs": [
                                                                                                     {
                                                                                                         "fqdn": "str",
@@ -5925,6 +6056,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "disableBgpRoutePropagation": bool,
+                                                                                            "disablePeeringRoute": "str",
                                                                                             "provisioningState": "str",
                                                                                             "resourceGuid": "str",
                                                                                             "routes": [
@@ -5936,6 +6068,11 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         "nextHopType": "str",
                                                                                                         "addressPrefix": "str",
                                                                                                         "hasBgpOverride": bool,
+                                                                                                        "nextHop": {
+                                                                                                            "nextHopIpAddresses": [
+                                                                                                                "str"
+                                                                                                            ]
+                                                                                                        },
                                                                                                         "nextHopIpAddress": "str",
                                                                                                         "provisioningState": "str",
                                                                                                     },
@@ -6149,6 +6286,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                     }
                                 ],
                                 "globalConfiguration": {
+                                    "disableDefaultServerHeaderInResponse": bool,
                                     "enableRequestBuffering": bool,
                                     "enableResponseBuffering": bool,
                                 },
@@ -6245,6 +6383,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "billingSku": "str",
                                                     "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                                     "customNetworkInterfaceName": "str",
                                                     "ipConfigurations": [
@@ -6455,6 +6594,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -6774,6 +6916,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "disableBgpRoutePropagation": bool,
+                                                                                                            "disablePeeringRoute": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "resourceGuid": "str",
                                                                                                             "routes": [
@@ -6785,6 +6928,11 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "nextHopType": "str",
                                                                                                                         "addressPrefix": "str",
                                                                                                                         "hasBgpOverride": bool,
+                                                                                                                        "nextHop": {
+                                                                                                                            "nextHopIpAddresses": [
+                                                                                                                                "str"
+                                                                                                                            ]
+                                                                                                                        },
                                                                                                                         "nextHopIpAddress": "str",
                                                                                                                         "provisioningState": "str",
                                                                                                                     },
@@ -6880,6 +7028,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -6893,6 +7042,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -6926,6 +7076,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -6998,6 +7149,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            },
                                                                                                             "ddosProtectionPlan": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -7015,6 +7169,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         "ipConfiguration": ...,
                                                                                                         "ipTags": [
                                                                                                             {
+                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                 "ipTagType": "str",
                                                                                                                 "tag": "str",
                                                                                                             }
@@ -7028,6 +7183,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                "nat64": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                                 "publicIpAddresses": [
                                                                                                                     {
@@ -7081,6 +7237,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         },
                                                                                                         "resourceGuid": "str",
                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                        "upgradedToV2": bool,
                                                                                                     },
                                                                                                     "sku": {
                                                                                                         "name": "str",
@@ -7323,6 +7480,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "disableBgpRoutePropagation": bool,
+                                                                                            "disablePeeringRoute": "str",
                                                                                             "provisioningState": "str",
                                                                                             "resourceGuid": "str",
                                                                                             "routes": [
@@ -7334,6 +7492,11 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         "nextHopType": "str",
                                                                                                         "addressPrefix": "str",
                                                                                                         "hasBgpOverride": bool,
+                                                                                                        "nextHop": {
+                                                                                                            "nextHopIpAddresses": [
+                                                                                                                "str"
+                                                                                                            ]
+                                                                                                        },
                                                                                                         "nextHopIpAddress": "str",
                                                                                                         "provisioningState": "str",
                                                                                                     },
@@ -7423,6 +7586,12 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    }
+                                                                                                },
+                                                                                                "enableConnectionTracking": bool,
                                                                                                 "gatewayLoadBalancer": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -7453,6 +7622,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            },
                                                                                                             "ddosProtectionPlan": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -7774,6 +7946,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                             "name": "str",
                                                                                                                             "properties": {
                                                                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                                                                "disablePeeringRoute": "str",
                                                                                                                                 "provisioningState": "str",
                                                                                                                                 "resourceGuid": "str",
                                                                                                                                 "routes": [
@@ -7785,6 +7958,11 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                                             "nextHopType": "str",
                                                                                                                                             "addressPrefix": "str",
                                                                                                                                             "hasBgpOverride": bool,
+                                                                                                                                            "nextHop": {
+                                                                                                                                                "nextHopIpAddresses": [
+                                                                                                                                                    "str"
+                                                                                                                                                ]
+                                                                                                                                            },
                                                                                                                                             "nextHopIpAddress": "str",
                                                                                                                                             "provisioningState": "str",
                                                                                                                                         },
@@ -7880,6 +8058,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         },
                                                                                                         "ipTags": [
                                                                                                             {
+                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                 "ipTagType": "str",
                                                                                                                 "tag": "str",
                                                                                                             }
@@ -7893,6 +8072,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                "nat64": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                                 "publicIpAddresses": [
                                                                                                                     {
@@ -7946,6 +8126,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         },
                                                                                                         "resourceGuid": "str",
                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                        "upgradedToV2": bool,
                                                                                                     },
                                                                                                     "sku": {
                                                                                                         "name": "str",
@@ -8036,6 +8217,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
                                                                                                                             "ddosSettings": {
+                                                                                                                                "ddosCustomPolicy": {
+                                                                                                                                    "id": "str"
+                                                                                                                                },
                                                                                                                                 "ddosProtectionPlan": {
                                                                                                                                     "id": "str"
                                                                                                                                 },
@@ -8053,6 +8237,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                             "ipConfiguration": ...,
                                                                                                                             "ipTags": [
                                                                                                                                 {
+                                                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                                                     "ipTagType": "str",
                                                                                                                                     "tag": "str",
                                                                                                                                 }
@@ -8066,6 +8251,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                                 "name": "str",
                                                                                                                                 "properties": {
                                                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                                                    "nat64": "str",
                                                                                                                                     "provisioningState": "str",
                                                                                                                                     "publicIpAddresses": [
                                                                                                                                         {
@@ -8119,6 +8305,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                             },
                                                                                                                             "resourceGuid": "str",
                                                                                                                             "servicePublicIPAddress": ...,
+                                                                                                                            "upgradedToV2": bool,
                                                                                                                         },
                                                                                                                         "sku": {
                                                                                                                             "name": "str",
@@ -8375,6 +8562,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                                                "disablePeeringRoute": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                                 "resourceGuid": "str",
                                                                                                                 "routes": [
@@ -8386,6 +8574,11 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                             "nextHopType": "str",
                                                                                                                             "addressPrefix": "str",
                                                                                                                             "hasBgpOverride": bool,
+                                                                                                                            "nextHop": {
+                                                                                                                                "nextHopIpAddresses": [
+                                                                                                                                    "str"
+                                                                                                                                ]
+                                                                                                                            },
                                                                                                                             "nextHopIpAddress": "str",
                                                                                                                             "provisioningState": "str",
                                                                                                                         },
@@ -8740,6 +8933,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            },
                                                                                                             "ddosProtectionPlan": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -8757,6 +8953,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         "ipConfiguration": ...,
                                                                                                         "ipTags": [
                                                                                                             {
+                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                 "ipTagType": "str",
                                                                                                                 "tag": "str",
                                                                                                             }
@@ -8770,6 +8967,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                "nat64": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                                 "publicIpAddresses": [
                                                                                                                     {
@@ -8823,6 +9021,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         },
                                                                                                         "resourceGuid": "str",
                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                        "upgradedToV2": bool,
                                                                                                     },
                                                                                                     "sku": {
                                                                                                         "name": "str",
@@ -8874,6 +9073,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "disableBgpRoutePropagation": bool,
+                                                                                            "disablePeeringRoute": "str",
                                                                                             "provisioningState": "str",
                                                                                             "resourceGuid": "str",
                                                                                             "routes": [
@@ -8885,6 +9085,11 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         "nextHopType": "str",
                                                                                                         "addressPrefix": "str",
                                                                                                         "hasBgpOverride": bool,
+                                                                                                        "nextHop": {
+                                                                                                            "nextHopIpAddresses": [
+                                                                                                                "str"
+                                                                                                            ]
+                                                                                                        },
                                                                                                         "nextHopIpAddress": "str",
                                                                                                         "provisioningState": "str",
                                                                                                     },
@@ -9066,6 +9271,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "ddosSettings": {
+                                                                                                                    "ddosCustomPolicy": {
+                                                                                                                        "id": "str"
+                                                                                                                    },
                                                                                                                     "ddosProtectionPlan": {
                                                                                                                         "id": "str"
                                                                                                                     },
@@ -9083,6 +9291,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                 "ipConfiguration": ...,
                                                                                                                 "ipTags": [
                                                                                                                     {
+                                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                                         "ipTagType": "str",
                                                                                                                         "tag": "str",
                                                                                                                     }
@@ -9096,6 +9305,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
                                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                                        "nat64": "str",
                                                                                                                         "provisioningState": "str",
                                                                                                                         "publicIpAddresses": [
                                                                                                                             {
@@ -9149,6 +9359,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                 },
                                                                                                                 "resourceGuid": "str",
                                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                                "upgradedToV2": bool,
                                                                                                             },
                                                                                                             "sku": {
                                                                                                                 "name": "str",
@@ -9397,6 +9608,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                                    "disablePeeringRoute": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "resourceGuid": "str",
                                                                                                     "routes": [
@@ -9408,6 +9620,11 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                 "nextHopType": "str",
                                                                                                                 "addressPrefix": "str",
                                                                                                                 "hasBgpOverride": bool,
+                                                                                                                "nextHop": {
+                                                                                                                    "nextHopIpAddresses": [
+                                                                                                                        "str"
+                                                                                                                    ]
+                                                                                                                },
                                                                                                                 "nextHopIpAddress": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                             },
@@ -9505,6 +9722,12 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -9529,6 +9752,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -9850,6 +10076,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
                                                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                                                    "disablePeeringRoute": "str",
                                                                                                                     "provisioningState": "str",
                                                                                                                     "resourceGuid": "str",
                                                                                                                     "routes": [
@@ -9861,6 +10088,11 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                                 "nextHopType": "str",
                                                                                                                                 "addressPrefix": "str",
                                                                                                                                 "hasBgpOverride": bool,
+                                                                                                                                "nextHop": {
+                                                                                                                                    "nextHopIpAddresses": [
+                                                                                                                                        "str"
+                                                                                                                                    ]
+                                                                                                                                },
                                                                                                                                 "nextHopIpAddress": "str",
                                                                                                                                 "provisioningState": "str",
                                                                                                                             },
@@ -9956,6 +10188,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -9969,6 +10202,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -10006,6 +10240,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -10088,6 +10323,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "ddosSettings": {
+                                                                                                                    "ddosCustomPolicy": {
+                                                                                                                        "id": "str"
+                                                                                                                    },
                                                                                                                     "ddosProtectionPlan": {
                                                                                                                         "id": "str"
                                                                                                                     },
@@ -10105,6 +10343,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                 "ipConfiguration": ...,
                                                                                                                 "ipTags": [
                                                                                                                     {
+                                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                                         "ipTagType": "str",
                                                                                                                         "tag": "str",
                                                                                                                     }
@@ -10118,6 +10357,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
                                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                                        "nat64": "str",
                                                                                                                         "provisioningState": "str",
                                                                                                                         "publicIpAddresses": [
                                                                                                                             {
@@ -10171,6 +10411,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                 },
                                                                                                                 "resourceGuid": "str",
                                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                                "upgradedToV2": bool,
                                                                                                             },
                                                                                                             "sku": {
                                                                                                                 "name": "str",
@@ -10419,6 +10660,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                                    "disablePeeringRoute": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "resourceGuid": "str",
                                                                                                     "routes": [
@@ -10430,6 +10672,11 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                 "nextHopType": "str",
                                                                                                                 "addressPrefix": "str",
                                                                                                                 "hasBgpOverride": bool,
+                                                                                                                "nextHop": {
+                                                                                                                    "nextHopIpAddresses": [
+                                                                                                                        "str"
+                                                                                                                    ]
+                                                                                                                },
                                                                                                                 "nextHopIpAddress": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                             },
@@ -10568,6 +10815,12 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                }
+                                                                                            },
+                                                                                            "enableConnectionTracking": bool,
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -10598,6 +10851,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -10919,6 +11175,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
                                                                                                                             "disableBgpRoutePropagation": bool,
+                                                                                                                            "disablePeeringRoute": "str",
                                                                                                                             "provisioningState": "str",
                                                                                                                             "resourceGuid": "str",
                                                                                                                             "routes": [
@@ -10930,6 +11187,11 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                                         "nextHopType": "str",
                                                                                                                                         "addressPrefix": "str",
                                                                                                                                         "hasBgpOverride": bool,
+                                                                                                                                        "nextHop": {
+                                                                                                                                            "nextHopIpAddresses": [
+                                                                                                                                                "str"
+                                                                                                                                            ]
+                                                                                                                                        },
                                                                                                                                         "nextHopIpAddress": "str",
                                                                                                                                         "provisioningState": "str",
                                                                                                                                     },
@@ -11025,6 +11287,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     },
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -11038,6 +11301,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -11091,6 +11355,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -11177,6 +11442,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
                                                                                                                         "ddosSettings": {
+                                                                                                                            "ddosCustomPolicy": {
+                                                                                                                                "id": "str"
+                                                                                                                            },
                                                                                                                             "ddosProtectionPlan": {
                                                                                                                                 "id": "str"
                                                                                                                             },
@@ -11194,6 +11462,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "ipConfiguration": ...,
                                                                                                                         "ipTags": [
                                                                                                                             {
+                                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                                 "ipTagType": "str",
                                                                                                                                 "tag": "str",
                                                                                                                             }
@@ -11207,6 +11476,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                             "name": "str",
                                                                                                                             "properties": {
                                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                                "nat64": "str",
                                                                                                                                 "provisioningState": "str",
                                                                                                                                 "publicIpAddresses": [
                                                                                                                                     {
@@ -11260,6 +11530,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         },
                                                                                                                         "resourceGuid": "str",
                                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                                        "upgradedToV2": bool,
                                                                                                                     },
                                                                                                                     "sku": {
                                                                                                                         "name": "str",
@@ -11516,6 +11787,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "disableBgpRoutePropagation": bool,
+                                                                                                            "disablePeeringRoute": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "resourceGuid": "str",
                                                                                                             "routes": [
@@ -11527,6 +11799,11 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "nextHopType": "str",
                                                                                                                         "addressPrefix": "str",
                                                                                                                         "hasBgpOverride": bool,
+                                                                                                                        "nextHop": {
+                                                                                                                            "nextHopIpAddresses": [
+                                                                                                                                "str"
+                                                                                                                            ]
+                                                                                                                        },
                                                                                                                         "nextHopIpAddress": "str",
                                                                                                                         "provisioningState": "str",
                                                                                                                     },
@@ -11788,6 +12065,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -12109,6 +12389,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
                                                                                                                             "disableBgpRoutePropagation": bool,
+                                                                                                                            "disablePeeringRoute": "str",
                                                                                                                             "provisioningState": "str",
                                                                                                                             "resourceGuid": "str",
                                                                                                                             "routes": [
@@ -12120,6 +12401,11 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                                         "nextHopType": "str",
                                                                                                                                         "addressPrefix": "str",
                                                                                                                                         "hasBgpOverride": bool,
+                                                                                                                                        "nextHop": {
+                                                                                                                                            "nextHopIpAddresses": [
+                                                                                                                                                "str"
+                                                                                                                                            ]
+                                                                                                                                        },
                                                                                                                                         "nextHopIpAddress": "str",
                                                                                                                                         "provisioningState": "str",
                                                                                                                                     },
@@ -12215,6 +12501,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     },
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -12228,6 +12515,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -12281,6 +12569,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -12364,6 +12653,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
                                                                                                                         "ddosSettings": {
+                                                                                                                            "ddosCustomPolicy": {
+                                                                                                                                "id": "str"
+                                                                                                                            },
                                                                                                                             "ddosProtectionPlan": {
                                                                                                                                 "id": "str"
                                                                                                                             },
@@ -12381,6 +12673,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "ipConfiguration": ...,
                                                                                                                         "ipTags": [
                                                                                                                             {
+                                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                                 "ipTagType": "str",
                                                                                                                                 "tag": "str",
                                                                                                                             }
@@ -12394,6 +12687,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                             "name": "str",
                                                                                                                             "properties": {
                                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                                "nat64": "str",
                                                                                                                                 "provisioningState": "str",
                                                                                                                                 "publicIpAddresses": [
                                                                                                                                     {
@@ -12447,6 +12741,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         },
                                                                                                                         "resourceGuid": "str",
                                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                                        "upgradedToV2": bool,
                                                                                                                     },
                                                                                                                     "sku": {
                                                                                                                         "name": "str",
@@ -12703,6 +12998,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "disableBgpRoutePropagation": bool,
+                                                                                                            "disablePeeringRoute": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "resourceGuid": "str",
                                                                                                             "routes": [
@@ -12714,6 +13010,11 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "nextHopType": "str",
                                                                                                                         "addressPrefix": "str",
                                                                                                                         "hasBgpOverride": bool,
+                                                                                                                        "nextHop": {
+                                                                                                                            "nextHopIpAddresses": [
+                                                                                                                                "str"
+                                                                                                                            ]
+                                                                                                                        },
                                                                                                                         "nextHopIpAddress": "str",
                                                                                                                         "provisioningState": "str",
                                                                                                                     },
@@ -12917,6 +13218,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -12931,7 +13233,11 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "ipAddress": "str",
                                                                                 "ipConfiguration": ...,
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -12942,6 +13248,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -12973,6 +13280,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -13287,6 +13595,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -13315,6 +13626,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     },
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -13328,6 +13640,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -13381,6 +13694,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -13403,6 +13717,12 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "ddosSettings": {
+                                                                                                                    "ddosCustomPolicy": {
+                                                                                                                        "id": "str"
+                                                                                                                    }
+                                                                                                                },
+                                                                                                                "enableConnectionTracking": bool,
                                                                                                                 "gatewayLoadBalancer": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -13441,6 +13761,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
                                                                                                                         "ddosSettings": {
+                                                                                                                            "ddosCustomPolicy": {
+                                                                                                                                "id": "str"
+                                                                                                                            },
                                                                                                                             "ddosProtectionPlan": {
                                                                                                                                 "id": "str"
                                                                                                                             },
@@ -13469,6 +13792,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         },
                                                                                                                         "ipTags": [
                                                                                                                             {
+                                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                                 "ipTagType": "str",
                                                                                                                                 "tag": "str",
                                                                                                                             }
@@ -13482,6 +13806,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                             "name": "str",
                                                                                                                             "properties": {
                                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                                "nat64": "str",
                                                                                                                                 "provisioningState": "str",
                                                                                                                                 "publicIpAddresses": [
                                                                                                                                     {
@@ -13535,6 +13860,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         },
                                                                                                                         "resourceGuid": "str",
                                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                                        "upgradedToV2": bool,
                                                                                                                     },
                                                                                                                     "sku": {
                                                                                                                         "name": "str",
@@ -13631,6 +13957,12 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        }
+                                                                                                    },
+                                                                                                    "enableConnectionTracking": bool,
                                                                                                     "gatewayLoadBalancer": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -13661,6 +13993,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "ddosSettings": {
+                                                                                                                "ddosCustomPolicy": {
+                                                                                                                    "id": "str"
+                                                                                                                },
                                                                                                                 "ddosProtectionPlan": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -13689,6 +14024,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                             },
                                                                                                             "ipTags": [
                                                                                                                 {
+                                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                                     "ipTagType": "str",
                                                                                                                     "tag": "str",
                                                                                                                 }
@@ -13702,6 +14038,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
                                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                                    "nat64": "str",
                                                                                                                     "provisioningState": "str",
                                                                                                                     "publicIpAddresses": [
                                                                                                                         {
@@ -13755,6 +14092,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                             },
                                                                                                             "resourceGuid": "str",
                                                                                                             "servicePublicIPAddress": ...,
+                                                                                                            "upgradedToV2": bool,
                                                                                                         },
                                                                                                         "sku": {
                                                                                                             "name": "str",
@@ -13825,6 +14163,12 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "ddosSettings": {
+                                                                                                                "ddosCustomPolicy": {
+                                                                                                                    "id": "str"
+                                                                                                                }
+                                                                                                            },
+                                                                                                            "enableConnectionTracking": bool,
                                                                                                             "gatewayLoadBalancer": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -13863,6 +14207,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
                                                                                                                     "ddosSettings": {
+                                                                                                                        "ddosCustomPolicy": {
+                                                                                                                            "id": "str"
+                                                                                                                        },
                                                                                                                         "ddosProtectionPlan": {
                                                                                                                             "id": "str"
                                                                                                                         },
@@ -13891,6 +14238,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                     },
                                                                                                                     "ipTags": [
                                                                                                                         {
+                                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                                             "ipTagType": "str",
                                                                                                                             "tag": "str",
                                                                                                                         }
@@ -13904,6 +14252,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
                                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                                            "nat64": "str",
                                                                                                                             "provisioningState": "str",
                                                                                                                             "publicIpAddresses": [
                                                                                                                                 {
@@ -13957,6 +14306,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                     },
                                                                                                                     "resourceGuid": "str",
                                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                                    "upgradedToV2": bool,
                                                                                                                 },
                                                                                                                 "sku": {
                                                                                                                     "name": "str",
@@ -14148,6 +14498,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
                                                                                                                     "ddosSettings": {
+                                                                                                                        "ddosCustomPolicy": {
+                                                                                                                            "id": "str"
+                                                                                                                        },
                                                                                                                         "ddosProtectionPlan": {
                                                                                                                             "id": "str"
                                                                                                                         },
@@ -14176,6 +14529,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                     },
                                                                                                                     "ipTags": [
                                                                                                                         {
+                                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                                             "ipTagType": "str",
                                                                                                                             "tag": "str",
                                                                                                                         }
@@ -14189,6 +14543,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
                                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                                            "nat64": "str",
                                                                                                                             "provisioningState": "str",
                                                                                                                             "publicIpAddresses": [
                                                                                                                                 {
@@ -14242,6 +14597,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                     },
                                                                                                                     "resourceGuid": "str",
                                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                                    "upgradedToV2": bool,
                                                                                                                 },
                                                                                                                 "sku": {
                                                                                                                     "name": "str",
@@ -14368,6 +14724,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "disableBgpRoutePropagation": bool,
+                                                                    "disablePeeringRoute": "str",
                                                                     "provisioningState": "str",
                                                                     "resourceGuid": "str",
                                                                     "routes": [
@@ -14379,6 +14736,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "nextHopType": "str",
                                                                                 "addressPrefix": "str",
                                                                                 "hasBgpOverride": bool,
+                                                                                "nextHop": {
+                                                                                    "nextHopIpAddresses": ["str"]
+                                                                                },
                                                                                 "nextHopIpAddress": "str",
                                                                                 "provisioningState": "str",
                                                                             },
@@ -14631,6 +14991,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                         "name": "str",
                                         "properties": {
                                             "data": "str",
+                                            "hsm": {"keyId": "str", "publicCertData": "str"},
                                             "keyVaultSecretId": "str",
                                             "password": "str",
                                             "provisioningState": "str",
@@ -14776,7 +15137,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                     "httpListeners": [{"id": "str"}],
                     "pathBasedRules": [{"id": "str"}],
                     "policySettings": {
-                        "captchaCookieExpirationInMins": 0,
+                        "captchaExpirationInMins": 0,
                         "customBlockResponseBody": "str",
                         "customBlockResponseStatusCode": 0,
                         "fileUploadEnforcement": bool,
@@ -14806,7 +15167,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -14819,7 +15180,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
             await self.client.web_application_firewall_policies.begin_delete(
                 resource_group_name=resource_group.name,
                 policy_name="str",
-                api_version="2025-05-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -14831,7 +15192,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
     async def test_web_application_firewall_policies_list(self, resource_group):
         response = self.client.web_application_firewall_policies.list(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -14841,7 +15202,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
     @recorded_by_proxy_async
     async def test_web_application_firewall_policies_list_all(self, resource_group):
         response = self.client.web_application_firewall_policies.list_all(
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

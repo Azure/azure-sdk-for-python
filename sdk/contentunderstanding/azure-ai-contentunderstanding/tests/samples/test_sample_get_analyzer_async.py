@@ -21,7 +21,10 @@ USAGE:
 import json
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
-from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
+from testpreparer_async import (
+    ContentUnderstandingPreparer,
+    ContentUnderstandingClientTestBaseAsync,
+)
 
 
 class TestSampleGetAnalyzerAsync(ContentUnderstandingClientTestBaseAsync):

@@ -13,7 +13,7 @@ import logging
 from typing import Any, Optional
 
 from azure.ai.ml._restclient.arm_ml_service.models import CreatedByType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UsageUnit
+from azure.ai.ml._restclient.arm_ml_service.models import UsageUnit
 
 from ._assets._artifacts._package.base_environment_source import BaseEnvironment
 from ._assets._artifacts._package.inferencing_server import (
@@ -251,6 +251,8 @@ from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.serverless_compute import ServerlessComputeSettings
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
+
+module_logger = logging.getLogger(__name__)
 
 __all__ = [
     "Resource",
@@ -567,7 +569,7 @@ def __getattr__(name: str):
 
     if requested:
         if not getattr(__getattr__, "warning_issued", False):
-            logging.warning(
+            module_logger.warning(
                 " %s will be removed from the azure.ai.ml.entities namespace in a future release."
                 " Please import from the azure.ai.ml.sweep namespace instead.",
                 name,

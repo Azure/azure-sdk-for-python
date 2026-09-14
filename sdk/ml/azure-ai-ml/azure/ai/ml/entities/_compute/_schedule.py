@@ -4,11 +4,11 @@
 # pylint: disable=protected-access
 from typing import Any, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputePowerAction
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeSchedules as RestComputeSchedules
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeStartStopSchedule as RestComputeStartStopSchedule
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ScheduleStatus as ScheduleState
-from azure.ai.ml._restclient.v2022_10_01_preview.models import TriggerType
+from azure.ai.ml._restclient.arm_ml_service.models import ComputePowerAction
+from azure.ai.ml._restclient.arm_ml_service.models import ComputeSchedules as RestComputeSchedules
+from azure.ai.ml._restclient.arm_ml_service.models import ComputeStartStopSchedule as RestComputeStartStopSchedule
+from azure.ai.ml._restclient.arm_ml_service.models import ScheduleStatus as ScheduleState
+from azure.ai.ml._restclient.arm_ml_service.models import TriggerType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 from .._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
@@ -17,12 +17,12 @@ from .._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigge
 class ComputeStartStopSchedule(RestTranslatableMixin):
     """Schedules for compute start or stop scenario.
 
-    :param trigger: The trigger of the schedule.
-    :type trigger: Union[~azure.ai.ml.entities.CronTrigger, ~azure.ai.ml.entities.RecurrenceTrigger]
-    :param action: The compute power action.
-    :type action: ~azure.ai.ml.entities.ComputePowerAction
-    :param state: The state of the schedule.
-    :type state: ~azure.ai.ml.entities.ScheduleState
+    :keyword trigger: The trigger of the schedule.
+    :paramtype trigger: Union[~azure.ai.ml.entities.CronTrigger, ~azure.ai.ml.entities.RecurrenceTrigger]
+    :keyword action: The compute power action.
+    :paramtype action: ~azure.ai.ml.entities.ComputePowerAction
+    :keyword state: The state of the schedule.
+    :paramtype state: ~azure.ai.ml.entities.ScheduleState
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
@@ -113,8 +113,8 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
 class ComputeSchedules(RestTranslatableMixin):
     """Compute schedules.
 
-    :param compute_start_stop: Compute start or stop schedules.
-    :type compute_start_stop: List[~azure.ai.ml.entities.ComputeStartStopSchedule]
+    :keyword compute_start_stop: Compute start or stop schedules.
+    :paramtype compute_start_stop: List[~azure.ai.ml.entities.ComputeStartStopSchedule]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 

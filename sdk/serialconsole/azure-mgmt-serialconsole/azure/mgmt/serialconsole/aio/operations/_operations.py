@@ -28,7 +28,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
@@ -45,7 +45,6 @@ from ...operations._operations import (
 )
 from .._configuration import MicrosoftSerialConsoleClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 List = list
@@ -203,7 +202,7 @@ class SerialPortsOperations:
         parent_resource_type: str,
         parent_resource: str,
         serial_port: str,
-        parameters: JSON,
+        parameters: _types.SerialPort,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -223,7 +222,7 @@ class SerialPortsOperations:
         :param serial_port: The name of the serial port to connect to. Required.
         :type serial_port: str
         :param parameters: Parameters supplied to create the serial port. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.serialconsole.types.SerialPort
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -277,7 +276,7 @@ class SerialPortsOperations:
         parent_resource_type: str,
         parent_resource: str,
         serial_port: str,
-        parameters: Union[_models.SerialPort, JSON, IO[bytes]],
+        parameters: Union[_models.SerialPort, _types.SerialPort, IO[bytes]],
         **kwargs: Any
     ) -> _models.SerialPort:
         """Creates or updates a serial port.
@@ -294,9 +293,10 @@ class SerialPortsOperations:
         :type parent_resource: str
         :param serial_port: The name of the serial port to connect to. Required.
         :type serial_port: str
-        :param parameters: Parameters supplied to create the serial port. Is one of the following
-         types: SerialPort, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.serialconsole.models.SerialPort or JSON or IO[bytes]
+        :param parameters: Parameters supplied to create the serial port. Is either a SerialPort type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.serialconsole.models.SerialPort or
+         ~azure.mgmt.serialconsole.types.SerialPort or IO[bytes]
         :return: SerialPort. The SerialPort is compatible with MutableMapping
         :rtype: ~azure.mgmt.serialconsole.models.SerialPort
         :raises ~azure.core.exceptions.HttpResponseError:

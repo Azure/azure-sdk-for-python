@@ -22,9 +22,10 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING - Set to `true` to enable GenAI telemetry tracing, which is
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+    4) AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING - Set to `true` to enable GenAI telemetry tracing, which is
        disabled by default.
-    4) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
+    5) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
        messages, which may contain personal data. False by default.
 """
 
@@ -83,18 +84,20 @@ provider = cast(TracerProvider, trace.get_tracer_provider())
 provider.add_span_processor(CustomAttributeSpanProcessor())
 
 scenario = os.path.basename(__file__)
-with tracer.start_as_current_span(scenario):
-    with (
-        DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as client,
-    ):
+with (
+    tracer.start_as_current_span(scenario),
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as client,
+):
 
-        agent_definition = PromptAgentDefinition(
-            model=os.environ["FOUNDRY_MODEL_NAME"],
-            instructions="You are a helpful assistant that answers general questions",
-        )
+    agent_definition = PromptAgentDefinition(
+        model=os.environ["FOUNDRY_MODEL_NAME"],
+        instructions="You are a helpful assistant that answers general questions",
+    )
 
-        agent = client.agents.create_version(agent_name="MyAgent", definition=agent_definition)
+    agent = client.agents.create_version(
+        agent_name=os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent"), definition=agent_definition
+    )
 
-        client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        print("Agent deleted")
+    client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+    print("Agent deleted")

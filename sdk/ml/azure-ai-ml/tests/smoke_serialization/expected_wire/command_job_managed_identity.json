@@ -1,0 +1,17 @@
+{
+  "properties": {
+    "command": "echo managed",
+    "computeId": "smoke-compute",
+    "environmentId": "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+    "environmentVariables": {},
+    "identity": {
+      "identityType": "Managed"
+    },
+    "inputs": {},
+    "isArchived": false,
+    "jobType": "Command",
+    "outputs": {},
+    "properties": {},
+    "tags": {}
+  }
+}

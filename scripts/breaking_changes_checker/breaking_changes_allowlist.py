@@ -5,8 +5,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from _models import RegexSuppression
-
 RUN_BREAKING_CHANGES_PACKAGES = ["azure-mgmt-*", "azure-ai-contentsafety", "azure-ai-vision-face"]
 
 
@@ -20,7 +18,6 @@ IGNORE_BREAKING_CHANGES = {
         ("ChangedParameterOrdering", "*", "*", "__init__"),
         # Changes due to latest dpg design
         ("RemovedOrRenamedInstanceAttribute", "*", "*", "additional_properties"),
-        ("RemovedOrRenamedClass", "*", RegexSuppression(".*ListResult$")),
         ("ChangedParameterKind", "*", "*", "*", "top"),
         ("ChangedParameterKind", "*", "*", "*", "filter"),
         ("ChangedParameterKind", "*", "*", "*", "skip"),

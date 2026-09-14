@@ -26,6 +26,9 @@ class AudienceErrorHandlingPolicy(SansIOHTTPPolicy):
     """
     A policy to handle audience-related authentication errors for Azure App Configuration.
     Raises a ClientAuthenticationError with a helpful message if the audience is missing or incorrect.
+
+    :param has_audience: Indicates if the expected audience is set for the authentication token.
+    :type has_audience: bool
     """
 
     def __init__(self, has_audience: bool = False):

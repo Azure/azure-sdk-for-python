@@ -5,7 +5,7 @@ client (`CosmosClient`, `Container.create_item`, etc.) plus a Rust
 backend that some operations can route through instead of the legacy
 Python HTTP path.
 
-This README only covers **building it locally and running the tests**.
+This README covers SDK usage, **building it locally and running the tests**.
 For architecture and design, see the docs under `docs/`.
 
 ---
@@ -83,6 +83,30 @@ URL = os.environ['ACCOUNT_URI']
 KEY = os.environ['ACCOUNT_KEY']
 client = CosmosClient(URL, credential=KEY)
 ```
+
+### Compact UTF-8 item writes
+
+By default, the client escapes non-ASCII characters in JSON item bodies, so each such character is sent as a
+`\uXXXX` escape sequence. A CJK character that occupies 3 bytes as UTF-8 therefore occupies 6 bytes on the wire, and
+a 4-byte emoji occupies 12. For Unicode-heavy items this expansion increases the size of the request sent over the
+network and can push a request past the 2 MiB request size limit. Applications writing such items can opt in to
+compact UTF-8 serialization when creating the client:
+
+```python
+client = CosmosClient(
+    URL,
+    credential=KEY,
+    enable_compact_utf8_item_writes=True,
+)
+```
+
+The option is disabled by default and applies to create, upsert, replace, patch, and transactional batch item
+bodies. Queries, control-plane requests, and responses are unchanged. Semantic request headers - including the
+partition-key header - are also unchanged; body-derived headers such as `Content-Length` necessarily reflect the
+compact byte count and are recalculated accordingly. Both representations describe the
+same JSON document, so the values stored in the service and returned on reads are identical - only the encoding of
+the outgoing request body differs. See the [synchronous][sample_compact_utf8_item_writes] and
+[asynchronous][sample_compact_utf8_item_writes_async] samples for complete examples.
 
 ### AAD Authentication
 
@@ -966,7 +990,7 @@ may have additional latencies associated with searching in the service.
 
 You can find our sync samples [here][cosmos_index_sample] and our async samples [here][cosmos_index_sample_async] as well for additional guidance.
 
-### Public Preview - Throughput Buckets
+### Throughput Buckets
 When multiple workloads share the same Azure Cosmos DB container, resource contention can lead to throttling, increased latency, and potential business impact.
 To address this, Cosmos DB allows you to allocate throughput buckets, which help manage resource consumption for workloads sharing a Cosmos DB container by limiting the maximum throughput a bucket can consume.
 However, throughput isn't reserved for any bucket, it remains shared across all workloads.
@@ -1132,9 +1156,14 @@ except exceptions.CosmosResourceExistsError:
     print("""Error creating container
 HTTP status code 409: The ID (name) provided for the container is already in use.
 The container name must be unique within the database.""")
->>>>>>> main
 
 ```
+
+## Local Rust development
+
+The Rust build expects an `azure-sdk-for-rust` clone next to this repository:
+
+```text
 <your repos folder>/
 ├── azure-sdk-for-python/   ← you are here
 └── azure-sdk-for-rust/
@@ -1382,3 +1411,57 @@ Python wiring or in maturin's install step, not in the Rust code.
 - Edited a `Cargo.toml`? `maturin develop` will pick it up; if you only
   changed deps, `cargo check` first is faster.
 
+<!-- LINKS -->
+[azure_cli]: https://learn.microsoft.com/cli/azure
+[azure_portal]: https://portal.azure.com
+[azure_sub]: https://azure.microsoft.com/free/
+[cloud_shell]: https://learn.microsoft.com/azure/cloud-shell/overview
+[cosmos_account_create]: https://learn.microsoft.com/azure/cosmos-db/how-to-manage-database-account
+[cosmos_account]: https://learn.microsoft.com/azure/cosmos-db/account-overview
+[cosmos_container]: https://learn.microsoft.com/azure/cosmos-db/databases-containers-items#azure-cosmos-containers
+[cosmos_database]: https://learn.microsoft.com/azure/cosmos-db/databases-containers-items#azure-cosmos-databases
+[cosmos_docs]: https://learn.microsoft.com/azure/cosmos-db/
+[cosmos_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples
+[cosmos_pypi]: https://pypi.org/project/azure-cosmos/
+[cosmos_http_status_codes]: https://learn.microsoft.com/rest/api/cosmos-db/http-status-codes-for-cosmosdb
+[cosmos_item]: https://learn.microsoft.com/azure/cosmos-db/databases-containers-items#azure-cosmos-items
+[cosmos_models]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/azure/cosmos/_models.py
+[cosmos_request_units]: https://learn.microsoft.com/azure/cosmos-db/request-units
+[cosmos_resources]: https://learn.microsoft.com/azure/cosmos-db/databases-containers-items
+[cosmos_sql_queries]: https://learn.microsoft.com/azure/cosmos-db/how-to-sql-query
+[cosmos_ttl]: https://learn.microsoft.com/azure/cosmos-db/time-to-live
+[cosmos_integrated_cache]: https://learn.microsoft.com/azure/cosmos-db/integrated-cache
+[cosmos_configure_integrated_cache]: https://learn.microsoft.com/azure/cosmos-db/how-to-configure-integrated-cache
+[python]: https://www.python.org/downloads/
+[ref_container_delete_item]: https://aka.ms/azsdk-python-cosmos-ref-delete-item
+[ref_container_query_items]: https://aka.ms/azsdk-python-cosmos-ref-query-items
+[ref_container_upsert_item]: https://aka.ms/azsdk-python-cosmos-ref-upsert-item
+[ref_container]: https://aka.ms/azsdk-python-cosmos-ref-container
+[ref_cosmos_sdk]: https://aka.ms/azsdk-python-cosmos-ref
+[ref_cosmosclient_create_database]: https://aka.ms/azsdk-python-cosmos-ref-create-database
+[ref_cosmosclient]: https://aka.ms/azsdk-python-cosmos-ref-cosmos-client
+[ref_database]: https://aka.ms/azsdk-python-cosmos-ref-database
+[ref_httpfailure]: https://aka.ms/azsdk-python-cosmos-ref-http-failure
+[sample_database_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/database_management.py
+[sample_compact_utf8_item_writes]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/compact_utf8_item_writes.py
+[sample_compact_utf8_item_writes_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/compact_utf8_item_writes_async.py
+[sample_document_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/document_management.py
+[sample_document_mgmt_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/document_management_async.py
+[sample_examples_misc]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/examples.py
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos
+[venv]: https://docs.python.org/3/library/venv.html
+[virtualenv]: https://virtualenv.pypa.io
+[telemetry_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/tracing_open_telemetry.py
+[timeouts_document]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/docs/TimeoutAndRetriesConfig.md
+[cosmos_transactional_batch]: https://learn.microsoft.com/azure/cosmos-db/transactional-batch
+[cosmos_concurrency_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/concurrency_sample.py
+[cosmos_index_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management.py
+[cosmos_index_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management_async.py
+[RRF]: https://learn.microsoft.com/azure/search/hybrid-search-ranking
+[BM25]: https://learn.microsoft.com/azure/search/index-similarity-and-scoring
+[cosmos_fts]: https://aka.ms/cosmosfulltextsearch
+[cosmos_index_policy_change]: https://learn.microsoft.com/azure/cosmos-db/index-policy#modifying-the-indexing-policy
+[cosmos_throughput_bucket_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/throughput_bucket_management.py
+[cosmos_throughput_bucket_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/throughput_bucket_management_async.py
+[cosmos_diagnostics_filter_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/samples/diagnostics_filter_sample.py
+[cosmos_throughput_bucket_configuration]: https://learn.microsoft.com/azure/cosmos-db/nosql/throughput-buckets#configuring-throughput-buckets

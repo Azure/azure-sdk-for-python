@@ -12,11 +12,13 @@ import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from ..._utils.model_base import Model as _Model, rest_discriminator, rest_field
+from ..._utils.utils import FileType
 from ._enums import (
     KnowledgeBaseModelKind,
     KnowledgeSourceKind,
     McpServerAuthenticationKind,
     McpServerOutputParsingKind,
+    SearchIndexKnowledgeSourceBoostKind,
     VectorSearchAlgorithmKind,
     VectorSearchCompressionKind,
     VectorSearchVectorizerKind,
@@ -27,7 +29,7 @@ if TYPE_CHECKING:
     from ...knowledgebases import models as _knowledgebases_models3
 
 
-class CognitiveServicesAccount(_Model):
+class CognitiveServicesAccount(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for describing any Azure AI service resource attached to a skillset.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -65,7 +67,9 @@ class CognitiveServicesAccount(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AIServicesAccountIdentity(CognitiveServicesAccount, discriminator="#Microsoft.Azure.Search.AIServicesByIdentity"):
+class AIServicesAccountIdentity(
+    CognitiveServicesAccount, discriminator="#Microsoft.Azure.Search.AIServicesByIdentity"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The multi-region account of an Azure AI service resource that's attached to a skillset.
 
     :ivar description: Description of the Azure AI service resource attached to a skillset.
@@ -117,7 +121,9 @@ class AIServicesAccountIdentity(CognitiveServicesAccount, discriminator="#Micros
         self.odata_type = "#Microsoft.Azure.Search.AIServicesByIdentity"  # type: ignore
 
 
-class AIServicesAccountKey(CognitiveServicesAccount, discriminator="#Microsoft.Azure.Search.AIServicesByKey"):
+class AIServicesAccountKey(
+    CognitiveServicesAccount, discriminator="#Microsoft.Azure.Search.AIServicesByKey"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The account key of an Azure AI service resource that's attached to a skillset, to be used with
     the resource's subdomain.
 
@@ -163,7 +169,7 @@ class AIServicesAccountKey(CognitiveServicesAccount, discriminator="#Microsoft.A
         self.odata_type = "#Microsoft.Azure.Search.AIServicesByKey"  # type: ignore
 
 
-class AIServicesVisionParameters(_Model):
+class AIServicesVisionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the AI Services Vision parameters for vectorizing a query image or text.
 
     :ivar model_version: The version of the model to use when calling the AI Services Vision
@@ -216,7 +222,7 @@ class AIServicesVisionParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VectorSearchVectorizer(_Model):
+class VectorSearchVectorizer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the vectorization method to be used during query time.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -257,7 +263,9 @@ class VectorSearchVectorizer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AIServicesVisionVectorizer(VectorSearchVectorizer, discriminator="aiServicesVision"):
+class AIServicesVisionVectorizer(
+    VectorSearchVectorizer, discriminator="aiServicesVision"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Clears the identity property of a datasource.
 
     :ivar vectorizer_name: The name to associate with this particular vectorization method.
@@ -331,7 +339,7 @@ class AnalyzedTokenInfo(_Model):
      Required."""
 
 
-class AnalyzeResult(_Model):
+class AnalyzeResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result of testing an analyzer on text.
 
     :ivar tokens: The list of tokens returned by the analyzer specified in the request. Required.
@@ -359,7 +367,7 @@ class AnalyzeResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeTextOptions(_Model):
+class AnalyzeTextOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies some text and analysis components used to break that text into tokens.
 
     :ivar text: The text to break into tokens. Required.
@@ -476,7 +484,7 @@ class AnalyzeTextOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TokenFilter(_Model):
+class TokenFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for token filters.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -523,7 +531,9 @@ class TokenFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AsciiFoldingTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.AsciiFoldingTokenFilter"):
+class AsciiFoldingTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.AsciiFoldingTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Converts alphabetic, numeric, and symbolic Unicode characters which are not in the first 127
     ASCII characters (the "Basic Latin" Unicode block) into their ASCII equivalents, if such
     equivalents exist. This token filter is implemented using Apache Lucene.
@@ -568,7 +578,9 @@ class AsciiFoldingTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Searc
         self.odata_type = "#Microsoft.Azure.Search.AsciiFoldingTokenFilter"  # type: ignore
 
 
-class AzureActiveDirectoryApplicationCredentials(_Model):  # pylint: disable=name-too-long
+class AzureActiveDirectoryApplicationCredentials(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Credentials of a registered application created for your search service, used for authenticated
     access to the encryption keys stored in Azure Key Vault.
 
@@ -608,7 +620,7 @@ class AzureActiveDirectoryApplicationCredentials(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeSource(_Model):
+class KnowledgeSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a knowledge source definition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -625,6 +637,11 @@ class KnowledgeSource(_Model):
      "azureBlob", "indexedSharePoint", "indexedOneLake", "indexedSql", "web", "remoteSharePoint",
      "workIQ", "file", "mcpServer", "fabricDataAgent", and "fabricOntology".
     :vartype kind: str or ~azure.search.documents.indexes.models.KnowledgeSourceKind
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -647,6 +664,12 @@ class KnowledgeSource(_Model):
     """The type of the knowledge source. Required. Known values are: \"searchIndex\", \"azureBlob\",
      \"indexedSharePoint\", \"indexedOneLake\", \"indexedSql\", \"web\", \"remoteSharePoint\",
      \"workIQ\", \"file\", \"mcpServer\", \"fabricDataAgent\", and \"fabricOntology\"."""
+    results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = rest_field(
+        name="resultsProcessing", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Controls whether results from this knowledge source are reranked before they are included in
+     the final result set. Defaults to 'rerank' when not specified. Known values are: \"rerank\" and
+     \"none\"."""
     e_tag: Optional[str] = rest_field(name="@odata.etag", visibility=["read", "create", "update", "delete", "query"])
     """The ETag of the knowledge source."""
     encryption_key: Optional["_models.SearchResourceEncryptionKey"] = rest_field(
@@ -668,6 +691,7 @@ class KnowledgeSource(_Model):
         name: str,
         kind: str,
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -683,13 +707,20 @@ class KnowledgeSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureBlobKnowledgeSource(KnowledgeSource, discriminator="azureBlob"):
+class AzureBlobKnowledgeSource(
+    KnowledgeSource, discriminator="azureBlob"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for Azure Blob Storage knowledge source.
 
     :ivar name: The name of the knowledge source. Required.
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -724,6 +755,7 @@ class AzureBlobKnowledgeSource(KnowledgeSource, discriminator="azureBlob"):
         name: str,
         azure_blob_parameters: "_models.AzureBlobKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -740,7 +772,7 @@ class AzureBlobKnowledgeSource(KnowledgeSource, discriminator="azureBlob"):
         self.kind = KnowledgeSourceKind.AZURE_BLOB  # type: ignore
 
 
-class AzureBlobKnowledgeSourceParameters(_Model):
+class AzureBlobKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for Azure Blob Storage knowledge source.
 
     :ivar connection_string: Key-based connection string or the ResourceId format if using a
@@ -756,6 +788,11 @@ class AzureBlobKnowledgeSourceParameters(_Model):
     :ivar ingestion_parameters: Consolidates all general ingestion settings.
     :vartype ingestion_parameters:
      ~azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters
+    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
+     this index-backed knowledge source. Request-time query hints replace these defaults as a
+     complete object.
+    :vartype query_hints:
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     :ivar created_resources: Resources created by the knowledge source.
     :vartype created_resources: ~azure.search.documents.indexes.models.CreatedResources
     """
@@ -778,6 +815,11 @@ class AzureBlobKnowledgeSourceParameters(_Model):
         name="ingestionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Consolidates all general ingestion settings."""
+    query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
+        name="queryHints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default hints that guide query planning toward useful filters and boosts for this index-backed
+     knowledge source. Request-time query hints replace these defaults as a complete object."""
     created_resources: Optional["_models.CreatedResources"] = rest_field(name="createdResources", visibility=["read"])
     """Resources created by the knowledge source."""
 
@@ -790,6 +832,7 @@ class AzureBlobKnowledgeSourceParameters(_Model):
         folder_path: Optional[str] = None,
         is_adls_gen2: Optional[bool] = None,
         ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = None,
+        query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -803,7 +846,7 @@ class AzureBlobKnowledgeSourceParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureMachineLearningParameters(_Model):
+class AzureMachineLearningParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the properties for connecting to an AML vectorizer.
 
     :ivar scoring_uri: (Required for no authentication or key authentication) The scoring URI of
@@ -879,7 +922,7 @@ class AzureMachineLearningParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchIndexerSkill(_Model):
+class SearchIndexerSkill(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for skills.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -956,7 +999,9 @@ class SearchIndexerSkill(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureMachineLearningSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Custom.AmlSkill"):
+class AzureMachineLearningSkill(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Custom.AmlSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The AML skill allows you to extend AI enrichment with a custom Azure Machine Learning (AML)
     model. Once an AML model is trained and deployed, an AML skill integrates it into AI
     enrichment.
@@ -1061,7 +1106,9 @@ class AzureMachineLearningSkill(SearchIndexerSkill, discriminator="#Microsoft.Sk
         self.odata_type = "#Microsoft.Skills.Custom.AmlSkill"  # type: ignore
 
 
-class AzureMachineLearningVectorizer(VectorSearchVectorizer, discriminator="aml"):
+class AzureMachineLearningVectorizer(
+    VectorSearchVectorizer, discriminator="aml"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies an Azure Machine Learning endpoint deployed via the Azure AI Foundry Model Catalog
     for generating the vector embedding of a query string.
 
@@ -1105,7 +1152,9 @@ class AzureMachineLearningVectorizer(VectorSearchVectorizer, discriminator="aml"
         self.kind = VectorSearchVectorizerKind.AML  # type: ignore
 
 
-class AzureOpenAIEmbeddingSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill"):
+class AzureOpenAIEmbeddingSkill(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Allows you to generate a vector embedding for a given text input using the Azure OpenAI
     resource.
 
@@ -1136,8 +1185,8 @@ class AzureOpenAIEmbeddingSkill(SearchIndexerSkill, discriminator="#Microsoft.Sk
     :ivar model_name: The name of the embedding model that is deployed at the provided deploymentId
      path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
      "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano",
-     "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5.1", "gpt-5.2", "gpt-5.4", "gpt-5.4-mini", and
-     "gpt-5.4-nano".
+     "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5.1", "gpt-5.2", "gpt-5.4", "gpt-5.4-mini",
+     "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", and "gpt-5.6-luna".
     :vartype model_name: str or ~azure.search.documents.indexes.models.AzureOpenAIModelName
     :ivar dimensions: The number of dimensions the resulting output embeddings should have. Only
      supported in text-embedding-3 and later models.
@@ -1167,8 +1216,8 @@ class AzureOpenAIEmbeddingSkill(SearchIndexerSkill, discriminator="#Microsoft.Sk
     """The name of the embedding model that is deployed at the provided deploymentId path. Known
      values are: \"text-embedding-ada-002\", \"text-embedding-3-large\", \"text-embedding-3-small\",
      \"gpt-4o\", \"gpt-4o-mini\", \"gpt-4.1\", \"gpt-4.1-mini\", \"gpt-4.1-nano\", \"gpt-5\",
-     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.1\", \"gpt-5.2\", \"gpt-5.4\", \"gpt-5.4-mini\", and
-     \"gpt-5.4-nano\"."""
+     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.1\", \"gpt-5.2\", \"gpt-5.4\", \"gpt-5.4-mini\",
+     \"gpt-5.4-nano\", \"gpt-5.5\", \"gpt-5.6-sol\", \"gpt-5.6-terra\", and \"gpt-5.6-luna\"."""
     dimensions: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of dimensions the resulting output embeddings should have. Only supported in
      text-embedding-3 and later models."""
@@ -1205,7 +1254,7 @@ class AzureOpenAIEmbeddingSkill(SearchIndexerSkill, discriminator="#Microsoft.Sk
         self.odata_type = "#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill"  # type: ignore
 
 
-class AzureOpenAITokenizerParameters(_Model):
+class AzureOpenAITokenizerParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure OpenAI Tokenizer parameters.
 
     :ivar encoder_model_name: Only applies if the unit is set to azureOpenAITokens. Options include
@@ -1250,7 +1299,9 @@ class AzureOpenAITokenizerParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureOpenAIVectorizer(VectorSearchVectorizer, discriminator="azureOpenAI"):
+class AzureOpenAIVectorizer(
+    VectorSearchVectorizer, discriminator="azureOpenAI"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the Azure OpenAI resource used to vectorize a query string.
 
     :ivar vectorizer_name: The name to associate with this particular vectorization method.
@@ -1291,7 +1342,7 @@ class AzureOpenAIVectorizer(VectorSearchVectorizer, discriminator="azureOpenAI")
         self.kind = VectorSearchVectorizerKind.AZURE_OPEN_AI  # type: ignore
 
 
-class AzureOpenAIVectorizerParameters(_Model):
+class AzureOpenAIVectorizerParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the parameters for connecting to the Azure OpenAI resource.
 
     :ivar resource_url: The resource URI of the Azure OpenAI resource.
@@ -1305,8 +1356,8 @@ class AzureOpenAIVectorizerParameters(_Model):
     :ivar model_name: The name of the embedding model that is deployed at the provided deploymentId
      path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
      "text-embedding-3-small", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano",
-     "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5.1", "gpt-5.2", "gpt-5.4", "gpt-5.4-mini", and
-     "gpt-5.4-nano".
+     "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5.1", "gpt-5.2", "gpt-5.4", "gpt-5.4-mini",
+     "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", and "gpt-5.6-luna".
     :vartype model_name: str or ~azure.search.documents.indexes.models.AzureOpenAIModelName
     """
 
@@ -1330,8 +1381,8 @@ class AzureOpenAIVectorizerParameters(_Model):
     """The name of the embedding model that is deployed at the provided deploymentId path. Known
      values are: \"text-embedding-ada-002\", \"text-embedding-3-large\", \"text-embedding-3-small\",
      \"gpt-4o\", \"gpt-4o-mini\", \"gpt-4.1\", \"gpt-4.1-mini\", \"gpt-4.1-nano\", \"gpt-5\",
-     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.1\", \"gpt-5.2\", \"gpt-5.4\", \"gpt-5.4-mini\", and
-     \"gpt-5.4-nano\"."""
+     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.1\", \"gpt-5.2\", \"gpt-5.4\", \"gpt-5.4-mini\",
+     \"gpt-5.4-nano\", \"gpt-5.5\", \"gpt-5.6-sol\", \"gpt-5.6-terra\", and \"gpt-5.6-luna\"."""
 
     @overload
     def __init__(
@@ -1355,7 +1406,7 @@ class AzureOpenAIVectorizerParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VectorSearchCompression(_Model):
+class VectorSearchCompression(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains configuration options specific to the compression method used during indexing or
     querying.
 
@@ -1418,7 +1469,9 @@ class VectorSearchCompression(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BinaryQuantizationCompression(VectorSearchCompression, discriminator="binaryQuantization"):
+class BinaryQuantizationCompression(
+    VectorSearchCompression, discriminator="binaryQuantization"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains configuration options specific to the binary quantization compression method used
     during indexing and querying.
 
@@ -1469,7 +1522,7 @@ class BinaryQuantizationCompression(VectorSearchCompression, discriminator="bina
         self.kind = VectorSearchCompressionKind.BINARY_QUANTIZATION  # type: ignore
 
 
-class SimilarityAlgorithm(_Model):
+class SimilarityAlgorithm(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for similarity algorithms. Similarity algorithms are used to calculate scores that
     tie queries to documents. The higher the score, the more relevant the document is to that
     specific query. Those scores are used to rank the search results.
@@ -1503,7 +1556,9 @@ class SimilarityAlgorithm(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BM25SimilarityAlgorithm(SimilarityAlgorithm, discriminator="#Microsoft.Azure.Search.BM25Similarity"):
+class BM25SimilarityAlgorithm(
+    SimilarityAlgorithm, discriminator="#Microsoft.Azure.Search.BM25Similarity"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Ranking function based on the Okapi BM25 similarity algorithm. BM25 is a TF-IDF-like algorithm
     that includes length normalization (controlled by the 'b' parameter) as well as term frequency
     saturation (controlled by the 'k1' parameter).
@@ -1553,7 +1608,7 @@ class BM25SimilarityAlgorithm(SimilarityAlgorithm, discriminator="#Microsoft.Azu
         self.odata_type = "#Microsoft.Azure.Search.BM25Similarity"  # type: ignore
 
 
-class CharFilter(_Model):
+class CharFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for character filters.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1594,7 +1649,7 @@ class CharFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatCompletionCommonModelParameters(_Model):
+class ChatCompletionCommonModelParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Common language model parameters for Chat Completions. If omitted, default values are used.
 
     :ivar model_name: The name of the model to use (e.g., 'gpt-4o', etc.). Default is null if not
@@ -1662,7 +1717,7 @@ class ChatCompletionCommonModelParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatCompletionResponseFormat(_Model):
+class ChatCompletionResponseFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Determines how the language model's response should be serialized. Defaults to 'text'.
 
     :ivar type: Specifies how the LLM should format the response. Known values are: "text",
@@ -1703,7 +1758,7 @@ class ChatCompletionResponseFormat(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatCompletionSchema(_Model):
+class ChatCompletionSchema(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Object defining the custom schema the model will use to structure its output.
 
     :ivar type: Type of schema representation. Usually 'object'. Default is 'object'.
@@ -1754,7 +1809,7 @@ class ChatCompletionSchema(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatCompletionSchemaProperties(_Model):
+class ChatCompletionSchemaProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for JSON schema response format.
 
     :ivar name: Name of the json schema the model will adhere to.
@@ -1800,7 +1855,9 @@ class ChatCompletionSchemaProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatCompletionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Custom.ChatCompletionSkill"):
+class ChatCompletionSkill(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Custom.ChatCompletionSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A skill that calls a language model via Azure AI Foundry's Chat Completions endpoint.
 
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
@@ -1913,7 +1970,9 @@ class ChatCompletionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.C
         self.odata_type = "#Microsoft.Skills.Custom.ChatCompletionSkill"  # type: ignore
 
 
-class CjkBigramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.CjkBigramTokenFilter"):
+class CjkBigramTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.CjkBigramTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Forms bigrams of CJK terms that are generated from the standard tokenizer. This token filter is
     implemented using Apache Lucene.
 
@@ -1997,7 +2056,7 @@ class ClassicSimilarityAlgorithm(SimilarityAlgorithm, discriminator="#Microsoft.
         self.odata_type = "#Microsoft.Azure.Search.ClassicSimilarity"  # type: ignore
 
 
-class LexicalTokenizer(_Model):
+class LexicalTokenizer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for tokenizers.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2041,7 +2100,9 @@ class LexicalTokenizer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClassicTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.ClassicTokenizer"):
+class ClassicTokenizer(
+    LexicalTokenizer, discriminator="#Microsoft.Azure.Search.ClassicTokenizer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Grammar-based tokenizer that is suitable for processing most European-language documents. This
     tokenizer is implemented using Apache Lucene.
 
@@ -2088,7 +2149,7 @@ class ClassicTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.
 
 class CognitiveServicesAccountKey(
     CognitiveServicesAccount, discriminator="#Microsoft.Azure.Search.CognitiveServicesByKey"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The multi-region account key of an Azure AI service resource that's attached to a skillset.
 
     :ivar description: Description of the Azure AI service resource attached to a skillset.
@@ -2127,7 +2188,9 @@ class CognitiveServicesAccountKey(
         self.odata_type = "#Microsoft.Azure.Search.CognitiveServicesByKey"  # type: ignore
 
 
-class CommonGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.CommonGramTokenFilter"):
+class CommonGramTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.CommonGramTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Construct bigrams for frequently occurring terms while indexing. Single terms are still indexed
     too, with bigrams overlaid. This token filter is implemented using Apache Lucene.
 
@@ -2187,7 +2250,9 @@ class CommonGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.
         self.odata_type = "#Microsoft.Azure.Search.CommonGramTokenFilter"  # type: ignore
 
 
-class ConditionalSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Util.ConditionalSkill"):
+class ConditionalSkill(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Util.ConditionalSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A skill that enables scenarios that require a Boolean operation to determine the data to assign
     to an output.
 
@@ -2239,7 +2304,7 @@ class ConditionalSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Util
         self.odata_type = "#Microsoft.Skills.Util.ConditionalSkill"  # type: ignore
 
 
-class ContentColumnMapping(_Model):
+class ContentColumnMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Maps a SQL column to a search index field.
 
     :ivar name: Target index field name. Required.
@@ -2279,7 +2344,9 @@ class ContentColumnMapping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContentUnderstandingSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Util.ContentUnderstandingSkill"):
+class ContentUnderstandingSkill(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Util.ContentUnderstandingSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A skill that leverages Azure AI Content Understanding to process and extract structured
     insights from documents, enabling enriched, searchable content for enhanced document indexing
     and retrieval.
@@ -2349,7 +2416,9 @@ class ContentUnderstandingSkill(SearchIndexerSkill, discriminator="#Microsoft.Sk
         self.odata_type = "#Microsoft.Skills.Util.ContentUnderstandingSkill"  # type: ignore
 
 
-class ContentUnderstandingSkillChunkingProperties(_Model):  # pylint: disable=name-too-long
+class ContentUnderstandingSkillChunkingProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Controls the cardinality for chunking the content.
 
     :ivar method: The chunking strategy. 'fixedSize' (default) or 'semantic'. Known values are:
@@ -2404,7 +2473,7 @@ class ContentUnderstandingSkillChunkingProperties(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class CorsOptions(_Model):
+class CorsOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines options to control Cross-Origin Resource Sharing (CORS) for an index.
 
     :ivar allowed_origins: The list of origins from which JavaScript code will be granted access to
@@ -2454,7 +2523,7 @@ class CreatedResources(_Model):
     """
 
 
-class LexicalAnalyzer(_Model):
+class LexicalAnalyzer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for analyzers.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2495,7 +2564,9 @@ class LexicalAnalyzer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.CustomAnalyzer"):
+class CustomAnalyzer(
+    LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.CustomAnalyzer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Allows you to take control over the process of converting text into indexable/searchable
     tokens. It's a user-defined configuration consisting of a single predefined tokenizer and one
     or more filters. The tokenizer is responsible for breaking text into tokens, and the filters
@@ -2570,7 +2641,7 @@ class CustomAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Cus
         self.odata_type = "#Microsoft.Azure.Search.CustomAnalyzer"  # type: ignore
 
 
-class CustomEntity(_Model):
+class CustomEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object that contains information about the matches that were found, and related metadata.
 
     :ivar name: The top-level entity descriptor. Matches in the skill output will be grouped by
@@ -2704,7 +2775,7 @@ class CustomEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomEntityAlias(_Model):
+class CustomEntityAlias(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A complex object that can be used to specify alternative spellings or synonyms to the root
     entity name.
 
@@ -2754,7 +2825,9 @@ class CustomEntityAlias(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomEntityLookupSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.CustomEntityLookupSkill"):
+class CustomEntityLookupSkill(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.CustomEntityLookupSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A skill looks for text from a custom, user-defined list of words and phrases.
 
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
@@ -2862,7 +2935,7 @@ class CustomEntityLookupSkill(SearchIndexerSkill, discriminator="#Microsoft.Skil
         self.odata_type = "#Microsoft.Skills.Text.CustomEntityLookupSkill"  # type: ignore
 
 
-class LexicalNormalizer(_Model):
+class LexicalNormalizer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for normalizers.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2903,7 +2976,9 @@ class LexicalNormalizer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomNormalizer(LexicalNormalizer, discriminator="#Microsoft.Azure.Search.CustomNormalizer"):
+class CustomNormalizer(
+    LexicalNormalizer, discriminator="#Microsoft.Azure.Search.CustomNormalizer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Allows you to configure normalization for filterable, sortable, and facetable fields, which by
     default operate with strict matching. This is a user-defined configuration consisting of at
     least one or more filters, which modify the token that is stored.
@@ -2962,7 +3037,7 @@ class CustomNormalizer(LexicalNormalizer, discriminator="#Microsoft.Azure.Search
         self.odata_type = "#Microsoft.Azure.Search.CustomNormalizer"  # type: ignore
 
 
-class DataChangeDetectionPolicy(_Model):
+class DataChangeDetectionPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for data change detection policies.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2994,7 +3069,7 @@ class DataChangeDetectionPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataDeletionDetectionPolicy(_Model):
+class DataDeletionDetectionPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for data deletion detection policies.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3026,7 +3101,7 @@ class DataDeletionDetectionPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataSourceCredentials(_Model):
+class DataSourceCredentials(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents credentials that can be used to connect to a datasource.
 
     :ivar connection_string: The connection string for the datasource. Set to ``<unchanged>`` (with
@@ -3062,7 +3137,7 @@ class DataSourceCredentials(_Model):
 
 class DefaultCognitiveServicesAccount(
     CognitiveServicesAccount, discriminator="#Microsoft.Azure.Search.DefaultCognitiveServices"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An empty object that represents the default Azure AI service resource for a skillset.
 
     :ivar description: Description of the Azure AI service resource attached to a skillset.
@@ -3097,7 +3172,7 @@ class DefaultCognitiveServicesAccount(
 
 class DictionaryDecompounderTokenFilter(
     TokenFilter, discriminator="#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Decomposes compound words found in many Germanic languages. This token filter is implemented
     using Apache Lucene.
 
@@ -3173,7 +3248,7 @@ class DictionaryDecompounderTokenFilter(
         self.odata_type = "#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter"  # type: ignore
 
 
-class ScoringFunction(_Model):
+class ScoringFunction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for functions that can modify document scores during ranking.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3227,7 +3302,9 @@ class ScoringFunction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DistanceScoringFunction(ScoringFunction, discriminator="distance"):
+class DistanceScoringFunction(
+    ScoringFunction, discriminator="distance"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a function that boosts scores based on distance from a geographic location.
 
     :ivar field_name: The name of the field used as input to the scoring function. Required.
@@ -3277,7 +3354,7 @@ class DistanceScoringFunction(ScoringFunction, discriminator="distance"):
         self.type = "distance"  # type: ignore
 
 
-class DistanceScoringParameters(_Model):
+class DistanceScoringParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provides parameter values to a distance scoring function.
 
     :ivar reference_point_parameter: The name of the parameter passed in search queries to specify
@@ -3316,7 +3393,9 @@ class DistanceScoringParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentExtractionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Util.DocumentExtractionSkill"):
+class DocumentExtractionSkill(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Util.DocumentExtractionSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A skill that extracts content from a file within the enrichment pipeline.
 
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
@@ -3390,7 +3469,7 @@ class DocumentExtractionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skil
 
 class DocumentIntelligenceLayoutSkill(
     SearchIndexerSkill, discriminator="#Microsoft.Skills.Util.DocumentIntelligenceLayoutSkill"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A skill that extracts content and layout information, via Azure AI Services, from files within
     the enrichment pipeline.
 
@@ -3492,7 +3571,9 @@ class DocumentIntelligenceLayoutSkill(
         self.odata_type = "#Microsoft.Skills.Util.DocumentIntelligenceLayoutSkill"  # type: ignore
 
 
-class DocumentIntelligenceLayoutSkillChunkingProperties(_Model):  # pylint: disable=name-too-long
+class DocumentIntelligenceLayoutSkillChunkingProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Controls the cardinality for chunking the content.
 
     :ivar unit: The unit of the chunk. "characters"
@@ -3537,7 +3618,7 @@ class DocumentIntelligenceLayoutSkillChunkingProperties(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class DocumentKeysOrIds(_Model):
+class DocumentKeysOrIds(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type of the keysOrIds.
 
     :ivar document_keys: document keys to be reset.
@@ -3574,7 +3655,9 @@ class DocumentKeysOrIds(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EdgeNGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.EdgeNGramTokenFilter"):
+class EdgeNGramTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.EdgeNGramTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Generates n-grams of the given size(s) starting from the front or the back of an input token.
     This token filter is implemented using Apache Lucene.
 
@@ -3630,7 +3713,9 @@ class EdgeNGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.E
         self.odata_type = "#Microsoft.Azure.Search.EdgeNGramTokenFilter"  # type: ignore
 
 
-class EdgeNGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search.EdgeNGramTokenFilterV2"):
+class EdgeNGramTokenFilterV2(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.EdgeNGramTokenFilterV2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Generates n-grams of the given size(s) starting from the front or the back of an input token.
     This token filter is implemented using Apache Lucene.
 
@@ -3687,7 +3772,9 @@ class EdgeNGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search
         self.odata_type = "#Microsoft.Azure.Search.EdgeNGramTokenFilterV2"  # type: ignore
 
 
-class EdgeNGramTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.EdgeNGramTokenizer"):
+class EdgeNGramTokenizer(
+    LexicalTokenizer, discriminator="#Microsoft.Azure.Search.EdgeNGramTokenizer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tokenizes the input from an edge into n-grams of the given size(s). This tokenizer is
     implemented using Apache Lucene.
 
@@ -3742,7 +3829,9 @@ class EdgeNGramTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Searc
         self.odata_type = "#Microsoft.Azure.Search.EdgeNGramTokenizer"  # type: ignore
 
 
-class ElisionTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.ElisionTokenFilter"):
+class ElisionTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.ElisionTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Removes elisions. For example, "l'avion" (the plane) will be converted to "avion" (plane). This
     token filter is implemented using Apache Lucene.
 
@@ -3783,7 +3872,7 @@ class ElisionTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Eli
         self.odata_type = "#Microsoft.Azure.Search.ElisionTokenFilter"  # type: ignore
 
 
-class EmbeddingColumnMapping(_Model):
+class EmbeddingColumnMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Maps a SQL column to a vector field for embedding.
 
     :ivar name: Target vector field name in the search index. Required.
@@ -3816,7 +3905,9 @@ class EmbeddingColumnMapping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityLinkingSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.V3.EntityLinkingSkill"):
+class EntityLinkingSkill(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.V3.EntityLinkingSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Using the Text Analytics API, extracts linked entities from text.
 
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
@@ -3896,7 +3987,9 @@ class EntityLinkingSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Te
         self.odata_type = "#Microsoft.Skills.Text.V3.EntityLinkingSkill"  # type: ignore
 
 
-class EntityRecognitionSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.V3.EntityRecognitionSkill"):
+class EntityRecognitionSkillV3(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.V3.EntityRecognitionSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Using the Text Analytics API, extracts entities of different types from text.
 
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
@@ -3989,7 +4082,54 @@ class EntityRecognitionSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Ski
         self.odata_type = "#Microsoft.Skills.Text.V3.EntityRecognitionSkill"  # type: ignore
 
 
-class VectorSearchAlgorithmConfiguration(_Model):
+class EntraAppAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration for a customer-owned Microsoft Entra app registration used for federated
+    credential-based on-behalf-of authentication.
+
+    :ivar application_id: The application (client) ID of the customer-owned Entra app registration.
+     Required.
+    :vartype application_id: str
+    :ivar federated_credential_id: The federated credential ID configured on the app registration,
+     enabling the search service to authenticate as the app without a stored client secret.
+     Required.
+    :vartype federated_credential_id: str
+    :ivar tenant_id: The tenant ID of the app registration. Required when the app registration is
+     in a different tenant than the search service. If omitted, the search service's tenant is used.
+    :vartype tenant_id: str
+    """
+
+    application_id: str = rest_field(name="applicationId", visibility=["read", "create", "update", "delete", "query"])
+    """The application (client) ID of the customer-owned Entra app registration. Required."""
+    federated_credential_id: str = rest_field(
+        name="federatedCredentialId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The federated credential ID configured on the app registration, enabling the search service to
+     authenticate as the app without a stored client secret. Required."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """The tenant ID of the app registration. Required when the app registration is in a different
+     tenant than the search service. If omitted, the search service's tenant is used."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        application_id: str,
+        federated_credential_id: str,
+        tenant_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VectorSearchAlgorithmConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains configuration options specific to the algorithm used during indexing or querying.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4028,7 +4168,9 @@ class VectorSearchAlgorithmConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExhaustiveKnnAlgorithmConfiguration(VectorSearchAlgorithmConfiguration, discriminator="exhaustiveKnn"):
+class ExhaustiveKnnAlgorithmConfiguration(
+    VectorSearchAlgorithmConfiguration, discriminator="exhaustiveKnn"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains configuration options specific to the exhaustive KNN algorithm used during querying,
     which will perform brute-force search across the entire vector index.
 
@@ -4069,7 +4211,7 @@ class ExhaustiveKnnAlgorithmConfiguration(VectorSearchAlgorithmConfiguration, di
         self.kind = VectorSearchAlgorithmKind.EXHAUSTIVE_KNN  # type: ignore
 
 
-class ExhaustiveKnnParameters(_Model):
+class ExhaustiveKnnParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the parameters specific to exhaustive KNN algorithm.
 
     :ivar metric: The similarity metric to use for vector comparisons. Known values are: "cosine",
@@ -4101,13 +4243,20 @@ class ExhaustiveKnnParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FabricDataAgentKnowledgeSource(KnowledgeSource, discriminator="fabricDataAgent"):
+class FabricDataAgentKnowledgeSource(
+    KnowledgeSource, discriminator="fabricDataAgent"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for Fabric Data Agent knowledge source.
 
     :ivar name: The name of the knowledge source. Required.
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -4143,6 +4292,7 @@ class FabricDataAgentKnowledgeSource(KnowledgeSource, discriminator="fabricDataA
         name: str,
         fabric_data_agent_parameters: "_models.FabricDataAgentKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -4159,7 +4309,7 @@ class FabricDataAgentKnowledgeSource(KnowledgeSource, discriminator="fabricDataA
         self.kind = KnowledgeSourceKind.FABRIC_DATA_AGENT  # type: ignore
 
 
-class FabricDataAgentKnowledgeSourceParameters(_Model):
+class FabricDataAgentKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for Fabric Data Agent knowledge source.
 
     :ivar workspace_id: Fabric workspace ID. Required.
@@ -4192,13 +4342,20 @@ class FabricDataAgentKnowledgeSourceParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FabricOntologyKnowledgeSource(KnowledgeSource, discriminator="fabricOntology"):
+class FabricOntologyKnowledgeSource(
+    KnowledgeSource, discriminator="fabricOntology"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for Fabric Ontology knowledge source.
 
     :ivar name: The name of the knowledge source. Required.
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -4234,6 +4391,7 @@ class FabricOntologyKnowledgeSource(KnowledgeSource, discriminator="fabricOntolo
         name: str,
         fabric_ontology_parameters: "_models.FabricOntologyKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -4250,7 +4408,7 @@ class FabricOntologyKnowledgeSource(KnowledgeSource, discriminator="fabricOntolo
         self.kind = KnowledgeSourceKind.FABRIC_ONTOLOGY  # type: ignore
 
 
-class FabricOntologyKnowledgeSourceParameters(_Model):
+class FabricOntologyKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for Fabric Ontology knowledge source.
 
     :ivar workspace_id: The Fabric workspace ID containing the ontology. Required.
@@ -4283,7 +4441,7 @@ class FabricOntologyKnowledgeSourceParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FieldMapping(_Model):
+class FieldMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a mapping between a field in a data source and a target field in an index.
 
     :ivar source_field_name: The name of the field in the data source. Required.
@@ -4328,7 +4486,7 @@ class FieldMapping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FieldMappingFunction(_Model):
+class FieldMappingFunction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a function that transforms a value from a data source before indexing.
 
     :ivar name: The name of the field mapping function. Required.
@@ -4363,13 +4521,20 @@ class FieldMappingFunction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileKnowledgeSource(KnowledgeSource, discriminator="file"):
+class FileKnowledgeSource(
+    KnowledgeSource, discriminator="file"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for File knowledge source that supports direct file upload and indexing.
 
     :ivar name: The name of the knowledge source. Required.
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -4386,6 +4551,9 @@ class FileKnowledgeSource(KnowledgeSource, discriminator="file"):
     :vartype kind: str or ~azure.search.documents.indexes.models.FILE
     :ivar file_parameters: The parameters for the File knowledge source. Required.
     :vartype file_parameters: ~azure.search.documents.indexes.models.FileKnowledgeSourceParameters
+    :ivar cors_options: Options to control Cross-Origin Resource Sharing (CORS) for the File
+     knowledge source's file endpoints (upload, list, update, delete).
+    :vartype cors_options: ~azure.search.documents.indexes.models.CorsOptions
     """
 
     kind: Literal[KnowledgeSourceKind.FILE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -4395,6 +4563,11 @@ class FileKnowledgeSource(KnowledgeSource, discriminator="file"):
         name="fileParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """The parameters for the File knowledge source. Required."""
+    cors_options: Optional["_models.CorsOptions"] = rest_field(
+        name="corsOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Options to control Cross-Origin Resource Sharing (CORS) for the File knowledge source's file
+     endpoints (upload, list, update, delete)."""
 
     @overload
     def __init__(
@@ -4403,8 +4576,10 @@ class FileKnowledgeSource(KnowledgeSource, discriminator="file"):
         name: str,
         file_parameters: "_models.FileKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
+        cors_options: Optional["_models.CorsOptions"] = None,
     ) -> None: ...
 
     @overload
@@ -4419,13 +4594,18 @@ class FileKnowledgeSource(KnowledgeSource, discriminator="file"):
         self.kind = KnowledgeSourceKind.FILE  # type: ignore
 
 
-class FileKnowledgeSourceParameters(_Model):
+class FileKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for File knowledge source.
 
-    :ivar ingestion_parameters: Consolidates all general ingestion settings. Only 'minimal' content
-     extraction mode and embeddingModel are supported for file knowledge sources.
+    :ivar ingestion_parameters: Consolidates all general ingestion settings for the File knowledge
+     source, including the content extraction mode and an optional embeddingModel.
     :vartype ingestion_parameters:
      ~azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters
+    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
+     this index-backed knowledge source. Request-time query hints replace these defaults as a
+     complete object.
+    :vartype query_hints:
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     :ivar created_resources: Resources created by the file knowledge source.
     :vartype created_resources: ~azure.search.documents.indexes.models.CreatedResources
     """
@@ -4433,8 +4613,13 @@ class FileKnowledgeSourceParameters(_Model):
     ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = rest_field(
         name="ingestionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Consolidates all general ingestion settings. Only 'minimal' content extraction mode and
-     embeddingModel are supported for file knowledge sources."""
+    """Consolidates all general ingestion settings for the File knowledge source, including the
+     content extraction mode and an optional embeddingModel."""
+    query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
+        name="queryHints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default hints that guide query planning toward useful filters and boosts for this index-backed
+     knowledge source. Request-time query hints replace these defaults as a complete object."""
     created_resources: Optional["_models.CreatedResources"] = rest_field(name="createdResources", visibility=["read"])
     """Resources created by the file knowledge source."""
 
@@ -4443,6 +4628,7 @@ class FileKnowledgeSourceParameters(_Model):
         self,
         *,
         ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = None,
+        query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -4456,7 +4642,45 @@ class FileKnowledgeSourceParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FreshnessScoringFunction(ScoringFunction, discriminator="freshness"):
+class FileUploadMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The JSON 'metadata' part of a multipart/form-data file upload: the full file name/path and
+    custom key/value metadata. The parsing mode and extraction mode are both chosen by the service
+    and are not supplied by the caller.
+
+    :ivar file_name: The full relative file name/path to store the file under (prefixes are derived
+     from it).
+    :vartype file_name: str
+    :ivar metadata: Custom key/value metadata to store with the file.
+    :vartype metadata: dict[str, str]
+    """
+
+    file_name: Optional[str] = rest_field(name="fileName", visibility=["read", "create", "update", "delete", "query"])
+    """The full relative file name/path to store the file under (prefixes are derived from it)."""
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Custom key/value metadata to store with the file."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file_name: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FreshnessScoringFunction(
+    ScoringFunction, discriminator="freshness"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a function that boosts scores based on the value of a date-time field.
 
     :ivar field_name: The name of the field used as input to the scoring function. Required.
@@ -4507,7 +4731,7 @@ class FreshnessScoringFunction(ScoringFunction, discriminator="freshness"):
         self.type = "freshness"  # type: ignore
 
 
-class FreshnessScoringParameters(_Model):
+class FreshnessScoringParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provides parameter values to a freshness scoring function.
 
     :ivar boosting_duration: The expiration period after which boosting will stop for a particular
@@ -4561,7 +4785,7 @@ class GetIndexStatisticsResult(_Model):
 
 class HighWaterMarkChangeDetectionPolicy(
     DataChangeDetectionPolicy, discriminator="#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a data change detection policy that captures changes based on the value of a high water
     mark column.
 
@@ -4599,7 +4823,9 @@ class HighWaterMarkChangeDetectionPolicy(
         self.odata_type = "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy"  # type: ignore
 
 
-class HnswAlgorithmConfiguration(VectorSearchAlgorithmConfiguration, discriminator="hnsw"):
+class HnswAlgorithmConfiguration(
+    VectorSearchAlgorithmConfiguration, discriminator="hnsw"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains configuration options specific to the HNSW approximate nearest neighbors algorithm
     used during indexing and querying. The HNSW algorithm offers a tunable trade-off between search
     speed and accuracy.
@@ -4642,7 +4868,7 @@ class HnswAlgorithmConfiguration(VectorSearchAlgorithmConfiguration, discriminat
         self.kind = VectorSearchAlgorithmKind.HNSW  # type: ignore
 
 
-class HnswParameters(_Model):
+class HnswParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the parameters specific to the HNSW algorithm.
 
     :ivar m: The number of bi-directional links created for every new element during construction.
@@ -4706,7 +4932,9 @@ class HnswParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageAnalysisSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Vision.ImageAnalysisSkill"):
+class ImageAnalysisSkill(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Vision.ImageAnalysisSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A skill that analyzes image files. It extracts a rich set of visual features based on the image
     content.
 
@@ -4789,13 +5017,20 @@ class ImageAnalysisSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Vi
         self.odata_type = "#Microsoft.Skills.Vision.ImageAnalysisSkill"  # type: ignore
 
 
-class IndexedOneLakeKnowledgeSource(KnowledgeSource, discriminator="indexedOneLake"):
+class IndexedOneLakeKnowledgeSource(
+    KnowledgeSource, discriminator="indexedOneLake"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for OneLake knowledge source.
 
     :ivar name: The name of the knowledge source. Required.
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -4828,6 +5063,7 @@ class IndexedOneLakeKnowledgeSource(KnowledgeSource, discriminator="indexedOneLa
         name: str,
         indexed_one_lake_parameters: "_models.IndexedOneLakeKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -4844,7 +5080,7 @@ class IndexedOneLakeKnowledgeSource(KnowledgeSource, discriminator="indexedOneLa
         self.kind = KnowledgeSourceKind.INDEXED_ONELAKE  # type: ignore
 
 
-class IndexedOneLakeKnowledgeSourceParameters(_Model):
+class IndexedOneLakeKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for OneLake knowledge source.
 
     :ivar fabric_workspace_id: OneLake workspace ID. Required.
@@ -4856,6 +5092,11 @@ class IndexedOneLakeKnowledgeSourceParameters(_Model):
     :ivar ingestion_parameters: Consolidates all general ingestion settings.
     :vartype ingestion_parameters:
      ~azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters
+    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
+     this index-backed knowledge source. Request-time query hints replace these defaults as a
+     complete object.
+    :vartype query_hints:
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     :ivar created_resources: Resources created by the knowledge source.
     :vartype created_resources: ~azure.search.documents.indexes.models.CreatedResources
     """
@@ -4874,6 +5115,11 @@ class IndexedOneLakeKnowledgeSourceParameters(_Model):
         name="ingestionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Consolidates all general ingestion settings."""
+    query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
+        name="queryHints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default hints that guide query planning toward useful filters and boosts for this index-backed
+     knowledge source. Request-time query hints replace these defaults as a complete object."""
     created_resources: Optional["_models.CreatedResources"] = rest_field(name="createdResources", visibility=["read"])
     """Resources created by the knowledge source."""
 
@@ -4885,6 +5131,7 @@ class IndexedOneLakeKnowledgeSourceParameters(_Model):
         lakehouse_id: str,
         target_path: Optional[str] = None,
         ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = None,
+        query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -4898,13 +5145,20 @@ class IndexedOneLakeKnowledgeSourceParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IndexedSharePointKnowledgeSource(KnowledgeSource, discriminator="indexedSharePoint"):
+class IndexedSharePointKnowledgeSource(
+    KnowledgeSource, discriminator="indexedSharePoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for SharePoint knowledge source.
 
     :ivar name: The name of the knowledge source. Required.
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -4937,6 +5191,7 @@ class IndexedSharePointKnowledgeSource(KnowledgeSource, discriminator="indexedSh
         name: str,
         indexed_share_point_parameters: "_models.IndexedSharePointKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -4953,7 +5208,9 @@ class IndexedSharePointKnowledgeSource(KnowledgeSource, discriminator="indexedSh
         self.kind = KnowledgeSourceKind.INDEXED_SHARE_POINT  # type: ignore
 
 
-class IndexedSharePointKnowledgeSourceParameters(_Model):  # pylint: disable=name-too-long
+class IndexedSharePointKnowledgeSourceParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Parameters for SharePoint knowledge source.
 
     :ivar connection_string: SharePoint connection string with format:
@@ -4970,6 +5227,11 @@ class IndexedSharePointKnowledgeSourceParameters(_Model):  # pylint: disable=nam
     :ivar ingestion_parameters: Consolidates all general ingestion settings.
     :vartype ingestion_parameters:
      ~azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters
+    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
+     this index-backed knowledge source. Request-time query hints replace these defaults as a
+     complete object.
+    :vartype query_hints:
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     :ivar created_resources: Resources created by the knowledge source.
     :vartype created_resources: ~azure.search.documents.indexes.models.CreatedResources
     """
@@ -4991,6 +5253,11 @@ class IndexedSharePointKnowledgeSourceParameters(_Model):  # pylint: disable=nam
         name="ingestionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Consolidates all general ingestion settings."""
+    query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
+        name="queryHints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default hints that guide query planning toward useful filters and boosts for this index-backed
+     knowledge source. Request-time query hints replace these defaults as a complete object."""
     created_resources: Optional["_models.CreatedResources"] = rest_field(name="createdResources", visibility=["read"])
     """Resources created by the knowledge source."""
 
@@ -5002,6 +5269,7 @@ class IndexedSharePointKnowledgeSourceParameters(_Model):  # pylint: disable=nam
         container_name: Union[str, "_models.IndexedSharePointContainerName"],
         query: Optional[str] = None,
         ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = None,
+        query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -5015,13 +5283,20 @@ class IndexedSharePointKnowledgeSourceParameters(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class IndexedSqlKnowledgeSource(KnowledgeSource, discriminator="indexedSql"):
+class IndexedSqlKnowledgeSource(
+    KnowledgeSource, discriminator="indexedSql"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for indexed SQL knowledge source.
 
     :ivar name: The name of the knowledge source. Required.
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -5056,6 +5331,7 @@ class IndexedSqlKnowledgeSource(KnowledgeSource, discriminator="indexedSql"):
         name: str,
         indexed_sql_parameters: "_models.IndexedSqlKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -5072,7 +5348,7 @@ class IndexedSqlKnowledgeSource(KnowledgeSource, discriminator="indexedSql"):
         self.kind = KnowledgeSourceKind.INDEXED_SQL  # type: ignore
 
 
-class IndexedSqlKnowledgeSourceParameters(_Model):
+class IndexedSqlKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for indexed SQL knowledge source.
 
     :ivar connection_string: The connection string for the Azure SQL Database or SQL Managed
@@ -5094,6 +5370,11 @@ class IndexedSqlKnowledgeSourceParameters(_Model):
      model, schedule, and identity.
     :vartype ingestion_parameters:
      ~azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters
+    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
+     this index-backed knowledge source. Request-time query hints replace these defaults as a
+     complete object.
+    :vartype query_hints:
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     :ivar created_resources: Resources created by the knowledge source.
     :vartype created_resources: ~azure.search.documents.indexes.models.CreatedResources
     """
@@ -5122,6 +5403,11 @@ class IndexedSqlKnowledgeSourceParameters(_Model):
         name="ingestionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Consolidates all general ingestion settings including embedding model, schedule, and identity."""
+    query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
+        name="queryHints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default hints that guide query planning toward useful filters and boosts for this index-backed
+     knowledge source. Request-time query hints replace these defaults as a complete object."""
     created_resources: Optional["_models.CreatedResources"] = rest_field(name="createdResources", visibility=["read"])
     """Resources created by the knowledge source."""
 
@@ -5135,6 +5421,7 @@ class IndexedSqlKnowledgeSourceParameters(_Model):
         content_columns: Optional[list["_models.ContentColumnMapping"]] = None,
         embedding_columns: Optional[list["_models.EmbeddingColumnMapping"]] = None,
         ingestion_parameters: Optional["_knowledgebases_models3.KnowledgeSourceIngestionParameters"] = None,
+        query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -5279,7 +5566,7 @@ class IndexerExecutionResult(_Model):
     """Change tracking state with which an indexer execution finished."""
 
 
-class IndexerResyncBody(_Model):
+class IndexerResyncBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for resync indexer operation.
 
     :ivar options: Re-sync options that have been pre-defined from data source.
@@ -5309,7 +5596,7 @@ class IndexerResyncBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IndexerRuntime(_Model):
+class IndexerRuntime(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the indexer's cumulative runtime consumption in the service.
 
     :ivar used_seconds: Cumulative runtime of the indexer from the beginningTime to endingTime, in
@@ -5364,7 +5651,7 @@ class IndexerRuntime(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IndexingParameters(_Model):
+class IndexingParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents parameters for indexer execution.
 
     :ivar batch_size: The number of items that are read from the data source and indexed as a
@@ -5421,7 +5708,7 @@ class IndexingParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IndexingParametersConfiguration(_Model):
+class IndexingParametersConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A dictionary of indexer-specific configuration properties. Each name is the name of a specific
     property. Each value must be of a primitive type.
 
@@ -5638,7 +5925,7 @@ class IndexingParametersConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IndexingSchedule(_Model):
+class IndexingSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a schedule for indexer execution.
 
     :ivar interval: The interval of time between indexer executions. Required.
@@ -5673,7 +5960,7 @@ class IndexingSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IndexStatisticsSummary(_Model):
+class IndexStatisticsSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Statistics for a given index. Statistics are collected periodically and are not guaranteed to
     always be up-to-date.
 
@@ -5715,7 +6002,7 @@ class IndexStatisticsSummary(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InputFieldMappingEntry(_Model):
+class InputFieldMappingEntry(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input field mapping for a skill.
 
     :ivar name: The name of the input. Required.
@@ -5762,7 +6049,9 @@ class InputFieldMappingEntry(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeepTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.KeepTokenFilter"):
+class KeepTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.KeepTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A token filter that only keeps tokens with text contained in a specified list of words. This
     token filter is implemented using Apache Lucene.
 
@@ -5811,7 +6100,9 @@ class KeepTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.KeepTo
         self.odata_type = "#Microsoft.Azure.Search.KeepTokenFilter"  # type: ignore
 
 
-class KeyPhraseExtractionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.KeyPhraseExtractionSkill"):
+class KeyPhraseExtractionSkill(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.KeyPhraseExtractionSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A skill that uses text analytics for key phrase extraction.
 
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
@@ -5894,7 +6185,9 @@ class KeyPhraseExtractionSkill(SearchIndexerSkill, discriminator="#Microsoft.Ski
         self.odata_type = "#Microsoft.Skills.Text.KeyPhraseExtractionSkill"  # type: ignore
 
 
-class KeywordMarkerTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.KeywordMarkerTokenFilter"):
+class KeywordMarkerTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.KeywordMarkerTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Marks terms as keywords. This token filter is implemented using Apache Lucene.
 
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
@@ -5943,7 +6236,9 @@ class KeywordMarkerTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sear
         self.odata_type = "#Microsoft.Azure.Search.KeywordMarkerTokenFilter"  # type: ignore
 
 
-class KeywordTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.KeywordTokenizer"):
+class KeywordTokenizer(
+    LexicalTokenizer, discriminator="#Microsoft.Azure.Search.KeywordTokenizer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Emits the entire input as a single token. This tokenizer is implemented using Apache Lucene.
 
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
@@ -5985,7 +6280,9 @@ class KeywordTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.
         self.odata_type = "#Microsoft.Azure.Search.KeywordTokenizer"  # type: ignore
 
 
-class KeywordTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.KeywordTokenizerV2"):
+class KeywordTokenizerV2(
+    LexicalTokenizer, discriminator="#Microsoft.Azure.Search.KeywordTokenizerV2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Emits the entire input as a single token. This tokenizer is implemented using Apache Lucene.
 
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
@@ -6029,7 +6326,7 @@ class KeywordTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure.Searc
         self.odata_type = "#Microsoft.Azure.Search.KeywordTokenizerV2"  # type: ignore
 
 
-class KnowledgeBase(_Model):
+class KnowledgeBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a knowledge base definition.
 
     :ivar name: The name of the knowledge base. Required.
@@ -6052,6 +6349,9 @@ class KnowledgeBase(_Model):
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     :ivar description: The description of the knowledge base.
     :vartype description: str
+    :ivar tags: User-defined key-value pairs for categorizing the knowledge base and attributing
+     its usage and costs.
+    :vartype tags: dict[str, str]
     :ivar retrieval_instructions: Instructions considered by the knowledge base when developing
      query plan.
     :vartype retrieval_instructions: str
@@ -6061,6 +6361,11 @@ class KnowledgeBase(_Model):
     :ivar cors_options: Options to control Cross-Origin Resource Sharing (CORS) for the knowledge
      base.
     :vartype cors_options: ~azure.search.documents.indexes.models.CorsOptions
+    :ivar retrieve_defaults: Persisted request-wide retrieve defaults for this knowledge base.
+     These values apply to retrieve requests that omit the corresponding fields; request-time values
+     take precedence when present.
+    :vartype retrieve_defaults:
+     ~azure.search.documents.indexes.models.KnowledgeBaseRetrieveDefaults
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6090,6 +6395,9 @@ class KnowledgeBase(_Model):
     """A description of an encryption key that you create in Azure Key Vault."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the knowledge base."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """User-defined key-value pairs for categorizing the knowledge base and attributing its usage and
+     costs."""
     retrieval_instructions: Optional[str] = rest_field(
         name="retrievalInstructions", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6102,6 +6410,12 @@ class KnowledgeBase(_Model):
         name="corsOptions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Options to control Cross-Origin Resource Sharing (CORS) for the knowledge base."""
+    retrieve_defaults: Optional["_models.KnowledgeBaseRetrieveDefaults"] = rest_field(
+        name="retrieveDefaults", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Persisted request-wide retrieve defaults for this knowledge base. These values apply to
+     retrieve requests that omit the corresponding fields; request-time values take precedence when
+     present."""
 
     @overload
     def __init__(
@@ -6115,9 +6429,11 @@ class KnowledgeBase(_Model):
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
         description: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         retrieval_instructions: Optional[str] = None,
         answer_instructions: Optional[str] = None,
         cors_options: Optional["_models.CorsOptions"] = None,
+        retrieve_defaults: Optional["_models.KnowledgeBaseRetrieveDefaults"] = None,
     ) -> None: ...
 
     @overload
@@ -6131,7 +6447,7 @@ class KnowledgeBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseModel(_Model):
+class KnowledgeBaseModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the connection parameters for the model to use for query planning.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -6163,7 +6479,9 @@ class KnowledgeBaseModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeBaseAzureOpenAIModel(KnowledgeBaseModel, discriminator="azureOpenAI"):
+class KnowledgeBaseAzureOpenAIModel(
+    KnowledgeBaseModel, discriminator="azureOpenAI"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the Azure OpenAI resource used to do query planning.
 
     :ivar kind: Required. Use Azure Open AI models for query planning.
@@ -6199,6 +6517,53 @@ class KnowledgeBaseAzureOpenAIModel(KnowledgeBaseModel, discriminator="azureOpen
         self.kind = KnowledgeBaseModelKind.AZURE_OPEN_AI  # type: ignore
 
 
+class KnowledgeBaseRetrieveDefaults(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Persisted request-wide defaults for knowledge base retrieve requests. Each value provides the
+    default for the matching retrieve-request field; service defaults apply when unset, and
+    request-time values take precedence when present.
+
+    :ivar max_runtime_in_seconds: The default maximum runtime in seconds for a retrieve request.
+    :vartype max_runtime_in_seconds: int
+    :ivar max_output_documents: The default maximum number of documents in the retrieve output.
+    :vartype max_output_documents: int
+    :ivar max_output_size_in_tokens: The default maximum size, in tokens, of the content in the
+     retrieve output.
+    :vartype max_output_size_in_tokens: int
+    """
+
+    max_runtime_in_seconds: Optional[int] = rest_field(
+        name="maxRuntimeInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The default maximum runtime in seconds for a retrieve request."""
+    max_output_documents: Optional[int] = rest_field(
+        name="maxOutputDocuments", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The default maximum number of documents in the retrieve output."""
+    max_output_size_in_tokens: Optional[int] = rest_field(
+        name="maxOutputSizeInTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The default maximum size, in tokens, of the content in the retrieve output."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_runtime_in_seconds: Optional[int] = None,
+        max_output_documents: Optional[int] = None,
+        max_output_size_in_tokens: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class KnowledgeSourceFile(_Model):
     """Metadata for a file uploaded to a File knowledge source.
 
@@ -6214,6 +6579,19 @@ class KnowledgeSourceFile(_Model):
     :vartype last_updated_at: ~datetime.datetime
     :ivar error_message: The error message if file processing failed, null otherwise.
     :vartype error_message: str
+    :ivar prefix: The prefix (directory-like path) derived from the full file name.
+    :vartype prefix: str
+    :ivar metadata: Custom key/value metadata stored with the file. Returned but not searchable or
+     filterable.
+    :vartype metadata: dict[str, str]
+    :ivar parsing_mode: The parsing mode applied to the file (auto-detected from the file). Known
+     values are: "default", "text", "delimitedText", "json", "jsonArray", "jsonLines", and
+     "markdown".
+    :vartype parsing_mode: str or ~azure.search.documents.indexes.models.BlobIndexerParsingMode
+    :ivar extraction_mode: The extraction mode applied to the file. Known values are: "minimal" and
+     "standard".
+    :vartype extraction_mode: str or
+     ~azure.search.documents.indexes.models.FileKnowledgeSourceExtractionMode
     """
 
     file_id: Optional[str] = rest_field(name="fileId", visibility=["read"])
@@ -6230,9 +6608,23 @@ class KnowledgeSourceFile(_Model):
     """The timestamp when the file was last updated."""
     error_message: Optional[str] = rest_field(name="errorMessage", visibility=["read"])
     """The error message if file processing failed, null otherwise."""
+    prefix: Optional[str] = rest_field(visibility=["read"])
+    """The prefix (directory-like path) derived from the full file name."""
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read"])
+    """Custom key/value metadata stored with the file. Returned but not searchable or filterable."""
+    parsing_mode: Optional[Union[str, "_models.BlobIndexerParsingMode"]] = rest_field(
+        name="parsingMode", visibility=["read"]
+    )
+    """The parsing mode applied to the file (auto-detected from the file). Known values are:
+     \"default\", \"text\", \"delimitedText\", \"json\", \"jsonArray\", \"jsonLines\", and
+     \"markdown\"."""
+    extraction_mode: Optional[Union[str, "_models.FileKnowledgeSourceExtractionMode"]] = rest_field(
+        name="extractionMode", visibility=["read"]
+    )
+    """The extraction mode applied to the file. Known values are: \"minimal\" and \"standard\"."""
 
 
-class KnowledgeSourceReference(_Model):
+class KnowledgeSourceReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reference to a knowledge source.
 
     :ivar name: The name of the knowledge source. Required.
@@ -6281,7 +6673,9 @@ class KnowledgeSourceReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LanguageDetectionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.LanguageDetectionSkill"):
+class LanguageDetectionSkill(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.LanguageDetectionSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A skill that detects the language of input text and reports a single language code for every
     document submitted on the request. The language code is paired with a score indicating the
     confidence of the analysis.
@@ -6354,7 +6748,9 @@ class LanguageDetectionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skill
         self.odata_type = "#Microsoft.Skills.Text.LanguageDetectionSkill"  # type: ignore
 
 
-class LengthTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.LengthTokenFilter"):
+class LengthTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.LengthTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Removes words that are too long or too short. This token filter is implemented using Apache
     Lucene.
 
@@ -6402,7 +6798,9 @@ class LengthTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Leng
         self.odata_type = "#Microsoft.Azure.Search.LengthTokenFilter"  # type: ignore
 
 
-class LimitTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.LimitTokenFilter"):
+class LimitTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.LimitTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Limits the number of tokens while indexing. This token filter is implemented using Apache
     Lucene.
 
@@ -6454,56 +6852,9 @@ class LimitTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Limit
         self.odata_type = "#Microsoft.Azure.Search.LimitTokenFilter"  # type: ignore
 
 
-class ListDataSourcesResult(_Model):
-    """Response from a List Datasources request. If successful, it includes the full definitions of
-    all datasources.
-
-    :ivar data_sources: The datasources in the Search service. Required.
-    :vartype data_sources:
-     list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
-    """
-
-    data_sources: list["_models.SearchIndexerDataSourceConnection"] = rest_field(name="value", visibility=["read"])
-    """The datasources in the Search service. Required."""
-
-
-class ListIndexersResult(_Model):
-    """Response from a List Indexers request. If successful, it includes the full definitions of all
-    indexers.
-
-    :ivar indexers: The indexers in the Search service. Required.
-    :vartype indexers: list[~azure.search.documents.indexes.models.SearchIndexer]
-    """
-
-    indexers: list["_models.SearchIndexer"] = rest_field(name="value", visibility=["read"])
-    """The indexers in the Search service. Required."""
-
-
-class ListSkillsetsResult(_Model):
-    """Response from a list skillset request. If successful, it includes the full definitions of all
-    skillsets.
-
-    :ivar skillsets: The skillsets defined in the Search service. Required.
-    :vartype skillsets: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
-    """
-
-    skillsets: list["_models.SearchIndexerSkillset"] = rest_field(name="value", visibility=["read"])
-    """The skillsets defined in the Search service. Required."""
-
-
-class ListSynonymMapsResult(_Model):
-    """Response from a List SynonymMaps request. If successful, it includes the full definitions of
-    all synonym maps.
-
-    :ivar synonym_maps: The synonym maps in the Search service. Required.
-    :vartype synonym_maps: list[~azure.search.documents.indexes.models.SynonymMap]
-    """
-
-    synonym_maps: list["_models.SynonymMap"] = rest_field(name="value", visibility=["read"])
-    """The synonym maps in the Search service. Required."""
-
-
-class LuceneStandardAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.StandardAnalyzer"):
+class LuceneStandardAnalyzer(
+    LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.StandardAnalyzer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Standard Apache Lucene analyzer; Composed of the standard tokenizer, lowercase filter and stop
     filter.
 
@@ -6553,7 +6904,9 @@ class LuceneStandardAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Se
         self.odata_type = "#Microsoft.Azure.Search.StandardAnalyzer"  # type: ignore
 
 
-class LuceneStandardTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.StandardTokenizer"):
+class LuceneStandardTokenizer(
+    LexicalTokenizer, discriminator="#Microsoft.Azure.Search.StandardTokenizer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Breaks text following the Unicode Text Segmentation rules. This tokenizer is implemented using
     Apache Lucene.
 
@@ -6597,7 +6950,9 @@ class LuceneStandardTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.
         self.odata_type = "#Microsoft.Azure.Search.StandardTokenizer"  # type: ignore
 
 
-class LuceneStandardTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.StandardTokenizerV2"):
+class LuceneStandardTokenizerV2(
+    LexicalTokenizer, discriminator="#Microsoft.Azure.Search.StandardTokenizerV2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Breaks text following the Unicode Text Segmentation rules. This tokenizer is implemented using
     Apache Lucene.
 
@@ -6642,7 +6997,9 @@ class LuceneStandardTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azur
         self.odata_type = "#Microsoft.Azure.Search.StandardTokenizerV2"  # type: ignore
 
 
-class MagnitudeScoringFunction(ScoringFunction, discriminator="magnitude"):
+class MagnitudeScoringFunction(
+    ScoringFunction, discriminator="magnitude"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a function that boosts scores based on the magnitude of a numeric field.
 
     :ivar field_name: The name of the field used as input to the scoring function. Required.
@@ -6693,7 +7050,7 @@ class MagnitudeScoringFunction(ScoringFunction, discriminator="magnitude"):
         self.type = "magnitude"  # type: ignore
 
 
-class MagnitudeScoringParameters(_Model):
+class MagnitudeScoringParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provides parameter values to a magnitude scoring function.
 
     :ivar boosting_range_start: The field value at which boosting starts. Required.
@@ -6739,7 +7096,9 @@ class MagnitudeScoringParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MappingCharFilter(CharFilter, discriminator="#Microsoft.Azure.Search.MappingCharFilter"):
+class MappingCharFilter(
+    CharFilter, discriminator="#Microsoft.Azure.Search.MappingCharFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A character filter that applies mappings defined with the mappings option. Matching is greedy
     (longest pattern matching at a given point wins). Replacement is allowed to be the empty
     string. This character filter is implemented using Apache Lucene.
@@ -6783,7 +7142,7 @@ class MappingCharFilter(CharFilter, discriminator="#Microsoft.Azure.Search.Mappi
         self.odata_type = "#Microsoft.Azure.Search.MappingCharFilter"  # type: ignore
 
 
-class McpServerAuthentication(_Model):
+class McpServerAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authentication configuration for an MCP server knowledge source.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -6817,7 +7176,7 @@ class McpServerAuthentication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class McpServerOutputParsing(_Model):
+class McpServerOutputParsing(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Output parsing configuration for an MCP server tool.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -6881,7 +7240,9 @@ class McpServerAutoOutputParsing(McpServerOutputParsing, discriminator="auto"):
         self.kind = McpServerOutputParsingKind.AUTO  # type: ignore
 
 
-class McpServerFoundryConnectionAuthentication(McpServerAuthentication, discriminator="foundryConnection"):
+class McpServerFoundryConnectionAuthentication(
+    McpServerAuthentication, discriminator="foundryConnection"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authentication using an Azure AI Foundry connection.
 
     :ivar kind: The discriminator value. Required. Authenticate using an Azure AI Foundry
@@ -6919,7 +7280,7 @@ class McpServerFoundryConnectionAuthentication(McpServerAuthentication, discrimi
         self.kind = McpServerAuthenticationKind.FOUNDRY_CONNECTION  # type: ignore
 
 
-class McpServerFoundryConnectionParameters(_Model):
+class McpServerFoundryConnectionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for Foundry connection authentication.
 
     :ivar connection_id: The Azure AI Foundry connection identifier.
@@ -6953,7 +7314,9 @@ class McpServerHeaders(_Model):
     """A dictionary of HTTP header names and values."""
 
 
-class McpServerJsonOutputParsing(McpServerOutputParsing, discriminator="json"):
+class McpServerJsonOutputParsing(
+    McpServerOutputParsing, discriminator="json"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parse the output as a JSON document using the configured JSON parameters.
 
     :ivar kind: The discriminator value. Required. Parse the output as a JSON document using the
@@ -6992,13 +7355,20 @@ class McpServerJsonOutputParsing(McpServerOutputParsing, discriminator="json"):
         self.kind = McpServerOutputParsingKind.JSON  # type: ignore
 
 
-class McpServerKnowledgeSource(KnowledgeSource, discriminator="mcpServer"):
+class McpServerKnowledgeSource(
+    KnowledgeSource, discriminator="mcpServer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for a knowledge source backed by an MCP (Model Context Protocol) server.
 
     :ivar name: The name of the knowledge source. Required.
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -7033,6 +7403,7 @@ class McpServerKnowledgeSource(KnowledgeSource, discriminator="mcpServer"):
         name: str,
         mcp_server_parameters: "_models.McpServerKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -7049,7 +7420,7 @@ class McpServerKnowledgeSource(KnowledgeSource, discriminator="mcpServer"):
         self.kind = KnowledgeSourceKind.MCP_SERVER  # type: ignore
 
 
-class McpServerKnowledgeSourceParameters(_Model):
+class McpServerKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for an MCP server knowledge source.
 
     :ivar server_url: The URL of the MCP server endpoint. Required.
@@ -7117,7 +7488,7 @@ class McpServerNoneOutputParsing(McpServerOutputParsing, discriminator="none"):
         self.kind = McpServerOutputParsingKind.NONE  # type: ignore
 
 
-class McpServerOutputParsingJsonParameters(_Model):
+class McpServerOutputParsingJsonParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for JSON output parsing.
 
     :ivar documents_path: The JSON path to the array of documents in the tool output. Required.
@@ -7153,7 +7524,7 @@ class McpServerOutputParsingJsonParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class McpServerOutputParsingSplitParameters(_Model):
+class McpServerOutputParsingSplitParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for split output parsing.
 
     :ivar text_split_mode: The text split mode to use. Known values are: "pages" and "sentences".
@@ -7218,7 +7589,9 @@ class McpServerOutputParsingSplitParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class McpServerSplitOutputParsing(McpServerOutputParsing, discriminator="split"):
+class McpServerSplitOutputParsing(
+    McpServerOutputParsing, discriminator="split"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Split the output into pages using the configured split parameters.
 
     :ivar kind: The discriminator value. Required. Split the output into pages using the configured
@@ -7256,7 +7629,9 @@ class McpServerSplitOutputParsing(McpServerOutputParsing, discriminator="split")
         self.kind = McpServerOutputParsingKind.SPLIT  # type: ignore
 
 
-class McpServerStoredHeadersAuthentication(McpServerAuthentication, discriminator="storedHeaders"):
+class McpServerStoredHeadersAuthentication(
+    McpServerAuthentication, discriminator="storedHeaders"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authentication using stored HTTP headers.
 
     :ivar kind: The discriminator value. Required. Authenticate using stored HTTP headers.
@@ -7292,7 +7667,7 @@ class McpServerStoredHeadersAuthentication(McpServerAuthentication, discriminato
         self.kind = McpServerAuthenticationKind.STORED_HEADERS  # type: ignore
 
 
-class McpServerStoredHeadersParameters(_Model):
+class McpServerStoredHeadersParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for stored headers authentication.
 
     :ivar headers: The stored HTTP headers to include in MCP server requests.
@@ -7322,18 +7697,17 @@ class McpServerStoredHeadersParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class McpServerTool(_Model):
+class McpServerTool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a single tool within an MCP server knowledge source.
 
     :ivar name: The name of the MCP tool to invoke.
     :vartype name: str
     :ivar output_parsing: Optional configuration for parsing the tool's output.
     :vartype output_parsing: ~azure.search.documents.indexes.models.McpServerOutputParsing
-    :ivar inclusion_mode: Controls how the parsed results from this tool are integrated into the
-     final result set. Defaults to 'reranked' when not specified. Known values are: "reranked" and
-     "always".
-    :vartype inclusion_mode: str or
-     ~azure.search.documents.indexes.models.McpServerToolInclusionMode
+    :ivar results_processing: Controls whether the parsed results from this tool are reranked.
+     Defaults to 'rerank' when not specified. Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar max_output_tokens: Optional post-parsing token cap for this tool's output. Must be
      greater than 0 when specified.
     :vartype max_output_tokens: int
@@ -7345,11 +7719,11 @@ class McpServerTool(_Model):
         name="outputParsing", visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional configuration for parsing the tool's output."""
-    inclusion_mode: Optional[Union[str, "_models.McpServerToolInclusionMode"]] = rest_field(
-        name="inclusionMode", visibility=["read", "create", "update", "delete", "query"]
+    results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = rest_field(
+        name="resultsProcessing", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Controls how the parsed results from this tool are integrated into the final result set.
-     Defaults to 'reranked' when not specified. Known values are: \"reranked\" and \"always\"."""
+    """Controls whether the parsed results from this tool are reranked. Defaults to 'rerank' when not
+     specified. Known values are: \"rerank\" and \"none\"."""
     max_output_tokens: Optional[int] = rest_field(
         name="maxOutputTokens", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7361,7 +7735,7 @@ class McpServerTool(_Model):
         *,
         name: Optional[str] = None,
         output_parsing: Optional["_models.McpServerOutputParsing"] = None,
-        inclusion_mode: Optional[Union[str, "_models.McpServerToolInclusionMode"]] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         max_output_tokens: Optional[int] = None,
     ) -> None: ...
 
@@ -7376,7 +7750,9 @@ class McpServerTool(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MergeSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.MergeSkill"):
+class MergeSkill(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.MergeSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A skill for merging two or more strings into a single unified string, with an optional
     user-defined delimiter separating each component part.
 
@@ -7446,7 +7822,7 @@ class MergeSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.Merge
 
 class MicrosoftLanguageStemmingTokenizer(
     LexicalTokenizer, discriminator="#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Divides text using language-specific rules and reduces words to their base forms.
 
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
@@ -7524,7 +7900,9 @@ class MicrosoftLanguageStemmingTokenizer(
         self.odata_type = "#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer"  # type: ignore
 
 
-class MicrosoftLanguageTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.MicrosoftLanguageTokenizer"):
+class MicrosoftLanguageTokenizer(
+    LexicalTokenizer, discriminator="#Microsoft.Azure.Search.MicrosoftLanguageTokenizer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Divides text using language-specific rules.
 
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
@@ -7634,7 +8012,9 @@ class NativeBlobSoftDeleteDeletionDetectionPolicy(
         self.odata_type = "#Microsoft.Azure.Search.NativeBlobSoftDeleteDeletionDetectionPolicy"  # type: ignore
 
 
-class NGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.NGramTokenFilter"):
+class NGramTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.NGramTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Generates n-grams of the given size(s). This token filter is implemented using Apache Lucene.
 
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
@@ -7680,7 +8060,9 @@ class NGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.NGram
         self.odata_type = "#Microsoft.Azure.Search.NGramTokenFilter"  # type: ignore
 
 
-class NGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search.NGramTokenFilterV2"):
+class NGramTokenFilterV2(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.NGramTokenFilterV2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Generates n-grams of the given size(s). This token filter is implemented using Apache Lucene.
 
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
@@ -7727,7 +8109,9 @@ class NGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search.NGr
         self.odata_type = "#Microsoft.Azure.Search.NGramTokenFilterV2"  # type: ignore
 
 
-class NGramTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.NGramTokenizer"):
+class NGramTokenizer(
+    LexicalTokenizer, discriminator="#Microsoft.Azure.Search.NGramTokenizer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tokenizes the input into n-grams of the given size(s). This tokenizer is implemented using
     Apache Lucene.
 
@@ -7782,7 +8166,9 @@ class NGramTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.NG
         self.odata_type = "#Microsoft.Azure.Search.NGramTokenizer"  # type: ignore
 
 
-class OcrSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Vision.OcrSkill"):
+class OcrSkill(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Vision.OcrSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A skill that extracts text from image files.
 
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
@@ -7889,7 +8275,7 @@ class OcrSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Vision.OcrSk
         self.odata_type = "#Microsoft.Skills.Vision.OcrSkill"  # type: ignore
 
 
-class OutputFieldMappingEntry(_Model):
+class OutputFieldMappingEntry(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Output field mapping for a skill.
 
     :ivar name: The name of the output defined by the skill. Required.
@@ -7924,7 +8310,9 @@ class OutputFieldMappingEntry(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PathHierarchyTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.PathHierarchyTokenizerV2"):
+class PathHierarchyTokenizerV2(
+    LexicalTokenizer, discriminator="#Microsoft.Azure.Search.PathHierarchyTokenizerV2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tokenizer for path-like hierarchies. This tokenizer is implemented using Apache Lucene.
 
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
@@ -7991,7 +8379,9 @@ class PathHierarchyTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure
         self.odata_type = "#Microsoft.Azure.Search.PathHierarchyTokenizerV2"  # type: ignore
 
 
-class PatternAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.PatternAnalyzer"):
+class PatternAnalyzer(
+    LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.PatternAnalyzer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Flexibly separates text into terms via a regular expression pattern. This analyzer is
     implemented using Apache Lucene.
 
@@ -8055,7 +8445,9 @@ class PatternAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Pa
         self.odata_type = "#Microsoft.Azure.Search.PatternAnalyzer"  # type: ignore
 
 
-class PatternCaptureTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.PatternCaptureTokenFilter"):
+class PatternCaptureTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.PatternCaptureTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Uses Java regexes to emit multiple tokens - one for each capture group in one or more patterns.
     This token filter is implemented using Apache Lucene.
 
@@ -8105,7 +8497,9 @@ class PatternCaptureTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sea
         self.odata_type = "#Microsoft.Azure.Search.PatternCaptureTokenFilter"  # type: ignore
 
 
-class PatternReplaceCharFilter(CharFilter, discriminator="#Microsoft.Azure.Search.PatternReplaceCharFilter"):
+class PatternReplaceCharFilter(
+    CharFilter, discriminator="#Microsoft.Azure.Search.PatternReplaceCharFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A character filter that replaces characters in the input string. It uses a regular expression
     to identify character sequences to preserve and a replacement pattern to identify characters to
     replace. For example, given the input text "aa bb aa bb", pattern "(aa)\\\\s+(bb)", and
@@ -8154,7 +8548,9 @@ class PatternReplaceCharFilter(CharFilter, discriminator="#Microsoft.Azure.Searc
         self.odata_type = "#Microsoft.Azure.Search.PatternReplaceCharFilter"  # type: ignore
 
 
-class PatternReplaceTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.PatternReplaceTokenFilter"):
+class PatternReplaceTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.PatternReplaceTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A character filter that replaces characters in the input string. It uses a regular expression
     to identify character sequences to preserve and a replacement pattern to identify characters to
     replace. For example, given the input text "aa bb aa bb", pattern "(aa)\\\\s+(bb)", and
@@ -8203,7 +8599,9 @@ class PatternReplaceTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sea
         self.odata_type = "#Microsoft.Azure.Search.PatternReplaceTokenFilter"  # type: ignore
 
 
-class PatternTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.PatternTokenizer"):
+class PatternTokenizer(
+    LexicalTokenizer, discriminator="#Microsoft.Azure.Search.PatternTokenizer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tokenizer that uses regex pattern matching to construct distinct tokens. This tokenizer is
     implemented using Apache Lucene.
 
@@ -8263,7 +8661,9 @@ class PatternTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.
         self.odata_type = "#Microsoft.Azure.Search.PatternTokenizer"  # type: ignore
 
 
-class PhoneticTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.PhoneticTokenFilter"):
+class PhoneticTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.PhoneticTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Create tokens for phonetic matches. This token filter is implemented using Apache Lucene.
 
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
@@ -8318,7 +8718,9 @@ class PhoneticTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Ph
         self.odata_type = "#Microsoft.Azure.Search.PhoneticTokenFilter"  # type: ignore
 
 
-class PIIDetectionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.PIIDetectionSkill"):
+class PIIDetectionSkill(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.PIIDetectionSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Using the Text Analytics API, extracts personal information from an input text and gives you
     the option of masking it.
 
@@ -8432,13 +8834,20 @@ class PIIDetectionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Tex
         self.odata_type = "#Microsoft.Skills.Text.PIIDetectionSkill"  # type: ignore
 
 
-class RemoteSharePointKnowledgeSource(KnowledgeSource, discriminator="remoteSharePoint"):
+class RemoteSharePointKnowledgeSource(
+    KnowledgeSource, discriminator="remoteSharePoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for remote SharePoint knowledge source.
 
     :ivar name: The name of the knowledge source. Required.
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -8470,6 +8879,7 @@ class RemoteSharePointKnowledgeSource(KnowledgeSource, discriminator="remoteShar
         *,
         name: str,
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
         remote_share_point_parameters: Optional["_models.RemoteSharePointKnowledgeSourceParameters"] = None,
@@ -8487,7 +8897,9 @@ class RemoteSharePointKnowledgeSource(KnowledgeSource, discriminator="remoteShar
         self.kind = KnowledgeSourceKind.REMOTE_SHARE_POINT  # type: ignore
 
 
-class RemoteSharePointKnowledgeSourceParameters(_Model):  # pylint: disable=name-too-long
+class RemoteSharePointKnowledgeSourceParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Parameters for remote SharePoint knowledge source.
 
     :ivar filter_expression: Keyword Query Language (KQL) expression with queryable SharePoint
@@ -8538,7 +8950,7 @@ class RemoteSharePointKnowledgeSourceParameters(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class RescoringOptions(_Model):
+class RescoringOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the options for rescoring.
 
     :ivar enable_rescoring: If set to true, after the initial search on the compressed vectors, the
@@ -8597,7 +9009,7 @@ class RescoringOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceCounter(_Model):
+class ResourceCounter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a resource's usage and quota.
 
     :ivar usage: The resource usage amount. Required.
@@ -8630,7 +9042,9 @@ class ResourceCounter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScalarQuantizationCompression(VectorSearchCompression, discriminator="scalarQuantization"):
+class ScalarQuantizationCompression(
+    VectorSearchCompression, discriminator="scalarQuantization"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains configuration options specific to the scalar quantization compression method used
     during indexing and querying.
 
@@ -8688,7 +9102,7 @@ class ScalarQuantizationCompression(VectorSearchCompression, discriminator="scal
         self.kind = VectorSearchCompressionKind.SCALAR_QUANTIZATION  # type: ignore
 
 
-class ScalarQuantizationParameters(_Model):
+class ScalarQuantizationParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the parameters specific to Scalar Quantization.
 
     :ivar quantized_data_type: The quantized data type of compressed vector values. "int8"
@@ -8719,7 +9133,7 @@ class ScalarQuantizationParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScoringProfile(_Model):
+class ScoringProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines parameters for a search index that influence scoring in search queries.
 
     :ivar name: The name of the scoring profile. Required.
@@ -8774,7 +9188,7 @@ class ScoringProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchAlias(_Model):
+class SearchAlias(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an index alias, which describes a mapping from the alias name to an index. The alias
     name can be used in place of the index name for supported operations.
 
@@ -8814,7 +9228,7 @@ class SearchAlias(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchField(_Model):
+class SearchField(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a field in an index definition, which describes the name, data type, and search
     behavior of a field.
 
@@ -9234,7 +9648,7 @@ class SearchField(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchIndex(_Model):
+class SearchIndex(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a search index definition, which describes the fields and search behavior of an
     index.
 
@@ -9421,7 +9835,7 @@ class SearchIndex(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchIndexer(_Model):
+class SearchIndexer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an indexer.
 
     :ivar name: The name of the indexer. Required.
@@ -9551,7 +9965,7 @@ class SearchIndexer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchIndexerCache(_Model):
+class SearchIndexerCache(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type of the cache.
 
     :ivar id: A guid for the SearchIndexerCache.
@@ -9609,7 +10023,7 @@ class SearchIndexerCache(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchIndexerDataContainer(_Model):
+class SearchIndexerDataContainer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents information about the entity (such as Azure SQL table or CosmosDB collection) that
     will be indexed.
 
@@ -9647,7 +10061,7 @@ class SearchIndexerDataContainer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchIndexerDataIdentity(_Model):
+class SearchIndexerDataIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Abstract base type for data identities.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -9711,7 +10125,7 @@ class SearchIndexerDataNoneIdentity(
         self.odata_type = "#Microsoft.Azure.Search.DataNoneIdentity"  # type: ignore
 
 
-class SearchIndexerDataSourceConnection(_Model):
+class SearchIndexerDataSourceConnection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a datasource definition, which can be used to configure an indexer.
 
     :ivar name: The name of the datasource. Required.
@@ -9857,7 +10271,7 @@ class SearchIndexerDataSourceConnection(_Model):
 
 class SearchIndexerDataUserAssignedIdentity(
     SearchIndexerDataIdentity, discriminator="#Microsoft.Azure.Search.DataUserAssignedIdentity"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the identity for a datasource to use.
 
     :ivar resource_id: The fully qualified Azure resource Id of a user assigned managed identity
@@ -9952,7 +10366,7 @@ class SearchIndexerError(_Model):
      available."""
 
 
-class SearchIndexerIndexProjection(_Model):
+class SearchIndexerIndexProjection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of additional projections to secondary search indexes.
 
     :ivar selectors: A list of projections to be performed to secondary search indexes. Required.
@@ -9993,7 +10407,7 @@ class SearchIndexerIndexProjection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchIndexerIndexProjectionSelector(_Model):
+class SearchIndexerIndexProjectionSelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description for what data to store in the designated search index.
 
     :ivar target_index_name: Name of the search index to project to. Must have a key field with the
@@ -10050,7 +10464,7 @@ class SearchIndexerIndexProjectionSelector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchIndexerIndexProjectionsParameters(_Model):
+class SearchIndexerIndexProjectionsParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A dictionary of index projection-specific configuration properties. Each name is the name of a
     specific property. Each value must be of a primitive type.
 
@@ -10083,7 +10497,7 @@ class SearchIndexerIndexProjectionsParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchIndexerKnowledgeStore(_Model):
+class SearchIndexerKnowledgeStore(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of additional projections to azure blob, table, or files, of enriched data.
 
     :ivar storage_connection_string: The connection string to the storage account projections will
@@ -10147,7 +10561,9 @@ class SearchIndexerKnowledgeStore(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchIndexerKnowledgeStoreProjectionSelector(_Model):  # pylint: disable=name-too-long
+class SearchIndexerKnowledgeStoreProjectionSelector(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Abstract class to share properties between concrete selectors.
 
     :ivar reference_key_name: Name of reference key to different projection.
@@ -10205,7 +10621,7 @@ class SearchIndexerKnowledgeStoreProjectionSelector(_Model):  # pylint: disable=
 
 class SearchIndexerKnowledgeStoreBlobProjectionSelector(
     SearchIndexerKnowledgeStoreProjectionSelector
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Abstract class to share properties between concrete selectors.
 
     :ivar reference_key_name: Name of reference key to different projection.
@@ -10252,7 +10668,7 @@ class SearchIndexerKnowledgeStoreBlobProjectionSelector(
 
 class SearchIndexerKnowledgeStoreFileProjectionSelector(
     SearchIndexerKnowledgeStoreBlobProjectionSelector
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Projection definition for what data to store in Azure Files.
 
     :ivar reference_key_name: Name of reference key to different projection.
@@ -10294,7 +10710,7 @@ class SearchIndexerKnowledgeStoreFileProjectionSelector(
 
 class SearchIndexerKnowledgeStoreObjectProjectionSelector(
     SearchIndexerKnowledgeStoreBlobProjectionSelector
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Projection definition for what data to store in Azure Blob.
 
     :ivar reference_key_name: Name of reference key to different projection.
@@ -10334,7 +10750,7 @@ class SearchIndexerKnowledgeStoreObjectProjectionSelector(
         super().__init__(*args, **kwargs)
 
 
-class SearchIndexerKnowledgeStoreParameters(_Model):
+class SearchIndexerKnowledgeStoreParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A dictionary of knowledge store-specific configuration properties. Each name is the name of a
     specific property. Each value must be of a primitive type.
 
@@ -10366,7 +10782,7 @@ class SearchIndexerKnowledgeStoreParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchIndexerKnowledgeStoreProjection(_Model):
+class SearchIndexerKnowledgeStoreProjection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container object for various projection selectors.
 
     :ivar tables: Projections to Azure Table storage.
@@ -10415,7 +10831,7 @@ class SearchIndexerKnowledgeStoreProjection(_Model):
 
 class SearchIndexerKnowledgeStoreTableProjectionSelector(
     SearchIndexerKnowledgeStoreProjectionSelector
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Description for what data to store in Azure Tables.
 
     :ivar reference_key_name: Name of reference key to different projection.
@@ -10486,7 +10902,7 @@ class SearchIndexerLimits(_Model):
     """The maximum number of characters that will be extracted from a document picked up for indexing."""
 
 
-class SearchIndexerSkillset(_Model):
+class SearchIndexerSkillset(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of skills.
 
     :ivar name: The name of the skillset. Required.
@@ -10648,7 +11064,7 @@ class SearchIndexerWarning(_Model):
      available."""
 
 
-class SearchIndexFieldReference(_Model):
+class SearchIndexFieldReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Field reference for a search index.
 
     :ivar name: The name of the field. Required.
@@ -10676,13 +11092,20 @@ class SearchIndexFieldReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchIndexKnowledgeSource(KnowledgeSource, discriminator="searchIndex"):
+class SearchIndexKnowledgeSource(
+    KnowledgeSource, discriminator="searchIndex"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Knowledge Source targeting a search index.
 
     :ivar name: The name of the knowledge source. Required.
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -10715,6 +11138,7 @@ class SearchIndexKnowledgeSource(KnowledgeSource, discriminator="searchIndex"):
         name: str,
         search_index_parameters: "_models.SearchIndexKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -10731,7 +11155,191 @@ class SearchIndexKnowledgeSource(KnowledgeSource, discriminator="searchIndex"):
         self.kind = KnowledgeSourceKind.SEARCH_INDEX  # type: ignore
 
 
-class SearchIndexKnowledgeSourceParameters(_Model):
+class SearchIndexKnowledgeSourceBoost(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A hint that identifies a condition the query planner can use to influence document ranking.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SearchIndexKnowledgeSourceFieldValueBoost, SearchIndexKnowledgeSourceMultiWordExpressionBoost
+
+    :ivar kind: The kind of boost hint. Required. Known values are: "fieldValue" and
+     "multiWordExpression".
+    :vartype kind: str or
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceBoostKind
+    :ivar boost_instructions: Natural-language instructions that explain when and how to apply the
+     boost.
+    :vartype boost_instructions: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """The kind of boost hint. Required. Known values are: \"fieldValue\" and \"multiWordExpression\"."""
+    boost_instructions: Optional[str] = rest_field(
+        name="boostInstructions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Natural-language instructions that explain when and how to apply the boost."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+        boost_instructions: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SearchIndexKnowledgeSourceFieldValueBoost(
+    SearchIndexKnowledgeSourceBoost, discriminator="fieldValue"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A hint that boosts documents based on a field value.
+
+    :ivar boost_instructions: Natural-language instructions that explain when and how to apply the
+     boost.
+    :vartype boost_instructions: str
+    :ivar kind: The discriminator value. Required. Boost documents based on a field value.
+    :vartype kind: str or ~azure.search.documents.indexes.models.FIELD_VALUE
+    :ivar field: The name of the search index field. Required.
+    :vartype field: str
+    :ivar field_values: Representative values for the field.
+    :vartype field_values: list[str]
+    :ivar boost: A multiplier for the document score. Must be a positive number not equal to 1.0.
+     Required.
+    :vartype boost: float
+    """
+
+    kind: Literal[SearchIndexKnowledgeSourceBoostKind.FIELD_VALUE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. Boost documents based on a field value."""
+    field: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the search index field. Required."""
+    field_values: Optional[list[str]] = rest_field(
+        name="fieldValues", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Representative values for the field."""
+    boost: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A multiplier for the document score. Must be a positive number not equal to 1.0. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        field: str,
+        boost: float,
+        boost_instructions: Optional[str] = None,
+        field_values: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = SearchIndexKnowledgeSourceBoostKind.FIELD_VALUE  # type: ignore
+
+
+class SearchIndexKnowledgeSourceFilterHint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A hint that identifies a field and representative values the query planner can use when
+    constructing a filter.
+
+    :ivar field: The name of the filterable search index field. Required.
+    :vartype field: str
+    :ivar field_values: Representative values for the field. Required.
+    :vartype field_values: list[str]
+    :ivar filter_instructions: Natural-language instructions that explain when and how to filter on
+     the field.
+    :vartype filter_instructions: str
+    """
+
+    field: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the filterable search index field. Required."""
+    field_values: list[str] = rest_field(name="fieldValues", visibility=["read", "create", "update", "delete", "query"])
+    """Representative values for the field. Required."""
+    filter_instructions: Optional[str] = rest_field(
+        name="filterInstructions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Natural-language instructions that explain when and how to filter on the field."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        field: str,
+        field_values: list[str],
+        filter_instructions: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SearchIndexKnowledgeSourceMultiWordExpressionBoost(
+    SearchIndexKnowledgeSourceBoost, discriminator="multiWordExpression"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A hint that boosts documents based on a multi-word expression.
+
+    :ivar boost_instructions: Natural-language instructions that explain when and how to apply the
+     boost.
+    :vartype boost_instructions: str
+    :ivar kind: The discriminator value. Required. Boost documents based on a multi-word
+     expression.
+    :vartype kind: str or ~azure.search.documents.indexes.models.MULTI_WORD_EXPRESSION
+    :ivar field_values: Representative values for the boost.
+    :vartype field_values: list[str]
+    :ivar boost: A multiplier for the document score. Must be a positive number not equal to 1.0.
+     Required.
+    :vartype boost: float
+    """
+
+    kind: Literal[SearchIndexKnowledgeSourceBoostKind.MULTI_WORD_EXPRESSION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. Boost documents based on a multi-word expression."""
+    field_values: Optional[list[str]] = rest_field(
+        name="fieldValues", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Representative values for the boost."""
+    boost: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A multiplier for the document score. Must be a positive number not equal to 1.0. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        boost: float,
+        boost_instructions: Optional[str] = None,
+        field_values: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = SearchIndexKnowledgeSourceBoostKind.MULTI_WORD_EXPRESSION  # type: ignore
+
+
+class SearchIndexKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for search index knowledge source.
 
     :ivar search_index_name: The name of the Search index. Required.
@@ -10747,6 +11355,11 @@ class SearchIndexKnowledgeSourceParameters(_Model):
     :ivar base_filter: A default filter condition applied to the index at retrieval time (e.g.,
      'State eq VA'). Can be overridden at query time via knowledge source runtime parameters.
     :vartype base_filter: str
+    :ivar query_hints: Default hints that guide query planning toward useful filters and boosts for
+     this search index knowledge source. Request-time query hints replace these defaults as a
+     complete object.
+    :vartype query_hints:
+     ~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceQueryHints
     """
 
     search_index_name: str = rest_field(
@@ -10771,6 +11384,11 @@ class SearchIndexKnowledgeSourceParameters(_Model):
     )
     """A default filter condition applied to the index at retrieval time (e.g., 'State eq VA'). Can be
      overridden at query time via knowledge source runtime parameters."""
+    query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = rest_field(
+        name="queryHints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default hints that guide query planning toward useful filters and boosts for this search index
+     knowledge source. Request-time query hints replace these defaults as a complete object."""
 
     @overload
     def __init__(
@@ -10781,6 +11399,7 @@ class SearchIndexKnowledgeSourceParameters(_Model):
         search_fields: Optional[list["_models.SearchIndexFieldReference"]] = None,
         semantic_configuration_name: Optional[str] = None,
         base_filter: Optional[str] = None,
+        query_hints: Optional["_models.SearchIndexKnowledgeSourceQueryHints"] = None,
     ) -> None: ...
 
     @overload
@@ -10794,7 +11413,49 @@ class SearchIndexKnowledgeSourceParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchIndexResponse(_Model):
+class SearchIndexKnowledgeSourceQueryHints(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Hints that guide query planning toward useful filters and boosts for a search index knowledge
+    source.
+
+    :ivar filters: Filter hints that identify fields and representative values the query planner
+     can use when constructing filters.
+    :vartype filters:
+     list[~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceFilterHint]
+    :ivar boosts: Boost hints that identify conditions the query planner can use to influence
+     document ranking.
+    :vartype boosts: list[~azure.search.documents.indexes.models.SearchIndexKnowledgeSourceBoost]
+    """
+
+    filters: Optional[list["_models.SearchIndexKnowledgeSourceFilterHint"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Filter hints that identify fields and representative values the query planner can use when
+     constructing filters."""
+    boosts: Optional[list["_models.SearchIndexKnowledgeSourceBoost"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Boost hints that identify conditions the query planner can use to influence document ranking."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        filters: Optional[list["_models.SearchIndexKnowledgeSourceFilterHint"]] = None,
+        boosts: Optional[list["_models.SearchIndexKnowledgeSourceBoost"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SearchIndexResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a search index definition, which describes the fields and search behavior of an
     index.
 
@@ -10971,7 +11632,7 @@ class SearchIndexResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchResourceEncryptionKey(_Model):
+class SearchResourceEncryptionKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be
     used to encrypt or decrypt data-at-rest, such as indexes and synonym maps.
 
@@ -11069,7 +11730,7 @@ class SearchResourceEncryptionKey(_Model):
             super().__setattr__(key, value)
 
 
-class SearchServiceCounters(_Model):
+class SearchServiceCounters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents service-level resource counters and quotas.
 
     :ivar alias_counter: Total number of aliases. Required.
@@ -11170,7 +11831,7 @@ class SearchServiceCounters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchServiceLimits(_Model):
+class SearchServiceLimits(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents various service level limits.
 
     :ivar max_fields_per_index: The maximum allowed fields per index.
@@ -11189,6 +11850,9 @@ class SearchServiceLimits(_Model):
     :ivar max_cumulative_indexer_runtime_seconds: The maximum cumulative indexer runtime in seconds
      allowed for the service.
     :vartype max_cumulative_indexer_runtime_seconds: int
+    :ivar max_vector_index_size_per_index_in_bytes: The maximum vector index size (vector memory
+     quota) allowed per index in bytes.
+    :vartype max_vector_index_size_per_index_in_bytes: int
     """
 
     max_fields_per_index: Optional[int] = rest_field(
@@ -11216,6 +11880,10 @@ class SearchServiceLimits(_Model):
         name="maxCumulativeIndexerRuntimeSeconds", visibility=["read", "create", "update", "delete", "query"]
     )
     """The maximum cumulative indexer runtime in seconds allowed for the service."""
+    max_vector_index_size_per_index_in_bytes: Optional[int] = rest_field(
+        name="maxVectorIndexSizePerIndexInBytes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum vector index size (vector memory quota) allowed per index in bytes."""
 
     @overload
     def __init__(
@@ -11227,6 +11895,7 @@ class SearchServiceLimits(_Model):
         max_complex_objects_in_collections_per_document: Optional[int] = None,
         max_storage_per_index_in_bytes: Optional[int] = None,
         max_cumulative_indexer_runtime_seconds: Optional[int] = None,
+        max_vector_index_size_per_index_in_bytes: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -11240,7 +11909,7 @@ class SearchServiceLimits(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchServiceStatistics(_Model):
+class SearchServiceStatistics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response from a get service statistics request. If successful, it includes service level
     counters and limits.
 
@@ -11281,7 +11950,7 @@ class SearchServiceStatistics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchSuggester(_Model):
+class SearchSuggester(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines how the Suggest API should apply to a group of fields in the index.
 
     :ivar name: The name of the suggester. Required.
@@ -11327,7 +11996,7 @@ class SearchSuggester(_Model):
         self.search_mode: Literal["analyzingInfixMatching"] = "analyzingInfixMatching"
 
 
-class SemanticConfiguration(_Model):
+class SemanticConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a specific configuration to be used in the context of semantic capabilities.
 
     :ivar name: The name of the semantic configuration. Required.
@@ -11383,7 +12052,7 @@ class SemanticConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SemanticField(_Model):
+class SemanticField(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A field that is used as part of the semantic configuration.
 
     :ivar field_name: File name. Required.
@@ -11411,7 +12080,7 @@ class SemanticField(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SemanticPrioritizedFields(_Model):
+class SemanticPrioritizedFields(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the title, content, and keywords fields to be used for semantic ranking, captions,
     highlights, and answers.
 
@@ -11470,7 +12139,7 @@ class SemanticPrioritizedFields(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SemanticSearch(_Model):
+class SemanticSearch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines parameters for a search index that influence semantic capabilities.
 
     :ivar default_configuration_name: Allows you to set the name of a default semantic
@@ -11509,7 +12178,9 @@ class SemanticSearch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SentimentSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.V3.SentimentSkill"):
+class SentimentSkillV3(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.V3.SentimentSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Using the Text Analytics API, evaluates unstructured text and for each record, provides
     sentiment labels (such as "negative", "neutral" and "positive") based on the highest confidence
     score found by the service at a sentence and document-level.
@@ -11596,7 +12267,7 @@ class SentimentSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text
         self.odata_type = "#Microsoft.Skills.Text.V3.SentimentSkill"  # type: ignore
 
 
-class ServiceIndexersRuntime(_Model):
+class ServiceIndexersRuntime(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents service-level indexer runtime counters.
 
     :ivar used_seconds: Cumulative runtime of all indexers in the service from the beginningTime to
@@ -11652,7 +12323,9 @@ class ServiceIndexersRuntime(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ShaperSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Util.ShaperSkill"):
+class ShaperSkill(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Util.ShaperSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A skill for reshaping the outputs. It creates a complex type to support composite fields (also
     known as multipart fields).
 
@@ -11704,7 +12377,7 @@ class ShaperSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Util.Shap
         self.odata_type = "#Microsoft.Skills.Util.ShaperSkill"  # type: ignore
 
 
-class SharePointConnectorAppRegistration(_Model):
+class SharePointConnectorAppRegistration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configures a SharePoint connector app registration for the index, enabling document-level
     permissions from SharePoint.
 
@@ -11749,7 +12422,9 @@ class SharePointConnectorAppRegistration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ShingleTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.ShingleTokenFilter"):
+class ShingleTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.ShingleTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Creates combinations of tokens as a single token. This token filter is implemented using Apache
     Lucene.
 
@@ -11838,7 +12513,7 @@ class ShingleTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Shi
         self.odata_type = "#Microsoft.Azure.Search.ShingleTokenFilter"  # type: ignore
 
 
-class SkillNames(_Model):
+class SkillNames(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type of the skill names.
 
     :ivar skill_names: the names of skills to be reset.
@@ -11868,7 +12543,9 @@ class SkillNames(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SnowballTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.SnowballTokenFilter"):
+class SnowballTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.SnowballTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A filter that stems words using a Snowball-generated stemmer. This token filter is implemented
     using Apache Lucene.
 
@@ -11919,7 +12596,7 @@ class SnowballTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Sn
 
 class SoftDeleteColumnDeletionDetectionPolicy(
     DataDeletionDetectionPolicy, discriminator="#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a data deletion detection policy that implements a soft-deletion strategy. It
     determines whether an item should be deleted based on the value of a designated 'soft delete'
     column.
@@ -11965,7 +12642,9 @@ class SoftDeleteColumnDeletionDetectionPolicy(
         self.odata_type = "#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy"  # type: ignore
 
 
-class SplitSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.SplitSkill"):
+class SplitSkill(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.SplitSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A skill to split a string into chunks of text.
 
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
@@ -12123,7 +12802,9 @@ class SqlIntegratedChangeTrackingPolicy(
         self.odata_type = "#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy"  # type: ignore
 
 
-class StemmerOverrideTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.StemmerOverrideTokenFilter"):
+class StemmerOverrideTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.StemmerOverrideTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provides the ability to override other stemming filters with custom dictionary-based stemming.
     Any dictionary-stemmed terms will be marked as keywords so that they will not be stemmed with
     stemmers down the chain. Must be placed before any stemming filters. This token filter is
@@ -12170,7 +12851,9 @@ class StemmerOverrideTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Se
         self.odata_type = "#Microsoft.Azure.Search.StemmerOverrideTokenFilter"  # type: ignore
 
 
-class StemmerTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.StemmerTokenFilter"):
+class StemmerTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.StemmerTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Language specific stemming filter. This token filter is implemented using Apache Lucene. See
     `https://learn.microsoft.com/rest/api/searchservice/Custom-analyzers-in-Azure-Search#TokenFilters
     <https://learn.microsoft.com/rest/api/searchservice/Custom-analyzers-in-Azure-Search#TokenFilters>`_.
@@ -12232,7 +12915,9 @@ class StemmerTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Ste
         self.odata_type = "#Microsoft.Azure.Search.StemmerTokenFilter"  # type: ignore
 
 
-class StopAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.StopAnalyzer"):
+class StopAnalyzer(
+    LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.StopAnalyzer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Divides text at non-letters; Applies the lowercase and stopword token filters. This analyzer is
     implemented using Apache Lucene.
 
@@ -12273,7 +12958,9 @@ class StopAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.StopA
         self.odata_type = "#Microsoft.Azure.Search.StopAnalyzer"  # type: ignore
 
 
-class StopwordsTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.StopwordsTokenFilter"):
+class StopwordsTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.StopwordsTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Removes stop words from a token stream. This token filter is implemented using Apache Lucene.
     See
     `http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/core/StopFilter.html
@@ -12351,7 +13038,7 @@ class StopwordsTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.S
         self.odata_type = "#Microsoft.Azure.Search.StopwordsTokenFilter"  # type: ignore
 
 
-class SynonymMap(_Model):
+class SynonymMap(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a synonym map definition.
 
     :ivar name: The name of the synonym map. Required.
@@ -12420,7 +13107,9 @@ class SynonymMap(_Model):
         self.format: Literal["solr"] = "solr"
 
 
-class SynonymTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.SynonymTokenFilter"):
+class SynonymTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.SynonymTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Matches single or multi-word synonyms in a token stream. This token filter is implemented using
     Apache Lucene.
 
@@ -12493,7 +13182,9 @@ class SynonymTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Syn
         self.odata_type = "#Microsoft.Azure.Search.SynonymTokenFilter"  # type: ignore
 
 
-class TagScoringFunction(ScoringFunction, discriminator="tag"):
+class TagScoringFunction(
+    ScoringFunction, discriminator="tag"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a function that boosts scores of documents with string values matching a given list of
     tags.
 
@@ -12544,7 +13235,7 @@ class TagScoringFunction(ScoringFunction, discriminator="tag"):
         self.type = "tag"  # type: ignore
 
 
-class TagScoringParameters(_Model):
+class TagScoringParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provides parameter values to a tag scoring function.
 
     :ivar tags_parameter: The name of the parameter passed in search queries to specify the list of
@@ -12574,7 +13265,9 @@ class TagScoringParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TextTranslationSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.TranslationSkill"):
+class TextTranslationSkill(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.TranslationSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A skill to translate text from one language to another.
 
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
@@ -12693,7 +13386,7 @@ class TextTranslationSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.
         self.odata_type = "#Microsoft.Skills.Text.TranslationSkill"  # type: ignore
 
 
-class TextWeights(_Model):
+class TextWeights(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines weights on index fields for which matches should boost scoring in search queries.
 
     :ivar weights: The dictionary of per-field weights to boost document scoring. The keys are
@@ -12723,7 +13416,9 @@ class TextWeights(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TruncateTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.TruncateTokenFilter"):
+class TruncateTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.TruncateTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Truncates the terms to a specific length. This token filter is implemented using Apache Lucene.
 
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
@@ -12763,7 +13458,9 @@ class TruncateTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Tr
         self.odata_type = "#Microsoft.Azure.Search.TruncateTokenFilter"  # type: ignore
 
 
-class UaxUrlEmailTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.UaxUrlEmailTokenizer"):
+class UaxUrlEmailTokenizer(
+    LexicalTokenizer, discriminator="#Microsoft.Azure.Search.UaxUrlEmailTokenizer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tokenizes urls and emails as one token. This tokenizer is implemented using Apache Lucene.
 
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
@@ -12807,7 +13504,9 @@ class UaxUrlEmailTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Sea
         self.odata_type = "#Microsoft.Azure.Search.UaxUrlEmailTokenizer"  # type: ignore
 
 
-class UniqueTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.UniqueTokenFilter"):
+class UniqueTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.UniqueTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Filters out tokens with same text as the previous token. This token filter is implemented using
     Apache Lucene.
 
@@ -12851,7 +13550,79 @@ class UniqueTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Uniq
         self.odata_type = "#Microsoft.Azure.Search.UniqueTokenFilter"  # type: ignore
 
 
-class VectorSearch(_Model):
+class UpdateKnowledgeSourceFileRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Multipart request for updating a file in a File knowledge source.
+
+    :ivar metadata: The JSON metadata describing the file. Required.
+    :vartype metadata: ~azure.search.documents.indexes.models.FileUploadMetadata
+    :ivar content: The raw file content. Required.
+    :vartype content: ~azure.search.documents._utils.utils.FileType
+    """
+
+    metadata: "_models.FileUploadMetadata" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The JSON metadata describing the file. Required."""
+    content: FileType = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
+    )
+    """The raw file content. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        metadata: "_models.FileUploadMetadata",
+        content: FileType,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UploadKnowledgeSourceFileMultipartRequest(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Multipart request for uploading a file to a File knowledge source.
+
+    :ivar metadata: The JSON metadata describing the file. Required.
+    :vartype metadata: ~azure.search.documents.indexes.models.FileUploadMetadata
+    :ivar content: The raw file content. Required.
+    :vartype content: ~azure.search.documents._utils.utils.FileType
+    """
+
+    metadata: "_models.FileUploadMetadata" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The JSON metadata describing the file. Required."""
+    content: FileType = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
+    )
+    """The raw file content. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        metadata: "_models.FileUploadMetadata",
+        content: FileType,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VectorSearch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains configuration options related to vector search.
 
     :ivar profiles: Defines combinations of configurations to use with vector search.
@@ -12906,7 +13677,7 @@ class VectorSearch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VectorSearchProfile(_Model):
+class VectorSearchProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a combination of configurations to use with vector search.
 
     :ivar name: The name to associate with this particular vector search profile. Required.
@@ -12960,7 +13731,9 @@ class VectorSearchProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VisionVectorizeSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Vision.VectorizeSkill"):
+class VisionVectorizeSkill(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Vision.VectorizeSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Allows you to generate a vector embedding for a given image or text input using the Azure AI
     Services Vision Vectorize API.
 
@@ -13023,7 +13796,9 @@ class WebApiHttpHeaders(_Model):
     """A dictionary of http request headers."""
 
 
-class WebApiSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Custom.WebApiSkill"):
+class WebApiSkill(
+    SearchIndexerSkill, discriminator="#Microsoft.Skills.Custom.WebApiSkill"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A skill that can call a Web API endpoint, allowing you to extend a skillset by having it call
     your custom code.
 
@@ -13142,7 +13917,9 @@ class WebApiSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Custom.We
         self.odata_type = "#Microsoft.Skills.Custom.WebApiSkill"  # type: ignore
 
 
-class WebApiVectorizer(VectorSearchVectorizer, discriminator="customWebApi"):
+class WebApiVectorizer(
+    VectorSearchVectorizer, discriminator="customWebApi"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies a user-defined vectorizer for generating the vector embedding of a query string.
     Integration of an external vectorizer is achieved using the custom Web API interface of a
     skillset.
@@ -13185,7 +13962,7 @@ class WebApiVectorizer(VectorSearchVectorizer, discriminator="customWebApi"):
         self.kind = VectorSearchVectorizerKind.CUSTOM_WEB_API  # type: ignore
 
 
-class WebApiVectorizerParameters(_Model):
+class WebApiVectorizerParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the properties for connecting to a user-defined vectorizer.
 
     :ivar url: The URI of the Web API providing the vectorizer.
@@ -13262,13 +14039,20 @@ class WebApiVectorizerParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebKnowledgeSource(KnowledgeSource, discriminator="web"):
+class WebKnowledgeSource(
+    KnowledgeSource, discriminator="web"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Knowledge Source targeting web results.
 
     :ivar name: The name of the knowledge source. Required.
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -13299,6 +14083,7 @@ class WebKnowledgeSource(KnowledgeSource, discriminator="web"):
         *,
         name: str,
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
         web_parameters: Optional["_models.WebKnowledgeSourceParameters"] = None,
@@ -13316,7 +14101,7 @@ class WebKnowledgeSource(KnowledgeSource, discriminator="web"):
         self.kind = KnowledgeSourceKind.WEB  # type: ignore
 
 
-class WebKnowledgeSourceDomain(_Model):
+class WebKnowledgeSourceDomain(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for web knowledge source domain.
 
     :ivar address: The address of the domain. Required.
@@ -13351,7 +14136,7 @@ class WebKnowledgeSourceDomain(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebKnowledgeSourceDomains(_Model):
+class WebKnowledgeSourceDomains(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Domain allow/block configuration for web knowledge source.
 
     :ivar allowed_domains: Domains that are allowed for web results.
@@ -13388,7 +14173,7 @@ class WebKnowledgeSourceDomains(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebKnowledgeSourceParameters(_Model):
+class WebKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for web knowledge source.
 
     :ivar domains: Domain allow/block configuration for web results.
@@ -13446,7 +14231,9 @@ class WebKnowledgeSourceParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WordDelimiterTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.WordDelimiterTokenFilter"):
+class WordDelimiterTokenFilter(
+    TokenFilter, discriminator="#Microsoft.Azure.Search.WordDelimiterTokenFilter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Splits words into subwords and performs optional transformations on subword groups. This token
     filter is implemented using Apache Lucene.
 
@@ -13569,13 +14356,20 @@ class WordDelimiterTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sear
         self.odata_type = "#Microsoft.Azure.Search.WordDelimiterTokenFilter"  # type: ignore
 
 
-class WorkIQKnowledgeSource(KnowledgeSource, discriminator="workIQ"):
+class WorkIQKnowledgeSource(
+    KnowledgeSource, discriminator="workIQ"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for WorkIQ knowledge source.
 
     :ivar name: The name of the knowledge source. Required.
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
+    :ivar results_processing: Controls whether results from this knowledge source are reranked
+     before they are included in the final result set. Defaults to 'rerank' when not specified.
+     Known values are: "rerank" and "none".
+    :vartype results_processing: str or
+     ~azure.search.documents.indexes.models.KnowledgeSourceResultsProcessing
     :ivar e_tag: The ETag of the knowledge source.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -13589,17 +14383,28 @@ class WorkIQKnowledgeSource(KnowledgeSource, discriminator="workIQ"):
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     :ivar kind: The discriminator value. Required. A knowledge source that reads data from work IQ.
     :vartype kind: str or ~azure.search.documents.indexes.models.WORK_IQ
+    :ivar work_iq_parameters: The parameters for the WorkIQ knowledge source, including the
+     customer-owned Entra app configuration used for on-behalf-of authentication. Required.
+    :vartype work_iq_parameters:
+     ~azure.search.documents.indexes.models.WorkIQKnowledgeSourceParameters
     """
 
     kind: Literal[KnowledgeSourceKind.WORK_IQ] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminator value. Required. A knowledge source that reads data from work IQ."""
+    work_iq_parameters: "_models.WorkIQKnowledgeSourceParameters" = rest_field(
+        name="workIQParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The parameters for the WorkIQ knowledge source, including the customer-owned Entra app
+     configuration used for on-behalf-of authentication. Required."""
 
     @overload
     def __init__(
         self,
         *,
         name: str,
+        work_iq_parameters: "_models.WorkIQKnowledgeSourceParameters",
         description: Optional[str] = None,
+        results_processing: Optional[Union[str, "_models.KnowledgeSourceResultsProcessing"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
     ) -> None: ...
@@ -13614,3 +14419,41 @@ class WorkIQKnowledgeSource(KnowledgeSource, discriminator="workIQ"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = KnowledgeSourceKind.WORK_IQ  # type: ignore
+
+
+class WorkIQKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters for a WorkIQ knowledge source.
+
+    :ivar entra_app_authentication: The customer-owned Microsoft Entra app registration
+     configuration used for on-behalf-of authentication to the Work IQ API. The customer registers a
+     tenant-owned Entra app, grants it the WorkIQAgent.Ask delegated permission, and configures a
+     federated credential so Azure AI Search can authenticate as that app without a stored client
+     secret. Required.
+    :vartype entra_app_authentication:
+     ~azure.search.documents.indexes.models.EntraAppAuthentication
+    """
+
+    entra_app_authentication: "_models.EntraAppAuthentication" = rest_field(
+        name="entraAppAuthentication", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The customer-owned Microsoft Entra app registration configuration used for on-behalf-of
+     authentication to the Work IQ API. The customer registers a tenant-owned Entra app, grants it
+     the WorkIQAgent.Ask delegated permission, and configures a federated credential so Azure AI
+     Search can authenticate as that app without a stored client secret. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        entra_app_authentication: "_models.EntraAppAuthentication",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)

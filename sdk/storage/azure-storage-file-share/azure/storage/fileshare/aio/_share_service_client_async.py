@@ -16,9 +16,9 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline import AsyncPipeline
-from .._generated.aio import AzureFileStorage
+from .._generated.aio import FileClient as AzureFileStorage
 from .._generated.models import KeyInfo, StorageServiceProperties
-from .._models import CorsRule, service_properties_deserialize, ShareProperties
+from .._models import CorsRule, Metrics, service_properties_deserialize, ShareProperties, ShareProtocolSettings
 from .._serialize import get_api_version
 from .._share_service_client_helpers import _parse_url
 from .._shared.base_client import StorageAccountHostsMixin, parse_query
@@ -38,7 +38,6 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from datetime import datetime
-    from .._models import Metrics, ShareProtocolSettings
     from .._shared.models import UserDelegationKey
 
 
@@ -132,13 +131,9 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         self.allow_source_trailing_dot = kwargs.pop("allow_source_trailing_dot", None)
         self.file_request_intent = token_intent
         self._client = AzureFileStorage(
-            version=get_api_version(kwargs),
             url=self.url,
-            base_url=self.url,
+            version=get_api_version(kwargs),
             pipeline=self._pipeline,
-            allow_trailing_dot=self.allow_trailing_dot,
-            allow_source_trailing_dot=self.allow_source_trailing_dot,
-            file_request_intent=self.file_request_intent,
         )
 
     async def __aenter__(self) -> Self:
@@ -279,7 +274,9 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         """
         timeout = kwargs.pop("timeout", None)
         try:
-            service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)
+            service_props = await self._client.service.get_properties(
+                timeout=timeout, file_request_intent=self.file_request_intent, **kwargs
+            )
             return service_properties_deserialize(service_props)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -332,13 +329,15 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         """
         timeout = kwargs.pop("timeout", None)
         props = StorageServiceProperties(
-            hour_metrics=hour_metrics,
-            minute_metrics=minute_metrics,
+            hour_metrics=Metrics._to_generated(hour_metrics),  # pylint: disable=protected-access
+            minute_metrics=Metrics._to_generated(minute_metrics),  # pylint: disable=protected-access
             cors=CorsRule._to_generated(cors),  # pylint: disable=protected-access
-            protocol=protocol,
+            protocol=ShareProtocolSettings._to_generated(protocol),  # pylint: disable=protected-access
         )
         try:
-            await self._client.service.set_properties(props, timeout=timeout, **kwargs)
+            await self._client.service.set_properties(
+                props, timeout=timeout, file_request_intent=self.file_request_intent, **kwargs
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -394,7 +393,11 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
 
         results_per_page = kwargs.pop("results_per_page", None)
         command = functools.partial(
-            self._client.service.list_shares_segment, include=include, timeout=timeout, **kwargs
+            self._client.service.list_shares_segment,
+            include=include,
+            timeout=timeout,
+            file_request_intent=self.file_request_intent,
+            **kwargs,
         )
         return AsyncItemPaged(
             command,

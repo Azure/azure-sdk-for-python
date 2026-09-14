@@ -12,7 +12,7 @@ from azure.core.exceptions import HttpResponseError
 
 from .._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from .._generated.models import DirectoryItem
-from .._models import Handle, ShareProperties, DirectoryProperties, FileProperties
+from .._models import FileRange, Handle, ShareProperties, DirectoryProperties, FileProperties, parse_file_range_list
 
 
 def _wrap_item(item):
@@ -209,4 +209,48 @@ class DirectoryPropertiesPaged(AsyncPageIterator):
             FileProperties._from_generated(i)  # pylint: disable = protected-access
             for i in self._response.segment.file_items
         )
+        return self._response.next_marker or None, self.current_page
+
+
+class FileRangePaged(AsyncPageIterator):
+    """An iterable of File Ranges.
+
+    :param Callable command: Function to retrieve the next page of items.
+    :param Optional[int] results_per_page: The maximum number of file ranges to retrieve per call.
+    :param Optional[str] continuation_token: An opaque continuation token to retrieve the next page of results.
+    """
+
+    results_per_page: Optional[int] = None
+    """The maximum number of results retrieved per API call."""
+    location_mode: Optional[str] = None
+    """The location mode being used to list results.
+        The available options include "primary" and "secondary"."""
+    current_page: List[FileRange]
+    """The current page of listed results."""
+
+    def __init__(
+        self, command: Callable, results_per_page: Optional[int] = None, continuation_token: Optional[str] = None
+    ) -> None:
+        super(FileRangePaged, self).__init__(
+            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
+        )
+        self._command = command
+        self.results_per_page = results_per_page
+        self.location_mode = None
+        self.current_page = []
+
+    async def _get_next_cb(self, continuation_token):
+        try:
+            return await self._command(
+                marker=continuation_token or None,
+                maxresults=self.results_per_page,
+                cls=return_context_and_deserialized,
+                use_location=self.location_mode,
+            )
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    async def _extract_data_cb(self, get_next_return):
+        self.location_mode, self._response = get_next_return
+        self.current_page = parse_file_range_list(self._response)
         return self._response.next_marker or None, self.current_page

@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-03-01-preview/IotHub_ManualFailover.json
+# x-ms-original-file: 2026-05-01-preview/IotHub_ManualFailover.json
 if __name__ == "__main__":
     main()

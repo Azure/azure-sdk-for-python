@@ -2,7 +2,7 @@ from typing import Union
 
 import pytest
 
-from azure.ai.ml._restclient.v2024_01_01_preview.models import AutoNCrossValidations, CustomNCrossValidations, JobBase
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase
 from azure.ai.ml.automl import classification, forecasting, regression
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
@@ -57,11 +57,10 @@ class TestNCrossValidationSettings:
         ]
 
         for obj in rest_objs:
-            assert isinstance(
-                obj.properties.task_details.n_cross_validations, AutoNCrossValidations
-            ), "N cross validations not an object of AutoNCrossValidations in {} job".format(
-                obj.properties.task_details.task_type
-            )
+            # arm_ml_service serializes the discriminated ``AutoNCrossValidations`` child to a dict.
+            assert (
+                obj.properties.task_details.n_cross_validations["mode"] == "Auto"
+            ), "N cross validations not an Auto mode in {} job".format(obj.properties.task_details.task_type)
 
     def test_auto_n_cv_from_rest(self):
         # Test with auto n cross validations (from_rest_object)
@@ -85,11 +84,10 @@ class TestNCrossValidationSettings:
         ]
 
         for obj in rest_objs:
-            assert isinstance(
-                obj.properties.task_details.n_cross_validations, CustomNCrossValidations
-            ), "N cross validations not an object of CustomNCrossValidations in {} job".format(
-                obj.properties.task_details.task_type
-            )
+            # arm_ml_service serializes the discriminated ``CustomNCrossValidations`` child to a dict.
+            assert (
+                obj.properties.task_details.n_cross_validations["mode"] == "Custom"
+            ), "N cross validations not a Custom mode in {} job".format(obj.properties.task_details.task_type)
 
     def test_value_n_cv_from_rest(self):
         # Test with auto n cross validations (from_rest_object)
@@ -135,8 +133,9 @@ class TestNCrossValidationSettings:
         ]
 
         for obj in rest_objs:
-            assert isinstance(
-                obj.properties.task_details.n_cross_validations, CustomNCrossValidations
+            # arm_ml_service serializes the discriminated ``CustomNCrossValidations`` child to a dict.
+            assert (
+                obj.properties.task_details.n_cross_validations["mode"] == "Custom"
             ), "N cross validations not an object of CustomNCrossValidations in {} job".format(
                 obj.properties.task_details.task_type
             )

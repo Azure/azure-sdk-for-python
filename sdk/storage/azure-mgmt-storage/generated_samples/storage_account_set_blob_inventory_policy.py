@@ -100,6 +100,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-08-01/StorageAccountSetBlobInventoryPolicy.json
+# x-ms-original-file: 2026-04-01/StorageAccountSetBlobInventoryPolicy.json
 if __name__ == "__main__":
     main()

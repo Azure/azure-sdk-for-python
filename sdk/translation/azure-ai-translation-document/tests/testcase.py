@@ -5,12 +5,17 @@
 
 import os
 import time
-import datetime
 import uuid
-from azure.ai.translation.document.models import DocumentBatch, SourceInput, StartTranslationDetails
+from azure.ai.translation.document.models import (
+    DocumentBatch,
+    SourceInput,
+    StartTranslationDetails,
+    DocumentTranslationInput,
+    TranslationTarget,
+)
 from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
-from azure.storage.blob import generate_container_sas, ContainerClient
-from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
+from azure.storage.blob import ContainerClient
+from azure.identity import DefaultAzureCredential
 
 
 class Document:
@@ -39,9 +44,11 @@ class DocumentTranslationTest(AzureRecordedTestCase):
     def storage_endpoint(self):
         return "https://" + self.storage_name + ".blob.core.windows.net/"
 
-    @property
-    def storage_key(self):
-        return os.getenv("DOCUMENT_TRANSLATION_STORAGE_KEY", "fakeZmFrZV9hY29jdW50X2tleQ==")
+    def get_storage_credential(self):
+        # Recorded tests authenticate to storage with Entra ID (RBAC) rather than an
+        # account key, so they work even when the storage account has shared-key access
+        # disabled. Only used in live/record mode; playback never touches storage.
+        return DefaultAzureCredential()
 
     def upload_documents(self, data, container_client):
         if isinstance(data, list):
@@ -55,40 +62,41 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         var_key = "source_container_name" + container_suffix
         if self.is_live:
             self.source_container_name = variables[var_key] = "src" + str(uuid.uuid4())
-            container_client = ContainerClient(self.storage_endpoint, variables[var_key], self.storage_key)
+            container_client = ContainerClient(
+                self.storage_endpoint, variables[var_key], credential=self.get_storage_credential()
+            )
             container_client.create_container()
 
             self.upload_documents(data, container_client)
-        return self.generate_sas_url(variables[var_key], "rl")
+        return self.container_url(variables[var_key])
 
     def create_target_container(self, data=None, variables={}, **kwargs):
         container_suffix = kwargs.get("container_suffix", "")
         var_key = "target_container_name" + container_suffix
         if self.is_live:
             self.target_container_name = variables[var_key] = "target" + str(uuid.uuid4())
-            container_client = ContainerClient(self.storage_endpoint, variables[var_key], self.storage_key)
+            container_client = ContainerClient(
+                self.storage_endpoint, variables[var_key], credential=self.get_storage_credential()
+            )
             container_client.create_container()
             if data:
                 self.upload_documents(data, container_client)
 
-        return self.generate_sas_url(variables[var_key], "wl")
+        return self.container_url(variables[var_key])
 
-    def generate_sas_url(self, container_name, permission):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+    def container_url(self, container_name):
+        # The Document Translation service reads/writes the containers using the Translator
+        # resource's managed identity, so a plain container URL (no SAS) is passed. This
+        # avoids any dependency on the storage account key / shared-key access.
+        # This can be reverted to set_bodiless_matcher() after tests are re-recorded.
+        # "Accept" is excluded because the generated begin_translation request no longer sends
+        # "Accept: application/json" (the 202 response has no body); excluding it keeps the
+        # existing recordings valid without re-recording every translation-flow test.
         set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+            compare_bodies=False,
+            excluded_headers="Accept,Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id",
         )
-        sas_token = self.generate_sas(
-            generate_container_sas,
-            account_name=self.storage_name,
-            container_name=container_name,
-            account_key=self.storage_key,
-            permission=permission,
-            expiry=datetime.datetime.utcnow() + datetime.timedelta(hours=2),
-        )
-
-        container_sas_url = self.storage_endpoint + container_name + "?" + sas_token
-        return container_sas_url
+        return self.storage_endpoint + container_name
 
     def wait(self, duration=30):
         if self.is_live:

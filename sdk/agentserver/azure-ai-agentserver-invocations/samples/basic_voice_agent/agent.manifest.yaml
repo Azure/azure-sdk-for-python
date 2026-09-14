@@ -1,0 +1,5 @@
+name: basic-voice-agent
+protocols:
+  - invocations_ws
+voiceLiveCompatible: "true"
+bridgeProtocolVersion: "1.0"

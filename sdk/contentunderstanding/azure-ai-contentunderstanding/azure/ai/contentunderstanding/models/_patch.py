@@ -10,9 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 import re
-from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypeVar
-from azure.core import CaseInsensitiveEnumMeta
 from azure.core.polling import LROPoller, PollingMethod
 from . import _models
 from .._utils.model_base import _deserialize
@@ -80,7 +78,6 @@ PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 __all__ = [
     "RecordMergePatchUpdate",
     "AnalyzeLROPoller",
-    "ProcessingLocation",
     "ContentField",
     "StringField",
     "IntegerField",
@@ -98,21 +95,6 @@ __all__ = [
 RecordMergePatchUpdate = Dict[str, str]
 
 
-# SDK-FIX: Redefine ProcessingLocation enum with correct member name GLOBAL.
-# The typespec-python emitter generates "GLOBALEnum" because "global" is a Python reserved keyword.
-# This redefinition restores the expected GLOBAL name and is visible in APIView.
-# Must be kept in sync with the generated _enums.ProcessingLocation if new members are added.
-class ProcessingLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The location where the data may be processed."""
-
-    GEOGRAPHY = "geography"
-    """Data may be processed in the same geography as the resource."""
-    DATA_ZONE = "dataZone"
-    """Data may be processed in the same data zone as the resource."""
-    GLOBAL = "global"
-    """Data may be processed in any Azure data center globally."""
-
-
 def _parse_operation_id(operation_location_header: str) -> str:
     """Parse operation ID from Operation-Location header for analyze operations.
 
@@ -127,9 +109,7 @@ def _parse_operation_id(operation_location_header: str) -> str:
 
     match = re.search(regex, operation_location_header)
     if not match:
-        raise ValueError(
-            f"Could not extract operation ID from: {operation_location_header}"
-        )
+        raise ValueError(f"Could not extract operation ID from: {operation_location_header}")
 
     return match.group(1)
 
@@ -221,9 +201,7 @@ class AnalyzeLROPoller(LROPoller[PollingReturnType_co]):
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
-def _add_value_property_to_field(
-    field_class: type, value_attr: str, return_type: Any = Any
-) -> None:
+def _add_value_property_to_field(field_class: type, value_attr: str, return_type: Any = Any) -> None:
     """Add a .value property implementation at runtime.
 
     This function adds the actual property implementation so IntelliSense works.

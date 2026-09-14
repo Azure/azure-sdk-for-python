@@ -23,7 +23,7 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from devtools_testutils import (
     AzureMgmtRecordedTestCase,
     CachedResourceGroupPreparer,
-    set_bodiless_matcher,
+    set_custom_default_matcher,
     get_credential,
 )
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -38,7 +38,9 @@ class TestServiceBusAdministrationClientRuleAsync(AzureMgmtRecordedTestCase):
     @ServiceBusPreparer()
     @recorded_by_proxy_async
     async def test_async_mgmt_rule_create(self, servicebus_fully_qualified_namespace, **kwargs):
-        set_bodiless_matcher()
+        # Bodiless matching (rule filter bodies vary), and ignore api-version so the recordings
+        # captured at 2021-05 still match under the 2024-05 default (see tests/conftest.py).
+        set_custom_default_matcher(compare_bodies=False, ignored_query_parameters="api-version")
         credential = get_credential(is_async=True)
         mgmt_service = ServiceBusAdministrationClient(
             fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential

@@ -161,6 +161,19 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
                                     "subscriptionId": "str",
                                 }
                             ],
+                            "eventStreams": [
+                                {
+                                    "endpointUri": "str",
+                                    "entityPath": "str",
+                                    "name": "str",
+                                    "authenticationType": "str",
+                                    "eventStreamId": "str",
+                                    "id": "str",
+                                    "identity": {"userAssignedIdentity": "str"},
+                                    "sourceId": "str",
+                                    "workspaceId": "str",
+                                }
+                            ],
                             "serviceBusQueues": [
                                 {
                                     "name": "str",
@@ -357,7 +370,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
             input={
                 "message": {"appProperties": {"str": "str"}, "body": "str", "systemProperties": {"str": "str"}},
                 "routingSource": "str",
-                "twin": {"properties": {"desired": {}, "reported": {}}, "tags": {}},
+                "twin": {"properties": {"desired": {"str": {}}, "reported": {"str": {}}}, "tags": {"str": {}}},
             },
         )
 
@@ -379,7 +392,7 @@ class TestIotHubIotHubResourceOperations(AzureMgmtRecordedTestCase):
                     "condition": "str",
                 },
                 "message": {"appProperties": {"str": "str"}, "body": "str", "systemProperties": {"str": "str"}},
-                "twin": {"properties": {"desired": {}, "reported": {}}, "tags": {}},
+                "twin": {"properties": {"desired": {"str": {}}, "reported": {"str": {}}}, "tags": {"str": {}}},
             },
         )
 

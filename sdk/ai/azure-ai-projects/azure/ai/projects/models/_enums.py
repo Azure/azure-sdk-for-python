@@ -14,16 +14,16 @@ from azure.core import CaseInsensitiveEnumMeta
 class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Feature opt-in keys for agent definition operations supporting hosted or workflow agents."""
 
-    HOSTED_AGENTS_V1_PREVIEW = "HostedAgents=V1Preview"
-    """HOSTED_AGENTS_V1_PREVIEW."""
     WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
     """WORKFLOW_AGENTS_V1_PREVIEW."""
-    AGENT_ENDPOINT_V1_PREVIEW = "AgentEndpoints=V1Preview"
-    """AGENT_ENDPOINT_V1_PREVIEW."""
-    CODE_AGENTS_V1_PREVIEW = "CodeAgents=V1Preview"
-    """CODE_AGENTS_V1_PREVIEW."""
     EXTERNAL_AGENTS_V1_PREVIEW = "ExternalAgents=V1Preview"
     """EXTERNAL_AGENTS_V1_PREVIEW."""
+    DRAFT_AGENTS_V1_PREVIEW = "DraftAgents=V1Preview"
+    """DRAFT_AGENTS_V1_PREVIEW."""
+    VOICE_AGENTS_V1_PREVIEW = "VoiceAgents=V1Preview"
+    """VOICE_AGENTS_V1_PREVIEW."""
+    DIGITAL_WORKER_V1_PREVIEW = "DigitalWorker=V1Preview"
+    """DIGITAL_WORKER_V1_PREVIEW."""
 
 
 class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -37,20 +37,70 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RED_TEAMS_V1_PREVIEW."""
     INSIGHTS_V1_PREVIEW = "Insights=V1Preview"
     """INSIGHTS_V1_PREVIEW."""
+    AGENT_INSIGHTS_V1_PREVIEW = "AgentInsights=V1Preview"
+    """AGENT_INSIGHTS_V1_PREVIEW."""
     MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
     """MEMORY_STORES_V1_PREVIEW."""
-    ROUTINES_V1_PREVIEW = "Routines=V1Preview"
-    """ROUTINES_V1_PREVIEW."""
-    TOOLBOXES_V1_PREVIEW = "Toolboxes=V1Preview"
-    """TOOLBOXES_V1_PREVIEW."""
+    ROUTINES_V2_PREVIEW = "Routines=V2Preview"
+    """ROUTINES_V2_PREVIEW."""
     SKILLS_V1_PREVIEW = "Skills=V1Preview"
     """SKILLS_V1_PREVIEW."""
     DATA_GENERATION_JOBS_V1_PREVIEW = "DataGenerationJobs=V1Preview"
     """DATA_GENERATION_JOBS_V1_PREVIEW."""
     MODELS_V1_PREVIEW = "Models=V1Preview"
     """MODELS_V1_PREVIEW."""
-    AGENTS_OPTIMIZATION_V1_PREVIEW = "AgentsOptimization=V1Preview"
-    """AGENTS_OPTIMIZATION_V1_PREVIEW."""
+    AGENTS_OPTIMIZATION_V2_PREVIEW = "AgentsOptimization=V2Preview"
+    """AGENTS_OPTIMIZATION_V2_PREVIEW."""
+    MODEL_ROUTER_CONTROLS_V1_PREVIEW = "ModelRouterControls=V1Preview"
+    """MODEL_ROUTER_CONTROLS_V1_PREVIEW."""
+
+
+class A2AProtocolVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported A2A protocol versions."""
+
+    V1_0 = "1.0"
+    """A2A protocol version 1.0."""
+
+
+class ActivityProtocolAccessBoundary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An access boundary for the activity protocol."""
+
+    READ1_ON1_DEVELOPERS = "read.1on1.developers"
+    """Allows read access to one-on-one developer conversations."""
+    READ1_ON1_MANAGER = "read.1on1.manager"
+    """Allows read access to one-on-one manager conversations."""
+    READ1_ON1_ALLOWLISTED = "read.1on1.allowlisted"
+    """Allows read access to allowlisted one-on-one conversations."""
+    READ1_ON1_TENANT = "read.1on1.tenant"
+    """Allows read access to tenant-wide one-on-one conversations."""
+    WRITE1_ON1_DEVELOPERS = "write.1on1.developers"
+    """Allows write access to one-on-one developer conversations."""
+    WRITE1_ON1_MANAGER = "write.1on1.manager"
+    """Allows write access to one-on-one manager conversations."""
+    WRITE1_ON1_ALLOWLISTED = "write.1on1.allowlisted"
+    """Allows write access to allowlisted one-on-one conversations."""
+    WRITE1_ON1_TENANT = "write.1on1.tenant"
+    """Allows write access to tenant-wide one-on-one conversations."""
+    READ_GROUP_DEVELOPERS = "read.group.developers"
+    """Allows read access to developer group conversations."""
+    READ_GROUP_ALLOWLISTED = "read.group.allowlisted"
+    """Allows read access to allowlisted group conversations."""
+    READ_GROUP_MANAGER_INVITED = "read.group.manager-invited"
+    """Allows read access to group conversations where a manager is invited."""
+    READ_GROUP_MANAGER_PRESENT = "read.group.manager-present"
+    """Allows read access to group conversations where a manager is present."""
+    READ_GROUP_TENANT = "read.group.tenant"
+    """Allows read access to tenant-wide group conversations."""
+    WRITE_GROUP_DEVELOPERS = "write.group.developers"
+    """Allows write access to developer group conversations."""
+    WRITE_GROUP_ALLOWLISTED = "write.group.allowlisted"
+    """Allows write access to allowlisted group conversations."""
+    WRITE_GROUP_MANAGER_INVITED = "write.group.manager-invited"
+    """Allows write access to group conversations where a manager is invited."""
+    WRITE_GROUP_MANAGER_PRESENT = "write.group.manager-present"
+    """Allows write access to group conversations where a manager is present."""
+    WRITE_GROUP_TENANT = "write.group.tenant"
+    """Allows write access to tenant-wide group conversations."""
 
 
 class AgentBlueprintReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -69,6 +119,8 @@ class AgentEndpointAuthorizationSchemeType(str, Enum, metaclass=CaseInsensitiveE
     """BOT_SERVICE."""
     BOT_SERVICE_RBAC = "BotServiceRbac"
     """BOT_SERVICE_RBAC."""
+    BOT_SERVICE_TENANT = "BotServiceTenant"
+    """BOT_SERVICE_TENANT."""
 
 
 class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -86,6 +138,77 @@ class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """INVOCATIONS."""
     INVOCATIONS_WS = "invocations_ws"
     """WebSocket-based protocol for hosted voice and real-time streaming agents."""
+
+
+class AgentIdentityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of an agent identity, applicable to both the agent instance identity and the agent
+    blueprint.
+    """
+
+    ACTIVE = "active"
+    """The agent identity is active and can be used to access resources."""
+    DISABLED = "disabled"
+    """The agent identity is disabled and cannot be used to access resources."""
+
+
+class AgentInsightOverviewSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Identifies where an Agent Insights overview came from."""
+
+    GENERATED = "generated"
+    """The overview was generated by Agent Insights."""
+    USER_OVERRIDE = "user_override"
+    """The overview was provided by the user."""
+
+
+class AgentInsightPromptSurface(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Prompt surface changed by a proposed fix."""
+
+    INSTRUCTIONS = "instructions"
+    """The Prompt instructions."""
+    TOOL = "tool"
+    """A function tool definition."""
+
+
+class AgentInsightProposedFixKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The customer-renderable kind of an agent insight's proposed fix."""
+
+    PROSE = "prose"
+    """Text-only remediation guidance."""
+    CODE_CHANGE = "code_change"
+    """A validated source-code change."""
+    PROMPT_CHANGE = "prompt_change"
+    """A validated Prompt change."""
+
+
+class AgentInsightRunTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The trigger that started an agent insight run."""
+
+    ON_DEMAND = "on_demand"
+    """The run was started on demand by a user or client."""
+    SCHEDULED = "scheduled"
+    """The run was started by scheduled insight generation."""
+
+
+class AgentInsightSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The severity of an agent insight."""
+
+    HIGH = "high"
+    """The insight has high severity."""
+    MEDIUM = "medium"
+    """The insight has medium severity."""
+    LOW = "low"
+    """The insight has low severity."""
+
+
+class AgentInsightStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The lifecycle status of an agent insight."""
+
+    ACTIVE = "active"
+    """The insight is active and should be reviewed."""
+    RESOLVED = "resolved"
+    """The insight was resolved by the user."""
+    IGNORED = "ignored"
+    """The insight was ignored by the user."""
 
 
 class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -116,19 +239,13 @@ class AgentObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AGENT_CONTAINER."""
 
 
-class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of AgentProtocol."""
+class AgentOptimizationDatasetInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Discriminator values for the dataset input union."""
 
-    ACTIVITY_PROTOCOL = "activity_protocol"
-    """ACTIVITY_PROTOCOL."""
-    RESPONSES = "responses"
-    """RESPONSES."""
-    MCP = "mcp"
-    """MCP."""
-    INVOCATIONS = "invocations"
-    """INVOCATIONS."""
-    INVOCATIONS_WS = "invocations_ws"
-    """WebSocket-based protocol for hosted voice and real-time streaming agents."""
+    INLINE = "inline"
+    """Inline dataset — items are provided directly in the request body."""
+    REFERENCE = "reference"
+    """Reference to a registered Foundry dataset by name and version."""
 
 
 class AgentSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -150,6 +267,26 @@ class AgentSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Session has been explicitly deleted."""
     EXPIRED = "expired"
     """Session TTL exceeded (30 days from last activity)."""
+
+
+class AgentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operational state of an agent."""
+
+    ENABLED = "enabled"
+    """Agent endpoint accepts requests. This is the default state on creation."""
+    DISABLED = "disabled"
+    """Agent endpoint rejects all requests."""
+
+
+class AgentStateSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the source of an agent's operational state. Empty when the state is not derived from
+    a specific source.
+    """
+
+    AGENT_INSTANCE_IDENTITY = "agent_instance_identity"
+    """The state is derived from the agent's instance identity."""
+    AGENT_BLUEPRINT = "agent_blueprint"
+    """The state is derived from the agent's blueprint."""
 
 
 class AgentVersionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -251,6 +388,15 @@ class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Query type ``vector_simple_hybrid``."""
     VECTOR_SEMANTIC_HYBRID = "vector_semantic_hybrid"
     """Query type ``vector_semantic_hybrid``."""
+
+
+class CallableToolAllowedCaller(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of CallableToolAllowedCaller."""
+
+    DIRECT = "direct"
+    """DIRECT."""
+    PROGRAMMATIC = "programmatic"
+    """PROGRAMMATIC."""
 
 
 class CodeDependencyResolution(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -402,6 +548,8 @@ class DataGenerationJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Single turn query and response from agent traces."""
     TOOL_USE = "tool_use"
     """Tool calling conversation between user and agent."""
+    SIMULATION_SEED = "simulation_seed"
+    """Simulation seed for evaluation scenarios."""
 
 
 class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -437,6 +585,13 @@ class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MODEL_DEPLOYMENT = "ModelDeployment"
     """Model deployment."""
+
+
+class DigitalWorkerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of digital worker."""
+
+    M365 = "m365"
+    """A Microsoft 365 digital worker."""
 
 
 class EvaluationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -502,6 +657,9 @@ class EvaluatorDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RUBRIC = "rubric"
     """Rubric-based evaluator definition. Stores dimensions (the scoring blueprint) for both quality
     and safety evaluators. Can be created via the generate API or manually via createVersion."""
+    ENDPOINT = "endpoint"
+    """Endpoint-based evaluator definition. References a customer-owned HTTP endpoint via a Project
+    Connection."""
 
 
 class EvaluatorGenerationJobSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -616,6 +774,16 @@ class FunctionShellToolParamEnvironmentType(str, Enum, metaclass=CaseInsensitive
     """CONTAINER_REFERENCE."""
 
 
+class GenerationWarningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Category of a warning surfaced on a generated evaluator version. Extensible so new warning
+    categories (e.g., safety, output quality) can be introduced without a breaking change.
+    """
+
+    INPUT_QUALITY = "input_quality"
+    """The paired EvaluatorGenerationJob emitted one or more input-quality advisories. Follow
+    ``generation_job_id`` to fetch the detailed warning payloads."""
+
+
 class GitHubIssueEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Known GitHub issue events that can fire a routine."""
 
@@ -678,15 +846,6 @@ class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cluster Insight on an Agent."""
     EVALUATION_COMPARISON = "EvaluationComparison"
     """Evaluation Comparison."""
-
-
-class IsolationKeySourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of IsolationKeySourceKind."""
-
-    ENTRA = "Entra"
-    """ENTRA."""
-    HEADER = "Header"
-    """HEADER."""
 
 
 class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -761,6 +920,17 @@ class MemoryStoreUpdateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SUPERSEDED."""
 
 
+class Microsoft365PublishScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The publish scope for the generated Microsoft Teams app."""
+
+    PERSONAL = "Personal"
+    """Publish the app for the acting user only."""
+    SHARED = "Shared"
+    """Publish the app to a shared scope within the organization."""
+    TENANT = "Tenant"
+    """Publish the app tenant-wide."""
+
+
 class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Authentication type for OpenApi endpoint. Allowed types are:
 
@@ -813,6 +983,24 @@ class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Temporary blob reference."""
 
 
+class PublishApprovalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Microsoft Agent Certification review status of the Microsoft 365 store title published for
+    an agent.
+    """
+
+    NOT_PUBLISHED = "not_published"
+    """The agent has never been published to the Microsoft 365 store, so there is nothing to review."""
+    PENDING = "pending"
+    """The published title is awaiting a review decision."""
+    APPROVED = "approved"
+    """The title passed review, as of this read."""
+    REJECTED = "rejected"
+    """The title was rejected in review, as of this read."""
+    NO_APPROVAL_NEEDED = "no_approval_needed"
+    """The agent is published at a scope that does not go through Microsoft Agent Certification. Only
+    tenant-scoped titles are reviewed."""
+
+
 class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of RankerVersionType."""
 
@@ -820,6 +1008,39 @@ class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AUTO."""
     DEFAULT_2024_11_15 = "default-2024-11-15"
     """DEFAULT_2024_11_15."""
+
+
+class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Constrains effort on reasoning for reasoning models. Currently supported values are ``none``,
+    ``minimal``, ``low``, ``medium``, ``high``, ``xhigh``, and ``max``. Reducing reasoning effort
+    can result in faster responses and fewer tokens used on reasoning in a response. Not all
+    reasoning models support every value. See the `reasoning guide
+    <https://platform.openai.com/docs/guides/reasoning>`_ for model-specific support.
+    """
+
+    NONE = "none"
+    """NONE."""
+    MINIMAL = "minimal"
+    """MINIMAL."""
+    LOW = "low"
+    """LOW."""
+    MEDIUM = "medium"
+    """MEDIUM."""
+    HIGH = "high"
+    """HIGH."""
+    XHIGH = "xhigh"
+    """XHIGH."""
+    MAX = "max"
+    """MAX."""
+
+
+class ReasoningModeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ReasoningModeEnum."""
+
+    STANDARD = "standard"
+    """STANDARD."""
+    PRO = "pro"
+    """PRO."""
 
 
 class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -884,6 +1105,15 @@ class RoutineAttemptSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A dispatch fired from a timer delivery."""
 
 
+class RoutineDispatchIdentity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported identities for routine dispatch authorization."""
+
+    AGENT = "agent"
+    """Dispatches with the target agent identity and a foundation token."""
+    CREATOR = "creator"
+    """An explicit customer opt-in to dispatch as the principal that created the routine."""
+
+
 class RoutineDispatchPayloadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The discriminator values supported for manual routine dispatch payloads."""
 
@@ -919,6 +1149,61 @@ class RoutineTriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A one-shot timer trigger."""
 
 
+class RubricGenerationInputQualityWarningCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Stable searchable machine-readable warning code for a rubric-generation input-quality warning.
+    Values are ``snake_case``; clients must tolerate additional service-defined identifiers.
+    """
+
+    EMPTY_PROMPT = "empty_prompt"
+    """A prompt source was empty or whitespace-only."""
+    SHORT_PROMPT = "short_prompt"
+    """A prompt source was non-empty but below the recommended minimum signal threshold."""
+    EMPTY_AGENT_INSTRUCTIONS = "empty_agent_instructions"
+    """An agent source resolved successfully but had no usable instructions."""
+    SHORT_AGENT_INSTRUCTIONS = "short_agent_instructions"
+    """An agent source had instructions below the recommended minimum signal threshold."""
+    EMPTY_DATASET_CONTENT = "empty_dataset_content"
+    """A dataset source resolved but contained no usable content for rubric generation."""
+    SHORT_DATASET_CONTENT = "short_dataset_content"
+    """Dataset content was below the recommended minimum signal threshold."""
+    LOW_TRACE_COUNT = "low_trace_count"
+    """A row-structured dataset had very few rows, so the generated rubric may not generalize."""
+    INSUFFICIENT_TOTAL_INPUT = "insufficient_total_input"
+    """Combined resolved input across successfully resolved sources was below the recommended minimum
+    signal threshold."""
+
+
+class RubricGenerationInputQualityWarningSeverity(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Advisory severity for a rubric-generation input-quality warning. Initial value set:
+    ``warning``.
+    """
+
+    WARNING = "warning"
+    """Non-fatal advisory; generation succeeded but output quality may be lower."""
+
+
+class RubricGenerationInputQualityWarningSource(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Warning source attribution for a rubric-generation input-quality warning. Per-source values
+    (``prompt``, ``agent``, ``dataset``) match the source category visible to the generation
+    runtime. ``aggregate`` is a synthetic value used only for warnings computed across successfully
+    resolved sources. ``traces`` is not exposed because trace sources resolve into dataset content
+    upstream.
+    """
+
+    PROMPT = "prompt"
+    """The warning applies to an inline prompt source."""
+    AGENT = "agent"
+    """The warning applies to an agent source."""
+    DATASET = "dataset"
+    """The warning applies to a dataset source (including trace-derived datasets)."""
+    AGGREGATE = "aggregate"
+    """The warning is computed across all successfully resolved sources."""
+
+
 class SampleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of sample used in the analysis."""
 
@@ -948,6 +1233,15 @@ class ScheduleTaskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Evaluation task."""
     INSIGHT = "Insight"
     """Insight task."""
+
+
+class SearchContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of SearchContentType."""
+
+    TEXT = "text"
+    """TEXT."""
+    IMAGE = "image"
+    """IMAGE."""
 
 
 class SearchContextSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1024,6 +1318,43 @@ class TextResponseFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEn
     """JSON_OBJECT."""
 
 
+class ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported tool types for tools stored in a toolbox."""
+
+    CODE_INTERPRETER = "code_interpreter"
+    """CODE_INTERPRETER."""
+    FILE_SEARCH = "file_search"
+    """FILE_SEARCH."""
+    WEB_SEARCH = "web_search"
+    """WEB_SEARCH."""
+    MCP = "mcp"
+    """MCP."""
+    AZURE_AI_SEARCH = "azure_ai_search"
+    """AZURE_AI_SEARCH."""
+    OPENAPI = "openapi"
+    """OPENAPI."""
+    A2A_PREVIEW = "a2a_preview"
+    """A2A_PREVIEW."""
+    BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
+    """BROWSER_AUTOMATION_PREVIEW."""
+    REMINDER_PREVIEW = "reminder_preview"
+    """REMINDER_PREVIEW."""
+    WORK_IQ_PREVIEW = "work_iq_preview"
+    """WORK_IQ_PREVIEW."""
+    FABRIC_IQ_PREVIEW = "fabric_iq_preview"
+    """FABRIC_IQ_PREVIEW."""
+    TOOLBOX_SEARCH = "toolbox_search"
+    """TOOLBOX_SEARCH."""
+    TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
+    """TOOLBOX_SEARCH_PREVIEW."""
+    A2_A = "a2a"
+    """A2_A."""
+    SHELL = "shell"
+    """SHELL."""
+    WEB_IQ_PREVIEW = "web_iq_preview"
+    """WEB_IQ_PREVIEW."""
+
+
 class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ToolChoiceParamType."""
 
@@ -1035,6 +1366,8 @@ class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MCP."""
     CUSTOM = "custom"
     """CUSTOM."""
+    PROGRAMMATIC_TOOL_CALLING = "programmatic_tool_calling"
+    """PROGRAMMATIC_TOOL_CALLING."""
     APPLY_PATCH = "apply_patch"
     """APPLY_PATCH."""
     SHELL = "shell"
@@ -1051,6 +1384,19 @@ class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """IMAGE_GENERATION."""
     CODE_INTERPRETER = "code_interpreter"
     """CODE_INTERPRETER."""
+    COMPUTER = "computer"
+    """COMPUTER."""
+    COMPUTER_USE = "computer_use"
+    """COMPUTER_USE."""
+
+
+class ToolSearchExecutionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ToolSearchExecutionType."""
+
+    SERVER = "server"
+    """SERVER."""
+    CLIENT = "client"
+    """CLIENT."""
 
 
 class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1060,6 +1406,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FUNCTION."""
     FILE_SEARCH = "file_search"
     """FILE_SEARCH."""
+    COMPUTER = "computer"
+    """COMPUTER."""
     COMPUTER_USE_PREVIEW = "computer_use_preview"
     """COMPUTER_USE_PREVIEW."""
     WEB_SEARCH = "web_search"
@@ -1068,6 +1416,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MCP."""
     CODE_INTERPRETER = "code_interpreter"
     """CODE_INTERPRETER."""
+    PROGRAMMATIC_TOOL_CALLING = "programmatic_tool_calling"
+    """PROGRAMMATIC_TOOL_CALLING."""
     IMAGE_GENERATION = "image_generation"
     """IMAGE_GENERATION."""
     LOCAL_SHELL = "local_shell"
@@ -1076,6 +1426,10 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SHELL."""
     CUSTOM = "custom"
     """CUSTOM."""
+    NAMESPACE = "namespace"
+    """NAMESPACE."""
+    TOOL_SEARCH = "tool_search"
+    """TOOL_SEARCH."""
     WEB_SEARCH_PREVIEW = "web_search_preview"
     """WEB_SEARCH_PREVIEW."""
     APPLY_PATCH = "apply_patch"
@@ -1098,6 +1452,10 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FABRIC_IQ_PREVIEW."""
     TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
     """TOOLBOX_SEARCH_PREVIEW."""
+    WEB_IQ_PREVIEW = "web_iq_preview"
+    """WEB_IQ_PREVIEW."""
+    A2_A = "a2a"
+    """A2_A."""
     AZURE_AI_SEARCH = "azure_ai_search"
     """AZURE_AI_SEARCH."""
     AZURE_FUNCTION = "azure_function"

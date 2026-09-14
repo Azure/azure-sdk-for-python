@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import IotHubClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -41,7 +41,6 @@ from .._utils.utils import prep_if_match, prep_if_none_match
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -52,7 +51,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -77,7 +76,7 @@ def build_private_endpoint_connections_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -113,7 +112,7 @@ def build_private_endpoint_connections_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -150,7 +149,7 @@ def build_private_endpoint_connections_delete_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -181,7 +180,7 @@ def build_private_endpoint_connections_list_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -209,7 +208,7 @@ def build_iot_hub_resource_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -244,7 +243,7 @@ def build_iot_hub_resource_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -281,7 +280,7 @@ def build_iot_hub_resource_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -311,7 +310,7 @@ def build_iot_hub_resource_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -339,7 +338,7 @@ def build_iot_hub_resource_list_by_resource_group_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -366,7 +365,7 @@ def build_iot_hub_resource_list_by_subscription_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -392,7 +391,7 @@ def build_iot_hub_resource_get_valid_skus_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -420,7 +419,7 @@ def build_iot_hub_resource_list_jobs_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -448,7 +447,7 @@ def build_iot_hub_resource_get_job_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -477,7 +476,7 @@ def build_iot_hub_resource_get_quota_metrics_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -505,7 +504,7 @@ def build_iot_hub_resource_get_endpoint_health_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -534,7 +533,7 @@ def build_iot_hub_resource_test_all_routes_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -565,7 +564,7 @@ def build_iot_hub_resource_test_route_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -595,7 +594,7 @@ def build_iot_hub_resource_list_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -623,7 +622,7 @@ def build_iot_hub_resource_get_keys_for_key_name_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -653,7 +652,7 @@ def build_iot_hub_resource_export_devices_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -684,7 +683,7 @@ def build_iot_hub_resource_import_devices_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -714,7 +713,7 @@ def build_iot_hub_resource_get_stats_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -747,7 +746,7 @@ def build_iot_hub_resource_get_event_hub_consumer_group_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -783,7 +782,7 @@ def build_iot_hub_resource_create_event_hub_consumer_group_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -819,7 +818,7 @@ def build_iot_hub_resource_delete_event_hub_consumer_group_request(  # pylint: d
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/eventHubEndpoints/{eventHubEndpointName}/ConsumerGroups/{name}"
     path_format_arguments = {
@@ -844,7 +843,7 @@ def build_iot_hub_resource_list_event_hub_consumer_groups_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -874,7 +873,7 @@ def build_iot_hub_resource_check_name_availability_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -903,7 +902,7 @@ def build_iot_hub_manual_failover_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{iotHubName}/failover"
     path_format_arguments = {
@@ -930,7 +929,7 @@ def build_certificates_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -967,7 +966,7 @@ def build_certificates_create_or_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1011,7 +1010,7 @@ def build_certificates_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/certificates/{certificateName}"
     path_format_arguments = {
@@ -1043,7 +1042,7 @@ def build_certificates_list_by_iot_hub_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1078,7 +1077,7 @@ def build_certificates_generate_verification_code_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1121,7 +1120,7 @@ def build_certificates_verify_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1158,7 +1157,7 @@ def build_private_link_resources_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1187,7 +1186,7 @@ def build_private_link_resources_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1215,7 +1214,7 @@ def build_resource_provider_common_get_subscription_quota_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1445,7 +1444,9 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         resource_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        private_endpoint_connection: Union[
+            _models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1559,7 +1560,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         resource_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: JSON,
+        private_endpoint_connection: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1577,7 +1578,7 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The private endpoint connection with updated properties.
          Required.
-        :type private_endpoint_connection: JSON
+        :type private_endpoint_connection: ~azure.mgmt.iothub.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1627,7 +1628,9 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         resource_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        private_endpoint_connection: Union[
+            _models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.PrivateEndpointConnection]:
         """Update private endpoint connection.
@@ -1642,9 +1645,9 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The private endpoint connection with updated properties. Is
-         one of the following types: PrivateEndpointConnection, JSON, IO[bytes] Required.
-        :type private_endpoint_connection: ~azure.mgmt.iothub.models.PrivateEndpointConnection or JSON
-         or IO[bytes]
+         either a PrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type private_endpoint_connection: ~azure.mgmt.iothub.models.PrivateEndpointConnection or
+         ~azure.mgmt.iothub.types.PrivateEndpointConnection or IO[bytes]
         :return: An instance of LROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iothub.models.PrivateEndpointConnection]
@@ -2006,7 +2009,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         resource_name: str,
-        iot_hub_description: Union[_models.IotHubDescription, JSON, IO[bytes]],
+        iot_hub_description: Union[_models.IotHubDescription, _types.IotHubDescription, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -2134,7 +2137,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         resource_name: str,
-        iot_hub_description: JSON,
+        iot_hub_description: _types.IotHubDescription,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -2153,7 +2156,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :param resource_name: The name of the IoT hub. Required.
         :type resource_name: str
         :param iot_hub_description: The IoT hub metadata and security metadata. Required.
-        :type iot_hub_description: JSON
+        :type iot_hub_description: ~azure.mgmt.iothub.types.IotHubDescription
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2212,7 +2215,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         resource_name: str,
-        iot_hub_description: Union[_models.IotHubDescription, JSON, IO[bytes]],
+        iot_hub_description: Union[_models.IotHubDescription, _types.IotHubDescription, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -2229,9 +2232,10 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param resource_name: The name of the IoT hub. Required.
         :type resource_name: str
-        :param iot_hub_description: The IoT hub metadata and security metadata. Is one of the following
-         types: IotHubDescription, JSON, IO[bytes] Required.
-        :type iot_hub_description: ~azure.mgmt.iothub.models.IotHubDescription or JSON or IO[bytes]
+        :param iot_hub_description: The IoT hub metadata and security metadata. Is either a
+         IotHubDescription type or a IO[bytes] type. Required.
+        :type iot_hub_description: ~azure.mgmt.iothub.models.IotHubDescription or
+         ~azure.mgmt.iothub.types.IotHubDescription or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -2300,7 +2304,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         resource_name: str,
-        iot_hub_tags: Union[_models.TagsResource, JSON, IO[bytes]],
+        iot_hub_tags: Union[_models.TagsResource, _types.TagsResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2404,7 +2408,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         resource_name: str,
-        iot_hub_tags: JSON,
+        iot_hub_tags: _types.TagsResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2419,7 +2423,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :param resource_name: The name of the IoT hub. Required.
         :type resource_name: str
         :param iot_hub_tags: Updated tag information to set into the iot hub instance. Required.
-        :type iot_hub_tags: JSON
+        :type iot_hub_tags: ~azure.mgmt.iothub.types.TagsResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2464,7 +2468,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         resource_name: str,
-        iot_hub_tags: Union[_models.TagsResource, JSON, IO[bytes]],
+        iot_hub_tags: Union[_models.TagsResource, _types.TagsResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.IotHubDescription]:
         """Update an existing IoT Hubs tags.
@@ -2476,9 +2480,10 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param resource_name: The name of the IoT hub. Required.
         :type resource_name: str
-        :param iot_hub_tags: Updated tag information to set into the iot hub instance. Is one of the
-         following types: TagsResource, JSON, IO[bytes] Required.
-        :type iot_hub_tags: ~azure.mgmt.iothub.models.TagsResource or JSON or IO[bytes]
+        :param iot_hub_tags: Updated tag information to set into the iot hub instance. Is either a
+         TagsResource type or a IO[bytes] type. Required.
+        :type iot_hub_tags: ~azure.mgmt.iothub.models.TagsResource or
+         ~azure.mgmt.iothub.types.TagsResource or IO[bytes]
         :return: An instance of LROPoller that returns IotHubDescription. The IotHubDescription is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iothub.models.IotHubDescription]
@@ -3403,7 +3408,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         iot_hub_name: str,
         resource_group_name: str,
-        input: JSON,
+        input: _types.TestAllRoutesInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3418,7 +3423,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type resource_group_name: str
         :param input: Input for testing all routes. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.iothub.types.TestAllRoutesInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3461,7 +3466,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         iot_hub_name: str,
         resource_group_name: str,
-        input: Union[_models.TestAllRoutesInput, JSON, IO[bytes]],
+        input: Union[_models.TestAllRoutesInput, _types.TestAllRoutesInput, IO[bytes]],
         **kwargs: Any
     ) -> _models.TestAllRoutesResult:
         """Test all routes.
@@ -3473,9 +3478,10 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param input: Input for testing all routes. Is one of the following types: TestAllRoutesInput,
-         JSON, IO[bytes] Required.
-        :type input: ~azure.mgmt.iothub.models.TestAllRoutesInput or JSON or IO[bytes]
+        :param input: Input for testing all routes. Is either a TestAllRoutesInput type or a IO[bytes]
+         type. Required.
+        :type input: ~azure.mgmt.iothub.models.TestAllRoutesInput or
+         ~azure.mgmt.iothub.types.TestAllRoutesInput or IO[bytes]
         :return: TestAllRoutesResult. The TestAllRoutesResult is compatible with MutableMapping
         :rtype: ~azure.mgmt.iothub.models.TestAllRoutesResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3581,7 +3587,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         iot_hub_name: str,
         resource_group_name: str,
-        input: JSON,
+        input: _types.TestRouteInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3596,7 +3602,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type resource_group_name: str
         :param input: Route that needs to be tested. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.iothub.types.TestRouteInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3639,7 +3645,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         iot_hub_name: str,
         resource_group_name: str,
-        input: Union[_models.TestRouteInput, JSON, IO[bytes]],
+        input: Union[_models.TestRouteInput, _types.TestRouteInput, IO[bytes]],
         **kwargs: Any
     ) -> _models.TestRouteResult:
         """Test the new route.
@@ -3651,9 +3657,10 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param input: Route that needs to be tested. Is one of the following types: TestRouteInput,
-         JSON, IO[bytes] Required.
-        :type input: ~azure.mgmt.iothub.models.TestRouteInput or JSON or IO[bytes]
+        :param input: Route that needs to be tested. Is either a TestRouteInput type or a IO[bytes]
+         type. Required.
+        :type input: ~azure.mgmt.iothub.models.TestRouteInput or
+         ~azure.mgmt.iothub.types.TestRouteInput or IO[bytes]
         :return: TestRouteResult. The TestRouteResult is compatible with MutableMapping
         :rtype: ~azure.mgmt.iothub.models.TestRouteResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3957,7 +3964,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         resource_name: str,
-        export_devices_parameters: JSON,
+        export_devices_parameters: _types.ExportDevicesRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3979,7 +3986,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type resource_name: str
         :param export_devices_parameters: The parameters that specify the export devices operation.
          Required.
-        :type export_devices_parameters: JSON
+        :type export_devices_parameters: ~azure.mgmt.iothub.types.ExportDevicesRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4029,7 +4036,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         resource_name: str,
-        export_devices_parameters: Union[_models.ExportDevicesRequest, JSON, IO[bytes]],
+        export_devices_parameters: Union[_models.ExportDevicesRequest, _types.ExportDevicesRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.JobResponse:
         """Exports all the device identities in the IoT hub identity registry to an Azure Storage blob
@@ -4048,9 +4055,9 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :param resource_name: The name of the IoT hub. Required.
         :type resource_name: str
         :param export_devices_parameters: The parameters that specify the export devices operation. Is
-         one of the following types: ExportDevicesRequest, JSON, IO[bytes] Required.
-        :type export_devices_parameters: ~azure.mgmt.iothub.models.ExportDevicesRequest or JSON or
-         IO[bytes]
+         either a ExportDevicesRequest type or a IO[bytes] type. Required.
+        :type export_devices_parameters: ~azure.mgmt.iothub.models.ExportDevicesRequest or
+         ~azure.mgmt.iothub.types.ExportDevicesRequest or IO[bytes]
         :return: JobResponse. The JobResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.iothub.models.JobResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4163,7 +4170,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         resource_name: str,
-        import_devices_parameters: JSON,
+        import_devices_parameters: _types.ImportDevicesRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4185,7 +4192,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type resource_name: str
         :param import_devices_parameters: The parameters that specify the import devices operation.
          Required.
-        :type import_devices_parameters: JSON
+        :type import_devices_parameters: ~azure.mgmt.iothub.types.ImportDevicesRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4235,7 +4242,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         resource_name: str,
-        import_devices_parameters: Union[_models.ImportDevicesRequest, JSON, IO[bytes]],
+        import_devices_parameters: Union[_models.ImportDevicesRequest, _types.ImportDevicesRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.JobResponse:
         """Import, update, or delete device identities in the IoT hub identity registry from a blob. For
@@ -4254,9 +4261,9 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :param resource_name: The name of the IoT hub. Required.
         :type resource_name: str
         :param import_devices_parameters: The parameters that specify the import devices operation. Is
-         one of the following types: ImportDevicesRequest, JSON, IO[bytes] Required.
-        :type import_devices_parameters: ~azure.mgmt.iothub.models.ImportDevicesRequest or JSON or
-         IO[bytes]
+         either a ImportDevicesRequest type or a IO[bytes] type. Required.
+        :type import_devices_parameters: ~azure.mgmt.iothub.models.ImportDevicesRequest or
+         ~azure.mgmt.iothub.types.ImportDevicesRequest or IO[bytes]
         :return: JobResponse. The JobResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.iothub.models.JobResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4524,7 +4531,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         resource_name: str,
         event_hub_endpoint_name: str,
         name: str,
-        consumer_group_body: JSON,
+        consumer_group_body: _types.EventHubConsumerGroupBodyDescription,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4543,7 +4550,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :param name: The name of the consumer group to retrieve. Required.
         :type name: str
         :param consumer_group_body: The consumer group to add. Required.
-        :type consumer_group_body: JSON
+        :type consumer_group_body: ~azure.mgmt.iothub.types.EventHubConsumerGroupBodyDescription
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4596,7 +4603,9 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         resource_name: str,
         event_hub_endpoint_name: str,
         name: str,
-        consumer_group_body: Union[_models.EventHubConsumerGroupBodyDescription, JSON, IO[bytes]],
+        consumer_group_body: Union[
+            _models.EventHubConsumerGroupBodyDescription, _types.EventHubConsumerGroupBodyDescription, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.EventHubConsumerGroupInfo:
         """Add a consumer group to an Event Hub-compatible endpoint in an IoT hub.
@@ -4612,10 +4621,10 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type event_hub_endpoint_name: str
         :param name: The name of the consumer group to retrieve. Required.
         :type name: str
-        :param consumer_group_body: The consumer group to add. Is one of the following types:
-         EventHubConsumerGroupBodyDescription, JSON, IO[bytes] Required.
+        :param consumer_group_body: The consumer group to add. Is either a
+         EventHubConsumerGroupBodyDescription type or a IO[bytes] type. Required.
         :type consumer_group_body: ~azure.mgmt.iothub.models.EventHubConsumerGroupBodyDescription or
-         JSON or IO[bytes]
+         ~azure.mgmt.iothub.types.EventHubConsumerGroupBodyDescription or IO[bytes]
         :return: EventHubConsumerGroupInfo. The EventHubConsumerGroupInfo is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.iothub.models.EventHubConsumerGroupInfo
@@ -4887,14 +4896,14 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def check_name_availability(
-        self, operation_inputs: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, operation_inputs: _types.OperationInputs, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.IotHubNameAvailabilityInfo:
         """Check if an IoT hub name is available.
 
         Check if an IoT hub name is available.
 
         :param operation_inputs: The request body. Required.
-        :type operation_inputs: JSON
+        :type operation_inputs: ~azure.mgmt.iothub.types.OperationInputs
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4925,15 +4934,16 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def check_name_availability(
-        self, operation_inputs: Union[_models.OperationInputs, JSON, IO[bytes]], **kwargs: Any
+        self, operation_inputs: Union[_models.OperationInputs, _types.OperationInputs, IO[bytes]], **kwargs: Any
     ) -> _models.IotHubNameAvailabilityInfo:
         """Check if an IoT hub name is available.
 
         Check if an IoT hub name is available.
 
-        :param operation_inputs: The request body. Is one of the following types: OperationInputs,
-         JSON, IO[bytes] Required.
-        :type operation_inputs: ~azure.mgmt.iothub.models.OperationInputs or JSON or IO[bytes]
+        :param operation_inputs: The request body. Is either a OperationInputs type or a IO[bytes]
+         type. Required.
+        :type operation_inputs: ~azure.mgmt.iothub.models.OperationInputs or
+         ~azure.mgmt.iothub.types.OperationInputs or IO[bytes]
         :return: IotHubNameAvailabilityInfo. The IotHubNameAvailabilityInfo is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.iothub.models.IotHubNameAvailabilityInfo
@@ -5026,7 +5036,7 @@ class IotHubOperations:
         self,
         iot_hub_name: str,
         resource_group_name: str,
-        failover_input: Union[_models.FailoverInput, JSON, IO[bytes]],
+        failover_input: Union[_models.FailoverInput, _types.FailoverInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5137,7 +5147,7 @@ class IotHubOperations:
         self,
         iot_hub_name: str,
         resource_group_name: str,
-        failover_input: JSON,
+        failover_input: _types.FailoverInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5155,7 +5165,7 @@ class IotHubOperations:
         :param failover_input: Region to failover to. Must be the Azure paired region. Get the value
          from the secondary location in the locations property. To learn more, see
          `https://aka.ms/manualfailover/region <https://aka.ms/manualfailover/region>`_. Required.
-        :type failover_input: JSON
+        :type failover_input: ~azure.mgmt.iothub.types.FailoverInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5201,7 +5211,7 @@ class IotHubOperations:
         self,
         iot_hub_name: str,
         resource_group_name: str,
-        failover_input: Union[_models.FailoverInput, JSON, IO[bytes]],
+        failover_input: Union[_models.FailoverInput, _types.FailoverInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Manually initiate a failover for the IoT Hub to its secondary region.
@@ -5216,9 +5226,10 @@ class IotHubOperations:
         :type resource_group_name: str
         :param failover_input: Region to failover to. Must be the Azure paired region. Get the value
          from the secondary location in the locations property. To learn more, see
-         `https://aka.ms/manualfailover/region <https://aka.ms/manualfailover/region>`_. Is one of the
-         following types: FailoverInput, JSON, IO[bytes] Required.
-        :type failover_input: ~azure.mgmt.iothub.models.FailoverInput or JSON or IO[bytes]
+         `https://aka.ms/manualfailover/region <https://aka.ms/manualfailover/region>`_. Is either a
+         FailoverInput type or a IO[bytes] type. Required.
+        :type failover_input: ~azure.mgmt.iothub.models.FailoverInput or
+         ~azure.mgmt.iothub.types.FailoverInput or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5410,7 +5421,7 @@ class CertificatesOperations:
         resource_group_name: str,
         resource_name: str,
         certificate_name: str,
-        certificate_description: JSON,
+        certificate_description: _types.CertificateDescription,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -5429,7 +5440,7 @@ class CertificatesOperations:
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
         :param certificate_description: The certificate body. Required.
-        :type certificate_description: JSON
+        :type certificate_description: ~azure.mgmt.iothub.types.CertificateDescription
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5488,7 +5499,7 @@ class CertificatesOperations:
         resource_group_name: str,
         resource_name: str,
         certificate_name: str,
-        certificate_description: Union[_models.CertificateDescription, JSON, IO[bytes]],
+        certificate_description: Union[_models.CertificateDescription, _types.CertificateDescription, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -5505,10 +5516,10 @@ class CertificatesOperations:
         :type resource_name: str
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
-        :param certificate_description: The certificate body. Is one of the following types:
-         CertificateDescription, JSON, IO[bytes] Required.
-        :type certificate_description: ~azure.mgmt.iothub.models.CertificateDescription or JSON or
-         IO[bytes]
+        :param certificate_description: The certificate body. Is either a CertificateDescription type
+         or a IO[bytes] type. Required.
+        :type certificate_description: ~azure.mgmt.iothub.models.CertificateDescription or
+         ~azure.mgmt.iothub.types.CertificateDescription or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -5896,7 +5907,7 @@ class CertificatesOperations:
         resource_group_name: str,
         resource_name: str,
         certificate_name: str,
-        certificate_verification_body: JSON,
+        certificate_verification_body: _types.CertificateVerificationDescription,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -5916,7 +5927,8 @@ class CertificatesOperations:
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
         :param certificate_verification_body: The name of the certificate. Required.
-        :type certificate_verification_body: JSON
+        :type certificate_verification_body:
+         ~azure.mgmt.iothub.types.CertificateVerificationDescription
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -5974,7 +5986,9 @@ class CertificatesOperations:
         resource_group_name: str,
         resource_name: str,
         certificate_name: str,
-        certificate_verification_body: Union[_models.CertificateVerificationDescription, JSON, IO[bytes]],
+        certificate_verification_body: Union[
+            _models.CertificateVerificationDescription, _types.CertificateVerificationDescription, IO[bytes]
+        ],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -5992,10 +6006,11 @@ class CertificatesOperations:
         :type resource_name: str
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
-        :param certificate_verification_body: The name of the certificate. Is one of the following
-         types: CertificateVerificationDescription, JSON, IO[bytes] Required.
+        :param certificate_verification_body: The name of the certificate. Is either a
+         CertificateVerificationDescription type or a IO[bytes] type. Required.
         :type certificate_verification_body:
-         ~azure.mgmt.iothub.models.CertificateVerificationDescription or JSON or IO[bytes]
+         ~azure.mgmt.iothub.models.CertificateVerificationDescription or
+         ~azure.mgmt.iothub.types.CertificateVerificationDescription or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.

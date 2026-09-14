@@ -5,7 +5,7 @@ from azure.ai.evaluation._evaluators._task_navigation_efficiency import (
     _TaskNavigationEfficiencyEvaluator,
     _TaskNavigationEfficiencyMatchingMode,
 )
-from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 @pytest.mark.unittest
@@ -398,9 +398,155 @@ class TestTaskNavigationEfficiencyEvaluator:
         assert evaluator2.matching_mode == _TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH
 
         # Test invalid string mode
-        with pytest.raises(ValueError):
+        with pytest.raises(EvaluationException):
             _TaskNavigationEfficiencyEvaluator(matching_mode="invalid_mode")
 
         # Test invalid type for mode
-        with pytest.raises(Exception):  # EvaluationException
+        with pytest.raises(EvaluationException):
             _TaskNavigationEfficiencyEvaluator(matching_mode=123)  # type: ignore
+
+    def test_matching_mode_validation_error_metadata(self):
+        """Test that invalid matching_mode raises EvaluationException with correct metadata."""
+        # Invalid string mode
+        with pytest.raises(EvaluationException) as exc_info:
+            _TaskNavigationEfficiencyEvaluator(matching_mode="invalid_mode")
+
+        exc = exc_info.value
+        assert exc.blame == ErrorBlame.USER_ERROR
+        assert exc.category == ErrorCategory.INVALID_VALUE
+        assert exc.target == ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR
+
+        # Invalid type for mode
+        with pytest.raises(EvaluationException) as exc_info:
+            _TaskNavigationEfficiencyEvaluator(matching_mode=123)  # type: ignore
+
+        exc = exc_info.value
+        assert exc.blame == ErrorBlame.USER_ERROR
+        assert exc.category == ErrorCategory.INVALID_VALUE
+        assert exc.target == ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR
+
+    def test_empty_ground_truth_error_metadata(self):
+        """Test that empty ground_truth raises EvaluationException with correct metadata."""
+        evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
+
+        response = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {}}],
+            },
+        ]
+
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(response=response, ground_truth=[])
+
+        exc = exc_info.value
+        assert exc.blame == ErrorBlame.USER_ERROR
+        assert exc.category == ErrorCategory.INVALID_VALUE
+        assert exc.target == ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR
+
+    def test_invalid_ground_truth_type_error_metadata(self):
+        """Test that an invalid ground_truth type raises EvaluationException with correct metadata."""
+        evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
+
+        response = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {}}],
+            },
+        ]
+
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(response=response, ground_truth="not-a-valid-ground-truth")  # type: ignore
+
+        exc = exc_info.value
+        assert exc.blame == ErrorBlame.USER_ERROR
+        assert exc.category == ErrorCategory.INVALID_VALUE
+        assert exc.target == ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR
+
+    # ==================== ALIAS INPUT NORMALIZATION TESTS ====================
+
+    def test_alias_actions_normalized_as_response(self):
+        """Test that 'actions' alias is accepted and normalized to 'response'."""
+        evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
+
+        actions = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {}}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_2", "name": "analyze", "arguments": {}}],
+            },
+        ]
+        ground_truth = ["search", "analyze"]
+
+        result = evaluator(actions=actions, ground_truth=ground_truth)
+        assert result["task_navigation_efficiency_passed"] is True
+        assert result["task_navigation_efficiency_properties"]["precision_score"] == 1.0
+        assert result["task_navigation_efficiency_properties"]["recall_score"] == 1.0
+
+    def test_alias_expected_actions_normalized_as_ground_truth(self):
+        """Test that 'expected_actions' alias is accepted and normalized to 'ground_truth'."""
+        evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
+
+        response = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {}}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_2", "name": "analyze", "arguments": {}}],
+            },
+        ]
+        expected_actions = ["search", "analyze"]
+
+        result = evaluator(response=response, expected_actions=expected_actions)
+        assert result["task_navigation_efficiency_passed"] is True
+        assert result["task_navigation_efficiency_properties"]["precision_score"] == 1.0
+        assert result["task_navigation_efficiency_properties"]["recall_score"] == 1.0
+
+    def test_both_aliases_normalized_and_evaluated(self):
+        """Test that both 'actions' and 'expected_actions' aliases together produce the correct result."""
+        evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
+
+        actions = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {}}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_2", "name": "analyze", "arguments": {}}],
+            },
+        ]
+        expected_actions = ["search", "analyze"]
+
+        result = evaluator(actions=actions, expected_actions=expected_actions)
+        assert result["task_navigation_efficiency_passed"] is True
+
+    def test_alias_inputs_mismatch(self):
+        """Test that alias inputs produce a failing result when actions do not match expected_actions."""
+        evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
+
+        # Agent performs 'search' and 'extra_step', but expected is 'search' and 'analyze'
+        actions = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {}}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_2", "name": "extra_step", "arguments": {}}],
+            },
+        ]
+        expected_actions = ["search", "analyze"]
+
+        result = evaluator(actions=actions, expected_actions=expected_actions)
+        assert result["task_navigation_efficiency_passed"] is False
+        assert result["task_navigation_efficiency_result"] == "fail"
+        # precision: 1 match out of 2 agent steps = 0.5
+        assert result["task_navigation_efficiency_properties"]["precision_score"] == 0.5
+        # recall: 1 match out of 2 expected steps = 0.5
+        assert result["task_navigation_efficiency_properties"]["recall_score"] == 0.5

@@ -1,0 +1,14 @@
+{
+  "properties": {
+    "authType": "ApiKey",
+    "category": "CognitiveService",
+    "credentials": {
+      "key": "smoke-speech-api-key"
+    },
+    "isSharedToAll": true,
+    "metadata": {
+      "Kind": "speech"
+    },
+    "target": "https://smoke-speech.cognitiveservices.azure.com/"
+  }
+}

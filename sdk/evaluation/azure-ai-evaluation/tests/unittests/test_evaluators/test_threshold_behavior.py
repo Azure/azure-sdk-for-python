@@ -11,6 +11,7 @@ from azure.ai.evaluation._evaluators._rouge._rouge import RougeScoreEvaluator, R
 from azure.ai.evaluation._evaluators._gleu._gleu import GleuScoreEvaluator
 from azure.ai.evaluation._evaluators._meteor._meteor import MeteorScoreEvaluator
 from azure.ai.evaluation._evaluators._f1_score._f1_score import F1ScoreEvaluator
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 @pytest.mark.unittest
@@ -202,6 +203,24 @@ class TestRougeThresholdBehavior:
         assert mock_result["rouge_precision_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
         assert mock_result["rouge_recall_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
         assert mock_result["rouge_f1_score_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
+
+    @pytest.mark.parametrize(
+        "kwargs",
+        [
+            {"precision_threshold": 1},
+            {"recall_threshold": "0.5"},
+            {"f1_score_threshold": None},
+        ],
+    )
+    def test_rouge_invalid_threshold_type_error_metadata(self, kwargs):
+        """Test that a non-float threshold raises EvaluationException with correct metadata."""
+        with pytest.raises(EvaluationException) as exc_info:
+            RougeScoreEvaluator(rouge_type=RougeType.ROUGE_L, **kwargs)  # type: ignore
+
+        exc = exc_info.value
+        assert exc.blame == ErrorBlame.USER_ERROR
+        assert exc.category == ErrorCategory.INVALID_VALUE
+        assert exc.target == ErrorTarget.ROUGE_EVALUATOR
 
 
 @pytest.mark.unittest

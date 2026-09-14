@@ -1,29 +1,95 @@
-# This file configures spell checking. Items in "words" were initially populated
-# with words that might be spelling errors. Review these words and take
-# appropriate action. For more information, see: https://aka.ms/ci-fix#spell-check
-
-# Spell checking is not case sensitive
-# Keep word lists in alphabetical order so the file is easier to manage
-version: "0.2"
+# cspell configuration for this service. Words are case-insensitive and
+# kept sorted alphabetically. The import of the central config is required.
+import:
+  - ../../.vscode/cspell.json
 words:
-  - dicretorytestfs
-  - mynewfilesystemsasync
-  - myleasefilesystemasync
-  - mymetadatafilesystemsyncasync
-  - mypathfilesystemasync
-  - myclientfilesystemasync
-  - mydirectoryfilesystemasync
   - aasync
-  - basync
-  - mycontainerdirectory
-  - recursiveasync
+  - abcdefghijklmnop
+  - ABFS
+  - adal
+  - adipiscing
+  - adlskey
+  - adlsstorage
+  - amet
   - asyncdownload
+  - basync
+  - consectetur
+  - cpkdirectory
+  - cpkfile
+  - cpksubdirectory
+  - deletionid
+  - dicretorytestfs
+  - dlake
+  - dname
   - download
+  - elit
+  - Fdir
+  - Fdirectory
+  - FFFE
+  - Ffile
+  - filea
+  - fileb
+  - filesys
+  - filetoupdate
+  - fpath
+  - fsname
+  - Fsubdir
+  - ints
+  - ISLNK
+  - ISREG
+  - mday
+  - myaccount
+  - myclientfilesystem
+  - myclientfilesystemasync
+  - mycontainerdirectory
+  - mydir
+  - mydirectoryfilesystem
+  - mydirectoryfilesystemasync
+  - mydomain
+  - myfilesystem
+  - myfilesystemforgetclient
+  - myfilesystemforlistpaths
+  - myleasefilesystem
+  - myleasefilesystemasync
+  - mymetadatafilesystemsync
+  - mymetadatafilesystemsyncasync
+  - mynewdirectory
+  - mynewfile
+  - mynewfilesystem
+  - mynewfilesystems
+  - mynewfilesystemsasync
+  - mypathfilesystem
+  - mypathfilesystemasync
+  - mytestshare
+  - nbytes
+  - newfs
+  - nonexistentfs
+  - oauthdir
+  - prevsharesnapshot
+  - pyacrstoragestorname
+  - pyrmtstoragestorname
+  - racwdlmeop
+  - rcwd
+  - rcwdl
+  - recursiveasync
+  - rwxr
+  - rwxrw
+  - rwxrwxrwx
+  - saoid
+  - sduoid
+  - skdutid
+  - struct
+  - tbody
   - testdir2async
   - testdirasync
-  - oauthdir
+  - testfs
+  - testid
+  - thead
   - uffff
-  - uffffsubdir
-  - ufffffile
   - uffffdir
   - uffffdirectory
+  - ufffffile
+  - uffffsubdir
+  - utdir
+  - vhds
+  - XSMB

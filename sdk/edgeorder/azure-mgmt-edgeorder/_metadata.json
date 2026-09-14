@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2024-02-01",
+  "apiVersions": {
+    "Microsoft.EdgeOrder": "2024-02-01"
+  },
+  "commit": "801a60cdad2669e8f824fedfbabbfe7f7093b940",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/edgeorder/resource-manager/Microsoft.EdgeOrder/EdgeOrder",
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.34.2"
+}

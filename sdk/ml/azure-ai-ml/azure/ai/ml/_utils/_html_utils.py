@@ -7,6 +7,8 @@ from collections import OrderedDict
 from datetime import datetime, timedelta
 from html import escape
 
+module_logger = logging.getLogger(__name__)
+
 SUPPORTED_VALUE_TYPE_TUPLE = (int, float, str, datetime, timedelta)
 TABLE_FMT = '<table style="width:100%">{0}</table>'
 ROW_FMT = "<tr>{0}</tr>"
@@ -46,7 +48,7 @@ def convert_dict_to_table(object_to_convert):
         length = len(list(ordered_obj.values)[0])
         if any(len(v) != length for v in ordered_obj.values()):
             # Case 4
-            logging.warning("Uneven column lengths in table conversion")
+            module_logger.warning("Uneven column lengths in table conversion")
             all_rows.append(values_to_data_row(ordered_obj.values()))
 
         else:
@@ -88,7 +90,7 @@ def to_html(object_to_convert):
     elif len(candidate_converters) == 1:
         converter = _type_to_converter[candidate_converters[0]]
     else:
-        logging.warning("Multiple candidate converters found for type %s", type(object_to_convert))
+        module_logger.warning("Multiple candidate converters found for type %s", type(object_to_convert))
         converter = convert_value
 
     converted_value = converter(object_to_convert)
@@ -111,7 +113,7 @@ def convert_value(value: str) -> str:
     if is_string_link(value):
         return make_link(value)
     if not isinstance(value, SUPPORTED_VALUE_TYPE_TUPLE):
-        logging.warning("Unsupported type %s for html, converting", type(value))
+        module_logger.warning("Unsupported type %s for html, converting", type(value))
 
     # TODO: Figure out a good escaping story here right now it breaks existing tags
     return str(value)

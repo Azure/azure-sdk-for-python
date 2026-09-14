@@ -1,0 +1,28 @@
+{
+  "properties": {
+    "computeId": "smoke-compute",
+    "experimentName": "smoke-experiment",
+    "isArchived": false,
+    "jobType": "AutoML",
+    "outputs": {},
+    "properties": {},
+    "tags": {},
+    "taskDetails": {
+      "limitSettings": {
+        "maxConcurrentTrials": 1,
+        "maxNodes": 1,
+        "maxTrials": 2,
+        "timeout": "PT1H"
+      },
+      "taskType": "TextNER",
+      "trainingData": {
+        "jobInputType": "mltable",
+        "uri": "azureml://datastores/workspaceblobstore/paths/smoke/train/"
+      },
+      "validationData": {
+        "jobInputType": "mltable",
+        "uri": "azureml://datastores/workspaceblobstore/paths/smoke/valid/"
+      }
+    }
+  }
+}

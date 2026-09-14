@@ -56,6 +56,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/DataflowEndpoint_CreateOrUpdate_AIO.json
+# x-ms-original-file: 2026-07-01/DataflowEndpoint_CreateOrUpdate_AIO.json
 if __name__ == "__main__":
     main()

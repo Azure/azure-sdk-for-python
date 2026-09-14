@@ -1495,6 +1495,99 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(len(envelope.data.base_data.properties), 1)
         self.assertEqual(envelope.data.base_data.properties["test"], "asd")
 
+    def test_span_to_envelope_custom_measurements(self):
+        exporter = self._exporter
+        start_time = 1575494316027613500
+        end_time = start_time + 1001000000
+
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            attributes={
+                "test": "asd",
+                "microsoft.custom_measurements": '{"itemsProcessed": 42.0, "queueDepth": 7}',
+            },
+            kind=SpanKind.CLIENT,
+        )
+        span._status = Status(status_code=StatusCode.OK)
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
+        self.assertEqual(
+            envelope.data.base_data.measurements,
+            {"itemsProcessed": 42.0, "queueDepth": 7.0},
+        )
+        self.assertIsNone(envelope.data.base_data.properties.get("microsoft.custom_measurements"))
+
+    def test_span_to_envelope_custom_measurements_request(self):
+        exporter = self._exporter
+        start_time = 1575494316027613500
+        end_time = start_time + 1001000000
+
+        links = []
+        links.append(
+            Link(
+                context=SpanContext(
+                    trace_id=36873507687745823477771305566750195431,
+                    span_id=12030755672171557337,
+                    is_remote=False,
+                ),
+                attributes={"enqueuedTime": 3000000000000},
+            )
+        )
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            attributes={
+                "az.namespace": "Microsoft.EventHub",
+                "microsoft.custom_measurements": '{"itemsProcessed": 42.0}',
+            },
+            kind=SpanKind.CONSUMER,
+            links=links,
+        )
+        span._status = Status(status_code=StatusCode.OK)
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_type, "RequestData")
+        # Custom measurements are merged with the measurements set by the exporter
+        self.assertEqual(envelope.data.base_data.measurements["itemsProcessed"], 42.0)
+        self.assertIn("timeSinceEnqueued", envelope.data.base_data.measurements)
+        self.assertIsNone(envelope.data.base_data.properties.get("microsoft.custom_measurements"))
+
+    def test_span_to_envelope_custom_measurements_invalid(self):
+        exporter = self._exporter
+        start_time = 1575494316027613500
+        end_time = start_time + 1001000000
+
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            attributes={
+                "microsoft.custom_measurements": "not json",
+            },
+            kind=SpanKind.CLIENT,
+        )
+        span._status = Status(status_code=StatusCode.OK)
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.measurements, {})
+        self.assertIsNone(envelope.data.base_data.properties.get("microsoft.custom_measurements"))
+
     def test_span_to_envelope_properties_links(self):
         exporter = self._exporter
         start_time = 1575494316027613500
@@ -1696,6 +1789,45 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.properties["test"], "asd")
         self.assertEqual(envelope.data.base_data.message, "test event")
         self.assertEqual(envelope.data.base_type, "MessageData")
+
+    def test_span_events_to_envelopes_custom_measurements(self):
+        exporter = self._exporter
+        time = 1575494316027613500
+
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            kind=SpanKind.CLIENT,
+        )
+        span.add_event(
+            "test event",
+            {"test": "asd", "microsoft.custom_measurements": '{"itemsProcessed": 42.0}'},
+            time,
+        )
+        span.add_event(
+            "exception",
+            {
+                "exception.type": "ZeroDivisionError",
+                "exception.message": "zero division error",
+                "microsoft.custom_measurements": '{"itemsProcessed": 42.0}',
+            },
+            time,
+        )
+        span.start()
+        span.end()
+        span._status = Status(status_code=StatusCode.OK)
+        envelopes = exporter._span_events_to_envelopes(span)
+
+        self.assertEqual(len(envelopes), 2)
+        for envelope, base_type in zip(envelopes, ("MessageData", "ExceptionData")):
+            with self.subTest(base_type=base_type):
+                self.assertEqual(envelope.data.base_type, base_type)
+                self.assertEqual(envelope.data.base_data.measurements, {"itemsProcessed": 42.0})
+                self.assertIsNone(envelope.data.base_data.properties.get("microsoft.custom_measurements"))
 
     def test_span_events_to_envelopes_sample_rate(self):
         exporter = self._exporter

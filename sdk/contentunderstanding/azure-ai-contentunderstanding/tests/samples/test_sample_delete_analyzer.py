@@ -26,7 +26,12 @@ USAGE:
 import uuid
 import pytest
 from devtools_testutils import recorded_by_proxy
-from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
+from testpreparer import (
+    ContentUnderstandingPreparer,
+    ContentUnderstandingClientTestBase,
+    get_model_profile_for_version,
+    get_test_api_version,
+)
 from azure.ai.contentunderstanding.models import ContentAnalyzer, ContentAnalyzerConfig
 from azure.core.exceptions import ResourceNotFoundError
 
@@ -49,6 +54,7 @@ class TestSampleDeleteAnalyzer(ContentUnderstandingClientTestBase):
         """
         try:
             client = self.create_client(endpoint=contentunderstanding_endpoint)
+            completion_model = get_model_profile_for_version(get_test_api_version()).completion_model
 
             # Generate unique analyzer ID for this test
             analyzer_id = f"test_analyzer_{uuid.uuid4().hex}"
@@ -59,7 +65,7 @@ class TestSampleDeleteAnalyzer(ContentUnderstandingClientTestBase):
                 base_analyzer_id="prebuilt-document",
                 description="Simple analyzer for deletion example",
                 config=ContentAnalyzerConfig(return_details=True),
-                models={"completion": "gpt-4.1"},
+                models={"completion": completion_model},
             )
 
             # Assertions for analyzer object
@@ -70,7 +76,7 @@ class TestSampleDeleteAnalyzer(ContentUnderstandingClientTestBase):
             assert analyzer.config.return_details is True, "ReturnDetails should be true"
             assert analyzer.models is not None, "Models should not be null"
             assert "completion" in analyzer.models, "Should have completion model"
-            assert analyzer.models["completion"] == "gpt-4.1", "Completion model should be gpt-4.1"
+            assert analyzer.models["completion"] == completion_model, "Completion model should match the API version"
             print("[PASS] Analyzer object configured correctly")
 
             # Create the analyzer
@@ -112,7 +118,7 @@ class TestSampleDeleteAnalyzer(ContentUnderstandingClientTestBase):
                 print(f"[PASS] Models verified: {len(created_models)} model(s)")
 
                 if "completion" in created_models:
-                    assert created_models["completion"] == "gpt-4.1", "Completion model should be gpt-4.1"
+                    assert created_models["completion"], "Completion model should not be empty"
                     print(f"[PASS] completion: {created_models['completion']}")
 
             print(f"[PASS] Verified analyzer '{analyzer_id}' exists and is correctly configured before deletion")

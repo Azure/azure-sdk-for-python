@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-03/sharedGalleryExamples/SharedGalleryImageVersion_Get.json
+# x-ms-original-file: 2025-12-03/sharedGalleryExamples/SharedGalleryImageVersion_Get.json
 if __name__ == "__main__":
     main()

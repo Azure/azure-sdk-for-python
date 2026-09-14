@@ -349,20 +349,42 @@ class FoundryResultProcessor:
             # Get role, handling api_role property
             role = getattr(piece, "api_role", None) or getattr(piece, "role", "user")
 
-            # Get content: for user messages show the original adversarial prompt,
-            # not the converter output (e.g., Base64-encoded or tense-rephrased text).
-            # For assistant messages, show the response as-is.
-            if role == "user":
-                original = getattr(piece, "original_value", None)
-                converted = getattr(piece, "converted_value", None)
-                content = original if isinstance(original, str) and original else (converted or "")
+            # Get content. For both user and assistant turns, ``content`` reflects
+            # what was actually sent on the wire (``converted_value``) so the
+            # stored conversation matches the payload the target received /
+            # produced. When a converter (Base64, Flip, Morse, Caesar, etc.) was
+            # applied, the pre-conversion adversarial objective is preserved as
+            # ``original_value`` on the same message so consumers can still
+            # display / score against the decoded text without losing fidelity
+            # of the actual attack surface.
+            #
+            # ``converted_value`` / ``original_value`` are passed through
+            # without forcing them to ``str`` so non-text payloads (bytes,
+            # structured / multimodal content) survive unchanged. ``content``
+            # falls back to ``""`` only when both fields are falsy / missing.
+            original = getattr(piece, "original_value", None)
+            converted = getattr(piece, "converted_value", None)
+            if converted:
+                content = converted
+            elif original:
+                content = original
             else:
-                content = getattr(piece, "converted_value", None) or getattr(piece, "original_value", "")
+                content = ""
 
             message: Dict[str, Any] = {
                 "role": role,
                 "content": content,
             }
+
+            # Preserve the pre-converter objective when it differs from the
+            # transmitted content. This keeps the audit trail intact: callers
+            # can compare ``content`` (what the target saw) with
+            # ``original_value`` (what the attack meant to say) for every
+            # encoding-based strategy. Restricted to strings because the
+            # audit field is only meaningful when both values are textual
+            # (and arbitrary cross-type inequality would be too aggressive).
+            if isinstance(original, str) and original and isinstance(content, str) and original != content:
+                message["original_value"] = original
 
             # Add context from labels if present (for XPIA)
             if hasattr(piece, "labels") and piece.labels:

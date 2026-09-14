@@ -17,7 +17,7 @@ from azure.ai.agentserver.responses._options import ResponsesServerOptions
 def _make_slow_handler(delay_seconds: float = 0.5, event_count: int = 2):
     """Factory for a handler that yields events with a configurable delay between them."""
 
-    def _handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             for i in range(event_count):
                 if i > 0:
@@ -34,7 +34,7 @@ def _make_slow_handler(delay_seconds: float = 0.5, event_count: int = 2):
     return _handler
 
 
-def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Minimal handler producing an empty stream."""
 
     async def _events():
@@ -140,9 +140,9 @@ def test_keep_alive__enabled_interleaves_comment_frames_during_slow_handler() ->
         events, comments = _collect_events_and_comments(response)
 
     # At least one keep-alive comment should have been sent during the 1.5s gap
-    assert len(comments) >= 1, (
-        f"Expected at least one keep-alive comment, got {len(comments)}. Events: {[e['type'] for e in events]}"
-    )
+    assert (
+        len(comments) >= 1
+    ), f"Expected at least one keep-alive comment, got {len(comments)}. Events: {[e['type'] for e in events]}"
     # All comments should be the standard keep-alive format
     for comment in comments:
         assert comment == ": keep-alive"
@@ -178,9 +178,12 @@ def test_keep_alive__does_not_disrupt_event_stream_integrity() -> None:
 
     event_types = [e["type"] for e in events]
     assert "response.created" in event_types
-    # Sequence numbers should still be monotonically increasing
+    # Sequence numbers must be present, unique, and strictly increasing.
     seq_nums = [e["data"].get("sequence_number") for e in events if "sequence_number" in e["data"]]
-    assert seq_nums == sorted(seq_nums)
+    assert len(seq_nums) >= 2
+    assert all(isinstance(n, int) for n in seq_nums)
+    assert len(set(seq_nums)) == len(seq_nums), f"sequence numbers not unique: {seq_nums}"
+    assert all(b > a for a, b in zip(seq_nums, seq_nums[1:])), f"sequence numbers not strictly increasing: {seq_nums}"
 
 
 def test_keep_alive__no_comments_after_stream_ends() -> None:

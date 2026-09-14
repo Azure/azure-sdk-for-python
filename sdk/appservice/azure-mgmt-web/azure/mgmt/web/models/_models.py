@@ -19862,8 +19862,8 @@ class SiteConfig(_Model):
      <https://www.iana.org/time-zones>`_ (for a quick reference see
      `https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
      <https://en.wikipedia.org/wiki/List_of_tz_database_time_zones>`_). For Windows, expects one of
-     the time zones listed under HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows
-     NT\CurrentVersion\Time Zones."""
+     the time zones listed under HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows
+     NT\\CurrentVersion\\Time Zones."""
     minimum_elastic_instance_count: Optional[int] = rest_field(
         name="minimumElasticInstanceCount", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -26043,7 +26043,8 @@ class TriggeredJobRun(_Model):
     :vartype web_job_id: str
     :ivar web_job_name: Job name.
     :vartype web_job_name: str
-    :ivar status: Job status. Known values are: "Success", "Failed", and "Error".
+    :ivar status: Job status. Known values are: "Success", "Failed", "Error", "Aborted", and
+     "Running".
     :vartype status: str or ~azure.mgmt.web.models.TriggeredWebJobStatus
     :ivar start_time: Start time.
     :vartype start_time: ~datetime.datetime
@@ -26070,7 +26071,7 @@ class TriggeredJobRun(_Model):
     status: Optional[Union[str, "_models.TriggeredWebJobStatus"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Job status. Known values are: \"Success\", \"Failed\", and \"Error\"."""
+    """Job status. Known values are: \"Success\", \"Failed\", \"Error\", \"Aborted\", and \"Running\"."""
     start_time: Optional[datetime.datetime] = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )

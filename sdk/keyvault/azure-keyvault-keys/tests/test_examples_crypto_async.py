@@ -3,18 +3,23 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest
+from azure.core.exceptions import HttpResponseError
+from azure.keyvault.keys import KeyOperation
 from azure.keyvault.keys.crypto.aio import CryptographyClient
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from _async_test_case import AsyncKeysClientPreparer
-from _test_case import get_decorator
+from _async_test_case import AsyncKeysClientPreparer, get_attestation_token
+from _test_case import get_decorator, get_release_policy
 from _shared.test_case_async import KeyVaultTestCase
+from _keys_test_case import KeysTestCase
 
 all_api_versions = get_decorator(is_async=True, only_vault=True)
+only_hsm_2026_default = get_decorator(only_hsm=True, is_async=True, api_versions=[DEFAULT_VERSION])
 
 
-class TestCryptoExamples(KeyVaultTestCase):
+class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
@@ -118,3 +123,47 @@ class TestCryptoExamples(KeyVaultTestCase):
         verified = await client.verify(SignatureAlgorithm.rs256, digest, signature)
         assert verified.is_valid
         # [END verify]
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm", only_hsm_2026_default)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
+    async def test_secure_wrap_unwrap_async(self, key_client, **kwargs):
+        credential = self.get_credential(CryptographyClient, is_async=True)
+        key_name = self.get_resource_name("crypto-test-secure-wrap-key")
+        attestation_uri = self._get_attestation_uri()
+        release_policy = get_release_policy(attestation_uri)
+        key = await key_client.create_rsa_key(
+            key_name,
+            hardware_protected=True,
+            key_operations=[KeyOperation.secure_wrap_key, KeyOperation.secure_unwrap_key],
+            release_policy=release_policy,
+        )
+        client = CryptographyClient(key, credential, api_version=key_client.api_version)
+
+        # [START secure_wrap_key]
+        from azure.keyvault.keys.crypto import KeySecureWrapAlgorithm
+
+        # the result holds the wrapped key generated inside the trusted execution environment
+        result = await client.secure_wrap_key(KeySecureWrapAlgorithm.rsa_oaep_256)
+        print(result.key_id)
+        print(result.algorithm)
+        encrypted_key = result.encrypted_key
+        # [END secure_wrap_key]
+
+        target_attestation_token = await get_attestation_token(attestation_uri)
+        try:
+            # [START secure_unwrap_key]
+            from azure.keyvault.keys.crypto import KeySecureWrapAlgorithm
+
+            # secure_unwrap_key requires a target environment attestation token to release the key into
+            result = await client.secure_unwrap_key(
+                KeySecureWrapAlgorithm.rsa_oaep_256, encrypted_key, target_attestation_token
+            )
+            print(result.key_id)
+            unwrapped_key = result.key
+            # [END secure_unwrap_key]
+        except HttpResponseError as ex:
+            if self.is_live and "attestation" in ex.message.lower():
+                pytest.skip("Target environment attestation statement could not be verified. Likely transient.")
+            raise

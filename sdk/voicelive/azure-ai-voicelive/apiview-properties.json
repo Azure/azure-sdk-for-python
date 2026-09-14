@@ -48,7 +48,6 @@
         "azure.ai.voicelive.models.ClientEventOutputAudioBufferClear": "VoiceLive.ClientEventOutputAudioBufferClear",
         "azure.ai.voicelive.models.ClientEventResponseCancel": "VoiceLive.ClientEventResponseCancel",
         "azure.ai.voicelive.models.ClientEventResponseCreate": "VoiceLive.ClientEventResponseCreate",
-        "azure.ai.voicelive.models.ClientEventRtcCallSdpCreate": "VoiceLive.ClientEventRtcCallSdpCreate",
         "azure.ai.voicelive.models.ClientEventSessionAvatarConnect": "VoiceLive.ClientEventSessionAvatarConnect",
         "azure.ai.voicelive.models.ClientEventSessionUpdate": "VoiceLive.ClientEventSessionUpdate",
         "azure.ai.voicelive.models.ContentPart": "VoiceLive.ContentPart",
@@ -96,7 +95,6 @@
         "azure.ai.voicelive.models.ResponseSession": "VoiceLive.ResponseSession",
         "azure.ai.voicelive.models.ResponseTextContentPart": "VoiceLive.ResponseTextContentPart",
         "azure.ai.voicelive.models.ResponseWebSearchCallItem": "VoiceLive.ResponseWebSearchCallItem",
-        "azure.ai.voicelive.models.RtcCallErrorDetails": "VoiceLive.RtcCallErrorDetails",
         "azure.ai.voicelive.models.Scene": "VoiceLive.Scene",
         "azure.ai.voicelive.models.ServerEvent": "VoiceLive.ServerEvent",
         "azure.ai.voicelive.models.ServerEventConversationItemCreated": "VoiceLive.ServerEventConversationItemCreated",
@@ -116,8 +114,6 @@
         "azure.ai.voicelive.models.ServerEventMcpListToolsFailed": "VoiceLive.ServerEventMcpListToolsFailed",
         "azure.ai.voicelive.models.ServerEventMcpListToolsInProgress": "VoiceLive.ServerEventMcpListToolsInProgress",
         "azure.ai.voicelive.models.ServerEventOutputAudioBufferCleared": "VoiceLive.ServerEventOutputAudioBufferCleared",
-        "azure.ai.voicelive.models.ServerEventOutputAudioBufferStarted": "VoiceLive.ServerEventOutputAudioBufferStarted",
-        "azure.ai.voicelive.models.ServerEventOutputAudioBufferStopped": "VoiceLive.ServerEventOutputAudioBufferStopped",
         "azure.ai.voicelive.models.ServerEventResponseAnimationBlendshapeDelta": "VoiceLive.ServerEventResponseAnimationBlendshapeDelta",
         "azure.ai.voicelive.models.ServerEventResponseAnimationBlendshapeDone": "VoiceLive.ServerEventResponseAnimationBlendshapeDone",
         "azure.ai.voicelive.models.ServerEventResponseAnimationVisemeDelta": "VoiceLive.ServerEventResponseAnimationVisemeDelta",
@@ -152,8 +148,6 @@
         "azure.ai.voicelive.models.ServerEventResponseWebSearchCallCompleted": "VoiceLive.ServerEventResponseWebSearchCallCompleted",
         "azure.ai.voicelive.models.ServerEventResponseWebSearchCallInProgress": "VoiceLive.ServerEventResponseWebSearchCallInProgress",
         "azure.ai.voicelive.models.ServerEventResponseWebSearchCallSearching": "VoiceLive.ServerEventResponseWebSearchCallSearching",
-        "azure.ai.voicelive.models.ServerEventRtcCallError": "VoiceLive.ServerEventRtcCallError",
-        "azure.ai.voicelive.models.ServerEventRtcCallSdpCreated": "VoiceLive.ServerEventRtcCallSdpCreated",
         "azure.ai.voicelive.models.ServerEventSessionAvatarConnecting": "VoiceLive.ServerEventSessionAvatarConnecting",
         "azure.ai.voicelive.models.ServerEventSessionAvatarSwitchToIdle": "VoiceLive.ServerEventSessionAvatarSwitchToIdle",
         "azure.ai.voicelive.models.ServerEventSessionAvatarSwitchToSpeaking": "VoiceLive.ServerEventSessionAvatarSwitchToSpeaking",
@@ -163,7 +157,6 @@
         "azure.ai.voicelive.models.ServerEventWarningDetails": "VoiceLive.ServerEventWarningDetails",
         "azure.ai.voicelive.models.ServerVad": "VoiceLive.ServerVad",
         "azure.ai.voicelive.models.SessionBase": "VoiceLive.SessionBase",
-        "azure.ai.voicelive.models.SmartEndOfTurnDetection": "VoiceLive.SmartEndOfTurnDetection",
         "azure.ai.voicelive.models.StaticInterimResponseConfig": "VoiceLive.StaticInterimResponseConfig",
         "azure.ai.voicelive.models.SystemMessageItem": "VoiceLive.SystemMessageItem",
         "azure.ai.voicelive.models.TokenUsage": "VoiceLive.TokenUsage",
@@ -208,5 +201,5 @@
         "azure.ai.voicelive.models.ResponseItemStatus": "VoiceLive.ResponseItemStatus",
         "azure.ai.voicelive.models.ServerEventType": "VoiceLive.ServerEventType"
     },
-    "CrossLanguageVersion": "9b238185e57a"
+    "CrossLanguageVersion": "e710d3387810"
 }

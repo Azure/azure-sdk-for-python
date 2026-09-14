@@ -27,6 +27,7 @@ from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code, load_job
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
+from azure.core.serialization import as_attribute_dict
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
@@ -612,9 +613,9 @@ class TestComponent(AzureRecordedTestCase):
         # additional fields added_property in distribution and resources are removed.
         torch_resources = {"instance_count": 2, "properties": {}}
         assert component_entity.distribution.__dict__ == torch_distribution()
-        assert component_entity.resources._to_rest_object().as_dict() == torch_resources
+        assert as_attribute_dict(component_entity.resources._to_rest_object()) == torch_resources
         torch_component_resource = client.components.create_or_update(component_entity)
-        assert torch_component_resource.resources._to_rest_object().as_dict() == torch_resources
+        assert as_attribute_dict(torch_component_resource.resources._to_rest_object()) == torch_resources
         assert torch_component_resource.distribution.__dict__ == torch_distribution(has_strs=True)
 
     def test_tensorflow_component(
@@ -996,7 +997,7 @@ class TestComponent(AzureRecordedTestCase):
         }
         omit_fields = ["name", "creation_context", "id", "code", "environment", "version"]
         rest_component = pydash.omit(
-            command_component._to_rest_object().as_dict()["properties"]["component_spec"],
+            command_component._to_rest_object().as_dict()["properties"]["componentSpec"],
             omit_fields,
         )
 
@@ -1120,7 +1121,7 @@ class TestComponent(AzureRecordedTestCase):
             ),
         ],
     )
-    def test_component_download(self, client: MLClient, randstr, component_path: str, request):
+    def test_component_download(self, client: MLClient, randstr, component_path: str, request, snapshot_hash_sanitizer):
         save_dir = Path(f"./tests/test_configs/components/downloaded", request.node.callspec.id)
         temp_component_name = randstr("component_name")
 
@@ -1222,7 +1223,7 @@ class TestComponent(AzureRecordedTestCase):
 
         assert component._get_origin_code_value() == created_component._get_origin_code_value()
 
-    @pytest.mark.live_test_only("Needs re-recording to work with new test proxy sanitizers")
+    @pytest.mark.skip(reason="Registry service rejects the generated FlowDefinitionDataUri.")
     def test_load_component_from_flow_in_registry(self, registry_client: MLClient, randstr):
         target_path: str = "./tests/test_configs/flows/runs/with_environment.yml"
         component = load_component(

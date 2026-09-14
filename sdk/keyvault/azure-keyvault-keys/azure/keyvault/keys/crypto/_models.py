@@ -27,7 +27,7 @@ from cryptography.hazmat.primitives.serialization import (
     PublicFormat,
 )
 
-from ._enums import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+from ._enums import EncryptionAlgorithm, KeySecureWrapAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from .._models import JsonWebKey
 
 if TYPE_CHECKING:
@@ -616,6 +616,39 @@ class WrapResult:
     """
 
     def __init__(self, key_id: Optional[str], algorithm: KeyWrapAlgorithm, encrypted_key: bytes) -> None:
+        self.key_id = key_id
+        self.algorithm = algorithm
+        self.encrypted_key = encrypted_key
+
+
+class SecureUnwrapResult:
+    """The result of a secure unwrap key operation.
+
+    :param str key_id: Key encryption key's Key Vault identifier.
+    :param algorithm: The secure key wrap algorithm used.
+    :type algorithm: ~azure.keyvault.keys.crypto.KeySecureWrapAlgorithm
+    :param bytes key: The unwrapped key.
+    """
+
+    def __init__(self, key_id: Optional[str], algorithm: KeySecureWrapAlgorithm, key: bytes) -> None:
+        self.key_id = key_id
+        self.algorithm = algorithm
+        self.key = key
+
+
+class SecureWrapResult:
+    """The result of a secure wrap key operation.
+
+    The secure wrap operation creates a new 256-bit AES key inside the trusted execution environment
+    (TEE) and returns the wrapped key bytes encrypted with the key wrapping key.
+
+    :param str key_id: The wrapping key's Key Vault identifier.
+    :param algorithm: The secure key wrap algorithm used.
+    :type algorithm: ~azure.keyvault.keys.crypto.KeySecureWrapAlgorithm
+    :param bytes encrypted_key: The wrapped key bytes generated inside the TEE.
+    """
+
+    def __init__(self, key_id: Optional[str], algorithm: KeySecureWrapAlgorithm, encrypted_key: bytes) -> None:
         self.key_id = key_id
         self.algorithm = algorithm
         self.encrypted_key = encrypted_key

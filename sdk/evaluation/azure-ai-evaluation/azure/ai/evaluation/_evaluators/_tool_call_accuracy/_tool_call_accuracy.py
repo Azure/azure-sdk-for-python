@@ -103,7 +103,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # Initialize input validator
         self._validator = ToolCallsValidator(
             error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
-            check_for_unsupported_tools=True,
+            check_for_unsupported_tools=False,
         )
 
         super().__init__(

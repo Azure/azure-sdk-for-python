@@ -1,0 +1,10 @@
+{
+  "properties": {
+    "dataType": "uri_file",
+    "dataUri": "azureml://datastores/workspaceblobstore/paths/smoke/data/file.csv",
+    "isAnonymous": false,
+    "isArchived": false,
+    "properties": {},
+    "tags": {}
+  }
+}

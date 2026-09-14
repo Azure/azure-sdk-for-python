@@ -108,7 +108,7 @@ Setting any of the following variables to `true` at queue time suppresses the co
 
 ## The pyproject.toml
 
-Starting with [this pr](https://github.com/Azure/azure-sdk-for-python/pull/28345), which checks apply to which packages are now **established** in a `pyproject.toml`, right next to each package's `setup.py`. This not only allows devs to fine-tune which checks that are applied at a package-level, but also seriously reduces confusion as to which checks apply when.
+Starting with [this pr](https://github.com/Azure/azure-sdk-for-python/pull/28345), which checks apply to which packages are now **established** in a `pyproject.toml`, right next to each package's `setup.py` (for legacy packages that still use it). This not only allows devs to fine-tune which checks that are applied at a package-level, but also seriously reduces confusion as to which checks apply when.
 
 We default to **enabling** most of our checks like `pylint`, `mypy`, etc. Due to that, most `pyproject.toml` settings will likely be **disabling** checks.
 
@@ -176,7 +176,7 @@ analyze_python_version = "3.11"
 
 This setting is read by `eng/scripts/dispatch_checks.py` and is passed to `azpysdk` via the `--python` flag (which requires `--isolate` and `uv`). This is useful for packages that use newer syntax or type features that require a more recent Python interpreter.
 
-> **Note:** This setting only affects the Python interpreter version used for the analyze venv; it does not change the minimum supported Python version declared in `setup.py`/`pyproject.toml`.
+> **Note:** This setting only affects the Python interpreter version used for the analyze venv; it does not change the minimum supported Python version declared in `pyproject.toml` (or `setup.py` for legacy packages).
 
 ## Environment variables important to CI
 
@@ -402,7 +402,7 @@ azpysdk verifywhl .
 
 <a name="verifysdist"></a>
 
-Verifies that directories included in the sdist match the manifest file, and ensures that `py.typed` configuration is correct within `setup.py`.
+Verifies that directories included in the sdist match the manifest file, and ensures that `py.typed` configuration is correct within `pyproject.toml` (or `setup.py` for legacy packages).
 
 To run locally:
 
@@ -414,7 +414,7 @@ azpysdk verifysdist .
 
 <a name="verify-keywords"></a>
 
-Verifies that the keyword `azure sdk` is present in the targeted package's `keywords` field (in `setup.py` or `pyproject.toml`). This ensures consistent discovery on PyPI.
+Verifies that the keyword `azure sdk` is present in the targeted package's `keywords` field (in `pyproject.toml`, or `setup.py` for legacy packages). This ensures consistent discovery on PyPI.
 
 To run locally:
 
@@ -458,7 +458,7 @@ azpysdk sdist .
 
 <a name="mindependency"></a>
 
-For each Azure SDK dependency declared in `setup.py` (dev-only requirements are excluded), this check resolves the **oldest** published version available on PyPI that satisfies the requirement range, installs it in place of the in-repo dev version, and then runs the full test suite. This confirms that the package works across the full declared version range — not just against the latest release.
+For each Azure SDK dependency declared in `pyproject.toml` (or `setup.py` for legacy packages; dev-only requirements are excluded), this check resolves the **oldest** published version available on PyPI that satisfies the requirement range, installs it in place of the in-repo dev version, and then runs the full test suite. This confirms that the package works across the full declared version range — not just against the latest release.
 
 To run locally:
 
@@ -474,7 +474,7 @@ The following checks are the additional entries in `FULL_BUILD_SET` beyond the P
 
 <a name="import-all"></a>
 
-The `import_all` check ensures all modules in a target package can be successfully imported. Installing and importing verifies that all package requirements are properly set in `setup.py`/`pyproject.toml` and that the `__all__` for the package is properly defined. This test installs the package and its required packages, then executes `from <package-root-namespace> import *`. For example from `azure-core`, the following would be invoked: `from azure.core import *`.
+The `import_all` check ensures all modules in a target package can be successfully imported. Installing and importing verifies that all package requirements are properly set in `pyproject.toml` (or `setup.py` for legacy packages) and that the `__all__` for the package is properly defined. This test installs the package and its required packages, then executes `from <package-root-namespace> import *`. For example from `azure-core`, the following would be invoked: `from azure.core import *`.
 
 To run locally:
 
@@ -498,7 +498,7 @@ azpysdk whl_no_aio .
 
 <a name="latest-dependency-test"></a>
 
-For each Azure SDK dependency declared in `setup.py`/`pyproject.toml` (dev-only requirements are excluded), this check resolves the **latest** published version available on PyPI that satisfies the requirement range, installs it in place of the in-repo dev version, and then runs the full test suite. This confirms that the package works with the newest available version of each of its dependencies.
+For each Azure SDK dependency declared in `pyproject.toml` (or `setup.py` for legacy packages; dev-only requirements are excluded), this check resolves the **latest** published version available on PyPI that satisfies the requirement range, installs it in place of the in-repo dev version, and then runs the full test suite. This confirms that the package works with the newest available version of each of its dependencies.
 
 To run locally:
 

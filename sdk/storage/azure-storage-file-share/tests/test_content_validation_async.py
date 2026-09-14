@@ -274,3 +274,23 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert content == data
         assert partial == data[5 * 1024 * 1024 : 30 * 1024 * 1024]
+
+    @FileSharePreparer()
+    @pytest.mark.parametrize("a", ["auto", "crc64"])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
+    async def test_download_decompress_with_crc64(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        await self._setup(storage_account_name)
+        file = self.share_client.get_file_client(self._get_file_reference())
+        data = b"abc" * 512
+        await file.upload_file(data)
+
+        # decompress=True should raise ValueError
+        with pytest.raises(ValueError, match="Decompression is not supported when using CRC64 content validation."):
+            await file.download_file(validate_content=a, decompress=True)
+
+        # decompress=False should work fine
+        downloader = await file.download_file(validate_content=a, decompress=False)
+        assert await downloader.readall() == data

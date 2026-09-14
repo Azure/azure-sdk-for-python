@@ -18,7 +18,6 @@ USAGE:
     2) AZURE_SEARCH_API_KEY - the admin key for your search service
 """
 
-
 import os
 import asyncio
 from typing import List
@@ -133,6 +132,24 @@ async def update_index_async():
     # [END update_index_async]
 
 
+async def list_index_names_async():
+    # [START list_index_names_async]
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes.aio import SearchIndexClient
+    from azure.search.documents.indexes.models import ListingSearchType
+
+    index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
+    print("Listing matching index names:")
+    async with index_client:
+        async for name in index_client.list_index_names(
+            search="hotels-sample",
+            page_size=10,
+            search_type=ListingSearchType.PREFIX,
+        ):
+            print(f"  - {name}")
+    # [END list_index_names_async]
+
+
 async def delete_index_async():
     # [START delete_index_async]
     from azure.core.credentials import AzureKeyCredential
@@ -149,4 +166,5 @@ if __name__ == "__main__":
     asyncio.run(create_index_async())
     asyncio.run(get_index_async())
     asyncio.run(update_index_async())
+    asyncio.run(list_index_names_async())
     asyncio.run(delete_index_async())

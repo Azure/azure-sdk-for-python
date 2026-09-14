@@ -19,7 +19,7 @@
           "testSignal": {
             "signalType": "GenerationTokenStatistics",
             "mode": "Enabled",
-            "samplingRate": "0.1",
+            "samplingRate": 0.1,
             "productionData": 
               {
                 "inputDataType": "Trailing",

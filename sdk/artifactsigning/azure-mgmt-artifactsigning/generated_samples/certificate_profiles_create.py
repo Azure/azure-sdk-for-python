@@ -40,12 +40,13 @@ def main():
                 "includePostalCode": True,
                 "includeStreetAddress": False,
                 "profileType": "PublicTrust",
+                "programType": "test",
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-10-13/CertificateProfiles_Create.json
+# x-ms-original-file: 2026-05-15-preview/CertificateProfiles_Create.json
 if __name__ == "__main__":
     main()

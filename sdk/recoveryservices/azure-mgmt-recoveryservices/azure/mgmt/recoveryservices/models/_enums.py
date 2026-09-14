@@ -104,6 +104,17 @@ class EnhancedSecurityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ALWAYS_ON."""
 
 
+class GranularityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of GranularityLevel."""
+
+    VAULT_LEVEL = "VaultLevel"
+    """VAULT_LEVEL."""
+    PROTECTED_ITEM_LEVEL = "ProtectedItemLevel"
+    """PROTECTED_ITEM_LEVEL."""
+    PROTECTED_ITEM_WITH_PARENT_TAG = "ProtectedItemWithParentTag"
+    """PROTECTED_ITEM_WITH_PARENT_TAG."""
+
+
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Identity type that should be used for an operation."""
 
@@ -122,6 +133,15 @@ class ImmutabilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """UNLOCKED."""
     LOCKED = "Locked"
     """LOCKED."""
+
+
+class ImmutabilityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Immutability config type."""
+
+    AS_PER_POLICY = "AsPerPolicy"
+    """Immutability is governed by policy."""
+    TIME_BASED = "TimeBased"
+    """Immutability duration is time-based."""
 
 
 class InfrastructureEncryptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

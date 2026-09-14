@@ -68,7 +68,11 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
                     "metadataSearch": "str",
                     "networkRuleBypassAllowedForTasks": bool,
                     "networkRuleBypassOptions": "str",
-                    "networkRuleSet": {"defaultAction": "str", "ipRules": [{"value": "str", "action": "str"}]},
+                    "networkRuleSet": {
+                        "defaultAction": "str",
+                        "ipRules": [{"value": "str", "action": "str"}],
+                        "virtualNetworkRules": [{"virtualNetworkSubnetResourceId": "str", "action": "str"}],
+                    },
                     "policies": {
                         "azureADAuthenticationAsArmPolicy": {"status": "str"},
                         "exportPolicy": {"status": "str"},
@@ -111,6 +115,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
                     "regionalEndpoints": "str",
                     "roleAssignmentMode": "str",
                     "status": {"displayStatus": "str", "message": "str", "timestamp": "2020-02-20 00:00:00"},
+                    "writableCacheRepos": "str",
                     "zoneRedundancy": "str",
                 },
                 "systemData": {
@@ -160,7 +165,11 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
                     "metadataSearch": "str",
                     "networkRuleBypassAllowedForTasks": bool,
                     "networkRuleBypassOptions": "str",
-                    "networkRuleSet": {"defaultAction": "str", "ipRules": [{"value": "str", "action": "str"}]},
+                    "networkRuleSet": {
+                        "defaultAction": "str",
+                        "ipRules": [{"value": "str", "action": "str"}],
+                        "virtualNetworkRules": [{"virtualNetworkSubnetResourceId": "str", "action": "str"}],
+                    },
                     "policies": {
                         "azureADAuthenticationAsArmPolicy": {"status": "str"},
                         "exportPolicy": {"status": "str"},
@@ -176,6 +185,7 @@ class TestContainerRegistryManagementRegistriesOperations(AzureMgmtRecordedTestC
                     "publicNetworkAccess": "str",
                     "regionalEndpoints": "str",
                     "roleAssignmentMode": "str",
+                    "writableCacheRepos": "str",
                 },
                 "sku": {"name": "str", "tier": "str"},
                 "tags": {"str": "str"},

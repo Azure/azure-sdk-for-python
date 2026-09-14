@@ -41,6 +41,7 @@ class TestDataProtectionMgmtBackupVaultsOperationsAsync(AzureMgmtRecordedTestCas
                     "location": "str",
                     "properties": {
                         "bcdrSecurityLevel": "str",
+                        "costManagementSettings": {"granularityLevel": "str"},
                         "featureSettings": {
                             "crossRegionRestoreSettings": {"state": "str"},
                             "crossSubscriptionRestoreSettings": {"state": "str"},
@@ -112,6 +113,7 @@ class TestDataProtectionMgmtBackupVaultsOperationsAsync(AzureMgmtRecordedTestCas
                         "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                     },
                     "properties": {
+                        "costManagementSettings": {"granularityLevel": "str"},
                         "featureSettings": {
                             "crossRegionRestoreSettings": {"state": "str"},
                             "crossSubscriptionRestoreSettings": {"state": "str"},

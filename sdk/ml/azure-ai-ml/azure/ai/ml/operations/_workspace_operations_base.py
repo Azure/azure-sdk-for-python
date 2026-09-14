@@ -11,10 +11,10 @@ from typing import Any, Callable, Dict, MutableMapping, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp import (
+from azure.ai.ml._restclient.arm_ml_service import (
     MachineLearningServicesMgmtClient as ServiceClient102024Preview,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
@@ -32,6 +32,7 @@ from azure.ai.ml._utils._workspace_utils import (
     get_resource_and_group_name,
     get_resource_group_location,
     get_sub_id_resource_and_group_name,
+    set_removed_workspace_property,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_min_sec
 from azure.ai.ml._version import VERSION
@@ -378,9 +379,6 @@ class WorkspaceOperationsBase(ABC):
             system_datastores_auth_mode=kwargs.get(
                 "system_datastores_auth_mode", workspace.system_datastores_auth_mode
             ),
-            allow_role_assignment_on_rg=kwargs.get(
-                "allow_roleassignment_on_rg", workspace.allow_roleassignment_on_rg
-            ),  # diff due to swagger restclient casing diff
             image_build_compute=kwargs.get("image_build_compute", workspace.image_build_compute),
             identity=identity,
             primary_user_assigned_identity=kwargs.get(
@@ -388,7 +386,19 @@ class WorkspaceOperationsBase(ABC):
             ),
             managed_network=managed_network,
             feature_store_settings=feature_store_settings,
-            network_acls=network_acls,
+        )
+        # allowRoleAssignmentOnRG and networkAcls were @removed at api-version 2025-12-01 and are not
+        # constructor fields on the shared arm_ml_service WorkspaceUpdateParameters model; set them on
+        # the flattened wire envelope instead. diff due to swagger restclient casing diff.
+        set_removed_workspace_property(
+            update_param,
+            "allowRoleAssignmentOnRG",
+            kwargs.get("allow_roleassignment_on_rg", workspace.allow_roleassignment_on_rg),
+        )
+        set_removed_workspace_property(
+            update_param,
+            "networkAcls",
+            network_acls.as_dict() if network_acls else None,
         )
         if serverless_compute_settings:
             update_param.serverless_compute_settings = serverless_compute_settings

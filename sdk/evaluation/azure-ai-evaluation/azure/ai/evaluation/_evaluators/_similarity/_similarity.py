@@ -7,7 +7,11 @@ from typing import Dict
 
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase, hoist_messages_to_conversation
+from azure.ai.evaluation._evaluators._common._validators import (
+    MessagesOrQueryResponseInputValidator,
+    ValidatorInterface,
+)
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
@@ -77,6 +81,8 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
     _PROMPTY_FILE = "similarity.prompty"
     _RESULT_KEY = "similarity"
 
+    _validator: ValidatorInterface
+
     id = "azureai://built-in/evaluators/similarity"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
@@ -86,6 +92,8 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._threshold = threshold
         self._higher_is_better = True
+        # Initialize input validator — accepts messages OR query/response(/ground_truth).
+        self._validator = MessagesOrQueryResponseInputValidator(error_target=ErrorTarget.SIMILARITY_EVALUATOR)
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
@@ -138,9 +146,17 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
 
     @override
     def _convert_kwargs_to_eval_input(self, **kwargs):
-        """Convert keyword arguments to evaluation input, with validation."""
-        conversation = kwargs.get("conversation")
-        if conversation is not None:
+        """Convert keyword arguments to evaluation input, with validation.
+
+        Normalize a bare ``messages=[...]`` kwarg (plus optional scalar
+        ``context`` / ``ground_truth`` / ``tool_definitions``) into
+        ``conversation={...}`` via ``hoist_messages_to_conversation`` so
+        the base ``_derive_conversation_converter`` handles per-turn q/r
+        extraction. Falls back to the original single-turn q/r/ground_truth
+        validation when no conversation/messages were provided.
+        """
+        hoist_messages_to_conversation(kwargs)
+        if kwargs.get("conversation") is not None:
             return super()._convert_kwargs_to_eval_input(**kwargs)
 
         query = kwargs.get("query")

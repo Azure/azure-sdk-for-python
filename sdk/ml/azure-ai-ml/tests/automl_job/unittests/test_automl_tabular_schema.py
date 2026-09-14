@@ -9,33 +9,33 @@ import yaml
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_job
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import Classification as RestClassification
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import ClassificationPrimaryMetrics
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.arm_ml_service.models import Classification as RestClassification
+from azure.ai.ml._restclient.arm_ml_service.models import ClassificationPrimaryMetrics
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ClassificationTrainingSettings as RestClassificationTrainingSettings,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import ColumnTransformer as RestColumnTransformer
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import Forecasting as RestForecasting
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import ForecastingPrimaryMetrics
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import ColumnTransformer as RestColumnTransformer
+from azure.ai.ml._restclient.arm_ml_service.models import Forecasting as RestForecasting
+from azure.ai.ml._restclient.arm_ml_service.models import ForecastingPrimaryMetrics
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ForecastingSettings as RestForecastingSettings,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ForecastingTrainingSettings as RestForecastingTrainingSettings,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import Regression as RestRegression
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import RegressionPrimaryMetrics
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import Regression as RestRegression
+from azure.ai.ml._restclient.arm_ml_service.models import RegressionPrimaryMetrics
+from azure.ai.ml._restclient.arm_ml_service.models import (
     RegressionTrainingSettings as RestRegressionTrainingSettings,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     TableVerticalFeaturizationSettings as RestTableFeaturizationSettings,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     TableVerticalLimitSettings as RestTableVerticalLimitSettings,
 )
-from azure.ai.ml._restclient.v2024_01_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     AutoNCrossValidations,
     CustomNCrossValidations,
     JobBase,
@@ -66,14 +66,20 @@ def set_env_var() -> None:
 
 @pytest.fixture
 def limits_expected() -> RestTableVerticalLimitSettings:
-    return RestTableVerticalLimitSettings(
+    limits = RestTableVerticalLimitSettings(
         max_trials=40,
         timeout=to_iso_duration_format_mins(180),
         max_concurrent_trials=5,
         enable_early_termination=True,
         exit_score=0.85,
-        max_nodes=None,
+        max_cores_per_trial=-1,
+        trial_timeout=to_iso_duration_format_mins(30),
     )
+    # ``sweepConcurrentTrials``/``sweepTrials`` are preserved via wire-key (default 0) to match the
+    # legacy msrest wire.
+    limits["sweepConcurrentTrials"] = 0
+    limits["sweepTrials"] = 0
+    return limits
 
 
 @pytest.fixture
@@ -82,6 +88,9 @@ def classification_training_settings_expected() -> RestClassificationTrainingSet
         enable_dnn_training=True,
         enable_model_explainability=True,
         ensemble_model_download_timeout="PT2M",
+        enable_onnx_compatible_models=False,
+        enable_stack_ensemble=True,
+        enable_vote_ensemble=True,
     )
 
 
@@ -91,6 +100,9 @@ def forecasting_training_settings_expected() -> RestForecastingTrainingSettings:
         enable_dnn_training=True,
         enable_model_explainability=True,
         ensemble_model_download_timeout="PT2M",
+        enable_onnx_compatible_models=False,
+        enable_stack_ensemble=True,
+        enable_vote_ensemble=True,
     )
 
 
@@ -100,6 +112,9 @@ def regression_training_settings_expected() -> RestRegressionTrainingSettings:
         enable_dnn_training=True,
         enable_model_explainability=True,
         ensemble_model_download_timeout="PT2M",
+        enable_onnx_compatible_models=False,
+        enable_stack_ensemble=True,
+        enable_vote_ensemble=True,
     )
 
 
@@ -170,7 +185,7 @@ def expected_validation_data_size() -> int:
 
 @pytest.fixture
 def expected_forecasting_settings(mock_workspace_scope: OperationScope) -> RestForecastingSettings:
-    from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    from azure.ai.ml._restclient.arm_ml_service.models import (
         CustomForecastHorizon,
         CustomTargetLags,
         CustomTargetRollingWindowSize,
@@ -179,7 +194,7 @@ def expected_forecasting_settings(mock_workspace_scope: OperationScope) -> RestF
     return RestForecastingSettings(
         country_or_region_for_holidays="US",
         forecast_horizon=CustomForecastHorizon(value=10),
-        target_lags=CustomTargetLags(values=[20]),
+        target_lags=CustomTargetLags(values_property=[20]),
         target_rolling_window_size=CustomTargetRollingWindowSize(value=3),
         time_column_name="abc",
         time_series_id_column_names=["xyz"],
@@ -302,6 +317,7 @@ def _get_rest_automl_job(automl_task, name, compute_id):
         properties={},
         outputs={},
         tags={},
+        is_archived=False,
     )
     result = JobBase(properties=properties)
     result.name = name

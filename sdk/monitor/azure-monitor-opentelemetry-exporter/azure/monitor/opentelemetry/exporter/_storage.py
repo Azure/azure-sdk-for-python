@@ -119,6 +119,10 @@ class LocalFileStorage:
         self._max_size = max_size
         self._retention_period = retention_period
         self._write_timeout = write_timeout
+        # Remote (OneSettings) on/off toggle, independent of _enabled (folder permissions).
+        # When False, put()/gets() no-op but the instance and its maintenance thread stay alive,
+        # so the FEATURE_LOCAL_STORAGE kill-switch can flip storage on/off without teardown.
+        self._active = True
         self._enabled = self._check_and_set_folder_permissions()
         if self._enabled:
             self._maintenance_routine()
@@ -137,6 +141,16 @@ class LocalFileStorage:
         if self._enabled:
             self._maintenance_task.cancel()
             self._maintenance_task.join()
+
+    def enable(self) -> None:
+        # Turn the remote toggle on; put()/gets() resume. No-op if folder permissions were denied.
+        self._active = True
+
+    def disable(self) -> None:
+        # Turn the remote toggle off; put()/gets() become no-ops. The instance and maintenance
+        # thread are left running so storage can be re-enabled later without reconstruction. Any
+        # telemetry already persisted to disk is left in place for retry once re-enabled.
+        self._active = False
 
     def __enter__(self) -> "LocalFileStorage":
         return self
@@ -157,7 +171,7 @@ class LocalFileStorage:
 
     # pylint: disable=too-many-nested-blocks
     def gets(self) -> Generator[LocalFileBlob, None, None]:
-        if self._enabled:
+        if self._enabled and self._active:
             now = _now()
             lease_deadline = _fmt(now)
             retention_deadline = _fmt(now - _seconds(self._retention_period))
@@ -196,6 +210,7 @@ class LocalFileStorage:
             pass
 
     def get(self) -> Optional[LocalFileBlob]:
+        # gets() already gates on _enabled and _active, so no need to re-check _active here.
         if not self._enabled:
             return None
         cursor = self.gets()
@@ -207,12 +222,15 @@ class LocalFileStorage:
 
     def put(self, data: List[Any], lease_period: Optional[int] = None) -> Union[StorageExportResult, str]:
         try:
-            if not self._enabled:
-                if get_local_storage_setup_state_readonly():
-                    return StorageExportResult.CLIENT_READONLY
-                if get_local_storage_setup_state_exception() != "":
-                    # Type conversion has been done to match the return type of this function
-                    return str(get_local_storage_setup_state_exception())
+            # Storage is unavailable when remotely disabled (_active) or never set up (_enabled).
+            if not self._active or not self._enabled:
+                # Only report the specific setup-failure reason when not remotely disabled.
+                if self._active:
+                    if get_local_storage_setup_state_readonly():
+                        return StorageExportResult.CLIENT_READONLY
+                    if get_local_storage_setup_state_exception() != "":
+                        # Type conversion has been done to match the return type of this function
+                        return str(get_local_storage_setup_state_exception())
                 return StorageExportResult.CLIENT_STORAGE_DISABLED
             if not self._check_storage_size():
                 return StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED

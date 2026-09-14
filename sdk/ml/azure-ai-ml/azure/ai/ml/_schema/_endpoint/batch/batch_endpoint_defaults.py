@@ -9,6 +9,7 @@ from typing import Any
 
 from marshmallow import fields, post_load
 
+from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpointDefaults
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 module_logger = logging.getLogger(__name__)
@@ -24,4 +25,4 @@ class BatchEndpointsDefaultsSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
-        return dict(data)
+        return BatchEndpointDefaults(**data)

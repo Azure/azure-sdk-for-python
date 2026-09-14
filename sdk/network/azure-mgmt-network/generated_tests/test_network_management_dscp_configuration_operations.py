@@ -25,7 +25,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
         response = self.client.dscp_configuration.get(
             resource_group_name=resource_group.name,
             dscp_configuration_name="str",
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -188,6 +188,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                 "name": "str",
                                                 "properties": {
                                                     "ddosSettings": {
+                                                        "ddosCustomPolicy": {"id": "str"},
                                                         "ddosProtectionPlan": {"id": "str"},
                                                         "protectionMode": "str",
                                                     },
@@ -468,6 +469,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "billingSku": "str",
                                                                                 "customDnsConfigs": [
                                                                                     {
                                                                                         "fqdn": "str",
@@ -557,6 +559,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "disableBgpRoutePropagation": bool,
+                                                                            "disablePeeringRoute": "str",
                                                                             "provisioningState": "str",
                                                                             "resourceGuid": "str",
                                                                             "routes": [
@@ -568,6 +571,11 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                         "nextHopType": "str",
                                                                                         "addressPrefix": "str",
                                                                                         "hasBgpOverride": bool,
+                                                                                        "nextHop": {
+                                                                                            "nextHopIpAddresses": [
+                                                                                                "str"
+                                                                                            ]
+                                                                                        },
                                                                                         "nextHopIpAddress": "str",
                                                                                         "provisioningState": "str",
                                                                                     },
@@ -643,7 +651,13 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                             },
                                                         },
                                                     },
-                                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                    "ipTags": [
+                                                        {
+                                                            "firstPartyServiceTagId": "str",
+                                                            "ipTagType": "str",
+                                                            "tag": "str",
+                                                        }
+                                                    ],
                                                     "linkedPublicIPAddress": ...,
                                                     "migrationPhase": "str",
                                                     "natGateway": {
@@ -653,6 +667,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                         "name": "str",
                                                         "properties": {
                                                             "idleTimeoutInMinutes": 0,
+                                                            "nat64": "str",
                                                             "provisioningState": "str",
                                                             "publicIpAddresses": [{"id": "str"}],
                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -674,6 +689,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                     "publicIPPrefix": {"id": "str"},
                                                     "resourceGuid": "str",
                                                     "servicePublicIPAddress": ...,
+                                                    "upgradedToV2": bool,
                                                 },
                                                 "sku": {"name": "str", "tier": "str"},
                                                 "tags": {"str": "str"},
@@ -740,6 +756,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -753,7 +770,13 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                         "idleTimeoutInMinutes": 0,
                                                                         "ipAddress": "str",
                                                                         "ipConfiguration": ...,
-                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "ipTags": [
+                                                                            {
+                                                                                "firstPartyServiceTagId": "str",
+                                                                                "ipTagType": "str",
+                                                                                "tag": "str",
+                                                                            }
+                                                                        ],
                                                                         "linkedPublicIPAddress": ...,
                                                                         "migrationPhase": "str",
                                                                         "natGateway": {
@@ -763,6 +786,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -784,6 +808,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                         "publicIPPrefix": {"id": "str"},
                                                                         "resourceGuid": "str",
                                                                         "servicePublicIPAddress": ...,
+                                                                        "upgradedToV2": bool,
                                                                     },
                                                                     "sku": {"name": "str", "tier": "str"},
                                                                     "tags": {"str": "str"},
@@ -985,6 +1010,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "billingSku": "str",
                                                                 "customDnsConfigs": [
                                                                     {"fqdn": "str", "ipAddresses": ["str"]}
                                                                 ],
@@ -1071,6 +1097,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                         "name": "str",
                                                         "properties": {
                                                             "disableBgpRoutePropagation": bool,
+                                                            "disablePeeringRoute": "str",
                                                             "provisioningState": "str",
                                                             "resourceGuid": "str",
                                                             "routes": [
@@ -1082,6 +1109,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                         "nextHopType": "str",
                                                                         "addressPrefix": "str",
                                                                         "hasBgpOverride": bool,
+                                                                        "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                         "nextHopIpAddress": "str",
                                                                         "provisioningState": "str",
                                                                     },
@@ -1165,6 +1193,8 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                                                "enableConnectionTracking": bool,
                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                 "inboundNatPools": [{"id": "str"}],
                                                                 "inboundNatRules": [{"id": "str"}],
@@ -1182,6 +1212,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -1486,6 +1517,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                                             "type": "str",
                                                                                                         }
                                                                                                     ],
+                                                                                                    "billingSku": "str",
                                                                                                     "customDnsConfigs": [
                                                                                                         {
                                                                                                             "fqdn": "str",
@@ -1583,6 +1615,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                                "disablePeeringRoute": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "resourceGuid": "str",
                                                                                                 "routes": [
@@ -1594,6 +1627,11 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                                             "nextHopType": "str",
                                                                                                             "addressPrefix": "str",
                                                                                                             "hasBgpOverride": bool,
+                                                                                                            "nextHop": {
+                                                                                                                "nextHopIpAddresses": [
+                                                                                                                    "str"
+                                                                                                                ]
+                                                                                                            },
                                                                                                             "nextHopIpAddress": "str",
                                                                                                             "provisioningState": "str",
                                                                                                         },
@@ -1675,7 +1713,13 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                 },
                                                                             },
                                                                         },
-                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "ipTags": [
+                                                                            {
+                                                                                "firstPartyServiceTagId": "str",
+                                                                                "ipTagType": "str",
+                                                                                "tag": "str",
+                                                                            }
+                                                                        ],
                                                                         "linkedPublicIPAddress": ...,
                                                                         "migrationPhase": "str",
                                                                         "natGateway": {
@@ -1685,6 +1729,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -1706,6 +1751,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                         "publicIPPrefix": {"id": "str"},
                                                                         "resourceGuid": "str",
                                                                         "servicePublicIPAddress": ...,
+                                                                        "upgradedToV2": bool,
                                                                     },
                                                                     "sku": {"name": "str", "tier": "str"},
                                                                     "tags": {"str": "str"},
@@ -1779,6 +1825,9 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -1796,6 +1845,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                             "ipConfiguration": ...,
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -1809,6 +1859,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -1846,6 +1897,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -2079,6 +2131,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "billingSku": "str",
                                                                                     "customDnsConfigs": [
                                                                                         {
                                                                                             "fqdn": "str",
@@ -2168,6 +2221,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                "disablePeeringRoute": "str",
                                                                                 "provisioningState": "str",
                                                                                 "resourceGuid": "str",
                                                                                 "routes": [
@@ -2179,6 +2233,11 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                             "nextHopType": "str",
                                                                                             "addressPrefix": "str",
                                                                                             "hasBgpOverride": bool,
+                                                                                            "nextHop": {
+                                                                                                "nextHopIpAddresses": [
+                                                                                                    "str"
+                                                                                                ]
+                                                                                            },
                                                                                             "nextHopIpAddress": "str",
                                                                                             "provisioningState": "str",
                                                                                         },
@@ -2498,6 +2557,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -2511,7 +2571,13 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                         "idleTimeoutInMinutes": 0,
                                                                         "ipAddress": "str",
                                                                         "ipConfiguration": ...,
-                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "ipTags": [
+                                                                            {
+                                                                                "firstPartyServiceTagId": "str",
+                                                                                "ipTagType": "str",
+                                                                                "tag": "str",
+                                                                            }
+                                                                        ],
                                                                         "linkedPublicIPAddress": ...,
                                                                         "migrationPhase": "str",
                                                                         "natGateway": {
@@ -2521,6 +2587,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -2542,6 +2609,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                         "publicIPPrefix": {"id": "str"},
                                                                         "resourceGuid": "str",
                                                                         "servicePublicIPAddress": ...,
+                                                                        "upgradedToV2": bool,
                                                                     },
                                                                     "sku": {"name": "str", "tier": "str"},
                                                                     "tags": {"str": "str"},
@@ -2584,6 +2652,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "billingSku": "str",
                                                                 "customDnsConfigs": [
                                                                     {"fqdn": "str", "ipAddresses": ["str"]}
                                                                 ],
@@ -2670,6 +2739,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                         "name": "str",
                                                         "properties": {
                                                             "disableBgpRoutePropagation": bool,
+                                                            "disablePeeringRoute": "str",
                                                             "provisioningState": "str",
                                                             "resourceGuid": "str",
                                                             "routes": [
@@ -2681,6 +2751,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                         "nextHopType": "str",
                                                                         "addressPrefix": "str",
                                                                         "hasBgpOverride": bool,
+                                                                        "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                         "nextHopIpAddress": "str",
                                                                         "provisioningState": "str",
                                                                     },
@@ -2777,6 +2848,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                 "type": "str",
                                             }
                                         ],
+                                        "billingSku": "str",
                                         "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                         "customNetworkInterfaceName": "str",
                                         "ipConfigurations": [
@@ -2892,6 +2964,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "ddosSettings": {
+                                                                        "ddosCustomPolicy": {"id": "str"},
                                                                         "ddosProtectionPlan": {"id": "str"},
                                                                         "protectionMode": "str",
                                                                     },
@@ -2905,7 +2978,13 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                     "idleTimeoutInMinutes": 0,
                                                                     "ipAddress": "str",
                                                                     "ipConfiguration": ...,
-                                                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                    "ipTags": [
+                                                                        {
+                                                                            "firstPartyServiceTagId": "str",
+                                                                            "ipTagType": "str",
+                                                                            "tag": "str",
+                                                                        }
+                                                                    ],
                                                                     "linkedPublicIPAddress": ...,
                                                                     "migrationPhase": "str",
                                                                     "natGateway": {
@@ -2915,6 +2994,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "idleTimeoutInMinutes": 0,
+                                                                            "nat64": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
                                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -2936,6 +3016,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                     "publicIPPrefix": {"id": "str"},
                                                                     "resourceGuid": "str",
                                                                     "servicePublicIPAddress": ...,
+                                                                    "upgradedToV2": bool,
                                                                 },
                                                                 "sku": {"name": "str", "tier": "str"},
                                                                 "tags": {"str": "str"},
@@ -3136,6 +3217,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                     "name": "str",
                                                     "properties": {
                                                         "disableBgpRoutePropagation": bool,
+                                                        "disablePeeringRoute": "str",
                                                         "provisioningState": "str",
                                                         "resourceGuid": "str",
                                                         "routes": [
@@ -3147,6 +3229,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                     "nextHopType": "str",
                                                                     "addressPrefix": "str",
                                                                     "hasBgpOverride": bool,
+                                                                    "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                     "nextHopIpAddress": "str",
                                                                     "provisioningState": "str",
                                                                 },
@@ -3312,6 +3395,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -3326,7 +3410,11 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                 "ipAddress": "str",
                                                                                 "ipConfiguration": ...,
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -3337,6 +3425,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -3368,6 +3457,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -3572,6 +3662,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                 "type": "str",
                                                                             }
                                                                         ],
+                                                                        "billingSku": "str",
                                                                         "customDnsConfigs": [
                                                                             {"fqdn": "str", "ipAddresses": ["str"]}
                                                                         ],
@@ -3658,6 +3749,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "disableBgpRoutePropagation": bool,
+                                                                    "disablePeeringRoute": "str",
                                                                     "provisioningState": "str",
                                                                     "resourceGuid": "str",
                                                                     "routes": [
@@ -3669,6 +3761,9 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                 "nextHopType": "str",
                                                                                 "addressPrefix": "str",
                                                                                 "hasBgpOverride": bool,
+                                                                                "nextHop": {
+                                                                                    "nextHopIpAddresses": ["str"]
+                                                                                },
                                                                                 "nextHopIpAddress": "str",
                                                                                 "provisioningState": "str",
                                                                             },
@@ -3750,6 +3845,8 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                 "id": "str",
                                                 "name": "str",
                                                 "properties": {
+                                                    "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                                    "enableConnectionTracking": bool,
                                                     "gatewayLoadBalancer": {"id": "str"},
                                                     "inboundNatPools": [{"id": "str"}],
                                                     "inboundNatRules": [{"id": "str"}],
@@ -3767,6 +3864,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                         "name": "str",
                                                         "properties": {
                                                             "ddosSettings": {
+                                                                "ddosCustomPolicy": {"id": "str"},
                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                 "protectionMode": "str",
                                                             },
@@ -4059,6 +4157,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                                 "type": "str",
                                                                                             }
                                                                                         ],
+                                                                                        "billingSku": "str",
                                                                                         "customDnsConfigs": [
                                                                                             {
                                                                                                 "fqdn": "str",
@@ -4148,6 +4247,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                    "disablePeeringRoute": "str",
                                                                                     "provisioningState": "str",
                                                                                     "resourceGuid": "str",
                                                                                     "routes": [
@@ -4159,6 +4259,11 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                                 "nextHopType": "str",
                                                                                                 "addressPrefix": "str",
                                                                                                 "hasBgpOverride": bool,
+                                                                                                "nextHop": {
+                                                                                                    "nextHopIpAddresses": [
+                                                                                                        "str"
+                                                                                                    ]
+                                                                                                },
                                                                                                 "nextHopIpAddress": "str",
                                                                                                 "provisioningState": "str",
                                                                                             },
@@ -4236,7 +4341,13 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                     },
                                                                 },
                                                             },
-                                                            "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                            "ipTags": [
+                                                                {
+                                                                    "firstPartyServiceTagId": "str",
+                                                                    "ipTagType": "str",
+                                                                    "tag": "str",
+                                                                }
+                                                            ],
                                                             "linkedPublicIPAddress": ...,
                                                             "migrationPhase": "str",
                                                             "natGateway": {
@@ -4246,6 +4357,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "idleTimeoutInMinutes": 0,
+                                                                    "nat64": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
                                                                     "publicIpAddressesV6": [{"id": "str"}],
@@ -4267,6 +4379,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                             "publicIPPrefix": {"id": "str"},
                                                             "resourceGuid": "str",
                                                             "servicePublicIPAddress": ...,
+                                                            "upgradedToV2": bool,
                                                         },
                                                         "sku": {"name": "str", "tier": "str"},
                                                         "tags": {"str": "str"},
@@ -4340,6 +4453,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -4354,7 +4468,11 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                 "ipAddress": "str",
                                                                                 "ipConfiguration": ...,
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -4365,6 +4483,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -4396,6 +4515,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -4600,6 +4720,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                 "type": "str",
                                                                             }
                                                                         ],
+                                                                        "billingSku": "str",
                                                                         "customDnsConfigs": [
                                                                             {"fqdn": "str", "ipAddresses": ["str"]}
                                                                         ],
@@ -4686,6 +4807,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "disableBgpRoutePropagation": bool,
+                                                                    "disablePeeringRoute": "str",
                                                                     "provisioningState": "str",
                                                                     "resourceGuid": "str",
                                                                     "routes": [
@@ -4697,6 +4819,9 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                 "nextHopType": "str",
                                                                                 "addressPrefix": "str",
                                                                                 "hasBgpOverride": bool,
+                                                                                "nextHop": {
+                                                                                    "nextHopIpAddresses": ["str"]
+                                                                                },
                                                                                 "nextHopIpAddress": "str",
                                                                                 "provisioningState": "str",
                                                                             },
@@ -4802,6 +4927,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                     "type": "str",
                                                                 }
                                                             ],
+                                                            "billingSku": "str",
                                                             "customDnsConfigs": [
                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                             ],
@@ -4925,6 +5051,9 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -4942,6 +5071,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                         "ipConfiguration": ...,
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -4955,6 +5085,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -4990,6 +5121,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -5214,6 +5346,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "disableBgpRoutePropagation": bool,
+                                                                            "disablePeeringRoute": "str",
                                                                             "provisioningState": "str",
                                                                             "resourceGuid": "str",
                                                                             "routes": [
@@ -5225,6 +5358,11 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                         "nextHopType": "str",
                                                                                         "addressPrefix": "str",
                                                                                         "hasBgpOverride": bool,
+                                                                                        "nextHop": {
+                                                                                            "nextHopIpAddresses": [
+                                                                                                "str"
+                                                                                            ]
+                                                                                        },
                                                                                         "nextHopIpAddress": "str",
                                                                                         "provisioningState": "str",
                                                                                     },
@@ -5339,6 +5477,8 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                         "id": "str",
                                                         "name": "str",
                                                         "properties": {
+                                                            "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                                            "enableConnectionTracking": bool,
                                                             "gatewayLoadBalancer": {"id": "str"},
                                                             "inboundNatPools": [{"id": "str"}],
                                                             "inboundNatRules": [{"id": "str"}],
@@ -5356,6 +5496,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "ddosSettings": {
+                                                                        "ddosCustomPolicy": {"id": "str"},
                                                                         "ddosProtectionPlan": {"id": "str"},
                                                                         "protectionMode": "str",
                                                                     },
@@ -5654,6 +5795,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                                         "type": "str",
                                                                                                     }
                                                                                                 ],
+                                                                                                "billingSku": "str",
                                                                                                 "customDnsConfigs": [
                                                                                                     {
                                                                                                         "fqdn": "str",
@@ -5751,6 +5893,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "disableBgpRoutePropagation": bool,
+                                                                                            "disablePeeringRoute": "str",
                                                                                             "provisioningState": "str",
                                                                                             "resourceGuid": "str",
                                                                                             "routes": [
@@ -5762,6 +5905,11 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                                         "nextHopType": "str",
                                                                                                         "addressPrefix": "str",
                                                                                                         "hasBgpOverride": bool,
+                                                                                                        "nextHop": {
+                                                                                                            "nextHopIpAddresses": [
+                                                                                                                "str"
+                                                                                                            ]
+                                                                                                        },
                                                                                                         "nextHopIpAddress": "str",
                                                                                                         "provisioningState": "str",
                                                                                                     },
@@ -5841,7 +5989,13 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                             },
                                                                         },
                                                                     },
-                                                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                    "ipTags": [
+                                                                        {
+                                                                            "firstPartyServiceTagId": "str",
+                                                                            "ipTagType": "str",
+                                                                            "tag": "str",
+                                                                        }
+                                                                    ],
                                                                     "linkedPublicIPAddress": ...,
                                                                     "migrationPhase": "str",
                                                                     "natGateway": {
@@ -5851,6 +6005,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "idleTimeoutInMinutes": 0,
+                                                                            "nat64": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
                                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -5872,6 +6027,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                     "publicIPPrefix": {"id": "str"},
                                                                     "resourceGuid": "str",
                                                                     "servicePublicIPAddress": ...,
+                                                                    "upgradedToV2": bool,
                                                                 },
                                                                 "sku": {"name": "str", "tier": "str"},
                                                                 "tags": {"str": "str"},
@@ -5945,6 +6101,9 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -5962,6 +6121,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                         "ipConfiguration": ...,
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -5975,6 +6135,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -6010,6 +6171,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -6235,6 +6397,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "billingSku": "str",
                                                                                 "customDnsConfigs": [
                                                                                     {
                                                                                         "fqdn": "str",
@@ -6324,6 +6487,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "disableBgpRoutePropagation": bool,
+                                                                            "disablePeeringRoute": "str",
                                                                             "provisioningState": "str",
                                                                             "resourceGuid": "str",
                                                                             "routes": [
@@ -6335,6 +6499,11 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                         "nextHopType": "str",
                                                                                         "addressPrefix": "str",
                                                                                         "hasBgpOverride": bool,
+                                                                                        "nextHop": {
+                                                                                            "nextHopIpAddresses": [
+                                                                                                "str"
+                                                                                            ]
+                                                                                        },
                                                                                         "nextHopIpAddress": "str",
                                                                                         "provisioningState": "str",
                                                                                     },
@@ -6540,6 +6709,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "ddosSettings": {
+                                                                        "ddosCustomPolicy": {"id": "str"},
                                                                         "ddosProtectionPlan": {"id": "str"},
                                                                         "protectionMode": "str",
                                                                     },
@@ -6838,6 +7008,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                                         "type": "str",
                                                                                                     }
                                                                                                 ],
+                                                                                                "billingSku": "str",
                                                                                                 "customDnsConfigs": [
                                                                                                     {
                                                                                                         "fqdn": "str",
@@ -6935,6 +7106,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "disableBgpRoutePropagation": bool,
+                                                                                            "disablePeeringRoute": "str",
                                                                                             "provisioningState": "str",
                                                                                             "resourceGuid": "str",
                                                                                             "routes": [
@@ -6946,6 +7118,11 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                                         "nextHopType": "str",
                                                                                                         "addressPrefix": "str",
                                                                                                         "hasBgpOverride": bool,
+                                                                                                        "nextHop": {
+                                                                                                            "nextHopIpAddresses": [
+                                                                                                                "str"
+                                                                                                            ]
+                                                                                                        },
                                                                                                         "nextHopIpAddress": "str",
                                                                                                         "provisioningState": "str",
                                                                                                     },
@@ -7025,7 +7202,13 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                             },
                                                                         },
                                                                     },
-                                                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                    "ipTags": [
+                                                                        {
+                                                                            "firstPartyServiceTagId": "str",
+                                                                            "ipTagType": "str",
+                                                                            "tag": "str",
+                                                                        }
+                                                                    ],
                                                                     "linkedPublicIPAddress": ...,
                                                                     "migrationPhase": "str",
                                                                     "natGateway": {
@@ -7035,6 +7218,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "idleTimeoutInMinutes": 0,
+                                                                            "nat64": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
                                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -7056,6 +7240,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                     "publicIPPrefix": {"id": "str"},
                                                                     "resourceGuid": "str",
                                                                     "servicePublicIPAddress": ...,
+                                                                    "upgradedToV2": bool,
                                                                 },
                                                                 "sku": {"name": "str", "tier": "str"},
                                                                 "tags": {"str": "str"},
@@ -7128,6 +7313,9 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -7145,6 +7333,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                         "ipConfiguration": ...,
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -7158,6 +7347,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -7193,6 +7383,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -7418,6 +7609,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "billingSku": "str",
                                                                                 "customDnsConfigs": [
                                                                                     {
                                                                                         "fqdn": "str",
@@ -7507,6 +7699,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "disableBgpRoutePropagation": bool,
+                                                                            "disablePeeringRoute": "str",
                                                                             "provisioningState": "str",
                                                                             "resourceGuid": "str",
                                                                             "routes": [
@@ -7518,6 +7711,11 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                                                         "nextHopType": "str",
                                                                                         "addressPrefix": "str",
                                                                                         "hasBgpOverride": bool,
+                                                                                        "nextHop": {
+                                                                                            "nextHopIpAddresses": [
+                                                                                                "str"
+                                                                                            ]
+                                                                                        },
                                                                                         "nextHopIpAddress": "str",
                                                                                         "provisioningState": "str",
                                                                                     },
@@ -7638,7 +7836,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7650,7 +7848,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
         response = self.client.dscp_configuration.begin_delete(
             resource_group_name=resource_group.name,
             dscp_configuration_name="str",
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7661,7 +7859,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
     def test_dscp_configuration_list(self, resource_group):
         response = self.client.dscp_configuration.list(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7671,7 +7869,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
     @recorded_by_proxy
     def test_dscp_configuration_list_all(self, resource_group):
         response = self.client.dscp_configuration.list_all(
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

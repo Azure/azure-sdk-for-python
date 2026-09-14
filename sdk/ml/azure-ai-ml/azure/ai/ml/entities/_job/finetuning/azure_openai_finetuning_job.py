@@ -6,17 +6,27 @@
 
 from typing import Any, Dict
 
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ModelProvider as RestModelProvider,
     AzureOpenAiFineTuning as RestAzureOpenAIFineTuning,
     FineTuningJob as RestFineTuningJob,
     JobBase as RestJobBase,
+    JobOutput as RestJobOutput,
+    MLFlowModelJobInput,
+    UriFileJobInput,
 )
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
+from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._job._input_output_helpers import (
+    from_rest_data_outputs,
+    to_hybrid_rest_model,
+    to_rest_data_outputs,
+)
 
 from azure.ai.ml.entities._job.finetuning.finetuning_vertical import FineTuningVertical
-from azure.ai.ml.entities._job.finetuning.azure_openai_hyperparameters import AzureOpenAIHyperparameters
+from azure.ai.ml.entities._job.finetuning.azure_openai_hyperparameters import (
+    AzureOpenAIHyperparameters,
+)
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._utils._experimental import experimental
@@ -77,21 +87,32 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
         self._hyperparameters = hyperparameters
 
     def _to_rest_object(self) -> "RestFineTuningJob":
-        """Convert CustomFineTuningVertical object to a RestFineTuningJob object.
+        """Convert AzureOpenAIFineTuningJob object to a RestFineTuningJob object.
 
         :return: REST object representation of this object.
         :rtype: JobBase
         """
+        # TSP rest models coerce SDK Input entities to dicts at construction, so
+        # convert to TSP JobInput types up front rather than mutating after.
+        model = MLFlowModelJobInput(uri=self._model.path) if isinstance(self._model, Input) else self._model
+        training_data = (
+            UriFileJobInput(uri=self._training_data.path)
+            if isinstance(self._training_data, Input)
+            else self._training_data
+        )
+        validation_data = (
+            UriFileJobInput(uri=self._validation_data.path)
+            if isinstance(self._validation_data, Input)
+            else self._validation_data
+        )
         aoai_finetuning_vertical = RestAzureOpenAIFineTuning(
             task_type=self._task,
-            model=self._model,
+            model=model,
             model_provider=self._model_provider,
-            training_data=self._training_data,
-            validation_data=self._validation_data,
-            hyper_parameters=self.hyperparameters._to_rest_object() if self.hyperparameters else None,
+            training_data=training_data,
+            validation_data=validation_data,
+            hyper_parameters=(self.hyperparameters._to_rest_object() if self.hyperparameters else None),
         )
-
-        self._resolve_inputs(aoai_finetuning_vertical)
 
         finetuning_job = RestFineTuningJob(
             display_name=self.display_name,
@@ -100,7 +121,13 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
             tags=self.tags,
             properties=self.properties,
             fine_tuning_details=aoai_finetuning_vertical,
-            outputs=to_rest_data_outputs(self.outputs),
+            # The shared arm_ml_service model defaults is_archived to None (omitted on the wire), but
+            # the legacy msrest model serialized isArchived=false on create. Set it explicitly to keep
+            # the wire body identical.
+            is_archived=False,
+            # The shared ``to_rest_data_outputs`` helper emits msrest models; convert to the
+            # arm_ml_service hybrid equivalent so the hybrid SdkJSONEncoder can serialize the body.
+            outputs=to_hybrid_rest_model(to_rest_data_outputs(self.outputs), RestJobOutput),
         )
 
         result = RestJobBase(properties=finetuning_job)
@@ -114,7 +141,9 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
         :return: dictionary representation of the object.
         :rtype: typing.Dict
         """
-        from azure.ai.ml._schema._finetuning.azure_openai_finetuning import AzureOpenAIFineTuningSchema
+        from azure.ai.ml._schema._finetuning.azure_openai_finetuning import (
+            AzureOpenAIFineTuningSchema,
+        )
 
         schema_dict: dict = {}
         # TODO: Combeback to this later for FineTuningJob in Pipelines
@@ -209,7 +238,9 @@ class AzureOpenAIFineTuningJob(FineTuningVertical):
         :return: AzureOpenAIFineTuningJob object.
         :rtype: AzureOpenAIFineTuningJob
         """
-        from azure.ai.ml._schema._finetuning.azure_openai_finetuning import AzureOpenAIFineTuningSchema
+        from azure.ai.ml._schema._finetuning.azure_openai_finetuning import (
+            AzureOpenAIFineTuningSchema,
+        )
 
         # TODO: Combeback to this later - Pipeline part.
         # from azure.ai.ml._schema.pipeline.automl_node import AutoMLClassificationNodeSchema

@@ -18,7 +18,7 @@ from pathlib import Path
 from threading import Thread
 from typing import Any, Dict, Optional, Tuple
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase as JobBaseData
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils.utils import DockerProxy
 from azure.ai.ml.constants._common import (

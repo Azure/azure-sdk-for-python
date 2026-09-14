@@ -28,13 +28,21 @@ from azure.monitor.opentelemetry._configure import (
     configure_azure_monitor,
 )
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import _DISTRO_DETECTS_ATTACH
-
+from azure.monitor.opentelemetry._version import VERSION
 
 TEST_RESOURCE = Resource({"foo": "bar"})
 
 
 # pylint: disable=too-many-public-methods
 class TestConfigure(unittest.TestCase):
+    def setUp(self):
+        # Patch get_configuration_manager for every test so configure_azure_monitor never starts the
+        # real OneSettings worker thread. Tests that care about the interaction use
+        # self._get_config_manager_mock to control the returned manager.
+        patcher = patch("azure.monitor.opentelemetry._configure.get_configuration_manager")
+        self._get_config_manager_mock = patcher.start()
+        self.addCleanup(patcher.stop)
+
     @patch(
         "azure.monitor.opentelemetry._configure._send_attach_warning",
     )
@@ -72,6 +80,89 @@ class TestConfigure(unittest.TestCase):
         live_metrics_mock.assert_called_once()
         instrumentation_mock.assert_called_once()
         detect_attach_mock.assert_called_once()
+
+    @patch(
+        "azure.monitor.opentelemetry._configure._send_attach_warning",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_instrumentations",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_live_metrics",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_metrics",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_logging",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_tracing",
+    )
+    def test_configure_azure_monitor_initializes_config_manager(
+        self,
+        tracing_mock,
+        logging_mock,
+        metrics_mock,
+        live_metrics_mock,
+        instrumentation_mock,
+        detect_attach_mock,
+    ):
+        config_manager_mock = self._get_config_manager_mock.return_value
+        # Record the order of manager initialization relative to exporter setup. initialize() must run
+        # before any exporter setup so the distro's component="dst" wins under first-wins fill(); if it
+        # ran afterward the profile would revert to the exporter's component="ext".
+        call_order = []
+        config_manager_mock.initialize.side_effect = lambda *a, **k: call_order.append("initialize")
+        metrics_mock.side_effect = lambda *a, **k: call_order.append("metrics")
+        tracing_mock.side_effect = lambda *a, **k: call_order.append("tracing")
+        logging_mock.side_effect = lambda *a, **k: call_order.append("logging")
+        configure_azure_monitor(connection_string="test_cs")
+        # Distro contributes component="dst" and its version before any exporter is created.
+        config_manager_mock.initialize.assert_called_once_with(
+            component="dst",
+            version=VERSION,
+        )
+        # initialize() is recorded first, ahead of every exporter setup step.
+        self.assertEqual(call_order[0], "initialize")
+        self.assertIn("metrics", call_order)
+        self.assertIn("tracing", call_order)
+        self.assertIn("logging", call_order)
+
+    @patch(
+        "azure.monitor.opentelemetry._configure._send_attach_warning",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_instrumentations",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_live_metrics",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_metrics",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_logging",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_tracing",
+    )
+    def test_configure_azure_monitor_config_manager_disabled(
+        self,
+        tracing_mock,
+        logging_mock,
+        metrics_mock,
+        live_metrics_mock,
+        instrumentation_mock,
+        detect_attach_mock,
+    ):
+        # When the control plane is disabled, get_configuration_manager returns None and the distro
+        # skips initialize() without raising.
+        self._get_config_manager_mock.return_value = None
+        configure_azure_monitor(connection_string="test_cs")
+        tracing_mock.assert_called_once()
+        logging_mock.assert_called_once()
+        metrics_mock.assert_called_once()
 
     @patch(
         "azure.monitor.opentelemetry._configure._setup_instrumentations",
@@ -933,6 +1024,7 @@ class TestConfigure(unittest.TestCase):
         ep_mock.name = "test_instr1"
         ep2_mock.name = "test_instr2"
         ep2_mock.load.return_value = instr_class_mock
+        instrumentor_mock.instrumentation_dependencies.return_value = ()
         dep_mock.return_value = None
         enabled_mock.return_value = True
         _setup_instrumentations({})
@@ -1036,6 +1128,7 @@ class TestConfigure(unittest.TestCase):
         ep_mock.name = "test_instr1"
         ep2_mock.name = "test_instr2"
         ep2_mock.load.return_value = instr_class_mock
+        instrumentor_mock.instrumentation_dependencies.return_value = ()
         dep_mock.return_value = None
         enabled_mock.side_effect = [False, True]
         _setup_instrumentations({})
@@ -1044,6 +1137,79 @@ class TestConfigure(unittest.TestCase):
         ep2_mock.load.assert_called_once()
         instrumentor_mock.instrument.assert_called_once()
         logger_mock.debug.assert_called_once()
+
+    @patch("azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("httpx", "httpx2"))
+    @patch("azure.monitor.opentelemetry._configure._setup_additional_azure_sdk_instrumentations")
+    @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled", return_value=True)
+    @patch("azure.monitor.opentelemetry._configure.get_dependency_conflicts")
+    @patch("azure.monitor.opentelemetry._configure.get_dist_dependency_conflicts", return_value=None)
+    @patch("azure.monitor.opentelemetry._configure.entry_points")
+    def test_setup_instrumentations_httpx_only(
+        self,
+        entry_points_mock,
+        dist_conflicts_mock,
+        dependency_conflicts_mock,
+        instrumentation_enabled_mock,
+        additional_instrumentations_mock,
+    ):
+        httpx_entry_point = Mock(name="httpx_entry_point")
+        httpx_entry_point.name = "httpx"
+        httpx2_entry_point = Mock(name="httpx2_entry_point")
+        httpx2_entry_point.name = "httpx2"
+        entry_points_mock.return_value = (httpx_entry_point, httpx2_entry_point)
+
+        httpx_instrumentor = Mock(name="httpx_instrumentor")
+        httpx2_instrumentor = Mock(name="httpx2_instrumentor")
+        httpx_entry_point.load.return_value.return_value = httpx_instrumentor
+        httpx2_entry_point.load.return_value.return_value = httpx2_instrumentor
+        httpx_instrumentor.instrumentation_dependencies.return_value = ("httpx >= 0.18.0",)
+        httpx2_instrumentor.instrumentation_dependencies.return_value = ("httpx2 >= 2.0.0",)
+        dependency_conflicts_mock.side_effect = [None, True]
+
+        _setup_instrumentations({})
+
+        self.assertEqual(
+            dependency_conflicts_mock.call_args_list,
+            [call(("httpx >= 0.18.0",)), call(("httpx2 >= 2.0.0",))],
+        )
+        httpx_instrumentor.instrument.assert_called_once_with(skip_dep_check=True)
+        httpx2_instrumentor.instrument.assert_not_called()
+        dist_conflicts_mock.assert_has_calls([call(httpx_entry_point.dist), call(httpx2_entry_point.dist)])
+        instrumentation_enabled_mock.assert_has_calls([call({}, "httpx"), call({}, "httpx2")])
+        additional_instrumentations_mock.assert_called_once_with({})
+
+    @patch("azure.monitor.opentelemetry._configure._ALL_SUPPORTED_INSTRUMENTED_LIBRARIES", ("httpx", "httpx2"))
+    @patch("azure.monitor.opentelemetry._configure._setup_additional_azure_sdk_instrumentations")
+    @patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled", return_value=True)
+    @patch("azure.monitor.opentelemetry._configure.get_dependency_conflicts")
+    @patch("azure.monitor.opentelemetry._configure.get_dist_dependency_conflicts", return_value=None)
+    @patch("azure.monitor.opentelemetry._configure.entry_points")
+    def test_setup_instrumentations_httpx2_only(
+        self,
+        entry_points_mock,
+        _dist_conflicts_mock,
+        dependency_conflicts_mock,
+        _instrumentation_enabled_mock,
+        _additional_instrumentations_mock,
+    ):
+        httpx_entry_point = Mock(name="httpx_entry_point")
+        httpx_entry_point.name = "httpx"
+        httpx2_entry_point = Mock(name="httpx2_entry_point")
+        httpx2_entry_point.name = "httpx2"
+        entry_points_mock.return_value = (httpx_entry_point, httpx2_entry_point)
+
+        httpx_instrumentor = Mock(name="httpx_instrumentor")
+        httpx2_instrumentor = Mock(name="httpx2_instrumentor")
+        httpx_entry_point.load.return_value.return_value = httpx_instrumentor
+        httpx2_entry_point.load.return_value.return_value = httpx2_instrumentor
+        httpx_instrumentor.instrumentation_dependencies.return_value = ("httpx >= 0.18.0",)
+        httpx2_instrumentor.instrumentation_dependencies.return_value = ("httpx2 >= 2.0.0",)
+        dependency_conflicts_mock.side_effect = [True, None]
+
+        _setup_instrumentations({})
+
+        httpx_instrumentor.instrument.assert_not_called()
+        httpx2_instrumentor.instrument.assert_called_once_with(skip_dep_check=True)
 
     @patch("azure.monitor.opentelemetry._configure._logger")
     @patch("azure.monitor.opentelemetry._configure.AzureDiagnosticLogging")

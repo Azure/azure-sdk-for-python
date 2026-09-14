@@ -57,7 +57,7 @@ def main() -> None:
         base_analyzer_id="prebuilt-document",
         description="Simple analyzer for deletion example",
         config=ContentAnalyzerConfig(return_details=True),
-        models={"completion": "gpt-4.1"},
+        models={"completion": "gpt-5.2"},
     )
 
     poller = client.begin_create_analyzer(

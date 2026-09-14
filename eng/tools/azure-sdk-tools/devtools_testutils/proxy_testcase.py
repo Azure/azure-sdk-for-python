@@ -19,14 +19,15 @@ except:
     pass
 
 try:
-    import httpx
+    import httpx2
 
-    HTTPXTransport = httpx.HTTPTransport
-    AsyncHTTPXTransport = httpx.AsyncHTTPTransport
+    HTTPX2Transport = httpx2.HTTPTransport
+    AsyncHTTPX2Transport = httpx2.AsyncHTTPTransport
+
 except ImportError:
-    httpx = None
-    HTTPXTransport = None
-    AsyncHTTPXTransport = None
+    httpx2 = None
+    HTTPX2Transport = None
+    AsyncHTTPX2Transport = None
 
 from .config import PROXY_URL
 from .helpers import (
@@ -56,7 +57,7 @@ class RecordedTransport(str, Enum):
     """Enum for specifying which transports to record in the test proxy."""
 
     AZURE_CORE = "azure_core"
-    HTTPX = "httpx"
+    HTTPX2 = "httpx2"
 
 
 def get_recording_assets(test_id: str) -> Optional[str]:
@@ -176,8 +177,8 @@ def transform_request(request: "HttpRequest", recording_id: str) -> None:
     request.url = updated_target
 
 
-def transform_httpx_request(request, recording_id: str) -> None:
-    """Transform an httpx.Request to route through the test proxy."""
+def transform_httpx2_request(request, recording_id: str) -> None:
+    """Transform an httpx2.Request to route through the test proxy."""
     parsed_result = url_parse.urlparse(str(request.url))
 
     # Store original upstream URI
@@ -190,10 +191,10 @@ def transform_httpx_request(request, recording_id: str) -> None:
 
     # Rewrite URL to proxy
     updated_target = parsed_result._replace(**get_proxy_netloc()).geturl()
-    request.url = httpx.URL(updated_target)
+    request.url = type(request.url)(updated_target)
 
 
-def restore_httpx_response_url(response) -> None:
+def restore_httpx2_response_url(response) -> None:
     """Restore the response's request URL to the original upstream target."""
     try:
         parsed_resp = url_parse.urlparse(str(response.request.url))
@@ -203,7 +204,7 @@ def restore_httpx_response_url(response) -> None:
             original_target = parsed_resp._replace(
                 scheme=upstream_uri.scheme or parsed_resp.scheme, netloc=upstream_uri.netloc
             ).geturl()
-            response.request.url = httpx.URL(original_target)
+            response.request.url = type(response.request.url)(original_target)
     except Exception:
         # Best-effort restore; don't fail the call if something goes wrong
         pass
@@ -220,14 +221,14 @@ def _transform_args(recording_id: str, *call_args, **call_kwargs):
     return tuple(copied_positional_args), call_kwargs
 
 
-def _transform_httpx_args(recording_id: str, *call_args, **call_kwargs):
-    """Transform httpx transport call arguments to route through the test proxy.
+def _transform_httpx2_args(recording_id: str, *call_args, **call_kwargs):
+    """Transform httpx2 transport call arguments to route through the test proxy.
 
     Used by both sync and async decorators.
     """
     copied_positional_args = list(call_args)
     request = copied_positional_args[1]
-    transform_httpx_request(request, recording_id)
+    transform_httpx2_request(request, recording_id)
     return tuple(copied_positional_args), call_kwargs
 
 
@@ -239,8 +240,8 @@ def recorded_by_proxy(*transports):
         *transports: Which transport(s) to record. Pass one or more comma separated RecordedTransport enum values.
             - No args (default): Record RequestsTransport.send calls (azure.core).
             - RecordedTransport.AZURE_CORE: Record RequestsTransport.send calls. Same as the default above.
-            - RecordedTransport.HTTPX: Record HTTPXTransport.handle_request calls.
-            - RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX: Record both transports.
+            - RecordedTransport.HTTPX2: Record HTTPX2Transport.handle_request calls.
+            - RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2: Record both transports.
 
     Usages:
       from devtools_testutils import recorded_by_proxy, RecordedTransport
@@ -253,12 +254,12 @@ def recorded_by_proxy(*transports):
       @recorded_by_proxy(RecordedTransport.AZURE_CORE)
       def test(...): ...
 
-      # If your test uses httpx only for network calls
-      @recorded_by_proxy(RecordedTransport.HTTPX)
+      # If your test uses httpx2 only for network calls
+      @recorded_by_proxy(RecordedTransport.HTTPX2)
       def test(...): ...
 
-      # If your test uses both azure.core and httpx for network calls
-      @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+      # If your test uses both azure.core and httpx2 for network calls
+      @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
       def test(...): ...
     """
 
@@ -281,11 +282,11 @@ def recorded_by_proxy(*transports):
             isinstance(transport, str) and transport == RecordedTransport.AZURE_CORE.value
         ):
             transport_list.append((RequestsTransport, "send"))
-        elif transport == RecordedTransport.HTTPX or (
-            isinstance(transport, str) and transport == RecordedTransport.HTTPX.value
+        elif transport == RecordedTransport.HTTPX2 or (
+            isinstance(transport, str) and transport == RecordedTransport.HTTPX2.value
         ):
-            if HTTPXTransport is not None:
-                transport_list.append((HTTPXTransport, "handle_request"))
+            if HTTPX2Transport is not None:
+                transport_list.append((HTTPX2Transport, "handle_request"))
 
     # If still no transports, fall back to azure.core
     if not transport_list:
@@ -309,12 +310,12 @@ def _make_proxy_decorator(transports):
             recording_id, variables = start_record_or_playback(test_id)
 
             # Build a wrapper factory so each patched method closes over its own original
-            def make_combined_call(original_transport_func, is_httpx=False):
+            def make_combined_call(original_transport_func, is_httpx2=False):
                 def combined_call(*call_args, **call_kwargs):
-                    if is_httpx:
-                        adjusted_args, adjusted_kwargs = _transform_httpx_args(recording_id, *call_args, **call_kwargs)
+                    if is_httpx2:
+                        adjusted_args, adjusted_kwargs = _transform_httpx2_args(recording_id, *call_args, **call_kwargs)
                         result = original_transport_func(*adjusted_args, **adjusted_kwargs)
-                        restore_httpx_response_url(result)
+                        restore_httpx2_response_url(result)
                     else:
                         adjusted_args, adjusted_kwargs = _transform_args(recording_id, *call_args, **call_kwargs)
                         result = original_transport_func(*adjusted_args, **adjusted_kwargs)
@@ -335,13 +336,13 @@ def _make_proxy_decorator(transports):
             # monkeypatch all requested transports
             for owner, name in transports:
                 original = getattr(owner, name)
-                # Check if this is an httpx transport by comparing with httpx transport classes
-                is_httpx_transport = (
-                    (HTTPXTransport is not None and owner is HTTPXTransport)
-                    or (AsyncHTTPXTransport is not None and owner is AsyncHTTPXTransport)
-                    or (httpx is not None and owner.__module__.startswith("httpx"))
+                # Check if this is an httpx2 transport by comparing with httpx2 transport classes
+                is_httpx2_transport = (
+                    (HTTPX2Transport is not None and owner is HTTPX2Transport)
+                    or (AsyncHTTPX2Transport is not None and owner is AsyncHTTPX2Transport)
+                    or (httpx2 is not None and owner.__module__.startswith("httpx2"))
                 )
-                setattr(owner, name, make_combined_call(original, is_httpx=is_httpx_transport))
+                setattr(owner, name, make_combined_call(original, is_httpx2=is_httpx2_transport))
                 originals.append((owner, name, original))
 
             try:

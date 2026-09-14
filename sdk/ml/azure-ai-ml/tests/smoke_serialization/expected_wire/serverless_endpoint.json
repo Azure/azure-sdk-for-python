@@ -1,0 +1,15 @@
+{
+  "location": "westus",
+  "properties": {
+    "modelSettings": {
+      "modelId": "azureml://registries/azureml-meta/models/Meta-Llama-3.1-8B-Instruct/versions/1"
+    }
+  },
+  "sku": {
+    "name": "Consumption"
+  },
+  "tags": {
+    "tag1": "value1",
+    "team": "smoke"
+  }
+}

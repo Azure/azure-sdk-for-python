@@ -1,5 +1,35 @@
 # Release History
 
+## 1.3.0 (2026-07-17)
+
+### Features Added
+
+  - Client `ComputeLimitMgmtClient` added operation group `trusted_host_subscriptions`
+  - Added model `TrustedHostSubscription`
+  - Added operation group `TrustedHostSubscriptionsOperations`
+
+## 1.2.1 (2026-07-07)
+
+### Other Changes
+
+  - Added `azure.mgmt.computelimit.types` module with `TypedDict` definitions (e.g. `GuestSubscription`, `SharedLimit`, `SharedLimitCap`, `MemberCapOverride`, `SetMemberCapOverridesRequest`, `FeatureEnableRequest`) that can be used in place of raw `JSON` when calling operations, providing better editor autocompletion and type checking.
+
+## 1.2.0 (2026-06-20)
+
+### Features Added
+
+  - Client `ComputeLimitMgmtClient` added operation group `shared_limit_caps`
+  - Client `ComputeLimitMgmtClient` added operation group `member_cap_overrides`
+  - Added model `MemberCap`
+  - Added model `MemberCapOverride`
+  - Added model `MemberCapOverrideProperties`
+  - Added model `SetMemberCapOverridesRequest`
+  - Added model `SetMemberCapOverridesResult`
+  - Added model `SharedLimitCap`
+  - Added model `SharedLimitCapProperties`
+  - Added operation group `MemberCapOverridesOperations`
+  - Added operation group `SharedLimitCapsOperations`
+
 ## 1.1.0 (2026-05-26)
 
 ### Features Added

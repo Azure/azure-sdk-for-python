@@ -1,5 +1,44 @@
 # Release History
 
+## 3.0.0 (2026-07-08)
+
+### Features Added
+
+  - Client `AzureDatabricksManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `AzureDatabricksManagementClient` added method `send_request`
+  - Model `AccessConnectorProperties` added property `refered_by`
+  - Model `GroupIdInformation` added property `system_data`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Model `VirtualNetworkPeering` added property `system_data`
+  - Added model `AutomaticClusterUpdateDefinition`
+  - Added enum `AutomaticClusterUpdateValue`
+  - Added model `ComplianceSecurityProfileDefinition`
+  - Added enum `ComplianceSecurityProfileValue`
+  - Added enum `ComputeMode`
+  - Added model `DefaultCatalogProperties`
+  - Added enum `DefaultStorageFirewall`
+  - Added model `EnhancedSecurityComplianceDefinition`
+  - Added model `EnhancedSecurityMonitoringDefinition`
+  - Added enum `EnhancedSecurityMonitoringValue`
+  - Added enum `IdentityType`
+  - Added enum `InitialType`
+  - Added model `ProxyResource`
+  - Added model `WorkspaceNoPublicIPBooleanParameter`
+  - Added model `WorkspacePropertiesAccessConnector`
+  - Operation group `WorkspacesOperations` added parameter `force_deletion` in method `begin_delete`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `VirtualNetworkPeering` moved instance variable `allow_virtual_network_access`, `allow_forwarded_traffic`, `allow_gateway_transit`, `use_remote_gateways`, `databricks_virtual_network`, `databricks_address_space`, `remote_virtual_network`, `remote_address_space`, `peering_state` and `provisioning_state` under property `properties` whose type is `VirtualNetworkPeeringPropertiesFormat`
+  - Model `Workspace` moved instance variable `managed_resource_group_id`, `parameters`, `provisioning_state`, `ui_definition_uri`, `authorizations`, `created_by`, `updated_by`, `created_date_time`, `workspace_id`, `workspace_url`, `storage_account_identity`, `managed_disk_identity`, `disk_encryption_set_id`, `encryption`, `private_endpoint_connections`, `public_network_access` and `required_nsg_rules` under property `properties` whose type is `WorkspaceProperties`
+
+### Other Changes
+
+  - Deleted model `AccessConnectorListResult`/`OperationListResult`/`PrivateEndpointConnectionsList`/`PrivateLinkResourcesList`/`VirtualNetworkPeeringList`/`WorkspaceListResult` which actually were not used by SDK users
+
 ## 3.0.0b1 (2026-05-27)
 
 ### Features Added

@@ -20,6 +20,18 @@ class TestContainerServiceOperationStatusResultOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_operation_status_result_list_by_agent_pool(self, resource_group):
+        response = self.client.operation_status_result.list_by_agent_pool(
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            agent_pool_name="str",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_operation_status_result_get_by_agent_pool(self, resource_group):
         response = self.client.operation_status_result.get_by_agent_pool(
             resource_group_name=resource_group.name,

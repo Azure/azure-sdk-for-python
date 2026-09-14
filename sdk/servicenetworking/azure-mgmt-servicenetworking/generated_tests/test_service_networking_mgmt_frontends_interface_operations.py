@@ -42,8 +42,10 @@ class TestServiceNetworkingMgmtFrontendsInterfaceOperations(AzureMgmtRecordedTes
                 "id": "str",
                 "name": "str",
                 "properties": {
+                    "association": {"id": "str"},
                     "fqdn": "str",
                     "provisioningState": "str",
+                    "publicNetworkAccess": "str",
                     "securityPolicyConfigurations": {
                         "ipAccessRulesSecurityPolicy": {"id": "str"},
                         "wafSecurityPolicy": {"id": "str"},
@@ -74,10 +76,12 @@ class TestServiceNetworkingMgmtFrontendsInterfaceOperations(AzureMgmtRecordedTes
             frontend_name="str",
             properties={
                 "properties": {
+                    "association": {"id": "str"},
+                    "publicNetworkAccess": "str",
                     "securityPolicyConfigurations": {
                         "ipAccessRulesSecurityPolicy": {"id": "str"},
                         "wafSecurityPolicy": {"id": "str"},
-                    }
+                    },
                 },
                 "tags": {"str": "str"},
             },

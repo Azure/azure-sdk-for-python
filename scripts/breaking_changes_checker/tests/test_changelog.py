@@ -20,6 +20,7 @@ for path in (SCRIPTS_DIR, PACKAGE_DIR):
 from breaking_changes_checker.checkers.added_method_overloads_checker import AddedMethodOverloadChecker
 from breaking_changes_checker.changelog_tracker import ChangelogTracker, BreakingChangesTracker
 from breaking_changes_checker.detect_breaking_changes import main
+from breaking_changes_checker.detect_breaking_changes import compare_report_dicts, drop_shadow_types_modules
 from breaking_changes_checker.detect_breaking_changes import test_compare_reports as compare_reports
 
 
@@ -151,6 +152,149 @@ def test_async_cleanup_check():
     assert msg == ChangelogTracker.ADDED_CLASS_PROPERTY_MSG
 
 
+def test_drop_shadow_types_modules_removes_generated_types():
+    # A generated `types` module is a projection of the sibling `models` module and is dropped
+    # from both reports before diffing.
+    stable = {
+        "azure.mgmt.computelimit.models": {"class_nodes": {}},
+        "azure.mgmt.computelimit.types": {"class_nodes": {}},
+    }
+    current = {
+        "azure.mgmt.computelimit.models": {"class_nodes": {}},
+        "azure.mgmt.computelimit.types": {"class_nodes": {}},
+    }
+
+    stable_out, current_out = drop_shadow_types_modules(stable, current)
+
+    assert set(stable_out) == {"azure.mgmt.computelimit.models"}
+    assert set(current_out) == {"azure.mgmt.computelimit.models"}
+
+
+def test_drop_shadow_types_modules_is_symmetric():
+    # The module is dropped from both sides even when it only exists on one of them, otherwise
+    # the diff would report a phantom added/removed module.
+    stable = {
+        "azure.mgmt.computelimit.models": {"class_nodes": {}},
+        "azure.mgmt.computelimit.types": {"class_nodes": {}},
+    }
+    current = {
+        "azure.mgmt.computelimit.models": {"class_nodes": {}},
+    }
+
+    stable_out, current_out = drop_shadow_types_modules(stable, current)
+
+    assert set(stable_out) == {"azure.mgmt.computelimit.models"}
+    assert set(current_out) == {"azure.mgmt.computelimit.models"}
+
+
+def test_drop_shadow_types_modules_keeps_types_without_models_sibling():
+    # Without a sibling `models` module, a `types` module is a real hand-written public module
+    # and must keep being checked.
+    stable = {"azure.mgmt.computelimit.types": {"class_nodes": {}}}
+    current = {"azure.mgmt.computelimit.types": {"class_nodes": {}}}
+
+    stable_out, current_out = drop_shadow_types_modules(stable, current)
+
+    assert set(stable_out) == {"azure.mgmt.computelimit.types"}
+    assert set(current_out) == {"azure.mgmt.computelimit.types"}
+
+
+def test_drop_shadow_types_modules_keeps_types_owning_a_class():
+    # The guard is a subset relation, not just a name check: a `types` module that declares a
+    # class with no counterpart in the sibling `models` module is not a pure projection, so it
+    # is kept and diffed normally. This covers a package that hand-writes both modules.
+    node = {"type": None, "methods": {}, "properties": {}}
+    stable = {
+        "azure.mgmt.computelimit.models": {"class_nodes": {"SharedModel": node}},
+        "azure.mgmt.computelimit.types": {"class_nodes": {"SharedModel": node, "OwnedByTypes": node}},
+    }
+    current = {
+        "azure.mgmt.computelimit.models": {"class_nodes": {"SharedModel": node}},
+        "azure.mgmt.computelimit.types": {"class_nodes": {"SharedModel": node, "OwnedByTypes": node}},
+    }
+
+    stable_out, current_out = drop_shadow_types_modules(stable, current)
+
+    assert set(stable_out) == set(stable)
+    assert set(current_out) == set(current)
+
+
+def test_shadow_types_module_removal_not_reported_as_deleted_model():
+    # The emitter only generates a `TypedDict` for a model reachable as request input. When a
+    # model becomes output-only its `TypedDict` disappears from `types` while the real class
+    # stays in `models`. That is not an API removal and must not be reported.
+    stable = {
+        "azure.mgmt.computelimit.models": {
+            "class_nodes": {
+                "InputModel": {"type": None, "methods": {}, "properties": {}},
+                "OutputOnlyResult": {"type": None, "methods": {}, "properties": {}},
+            }
+        },
+        "azure.mgmt.computelimit.types": {
+            "class_nodes": {
+                "InputModel": {"type": None, "methods": {}, "properties": {}},
+                "OutputOnlyResult": {"type": None, "methods": {}, "properties": {}},
+            }
+        },
+    }
+
+    current = {
+        "azure.mgmt.computelimit.models": {
+            "class_nodes": {
+                "InputModel": {"type": None, "methods": {}, "properties": {}},
+                "OutputOnlyResult": {"type": None, "methods": {}, "properties": {}},
+            }
+        },
+        "azure.mgmt.computelimit.types": {
+            "class_nodes": {
+                # `OutputOnlyResult` is no longer request input, so its TypedDict is gone.
+                "InputModel": {"type": None, "methods": {}, "properties": {}},
+            }
+        },
+    }
+
+    checker = compare_report_dicts(stable, current, "azure-mgmt-computelimit", changelog=True)
+
+    assert checker.breaking_changes == []
+    assert checker.features_added == []
+
+
+def test_shadow_types_module_added_model_reported_once():
+    # A newly added model shows up in both `models` and `types`; only the `models` entry should
+    # be reported.
+    stable = {
+        "azure.mgmt.computelimit.models": {
+            "class_nodes": {"ExistingModel": {"type": None, "methods": {}, "properties": {}}}
+        },
+        "azure.mgmt.computelimit.types": {
+            "class_nodes": {"ExistingModel": {"type": None, "methods": {}, "properties": {}}}
+        },
+    }
+    current = {
+        "azure.mgmt.computelimit.models": {
+            "class_nodes": {
+                "ExistingModel": {"type": None, "methods": {}, "properties": {}},
+                "TrustedHostSubscription": {"type": None, "methods": {}, "properties": {}},
+            }
+        },
+        "azure.mgmt.computelimit.types": {
+            "class_nodes": {
+                "ExistingModel": {"type": None, "methods": {}, "properties": {}},
+                "TrustedHostSubscription": {"type": None, "methods": {}, "properties": {}},
+            }
+        },
+    }
+
+    checker = compare_report_dicts(stable, current, "azure-mgmt-computelimit", changelog=True)
+
+    added_models = [fa for fa in checker.features_added if fa[0] == ChangelogTracker.ADDED_CLASS_MSG]
+    assert len(added_models) == 1
+    _, _, module_name, class_name = added_models[0]
+    assert module_name == "azure.mgmt.computelimit.models"
+    assert class_name == "TrustedHostSubscription"
+    assert not any(fa[2] == "azure.mgmt.computelimit.types" for fa in checker.features_added)
+
+
 def test_new_class_property_added_init():
     # Testing if a property is added both in the init and at the class level that we only get 1 report for it
     current = {
@@ -227,6 +371,59 @@ def test_new_class_property_added_init():
     msg, _, *args = bc.features_added[0]
     assert msg == ChangelogTracker.ADDED_CLASS_PROPERTY_MSG
     assert args == ['azure.ai.contentsafety', 'AnalyzeTextResult', 'new_class_att']
+
+
+def test_added_operation_group_class_not_labeled_as_model():
+    # A newly added operation group class must be reported as "Added operation group `X`",
+    # not "Added model `X`". It appears in both the sync `...operations` module and the async
+    # `...aio.operations` module, but the async cleanup should collapse it into a single entry.
+    def _op_group_module():
+        return {
+            "class_nodes": {
+                "ExistingOperations": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {}
+                },
+                "PrivateLinkResourcesOperations": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {}
+                }
+            }
+        }
+
+    def _stable_op_group_module():
+        return {
+            "class_nodes": {
+                "ExistingOperations": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {}
+                }
+            }
+        }
+
+    current = {
+        "azure.mgmt.attestation.operations": _op_group_module(),
+        "azure.mgmt.attestation.aio.operations": _op_group_module(),
+    }
+    stable = {
+        "azure.mgmt.attestation.operations": _stable_op_group_module(),
+        "azure.mgmt.attestation.aio.operations": _stable_op_group_module(),
+    }
+
+    bc = ChangelogTracker(stable, current, "azure-mgmt-attestation")
+    bc.run_checks()
+
+    op_group_entries = [fa for fa in bc.features_added if fa[0] == ChangelogTracker.ADDED_OPERATION_GROUP_CLASS_MSG]
+    added_model_entries = [fa for fa in bc.features_added if fa[0] == ChangelogTracker.ADDED_CLASS_MSG]
+
+    # Exactly one operation group entry (sync/async duplicate collapsed) and no "Added model".
+    assert len(op_group_entries) == 1
+    assert not added_model_entries
+    _, _, _, class_name = op_group_entries[0]
+    assert class_name == "PrivateLinkResourcesOperations"
 
 
 def test_new_class_property_added_init_only():

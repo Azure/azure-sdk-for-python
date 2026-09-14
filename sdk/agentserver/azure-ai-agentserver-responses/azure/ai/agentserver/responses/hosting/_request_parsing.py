@@ -7,11 +7,13 @@ from __future__ import annotations
 import hashlib
 import os
 from copy import deepcopy
-from typing import Any, Mapping
+from typing import Any, Mapping, cast
+
+from ..models._wire import get_field
+from ..models import AgentReference, CreateResponse
 
 from .._id_generator import IdGenerator
-from ..models._generated import AgentReference, CreateResponse
-from ..models.errors import RequestValidationError
+from ..models._errors import RequestValidationError
 
 _X_AGENT_RESPONSE_ID_HEADER = "x-agent-response-id"
 
@@ -117,7 +119,7 @@ def _validate_response_id(response_id: str) -> None:
 
 
 def _normalize_agent_reference(value: Any) -> AgentReference | dict[str, Any]:
-    """Normalize an agent reference value into a validated model or empty dict.
+    """Normalize an agent reference value into a validated wire payload or empty dict.
 
     If *value* is ``None``, an empty dict is returned as a sentinel for
     "no agent_reference was provided".  Callers use truthiness to detect
@@ -125,7 +127,7 @@ def _normalize_agent_reference(value: Any) -> AgentReference | dict[str, Any]:
 
     :param value: Raw agent reference from the request (dict, model, or ``None``).
     :type value: Any
-    :return: An :class:`AgentReference` model instance,
+    :return: An :class:`AgentReference` wire payload,
         or ``{}`` when no agent_reference was provided.
     :rtype: AgentReference | dict[str, Any]
     :raises RequestValidationError: If the value is not a valid agent reference.
@@ -133,17 +135,14 @@ def _normalize_agent_reference(value: Any) -> AgentReference | dict[str, Any]:
     if value is None:
         return {}
 
-    if hasattr(value, "as_dict"):
-        candidate = value.as_dict()
-    elif isinstance(value, dict):
-        candidate = dict(value)
-    else:
+    if not isinstance(value, dict):
         raise RequestValidationError(
             "agent_reference must be an object",
             code="invalid_request",
             param="agent_reference",
         )
 
+    candidate = value.copy()
     candidate.setdefault("type", "agent_reference")
     name = candidate.get("name")
     reference_type = candidate.get("type")
@@ -163,7 +162,7 @@ def _normalize_agent_reference(value: Any) -> AgentReference | dict[str, Any]:
         )
 
     candidate["name"] = name.strip()
-    return AgentReference(candidate)
+    return cast(AgentReference, candidate)
 
 
 def _prevalidate_identity_payload(payload: dict[str, Any]) -> None:
@@ -231,7 +230,7 @@ def _resolve_identity_fields(
     ``IdGenerator.new_response_id()``, using the ``previous_response_id`` or
     ``conversation`` ID as partition-key hint when available.
 
-    :param parsed: Parsed ``CreateResponse`` model instance.
+    :param parsed: Parsed ``CreateResponse`` wire payload.
     :type parsed: CreateResponse
     :keyword request_headers: HTTP request headers mapping.
     :keyword type request_headers: Mapping[str, str] | None
@@ -248,12 +247,10 @@ def _resolve_identity_fields(
         if isinstance(raw_header, str) and raw_header.strip():
             header_response_id = raw_header.strip()
 
-    parsed_mapping = parsed.as_dict() if hasattr(parsed, "as_dict") else {}
-
     if header_response_id:
         response_id = header_response_id
     else:
-        explicit_response_id = parsed_mapping.get("response_id") or getattr(parsed, "response_id", None)
+        explicit_response_id = parsed.get("response_id")
         if isinstance(explicit_response_id, str) and explicit_response_id.strip():
             response_id = explicit_response_id.strip()
         else:
@@ -261,37 +258,30 @@ def _resolve_identity_fields(
             # for co-locating related response IDs in the same partition.
             # previous_response_id takes priority because it directly chains
             # responses, while conversation ID groups them more loosely.
-            partition_hint = parsed_mapping.get("previous_response_id") or _resolve_conversation_id(parsed) or ""
+            partition_hint = parsed.get("previous_response_id") or _resolve_conversation_id(parsed) or ""
             response_id = IdGenerator.new_response_id(partition_hint)
 
     _validate_response_id(response_id)
-    agent_reference = _normalize_agent_reference(
-        parsed_mapping.get("agent_reference")
-        if isinstance(parsed_mapping, dict)
-        else getattr(parsed, "agent_reference", None)
-    )
+    agent_reference = _normalize_agent_reference(parsed.get("agent_reference"))
     return response_id, agent_reference
 
 
 def _resolve_conversation_id(parsed: CreateResponse) -> str | None:
     """Extract the conversation ID from a parsed ``CreateResponse`` request.
 
-    Handles both a plain string value and a ``ConversationParam_2`` object
-    (which carries the ID in its ``.id`` attribute).
+    Handles both a plain string value and a ``ConversationParam_2`` wire payload.
 
-    :param parsed: The parsed ``CreateResponse`` model instance.
+    :param parsed: The parsed ``CreateResponse`` wire payload.
     :type parsed: CreateResponse
     :returns: The conversation ID string, or ``None`` if not present.
     :rtype: str | None
     """
-    raw = getattr(parsed, "conversation", None)
+    raw = parsed.get("conversation")
     if isinstance(raw, str):
         return raw or None
     if isinstance(raw, dict):
         cid = raw.get("id")
         return str(cid) if cid else None
-    if raw is not None and hasattr(raw, "id"):
-        return str(raw.id) or None
     return None
 
 
@@ -313,7 +303,7 @@ def _resolve_session_id(
        where *partition_hint* is extracted from ``conversation_id`` or ``previous_response_id``.
     4. Random 63-char lowercase hex (one-shot, no conversational context)
 
-    :param parsed: Parsed ``CreateResponse`` model instance.
+    :param parsed: Parsed ``CreateResponse`` wire payload.
     :type parsed: CreateResponse
     :param payload: Raw JSON payload dict.
     :type payload: dict[str, Any]
@@ -327,7 +317,7 @@ def _resolve_session_id(
     :rtype: str
     """
     # Priority 1: payload field
-    session_id = getattr(parsed, "agent_session_id", None)
+    session_id = parsed.get("agent_session_id")
     if not isinstance(session_id, str) or not session_id.strip():
         # Also check the raw payload for when the field isn't in the model yet
         if isinstance(payload, dict):
@@ -342,7 +332,7 @@ def _resolve_session_id(
     # Priority 3: deterministic derivation from conversation context
     conversation_id = _resolve_conversation_id(parsed)
     previous_response_id: str | None = None
-    raw_prev = getattr(parsed, "previous_response_id", None)
+    raw_prev = parsed.get("previous_response_id")
     if isinstance(raw_prev, str) and raw_prev.strip():
         previous_response_id = raw_prev.strip()
 
@@ -400,19 +390,15 @@ def _extract_agent_identity(
 ) -> tuple[str, str]:
     """Extract (agent_name, agent_version) from an agent reference.
 
-    :param agent_reference: Agent reference mapping or model instance.
+    :param agent_reference: Agent reference mapping.
     :type agent_reference: AgentReference | dict[str, Any] | None
     :returns: Tuple of (name, version) with fallback defaults.
     :rtype: tuple[str, str]
     """
     if agent_reference is None:
         return _DEFAULT_AGENT_REFERENCE_NAME, ""
-    if isinstance(agent_reference, dict):
-        name = agent_reference.get("name") or _DEFAULT_AGENT_REFERENCE_NAME
-        version = agent_reference.get("version") or ""
-        return str(name), str(version)
-    name = getattr(agent_reference, "name", None) or _DEFAULT_AGENT_REFERENCE_NAME
-    version = getattr(agent_reference, "version", None) or ""
+    name = get_field(agent_reference, "name") or _DEFAULT_AGENT_REFERENCE_NAME
+    version = get_field(agent_reference, "version") or ""
     return str(name), str(version)
 
 

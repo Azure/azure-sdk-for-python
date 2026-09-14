@@ -21,14 +21,13 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = ["azure", "azure sdk"]
 
 dependencies = [
@@ -36,7 +35,7 @@ dependencies = [
     "azure-core>=1.37.0",
     "typing-extensions>=4.11",
     "azure-identity>=1.15.0",
-    "openai>=2.8.0",
+    "openai>=3.0.0",
     "azure-storage-blob>=12.15.0",
 ]
 dynamic = [
@@ -66,6 +65,10 @@ pytyped = ["py.typed"]
 
 [tool.azure-sdk-build]
 verifytypes = false
+
+[tool.mypy]
+mypy_path = ["samples"]
+exclude = '(^|.*[\\/])samples[\\/]hosted_agents[\\/]assets[\\/].*main\.py$|(^|.*[\\/])samples[\\/].+[\\/]utils?\.py$'
 
 [tool.azure-sdk-conda]
 in_bundle = false

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -16,17 +17,22 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._deserialize import deserialize_permission, deserialize_share_properties
-from .._generated.aio import AzureFileStorage
-from .._generated.models import DeleteSnapshotsOptionType, ShareStats, SignedIdentifier
-from .._models import ShareProtocols
+from .._generated.aio import FileClient as AzureFileStorage
+from .._generated.models import (
+    DeleteSnapshotsOptionType,
+    ShareStats,
+    SignedIdentifier as GenSignedIdentifier,
+    SignedIdentifiers,
+)
+from .._models import AccessPolicy, ShareProtocols, SignedIdentifier
 from .._parser import _parse_snapshot
 from .._share_client_helpers import _create_permission_for_share_options, _format_url, _from_share_url, _parse_url
 from .._shared.policies_async import ExponentialRetry
 from .._shared.base_client import parse_query, StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
-from .._shared.request_handlers import add_metadata_headers, serialize_iso
+from .._shared.request_handlers import add_metadata_headers
 from .._shared.response_handlers import process_storage_error, return_headers_and_deserialized, return_response_headers
-from .._serialize import get_access_conditions, get_api_version
+from .._serialize import get_api_version, get_lease_id
 from ..aio._lease_async import ShareLeaseClient
 from ._directory_client_async import ShareDirectoryClient
 from ._file_client_async import ShareFileClient
@@ -34,7 +40,7 @@ from ._file_client_async import ShareFileClient
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._models import AccessPolicy, DirectoryProperties, FileProperties, ShareProperties
+    from .._models import DirectoryProperties, FileProperties, ShareProperties
 
 
 class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]  # pylint: disable=too-many-public-methods
@@ -125,13 +131,9 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         self.allow_source_trailing_dot = kwargs.pop("allow_source_trailing_dot", None)
         self.file_request_intent = token_intent
         self._client = AzureFileStorage(
-            version=get_api_version(kwargs),
             url=self.url,
-            base_url=self.url,
+            version=get_api_version(kwargs),
             pipeline=self._pipeline,
-            allow_trailing_dot=self.allow_trailing_dot,
-            allow_source_trailing_dot=self.allow_source_trailing_dot,
-            file_request_intent=self.file_request_intent,
         )
 
     async def __aenter__(self) -> Self:
@@ -420,6 +422,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
                     share_provisioned_bandwidth_mibps=share_provisioned_bandwidth_mibps,
                     cls=return_response_headers,
                     headers=headers,
+                    file_request_intent=self.file_request_intent,
                     **kwargs
                 ),
             )
@@ -467,7 +470,11 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
             return cast(
                 Dict[str, Any],
                 await self._client.share.create_snapshot(
-                    timeout=timeout, cls=return_response_headers, headers=headers, **kwargs
+                    timeout=timeout,
+                    cls=return_response_headers,
+                    headers=headers,
+                    file_request_intent=self.file_request_intent,
+                    **kwargs
                 ),
             )
         except HttpResponseError as error:
@@ -509,7 +516,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
                 :dedent: 16
                 :caption: Deletes the share and any snapshots.
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         delete_include = None
         if isinstance(delete_snapshots, bool) and delete_snapshots:
@@ -522,9 +529,9 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         try:
             await self._client.share.delete(
                 timeout=timeout,
-                sharesnapshot=self.snapshot,
                 delete_snapshots=delete_include,
-                lease_access_conditions=access_conditions,
+                lease_id=lease_id,
+                file_request_intent=self.file_request_intent,
                 **kwargs
             )
         except HttpResponseError as error:
@@ -562,16 +569,16 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
                 :dedent: 16
                 :caption: Gets the share properties.
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         try:
             props = cast(
                 "ShareProperties",
                 await self._client.share.get_properties(
                     timeout=timeout,
-                    sharesnapshot=self.snapshot,
                     cls=deserialize_share_properties,
-                    lease_access_conditions=access_conditions,
+                    lease_id=lease_id,
+                    file_request_intent=self.file_request_intent,
                     **kwargs
                 ),
             )
@@ -614,7 +621,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
                 :dedent: 16
                 :caption: Sets the share quota.
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         try:
             return cast(
@@ -624,7 +631,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
                     quota=quota,
                     access_tier=None,
                     cls=return_response_headers,
-                    lease_access_conditions=access_conditions,
+                    lease_id=lease_id,
+                    file_request_intent=self.file_request_intent,
                     **kwargs
                 ),
             )
@@ -674,7 +682,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
                 :dedent: 16
                 :caption: Sets the share properties.
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         access_tier = kwargs.pop("access_tier", None)
         quota = kwargs.pop("quota", None)
@@ -693,12 +701,13 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
                     quota=quota,
                     access_tier=access_tier,
                     root_squash=root_squash,
-                    lease_access_conditions=access_conditions,
+                    lease_id=lease_id,
                     paid_bursting_max_bandwidth_mibps=paid_bursting_bandwidth_mibps,
                     paid_bursting_max_iops=paid_bursting_iops,
                     share_provisioned_iops=share_provisioned_iops,
                     share_provisioned_bandwidth_mibps=share_provisioned_bandwidth_mibps,
                     cls=return_response_headers,
+                    file_request_intent=self.file_request_intent,
                     **kwargs
                 ),
             )
@@ -742,7 +751,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
                 :dedent: 16
                 :caption: Sets the share metadata.
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
@@ -753,7 +762,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
                     timeout=timeout,
                     cls=return_response_headers,
                     headers=headers,
-                    lease_access_conditions=access_conditions,
+                    lease_id=lease_id,
+                    file_request_intent=self.file_request_intent,
                     **kwargs
                 ),
             )
@@ -782,18 +792,25 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         :returns: Access policy information in a dict.
         :rtype: dict[str, Any]
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         try:
             response, identifiers = await self._client.share.get_access_policy(
                 timeout=timeout,
                 cls=return_headers_and_deserialized,
-                lease_access_conditions=access_conditions,
+                lease_id=lease_id,
+                file_request_intent=self.file_request_intent,
                 **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
-        return {"public_access": response.get("share_public_access"), "signed_identifiers": identifiers or []}
+        items = identifiers.items_property if hasattr(identifiers, "items_property") else identifiers
+        return {
+            "public_access": response.get("share_public_access"),
+            "signed_identifiers": [
+                SignedIdentifier._from_generated(si) for si in items or []  # pylint: disable=protected-access
+            ],
+        }
 
     @distributed_trace_async
     async def set_share_access_policy(
@@ -825,7 +842,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         if len(signed_identifiers) > 5:
             raise ValueError(
@@ -834,18 +851,21 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
             )
         identifiers = []
         for key, value in signed_identifiers.items():
-            if value:
-                value.start = serialize_iso(value.start)
-                value.expiry = serialize_iso(value.expiry)
-            identifiers.append(SignedIdentifier(id=key, access_policy=value))
+            identifiers.append(
+                GenSignedIdentifier(
+                    id=key,
+                    access_policy=value._to_generated() if value else None,  # pylint: disable=protected-access
+                )
+            )
         try:
             return cast(
                 Dict[str, Any],
                 await self._client.share.set_access_policy(
-                    share_acl=identifiers or None,
+                    share_acl=SignedIdentifiers(items_property=identifiers) if identifiers else None,
                     timeout=timeout,
                     cls=return_response_headers,
-                    lease_access_conditions=access_conditions,
+                    lease_id=lease_id,
+                    file_request_intent=self.file_request_intent,
                     **kwargs
                 ),
             )
@@ -876,13 +896,13 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         :return: The approximate size of the data (in bytes) stored on the share.
         :rtype: int
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         try:
             stats = cast(
                 ShareStats,
                 await self._client.share.get_statistics(
-                    timeout=timeout, lease_access_conditions=access_conditions, **kwargs
+                    timeout=timeout, lease_id=lease_id, file_request_intent=self.file_request_intent, **kwargs
                 ),
             )
             return stats.share_usage_bytes
@@ -972,7 +992,10 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         timeout = kwargs.pop("timeout", None)
         options = _create_permission_for_share_options(file_permission, timeout=timeout, **kwargs)
         try:
-            return cast(Optional[str], await self._client.share.create_permission(**options))
+            return cast(
+                Optional[str],
+                await self._client.share.create_permission(file_request_intent=self.file_request_intent, **options),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1001,7 +1024,11 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
             return cast(
                 str,
                 await self._client.share.get_permission(
-                    file_permission_key=permission_key, cls=deserialize_permission, timeout=timeout, **kwargs
+                    file_permission_key=permission_key,
+                    cls=deserialize_permission,
+                    timeout=timeout,
+                    file_request_intent=self.file_request_intent,
+                    **kwargs
                 ),
             )
         except HttpResponseError as error:

@@ -953,7 +953,7 @@ class TestStorageShare(StorageRecordedTestCase):
         assert len(shares2) == 2
         self.assertNamedItemInContainer(shares2, share_names[2])
         self.assertNamedItemInContainer(shares2, share_names[3])
-        self._delete_shares()
+        self._delete_shares(prefix)
 
     @FileSharePreparer()
     @recorded_by_proxy

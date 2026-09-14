@@ -13,7 +13,7 @@ authors = [
 description = "Microsoft Azure Loganalytics Management Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -21,6 +21,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 requires-python = ">=3.10"
 keywords = [
@@ -77,7 +78,7 @@ verifytypes = false
 package_name = "azure-mgmt-loganalytics"
 package_pprint_name = "Log Analytics Management"
 package_doc_id = ""
-is_stable = false
+is_stable = true
 sample_link = ""
 title = "LogAnalyticsManagementClient"
 package_nspkg = "azure-mgmt-nspkg"

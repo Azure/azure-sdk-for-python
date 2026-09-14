@@ -26,7 +26,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
         response = await self.client.virtual_network_appliances.get(
             resource_group_name=resource_group.name,
             virtual_network_appliance_name="str",
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                     "location": "str",
                     "name": "str",
                     "properties": {
-                        "bandwidthInGbps": "str",
+                        "bandwidthInGbps": 0.0,
                         "ipConfigurations": [
                             {
                                 "etag": "str",
@@ -61,6 +61,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                 "type": "str",
                             }
                         ],
+                        "privateIPAddressVersion": "str",
                         "provisioningState": "str",
                         "resourceGuid": "str",
                         "subnet": {
@@ -120,6 +121,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                 "name": "str",
                                                 "properties": {
                                                     "ddosSettings": {
+                                                        "ddosCustomPolicy": {"id": "str"},
                                                         "ddosProtectionPlan": {"id": "str"},
                                                         "protectionMode": "str",
                                                     },
@@ -133,7 +135,13 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                     "idleTimeoutInMinutes": 0,
                                                     "ipAddress": "str",
                                                     "ipConfiguration": ...,
-                                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                    "ipTags": [
+                                                        {
+                                                            "firstPartyServiceTagId": "str",
+                                                            "ipTagType": "str",
+                                                            "tag": "str",
+                                                        }
+                                                    ],
                                                     "linkedPublicIPAddress": ...,
                                                     "migrationPhase": "str",
                                                     "natGateway": {
@@ -143,6 +151,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                         "name": "str",
                                                         "properties": {
                                                             "idleTimeoutInMinutes": 0,
+                                                            "nat64": "str",
                                                             "provisioningState": "str",
                                                             "publicIpAddresses": [{"id": "str"}],
                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -164,6 +173,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                     "publicIPPrefix": {"id": "str"},
                                                     "resourceGuid": "str",
                                                     "servicePublicIPAddress": ...,
+                                                    "upgradedToV2": bool,
                                                 },
                                                 "sku": {"name": "str", "tier": "str"},
                                                 "tags": {"str": "str"},
@@ -431,6 +441,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -455,7 +466,13 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                 "subnet": ...,
                                                                             },
                                                                         },
-                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "ipTags": [
+                                                                            {
+                                                                                "firstPartyServiceTagId": "str",
+                                                                                "ipTagType": "str",
+                                                                                "tag": "str",
+                                                                            }
+                                                                        ],
                                                                         "linkedPublicIPAddress": ...,
                                                                         "migrationPhase": "str",
                                                                         "natGateway": {
@@ -465,6 +482,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -486,6 +504,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                         "publicIPPrefix": {"id": "str"},
                                                                         "resourceGuid": "str",
                                                                         "servicePublicIPAddress": ...,
+                                                                        "upgradedToV2": bool,
                                                                     },
                                                                     "sku": {"name": "str", "tier": "str"},
                                                                     "tags": {"str": "str"},
@@ -505,6 +524,12 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -529,6 +554,9 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -557,6 +585,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -570,6 +599,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -607,6 +637,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -673,6 +704,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                     "type": "str",
                                                                 }
                                                             ],
+                                                            "billingSku": "str",
                                                             "customDnsConfigs": [
                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                             ],
@@ -770,6 +802,10 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                     "id": "str",
                                                                     "name": "str",
                                                                     "properties": {
+                                                                        "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"}
+                                                                        },
+                                                                        "enableConnectionTracking": bool,
                                                                         "gatewayLoadBalancer": {"id": "str"},
                                                                         "inboundNatPools": [{"id": "str"}],
                                                                         "inboundNatRules": [{"id": "str"}],
@@ -790,6 +826,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -815,7 +852,11 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                     },
                                                                                 },
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -826,6 +867,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -857,6 +899,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -902,6 +945,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "billingSku": "str",
                                                                                 "customDnsConfigs": [
                                                                                     {
                                                                                         "fqdn": "str",
@@ -1004,6 +1048,10 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"}
+                                                                                },
+                                                                                "enableConnectionTracking": bool,
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -1024,6 +1072,9 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -1052,6 +1103,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -1065,6 +1117,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -1100,6 +1153,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -1271,6 +1325,9 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -1299,6 +1356,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -1312,6 +1370,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -1347,6 +1406,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -1460,6 +1520,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                     "type": "str",
                                                 }
                                             ],
+                                            "billingSku": "str",
                                             "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                             "customNetworkInterfaceName": "str",
                                             "ipConfigurations": [
@@ -1653,6 +1714,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -1678,7 +1740,11 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                 },
                                                                             },
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -1689,6 +1755,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -1718,6 +1785,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -1737,6 +1805,12 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            }
+                                                                                        },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -1767,6 +1841,9 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -1795,6 +1872,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -1808,6 +1886,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -1859,6 +1938,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -2102,6 +2182,10 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"}
+                                                                            },
+                                                                            "enableConnectionTracking": bool,
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -2122,6 +2206,9 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -2150,6 +2237,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -2163,6 +2251,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -2196,6 +2285,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -2255,6 +2345,12 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -2279,6 +2375,9 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -2307,6 +2406,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -2320,6 +2420,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -2357,6 +2458,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -2530,6 +2632,9 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -2558,6 +2663,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -2571,6 +2677,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -2608,6 +2715,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -2691,6 +2799,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                     "name": "str",
                                     "properties": {
                                         "disableBgpRoutePropagation": bool,
+                                        "disablePeeringRoute": "str",
                                         "provisioningState": "str",
                                         "resourceGuid": "str",
                                         "routes": [
@@ -2702,6 +2811,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                                                     "nextHopType": "str",
                                                     "addressPrefix": "str",
                                                     "hasBgpOverride": bool,
+                                                    "nextHop": {"nextHopIpAddresses": ["str"]},
                                                     "nextHopIpAddress": "str",
                                                     "provisioningState": "str",
                                                 },
@@ -2777,7 +2887,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-05-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -2791,7 +2901,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             virtual_network_appliance_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -2804,7 +2914,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
             await self.client.virtual_network_appliances.begin_delete(
                 resource_group_name=resource_group.name,
                 virtual_network_appliance_name="str",
-                api_version="2025-05-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -2816,7 +2926,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
     async def test_virtual_network_appliances_list(self, resource_group):
         response = self.client.virtual_network_appliances.list(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -2826,7 +2936,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperationsAsync(AzureMgmtReco
     @recorded_by_proxy_async
     async def test_virtual_network_appliances_list_all(self, resource_group):
         response = self.client.virtual_network_appliances.list_all(
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

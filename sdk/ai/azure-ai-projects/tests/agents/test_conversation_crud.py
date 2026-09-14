@@ -19,7 +19,7 @@ class TestConversationCrud(TestBase):
     # To run only this test:
     # pytest tests/agents/test_conversation_crud.py::TestConversationCrud::test_conversation_crud -s
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.HTTPX2)
     def test_conversation_crud(self, **kwargs):
         """
         Test CRUD operations for Conversations.

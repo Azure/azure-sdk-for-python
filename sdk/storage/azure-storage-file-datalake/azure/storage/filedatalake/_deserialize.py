@@ -157,8 +157,16 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
     serialized = False
     if not storage_error.response:
         raise storage_error
-    # If it is one of those three then it has been serialized prior by the generated layer.
-    if isinstance(storage_error, (ResourceNotFoundError, ClientAuthenticationError, ResourceExistsError)):
+    # The generated layer now pre-maps 412 (Precondition Failed) responses to typed
+    # exceptions based on the request's match condition (e.g. ResourceExistsError for
+    # IfMissing, ResourceNotFoundError for IfPresent). Historically 412 was not
+    # pre-mapped and always flowed through the error-code mapping below, surfacing as
+    # ResourceModifiedError. Skip the "already serialized" shortcut for 412 so it is
+    # re-mapped from x-ms-error-code (ConditionNotMet -> ResourceModifiedError) and the
+    # public exception type is preserved for users.
+    if storage_error.response.status_code != 412 and isinstance(
+        storage_error, (ResourceNotFoundError, ClientAuthenticationError, ResourceExistsError)
+    ):
         serialized = True
     error_code = storage_error.response.headers.get("x-ms-error-code")
     error_message = storage_error.message

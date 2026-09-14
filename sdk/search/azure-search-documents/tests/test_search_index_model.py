@@ -14,7 +14,6 @@ from azure.search.documents.indexes.models import (
     SimpleField,
 )
 
-
 INDEX_NAME = "hotels"
 
 

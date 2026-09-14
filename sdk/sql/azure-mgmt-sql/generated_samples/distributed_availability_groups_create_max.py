@@ -40,6 +40,7 @@ def main():
                 "failoverMode": "None",
                 "instanceAvailabilityGroupName": "testcl",
                 "instanceLinkRole": "Primary",
+                "linkMode": "SingleDatabase",
                 "partnerAvailabilityGroupName": "BoxLocalAg1",
                 "partnerEndpoint": "TCP://SERVER:7022",
                 "seedingMode": "Automatic",
@@ -49,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-01-01/DistributedAvailabilityGroupsCreateMax.json
+# x-ms-original-file: 2025-08-01-preview/DistributedAvailabilityGroupsCreateMax.json
 if __name__ == "__main__":
     main()

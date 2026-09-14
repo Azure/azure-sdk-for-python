@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import pytest
+from devtools_testutils import set_custom_default_matcher
 from devtools_testutils.sanitizers import (
     add_remove_header_sanitizer,
     add_general_regex_sanitizer,
@@ -21,6 +22,11 @@ def add_sanitizers(test_proxy):
     add_remove_header_sanitizer(headers="ServiceBusDlqSupplementaryAuthorization")
     add_general_regex_sanitizer(value="fakeresource", regex="(?<=\\/\\/)[a-z-]+(?=\\.servicebus\\.windows\\.net)")
     add_oauth_response_sanitizer()
+    # The default management api-version was bumped from 2021-05 to 2024-05 (required to serve the
+    # topic filter counts). The existing session recordings were captured at 2021-05, so ignore the
+    # api-version query parameter when matching a recorded request; version-specific tests pin their
+    # own api-version and match at that version regardless.
+    set_custom_default_matcher(ignored_query_parameters="api-version")
 
 
 # Note: This is duplicated between here and the basic conftest, so that it does not throw warnings if you're

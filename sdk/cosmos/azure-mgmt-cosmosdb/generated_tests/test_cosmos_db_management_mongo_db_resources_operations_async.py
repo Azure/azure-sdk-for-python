@@ -52,7 +52,6 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                             "offerReplacePending": "str",
                             "softAllowedMaximumThroughput": "str",
                             "throughput": 0,
-                            "throughputBuckets": [{"id": 0, "maxThroughputPercentage": 0, "isDefaultBucket": bool}],
                         }
                     },
                     "id": "str",
@@ -103,72 +102,6 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_mongo_db_resources_begin_mongo_db_database_retrieve_throughput_distribution(self, resource_group):
-        response = await (
-            await self.client.mongo_db_resources.begin_mongo_db_database_retrieve_throughput_distribution(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                database_name="str",
-                retrieve_throughput_parameters={
-                    "properties": {"resource": {"physicalPartitionIds": [{"id": "str"}]}},
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "location": "str",
-                    "name": "str",
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_mongo_db_resources_begin_mongo_db_database_redistribute_throughput(self, resource_group):
-        response = await (
-            await self.client.mongo_db_resources.begin_mongo_db_database_redistribute_throughput(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                database_name="str",
-                redistribute_throughput_parameters={
-                    "properties": {
-                        "resource": {
-                            "sourcePhysicalPartitionThroughputInfo": [
-                                {"id": "str", "targetThroughput": 0.0, "throughput": 0.0}
-                            ],
-                            "targetPhysicalPartitionThroughputInfo": [
-                                {"id": "str", "targetThroughput": 0.0, "throughput": 0.0}
-                            ],
-                            "throughputPolicy": "str",
-                        }
-                    },
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "location": "str",
-                    "name": "str",
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
     async def test_mongo_db_resources_get_mongo_db_collection_throughput(self, resource_group):
         response = await self.client.mongo_db_resources.get_mongo_db_collection_throughput(
             resource_group_name=resource_group.name,
@@ -202,75 +135,6 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                             "offerReplacePending": "str",
                             "softAllowedMaximumThroughput": "str",
                             "throughput": 0,
-                            "throughputBuckets": [{"id": 0, "maxThroughputPercentage": 0, "isDefaultBucket": bool}],
-                        }
-                    },
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "location": "str",
-                    "name": "str",
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_mongo_db_resources_begin_mongo_db_container_retrieve_throughput_distribution(self, resource_group):
-        response = await (
-            await self.client.mongo_db_resources.begin_mongo_db_container_retrieve_throughput_distribution(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                database_name="str",
-                collection_name="str",
-                retrieve_throughput_parameters={
-                    "properties": {"resource": {"physicalPartitionIds": [{"id": "str"}]}},
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "location": "str",
-                    "name": "str",
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_mongo_db_resources_begin_mongo_db_container_redistribute_throughput(self, resource_group):
-        response = await (
-            await self.client.mongo_db_resources.begin_mongo_db_container_redistribute_throughput(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                database_name="str",
-                collection_name="str",
-                redistribute_throughput_parameters={
-                    "properties": {
-                        "resource": {
-                            "sourcePhysicalPartitionThroughputInfo": [
-                                {"id": "str", "targetThroughput": 0.0, "throughput": 0.0}
-                            ],
-                            "targetPhysicalPartitionThroughputInfo": [
-                                {"id": "str", "targetThroughput": 0.0, "throughput": 0.0}
-                            ],
-                            "throughputPolicy": "str",
                         }
                     },
                     "id": "str",
@@ -399,21 +263,6 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_mongo_db_resources_begin_mongo_db_database_partition_merge(self, resource_group):
-        response = await (
-            await self.client.mongo_db_resources.begin_mongo_db_database_partition_merge(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                database_name="str",
-                merge_parameters={"isDryRun": bool},
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
     async def test_mongo_db_resources_get_mongo_db_collection(self, resource_group):
         response = await self.client.mongo_db_resources.get_mongo_db_collection(
             resource_group_name=resource_group.name,
@@ -494,22 +343,6 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
             database_name="str",
         )
         result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_mongo_db_resources_begin_list_mongo_db_collection_partition_merge(self, resource_group):
-        response = await (
-            await self.client.mongo_db_resources.begin_list_mongo_db_collection_partition_merge(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                database_name="str",
-                collection_name="str",
-                merge_parameters={"isDryRun": bool},
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
         # please add some check logic here by yourself
         # ...
 

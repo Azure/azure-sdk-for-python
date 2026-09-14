@@ -18,6 +18,7 @@ from ._models import (
     RecordingProperties,
     AddParticipantResult,
     RemoveParticipantResult,
+    MoveParticipantsResult,
     TransferCallResult,
     MediaStreamingOptions,
     TranscriptionOptions,
@@ -29,6 +30,9 @@ from ._models import (
     AzureCommunicationsRecordingStorage,
     MediaStreamingSubscription,
     TranscriptionSubscription,
+    TeamsPhoneCallDetails,
+    TeamsPhoneCallerDetails,
+    TeamsPhoneSourceDetails
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -77,6 +81,9 @@ __all__ = [
     "TranscriptionOptions",
     "AzureBlobContainerRecordingStorage",
     "AzureCommunicationsRecordingStorage",
+    "TeamsPhoneCallDetails",
+    "TeamsPhoneCallerDetails",
+    "TeamsPhoneSourceDetails",
     # models for output
     "CallConnectionProperties",
     "MediaStreamingSubscription",
@@ -89,6 +96,7 @@ __all__ = [
     "MuteParticipantResult",
     "SendDtmfTonesResult",
     "CancelAddParticipantOperationResult",
+    "MoveParticipantsResult",
     # common ACS communication identifier
     "CommunicationIdentifier",
     "PhoneNumberIdentifier",

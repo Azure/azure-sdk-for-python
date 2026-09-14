@@ -1,3 +1,11 @@
 {
-  "apiVersion": "2024-12-09-preview"
+  "apiVersion": "2026-02-23",
+  "apiVersions": {
+    "ConfidentialLedger": "2026-02-23"
+  },
+  "commit": "8a3262d0e5c399e19b4e489368643a0e5b7f16e3",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/confidentialledger/data-plane/ConfidentialLedger",
+  "emitterVersion": "0.63.1",
+  "httpClientPythonVersion": "^0.31.1"
 }

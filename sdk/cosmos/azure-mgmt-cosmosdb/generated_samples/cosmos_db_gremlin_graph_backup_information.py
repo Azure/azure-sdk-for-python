@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/CosmosDBGremlinGraphBackupInformation.json
+# x-ms-original-file: 2026-03-15/CosmosDBGremlinGraphBackupInformation.json
 if __name__ == "__main__":
     main()

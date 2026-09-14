@@ -3,21 +3,21 @@
 #          generate-contracts, clean, install-typespec-deps
 #
 # Dependencies are resolved from eng/emitter-package.json (via tsp-client sync)
-# which creates TempTypeSpecFiles/package.json with pinned versions.
-# Do NOT override versions with npm install --no-save.
+# which creates TempTypeSpecFiles/package.json with pinned versions. The optional
+# TYPESPEC_*_PATH variables are only for validating local emitter builds before
+# their package versions are pinned in emitter-package.json.
 
 OUTPUT_DIR  ?= azure/ai/agentserver/responses/models/_generated
 TYPESPEC_DIR ?= type_spec
 TEMP_TSP_DIR := $(TYPESPEC_DIR)/TempTypeSpecFiles
+TEMP_OUTPUT_DIR := .tmp_typeddict_codegen
+TYPESPEC_PYTHON_EMITTER_PATH ?=
+TYPESPEC_HTTP_CLIENT_PYTHON_PATH ?=
 OPENAPI_SPEC ?= $(TEMP_TSP_DIR)/Foundry/openapi.virtual-public-preview.yaml
-VALIDATORS_OUTPUT ?= $(OUTPUT_DIR)/_validators.py
+VALIDATORS_OUTPUT ?= azure/ai/agentserver/responses/models/_request_validators.py
 ROOT_SCHEMAS ?= CreateResponse
-OVERLAY ?= scripts/validation-overlay.yaml
-TEMP_OUTPUT_DIR := $(OUTPUT_DIR)/.tmp_codegen
-MODEL_PACKAGE_DIR := $(TEMP_OUTPUT_DIR)/azure/ai/agentserver/responses/models
-MODEL_SHIMS_DIR := scripts/generated_shims
+OVERLAY ?= _scripts/validation-overlay.yaml
 CONTRACTS_DIR := $(TEMP_TSP_DIR)/sdk-service-agentserver-contracts
-MODEL_BASE    := $(OUTPUT_DIR)/sdk/models/_utils/model_base.py
 
 .PHONY: generate-models generate-validators generate-openapi generate-contracts clean install-typespec-deps
 
@@ -34,7 +34,7 @@ generate-validators:
 	@where python >NUL 2>NUL || (echo Error: python is required and was not found on PATH. 1>&2 && exit /b 1)
 	@if not exist "$(OPENAPI_SPEC)" (echo Error: OpenAPI spec not found at $(OPENAPI_SPEC). Run 'make generate-openapi' first. 1>&2 && exit /b 1)
 	@echo Generating payload validators from $(OPENAPI_SPEC)...
-	python scripts/generate_validators.py --input "$(OPENAPI_SPEC)" --output "$(VALIDATORS_OUTPUT)" --root-schemas "$(ROOT_SCHEMAS)" --overlay "$(OVERLAY)"
+	python _scripts/generate_validators.py --input "$(OPENAPI_SPEC)" --output "$(VALIDATORS_OUTPUT)" --root-schemas "$(ROOT_SCHEMAS)" --overlay "$(OVERLAY)"
 	@echo Generated validators at $(VALIDATORS_OUTPUT)
 else
 generate-validators:
@@ -48,7 +48,7 @@ generate-validators:
 		exit 1; \
 	}
 	@echo "Generating payload validators from $(OPENAPI_SPEC)..."
-	python scripts/generate_validators.py --input "$(OPENAPI_SPEC)" --output "$(VALIDATORS_OUTPUT)" --root-schemas "$(ROOT_SCHEMAS)" --overlay "$(OVERLAY)"
+	python _scripts/generate_validators.py --input "$(OPENAPI_SPEC)" --output "$(VALIDATORS_OUTPUT)" --root-schemas "$(ROOT_SCHEMAS)" --overlay "$(OVERLAY)"
 	@echo "Generated validators at $(VALIDATORS_OUTPUT)"
 endif
 
@@ -90,7 +90,7 @@ endif
 generate-contracts: generate-models generate-openapi generate-validators
 
 # --------------------------------------------------------------------------
-# generate-models: Compile TypeSpec definitions into Python model classes
+# generate-models: Compile TypeSpec definitions into local TypedDict model contracts
 # --------------------------------------------------------------------------
 ifeq ($(OS),Windows_NT)
 generate-models:
@@ -100,25 +100,14 @@ generate-models:
 	cd /d $(TYPESPEC_DIR) && tsp-client sync
 	@echo Installing TypeSpec dependencies from emitter-package.json...
 	cd /d $(TEMP_TSP_DIR) && npm install --silent
-	@echo Generating Python models...
+	@if not "$(TYPESPEC_HTTP_CLIENT_PYTHON_PATH)"=="" cd /d $(TEMP_TSP_DIR) && npm install --silent --no-save "$(TYPESPEC_HTTP_CLIENT_PYTHON_PATH)"
+	@if not "$(TYPESPEC_PYTHON_EMITTER_PATH)"=="" cd /d $(TEMP_TSP_DIR) && npm install --silent --no-save "$(TYPESPEC_PYTHON_EMITTER_PATH)"
+	@echo Generating local Python TypedDict models...
 	@if exist "$(OUTPUT_DIR)" rmdir /s /q "$(OUTPUT_DIR)"
-	cd /d $(TEMP_TSP_DIR) && npx tsp compile sdk-service-agentserver-contracts\client.tsp --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(abspath $(TEMP_OUTPUT_DIR))"
-	@if not exist "$(MODEL_PACKAGE_DIR)" (echo Error: generated model package was not found. 1>&2 && exit /b 1)
-	@if not exist "$(OUTPUT_DIR)\sdk" mkdir "$(OUTPUT_DIR)\sdk"
-	@xcopy /E /I /Y "$(MODEL_PACKAGE_DIR)" "$(OUTPUT_DIR)\sdk\models" >NUL
-	@if exist "$(OUTPUT_DIR)\sdk\models\aio" rmdir /s /q "$(OUTPUT_DIR)\sdk\models\aio"
-	@if exist "$(OUTPUT_DIR)\sdk\models\operations" rmdir /s /q "$(OUTPUT_DIR)\sdk\models\operations"
-	@if exist "$(OUTPUT_DIR)\sdk\models\_client.py" del /q "$(OUTPUT_DIR)\sdk\models\_client.py"
-	@if exist "$(OUTPUT_DIR)\sdk\models\_configuration.py" del /q "$(OUTPUT_DIR)\sdk\models\_configuration.py"
-	@if exist "$(OUTPUT_DIR)\sdk\models\_version.py" del /q "$(OUTPUT_DIR)\sdk\models\_version.py"
-	@copy /Y "$(MODEL_SHIMS_DIR)\sdk_models__init__.py" "$(OUTPUT_DIR)\sdk\models\__init__.py" >NUL
-	@copy /Y "$(MODEL_SHIMS_DIR)\__init__.py" "$(OUTPUT_DIR)\__init__.py" >NUL
-	@copy /Y "$(MODEL_SHIMS_DIR)\_enums.py" "$(OUTPUT_DIR)\_enums.py" >NUL
-	@copy /Y "$(MODEL_SHIMS_DIR)\_models.py" "$(OUTPUT_DIR)\_models.py" >NUL
-	@copy /Y "$(MODEL_SHIMS_DIR)\_patch.py" "$(OUTPUT_DIR)\_patch.py" >NUL
-	@copy /Y "$(MODEL_SHIMS_DIR)\models_patch.py" "$(OUTPUT_DIR)\sdk\models\models\_patch.py" >NUL
-	@REM Patch _deserialize_sequence: reject plain strings so union falls through to str branch
-	@powershell -Command "(Get-Content '$(MODEL_BASE)') -replace 'return type\(obj\)\(_deserialize\(deserializer, entry, module\) for entry in obj\)','if isinstance(obj, str):\n        raise DeserializationError()\n    return type(obj)(_deserialize(deserializer, entry, module) for entry in obj)' | Set-Content '$(MODEL_BASE)'"
+	@if exist "$(TEMP_OUTPUT_DIR)" rmdir /s /q "$(TEMP_OUTPUT_DIR)"
+	cd /d $(TEMP_TSP_DIR) && npx tsp compile sdk-service-agentserver-contracts\client.tsp --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(abspath $(TEMP_OUTPUT_DIR))" --option "@azure-tools/typespec-python.namespace=ai.agentserver.responses.models._generated" --option "@azure-tools/typespec-python.package-name=azure-ai-agentserver-responses" --option "@azure-tools/typespec-python.models-mode=typeddict" --option "@azure-tools/typespec-python.generate-packaging-files=false"
+	python _scripts\extract_model_contracts.py --emitter-output-root "$(TEMP_OUTPUT_DIR)" --generated-root "$(OUTPUT_DIR)"
+	@if not exist "$(OUTPUT_DIR)" (echo Error: generated model package was not found. 1>&2 && exit /b 1)
 	@if exist "$(TEMP_OUTPUT_DIR)" rmdir /s /q "$(TEMP_OUTPUT_DIR)"
 else
 generate-models:
@@ -135,28 +124,21 @@ generate-models:
 	cd $(TYPESPEC_DIR) && tsp-client sync
 	@echo "Installing TypeSpec dependencies from emitter-package.json..."
 	cd $(TEMP_TSP_DIR) && npm install --silent
-	@echo "Generating Python models..."
+	@if [ -n "$(TYPESPEC_HTTP_CLIENT_PYTHON_PATH)" ]; then \
+		cd $(TEMP_TSP_DIR) && npm install --silent --no-save "$(TYPESPEC_HTTP_CLIENT_PYTHON_PATH)"; \
+	fi
+	@if [ -n "$(TYPESPEC_PYTHON_EMITTER_PATH)" ]; then \
+		cd $(TEMP_TSP_DIR) && npm install --silent --no-save "$(TYPESPEC_PYTHON_EMITTER_PATH)"; \
+	fi
+	@echo "Generating local Python TypedDict models..."
 	rm -rf $(OUTPUT_DIR)
-	cd $(TEMP_TSP_DIR) && npx tsp compile sdk-service-agentserver-contracts/client.tsp --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(abspath $(TEMP_OUTPUT_DIR))"
-	@test -d $(MODEL_PACKAGE_DIR) || { \
+	rm -rf $(TEMP_OUTPUT_DIR)
+	cd $(TEMP_TSP_DIR) && npx tsp compile sdk-service-agentserver-contracts/client.tsp --emit @azure-tools/typespec-python --option "@azure-tools/typespec-python.emitter-output-dir=$(abspath $(TEMP_OUTPUT_DIR))" --option "@azure-tools/typespec-python.namespace=ai.agentserver.responses.models._generated" --option "@azure-tools/typespec-python.package-name=azure-ai-agentserver-responses" --option "@azure-tools/typespec-python.models-mode=typeddict" --option "@azure-tools/typespec-python.generate-packaging-files=false"
+	python _scripts/extract_model_contracts.py --emitter-output-root "$(TEMP_OUTPUT_DIR)" --generated-root "$(OUTPUT_DIR)"
+	@test -d $(OUTPUT_DIR) || { \
 		echo "Error: generated model package was not found." >&2; \
 		exit 1; \
 	}
-	mkdir -p $(OUTPUT_DIR)/sdk
-	cp -R $(MODEL_PACKAGE_DIR) $(OUTPUT_DIR)/sdk/models
-	rm -rf $(OUTPUT_DIR)/sdk/models/aio
-	rm -rf $(OUTPUT_DIR)/sdk/models/operations
-	rm -f $(OUTPUT_DIR)/sdk/models/_client.py
-	rm -f $(OUTPUT_DIR)/sdk/models/_configuration.py
-	rm -f $(OUTPUT_DIR)/sdk/models/_version.py
-	cp $(MODEL_SHIMS_DIR)/sdk_models__init__.py $(OUTPUT_DIR)/sdk/models/__init__.py
-	cp $(MODEL_SHIMS_DIR)/__init__.py $(OUTPUT_DIR)/__init__.py
-	cp $(MODEL_SHIMS_DIR)/_enums.py $(OUTPUT_DIR)/_enums.py
-	cp $(MODEL_SHIMS_DIR)/_models.py $(OUTPUT_DIR)/_models.py
-	cp $(MODEL_SHIMS_DIR)/_patch.py $(OUTPUT_DIR)/_patch.py
-	cp $(MODEL_SHIMS_DIR)/models_patch.py $(OUTPUT_DIR)/sdk/models/models/_patch.py
-	# Patch _deserialize_sequence: reject plain strings so union falls through to str branch
-	sed -i 's/    return type(obj)(_deserialize(deserializer, entry, module) for entry in obj)/    if isinstance(obj, str):\n        raise DeserializationError()\n    return type(obj)(_deserialize(deserializer, entry, module) for entry in obj)/' $(MODEL_BASE)
 	rm -rf $(TEMP_OUTPUT_DIR)
 endif
 
@@ -166,9 +148,13 @@ endif
 ifeq ($(OS),Windows_NT)
 clean:
 	@if exist "$(OUTPUT_DIR)" rmdir /s /q "$(OUTPUT_DIR)"
+	@if exist "$(VALIDATORS_OUTPUT)" del /q "$(VALIDATORS_OUTPUT)"
+	@if exist "$(TEMP_OUTPUT_DIR)" rmdir /s /q "$(TEMP_OUTPUT_DIR)"
 else
 clean:
 	rm -rf $(OUTPUT_DIR)
+	rm -f $(VALIDATORS_OUTPUT)
+	rm -rf $(TEMP_OUTPUT_DIR)
 endif
 
 # --------------------------------------------------------------------------

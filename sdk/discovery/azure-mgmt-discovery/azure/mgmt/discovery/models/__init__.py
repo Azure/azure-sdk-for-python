@@ -51,6 +51,7 @@ from ._models import (  # type: ignore
     Supercomputer,
     SupercomputerIdentities,
     SupercomputerProperties,
+    SystemAssignedServiceIdentity,
     SystemData,
     Tool,
     ToolProperties,
@@ -65,8 +66,10 @@ from ._models import (  # type: ignore
 
 from ._enums import (  # type: ignore
     ActionType,
+    BlobStorageMountProtocol,
     CreatedByType,
     CustomerManagedKeys,
+    NetAppMountProtocol,
     NetworkEgressType,
     Origin,
     PrivateEndpointConnectionProvisioningState,
@@ -75,6 +78,7 @@ from ._enums import (  # type: ignore
     PublicNetworkAccess,
     ScaleSetPriority,
     StorageStoreType,
+    SystemAssignedServiceIdentityType,
     SystemSku,
     VmSize,
 )
@@ -120,6 +124,7 @@ __all__ = [
     "Supercomputer",
     "SupercomputerIdentities",
     "SupercomputerProperties",
+    "SystemAssignedServiceIdentity",
     "SystemData",
     "Tool",
     "ToolProperties",
@@ -131,8 +136,10 @@ __all__ = [
     "WorkspacePrivateLinkResource",
     "WorkspaceProperties",
     "ActionType",
+    "BlobStorageMountProtocol",
     "CreatedByType",
     "CustomerManagedKeys",
+    "NetAppMountProtocol",
     "NetworkEgressType",
     "Origin",
     "PrivateEndpointConnectionProvisioningState",
@@ -141,6 +148,7 @@ __all__ = [
     "PublicNetworkAccess",
     "ScaleSetPriority",
     "StorageStoreType",
+    "SystemAssignedServiceIdentityType",
     "SystemSku",
     "VmSize",
 ]

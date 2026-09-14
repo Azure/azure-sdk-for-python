@@ -5,21 +5,21 @@
 from abc import ABC
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import FqdnOutboundRule as RestFqdnOutboundRule
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import FqdnOutboundRule as RestFqdnOutboundRule
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ManagedNetworkProvisionStatus as RestManagedNetworkProvisionStatus,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import ManagedNetworkSettings as RestManagedNetwork
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.arm_ml_service.models import (
     PrivateEndpointDestination as RestPrivateEndpointOutboundRuleDestination,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ServiceTagDestination as RestServiceTagOutboundRuleDestination,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import ServiceTagOutboundRule as RestServiceTagOutboundRule
+from azure.ai.ml._restclient.arm_ml_service.models import ServiceTagOutboundRule as RestServiceTagOutboundRule
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
 
 
@@ -27,8 +27,8 @@ class OutboundRule(ABC):
     """Base class for Outbound Rules, cannot be instantiated directly. Please see FqdnDestination,
     PrivateEndpointDestination, and ServiceTagDestination objects to create outbound rules.
 
-    :param name: Name of the outbound rule.
-    :type name: str
+    :keyword name: Name of the outbound rule.
+    :paramtype name: str
     :param type: Type of the outbound rule. Supported types are "FQDN", "PrivateEndpoint", "ServiceTag"
     :type type: str
     :ivar type: Type of the outbound rule. Supported types are "FQDN", "PrivateEndpoint", "ServiceTag"
@@ -83,11 +83,11 @@ class OutboundRule(ABC):
 class FqdnDestination(OutboundRule):
     """Class representing a FQDN outbound rule.
 
-    :param name: Name of the outbound rule.
-    :type name: str
-    :param destination: Fully qualified domain name to which outbound connections are allowed.
+    :keyword name: Name of the outbound rule.
+    :paramtype name: str
+    :keyword destination: Fully qualified domain name to which outbound connections are allowed.
         For example: “xxxxxx.contoso.com”.
-    :type destination: str
+    :paramtype destination: str
     :ivar type: Type of the outbound rule. Set to "FQDN" for this class.
     :vartype type: str
 
@@ -119,18 +119,18 @@ class FqdnDestination(OutboundRule):
 class PrivateEndpointDestination(OutboundRule):
     """Class representing a Private Endpoint outbound rule.
 
-    :param name: Name of the outbound rule.
-    :type name: str
-    :param service_resource_id: The resource URI of the root service that supports creation of the private link.
-    :type service_resource_id: str
-    :param subresource_target: The target endpoint of the subresource of the service.
-    :type subresource_target: str
-    :param spark_enabled: Indicates if the private endpoint can be used for Spark jobs, default is “false”.
-    :type spark_enabled: bool
-    :param fqdns: String list of FQDNs particular to the Private Endpoint resource creation. For application
+    :keyword name: Name of the outbound rule.
+    :paramtype name: str
+    :keyword service_resource_id: The resource URI of the root service that supports creation of the private link.
+    :paramtype service_resource_id: str
+    :keyword subresource_target: The target endpoint of the subresource of the service.
+    :paramtype subresource_target: str
+    :keyword spark_enabled: Indicates if the private endpoint can be used for Spark jobs, default is “false”.
+    :paramtype spark_enabled: bool
+    :keyword fqdns: String list of FQDNs particular to the Private Endpoint resource creation. For application
         gateway Private Endpoints, this is the FQDN which will resolve to the private IP of the application
         gateway PE inside the workspace's managed network.
-    :type fqdns: List[str]
+    :paramtype fqdns: List[str]
     :ivar type: Type of the outbound rule. Set to "PrivateEndpoint" for this class.
     :vartype type: str
 
@@ -188,18 +188,18 @@ class PrivateEndpointDestination(OutboundRule):
 class ServiceTagDestination(OutboundRule):
     """Class representing a Service Tag outbound rule.
 
-    :param name: Name of the outbound rule.
-    :type name: str
-    :param service_tag: Service Tag of an Azure service, maps to predefined IP addresses for its service endpoints.
-    :type service_tag: str
-    :param protocol: Allowed transport protocol, can be "TCP", "UDP", "ICMP" or "*" for all supported protocols.
-    :type protocol: str
-    :param port_ranges: A comma-separated list of single ports and/or range of ports, such as "80,1024-65535".
+    :keyword name: Name of the outbound rule.
+    :paramtype name: str
+    :keyword service_tag: Service Tag of an Azure service, maps to predefined IP addresses for its service endpoints.
+    :paramtype service_tag: str
+    :keyword protocol: Allowed transport protocol, can be "TCP", "UDP", "ICMP" or "*" for all supported protocols.
+    :paramtype protocol: str
+    :keyword port_ranges: A comma-separated list of single ports and/or range of ports, such as "80,1024-65535".
         Traffics should be allowed to these port ranges.
-    :type port_ranges: str
-    :param address_prefixes: Optional list of CIDR prefixes or IP ranges, when provided, service_tag argument will
+    :paramtype port_ranges: str
+    :keyword address_prefixes: Optional list of CIDR prefixes or IP ranges, when provided, service_tag argument will
         be ignored and address_prefixes will be used instead.
-    :type address_prefixes: List[str]
+    :paramtype address_prefixes: List[str]
     :ivar type: Type of the outbound rule. Set to "ServiceTag" for this class.
     :vartype type: str
 
@@ -257,14 +257,14 @@ class ServiceTagDestination(OutboundRule):
 class ManagedNetwork:
     """Managed Network settings for a workspace.
 
-    :param isolation_mode: Isolation of the managed network, defaults to Disabled.
-    :type isolation_mode: str
-    :param firewall_sku: Firewall Sku for FQDN rules in AllowOnlyApprovedOutbound..
-    :type firewall_sku: str
-    :param outbound_rules: List of outbound rules for the managed network.
-    :type outbound_rules: List[~azure.ai.ml.entities.OutboundRule]
-    :param network_id: Network id for the managed network, not meant to be set by user.
-    :type network_id: str
+    :keyword isolation_mode: Isolation of the managed network, defaults to Disabled.
+    :paramtype isolation_mode: str
+    :keyword firewall_sku: Firewall Sku for FQDN rules in AllowOnlyApprovedOutbound..
+    :paramtype firewall_sku: str
+    :keyword outbound_rules: List of outbound rules for the managed network.
+    :paramtype outbound_rules: List[~azure.ai.ml.entities.OutboundRule]
+    :keyword network_id: Network id for the managed network, not meant to be set by user.
+    :paramtype network_id: str
 
     .. literalinclude:: ../samples/ml_samples_workspace.py
             :start-after: [START workspace_managed_network]
@@ -325,10 +325,10 @@ class ManagedNetwork:
 class ManagedNetworkProvisionStatus:
     """ManagedNetworkProvisionStatus.
 
-    :param status: Status for managed network provision.
-    :type status: str
-    :param spark_ready: Bool value indicating if managed network is spark ready
-    :type spark_ready: bool
+    :keyword status: Status for managed network provision.
+    :paramtype status: str
+    :keyword spark_ready: Bool value indicating if managed network is spark ready
+    :paramtype spark_ready: bool
     """
 
     def __init__(

@@ -52,7 +52,7 @@ class TestResponsesInstrumentorCodeInterpreterAsync(TestAiAgentsInstrumentorBase
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_code_interpreter_non_streaming_with_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements,too-many-nested-blocks
@@ -241,7 +241,7 @@ TRANSPORTATION,Contoso air,1100000
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_code_interpreter_non_streaming_without_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements,too-many-nested-blocks
@@ -434,7 +434,7 @@ TRANSPORTATION,Contoso air,1100000
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_code_interpreter_streaming_with_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements,too-many-nested-blocks
@@ -627,7 +627,7 @@ TRANSPORTATION,Contoso air,1100000
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_code_interpreter_streaming_without_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements,too-many-nested-blocks

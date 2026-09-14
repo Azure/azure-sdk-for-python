@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-03-03/galleryScriptExamples/GalleryScriptVersion_ListByGalleryScript.json
+# x-ms-original-file: 2025-12-03/galleryScriptExamples/GalleryScriptVersion_ListByGalleryScript.json
 if __name__ == "__main__":
     main()

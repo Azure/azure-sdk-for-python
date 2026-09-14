@@ -1,5 +1,31 @@
 # Release History
 
+## 2.0.0b5 (2026-07-07)
+
+### Features Added
+
+  - Client `SelfHelpMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `SelfHelpMgmtClient` added method `send_request`
+  - Added model `ExtensionResource`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `DiagnosticResource` moved instance variable `global_parameters`, `insights`, `accepted_at`, `provisioning_state` and `diagnostics` under property `properties` whose type is `DiagnosticResourceProperties`
+  - Model `Filter` renamed its instance variable `values` to `values_property`
+  - Model `SimplifiedSolutionsResource` moved instance variable `solution_id`, `parameters`, `title`, `appendix`, `content` and `provisioning_state` under property `properties` whose type is `SimplifiedSolutionsResourceProperties`
+  - Model `SolutionMetadataResource` moved instance variable `solutions` under property `properties` whose type is `Solutions`
+  - Model `SolutionNlpMetadataResource` moved instance variable `problem_title`, `problem_description`, `service_id`, `problem_classification_id`, `solutions` and `related_services` under property `properties` whose type is `NlpSolutions`
+  - Model `SolutionPatchRequestBody` moved instance variable `trigger_criteria`, `parameters`, `solution_id`, `provisioning_state`, `title`, `content`, `replacement_maps` and `sections` under property `properties` whose type is `SolutionResourceProperties`
+  - Model `SolutionResource` moved instance variable `trigger_criteria`, `parameters`, `solution_id`, `provisioning_state`, `title`, `content`, `replacement_maps` and `sections` under property `properties` whose type is `SolutionResourceProperties`
+  - Model `SolutionResourceSelfHelp` moved instance variable `solution_id`, `title`, `content`, `replacement_maps` and `sections` under property `properties` whose type is `SolutionsResourcePropertiesSelfHelp`
+  - Model `TroubleshooterResource` moved instance variable `solution_id`, `parameters`, `provisioning_state` and `steps` under property `properties` whose type is `TroubleshooterInstanceProperties`
+  - Method `DiscoverySolutionOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `DiscoveryResponse`/`OperationListResult` which actually were not used by SDK users
+
 ## 2.0.0b4 (2024-05-27)
 
 ### Features Added

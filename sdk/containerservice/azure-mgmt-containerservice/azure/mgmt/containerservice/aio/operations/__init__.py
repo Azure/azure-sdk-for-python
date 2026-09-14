@@ -27,6 +27,7 @@ from ._operations import IdentityBindingsOperations  # type: ignore
 from ._operations import JWTAuthenticatorsOperations  # type: ignore
 from ._operations import MeshMembershipsOperations  # type: ignore
 from ._operations import Operations  # type: ignore
+from ._operations import AlertConfigurationsOperations  # type: ignore
 from ._operations import OperationStatusResultOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
 from ._operations import ResolvePrivateLinkServiceIdOperations  # type: ignore
@@ -54,6 +55,7 @@ __all__ = [
     "JWTAuthenticatorsOperations",
     "MeshMembershipsOperations",
     "Operations",
+    "AlertConfigurationsOperations",
     "OperationStatusResultOperations",
     "PrivateLinkResourcesOperations",
     "ResolvePrivateLinkServiceIdOperations",

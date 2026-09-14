@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2023-10-01-preview",
+  "apiVersions": {
+    "Microsoft.NotificationHubs": "2023-10-01-preview"
+  },
+  "commit": "c4186f9c6595ff594789322daa64f9c1cb58ef65",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/notificationhubs/resource-manager/Microsoft.NotificationHubs/NotificationHubs",
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.1"
+}

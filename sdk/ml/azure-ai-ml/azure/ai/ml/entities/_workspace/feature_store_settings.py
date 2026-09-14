@@ -6,7 +6,7 @@
 
 from typing import Optional
 
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import FeatureStoreSettings as RestFeatureStoreSettings
+from azure.ai.ml._restclient.arm_ml_service.models import FeatureStoreSettings as RestFeatureStoreSettings
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 from .compute_runtime import ComputeRuntime
@@ -15,12 +15,12 @@ from .compute_runtime import ComputeRuntime
 class FeatureStoreSettings(RestTranslatableMixin):
     """Feature Store Settings
 
-    :param compute_runtime: The spark compute runtime settings. defaults to None.
-    :type compute_runtime: Optional[~compute_runtime.ComputeRuntime]
-    :param offline_store_connection_name: The offline store connection name. Defaults to None.
-    :type offline_store_connection_name: Optional[str]
-    :param online_store_connection_name: The online store connection name. Defaults to None.
-    :type online_store_connection_name: Optional[str]
+    :keyword compute_runtime: The spark compute runtime settings. defaults to None.
+    :paramtype compute_runtime: Optional[~compute_runtime.ComputeRuntime]
+    :keyword offline_store_connection_name: The offline store connection name. Defaults to None.
+    :paramtype offline_store_connection_name: Optional[str]
+    :keyword online_store_connection_name: The online store connection name. Defaults to None.
+    :paramtype online_store_connection_name: Optional[str]
 
     .. admonition:: Example:
 

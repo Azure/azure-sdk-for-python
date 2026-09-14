@@ -41,6 +41,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-01-01/SyncMemberGetSchema.json
+# x-ms-original-file: 2025-08-01-preview/SyncMemberGetSchema.json
 if __name__ == "__main__":
     main()

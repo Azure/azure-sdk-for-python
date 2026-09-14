@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-04-16",
+  "apiVersions": {
+    "Qumulo.Storage": "2026-04-16"
+  },
+  "commit": "a3befae1988d1229f2bc679f4e4277ab5e20db8c",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/liftrqumulo/Qumulo.Storage.Management",
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.33.0"
+}

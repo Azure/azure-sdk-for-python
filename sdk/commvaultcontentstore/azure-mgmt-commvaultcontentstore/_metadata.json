@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-07-03-preview",
+  "apiVersions": {
+    "Commvault.ContentStore": "2026-07-03-preview"
+  },
+  "commit": "e7c377b4c801d6fe9e256ca22f6d6a79114026a7",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/liftrcommvault/Commvault.ContentStore.Management",
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.33.0"
+}

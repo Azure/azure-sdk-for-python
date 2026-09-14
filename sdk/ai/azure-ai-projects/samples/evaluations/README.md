@@ -47,6 +47,7 @@ python sample_evaluations_builtin_with_inline_data.py
 | [sample_agent_response_evaluation_with_function_tool.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_agent_response_evaluation_with_function_tool.py) | Evaluate agent responses with function tools |
 | [sample_model_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_model_evaluation.py) | Create response from model and evaluate |
 | [sample_synthetic_data_agent_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_synthetic_data_agent_evaluation.py) | Generate synthetic test data, evaluate a Foundry agent |
+| [sample_synthetic_multiturn_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_synthetic_multiturn_evaluation.py) | Generate simulation seed data from an agent, simulate multi-turn conversations, and evaluate them |
 | [sample_synthetic_data_model_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_synthetic_data_model_evaluation.py) | Generate synthetic test data, evaluate a model |
 
 ### Red Team Evaluations
@@ -114,11 +115,17 @@ Located in the [agentic_evaluators](https://github.com/Azure/azure-sdk-for-pytho
 | [sample_generic_agentic_evaluator](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/evaluations/agentic_evaluators/sample_generic_agentic_evaluator) | Generic agentic evaluator example |
 
 
+### Endpoint-Based (Custom) Evaluators
+
+| Sample | Description | Requirements |
+|--------|-------------|--------------|
+| [sample_endpoint_evaluator_with_api_key.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_endpoint_evaluator_with_api_key.py) | Bring your own HTTP endpoint as an evaluator, authenticated with an API key | Scoring endpoint, `azure-mgmt-cognitiveservices` |
+| [sample_endpoint_evaluator_with_entra_id.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_endpoint_evaluator_with_entra_id.py) | Bring your own HTTP endpoint as an evaluator, authenticated with Entra ID managed identity | Scoring endpoint with Easy Auth, `azure-mgmt-cognitiveservices` |
+
 ### Evaluation Result Insights & Analysis
 
 | Sample | Description |
 |--------|-------------|
 | [sample_evaluation_compare_insight.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluation_compare_insight.py) | Compare evaluation runs and generate statistics |
 | [sample_evaluation_cluster_insight.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluation_cluster_insight.py) | Analyze evaluation runs with cluster insights |
-
 

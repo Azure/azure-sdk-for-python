@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2020-10-30-preview",
+  "apiVersions": {
+    "Microsoft.PowerPlatform": "2020-10-30-preview"
+  },
+  "commit": "91f575a1998fa202e1d5c79e52138c4e1819a5ba",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/powerplatform/resource-manager/Microsoft.PowerPlatform/PowerPlatform",
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.33.0"
+}

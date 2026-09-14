@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -149,28 +148,6 @@ class ComplianceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The resource compliance status is pending."""
 
 
-class ConfidentialVmIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Captures the customer's intent to enable or disable Confidential Virtual Machine (CVM) support
-    on the cluster, either during initial deployment (Day-0) or at a later stage (Day-N).
-    """
-
-    ENABLE = "Enable"
-    """Indicates that the customer intends to enable CVM support on the cluster."""
-    DISABLE = "Disable"
-    """Indicates that the customer intends to disable CVM support on the cluster."""
-
-
-class ConfidentialVmStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Captures the current status of Confidential Virtual Machine (CVM) support on the cluster."""
-
-    ENABLED = "Enabled"
-    """CVM support is fully enabled on the cluster. All nodes are CVM capable."""
-    PARTIALLY_ENABLED = "PartiallyEnabled"
-    """CVM support is partially enabled. At least one node in the cluster is CVM capable."""
-    DISABLED = "Disabled"
-    """CVM support is disabled. None of the nodes in the cluster are CVM capable."""
-
-
 class ConnectivityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Overall connectivity status for the cluster resource. Indicates whether the cluster is
     connected to Azure, partially connected, or has not recently communicated.
@@ -297,63 +274,6 @@ class EdgeDeviceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Arc-enabled edge device with HCI OS."""
 
 
-class EdgeMachineConnectivityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Overall connectivity status for the machine resource."""
-
-    NOT_SPECIFIED = "NotSpecified"
-    """The connectivity status of the machine resource is not specified."""
-    DISCONNECTED = "Disconnected"
-    """The machine resource is disconnected."""
-    CONNECTED = "Connected"
-    """The machine resource is connected."""
-
-
-class EdgeMachineJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Job Type supported."""
-
-    COLLECT_LOG = "CollectLog"
-    """Job to collect logs from the device."""
-    REMOTE_SUPPORT = "RemoteSupport"
-    """Job to provide remote support to the device."""
-    PROVISION_OS = "ProvisionOs"
-    """Job to provision operating system in the device."""
-    DOWNLOAD_OS = "DownloadOs"
-    """Job to download OS packages on to the device."""
-
-
-class EdgeMachineKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Edge Machine Kind."""
-
-    STANDARD = "Standard"
-    """EdgeMachine resource created using Zero-touch provisioning."""
-    DEDICATED = "Dedicated"
-    """EdgeMachine resource created for brownfield HCI customers without zero touch provisioning."""
-
-
-class EdgeMachineState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OS State."""
-
-    CREATED = "Created"
-    """Created when EdgeMachine resource created."""
-    REGISTERING = "Registering"
-    """EdgeMachine state during device discovery and registration."""
-    UNPURPOSED = "Unpurposed"
-    """EdgeMachine state when machine configured with restricted OS and not provisioned to deploy
-    workloads."""
-    TRANSITIONING = "Transitioning"
-    """EdgeMachine state when transitioning from initial OS to target OS."""
-    PURPOSED = "Purposed"
-    """EdgeMachine state when machine configured with target OS to deploy workloads."""
-    UPDATING = "Updating"
-    """EdgeMachine state when OS updates are in-progress."""
-    RESETTING = "Resetting"
-    """EdgeMachine state when transitioning from target OS to restricted OS."""
-    FAILED = "Failed"
-    """EdgeMachine failed state and only option to recover is to re-provisioning machine."""
-    PREPARING = "Preparing"
-    """Preparing EdgeMachine."""
-
-
 class ExtensionAggregateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Aggregate state of Arc Extensions across the nodes in this HCI cluster. This reflects the
     overall status of the extension deployment and operation across all nodes.
@@ -426,15 +346,6 @@ class HciEdgeDeviceJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Job to provide remote support to the device."""
 
 
-class HciJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ClusterJob Type supported."""
-
-    CONFIGURE_CVM = "ConfigureCVM"
-    """Job to CVM  intent for the cluster."""
-    CONFIGURE_SDN_INTEGRATION = "ConfigureSdnIntegration"
-    """Job to configure SDN (Software Defined Networking) integration for the cluster."""
-
-
 class HealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Overall health state for update-specific health checks. Indicates whether the system is
     functioning correctly, has warnings or errors, or is undergoing a health evaluation.
@@ -465,18 +376,6 @@ class IdentityProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AD-less environments where Active Directory is not available or required."""
 
 
-class IgvmStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Represents the IGVM support status for the device."""
-
-    UNKNOWN = "Unknown"
-    """The IGVM status could not be determined due to a query failure or inconsistent system state."""
-    ENABLED = "Enabled"
-    """IGVM support is enabled, indicating that confidential VM features are available on this device."""
-    DISABLED = "Disabled"
-    """IGVM status is disabled, indicating that confidential VM features are not supported on this
-    device."""
-
-
 class ImdsAttestation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """IMDS attestation status of the cluster."""
 
@@ -484,15 +383,6 @@ class ImdsAttestation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """IMDS attestation is disabled for the cluster."""
     ENABLED = "Enabled"
     """IMDS attestation is enabled for the cluster."""
-
-
-class IpAssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """IP assignment types."""
-
-    AUTOMATIC = "Automatic"
-    """Automatic IP assignment."""
-    MANUAL = "Manual"
-    """Manual IP assignment."""
 
 
 class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -657,13 +547,6 @@ class OemActivation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """OEM activation is enabled for the cluster."""
 
 
-class OnboardingResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Onboarding resource type."""
-
-    HYBRID_COMPUTE_MACHINE = "HybridComputeMachine"
-    """Hybrid Compute Machine."""
-
-
 class OperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended operation for a cluster."""
 
@@ -686,17 +569,6 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a user or system."""
 
 
-class OSOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OS Provision Operation type."""
-
-    PROVISION = "Provision"
-    """OS Provisioning operation."""
-    UPDATE = "Update"
-    """OS Update operation."""
-    RE_IMAGE = "ReImage"
-    """OS ReImage operation."""
-
-
 class OverprovisioningRatio(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Overprovisioning ratio for S2D storage."""
 
@@ -706,31 +578,6 @@ class OverprovisioningRatio(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Overprovisioning ratio of 1."""
     TWO = "2"
     """Overprovisioning ratio of 2."""
-
-
-class OwnerKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of owner key in the voucher."""
-
-    MICROSOFT_MANAGED = "MicrosoftManaged"
-    """Owner is Microsoft managed key."""
-
-
-class OwnershipVoucherValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Ownership Voucher validation Status."""
-
-    VALID = "Valid"
-    """Voucher evaluated as valid."""
-    INVALID = "Invalid"
-    """Voucher evaluated as invalid."""
-
-
-class ProvisioningOsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Represents the provisioning operating system type."""
-
-    AZURE_LINUX = "AzureLinux"
-    """AzureLinux OS."""
-    HCI = "HCI"
-    """HCI OS."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -831,49 +678,11 @@ class RemoteSupportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Revoke previously enabled remote support for the cluster."""
 
 
-class SdnIntegrationIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates whether Software Defined Networking (SDN) integration should be enabled or disabled
-    for this deployment.
-    """
-
-    ENABLE = "Enable"
-    """Enable SDN integration for the deployment."""
-    DISABLE = "Disable"
-    """Disable SDN integration for the deployment."""
-
-
-class SdnStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates the current Software Defined Networking (SDN) status of the resource, which may be an
-    individual device or a cluster.
-    """
-
-    UNKNOWN = "Unknown"
-    """The SDN status could not be determined due to a failure in querying the SDN API service. This
-    may occur if the query script fails or if the system is in an inconsistent state. The domain
-    name will be null in this case."""
-    DISABLED = "Disabled"
-    """SDN is not enabled on the resource. The domain name will be null. This is the default state
-    when SDN has not been configured."""
-    ENABLED = "Enabled"
-    """SDN is successfully enabled on the resource. The domain name will be populated in the format
-    ``<sdnPrefix>-nc.<domain>``. Customers may need to manage DNS settings to ensure proper
-    resolution."""
-
-
 class SecretsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of secrets to store."""
 
     BACKUP_SECRETS = "BackupSecrets"
     """Backup secrets type."""
-
-
-class SecretType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of secret used for authentication."""
-
-    KEY_VAULT = "KeyVault"
-    """Key Vault based authentication."""
-    SSH_PUB_KEY = "SshPubKey"
-    """SSH Public Key based authentication."""
 
 
 class ServiceName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1013,11 +822,11 @@ class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class StorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage type supported for HCI Cluster."""
 
-    S2D = "S2D"
+    S2_D = "S2D"
     """Storage Spaces Direct (S2D) storage type."""
     SAN = "SAN"
     """Storage Area Network (SAN) storage type."""
-    SANS2D = "SANS2D"
+    SANS2_D = "SANS2D"
     """Combined SAN and Storage Spaces Direct (SANS2D) storage type."""
 
 

@@ -10,7 +10,7 @@ DESCRIPTION:
     `.evaluators` methods to create, get and list evaluators.
 
 USAGE:
-    python sample_prompt_based_custom_evaluators.py
+    python sample_eval_catalog_prompt_based_evaluators.py
 
     Before running the sample:
 
@@ -83,9 +83,10 @@ with (
 ):
 
     print("Creating a single evaluator version - Prompt based (json style)")
-    prompt_evaluator = project_client.beta.evaluators.create_version(
+    # TODO: Remove this suppression once TypeSpec typing for EvaluatorVersion is fixed.
+    prompt_evaluator = project_client.beta.evaluators.create_version(  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue]
         name="my_custom_evaluator_prompt",
-        evaluator_version={
+        evaluator_version={  # pyright: ignore[reportArgumentType]
             "name": "my_custom_evaluator_prompt",
             "categories": [EvaluatorCategory.QUALITY],
             "display_name": "my_custom_evaluator_prompt",

@@ -21,13 +21,15 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) WORK_IQ_PROJECT_CONNECTION_ID - The fully-qualified resource id of the WorkIQ project connection.
-    4) WORK_IQ_USER_INPUT - The natural-language question to send to the agent.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+    4) WORK_IQ_PROJECT_CONNECTION_ID - The fully-qualified resource id of the WorkIQ project connection.
+    5) WORK_IQ_USER_INPUT - The natural-language question to send to the agent.
 """
 
 import os
 import asyncio
 from dotenv import load_dotenv
+from util import create_version_with_endpoint_async
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, WorkIQPreviewTool
@@ -35,40 +37,38 @@ from azure.ai.projects.models import PromptAgentDefinition, WorkIQPreviewTool
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
 
 async def main():
+    tool_payload = WorkIQPreviewTool(
+        project_connection_id=os.environ["WORK_IQ_PROJECT_CONNECTION_ID"],
+    )
+
     async with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-        project_client.get_openai_client() as openai_client,
-    ):
-        tool_payload = WorkIQPreviewTool(
-            project_connection_id=os.environ["WORK_IQ_PROJECT_CONNECTION_ID"],
-        )
-
-        agent = await project_client.agents.create_version(
-            agent_name="MyAgent",
+        create_version_with_endpoint_async(
+            project_client=project_client,
+            agent_name=agent_name,
             definition=PromptAgentDefinition(
                 model=os.environ["FOUNDRY_MODEL_NAME"],
                 instructions="Use the available WorkIQ tools to answer questions and perform tasks.",
                 tools=[tool_payload],
             ),
-        )
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+        ),
+        project_client.get_openai_client(agent_name=agent_name) as openai_client,
+    ):
+        agent = await project_client.agents.get(agent_name=agent_name)
+        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
         user_input = os.environ.get("WORK_IQ_USER_INPUT") or input("Enter your question:\n")
 
         response = await openai_client.responses.create(
             input=user_input,
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         print(f"Agent response: {response.output_text}")
-
-        # Clean up the agent version so unused versions don't accumulate in the project.
-        await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        print("Agent deleted")
 
 
 if __name__ == "__main__":

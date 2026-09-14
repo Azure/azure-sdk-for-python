@@ -1,5 +1,50 @@
 # Release History
 
+## 26.0.0 (2026-06-24)
+
+### Features Added
+
+  - Client `ResourceManagementClient` added method `send_request`
+  - Model `GenericResource` added property `system_data`
+  - Model `GenericResourceExpanded` added property `system_data`
+  - Model `Operation` added property `is_data_action`
+  - Model `Operation` added property `origin`
+  - Model `Operation` added property `action_type`
+  - Model `Resource` added property `system_data`
+  - Model `ResourceGroup` added property `system_data`
+  - Model `TagsResource` added property `system_data`
+  - Added enum `ActionType`
+  - Added model `CloudError`
+  - Added enum `CreatedByType`
+  - Added model `ErrorDetail`
+  - Added model `ExtensionResource`
+  - Added enum `Origin`
+  - Added model `SystemData`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Import path for `ResourceManagementClient` has changed from `azure.mgmt.resource` to `azure.mgmt.resource.resources`.
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `extended_location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Model `TagDetails` renamed its instance variable `values` to `values_property`
+  - Deleted or renamed model `ResourceProviderOperationDisplayProperties`
+  - Deleted or renamed model `SubResource`
+  - Method `ProviderResourceTypesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ProvidersOperations.get`/`get_at_tenant_scope` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ProvidersOperations.list`/`list_at_tenant_scope` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourceGroupsOperations.begin_delete` changed its parameter `force_deletion_types` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourcesOperations.begin_create_or_update`/`begin_create_or_update_by_id`/`begin_delete`/`begin_delete_by_id`/`begin_update`/`begin_update_by_id`/`check_existence`/`check_existence_by_id`/`get`/`get_by_id` changed its parameter `api_version` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourcesOperations.list`/`list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `GenericResourceFilter`/`ResourceGroupFilter` which actually were not used by SDK users
+  - Deleted model `OperationListResult`/`ProviderListResult`/`ResourceGroupListResult`/`ResourceListResult`/`TagsListResult` which actually were not used by SDK users
+
 ## 26.0.0b1 (2026-06-08)
 
 ### Features Added

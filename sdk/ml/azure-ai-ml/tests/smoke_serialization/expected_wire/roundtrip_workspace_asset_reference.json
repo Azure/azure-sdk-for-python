@@ -1,0 +1,8 @@
+{
+  "properties": {
+    "destinationName": "smoke-shared-model",
+    "destinationVersion": "3",
+    "referenceType": "Id",
+    "sourceAssetId": "azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/smoke-rg/providers/Microsoft.MachineLearningServices/workspaces/smoke-ws/models/smoke-model/versions/1"
+  }
+}

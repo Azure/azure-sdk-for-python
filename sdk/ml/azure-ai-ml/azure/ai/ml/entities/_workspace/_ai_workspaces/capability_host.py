@@ -7,10 +7,8 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2025_01_01_preview.models._models_py3 import CapabilityHost as RestCapabilityHost
-from azure.ai.ml._restclient.v2025_01_01_preview.models._models_py3 import (
-    CapabilityHostProperties as RestCapabilityHostProperties,
-)
+from azure.ai.ml._restclient.arm_ml_service.models import CapabilityHost as RestCapabilityHost
+from azure.ai.ml._restclient.arm_ml_service.models import CapabilityHostProperties as RestCapabilityHostProperties
 from azure.ai.ml._schema.workspace.ai_workspaces.capability_host import CapabilityHostSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file
@@ -25,22 +23,22 @@ class CapabilityHost(Resource):
     """Initialize a CapabilityHost instance.
     Capabilityhost management is controlled by MLClient's capabilityhosts operations.
 
-    :param name: The name of the capability host.
-    :type name: str
-    :param description: The description of the capability host.
-    :type description: Optional[str]
-    :param vector_store_connections: A list of vector store  (AI Search) connections.
-    :type vector_store_connections: Optional[List[str]]
-    :param ai_services_connections: A list of OpenAI service connection.
-    :type ai_services_connections: Optional[List[str]]
-    :param storage_connections: A list of storage connections. Default storage connection value is
+    :keyword name: The name of the capability host.
+    :paramtype name: str
+    :keyword description: The description of the capability host.
+    :paramtype description: Optional[str]
+    :keyword vector_store_connections: A list of vector store  (AI Search) connections.
+    :paramtype vector_store_connections: Optional[List[str]]
+    :keyword ai_services_connections: A list of OpenAI service connection.
+    :paramtype ai_services_connections: Optional[List[str]]
+    :keyword storage_connections: A list of storage connections. Default storage connection value is
         projectname/workspaceblobstore for project workspace.
-    :type storage_connections: Optional[List[str]]
-    :param thread_storage_connections: A list of cosmos db connections, which will be used for thread storage.
-    :type thread_storage_connections: Optional[List[str]]
-    :param capability_host_kind: The kind of capability host, either as a string or CapabilityHostKind enum.
+    :paramtype storage_connections: Optional[List[str]]
+    :keyword thread_storage_connections: A list of cosmos db connections, which will be used for thread storage.
+    :paramtype thread_storage_connections: Optional[List[str]]
+    :keyword capability_host_kind: The kind of capability host, either as a string or CapabilityHostKind enum.
         Default is AGENTS.
-    :type capability_host_kind: Union[str, CapabilityHostKind]
+    :paramtype capability_host_kind: Union[str, CapabilityHostKind]
     :param kwargs: Additional keyword arguments.
     :type kwargs: Any
 
@@ -139,7 +137,7 @@ class CapabilityHost(Resource):
         :param cls: Indicates that this is a class method.
         :type cls: class
         :param rest_obj: The REST object to convert.
-        :type rest_obj: ~azure.ai.ml._restclient.v2024_10_01_preview_tsp.models._models_py3.CapabilityHost
+        :type rest_obj: ~azure.ai.ml._restclient.arm_ml_service.models.CapabilityHost
         :return: CapabilityHost object.
         :rtype: ~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost
         """
@@ -163,7 +161,7 @@ class CapabilityHost(Resource):
         Convert the CapabilityHost instance to a RestCapabilityHost object.
 
         :return: A RestCapabilityHost object representing the capability host for a Hub or Project workspace.
-        :rtype: azure.ai.ml._restclient.v2024_10_01_preview_tsp.models._models_py3.CapabilityHost
+        :rtype: azure.ai.ml._restclient.arm_ml_service.models.CapabilityHost
         """
 
         properties = RestCapabilityHostProperties(

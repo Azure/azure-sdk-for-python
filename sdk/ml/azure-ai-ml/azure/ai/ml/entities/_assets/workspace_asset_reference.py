@@ -6,10 +6,6 @@ import os
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
-    ResourceManagementAssetReferenceData,
-    ResourceManagementAssetReferenceDetails,
-)
 from azure.ai.ml._schema import WorkspaceAssetReferenceSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets.asset import Asset
@@ -20,12 +16,12 @@ class WorkspaceAssetReference(Asset):
     """Workspace Model Reference.
 
     This is for SDK internal use only, might be deprecated in the future.
-    :param name: Model name
-    :type name: str
-    :param version: Model version
-    :type version: str
-    :param asset_id: Model asset id
-    :type version: str
+    :keyword name: Model name
+    :paramtype name: str
+    :keyword version: Model version
+    :paramtype version: str
+    :keyword asset_id: Model asset id
+    :paramtype asset_id: str
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -64,21 +60,24 @@ class WorkspaceAssetReference(Asset):
         res: WorkspaceAssetReference = load_from_dict(WorkspaceAssetReferenceSchema, data, context, **kwargs)
         return res
 
-    def _to_rest_object(self) -> ResourceManagementAssetReferenceData:
-        resource_management_details = ResourceManagementAssetReferenceDetails(
-            destination_name=self.name,
-            destination_version=self.version,
-            source_asset_id=self.asset_id,
-        )
-        resource_management = ResourceManagementAssetReferenceData(properties=resource_management_details)
-        return resource_management
+    def _to_rest_object(self) -> dict:
+        # JSON-direct wire dict, byte-identical to the legacy v2021_10 ``ResourceManagementAssetReferenceData``
+        # (referenceType is a server-pinned constant; None fields are omitted, matching msrest serialization).
+        properties: Dict[str, Any] = {"referenceType": "Id"}
+        if self.name is not None:
+            properties["destinationName"] = self.name
+        if self.version is not None:
+            properties["destinationVersion"] = self.version
+        properties["sourceAssetId"] = self.asset_id
+        return {"properties": properties}
 
     @classmethod
-    def _from_rest_object(cls, resource_object: ResourceManagementAssetReferenceData) -> "WorkspaceAssetReference":
+    def _from_rest_object(cls, resource_object: dict) -> "WorkspaceAssetReference":
+        properties = resource_object["properties"]
         resource_management = WorkspaceAssetReference(
-            name=resource_object.properties.destination_name,
-            version=resource_object.properties.destination_version,
-            asset_id=resource_object.properties.source_asset_id,
+            name=properties.get("destinationName"),
+            version=properties.get("destinationVersion"),
+            asset_id=properties.get("sourceAssetId"),
         )
 
         return resource_management

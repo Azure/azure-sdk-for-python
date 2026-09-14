@@ -11,8 +11,8 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._azure_environments import _resource_to_scopes
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
-from azure.ai.ml._restclient.v2022_02_01_preview.models import KeyType, RegenerateEndpointKeysRequest
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient022022Preview
+from azure.ai.ml._restclient.arm_ml_service.models import KeyType, RegenerateEndpointKeysRequest
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -89,7 +89,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
         :keyword local: (Optional) Flag to indicate whether to interact with endpoints in local Docker environment.
             Default: False
-        :type local: bool
+        :paramtype local: bool
         :return: A list of endpoints
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.OnlineEndpoint]
         """

@@ -232,7 +232,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disable
             baggage_kwarg: Value passed as enable_baggage_propagation to instrument(), or None to omit.
             expected_baggage: Whether baggage should appear in outgoing request headers.
         """
-        import httpx
+        import httpx2
         from openai import OpenAI
         from opentelemetry import baggage as otel_baggage
         from opentelemetry import trace
@@ -287,16 +287,16 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disable
             )
 
             # ---- Mock transport: capture outgoing HTTP request headers ----
-            class CapturingTransport(httpx.BaseTransport):
+            class CapturingTransport(httpx2.BaseTransport):
                 def __init__(self):
-                    self.last_request: Optional[httpx.Request] = None
+                    self.last_request: Optional[httpx2.Request] = None
 
-                def handle_request(self, request: httpx.Request) -> httpx.Response:
+                def handle_request(self, request: httpx2.Request) -> httpx2.Response:
                     self.last_request = request
-                    return httpx.Response(200, content=b"{}")
+                    return httpx2.Response(200, content=b"{}")
 
             transport = CapturingTransport()
-            http_client = httpx.Client(transport=transport)
+            http_client = httpx2.Client(transport=transport)
             openai_client = OpenAI(api_key="fake-key", base_url="http://fake.test/", http_client=http_client)
 
             # Exercise the same wrapper that get_openai_client() uses after instrumentation.

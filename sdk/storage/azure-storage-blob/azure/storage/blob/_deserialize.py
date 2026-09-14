@@ -89,12 +89,47 @@ def deserialize_ors_policies(policy_dictionary: Optional[Dict[str, str]]) -> Opt
     return result_list
 
 
+# iter_bytes and iter_raw return generators
+class _StreamWrapper:
+    """Wraps a bytes iterator (sync or async) so that properties can be attached."""
+
+    def __init__(self, stream: Any):
+        self._stream = stream
+        self.properties: Optional[BlobProperties] = None
+        self.response: Optional[Any] = None
+        self.content_length: int = 0
+
+    def __iter__(self):
+        return iter(self._stream)
+
+    def __next__(self):
+        return next(self._stream)
+
+    def __aiter__(self):
+        return self._stream.__aiter__()
+
+    async def __anext__(self):
+        return await self._stream.__anext__()
+
+
 def deserialize_blob_stream(
-    response: "PipelineResponse", obj: Any, headers: Dict[str, Any]
+    response: "PipelineResponse",
+    obj: Any,
+    headers: Dict[str, Any],
 ) -> Tuple["LocationMode", Any]:
     blob_properties = deserialize_blob_properties(response, obj, headers)
+    http_response = response.http_response
+    # The TypeSpec-generated download returns a raw bytes iterator or a structured-message
+    # decoder rather than a response object that exposes .properties. When the stream can't
+    # carry our metadata, wrap it so callers can still reach .properties/.response/.content_length.
+    if not hasattr(obj, "properties"):
+        stream = _StreamWrapper(obj)
+        stream.properties = blob_properties
+        stream.response = http_response
+        stream.content_length = int(http_response.headers.get("Content-Length", 0))
+        return http_response.location_mode, stream
     obj.properties = blob_properties
-    return response.http_response.location_mode, obj
+    return http_response.location_mode, obj
 
 
 def deserialize_container_properties(
@@ -155,7 +190,9 @@ def get_blob_properties_from_generated_code(generated: "BlobItemInternal") -> Bl
     blob.deleted = generated.deleted
     blob.snapshot = generated.snapshot
     blob.is_append_blob_sealed = generated.properties.is_sealed
-    blob.metadata = generated.metadata.additional_properties if generated.metadata else {}  # type: ignore [assignment]
+    blob.metadata = (  # type: ignore [assignment]
+        {k: v for k, v in generated.metadata.items() if k != "encrypted"} if generated.metadata else {}
+    )
     blob.encrypted_metadata = generated.metadata.encrypted if generated.metadata else None
     blob.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
     blob.copy = CopyProperties._from_generated(generated)  # pylint: disable=protected-access
@@ -178,7 +215,9 @@ def get_blob_properties_from_generated_code(generated: "BlobItemInternal") -> Bl
     blob.is_current_version = generated.is_current_version
     blob.tag_count = generated.properties.tag_count
     blob.tags = parse_tags(generated.blob_tags)
-    blob.object_replication_source_properties = deserialize_ors_policies(generated.object_replication_metadata)
+    blob.object_replication_source_properties = deserialize_ors_policies(
+        generated.object_replication_metadata.as_dict() if generated.object_replication_metadata else None
+    )
     blob.last_accessed_on = generated.properties.last_accessed_on
     blob.immutability_policy = ImmutabilityPolicy._from_generated(generated)  # pylint: disable=protected-access
     blob.has_legal_hold = generated.properties.legal_hold

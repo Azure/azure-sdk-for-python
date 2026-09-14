@@ -6,11 +6,11 @@ from uuid import UUID, uuid4
 import pytest
 from pytest_mock import MockFixture
 
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
 )
 from azure.ai.ml._scope_dependent_operations import OperationScope
@@ -238,7 +238,9 @@ class TestWorkspaceOperation:
             )
             assert params.managed_network.isolation_mode == "Disabled"
             assert params.system_datastores_auth_mode == "identity"
-            assert params.allow_role_assignment_on_rg == True  # diff due to swagger restclient casing diff
+            # allowRoleAssignmentOnRG was @removed at api-version 2025-12-01, so it is not a declared
+            # attribute on the shared arm_ml_service model; assert it is set on the flattened wire envelope.
+            assert params.as_dict().get("properties", {}).get("allowRoleAssignmentOnRG") == True
             assert params.managed_network.outbound_rules == {}
             assert polling is True
             assert callable(cls)

@@ -30,11 +30,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.web_apps.begin_start_network_trace_slot(
+    response = client.web_apps.begin_start_network_trace_slot(
         resource_group_name="testrg123",
         name="SampleApp",
         slot="Production",
     ).result()
+    print(response)
 
 
 # x-ms-original-file: 2025-05-01/StartWebSiteNetworkTraceOperation_StartNetworkTraceSlot.json

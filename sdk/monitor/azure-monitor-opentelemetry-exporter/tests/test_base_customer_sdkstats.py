@@ -6,7 +6,7 @@ import unittest
 from unittest import mock
 from datetime import datetime
 
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceResponseError
 from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
@@ -210,6 +210,16 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         """Test that _track_retry_items is called on ServiceRequestError"""
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
         with mock.patch.object(AzureMonitorClient, "track", side_effect=ServiceRequestError("Connection error")):
+            result = exporter._transmit(self._envelopes_to_export)
+
+        track_retry_mock.assert_called_once()
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_retry_items")
+    def test_transmit_service_response_error_customer_sdkstats_track_retry_items(self, track_retry_mock):
+        """Test that _track_retry_items is called on ServiceResponseError (e.g. read timeout)"""
+        exporter = self._create_exporter_with_customer_sdkstats_enabled()
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=ServiceResponseError("Read timed out")):
             result = exporter._transmit(self._envelopes_to_export)
 
         track_retry_mock.assert_called_once()

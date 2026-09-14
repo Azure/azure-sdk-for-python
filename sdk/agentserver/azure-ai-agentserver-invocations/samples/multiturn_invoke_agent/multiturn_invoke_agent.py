@@ -7,7 +7,7 @@ across multiple invocations via the ``agent_session_id`` query parameter.
 
     **In-memory demo only.**  Session history is stored in process memory
     and is lost on restart.  For production use, persist history to
-    durable storage (Redis, Cosmos DB, etc.).
+    persistent storage (Redis, Cosmos DB, etc.).
 
 Usage::
 

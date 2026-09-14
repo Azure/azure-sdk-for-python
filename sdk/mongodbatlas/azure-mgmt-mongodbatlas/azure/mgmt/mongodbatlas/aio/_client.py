@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -19,9 +19,15 @@ from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import MongoDBAtlasMgmtClientConfiguration
-from .operations import Operations, OrganizationsOperations
+from .operations import ClustersOperations, Operations, OrganizationsOperations, ProjectsOperations
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
@@ -32,24 +38,39 @@ class MongoDBAtlasMgmtClient:
     :vartype operations: azure.mgmt.mongodbatlas.aio.operations.Operations
     :ivar organizations: OrganizationsOperations operations
     :vartype organizations: azure.mgmt.mongodbatlas.aio.operations.OrganizationsOperations
+    :ivar projects: ProjectsOperations operations
+    :vartype projects: azure.mgmt.mongodbatlas.aio.operations.ProjectsOperations
+    :ivar clusters: ClustersOperations operations
+    :vartype clusters: azure.mgmt.mongodbatlas.aio.operations.ClustersOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service host. Default value is None.
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is "2025-06-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-03-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
-        self, credential: "AsyncTokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
@@ -58,6 +79,7 @@ class MongoDBAtlasMgmtClient:
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),
+            cloud_setting=cloud_setting,
             credential_scopes=credential_scopes,
             **kwargs
         )
@@ -89,6 +111,8 @@ class MongoDBAtlasMgmtClient:
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.organizations = OrganizationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.projects = ProjectsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

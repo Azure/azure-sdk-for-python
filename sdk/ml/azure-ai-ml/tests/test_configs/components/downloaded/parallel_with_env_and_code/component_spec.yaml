@@ -38,7 +38,7 @@ task:
       channels:
       - conda-forge
       dependencies:
-      - python=3.8
+      - python=3.10
       - pip
       - pip:
         - mlflow
@@ -47,8 +47,8 @@ task:
         - pandas
         - pillow
         - azureml-core
-        - scikit-learn~=0.20.0
-        - cloudpickle==1.1.1
-        - tensorflow==1.15.2
+        - scikit-learn~=1.3.0
+        - cloudpickle==2.2.1
+        - tensorflow==2.15.1
       name: prs-env
     os_type: linux

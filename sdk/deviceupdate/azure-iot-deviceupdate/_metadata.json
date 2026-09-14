@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-06-01",
+  "apiVersions": {
+    "DeviceUpdateClient": "2026-06-01"
+  },
+  "commit": "a1e083316c4db68aac174e4039aa47c618ba41c1",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/deviceupdate/data-plane/duiothub",
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.34.2"
+}

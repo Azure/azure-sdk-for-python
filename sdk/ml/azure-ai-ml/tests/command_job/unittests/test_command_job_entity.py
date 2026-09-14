@@ -4,7 +4,7 @@ from collections import OrderedDict
 import pytest
 
 from azure.ai.ml import Input, MpiDistribution
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken, JobBase
+from azure.ai.ml._restclient.arm_ml_service.models import AmlToken, JobBase
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities import CommandJob, Environment, Job
@@ -42,7 +42,7 @@ class TestCommandJobEntity:
     def test_from_rest_legacy1_command(self, mock_workspace_scope: OperationScope, file: str):
         with open(file, "r") as f:
             resource = json.load(f)
-        rest_job = JobBase.deserialize(resource)
+        rest_job = JobBase._deserialize(resource, [])
         print(type(rest_job.properties))
         job = Job._from_rest_object(rest_job)
         assert job.command == "echo ${{inputs.filePath}} && ls ${{inputs.dirPath}}"
@@ -50,7 +50,7 @@ class TestCommandJobEntity:
     def test_missing_input_raises(self):
         with open("./tests/test_configs/command_job/rest_command_job_env_var_command.json", "r") as f:
             resource = json.load(f)
-        rest_job = JobBase.deserialize(resource)
+        rest_job = JobBase._deserialize(resource, [])
         job = Job._from_rest_object(rest_job)
         job.command = "echo ${{inputs.missing_input}}"
         with pytest.raises(ValidationException):
@@ -215,6 +215,8 @@ class TestCommandJobEntity:
         )
         job_prop = command_job._to_job()._to_rest_object().properties
         from_rest_job = Job._from_rest_object(command_job._to_job()._to_rest_object())
+        # The list form of docker_args routes to the 2025-01 resources model, which does not carry
+        # ``locations`` (neither as an attribute nor on the wire).
         assert hasattr(job_prop.resources, "locations") == False
         assert job_prop.resources.docker_args_list == ["--shm-size=1g", "--ipc=host"]
         assert isinstance(job_prop.resources.docker_args_list, list)
@@ -240,6 +242,9 @@ class TestCommandJobEntity:
         )
         job_prop = command_job._to_job()._to_rest_object().properties
         from_rest_job = Job._from_rest_object(command_job._to_job()._to_rest_object())
-        assert job_prop.resources.locations == ["westus"]
-        assert hasattr(job_prop.resources, "docker_args_list") == False
+        # The rest resources model is the shared arm_ml_service hybrid model (a mapping); ``locations``
+        # is carried on the wire as a dict key, and the string form of docker_args serializes to
+        # ``dockerArgs`` (not the list-only ``dockerArgsList``).
+        assert job_prop.resources["locations"] == ["westus"]
+        assert "dockerArgsList" not in job_prop.resources
         assert from_rest_job.resources.docker_args == "--shm-size=1g"

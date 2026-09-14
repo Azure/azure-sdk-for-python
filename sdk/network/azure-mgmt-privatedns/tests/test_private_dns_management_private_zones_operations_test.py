@@ -26,4 +26,3 @@ class TestPrivateDnsManagementPrivateZonesOperations(AzureMgmtRecordedTestCase):
         )
         result = [r for r in response]
         assert result == []
-        

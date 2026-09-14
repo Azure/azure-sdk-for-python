@@ -35,7 +35,7 @@ USAGE:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint.
     2) FOUNDRY_MODEL_NAME - Required. The model deployment name for the simulator
        and AI-assisted evaluators.
-    3) FOUNDRY_AGENT_NAME - Required. The name of the Foundry agent to simulate against.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 """
 
 import os
@@ -51,7 +51,7 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
-agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "")
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
 # Path to the simulation scenarios data file
 script_dir = os.path.dirname(os.path.abspath(__file__))

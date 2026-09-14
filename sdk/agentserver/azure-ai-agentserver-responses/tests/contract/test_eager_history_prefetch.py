@@ -17,17 +17,16 @@ from typing import Any
 import pytest
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.responses import ResponsesAgentServerHost
+from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.store._foundry_errors import FoundryResourceNotFoundError
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
 
-
 # ─── Helpers / handlers ──────────────────────────────────────
 
 
-def _simple_handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
+async def _simple_handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
     """Handler that always succeeds, no history access."""
 
     async def _events():
@@ -41,7 +40,7 @@ def _simple_handler(request: Any, context: Any, cancellation_signal: Any) -> Any
     return _events()
 
 
-def _history_reading_handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
+async def _history_reading_handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
     """Handler that awaits ``context.get_history()`` before emitting events."""
 
     async def _events():
@@ -69,7 +68,7 @@ class TestEagerHistoryPrefetchValidation:
         """POST with a nonexistent previous_response_id should return
         404 when the provider raises FoundryResourceNotFoundError."""
         provider = InMemoryResponseProvider()
-        app = ResponsesAgentServerHost(store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
         app.response_handler(_simple_handler)
 
         # Monkeypatch the provider to raise FoundryResourceNotFoundError.
@@ -109,7 +108,7 @@ class TestEagerHistoryPrefetchValidation:
         """POST with a nonexistent conversation_id should return 404
         when the provider raises FoundryResourceNotFoundError."""
         provider = InMemoryResponseProvider()
-        app = ResponsesAgentServerHost(store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
         app.response_handler(_simple_handler)
 
         async def _raise_not_found(*args: Any, **kwargs: Any) -> list[str]:
@@ -142,7 +141,7 @@ class TestEagerHistoryPrefetchValidation:
         """A non-404 storage error during prefetch should still return
         an error response (not crash)."""
         provider = InMemoryResponseProvider()
-        app = ResponsesAgentServerHost(store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
         app.response_handler(_simple_handler)
 
         async def _raise_generic(*args: Any, **kwargs: Any) -> list[str]:
@@ -178,7 +177,7 @@ class TestEagerHistoryPrefetchReuse:
         orchestrator's persistence path (which makes its own call).
         """
         provider = InMemoryResponseProvider()
-        app = ResponsesAgentServerHost(store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
         app.response_handler(_history_reading_handler)
         client = TestClient(app)
 
@@ -218,8 +217,7 @@ class TestEagerHistoryPrefetchReuse:
         # get_history_item_ids should be called exactly once (eager prefetch).
         # The handler's get_history() should reuse the prefetched IDs.
         assert call_count == 1, (
-            f"Expected get_history_item_ids to be called once (eager), "
-            f"but called {call_count} times"
+            f"Expected get_history_item_ids to be called once (eager), " f"but called {call_count} times"
         )
 
 
@@ -230,7 +228,7 @@ class TestEagerHistoryPrefetchSkipped:
         """When neither previous_response_id nor conversation_id is set,
         get_history_item_ids should NOT be called."""
         provider = InMemoryResponseProvider()
-        app = ResponsesAgentServerHost(store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
         app.response_handler(_simple_handler)
 
         call_count = 0
@@ -249,6 +247,5 @@ class TestEagerHistoryPrefetchSkipped:
         )
         assert r.status_code == 200
         assert call_count == 0, (
-            f"get_history_item_ids should not be called without conversation refs, "
-            f"but called {call_count} times"
+            f"get_history_item_ids should not be called without conversation refs, " f"but called {call_count} times"
         )

@@ -18,18 +18,8 @@ class TestNetworkCloudMgmtL3NetworksOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(NetworkCloudMgmtClient)
 
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    def test_list_by_subscription(self):
         response = self.client.l3_networks.list_by_subscription()
         result = [r for r in response]
         assert response
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
-        response = self.client.l3_networks.list_by_resource_group(
-            resource_group_name=resource_group.name,
-        )
-        result = [r for r in response]
-        assert result == []

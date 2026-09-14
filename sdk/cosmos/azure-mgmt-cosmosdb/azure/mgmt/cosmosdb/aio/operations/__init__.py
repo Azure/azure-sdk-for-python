@@ -14,20 +14,14 @@ if TYPE_CHECKING:
 
 from ._operations import Operations  # type: ignore
 from ._operations import DatabaseAccountsOperations  # type: ignore
-from ._operations import CopyJobsOperations  # type: ignore
-from ._operations import GraphResourcesOperations  # type: ignore
 from ._operations import SqlResourcesOperations  # type: ignore
 from ._operations import MongoDBResourcesOperations  # type: ignore
 from ._operations import TableResourcesOperations  # type: ignore
 from ._operations import CassandraResourcesOperations  # type: ignore
 from ._operations import GremlinResourcesOperations  # type: ignore
-from ._operations import DataTransferJobsOperations  # type: ignore
-from ._operations import GarnetClustersOperations  # type: ignore
-from ._operations import NetworkSecurityPerimeterConfigurationsOperations  # type: ignore
 from ._operations import NotebookWorkspacesOperations  # type: ignore
 from ._operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
-from ._operations import ChaosFaultOperations  # type: ignore
 from ._operations import DatabaseOperations  # type: ignore
 from ._operations import CollectionOperations  # type: ignore
 from ._operations import CollectionRegionOperations  # type: ignore
@@ -55,13 +49,8 @@ from ._operations import RestorableGremlinResourcesOperations  # type: ignore
 from ._operations import RestorableTablesOperations  # type: ignore
 from ._operations import RestorableTableResourcesOperations  # type: ignore
 from ._operations import ServiceOperations  # type: ignore
-from ._operations import ThroughputPoolOperations  # type: ignore
-from ._operations import ThroughputPoolsOperations  # type: ignore
-from ._operations import ThroughputPoolAccountOperations  # type: ignore
-from ._operations import ThroughputPoolAccountsOperations  # type: ignore
 from ._operations import MongoMIResourcesOperations  # type: ignore
 from ._operations import FleetOperations  # type: ignore
-from ._operations import FleetAnalyticsOperations  # type: ignore
 from ._operations import FleetspaceOperations  # type: ignore
 from ._operations import FleetspaceAccountOperations  # type: ignore
 
@@ -72,20 +61,14 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "Operations",
     "DatabaseAccountsOperations",
-    "CopyJobsOperations",
-    "GraphResourcesOperations",
     "SqlResourcesOperations",
     "MongoDBResourcesOperations",
     "TableResourcesOperations",
     "CassandraResourcesOperations",
     "GremlinResourcesOperations",
-    "DataTransferJobsOperations",
-    "GarnetClustersOperations",
-    "NetworkSecurityPerimeterConfigurationsOperations",
     "NotebookWorkspacesOperations",
     "PrivateEndpointConnectionsOperations",
     "PrivateLinkResourcesOperations",
-    "ChaosFaultOperations",
     "DatabaseOperations",
     "CollectionOperations",
     "CollectionRegionOperations",
@@ -113,13 +96,8 @@ __all__ = [
     "RestorableTablesOperations",
     "RestorableTableResourcesOperations",
     "ServiceOperations",
-    "ThroughputPoolOperations",
-    "ThroughputPoolsOperations",
-    "ThroughputPoolAccountOperations",
-    "ThroughputPoolAccountsOperations",
     "MongoMIResourcesOperations",
     "FleetOperations",
-    "FleetAnalyticsOperations",
     "FleetspaceOperations",
     "FleetspaceAccountOperations",
 ]

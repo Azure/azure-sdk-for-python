@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -47,7 +46,7 @@ def main():
                         "type": "AzureKeyVault",
                         "value": "AzureKeyVault Key URL",
                     },
-                    "wrappedDataEncryptionKey": "VGhpcyBpcyBhY3R1YWxseSBhbiBhcnJheSBvZiBieXRlcy4gVGhpcyByZXF1ZXN0L3Jlc3BvbnNlIGlzIGJlaW5nIHByZXNlbnRlZCBhcyBhIHN0cmluZyBmb3IgcmVhZGFiaWxpdHkgaW4gdGhlIGV4YW1wbGU=",
+                    "wrappedDataEncryptionKey": "U3dhZ2dlciByb2Nrcw==",
                 }
             }
         },
@@ -55,6 +54,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/CosmosDBSqlClientEncryptionKeyCreateUpdate.json
+# x-ms-original-file: 2026-03-15/CosmosDBSqlClientEncryptionKeyCreateUpdate.json
 if __name__ == "__main__":
     main()

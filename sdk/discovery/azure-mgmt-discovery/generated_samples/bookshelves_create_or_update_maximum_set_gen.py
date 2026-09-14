@@ -33,29 +33,29 @@ def main():
 
     response = client.bookshelves.begin_create_or_update(
         resource_group_name="rgdiscovery",
-        bookshelf_name="21b8f5a6a47fa1fdcc",
+        bookshelf_name="899a72bfc67be99cd8",
         resource={
             "location": "uksouth",
             "properties": {
                 "customerManagedKeys": "Enabled",
                 "keyVaultProperties": {
                     "identityClientId": "00000011-1111-2222-2222-123456789111",
-                    "keyName": "tjjzitmclgtahulm",
+                    "keyName": "picc",
                     "keyVaultUri": "https://microsoft.com/a",
-                    "keyVersion": "dnoogjozeqlpubvkxwrujbncstsm",
+                    "keyVersion": "bnzaxtmzrsjovfifuizqsfsphspdyc",
                 },
                 "logAnalyticsClusterId": "/subscriptions/31735C59-6307-4464-8B80-3675223F23D2/providers/Microsoft.OperationalInsights/clusters/cluster1",
                 "privateEndpointSubnetId": "/subscriptions/31735C59-6307-4464-8B80-3675223F23D2/providers/Microsoft.Network/virtualNetworks/virtualnetwork1/subnets/privateEndpointSubnet1",
                 "publicNetworkAccess": "Enabled",
                 "searchSubnetId": "/subscriptions/31735C59-6307-4464-8B80-3675223F23D2/providers/Microsoft.Network/virtualNetworks/virtualnetwork1/subnets/searchSubnet1",
-                "workloadIdentities": {"key8334": {}},
+                "workloadIdentities": {"key3650": {}},
             },
-            "tags": {"key782": "hmvugqbu"},
+            "tags": {"key3815": "lrfxoxtbcgjpokrmtlzvknkcu"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/Bookshelves_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/Bookshelves_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

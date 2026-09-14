@@ -1,0 +1,14 @@
+{
+  "properties": {
+    "authType": "ApiKey",
+    "category": "AIServices",
+    "credentials": {
+      "key": "smoke-aiservices-api-key"
+    },
+    "isSharedToAll": true,
+    "metadata": {
+      "ResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/smoke-rg/providers/Microsoft.CognitiveServices/accounts/smoke-aiservices"
+    },
+    "target": "https://smoke-aiservices.cognitiveservices.azure.com/"
+  }
+}

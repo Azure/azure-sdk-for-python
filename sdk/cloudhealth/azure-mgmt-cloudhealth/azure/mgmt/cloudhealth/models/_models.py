@@ -18,7 +18,46 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AlertConfiguration(_Model):
+class AddDataAnnotationRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request body for adding a data annotation.
+
+    :ivar annotation_details: Annotation details as a dynamic key-value pair bag. Service-enforced
+     limits: a maximum of 10 entries per annotation and a maximum value length of 256 characters.
+     Requests exceeding these limits will be rejected with a 400 response. Required.
+    :vartype annotation_details: dict[str, str]
+    :ivar description: Optional description of the annotation.
+    :vartype description: str
+    """
+
+    annotation_details: dict[str, str] = rest_field(
+        name="annotationDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Annotation details as a dynamic key-value pair bag. Service-enforced limits: a maximum of 10
+     entries per annotation and a maximum value length of 256 characters. Requests exceeding these
+     limits will be rejected with a 400 response. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional description of the annotation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        annotation_details: dict[str, str],
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AlertConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Alert configuration details.
 
     :ivar severity: The severity of triggered alert. Required. Known values are: "Sev0", "Sev1",
@@ -63,7 +102,7 @@ class AlertConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiscoveryRuleSpecification(_Model):
+class DiscoveryRuleSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base model for discovery rule specifications.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -97,7 +136,9 @@ class DiscoveryRuleSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationInsightsTopologySpecification(DiscoveryRuleSpecification, discriminator="ApplicationInsightsTopology"):
+class ApplicationInsightsTopologySpecification(
+    DiscoveryRuleSpecification, discriminator="ApplicationInsightsTopology"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Discovery rule specification for an Application Insights topology query.
 
     :ivar kind: Kind of the discovery rule specification. Required. Application Insights topology
@@ -179,7 +220,7 @@ class ProxyResource(Resource):
     """
 
 
-class AuthenticationSetting(ProxyResource):
+class AuthenticationSetting(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An authentication setting in a health model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -220,7 +261,7 @@ class AuthenticationSetting(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AuthenticationSettingProperties(_Model):
+class AuthenticationSettingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authentication setting properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -269,7 +310,7 @@ class AuthenticationSettingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureMonitorWorkspaceSignals(_Model):
+class AzureMonitorWorkspaceSignals(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A grouping of Azure Monitor workspace signals.
 
     :ivar authentication_setting: Reference to the name of the authentication setting which is used
@@ -315,7 +356,147 @@ class AzureMonitorWorkspaceSignals(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SignalInstanceProperties(_Model):
+class AzureResourceHealthSignal(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Azure resource health signal configuration.
+
+    :ivar enabled: Whether to automatically add a signal for the Azure resource's availability
+     state from Azure Resource Health. Defaults to Enabled. Known values are: "Enabled" and
+     "Disabled".
+    :vartype enabled: str or
+     ~azure.mgmt.cloudhealth.models.ResourceHealthAvailabilityStateSignalBehavior
+    :ivar signal_name: The unique name of the Azure resource health signal. System assigned.
+    :vartype signal_name: str
+    :ivar status: Current status of the Azure resource health signal.
+    :vartype status: ~azure.mgmt.cloudhealth.models.AzureResourceHealthSignalStatus
+    """
+
+    enabled: Optional[Union[str, "_models.ResourceHealthAvailabilityStateSignalBehavior"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to automatically add a signal for the Azure resource's availability state from Azure
+     Resource Health. Defaults to Enabled. Known values are: \"Enabled\" and \"Disabled\"."""
+    signal_name: Optional[str] = rest_field(name="signalName", visibility=["read"])
+    """The unique name of the Azure resource health signal. System assigned."""
+    status: Optional["_models.AzureResourceHealthSignalStatus"] = rest_field(visibility=["read"])
+    """Current status of the Azure resource health signal."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[Union[str, "_models.ResourceHealthAvailabilityStateSignalBehavior"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzureResourceHealthSignalStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Status of an Azure Resource Health signal, including availability information reported by Azure
+    Resource Health.
+
+    :ivar health_state: Health state of this signal. Known values are: "Healthy", "Degraded",
+     "Unhealthy", and "Unknown".
+    :vartype health_state: str or ~azure.mgmt.cloudhealth.models.HealthState
+    :ivar value: Reported value of the signal.
+    :vartype value: float
+    :ivar reported_at: Timestamp when the value was reported.
+    :vartype reported_at: ~datetime.datetime
+    :ivar error: Error message if the signal status cannot be retrieved.
+    :vartype error: str
+    :ivar additional_context: Additional context as provided by the submitter.
+    :vartype additional_context: str
+    :ivar availability_state: Availability state of the Azure resource as reported by Azure
+     Resource Health. Known values are: "Available", "Unavailable", "Degraded", and "Unknown".
+    :vartype availability_state: str or
+     ~azure.mgmt.cloudhealth.models.ResourceHealthAvailabilityState
+    :ivar category: Whether the status changing event was planned or unplanned. Known values are:
+     "Planned" and "Unplanned".
+    :vartype category: str or ~azure.mgmt.cloudhealth.models.ResourceHealthCategory
+    :ivar detailed_status: Detailed status of the Azure resource as reported by Azure Resource
+     Health.
+    :vartype detailed_status: str
+    :ivar summary: Human-readable summary of the current availability state from Azure Resource
+     Health.
+    :vartype summary: str
+    :ivar reason_type: Reason type for the current availability state (e.g. 'Unplanned', 'Planned',
+     'UserInitiated'). Known values are: "Unplanned", "Planned", and "UserInitiated".
+    :vartype reason_type: str or ~azure.mgmt.cloudhealth.models.ResourceHealthReasonType
+    :ivar reason_chronicity: Whether the current availability state is 'Persistent' or 'Transient'.
+     Known values are: "Persistent" and "Transient".
+    :vartype reason_chronicity: str or
+     ~azure.mgmt.cloudhealth.models.ResourceHealthReasonChronicity
+    :ivar availability_reported_time: Timestamp when Azure Resource Health observed the current
+     availability state.
+    :vartype availability_reported_time: ~datetime.datetime
+    """
+
+    health_state: Optional[Union[str, "_models.HealthState"]] = rest_field(name="healthState", visibility=["read"])
+    """Health state of this signal. Known values are: \"Healthy\", \"Degraded\", \"Unhealthy\", and
+     \"Unknown\"."""
+    value: Optional[float] = rest_field(visibility=["read"])
+    """Reported value of the signal."""
+    reported_at: Optional[datetime.datetime] = rest_field(name="reportedAt", visibility=["read"], format="rfc3339")
+    """Timestamp when the value was reported."""
+    error: Optional[str] = rest_field(visibility=["read"])
+    """Error message if the signal status cannot be retrieved."""
+    additional_context: Optional[str] = rest_field(
+        name="additionalContext", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional context as provided by the submitter."""
+    availability_state: Optional[Union[str, "_models.ResourceHealthAvailabilityState"]] = rest_field(
+        name="availabilityState", visibility=["read"]
+    )
+    """Availability state of the Azure resource as reported by Azure Resource Health. Known values
+     are: \"Available\", \"Unavailable\", \"Degraded\", and \"Unknown\"."""
+    category: Optional[Union[str, "_models.ResourceHealthCategory"]] = rest_field(visibility=["read"])
+    """Whether the status changing event was planned or unplanned. Known values are: \"Planned\" and
+     \"Unplanned\"."""
+    detailed_status: Optional[str] = rest_field(name="detailedStatus", visibility=["read"])
+    """Detailed status of the Azure resource as reported by Azure Resource Health."""
+    summary: Optional[str] = rest_field(visibility=["read"])
+    """Human-readable summary of the current availability state from Azure Resource Health."""
+    reason_type: Optional[Union[str, "_models.ResourceHealthReasonType"]] = rest_field(
+        name="reasonType", visibility=["read"]
+    )
+    """Reason type for the current availability state (e.g. 'Unplanned', 'Planned', 'UserInitiated').
+     Known values are: \"Unplanned\", \"Planned\", and \"UserInitiated\"."""
+    reason_chronicity: Optional[Union[str, "_models.ResourceHealthReasonChronicity"]] = rest_field(
+        name="reasonChronicity", visibility=["read"]
+    )
+    """Whether the current availability state is 'Persistent' or 'Transient'. Known values are:
+     \"Persistent\" and \"Transient\"."""
+    availability_reported_time: Optional[datetime.datetime] = rest_field(
+        name="availabilityReportedTime", visibility=["read"], format="rfc3339"
+    )
+    """Timestamp when Azure Resource Health observed the current availability state."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        additional_context: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SignalInstanceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional properties for signal instances assigned to an entity.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -366,7 +547,9 @@ class SignalInstanceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureResourceSignal(SignalInstanceProperties, discriminator="AzureResourceMetric"):
+class AzureResourceSignal(
+    SignalInstanceProperties, discriminator="AzureResourceMetric"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Resource Metric signal instance assigned to an entity.
 
     :ivar name: Unique name of the signal within the entity. Required.
@@ -387,15 +570,12 @@ class AzureResourceSignal(SignalInstanceProperties, discriminator="AzureResource
     :ivar aggregation_type: Type of aggregation to apply to the metric. Known values are: "None",
      "Average", "Count", "Minimum", "Maximum", and "Total".
     :vartype aggregation_type: str or ~azure.mgmt.cloudhealth.models.MetricAggregationType
-    :ivar dimension: Optional: Dimension to split by.
-    :vartype dimension: str
-    :ivar dimension_filter: Optional: Dimension filter to apply to the dimension. Must only be set
-     if also Dimension is set.
+    :ivar dimension_filter: Optional: Dimension filter to apply to the dimension.
     :vartype dimension_filter: str
     :ivar display_name: Display name.
     :vartype display_name: str
     :ivar refresh_interval: Interval in which the signal is being evaluated. Defaults to PT1M (1
-     minute). Known values are: "PT1M", "PT5M", "PT10M", "PT30M", "PT1H", and "PT2H".
+     minute). Known values are: "PT1M", "PT5M", "PT10M", "PT15M", "PT30M", "PT1H", and "PT2H".
     :vartype refresh_interval: str or ~azure.mgmt.cloudhealth.models.RefreshInterval
     :ivar data_unit: Unit of the signal result (e.g. Bytes, MilliSeconds, Percent, Count)).
     :vartype data_unit: str
@@ -420,13 +600,10 @@ class AzureResourceSignal(SignalInstanceProperties, discriminator="AzureResource
     )
     """Type of aggregation to apply to the metric. Known values are: \"None\", \"Average\", \"Count\",
      \"Minimum\", \"Maximum\", and \"Total\"."""
-    dimension: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional: Dimension to split by."""
     dimension_filter: Optional[str] = rest_field(
         name="dimensionFilter", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Optional: Dimension filter to apply to the dimension. Must only be set if also Dimension is
-     set."""
+    """Optional: Dimension filter to apply to the dimension."""
     display_name: Optional[str] = rest_field(
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -435,7 +612,7 @@ class AzureResourceSignal(SignalInstanceProperties, discriminator="AzureResource
         name="refreshInterval", visibility=["read", "create", "update", "delete", "query"]
     )
     """Interval in which the signal is being evaluated. Defaults to PT1M (1 minute). Known values are:
-     \"PT1M\", \"PT5M\", \"PT10M\", \"PT30M\", \"PT1H\", and \"PT2H\"."""
+     \"PT1M\", \"PT5M\", \"PT10M\", \"PT15M\", \"PT30M\", \"PT1H\", and \"PT2H\"."""
     data_unit: Optional[str] = rest_field(name="dataUnit", visibility=["read", "create", "update", "delete", "query"])
     """Unit of the signal result (e.g. Bytes, MilliSeconds, Percent, Count))."""
     evaluation_rules: Optional["_models.EvaluationRule"] = rest_field(
@@ -453,7 +630,6 @@ class AzureResourceSignal(SignalInstanceProperties, discriminator="AzureResource
         metric_name: Optional[str] = None,
         time_grain: Optional[str] = None,
         aggregation_type: Optional[Union[str, "_models.MetricAggregationType"]] = None,
-        dimension: Optional[str] = None,
         dimension_filter: Optional[str] = None,
         display_name: Optional[str] = None,
         refresh_interval: Optional[Union[str, "_models.RefreshInterval"]] = None,
@@ -473,7 +649,7 @@ class AzureResourceSignal(SignalInstanceProperties, discriminator="AzureResource
         self.signal_kind = SignalKind.AZURE_RESOURCE_METRIC  # type: ignore
 
 
-class AzureResourceSignals(_Model):
+class AzureResourceSignals(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A grouping of Azure resource signals.
 
     :ivar authentication_setting: Reference to the name of the authentication setting which is used
@@ -486,6 +662,9 @@ class AzureResourceSignals(_Model):
     :vartype azure_resource_kind: str
     :ivar signals: Signals assigned to this group.
     :vartype signals: list[~azure.mgmt.cloudhealth.models.AzureResourceSignal]
+    :ivar resource_health: Optional configuration for automatically adding a signal based on the
+     resource's availability state in Azure Resource Health.
+    :vartype resource_health: ~azure.mgmt.cloudhealth.models.AzureResourceHealthSignal
     """
 
     authentication_setting: str = rest_field(
@@ -506,6 +685,11 @@ class AzureResourceSignals(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Signals assigned to this group."""
+    resource_health: Optional["_models.AzureResourceHealthSignal"] = rest_field(
+        name="resourceHealth", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional configuration for automatically adding a signal based on the resource's availability
+     state in Azure Resource Health."""
 
     @overload
     def __init__(
@@ -515,6 +699,7 @@ class AzureResourceSignals(_Model):
         azure_resource_id: str,
         azure_resource_kind: Optional[str] = None,
         signals: Optional[list["_models.AzureResourceSignal"]] = None,
+        resource_health: Optional["_models.AzureResourceHealthSignal"] = None,
     ) -> None: ...
 
     @overload
@@ -528,12 +713,59 @@ class AzureResourceSignals(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DependenciesSignalGroupV2(_Model):
+class DataAnnotation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A single data annotation on an entity.
+
+    :ivar annotation_id: Auto-assigned identifier for the annotation.
+    :vartype annotation_id: str
+    :ivar created_at: Timestamp when the annotation was created.
+    :vartype created_at: ~datetime.datetime
+    :ivar annotation_details: Annotation details as a dynamic key-value pair bag. Service-enforced
+     limits: a maximum of 10 entries per annotation and a maximum value length of 256 characters.
+     Requests exceeding these limits will be rejected with a 400 response. Required.
+    :vartype annotation_details: dict[str, str]
+    :ivar description: Optional description of the annotation.
+    :vartype description: str
+    """
+
+    annotation_id: Optional[str] = rest_field(name="annotationId", visibility=["read"])
+    """Auto-assigned identifier for the annotation."""
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """Timestamp when the annotation was created."""
+    annotation_details: dict[str, str] = rest_field(
+        name="annotationDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Annotation details as a dynamic key-value pair bag. Service-enforced limits: a maximum of 10
+     entries per annotation and a maximum value length of 256 characters. Requests exceeding these
+     limits will be rejected with a 400 response. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional description of the annotation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        annotation_details: dict[str, str],
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DependenciesSignalGroupV2(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for dependent entities, i.e. child entities.
 
     :ivar aggregation_type: Aggregation type for child dependencies. Required. Known values are:
-     "WorstOf", "MinHealthy", and "MaxNotHealthy".
-    :vartype aggregation_type: str or ~azure.mgmt.cloudhealth.models.DependenciesAggregationType
+     "WorstOf", "BestOf", "MinHealthy", and "MaxNotHealthy".
+    :vartype aggregation_type: str or ~azure.mgmt.cloudhealth.models.AggregationType
     :ivar degraded_threshold: Degraded threshold for aggregation. For MinHealthy: parent is
      degraded when healthy count/percentage falls to or below this value. For MaxNotHealthy: parent
      is degraded when not-healthy count/percentage reaches or exceeds this value. Optional — if not
@@ -546,16 +778,16 @@ class DependenciesSignalGroupV2(_Model):
     :vartype unhealthy_threshold: float
     :ivar unit: Unit type for the aggregation thresholds. Required when aggregationType is
      MinHealthy or MaxNotHealthy. Known values are: "Absolute" and "Percentage".
-    :vartype unit: str or ~azure.mgmt.cloudhealth.models.DependenciesAggregationUnit
+    :vartype unit: str or ~azure.mgmt.cloudhealth.models.AggregationUnit
     :ivar ignore_unknown: If true, children with Unknown health state are excluded from aggregation
      calculations. Defaults to true.
     :vartype ignore_unknown: bool
     """
 
-    aggregation_type: Union[str, "_models.DependenciesAggregationType"] = rest_field(
+    aggregation_type: Union[str, "_models.AggregationType"] = rest_field(
         name="aggregationType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Aggregation type for child dependencies. Required. Known values are: \"WorstOf\",
+    """Aggregation type for child dependencies. Required. Known values are: \"WorstOf\", \"BestOf\",
      \"MinHealthy\", and \"MaxNotHealthy\"."""
     degraded_threshold: Optional[float] = rest_field(
         name="degradedThreshold", visibility=["read", "create", "update", "delete", "query"]
@@ -571,7 +803,7 @@ class DependenciesSignalGroupV2(_Model):
      count/percentage falls to or below this value. For MaxNotHealthy: parent is unhealthy when
      not-healthy count/percentage reaches or exceeds this value. Required when aggregationType is
      MinHealthy or MaxNotHealthy."""
-    unit: Optional[Union[str, "_models.DependenciesAggregationUnit"]] = rest_field(
+    unit: Optional[Union[str, "_models.AggregationUnit"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Unit type for the aggregation thresholds. Required when aggregationType is MinHealthy or
@@ -586,10 +818,10 @@ class DependenciesSignalGroupV2(_Model):
     def __init__(
         self,
         *,
-        aggregation_type: Union[str, "_models.DependenciesAggregationType"],
+        aggregation_type: Union[str, "_models.AggregationType"],
         degraded_threshold: Optional[float] = None,
         unhealthy_threshold: Optional[float] = None,
-        unit: Optional[Union[str, "_models.DependenciesAggregationUnit"]] = None,
+        unit: Optional[Union[str, "_models.AggregationUnit"]] = None,
         ignore_unknown: Optional[bool] = None,
     ) -> None: ...
 
@@ -619,7 +851,7 @@ class DiscoveryError(_Model):
     """Additional context information, like resource IDs or query details."""
 
 
-class DiscoveryRule(ProxyResource):
+class DiscoveryRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A discovery rule which automatically finds entities and relationships in a health model based
     on an Azure Resource Graph query.
 
@@ -661,7 +893,7 @@ class DiscoveryRule(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DiscoveryRuleProperties(_Model):
+class DiscoveryRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Discovery rule properties.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -685,10 +917,17 @@ class DiscoveryRuleProperties(_Model):
     :ivar specification: Specification of the discovery rule defining how entities are discovered.
      Required.
     :vartype specification: ~azure.mgmt.cloudhealth.models.DiscoveryRuleSpecification
+    :ivar add_resource_health_signal: Whether to automatically add a signal for the Azure
+     resource's availability state from Azure Resource Health to the discovered entities. Defaults
+     to ``Enabled``: discovery rules updated via this API version without setting this field will
+     begin emitting a Resource Health availability signal. Pass ``Disabled`` to preserve
+     pre-``2026-05-01-preview`` behavior. Known values are: "Enabled" and "Disabled".
+    :vartype add_resource_health_signal: str or
+     ~azure.mgmt.cloudhealth.models.ResourceHealthAvailabilityStateSignalBehavior
     :ivar error: Error details if the last discovery operation failed.
     :vartype error: ~azure.mgmt.cloudhealth.models.DiscoveryError
     :ivar entity_name: Name of the entity which represents the discovery rule. Note: It might take
-     a few minutes after creating the discovery rule until the entity is created. Required.
+     a few minutes after creating the discovery rule until the entity is created.
     :vartype entity_name: str
     """
 
@@ -722,11 +961,19 @@ class DiscoveryRuleProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Specification of the discovery rule defining how entities are discovered. Required."""
+    add_resource_health_signal: Optional[Union[str, "_models.ResourceHealthAvailabilityStateSignalBehavior"]] = (
+        rest_field(name="addResourceHealthSignal", visibility=["read", "create", "update", "delete", "query"])
+    )
+    """Whether to automatically add a signal for the Azure resource's availability state from Azure
+     Resource Health to the discovered entities. Defaults to ``Enabled``: discovery rules updated
+     via this API version without setting this field will begin emitting a Resource Health
+     availability signal. Pass ``Disabled`` to preserve pre-``2026-05-01-preview`` behavior. Known
+     values are: \"Enabled\" and \"Disabled\"."""
     error: Optional["_models.DiscoveryError"] = rest_field(visibility=["read"])
     """Error details if the last discovery operation failed."""
-    entity_name: str = rest_field(name="entityName", visibility=["read"])
+    entity_name: Optional[str] = rest_field(name="entityName", visibility=["read"])
     """Name of the entity which represents the discovery rule. Note: It might take a few minutes after
-     creating the discovery rule until the entity is created. Required."""
+     creating the discovery rule until the entity is created."""
 
     @overload
     def __init__(
@@ -737,6 +984,9 @@ class DiscoveryRuleProperties(_Model):
         add_recommended_signals: Union[str, "_models.DiscoveryRuleRecommendedSignalsBehavior"],
         specification: "_models.DiscoveryRuleSpecification",
         display_name: Optional[str] = None,
+        add_resource_health_signal: Optional[
+            Union[str, "_models.ResourceHealthAvailabilityStateSignalBehavior"]
+        ] = None,
     ) -> None: ...
 
     @overload
@@ -750,7 +1000,7 @@ class DiscoveryRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Entity(ProxyResource):
+class Entity(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An entity (aka node) of a health model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -791,7 +1041,7 @@ class Entity(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class EntityAlerts(_Model):
+class EntityAlerts(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Alert configuration for an entity.
 
     :ivar unhealthy: Alert to be triggered on state change to unhealthy.
@@ -828,7 +1078,7 @@ class EntityAlerts(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityCoordinates(_Model):
+class EntityCoordinates(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Visual position of the entity.
 
     :ivar x: X Coordinate. Required.
@@ -861,13 +1111,18 @@ class EntityCoordinates(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityHistoryRequest(_Model):
+class EntityHistoryRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for getting entity health history.
 
     :ivar start_at: Start time for the history query. Defaults to 24 hours ago if not specified.
     :vartype start_at: ~datetime.datetime
     :ivar end_at: End time for the history query. Defaults to now if not specified.
     :vartype end_at: ~datetime.datetime
+    :ivar top: Maximum number of health state transitions to return per page. Defaults to 1000.
+    :vartype top: int
+    :ivar next_marker: An opaque string value that identifies the portion of the result set to be
+     returned with the next operation. Must not be combined with startAt or endAt.
+    :vartype next_marker: str
     """
 
     start_at: Optional[datetime.datetime] = rest_field(
@@ -878,6 +1133,13 @@ class EntityHistoryRequest(_Model):
         name="endAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """End time for the history query. Defaults to now if not specified."""
+    top: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum number of health state transitions to return per page. Defaults to 1000."""
+    next_marker: Optional[str] = rest_field(
+        name="nextMarker", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An opaque string value that identifies the portion of the result set to be returned with the
+     next operation. Must not be combined with startAt or endAt."""
 
     @overload
     def __init__(
@@ -885,6 +1147,8 @@ class EntityHistoryRequest(_Model):
         *,
         start_at: Optional[datetime.datetime] = None,
         end_at: Optional[datetime.datetime] = None,
+        top: Optional[int] = None,
+        next_marker: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -898,13 +1162,16 @@ class EntityHistoryRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityHistoryResponse(_Model):
+class EntityHistoryResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response containing entity health state transitions.
 
     :ivar entity_name: Name of the entity. Required.
     :vartype entity_name: str
     :ivar history: List of health state transitions. Required.
     :vartype history: list[~azure.mgmt.cloudhealth.models.HealthStateTransition]
+    :ivar next_marker: An opaque string value that identifies the portion of the result set to be
+     returned with the next operation.
+    :vartype next_marker: str
     """
 
     entity_name: str = rest_field(name="entityName", visibility=["read", "create", "update", "delete", "query"])
@@ -913,6 +1180,11 @@ class EntityHistoryResponse(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of health state transitions. Required."""
+    next_marker: Optional[str] = rest_field(
+        name="nextMarker", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An opaque string value that identifies the portion of the result set to be returned with the
+     next operation."""
 
     @overload
     def __init__(
@@ -920,6 +1192,7 @@ class EntityHistoryResponse(_Model):
         *,
         entity_name: str,
         history: list["_models.HealthStateTransition"],
+        next_marker: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -933,7 +1206,7 @@ class EntityHistoryResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityProperties(_Model):
+class EntityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties which are common across all kinds of entities.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -954,11 +1227,18 @@ class EntityProperties(_Model):
     :vartype tags: dict[str, str]
     :ivar signal_groups: Signal groups which are assigned to this entity.
     :vartype signal_groups: ~azure.mgmt.cloudhealth.models.SignalGroups
+    :ivar signal_aggregation_groups: Logical aggregation groups over the signals on this entity.
+     Overlap is allowed: the same signal may appear in more than one group's members. Each group is
+     evaluated independently according to its strategy, and a shared signal can contribute to
+     multiple group states and related per-group telemetry. Group states contribute alongside any
+     ungrouped signals and the dependency-aggregated child health to the entity's overall worst-of
+     composite.
+    :vartype signal_aggregation_groups: list[~azure.mgmt.cloudhealth.models.SignalAggregationGroup]
     :ivar discovered_by: Discovered by which discovery rule. If set, the entity cannot be deleted
      manually.
     :vartype discovered_by: str
     :ivar health_state: Health state of this entity. Known values are: "Healthy", "Degraded",
-     "Unhealthy", "Unknown", and "Deleted".
+     "Unhealthy", and "Unknown".
     :vartype health_state: str or ~azure.mgmt.cloudhealth.models.HealthState
     :ivar alerts: Alert configuration for this entity.
     :vartype alerts: ~azure.mgmt.cloudhealth.models.EntityAlerts
@@ -994,11 +1274,19 @@ class EntityProperties(_Model):
         name="signalGroups", visibility=["read", "create", "update", "delete", "query"]
     )
     """Signal groups which are assigned to this entity."""
+    signal_aggregation_groups: Optional[list["_models.SignalAggregationGroup"]] = rest_field(
+        name="signalAggregationGroups", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Logical aggregation groups over the signals on this entity. Overlap is allowed: the same signal
+     may appear in more than one group's members. Each group is evaluated independently according to
+     its strategy, and a shared signal can contribute to multiple group states and related per-group
+     telemetry. Group states contribute alongside any ungrouped signals and the
+     dependency-aggregated child health to the entity's overall worst-of composite."""
     discovered_by: Optional[str] = rest_field(name="discoveredBy", visibility=["read"])
     """Discovered by which discovery rule. If set, the entity cannot be deleted manually."""
     health_state: Optional[Union[str, "_models.HealthState"]] = rest_field(name="healthState", visibility=["read"])
-    """Health state of this entity. Known values are: \"Healthy\", \"Degraded\", \"Unhealthy\",
-     \"Unknown\", and \"Deleted\"."""
+    """Health state of this entity. Known values are: \"Healthy\", \"Degraded\", \"Unhealthy\", and
+     \"Unknown\"."""
     alerts: Optional["_models.EntityAlerts"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Alert configuration for this entity."""
 
@@ -1013,6 +1301,7 @@ class EntityProperties(_Model):
         impact: Optional[Union[str, "_models.EntityImpact"]] = None,
         tags: Optional[dict[str, str]] = None,
         signal_groups: Optional["_models.SignalGroups"] = None,
+        signal_aggregation_groups: Optional[list["_models.SignalAggregationGroup"]] = None,
         alerts: Optional["_models.EntityAlerts"] = None,
     ) -> None: ...
 
@@ -1071,7 +1360,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -1099,7 +1388,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluationRule(_Model):
+class EvaluationRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Evaluation rule for a signal definition.
 
     :ivar degraded_rule: Degraded rule with static threshold.
@@ -1136,7 +1425,9 @@ class EvaluationRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExternalSignal(SignalInstanceProperties, discriminator="External"):
+class ExternalSignal(
+    SignalInstanceProperties, discriminator="External"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An externally submitted signal instance assigned to an entity.
 
     :ivar name: Unique name of the signal within the entity. Required.
@@ -1191,7 +1482,154 @@ class ExternalSignalGroup(_Model):
     """Signals assigned to this signal group."""
 
 
-class TrackedResource(Resource):
+class GetDataAnnotationsRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request body for querying data annotations.
+
+    :ivar start_at: Start of UTC time range. Defaults to 24 hours ago if not specified.
+    :vartype start_at: ~datetime.datetime
+    :ivar end_at: End of UTC time range. Defaults to now if not specified.
+    :vartype end_at: ~datetime.datetime
+    :ivar top: Maximum number of annotations to return per page. Defaults to 100.
+    :vartype top: int
+    :ivar next_marker: An opaque string value that identifies the portion of the result set to be
+     returned with the next operation. Must not be combined with startAt or endAt.
+    :vartype next_marker: str
+    """
+
+    start_at: Optional[datetime.datetime] = rest_field(
+        name="startAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Start of UTC time range. Defaults to 24 hours ago if not specified."""
+    end_at: Optional[datetime.datetime] = rest_field(
+        name="endAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """End of UTC time range. Defaults to now if not specified."""
+    top: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum number of annotations to return per page. Defaults to 100."""
+    next_marker: Optional[str] = rest_field(
+        name="nextMarker", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An opaque string value that identifies the portion of the result set to be returned with the
+     next operation. Must not be combined with startAt or endAt."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        start_at: Optional[datetime.datetime] = None,
+        end_at: Optional[datetime.datetime] = None,
+        top: Optional[int] = None,
+        next_marker: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GetDataAnnotationsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Response containing data annotations for an entity.
+
+    :ivar entity_name: Name of the entity. Required.
+    :vartype entity_name: str
+    :ivar annotations: List of data annotations. Required.
+    :vartype annotations: list[~azure.mgmt.cloudhealth.models.DataAnnotation]
+    :ivar next_marker: An opaque string value that identifies the portion of the result set to be
+     returned with the next operation.
+    :vartype next_marker: str
+    """
+
+    entity_name: str = rest_field(name="entityName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the entity. Required."""
+    annotations: list["_models.DataAnnotation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of data annotations. Required."""
+    next_marker: Optional[str] = rest_field(
+        name="nextMarker", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An opaque string value that identifies the portion of the result set to be returned with the
+     next operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        entity_name: str,
+        annotations: list["_models.DataAnnotation"],
+        next_marker: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GetSignalRecommendationsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Response from ``getSignalRecommendations`` containing two independent suggestion streams for
+    the Azure resource type represented by the target Entity. ``recommendedSignals`` lists signals
+    broadly recommended to be enabled by default; ``recommendedConfigurations`` lists additional
+    metrics that are not broadly applicable but, if a caller chooses to monitor one of them, ship
+    with suggested starting-point thresholds. The two arrays are independent — items are not paired
+    by index, and callers should treat them as two separate suggestion streams.
+
+    :ivar recommended_signals: Signals that are broadly recommended to be enabled by default for
+     health models monitoring an Entity of this resource type. Each entry is a complete signal
+     configuration (metric, aggregation, thresholds) ready to be added to a health model.
+     Independent of ``recommendedConfigurations`` — not paired by index. Required.
+    :vartype recommended_signals: list[~azure.mgmt.cloudhealth.models.SignalConfiguration]
+    :ivar recommended_configurations: Additional signal configurations for metrics that are not
+     broadly applicable to every health model for an Entity of this resource type, but if a caller
+     chooses to monitor one of these metrics, the provided thresholds are suggested as a starting
+     point. Independent of ``recommendedSignals`` — not paired by index. Required.
+    :vartype recommended_configurations: list[~azure.mgmt.cloudhealth.models.SignalConfiguration]
+    """
+
+    recommended_signals: list["_models.SignalConfiguration"] = rest_field(
+        name="recommendedSignals", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Signals that are broadly recommended to be enabled by default for health models monitoring an
+     Entity of this resource type. Each entry is a complete signal configuration (metric,
+     aggregation, thresholds) ready to be added to a health model. Independent of
+     ``recommendedConfigurations`` — not paired by index. Required."""
+    recommended_configurations: list["_models.SignalConfiguration"] = rest_field(
+        name="recommendedConfigurations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional signal configurations for metrics that are not broadly applicable to every health
+     model for an Entity of this resource type, but if a caller chooses to monitor one of these
+     metrics, the provided thresholds are suggested as a starting point. Independent of
+     ``recommendedSignals`` — not paired by index. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        recommended_signals: list["_models.SignalConfiguration"],
+        recommended_configurations: list["_models.SignalConfiguration"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1235,7 +1673,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class HealthModel(TrackedResource):
+class HealthModel(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A HealthModel resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1304,7 +1742,7 @@ class HealthModelProperties(_Model):
      \"Creating\", and \"Deleting\"."""
 
 
-class HealthModelUpdate(_Model):
+class HealthModelUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the HealthModel.
 
     :ivar identity: The managed service identities assigned to this resource.
@@ -1339,7 +1777,7 @@ class HealthModelUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthReportEvaluationRule(_Model):
+class HealthReportEvaluationRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Evaluation rules for the health report.
 
     :ivar degraded_rule: Degraded rule with static threshold.
@@ -1376,13 +1814,13 @@ class HealthReportEvaluationRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthReportRequest(_Model):
+class HealthReportRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Health report that's submitted for a specific signal.
 
     :ivar signal_name: Name of the entity signal to report health for. Required.
     :vartype signal_name: str
     :ivar health_state: Health state to report for the signal. Required. Known values are:
-     "Healthy", "Degraded", "Unhealthy", "Unknown", and "Deleted".
+     "Healthy", "Degraded", "Unhealthy", and "Unknown".
     :vartype health_state: str or ~azure.mgmt.cloudhealth.models.HealthState
     :ivar value: Reported value of the signal.
     :vartype value: float
@@ -1401,7 +1839,7 @@ class HealthReportRequest(_Model):
         name="healthState", visibility=["read", "create", "update", "delete", "query"]
     )
     """Health state to report for the signal. Required. Known values are: \"Healthy\", \"Degraded\",
-     \"Unhealthy\", \"Unknown\", and \"Deleted\"."""
+     \"Unhealthy\", and \"Unknown\"."""
     value: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Reported value of the signal."""
     evaluation_rules: Optional["_models.HealthReportEvaluationRule"] = rest_field(
@@ -1440,14 +1878,14 @@ class HealthReportRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthStateTransition(_Model):
+class HealthStateTransition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A health state transition record.
 
     :ivar previous_state: Previous health state before the transition. Required. Known values are:
-     "Healthy", "Degraded", "Unhealthy", "Unknown", and "Deleted".
+     "Healthy", "Degraded", "Unhealthy", and "Unknown".
     :vartype previous_state: str or ~azure.mgmt.cloudhealth.models.HealthState
     :ivar new_state: New health state after the transition. Required. Known values are: "Healthy",
-     "Degraded", "Unhealthy", "Unknown", and "Deleted".
+     "Degraded", "Unhealthy", and "Unknown".
     :vartype new_state: str or ~azure.mgmt.cloudhealth.models.HealthState
     :ivar occurred_at: Timestamp when the transition occurred. Required.
     :vartype occurred_at: ~datetime.datetime
@@ -1459,12 +1897,12 @@ class HealthStateTransition(_Model):
         name="previousState", visibility=["read", "create", "update", "delete", "query"]
     )
     """Previous health state before the transition. Required. Known values are: \"Healthy\",
-     \"Degraded\", \"Unhealthy\", \"Unknown\", and \"Deleted\"."""
+     \"Degraded\", \"Unhealthy\", and \"Unknown\"."""
     new_state: Union[str, "_models.HealthState"] = rest_field(
         name="newState", visibility=["read", "create", "update", "delete", "query"]
     )
     """New health state after the transition. Required. Known values are: \"Healthy\", \"Degraded\",
-     \"Unhealthy\", \"Unknown\", and \"Deleted\"."""
+     \"Unhealthy\", and \"Unknown\"."""
     occurred_at: datetime.datetime = rest_field(
         name="occurredAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
@@ -1493,7 +1931,7 @@ class HealthStateTransition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IconDefinition(_Model):
+class IconDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Visual icon definition of an entity.
 
     :ivar icon_name: Name of the built-in icon, or 'Custom' to use customData. Required.
@@ -1529,7 +1967,7 @@ class IconDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SignalDefinitionProperties(_Model):
+class SignalDefinitionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SignalDefinition properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1545,7 +1983,7 @@ class SignalDefinitionProperties(_Model):
      "AzureResourceMetric", "LogAnalyticsQuery", "PrometheusMetricsQuery", and "External".
     :vartype signal_kind: str or ~azure.mgmt.cloudhealth.models.SignalKind
     :ivar refresh_interval: Interval in which the signal is being evaluated. Defaults to PT1M (1
-     minute). Known values are: "PT1M", "PT5M", "PT10M", "PT30M", "PT1H", and "PT2H".
+     minute). Known values are: "PT1M", "PT5M", "PT10M", "PT15M", "PT30M", "PT1H", and "PT2H".
     :vartype refresh_interval: str or ~azure.mgmt.cloudhealth.models.RefreshInterval
     :ivar tags: Optional set of tags (key-value pairs).
     :vartype tags: dict[str, str]
@@ -1572,7 +2010,7 @@ class SignalDefinitionProperties(_Model):
         name="refreshInterval", visibility=["read", "create", "update", "delete", "query"]
     )
     """Interval in which the signal is being evaluated. Defaults to PT1M (1 minute). Known values are:
-     \"PT1M\", \"PT5M\", \"PT10M\", \"PT30M\", \"PT1H\", and \"PT2H\"."""
+     \"PT1M\", \"PT5M\", \"PT10M\", \"PT15M\", \"PT30M\", \"PT1H\", and \"PT2H\"."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional set of tags (key-value pairs)."""
     data_unit: Optional[str] = rest_field(name="dataUnit", visibility=["read", "create", "update", "delete", "query"])
@@ -1607,7 +2045,7 @@ class SignalDefinitionProperties(_Model):
 
 class LogAnalyticsQuerySignalDefinitionProperties(
     SignalDefinitionProperties, discriminator="LogAnalyticsQuery"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Log Analytics Query Signal Definition properties.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -1616,7 +2054,7 @@ class LogAnalyticsQuerySignalDefinitionProperties(
     :ivar display_name: Display name.
     :vartype display_name: str
     :ivar refresh_interval: Interval in which the signal is being evaluated. Defaults to PT1M (1
-     minute). Known values are: "PT1M", "PT5M", "PT10M", "PT30M", "PT1H", and "PT2H".
+     minute). Known values are: "PT1M", "PT5M", "PT10M", "PT15M", "PT30M", "PT1H", and "PT2H".
     :vartype refresh_interval: str or ~azure.mgmt.cloudhealth.models.RefreshInterval
     :ivar tags: Optional set of tags (key-value pairs).
     :vartype tags: dict[str, str]
@@ -1676,7 +2114,9 @@ class LogAnalyticsQuerySignalDefinitionProperties(
         self.signal_kind = SignalKind.LOG_ANALYTICS_QUERY  # type: ignore
 
 
-class LogAnalyticsSignal(SignalInstanceProperties, discriminator="LogAnalyticsQuery"):
+class LogAnalyticsSignal(
+    SignalInstanceProperties, discriminator="LogAnalyticsQuery"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Log Analytics Query signal instance assigned to an entity.
 
     :ivar name: Unique name of the signal within the entity. Required.
@@ -1700,7 +2140,7 @@ class LogAnalyticsSignal(SignalInstanceProperties, discriminator="LogAnalyticsQu
     :ivar display_name: Display name.
     :vartype display_name: str
     :ivar refresh_interval: Interval in which the signal is being evaluated. Defaults to PT1M (1
-     minute). Known values are: "PT1M", "PT5M", "PT10M", "PT30M", "PT1H", and "PT2H".
+     minute). Known values are: "PT1M", "PT5M", "PT10M", "PT15M", "PT30M", "PT1H", and "PT2H".
     :vartype refresh_interval: str or ~azure.mgmt.cloudhealth.models.RefreshInterval
     :ivar data_unit: Unit of the signal result (e.g. Bytes, MilliSeconds, Percent, Count)).
     :vartype data_unit: str
@@ -1728,7 +2168,7 @@ class LogAnalyticsSignal(SignalInstanceProperties, discriminator="LogAnalyticsQu
         name="refreshInterval", visibility=["read", "create", "update", "delete", "query"]
     )
     """Interval in which the signal is being evaluated. Defaults to PT1M (1 minute). Known values are:
-     \"PT1M\", \"PT5M\", \"PT10M\", \"PT30M\", \"PT1H\", and \"PT2H\"."""
+     \"PT1M\", \"PT5M\", \"PT10M\", \"PT15M\", \"PT30M\", \"PT1H\", and \"PT2H\"."""
     data_unit: Optional[str] = rest_field(name="dataUnit", visibility=["read", "create", "update", "delete", "query"])
     """Unit of the signal result (e.g. Bytes, MilliSeconds, Percent, Count))."""
     evaluation_rules: Optional["_models.EvaluationRule"] = rest_field(
@@ -1763,7 +2203,7 @@ class LogAnalyticsSignal(SignalInstanceProperties, discriminator="LogAnalyticsQu
         self.signal_kind = SignalKind.LOG_ANALYTICS_QUERY  # type: ignore
 
 
-class LogAnalyticsSignals(_Model):
+class LogAnalyticsSignals(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A grouping of Log Analytics workspace signals.
 
     :ivar authentication_setting: Reference to the name of the authentication setting which is used
@@ -1811,7 +2251,7 @@ class LogAnalyticsSignals(_Model):
 
 class ManagedIdentityAuthenticationSettingProperties(
     AuthenticationSettingProperties, discriminator="ManagedIdentity"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Authentication setting properties for Azure Managed Identity.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -1854,7 +2294,7 @@ class ManagedIdentityAuthenticationSettingProperties(
         self.authentication_kind = AuthenticationKind.MANAGED_IDENTITY  # type: ignore
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -1906,7 +2346,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -1994,7 +2434,9 @@ class OperationDisplay(_Model):
      views."""
 
 
-class PrometheusMetricsSignal(SignalInstanceProperties, discriminator="PrometheusMetricsQuery"):
+class PrometheusMetricsSignal(
+    SignalInstanceProperties, discriminator="PrometheusMetricsQuery"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Prometheus Metrics Query signal instance assigned to an entity.
 
     :ivar name: Unique name of the signal within the entity. Required.
@@ -2013,7 +2455,7 @@ class PrometheusMetricsSignal(SignalInstanceProperties, discriminator="Prometheu
     :ivar display_name: Display name.
     :vartype display_name: str
     :ivar refresh_interval: Interval in which the signal is being evaluated. Defaults to PT1M (1
-     minute). Known values are: "PT1M", "PT5M", "PT10M", "PT30M", "PT1H", and "PT2H".
+     minute). Known values are: "PT1M", "PT5M", "PT10M", "PT15M", "PT30M", "PT1H", and "PT2H".
     :vartype refresh_interval: str or ~azure.mgmt.cloudhealth.models.RefreshInterval
     :ivar data_unit: Unit of the signal result (e.g. Bytes, MilliSeconds, Percent, Count)).
     :vartype data_unit: str
@@ -2035,7 +2477,7 @@ class PrometheusMetricsSignal(SignalInstanceProperties, discriminator="Prometheu
         name="refreshInterval", visibility=["read", "create", "update", "delete", "query"]
     )
     """Interval in which the signal is being evaluated. Defaults to PT1M (1 minute). Known values are:
-     \"PT1M\", \"PT5M\", \"PT10M\", \"PT30M\", \"PT1H\", and \"PT2H\"."""
+     \"PT1M\", \"PT5M\", \"PT10M\", \"PT15M\", \"PT30M\", \"PT1H\", and \"PT2H\"."""
     data_unit: Optional[str] = rest_field(name="dataUnit", visibility=["read", "create", "update", "delete", "query"])
     """Unit of the signal result (e.g. Bytes, MilliSeconds, Percent, Count))."""
     evaluation_rules: Optional["_models.EvaluationRule"] = rest_field(
@@ -2071,7 +2513,7 @@ class PrometheusMetricsSignal(SignalInstanceProperties, discriminator="Prometheu
 
 class PrometheusMetricsSignalDefinitionProperties(
     SignalDefinitionProperties, discriminator="PrometheusMetricsQuery"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Prometheus Metrics Signal Definition properties.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -2080,7 +2522,7 @@ class PrometheusMetricsSignalDefinitionProperties(
     :ivar display_name: Display name.
     :vartype display_name: str
     :ivar refresh_interval: Interval in which the signal is being evaluated. Defaults to PT1M (1
-     minute). Known values are: "PT1M", "PT5M", "PT10M", "PT30M", "PT1H", and "PT2H".
+     minute). Known values are: "PT1M", "PT5M", "PT10M", "PT15M", "PT30M", "PT1H", and "PT2H".
     :vartype refresh_interval: str or ~azure.mgmt.cloudhealth.models.RefreshInterval
     :ivar tags: Optional set of tags (key-value pairs).
     :vartype tags: dict[str, str]
@@ -2128,7 +2570,7 @@ class PrometheusMetricsSignalDefinitionProperties(
         self.signal_kind = SignalKind.PROMETHEUS_METRICS_QUERY  # type: ignore
 
 
-class Relationship(ProxyResource):
+class Relationship(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A relationship (aka edge) between two entities in a health model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2169,7 +2611,7 @@ class Relationship(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RelationshipProperties(_Model):
+class RelationshipProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Relationship properties.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -2227,7 +2669,9 @@ class RelationshipProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceGraphQuerySpecification(DiscoveryRuleSpecification, discriminator="ResourceGraphQuery"):
+class ResourceGraphQuerySpecification(
+    DiscoveryRuleSpecification, discriminator="ResourceGraphQuery"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Discovery rule specification for an Azure Resource Graph query.
 
     :ivar kind: Kind of the discovery rule specification. Required. Azure Resource Graph query
@@ -2266,7 +2710,9 @@ class ResourceGraphQuerySpecification(DiscoveryRuleSpecification, discriminator=
         self.kind = DiscoveryRuleKind.RESOURCE_GRAPH_QUERY  # type: ignore
 
 
-class ResourceMetricSignalDefinitionProperties(SignalDefinitionProperties, discriminator="AzureResourceMetric"):
+class ResourceMetricSignalDefinitionProperties(
+    SignalDefinitionProperties, discriminator="AzureResourceMetric"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Resource Metric Signal Definition properties.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -2275,7 +2721,7 @@ class ResourceMetricSignalDefinitionProperties(SignalDefinitionProperties, discr
     :ivar display_name: Display name.
     :vartype display_name: str
     :ivar refresh_interval: Interval in which the signal is being evaluated. Defaults to PT1M (1
-     minute). Known values are: "PT1M", "PT5M", "PT10M", "PT30M", "PT1H", and "PT2H".
+     minute). Known values are: "PT1M", "PT5M", "PT10M", "PT15M", "PT30M", "PT1H", and "PT2H".
     :vartype refresh_interval: str or ~azure.mgmt.cloudhealth.models.RefreshInterval
     :ivar tags: Optional set of tags (key-value pairs).
     :vartype tags: dict[str, str]
@@ -2294,10 +2740,7 @@ class ResourceMetricSignalDefinitionProperties(SignalDefinitionProperties, discr
     :ivar aggregation_type: Type of aggregation to apply to the metric. Required. Known values are:
      "None", "Average", "Count", "Minimum", "Maximum", and "Total".
     :vartype aggregation_type: str or ~azure.mgmt.cloudhealth.models.MetricAggregationType
-    :ivar dimension: Optional: Dimension to split by.
-    :vartype dimension: str
-    :ivar dimension_filter: Optional: Dimension filter to apply to the dimension. Must only be set
-     if also Dimension is set.
+    :ivar dimension_filter: Optional: Dimension filter to apply to the dimension.
     :vartype dimension_filter: str
     """
 
@@ -2316,13 +2759,10 @@ class ResourceMetricSignalDefinitionProperties(SignalDefinitionProperties, discr
     )
     """Type of aggregation to apply to the metric. Required. Known values are: \"None\", \"Average\",
      \"Count\", \"Minimum\", \"Maximum\", and \"Total\"."""
-    dimension: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional: Dimension to split by."""
     dimension_filter: Optional[str] = rest_field(
         name="dimensionFilter", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Optional: Dimension filter to apply to the dimension. Must only be set if also Dimension is
-     set."""
+    """Optional: Dimension filter to apply to the dimension."""
 
     @overload
     def __init__(
@@ -2337,7 +2777,6 @@ class ResourceMetricSignalDefinitionProperties(SignalDefinitionProperties, discr
         refresh_interval: Optional[Union[str, "_models.RefreshInterval"]] = None,
         tags: Optional[dict[str, str]] = None,
         data_unit: Optional[str] = None,
-        dimension: Optional[str] = None,
         dimension_filter: Optional[str] = None,
     ) -> None: ...
 
@@ -2353,7 +2792,210 @@ class ResourceMetricSignalDefinitionProperties(SignalDefinitionProperties, discr
         self.signal_kind = SignalKind.AZURE_RESOURCE_METRIC  # type: ignore
 
 
-class SignalDefinition(ProxyResource):
+class SignalAggregationGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A logical group of signals on an entity, evaluated under a configurable aggregation strategy.
+    Groups are independent even when they share members. Each group's aggregated state is one of
+    the inputs to the entity's composite health computation alongside any signals not declared in
+    any group's members[].
+
+    :ivar name: Name of the aggregation group. Unique within the entity. Required.
+    :vartype name: str
+    :ivar display_name: Display name.
+    :vartype display_name: str
+    :ivar aggregation_type: Aggregation strategy applied across the members of this group. Known
+     values are: "WorstOf", "BestOf", "MinHealthy", and "MaxNotHealthy".
+    :vartype aggregation_type: str or ~azure.mgmt.cloudhealth.models.AggregationType
+    :ivar members: Names of signals on this entity which are members of the group. Members are
+     matched by name; references to signals that do not currently exist on the entity are accepted
+     (typically for pre-declared external signals) and surfaced via 'unresolvedMembers'. A signal
+     may be listed in multiple groups; no duplicates within this list. Required.
+    :vartype members: list[str]
+    :ivar degraded_threshold: Degraded threshold for threshold-bearing strategies (MinHealthy,
+     MaxNotHealthy). For MinHealthy: group is degraded when the healthy member count/percentage
+     falls to or below this value. For MaxNotHealthy: group is degraded when the not-healthy member
+     count/percentage reaches or exceeds this value. Optional — if not set, the group transitions
+     directly between Healthy and Unhealthy. MUST NOT be set when aggregationType is WorstOf or
+     BestOf.
+    :vartype degraded_threshold: float
+    :ivar unhealthy_threshold: Unhealthy threshold for threshold-bearing strategies. Required when
+     aggregationType is MinHealthy or MaxNotHealthy; MUST NOT be set otherwise.
+    :vartype unhealthy_threshold: float
+    :ivar unit: Unit type for the thresholds. Required when aggregationType is MinHealthy or
+     MaxNotHealthy; MUST NOT be set otherwise. Known values are: "Absolute" and "Percentage".
+    :vartype unit: str or ~azure.mgmt.cloudhealth.models.AggregationUnit
+    :ivar ignore_unknown: If true (default), members reporting Unknown are excluded from the
+     aggregation. For MinHealthy and MaxNotHealthy this flag affects the denominator/count and is
+     meaningful. For WorstOf and BestOf the flag has no observable effect: under WorstOf, Unknown=0
+     is the lowest severity and can never beat any non-Unknown member in a Max() so filtering it
+     changes nothing observable; under BestOf, Unknown is unconditionally excluded by the strategy
+     itself irrespective of the flag. The flag is retained on the contract for vocabulary symmetry
+     across all four strategies.
+    :vartype ignore_unknown: bool
+    :ivar aggregated_health_state: Computed aggregated health state of the group as of the last
+     entity evaluation. Unknown if no resolvable members or all members filtered out. Known values
+     are: "Healthy", "Degraded", "Unhealthy", and "Unknown".
+    :vartype aggregated_health_state: str or ~azure.mgmt.cloudhealth.models.HealthState
+    :ivar unresolved_members: Members listed in 'members' that do not currently resolve to a signal
+     on this entity at the time of the last entity evaluation. Treated as Unknown during
+     aggregation. Empty/omitted when every member resolves.
+    :vartype unresolved_members: list[str]
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the aggregation group. Unique within the entity. Required."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Display name."""
+    aggregation_type: Optional[Union[str, "_models.AggregationType"]] = rest_field(
+        name="aggregationType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Aggregation strategy applied across the members of this group. Known values are: \"WorstOf\",
+     \"BestOf\", \"MinHealthy\", and \"MaxNotHealthy\"."""
+    members: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Names of signals on this entity which are members of the group. Members are matched by name;
+     references to signals that do not currently exist on the entity are accepted (typically for
+     pre-declared external signals) and surfaced via 'unresolvedMembers'. A signal may be listed in
+     multiple groups; no duplicates within this list. Required."""
+    degraded_threshold: Optional[float] = rest_field(
+        name="degradedThreshold", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Degraded threshold for threshold-bearing strategies (MinHealthy, MaxNotHealthy). For
+     MinHealthy: group is degraded when the healthy member count/percentage falls to or below this
+     value. For MaxNotHealthy: group is degraded when the not-healthy member count/percentage
+     reaches or exceeds this value. Optional — if not set, the group transitions directly between
+     Healthy and Unhealthy. MUST NOT be set when aggregationType is WorstOf or BestOf."""
+    unhealthy_threshold: Optional[float] = rest_field(
+        name="unhealthyThreshold", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unhealthy threshold for threshold-bearing strategies. Required when aggregationType is
+     MinHealthy or MaxNotHealthy; MUST NOT be set otherwise."""
+    unit: Optional[Union[str, "_models.AggregationUnit"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unit type for the thresholds. Required when aggregationType is MinHealthy or MaxNotHealthy;
+     MUST NOT be set otherwise. Known values are: \"Absolute\" and \"Percentage\"."""
+    ignore_unknown: Optional[bool] = rest_field(
+        name="ignoreUnknown", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """If true (default), members reporting Unknown are excluded from the aggregation. For MinHealthy
+     and MaxNotHealthy this flag affects the denominator/count and is meaningful. For WorstOf and
+     BestOf the flag has no observable effect: under WorstOf, Unknown=0 is the lowest severity and
+     can never beat any non-Unknown member in a Max() so filtering it changes nothing observable;
+     under BestOf, Unknown is unconditionally excluded by the strategy itself irrespective of the
+     flag. The flag is retained on the contract for vocabulary symmetry across all four strategies."""
+    aggregated_health_state: Optional[Union[str, "_models.HealthState"]] = rest_field(
+        name="aggregatedHealthState", visibility=["read"]
+    )
+    """Computed aggregated health state of the group as of the last entity evaluation. Unknown if no
+     resolvable members or all members filtered out. Known values are: \"Healthy\", \"Degraded\",
+     \"Unhealthy\", and \"Unknown\"."""
+    unresolved_members: Optional[list[str]] = rest_field(name="unresolvedMembers", visibility=["read"])
+    """Members listed in 'members' that do not currently resolve to a signal on this entity at the
+     time of the last entity evaluation. Treated as Unknown during aggregation. Empty/omitted when
+     every member resolves."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        members: list[str],
+        display_name: Optional[str] = None,
+        aggregation_type: Optional[Union[str, "_models.AggregationType"]] = None,
+        degraded_threshold: Optional[float] = None,
+        unhealthy_threshold: Optional[float] = None,
+        unit: Optional[Union[str, "_models.AggregationUnit"]] = None,
+        ignore_unknown: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SignalConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A signal configuration for an Azure resource type.
+
+    :ivar signal_id: Unique identifier of the recommended signal configuration. Required.
+    :vartype signal_id: str
+    :ivar metric_namespace: Metric namespace (e.g. 'microsoft.compute/virtualmachines').
+    :vartype metric_namespace: str
+    :ivar metric_name: Name of the metric (e.g. 'Percentage CPU').
+    :vartype metric_name: str
+    :ivar aggregation_type: Type of aggregation to apply to the metric. Known values are: "None",
+     "Average", "Count", "Minimum", "Maximum", and "Total".
+    :vartype aggregation_type: str or ~azure.mgmt.cloudhealth.models.MetricAggregationType
+    :ivar unit: Unit of the metric (e.g. Percent, Bytes, Count).
+    :vartype unit: str
+    :ivar time_grain: Time range of the metric. ISO 8601 duration format (e.g. 'PT5M').
+    :vartype time_grain: str
+    :ivar dimension_filter: Optional dimension filter to apply to the metric.
+    :vartype dimension_filter: str
+    :ivar evaluation_rules: Evaluation rules with recommended thresholds.
+    :vartype evaluation_rules: ~azure.mgmt.cloudhealth.models.EvaluationRule
+    """
+
+    signal_id: str = rest_field(name="signalId", visibility=["read", "create", "update", "delete", "query"])
+    """Unique identifier of the recommended signal configuration. Required."""
+    metric_namespace: Optional[str] = rest_field(
+        name="metricNamespace", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Metric namespace (e.g. 'microsoft.compute/virtualmachines')."""
+    metric_name: Optional[str] = rest_field(
+        name="metricName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the metric (e.g. 'Percentage CPU')."""
+    aggregation_type: Optional[Union[str, "_models.MetricAggregationType"]] = rest_field(
+        name="aggregationType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of aggregation to apply to the metric. Known values are: \"None\", \"Average\", \"Count\",
+     \"Minimum\", \"Maximum\", and \"Total\"."""
+    unit: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Unit of the metric (e.g. Percent, Bytes, Count)."""
+    time_grain: Optional[str] = rest_field(name="timeGrain", visibility=["read", "create", "update", "delete", "query"])
+    """Time range of the metric. ISO 8601 duration format (e.g. 'PT5M')."""
+    dimension_filter: Optional[str] = rest_field(
+        name="dimensionFilter", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional dimension filter to apply to the metric."""
+    evaluation_rules: Optional["_models.EvaluationRule"] = rest_field(
+        name="evaluationRules", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Evaluation rules with recommended thresholds."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        signal_id: str,
+        metric_namespace: Optional[str] = None,
+        metric_name: Optional[str] = None,
+        aggregation_type: Optional[Union[str, "_models.MetricAggregationType"]] = None,
+        unit: Optional[str] = None,
+        time_grain: Optional[str] = None,
+        dimension_filter: Optional[str] = None,
+        evaluation_rules: Optional["_models.EvaluationRule"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SignalDefinition(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A signal definition in a health model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2394,7 +3036,7 @@ class SignalDefinition(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SignalGroups(_Model):
+class SignalGroups(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains various signal groups that can be assigned to an entity.
 
     :ivar azure_resource: Azure Resource Signal Group.
@@ -2451,7 +3093,7 @@ class SignalGroups(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SignalHistoryDataPoint(_Model):
+class SignalHistoryDataPoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A data point in the signal time series.
 
     :ivar occurred_at: Timestamp of the data point. Required.
@@ -2459,7 +3101,7 @@ class SignalHistoryDataPoint(_Model):
     :ivar value: Signal value at this point in time.
     :vartype value: float
     :ivar health_state: Health state at this point in time. Required. Known values are: "Healthy",
-     "Degraded", "Unhealthy", "Unknown", and "Deleted".
+     "Degraded", "Unhealthy", and "Unknown".
     :vartype health_state: str or ~azure.mgmt.cloudhealth.models.HealthState
     :ivar additional_context: Additional context as provided by the submitter.
     :vartype additional_context: str
@@ -2475,7 +3117,7 @@ class SignalHistoryDataPoint(_Model):
         name="healthState", visibility=["read", "create", "update", "delete", "query"]
     )
     """Health state at this point in time. Required. Known values are: \"Healthy\", \"Degraded\",
-     \"Unhealthy\", \"Unknown\", and \"Deleted\"."""
+     \"Unhealthy\", and \"Unknown\"."""
     additional_context: Optional[str] = rest_field(
         name="additionalContext", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2502,7 +3144,7 @@ class SignalHistoryDataPoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SignalHistoryRequest(_Model):
+class SignalHistoryRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for getting signal history.
 
     :ivar signal_name: Name of the signal to get history for. Required.
@@ -2511,6 +3153,11 @@ class SignalHistoryRequest(_Model):
     :vartype start_at: ~datetime.datetime
     :ivar end_at: End time for the history query. Defaults to now if not specified.
     :vartype end_at: ~datetime.datetime
+    :ivar top: Maximum number of data points to return per page. Defaults to 1000.
+    :vartype top: int
+    :ivar next_marker: An opaque string value that identifies the portion of the result set to be
+     returned with the next operation. Must not be combined with startAt or endAt.
+    :vartype next_marker: str
     """
 
     signal_name: str = rest_field(name="signalName", visibility=["read", "create", "update", "delete", "query"])
@@ -2523,6 +3170,13 @@ class SignalHistoryRequest(_Model):
         name="endAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """End time for the history query. Defaults to now if not specified."""
+    top: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum number of data points to return per page. Defaults to 1000."""
+    next_marker: Optional[str] = rest_field(
+        name="nextMarker", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An opaque string value that identifies the portion of the result set to be returned with the
+     next operation. Must not be combined with startAt or endAt."""
 
     @overload
     def __init__(
@@ -2531,6 +3185,8 @@ class SignalHistoryRequest(_Model):
         signal_name: str,
         start_at: Optional[datetime.datetime] = None,
         end_at: Optional[datetime.datetime] = None,
+        top: Optional[int] = None,
+        next_marker: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2544,7 +3200,7 @@ class SignalHistoryRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SignalHistoryResponse(_Model):
+class SignalHistoryResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response containing signal history.
 
     :ivar entity_name: Name of the entity. Required.
@@ -2553,6 +3209,9 @@ class SignalHistoryResponse(_Model):
     :vartype signal_name: str
     :ivar history: Signal history data points. Required.
     :vartype history: list[~azure.mgmt.cloudhealth.models.SignalHistoryDataPoint]
+    :ivar next_marker: An opaque string value that identifies the portion of the result set to be
+     returned with the next operation.
+    :vartype next_marker: str
     """
 
     entity_name: str = rest_field(name="entityName", visibility=["read", "create", "update", "delete", "query"])
@@ -2563,6 +3222,11 @@ class SignalHistoryResponse(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Signal history data points. Required."""
+    next_marker: Optional[str] = rest_field(
+        name="nextMarker", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An opaque string value that identifies the portion of the result set to be returned with the
+     next operation."""
 
     @overload
     def __init__(
@@ -2571,6 +3235,7 @@ class SignalHistoryResponse(_Model):
         entity_name: str,
         signal_name: str,
         history: list["_models.SignalHistoryDataPoint"],
+        next_marker: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2584,11 +3249,11 @@ class SignalHistoryResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SignalStatus(_Model):
+class SignalStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Status of a signal.
 
     :ivar health_state: Health state of this signal. Known values are: "Healthy", "Degraded",
-     "Unhealthy", "Unknown", and "Deleted".
+     "Unhealthy", and "Unknown".
     :vartype health_state: str or ~azure.mgmt.cloudhealth.models.HealthState
     :ivar value: Reported value of the signal.
     :vartype value: float
@@ -2596,20 +3261,43 @@ class SignalStatus(_Model):
     :vartype reported_at: ~datetime.datetime
     :ivar error: Error message if the signal status cannot be retrieved.
     :vartype error: str
+    :ivar additional_context: Additional context as provided by the submitter.
+    :vartype additional_context: str
     """
 
     health_state: Optional[Union[str, "_models.HealthState"]] = rest_field(name="healthState", visibility=["read"])
-    """Health state of this signal. Known values are: \"Healthy\", \"Degraded\", \"Unhealthy\",
-     \"Unknown\", and \"Deleted\"."""
+    """Health state of this signal. Known values are: \"Healthy\", \"Degraded\", \"Unhealthy\", and
+     \"Unknown\"."""
     value: Optional[float] = rest_field(visibility=["read"])
     """Reported value of the signal."""
     reported_at: Optional[datetime.datetime] = rest_field(name="reportedAt", visibility=["read"], format="rfc3339")
     """Timestamp when the value was reported."""
     error: Optional[str] = rest_field(visibility=["read"])
     """Error message if the signal status cannot be retrieved."""
+    additional_context: Optional[str] = rest_field(
+        name="additionalContext", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional context as provided by the submitter."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        additional_context: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -2676,32 +3364,41 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThresholdRuleV2(_Model):
+class ThresholdRuleV2(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Threshold-based evaluation rule for a signal definition.
 
     :ivar operator: Operator how to compare the signal value with the threshold. Required. Known
-     values are: "GreaterThan", "LessThan", "LessThanOrEqual", "GreaterThanOrEqual", "Equal", and
-     "NotEqual".
+     values are: "GreaterThan", "LessThan", "LessThanOrEqual", "GreaterThanOrEqual", "Equal",
+     "NotEqual", and "Dynamic".
     :vartype operator: str or ~azure.mgmt.cloudhealth.models.SignalOperator
-    :ivar threshold: Threshold value. Required.
+    :ivar threshold: Threshold value.
     :vartype threshold: float
+    :ivar sensitivity: Sensitivity level for dynamic threshold detection. Only applicable when
+     operator is Dynamic. Known values are: "Low", "Medium", and "High".
+    :vartype sensitivity: str or ~azure.mgmt.cloudhealth.models.DynamicThresholdSensitivity
     """
 
     operator: Union[str, "_models.SignalOperator"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Operator how to compare the signal value with the threshold. Required. Known values are:
-     \"GreaterThan\", \"LessThan\", \"LessThanOrEqual\", \"GreaterThanOrEqual\", \"Equal\", and
-     \"NotEqual\"."""
-    threshold: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Threshold value. Required."""
+     \"GreaterThan\", \"LessThan\", \"LessThanOrEqual\", \"GreaterThanOrEqual\", \"Equal\",
+     \"NotEqual\", and \"Dynamic\"."""
+    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Threshold value."""
+    sensitivity: Optional[Union[str, "_models.DynamicThresholdSensitivity"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Sensitivity level for dynamic threshold detection. Only applicable when operator is Dynamic.
+     Known values are: \"Low\", \"Medium\", and \"High\"."""
 
     @overload
     def __init__(
         self,
         *,
         operator: Union[str, "_models.SignalOperator"],
-        threshold: float,
+        threshold: Optional[float] = None,
+        sensitivity: Optional[Union[str, "_models.DynamicThresholdSensitivity"]] = None,
     ) -> None: ...
 
     @overload

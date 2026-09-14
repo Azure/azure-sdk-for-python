@@ -26,7 +26,7 @@ class TestComputeManagementGalleryInVMAccessControlProfilesOperationsAsync(Azure
             resource_group_name=resource_group.name,
             gallery_name="str",
             in_vm_access_control_profile_name="str",
-            api_version="2025-03-03",
+            api_version="2025-12-03",
         )
 
         # please add some check logic here by yourself
@@ -61,7 +61,7 @@ class TestComputeManagementGalleryInVMAccessControlProfilesOperationsAsync(Azure
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-03-03",
+                api_version="2025-12-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -88,7 +88,7 @@ class TestComputeManagementGalleryInVMAccessControlProfilesOperationsAsync(Azure
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-03-03",
+                api_version="2025-12-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -103,7 +103,7 @@ class TestComputeManagementGalleryInVMAccessControlProfilesOperationsAsync(Azure
                 resource_group_name=resource_group.name,
                 gallery_name="str",
                 in_vm_access_control_profile_name="str",
-                api_version="2025-03-03",
+                api_version="2025-12-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -116,7 +116,7 @@ class TestComputeManagementGalleryInVMAccessControlProfilesOperationsAsync(Azure
         response = self.client.gallery_in_vm_access_control_profiles.list_by_gallery(
             resource_group_name=resource_group.name,
             gallery_name="str",
-            api_version="2025-03-03",
+            api_version="2025-12-03",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

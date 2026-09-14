@@ -1,6 +1,7 @@
 import re
 import sys
 import os
+import json
 from packaging.version import Version
 import ast
 import shutil
@@ -23,6 +24,12 @@ from .change_log import main as change_log_main
 
 _LOGGER = logging.getLogger(__name__)
 
+PREVIEW_API_STABLE_VERSION_WARNING = (
+    "WARNING: Stable SDK version {sdk_version} is used with preview API version {api_version}. "
+    "If this is expected, delete this line; otherwise, check this PR."
+)
+PREVIEW_API_STABLE_VERSION_WARNING_PREFIX = "WARNING: Stable SDK version "
+
 
 # prefolder: "sdk/compute"; name: "azure-mgmt-compute"
 def create_package(prefolder, name):
@@ -33,7 +40,7 @@ def create_package(prefolder, name):
 @return_origin_path
 def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
     os.chdir(package_folder)
-    cmd = "azpysdk breaking . --changelog"
+    cmd = "azpysdk breaking . --changelog --use-apistub "
     if lastest_pypi_version:
         cmd += " --latest-pypi-version"
     try:
@@ -55,9 +62,19 @@ def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
 def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[str, str]:
     from pypi_tools.pypi import PyPIClient
 
+    SDK_VERSIONS_WITH_CHANGELOG_ISSUE = {}
+    SKIP_SDK_VERSIONS = {"azure-mgmt-datatransfer": "1.0.0b1"}  # could be removed after new SDK version released
+
     try:
-        client = PyPIClient()
-        ordered_versions = client.get_ordered_versions(package_name)
+        client = PyPIClient(force_pypi=True)
+        # Ignore 0.0.0 placeholder releases, including prereleases like 0.0.0b1 via base_version.
+        ordered_versions = [
+            v
+            for v in client.get_ordered_versions(package_name)
+            if v.base_version != "0.0.0" and str(v) != SKIP_SDK_VERSIONS.get(package_name)
+        ]
+        if not ordered_versions:
+            return "", ""
         last_release = ordered_versions[-1]
         stable_releases = [x for x in ordered_versions if not x.is_prerelease]
         last_stable_version = str(stable_releases[-1] if stable_releases else "")
@@ -69,10 +86,9 @@ def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[st
         # temporary logic to always get latest version from pypi for specific packages whose latest stable version
         # is not updated for a long time and has some issue in changelog generation.
         # This is a workaround before we have a better solution to determine the version for changelog generation.
-        sdks_with_changelog_issue = {"azure-mgmt-sql": "3.0.1"}
-        if package_name in sdks_with_changelog_issue and (
-            last_version == sdks_with_changelog_issue[package_name]
-            or last_stable_version == sdks_with_changelog_issue[package_name]
+        if package_name in SDK_VERSIONS_WITH_CHANGELOG_ISSUE and (
+            last_version == SDK_VERSIONS_WITH_CHANGELOG_ISSUE[package_name]
+            or last_stable_version == SDK_VERSIONS_WITH_CHANGELOG_ISSUE[package_name]
         ):
             _LOGGER.info(
                 f"Package {package_name} has changelog generation issue with version {last_version}, fallback to get latest version from pypi"
@@ -84,10 +100,6 @@ def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[st
         _LOGGER.warning(f"Failed to get version info from PyPI for {package_name}: {e}")
         last_version = ""
         last_stable_version = ""
-
-    # Ignore 0.0.0 when it appears on PyPI as a placeholder or name-reservation version.
-    if last_version and Version(last_version).base_version == "0.0.0":
-        return "", ""
 
     return last_version, last_stable_version
 
@@ -233,7 +245,7 @@ class CheckFile:
                 toml_data = toml.load(fd)
             if "packaging" not in toml_data:
                 toml_data["packaging"] = {}
-            if title and not toml_data["packaging"].get("title"):
+            if title:
                 toml_data["packaging"]["title"] = title
             toml_data["packaging"]["is_stable"] = is_stable
             with open(pyproject_toml, "wb") as fd:
@@ -349,12 +361,87 @@ class CheckFile:
 
         _LOGGER.info("Updated pyproject.toml with required azure-sdk-build configurations")
 
+    def check_preview_api_version(self):
+        metadata_path = self.package_path / "_metadata.json"
+        if not metadata_path.exists():
+            return
+
+        try:
+            with open(metadata_path, "r") as file:
+                metadata = json.load(file)
+        except Exception as e:
+            _LOGGER.info(f"Failed to parse {metadata_path}: {e}")
+            return
+
+        api_versions = []
+        api_version = metadata.get("apiVersion")
+        if isinstance(api_version, str):
+            api_versions.append(api_version)
+
+        api_versions_map = metadata.get("apiVersions")
+        if isinstance(api_versions_map, dict):
+            api_versions.extend(str(value) for value in api_versions_map.values())
+
+        preview_api_version = next((version for version in api_versions if "preview" in version.lower()), "")
+        if not preview_api_version:
+            return
+
+        version_files = list((self.package_path / "azure" / "mgmt").glob("**/_version.py"))
+        if not version_files:
+            _LOGGER.info(f"Can not find _version.py under {self.package_path / 'azure' / 'mgmt'}")
+            return
+
+        try:
+            with open(version_files[0], "r") as file:
+                tree = ast.parse(file.read())
+        except Exception as e:
+            _LOGGER.info(f"Failed to parse {version_files[0]}: {e}")
+            return
+
+        sdk_version = ""
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name) and target.id == "VERSION" and isinstance(node.value, ast.Constant):
+                        sdk_version = str(node.value.value)
+                        break
+
+        if not sdk_version or "b" in sdk_version.lower():
+            return
+
+        warning = PREVIEW_API_STABLE_VERSION_WARNING.format(
+            sdk_version=sdk_version,
+            api_version=preview_api_version,
+        )
+
+        changelog_path = self.package_path / "CHANGELOG.md"
+        if not changelog_path.exists():
+            _LOGGER.info(f"{changelog_path} does not exist.")
+            return
+
+        def add_warning_to_changelog(content: List[str]):
+            if any(line.startswith(PREVIEW_API_STABLE_VERSION_WARNING_PREFIX) for line in content):
+                return
+            for i, line in enumerate(content):
+                if re.match(r"^## \d+\.\d+\.\d+(?:b\d+)?\s+\(", line):
+                    insert_at = i + 1
+                    if insert_at < len(content) and not content[insert_at].strip():
+                        insert_at += 1
+                    content.insert(insert_at, f"{warning}\n\n")
+                    _LOGGER.warning(
+                        f"Added preview API/stable SDK version warning to {changelog_path} for SDK version {sdk_version}"
+                    )
+                    break
+
+        modify_file(str(changelog_path), add_warning_to_changelog)
+
     def run(self):
         self.check_file_with_packaging_tool()
         self.check_pprint_name()
         self.check_sdk_readme()
         self.check_dev_requirement()
         self.check_pyproject_toml()
+        self.check_preview_api_version()
 
 
 def check_file(package_path: Path):

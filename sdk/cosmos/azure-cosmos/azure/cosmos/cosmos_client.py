@@ -218,7 +218,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         level (to log all requests) or at a single request level. Requests will be logged at INFO level.
     :keyword bool no_response_on_write: Indicates whether service should be instructed to skip sending 
         response payloads on write operations for items.
-    :keyword int throughput_bucket: The desired throughput bucket for the client
+    :keyword int throughput_bucket: The desired throughput bucket for the client.
     :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
     :keyword Union[bool, dict[str, Any]] availability_strategy:
         Enables an availability strategy by using cross-region request hedging.
@@ -228,6 +228,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :paramtype availability_strategy: Union[bool, dict[str, Any]]
     :keyword ~concurrent.futures.thread.ThreadPoolExecutor availability_strategy_executor:
         Optional ThreadPoolExecutor for handling concurrent operations.
+    :keyword bool enable_compact_utf8_item_writes:
+        Use compact UTF-8 when serializing item bodies for create, upsert, replace, patch, and transactional batch
+        operations. The default is False.
 
     .. admonition:: Example:
 
@@ -303,6 +306,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         )
 
         auth = _build_auth(credential)
+        enable_compact_utf8_item_writes = kwargs.pop("enable_compact_utf8_item_writes", False)
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
             _response_state=self._item_context.response_state,
@@ -312,6 +316,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             connection_policy=connection_policy,
             availability_strategy=kwargs.pop("availability_strategy", False),
             availability_strategy_executor=kwargs.pop("availability_strategy_executor", None),
+            enable_compact_utf8_item_writes=enable_compact_utf8_item_writes,
             **kwargs
         )
         # Unmigrated families still retrieve their backend from the connection.
@@ -408,7 +413,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Callable[[Mapping[str, Any], Mapping[str, Any]], None] response_hook:
             A callable invoked with the response metadata and database properties.
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
@@ -450,7 +455,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable[[Mapping[str, Any], Mapping[str, Any]], None] response_hook:
             A callable invoked with the response metadata and database properties.
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
         :returns: A tuple of `DatabaseProxy` and CosmosDict with the database properties.
@@ -484,7 +489,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable[[Mapping[str, Any], Mapping[str, Any]], None] response_hook:
             A callable invoked with the response metadata and database properties.
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
         :returns: A `DatabaseProxy` instance representing the database or a tuple of `DatabaseProxy`
@@ -554,7 +559,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable[[Mapping[str, Any], Mapping[str, Any]], None] response_hook:
             A callable invoked with the response metadata and database properties.
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
         :returns: A `DatabaseProxy` instance representing the database.
@@ -589,7 +594,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable[[Mapping[str, Any], Mapping[str, Any]], None] response_hook:
             A callable invoked with the response metadata and database properties.
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
         :returns: A tuple of `DatabaseProxy` and CosmosDict with the database properties.
@@ -620,7 +625,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable[[Mapping[str, Any], Mapping[str, Any]], None] response_hook:
             A callable invoked with the response metadata and database properties.
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
         :returns: A `DatabaseProxy` instance representing the database or a tuple of `DatabaseProxy`
@@ -695,7 +700,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword response_hook: A synchronous callable invoked once after each successfully fetched page,
             with a snapshot of that page's response headers. It is not called until iteration fetches a page.
         :paramtype response_hook: Callable[[Mapping[str, str]], None]
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[dict[str, str]]
 
@@ -749,7 +754,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword response_hook: A synchronous callable invoked once per successfully fetched page
             with a separate snapshot of that page's response headers.
         :paramtype response_hook: Callable[[Mapping[str, str]], None]
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[dict[str, str]]
 
@@ -816,7 +821,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword response_hook: A synchronous callable invoked once after a successful delete
             with a separate snapshot of the response headers.
         :paramtype response_hook: Callable[[Mapping[str, str]], None]
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword str etag: ETag to use with a matching condition.
         :keyword match_condition: Conditional request behavior. Use ``IfNotModified`` with
             ``etag`` to delete only if the database still has that ETag.

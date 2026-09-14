@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-01-01-preview",
+  "apiVersions": {
+    "Microsoft.DevCenter": "2026-01-01-preview"
+  },
+  "commit": "473a3bcb1ab8ce3a94e032b59f26b0bf1609064f",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/devcenter/DevCenter.Management",
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.1"
+}

@@ -30,10 +30,11 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.web_apps.begin_start_web_site_network_trace_operation(
+    response = client.web_apps.begin_start_web_site_network_trace_operation(
         resource_group_name="testrg123",
         name="SampleApp",
     ).result()
+    print(response)
 
 
 # x-ms-original-file: 2025-05-01/StartWebSiteNetworkTraceOperation.json

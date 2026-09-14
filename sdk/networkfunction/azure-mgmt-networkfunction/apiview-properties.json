@@ -48,5 +48,6 @@
         "azure.mgmt.networkfunction.aio.operations.AzureTrafficCollectorsByResourceGroupOperations.list": "Microsoft.NetworkFunction.AzureTrafficCollectors.list",
         "azure.mgmt.networkfunction.operations.AzureTrafficCollectorsBySubscriptionOperations.list": "Microsoft.NetworkFunction.AzureTrafficCollectors.azureTrafficCollectorsBySubscriptionList",
         "azure.mgmt.networkfunction.aio.operations.AzureTrafficCollectorsBySubscriptionOperations.list": "Microsoft.NetworkFunction.AzureTrafficCollectors.azureTrafficCollectorsBySubscriptionList"
-    }
+    },
+    "CrossLanguageVersion": "bdefbd5ce9ae"
 }

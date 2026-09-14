@@ -25,6 +25,7 @@ from azure.ai.evaluation._legacy.prompty._exceptions import (
     WrappedOpenAIError,
 )
 from azure.ai.evaluation._legacy.prompty._connection import AzureOpenAIConnection, Connection, OpenAIConnection
+from azure.ai.evaluation._byo_judge import AsyncByoProjectResponsesClient, is_byo_model_config
 from azure.ai.evaluation._legacy.prompty._yaml_utils import load_yaml_string
 from azure.ai.evaluation._legacy.prompty._utils import (
     dataclass_from_dict,
@@ -279,7 +280,8 @@ class AsyncPrompty:
         """
 
         inputs = self._resolve_inputs(kwargs)
-        connection = Connection.parse_from_config(self._model.configuration)
+        configuration = self._model.configuration
+        is_byo = is_byo_model_config(configuration)
         messages = build_messages(prompt=self._template, working_dir=self.path.parent, **inputs)
         params = prepare_open_ai_request_params(self._model, messages)
 
@@ -293,31 +295,45 @@ class AsyncPrompty:
 
         default_headers = {"User-Agent": UserAgentSingleton().value}
 
-        api_client: Union[AsyncAzureOpenAI, AsyncOpenAI]
-        if isinstance(connection, AzureOpenAIConnection):
-            api_client = AsyncAzureOpenAI(
-                azure_endpoint=connection.azure_endpoint,
-                api_key=connection.api_key,
-                azure_deployment=connection.azure_deployment,
-                api_version=connection.api_version,
-                max_retries=max_retries,
-                azure_ad_token_provider=(
-                    self.get_token_provider(self._token_credential) if not connection.api_key else None
-                ),
-                default_headers=default_headers,
-            )
-        elif isinstance(connection, OpenAIConnection):
-            api_client = AsyncOpenAI(
-                base_url=connection.base_url,
-                api_key=connection.api_key,
-                organization=connection.organization,
-                max_retries=max_retries,
-                default_headers=default_headers,
+        api_client: Union[AsyncAzureOpenAI, AsyncOpenAI, AsyncByoProjectResponsesClient]
+        if is_byo:
+            # BYO judge model (connection/deployment): route chat.completions through the Foundry
+            # Responses API, which resolves the connection and auth (API key / managed identity / OAuth2).
+            # Merge SDK default headers (e.g. User-Agent) with caller extra_headers (caller wins),
+            # matching the non-BYO paths' default_headers.
+            byo_headers = {**default_headers, **(configuration.get("extra_headers") or {})}
+            api_client = AsyncByoProjectResponsesClient(
+                byo_model=configuration["byo_model"],
+                project_endpoint=configuration["project_endpoint"],
+                credential=self._token_credential,
+                extra_headers=byo_headers,
             )
         else:
-            raise NotSupportedError(
-                f"'{type(connection).__name__}' is not a supported connection type.", target=ErrorTarget.EVAL_RUN
-            )
+            connection = Connection.parse_from_config(configuration)
+            if isinstance(connection, AzureOpenAIConnection):
+                api_client = AsyncAzureOpenAI(
+                    azure_endpoint=connection.azure_endpoint,
+                    api_key=connection.api_key,
+                    azure_deployment=connection.azure_deployment,
+                    api_version=connection.api_version,
+                    max_retries=max_retries,
+                    azure_ad_token_provider=(
+                        self.get_token_provider(self._token_credential) if not connection.api_key else None
+                    ),
+                    default_headers=default_headers,
+                )
+            elif isinstance(connection, OpenAIConnection):
+                api_client = AsyncOpenAI(
+                    base_url=connection.base_url,
+                    api_key=connection.api_key,
+                    organization=connection.organization,
+                    max_retries=max_retries,
+                    default_headers=default_headers,
+                )
+            else:
+                raise NotSupportedError(
+                    f"'{type(connection).__name__}' is not a supported connection type.", target=ErrorTarget.EVAL_RUN
+                )
 
         response: OpenAIChatResponseType = await self._send_with_retries(
             api_client=api_client,
@@ -350,7 +366,7 @@ class AsyncPrompty:
 
     async def _send_with_retries(
         self,
-        api_client: Union[AsyncAzureOpenAI, AsyncOpenAI],
+        api_client: Union[AsyncAzureOpenAI, AsyncOpenAI, AsyncByoProjectResponsesClient],
         params: Mapping[str, Any],
         timeout: Optional[float],
         max_retries: int = 10,
@@ -358,7 +374,7 @@ class AsyncPrompty:
     ) -> OpenAIChatResponseType:
         """Send the request with retries.
 
-        :param Union[AsyncAzureOpenAI, AsyncOpenAI] api_client: The OpenAI client.
+        :param Union[AsyncAzureOpenAI, AsyncOpenAI, AsyncByoProjectResponsesClient] api_client: The OpenAI client.
         :param Mapping[str, Any] params: The request parameters.
         :param Optional[float] timeout: The timeout for the request.
         :param int max_retries: The maximum number of retries.
@@ -368,7 +384,9 @@ class AsyncPrompty:
         """
 
         client_name: str = api_client.__class__.__name__
-        client: Union[AsyncAzureOpenAI, AsyncOpenAI] = api_client.with_options(timeout=timeout or NotGiven())
+        client: Union[AsyncAzureOpenAI, AsyncOpenAI, AsyncByoProjectResponsesClient] = api_client.with_options(
+            timeout=timeout or NotGiven()
+        )
 
         entity_retries: List[int] = [0]
         should_retry: bool = True

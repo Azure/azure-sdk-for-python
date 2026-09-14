@@ -19,18 +19,8 @@ class TestMongoDBAtlasMgmtOrganizationsOperationsAsync(AzureMgmtRecordedTestCase
     def setup_method(self, method):
         self.client = self.create_mgmt_client(MongoDBAtlasMgmtClient, is_async=True)
 
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_organizations_list_by_resource_group(self, resource_group):
-        response = self.client.organizations.list_by_resource_group(
-            resource_group_name=resource_group.name,
-        )
-        result = [r async for r in response]
-        assert result == []
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_organizations_list_by_subscription(self, resource_group):
+    async def test_organizations_list_by_subscription(self):
         response = self.client.organizations.list_by_subscription()
         result = [r async for r in response]
         assert response

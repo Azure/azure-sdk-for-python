@@ -50,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-03/galleryExamples/GalleryImageVersion_Update_WithoutSourceId.json
+# x-ms-original-file: 2025-12-03/galleryExamples/GalleryImageVersion_Update_WithoutSourceId.json
 if __name__ == "__main__":
     main()

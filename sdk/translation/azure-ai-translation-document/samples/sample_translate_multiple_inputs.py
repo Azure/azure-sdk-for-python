@@ -36,7 +36,8 @@ def sample_multiple_translation():
     # [START multiple_translation]
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.translation.document import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
+    from azure.ai.translation.document import DocumentTranslationClient
+    from azure.ai.translation.document.models import DocumentTranslationInput, TranslationTarget
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]

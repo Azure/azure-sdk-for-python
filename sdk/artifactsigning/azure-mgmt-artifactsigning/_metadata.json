@@ -1,10 +1,10 @@
 {
-  "apiVersion": "2025-10-13",
+  "apiVersion": "2026-05-15-preview",
   "apiVersions": {
-    "Microsoft.CodeSigning": "2025-10-13"
+    "Microsoft.CodeSigning": "2026-05-15-preview"
   },
-  "commit": "095b67fa70bf85a51667949506fe090e987d2475",
+  "commit": "5f185b3e3f4ca65ea23dcf52795aa2e6bdc91100",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/codesigning/CodeSigning.Management",
-  "emitterVersion": "0.60.1"
+  "emitterVersion": "0.63.0"
 }

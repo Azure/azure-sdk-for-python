@@ -38,9 +38,7 @@ DESCRIPTION:
     - Enable source and confidence tracking: Set estimateFieldSourceAndConfidence to true at the
       analyzer level (in ContentAnalyzerConfig) or estimateSourceAndConfidence to true at the field
       level to get source location (page number, bounding box) and confidence scores for extracted
-      field values. This is required for fields with method = extract and is useful for validation,
-      quality assurance, debugging, and highlighting source text in user interfaces. Field-level
-      settings override analyzer-level settings.
+      field values. Field-level settings override analyzer-level settings.
 
 USAGE:
     python sample_create_analyzer.py
@@ -136,7 +134,7 @@ def main() -> None:
         config=config,
         field_schema=field_schema,
         models={
-            "completion": "gpt-4.1",
+            "completion": "gpt-5.2",
             "embedding": "text-embedding-3-large",
         },  # Required when using field_schema
     )

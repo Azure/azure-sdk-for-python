@@ -1,0 +1,10 @@
+{
+  "properties": {
+    "build": {
+      "contextUri": "azureml://datastores/workspaceblobstore/paths/smoke/context/",
+      "dockerfilePath": "Dockerfile"
+    },
+    "isAnonymous": false,
+    "isArchived": false
+  }
+}

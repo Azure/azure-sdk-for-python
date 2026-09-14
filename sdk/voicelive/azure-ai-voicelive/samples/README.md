@@ -122,9 +122,9 @@ python basic_voice_assistant_async.py --help
 ## Sample descriptions
 
 - **basic_voice_assistant_async.py**: 🌟 **[Featured Sample]** Complete async voice assistant demonstrating real-time conversation, interruption handling, and server VAD. Supports optional OpenTelemetry tracing via `--enable-tracing`, defaults to Entra ID auth, and writes logs to standard output instead of creating log files. See "BASIC_VOICE_ASSISTANT.md" for detailed documentation.
-- **agent_v2_sample.py**: Demonstrates how to connect to an Azure AI Foundry agent using flattened `connect()` keyword arguments. Shows the new pattern where agents are configured at connection time rather than as tools in the session. Features callback-based audio streaming, sequence number based interrupt handling, standard logger output for conversation events, and defaults the agent connection to API version `2026-04-10`.
+- **agent_v2_sample.py**: Demonstrates how to connect to an Azure AI Foundry agent using flattened `connect()` keyword arguments. Shows the new pattern where agents are configured at connection time rather than as tools in the session. Features callback-based audio streaming, sequence number based interrupt handling, standard logger output for conversation events, and defaults the agent connection to API version `2026-07-15`.
 - **async_function_calling_sample.py**: Demonstrates async function calling capabilities with the VoiceLive SDK, showing how to handle function calls from the AI model.
-- **async_mcp_sample.py**: Demonstrates async MCP capabilities with Entra ID-first authentication and uses API version `2026-04-10` for MCP support.
+- **async_mcp_sample.py**: Demonstrates async MCP capabilities with Entra ID-first authentication and uses API version `2026-07-15` for MCP support.
 
 ### Telemetry samples
 

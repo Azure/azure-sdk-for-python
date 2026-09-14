@@ -26,7 +26,7 @@ class TestComputeManagementGalleryImageVersionsOperations(AzureMgmtRecordedTestC
             gallery_name="str",
             gallery_image_name="str",
             gallery_image_version_name="str",
-            api_version="2025-03-03",
+            api_version="2025-12-03",
         )
 
         # please add some check logic here by yourself
@@ -149,7 +149,7 @@ class TestComputeManagementGalleryImageVersionsOperations(AzureMgmtRecordedTestC
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-03-03",
+            api_version="2025-12-03",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -263,7 +263,7 @@ class TestComputeManagementGalleryImageVersionsOperations(AzureMgmtRecordedTestC
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-03-03",
+            api_version="2025-12-03",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -277,7 +277,7 @@ class TestComputeManagementGalleryImageVersionsOperations(AzureMgmtRecordedTestC
             gallery_name="str",
             gallery_image_name="str",
             gallery_image_version_name="str",
-            api_version="2025-03-03",
+            api_version="2025-12-03",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -290,7 +290,7 @@ class TestComputeManagementGalleryImageVersionsOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             gallery_name="str",
             gallery_image_name="str",
-            api_version="2025-03-03",
+            api_version="2025-12-03",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

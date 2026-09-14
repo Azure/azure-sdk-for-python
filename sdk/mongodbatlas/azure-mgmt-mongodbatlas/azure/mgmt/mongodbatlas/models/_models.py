@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,12 +9,158 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
+
+
+class Resource(_Model):
+    """Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mongodbatlas.models.SystemData
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the resource."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class ProxyResource(Resource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mongodbatlas.models.SystemData
+    """
+
+
+class Cluster(ProxyResource):
+    """The MongoDB Atlas Cluster resource type. A cluster is a managed database deployment within a
+    project.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mongodbatlas.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.mongodbatlas.models.ClusterProperties
+    """
+
+    properties: Optional["_models.ClusterProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ClusterProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterProperties(_Model):
+    """Properties specific to a MongoDB Atlas Cluster.
+
+    :ivar cluster_name: Name of the MongoDB Atlas Cluster.
+    :vartype cluster_name: str
+    :ivar cluster_tier: Cluster tier (FREE, FLEX, M10, M30). Required. Known values are: "FREE",
+     "FLEX", "M10", and "M30".
+    :vartype cluster_tier: str or ~azure.mgmt.mongodbatlas.models.ClusterTier
+    :ivar region_name: Azure region where the cluster is deployed. Required.
+    :vartype region_name: str
+    :ivar mongo_db_version: MongoDB version running on the cluster.
+    :vartype mongo_db_version: str
+    :ivar backups: Whether backups are active for the cluster; null if undetermined.
+    :vartype backups: bool
+    :ivar state: Current state of the cluster.
+    :vartype state: str
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.mongodbatlas.models.ResourceProvisioningState
+    """
+
+    cluster_name: Optional[str] = rest_field(name="clusterName", visibility=["read"])
+    """Name of the MongoDB Atlas Cluster."""
+    cluster_tier: Union[str, "_models.ClusterTier"] = rest_field(name="clusterTier", visibility=["read", "create"])
+    """Cluster tier (FREE, FLEX, M10, M30). Required. Known values are: \"FREE\", \"FLEX\", \"M10\",
+     and \"M30\"."""
+    region_name: str = rest_field(name="regionName", visibility=["read", "create"])
+    """Azure region where the cluster is deployed. Required."""
+    mongo_db_version: Optional[str] = rest_field(name="mongoDbVersion", visibility=["read"])
+    """MongoDB version running on the cluster."""
+    backups: Optional[bool] = rest_field(visibility=["read"])
+    """Whether backups are active for the cluster; null if undetermined."""
+    state: Optional[str] = rest_field(visibility=["read"])
+    """Current state of the cluster."""
+    provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cluster_tier: Union[str, "_models.ClusterTier"],
+        region_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ErrorAdditionalInfo(_Model):
@@ -53,9 +199,9 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
@@ -117,7 +263,7 @@ class ManagedServiceIdentity(_Model):
     )
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
-    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identities assigned to this resource by the user."""
@@ -127,7 +273,7 @@ class ManagedServiceIdentity(_Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -297,7 +443,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -375,34 +521,6 @@ class OrganizationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Resource(_Model):
-    """Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.mongodbatlas.models.SystemData
-    """
-
-    id: Optional[str] = rest_field(visibility=["read"])
-    """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the resource."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
-     \"Microsoft.Storage/storageAccounts\"."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
-    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
-
-
 class TrackedResource(Resource):
     """Tracked Resource.
 
@@ -423,7 +541,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -433,7 +551,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -485,7 +603,7 @@ class OrganizationResource(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.OrganizationProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
@@ -516,7 +634,7 @@ class OrganizationResourceUpdate(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The managed service identities assigned to this resource."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.OrganizationResourceUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -528,7 +646,7 @@ class OrganizationResourceUpdate(_Model):
         self,
         *,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.OrganizationResourceUpdateProperties"] = None,
     ) -> None: ...
 
@@ -622,6 +740,141 @@ class PartnerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class Project(ProxyResource):
+    """The MongoDB Atlas Project resource type. A project is a logical grouping of clusters within an
+    organization.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mongodbatlas.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.mongodbatlas.models.ProjectProperties
+    """
+
+    properties: Optional["_models.ProjectProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ProjectProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ProjectLimitStatus(_Model):
+    """Usage and limit status for a resource quota in a MongoDB Atlas project.
+
+    :ivar type: Type of the limit. Required. Known values are: "FREE", "FLEX", "M10", and "M30".
+    :vartype type: str or ~azure.mgmt.mongodbatlas.models.ClusterTier
+    :ivar maximum: Maximum allowed value. Required.
+    :vartype maximum: int
+    :ivar current: Current value. Required.
+    :vartype current: int
+    :ivar is_reached: Whether the limit has been reached. Required.
+    :vartype is_reached: bool
+    """
+
+    type: Union[str, "_models.ClusterTier"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Type of the limit. Required. Known values are: \"FREE\", \"FLEX\", \"M10\", and \"M30\"."""
+    maximum: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum allowed value. Required."""
+    current: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Current value. Required."""
+    is_reached: bool = rest_field(name="isReached", visibility=["read", "create", "update", "delete", "query"])
+    """Whether the limit has been reached. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ClusterTier"],
+        maximum: int,
+        current: int,
+        is_reached: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ProjectProperties(_Model):
+    """Properties specific to a MongoDB Atlas Project.
+
+    :ivar project_id: Atlas project id.
+    :vartype project_id: str
+    :ivar project_name: Atlas project name.
+    :vartype project_name: str
+    :ivar organization_id: Atlas organization id.
+    :vartype organization_id: str
+    :ivar cluster_count: Number of clusters in the project.
+    :vartype cluster_count: int
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.mongodbatlas.models.ResourceProvisioningState
+    """
+
+    project_id: Optional[str] = rest_field(name="projectId", visibility=["read"])
+    """Atlas project id."""
+    project_name: Optional[str] = rest_field(name="projectName", visibility=["read"])
+    """Atlas project name."""
+    organization_id: Optional[str] = rest_field(name="organizationId", visibility=["read"])
+    """Atlas organization id."""
+    cluster_count: Optional[int] = rest_field(name="clusterCount", visibility=["read"])
+    """Number of clusters in the project."""
+    provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+
+class RegionsByTierResponse(_Model):
+    """Response for regions by cluster tier.
+
+    :ivar organization_id: Atlas organization id. Required.
+    :vartype organization_id: str
+    :ivar project_id: Atlas project id. Required.
+    :vartype project_id: str
+    :ivar regions_by_tier: List of cluster tiers and their supported regions. Required.
+    :vartype regions_by_tier: list[~azure.mgmt.mongodbatlas.models.TierRegions]
+    """
+
+    organization_id: str = rest_field(name="organizationId", visibility=["read"])
+    """Atlas organization id. Required."""
+    project_id: str = rest_field(name="projectId", visibility=["read"])
+    """Atlas project id. Required."""
+    regions_by_tier: list["_models.TierRegions"] = rest_field(name="regionsByTier", visibility=["read"])
+    """List of cluster tiers and their supported regions. Required."""
+
+
 class SystemData(_Model):
     """Metadata pertaining to creation and last modification of the resource.
 
@@ -676,6 +929,50 @@ class SystemData(_Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TierLimitReachedResponse(_Model):
+    """Response for tier limit check.
+
+    :ivar limits: List of project limit statuses. Required.
+    :vartype limits: list[~azure.mgmt.mongodbatlas.models.ProjectLimitStatus]
+    """
+
+    limits: list["_models.ProjectLimitStatus"] = rest_field(visibility=["read"])
+    """List of project limit statuses. Required."""
+
+
+class TierRegions(_Model):
+    """Cluster tier and its supported regions.
+
+    :ivar tier: Cluster tier name. Required. Known values are: "FREE", "FLEX", "M10", and "M30".
+    :vartype tier: str or ~azure.mgmt.mongodbatlas.models.ClusterTier
+    :ivar regions: Supported region names. Required.
+    :vartype regions: list[str]
+    """
+
+    tier: Union[str, "_models.ClusterTier"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Cluster tier name. Required. Known values are: \"FREE\", \"FLEX\", \"M10\", and \"M30\"."""
+    regions: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Supported region names. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tier: Union[str, "_models.ClusterTier"],
+        regions: list[str],
     ) -> None: ...
 
     @overload

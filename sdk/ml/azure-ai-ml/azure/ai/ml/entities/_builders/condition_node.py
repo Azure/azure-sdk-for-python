@@ -21,10 +21,10 @@ class ConditionNode(ControlFlowNode):
 
     :param condition: The condition for the conditional node.
     :type condition: Any
-    :param true_block: The list of nodes to execute when the condition is true.
-    :type true_block: List[~azure.ai.ml.entities._builders.BaseNode]
-    :param false_block: The list of nodes to execute when the condition is false.
-    :type false_block: List[~azure.ai.ml.entities._builders.BaseNode]
+    :keyword true_block: The list of nodes to execute when the condition is true.
+    :paramtype true_block: List[~azure.ai.ml.entities._builders.BaseNode]
+    :keyword false_block: The list of nodes to execute when the condition is false.
+    :paramtype false_block: List[~azure.ai.ml.entities._builders.BaseNode]
     """
 
     def __init__(

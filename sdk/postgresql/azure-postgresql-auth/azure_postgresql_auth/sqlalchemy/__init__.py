@@ -23,9 +23,11 @@ Functions:
 """
 
 from .async_entra_connection import enable_entra_authentication_async
+from .asyncpg import create_asyncpg_engine
 from .entra_connection import enable_entra_authentication
 
 __all__ = [
     "enable_entra_authentication",
     "enable_entra_authentication_async",
+    "create_asyncpg_engine",
 ]

@@ -104,6 +104,13 @@ class ErrorTarget(Enum):
     AOAI_GRADER = "AoaiGrader"
     CONVERSATION_HISTORY_PARSING = "_get_conversation_history"
     TOOL_OUTPUT_UTILIZATION_EVALUATOR = "ToolOutputUtilizationEvaluator"
+    QA_EVALUATOR = "QAEvaluator"
+    ROUGE_EVALUATOR = "RougeScoreEvaluator"
+    DOCUMENT_RETRIEVAL_EVALUATOR = "DocumentRetrievalEvaluator"
+    QUALITY_GRADER_EVALUATOR = "QualityGraderEvaluator"
+    CUSTOMER_SATISFACTION_EVALUATOR = "CustomerSatisfactionEvaluator"
+    DEFLECTION_RATE_EVALUATOR = "DeflectionRateEvaluator"
+    REGEX_MATCH_EVALUATOR = "RegexMatchEvaluator"
 
 
 class EvaluationException(AzureError):

@@ -1,0 +1,45 @@
+{
+  "properties": {
+    "computeId": "smoke-compute",
+    "earlyTermination": {
+      "delayEvaluation": 5,
+      "evaluationInterval": 1,
+      "policyType": "MedianStopping"
+    },
+    "experimentName": "smoke-experiment",
+    "inputs": {},
+    "isArchived": false,
+    "jobType": "Sweep",
+    "limits": {
+      "jobLimitsType": "Sweep",
+      "maxConcurrentTrials": 2,
+      "maxTotalTrials": 4
+    },
+    "objective": {
+      "goal": "minimize",
+      "primaryMetric": "loss"
+    },
+    "outputs": {},
+    "properties": {},
+    "samplingAlgorithm": {
+      "samplingAlgorithmType": "Grid"
+    },
+    "searchSpace": {
+      "learning_rate": [
+        "choice",
+        [
+          [
+            0.01,
+            0.1
+          ]
+        ]
+      ]
+    },
+    "tags": {},
+    "trial": {
+      "command": "python train.py --lr ${{search_space.learning_rate}}",
+      "environmentId": "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+      "environmentVariables": {}
+    }
+  }
+}

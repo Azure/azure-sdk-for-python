@@ -31,7 +31,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import ReservationsMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -40,7 +40,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -1242,7 +1241,7 @@ class QuotaOperations:
         provider_id: str,
         location: str,
         resource_name: str,
-        create_quota_request: Union[_models.CurrentQuotaLimitBase, JSON, IO[bytes]],
+        create_quota_request: Union[_models.CurrentQuotaLimitBase, _types.CurrentQuotaLimitBase, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1364,7 +1363,7 @@ class QuotaOperations:
         provider_id: str,
         location: str,
         resource_name: str,
-        create_quota_request: JSON,
+        create_quota_request: _types.CurrentQuotaLimitBase,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1389,7 +1388,7 @@ class QuotaOperations:
          Required.
         :type resource_name: str
         :param create_quota_request: Quota requests payload. Required.
-        :type create_quota_request: JSON
+        :type create_quota_request: ~azure.mgmt.reservations.types.CurrentQuotaLimitBase
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1448,7 +1447,7 @@ class QuotaOperations:
         provider_id: str,
         location: str,
         resource_name: str,
-        create_quota_request: Union[_models.CurrentQuotaLimitBase, JSON, IO[bytes]],
+        create_quota_request: Union[_models.CurrentQuotaLimitBase, _types.CurrentQuotaLimitBase, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.CurrentQuotaLimitBase]:
         """Create or update the quota (service limits) of a resource to the requested value.
@@ -1470,10 +1469,10 @@ class QuotaOperations:
          Microsoft.Compute, Sku or TotalLowPriorityCores for Microsoft.MachineLearningServices.
          Required.
         :type resource_name: str
-        :param create_quota_request: Quota requests payload. Is one of the following types:
-         CurrentQuotaLimitBase, JSON, IO[bytes] Required.
-        :type create_quota_request: ~azure.mgmt.reservations.models.CurrentQuotaLimitBase or JSON or
-         IO[bytes]
+        :param create_quota_request: Quota requests payload. Is either a CurrentQuotaLimitBase type or
+         a IO[bytes] type. Required.
+        :type create_quota_request: ~azure.mgmt.reservations.models.CurrentQuotaLimitBase or
+         ~azure.mgmt.reservations.types.CurrentQuotaLimitBase or IO[bytes]
         :return: An instance of LROPoller that returns CurrentQuotaLimitBase. The CurrentQuotaLimitBase
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.reservations.models.CurrentQuotaLimitBase]
@@ -1541,7 +1540,7 @@ class QuotaOperations:
         provider_id: str,
         location: str,
         resource_name: str,
-        create_quota_request: Union[_models.CurrentQuotaLimitBase, JSON, IO[bytes]],
+        create_quota_request: Union[_models.CurrentQuotaLimitBase, _types.CurrentQuotaLimitBase, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1660,7 +1659,7 @@ class QuotaOperations:
         provider_id: str,
         location: str,
         resource_name: str,
-        create_quota_request: JSON,
+        create_quota_request: _types.CurrentQuotaLimitBase,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1682,7 +1681,7 @@ class QuotaOperations:
          Required.
         :type resource_name: str
         :param create_quota_request: Payload for the quota request. Required.
-        :type create_quota_request: JSON
+        :type create_quota_request: ~azure.mgmt.reservations.types.CurrentQuotaLimitBase
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1738,7 +1737,7 @@ class QuotaOperations:
         provider_id: str,
         location: str,
         resource_name: str,
-        create_quota_request: Union[_models.CurrentQuotaLimitBase, JSON, IO[bytes]],
+        create_quota_request: Union[_models.CurrentQuotaLimitBase, _types.CurrentQuotaLimitBase, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.CurrentQuotaLimitBase]:
         """Update the quota (service limits) of this resource to the requested value. • To get the quota
@@ -1757,10 +1756,10 @@ class QuotaOperations:
          Microsoft.Compute, Sku or TotalLowPriorityCores for Microsoft.MachineLearningServices.
          Required.
         :type resource_name: str
-        :param create_quota_request: Payload for the quota request. Is one of the following types:
-         CurrentQuotaLimitBase, JSON, IO[bytes] Required.
-        :type create_quota_request: ~azure.mgmt.reservations.models.CurrentQuotaLimitBase or JSON or
-         IO[bytes]
+        :param create_quota_request: Payload for the quota request. Is either a CurrentQuotaLimitBase
+         type or a IO[bytes] type. Required.
+        :type create_quota_request: ~azure.mgmt.reservations.models.CurrentQuotaLimitBase or
+         ~azure.mgmt.reservations.types.CurrentQuotaLimitBase or IO[bytes]
         :return: An instance of LROPoller that returns CurrentQuotaLimitBase. The CurrentQuotaLimitBase
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.reservations.models.CurrentQuotaLimitBase]
@@ -2011,7 +2010,7 @@ class ReservationOperations:
         self,
         reservation_order_id: str,
         reservation_id: str,
-        parameters: Union[_models.Patch, JSON, IO[bytes]],
+        parameters: Union[_models.Patch, _types.Patch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2119,7 +2118,7 @@ class ReservationOperations:
         self,
         reservation_order_id: str,
         reservation_id: str,
-        parameters: JSON,
+        parameters: _types.Patch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2133,7 +2132,7 @@ class ReservationOperations:
         :param reservation_id: Id of the reservation item. Required.
         :type reservation_id: str
         :param parameters: Information needed to patch a reservation item. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.reservations.types.Patch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2177,7 +2176,7 @@ class ReservationOperations:
         self,
         reservation_order_id: str,
         reservation_id: str,
-        parameters: Union[_models.Patch, JSON, IO[bytes]],
+        parameters: Union[_models.Patch, _types.Patch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ReservationResponse]:
         """Updates a ``Reservation``.
@@ -2188,9 +2187,10 @@ class ReservationOperations:
         :type reservation_order_id: str
         :param reservation_id: Id of the reservation item. Required.
         :type reservation_id: str
-        :param parameters: Information needed to patch a reservation item. Is one of the following
-         types: Patch, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.reservations.models.Patch or JSON or IO[bytes]
+        :param parameters: Information needed to patch a reservation item. Is either a Patch type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.reservations.models.Patch or ~azure.mgmt.reservations.types.Patch
+         or IO[bytes]
         :return: An instance of LROPoller that returns ReservationResponse. The ReservationResponse is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.reservations.models.ReservationResponse]
@@ -2338,7 +2338,7 @@ class ReservationOperations:
         self,
         reservation_order_id: str,
         reservation_id: str,
-        body: Union[_models.AvailableScopeRequest, JSON, IO[bytes]],
+        body: Union[_models.AvailableScopeRequest, _types.AvailableScopeRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2442,7 +2442,7 @@ class ReservationOperations:
         self,
         reservation_order_id: str,
         reservation_id: str,
-        body: JSON,
+        body: _types.AvailableScopeRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2456,7 +2456,7 @@ class ReservationOperations:
         :param reservation_id: Id of the reservation item. Required.
         :type reservation_id: str
         :param body: Scopes to be checked for eligibility. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.reservations.types.AvailableScopeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2500,7 +2500,7 @@ class ReservationOperations:
         self,
         reservation_order_id: str,
         reservation_id: str,
-        body: Union[_models.AvailableScopeRequest, JSON, IO[bytes]],
+        body: Union[_models.AvailableScopeRequest, _types.AvailableScopeRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AvailableScopeProperties]:
         """Get Available Scopes for ``Reservation``.
@@ -2511,9 +2511,10 @@ class ReservationOperations:
         :type reservation_order_id: str
         :param reservation_id: Id of the reservation item. Required.
         :type reservation_id: str
-        :param body: Scopes to be checked for eligibility. Is one of the following types:
-         AvailableScopeRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.reservations.models.AvailableScopeRequest or JSON or IO[bytes]
+        :param body: Scopes to be checked for eligibility. Is either a AvailableScopeRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.reservations.models.AvailableScopeRequest or
+         ~azure.mgmt.reservations.types.AvailableScopeRequest or IO[bytes]
         :return: An instance of LROPoller that returns AvailableScopeProperties. The
          AvailableScopeProperties is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.reservations.models.AvailableScopeProperties]
@@ -2787,7 +2788,10 @@ class ReservationOperations:
         return ItemPaged(get_next, extract_data)
 
     def _split_initial(
-        self, reservation_order_id: str, body: Union[_models.SplitRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        reservation_order_id: str,
+        body: Union[_models.SplitRequest, _types.SplitRequest, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2884,7 +2888,12 @@ class ReservationOperations:
 
     @overload
     def begin_split(
-        self, reservation_order_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        reservation_order_id: str,
+        body: _types.SplitRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[List[_models.ReservationResponse]]:
         """Split the ``Reservation``.
 
@@ -2893,7 +2902,7 @@ class ReservationOperations:
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
         :param body: Information needed to Split a reservation item. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.reservations.types.SplitRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2926,7 +2935,10 @@ class ReservationOperations:
 
     @distributed_trace
     def begin_split(
-        self, reservation_order_id: str, body: Union[_models.SplitRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        reservation_order_id: str,
+        body: Union[_models.SplitRequest, _types.SplitRequest, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[List[_models.ReservationResponse]]:
         """Split the ``Reservation``.
 
@@ -2934,9 +2946,10 @@ class ReservationOperations:
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param body: Information needed to Split a reservation item. Is one of the following types:
-         SplitRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.reservations.models.SplitRequest or JSON or IO[bytes]
+        :param body: Information needed to Split a reservation item. Is either a SplitRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.reservations.models.SplitRequest or
+         ~azure.mgmt.reservations.types.SplitRequest or IO[bytes]
         :return: An instance of LROPoller that returns list of ReservationResponse
         :rtype:
          ~azure.core.polling.LROPoller[list[~azure.mgmt.reservations.models.ReservationResponse]]
@@ -2996,7 +3009,10 @@ class ReservationOperations:
         )
 
     def _merge_initial(
-        self, reservation_order_id: str, body: Union[_models.MergeRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        reservation_order_id: str,
+        body: Union[_models.MergeRequest, _types.MergeRequest, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3094,7 +3110,12 @@ class ReservationOperations:
 
     @overload
     def begin_merge(
-        self, reservation_order_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        reservation_order_id: str,
+        body: _types.MergeRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[List[_models.ReservationResponse]]:
         """Merges two ``Reservation``s.
 
@@ -3104,7 +3125,7 @@ class ReservationOperations:
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
         :param body: Information needed for commercial request for a reservation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.reservations.types.MergeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3138,7 +3159,10 @@ class ReservationOperations:
 
     @distributed_trace
     def begin_merge(
-        self, reservation_order_id: str, body: Union[_models.MergeRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        reservation_order_id: str,
+        body: Union[_models.MergeRequest, _types.MergeRequest, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[List[_models.ReservationResponse]]:
         """Merges two ``Reservation``s.
 
@@ -3147,9 +3171,10 @@ class ReservationOperations:
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param body: Information needed for commercial request for a reservation. Is one of the
-         following types: MergeRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.reservations.models.MergeRequest or JSON or IO[bytes]
+        :param body: Information needed for commercial request for a reservation. Is either a
+         MergeRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.reservations.models.MergeRequest or
+         ~azure.mgmt.reservations.types.MergeRequest or IO[bytes]
         :return: An instance of LROPoller that returns list of ReservationResponse
         :rtype:
          ~azure.core.polling.LROPoller[list[~azure.mgmt.reservations.models.ReservationResponse]]
@@ -3416,7 +3441,10 @@ class ReservationOrderOperations:
         return deserialized  # type: ignore
 
     def _purchase_initial(
-        self, reservation_order_id: str, body: Union[_models.PurchaseRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        reservation_order_id: str,
+        body: Union[_models.PurchaseRequest, _types.PurchaseRequest, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3513,7 +3541,12 @@ class ReservationOrderOperations:
 
     @overload
     def begin_purchase(
-        self, reservation_order_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        reservation_order_id: str,
+        body: _types.PurchaseRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.ReservationOrderResponse]:
         """Purchase ``ReservationOrder``.
 
@@ -3522,7 +3555,7 @@ class ReservationOrderOperations:
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
         :param body: Information needed for calculate or purchase reservation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.reservations.types.PurchaseRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3555,7 +3588,10 @@ class ReservationOrderOperations:
 
     @distributed_trace
     def begin_purchase(
-        self, reservation_order_id: str, body: Union[_models.PurchaseRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        reservation_order_id: str,
+        body: Union[_models.PurchaseRequest, _types.PurchaseRequest, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.ReservationOrderResponse]:
         """Purchase ``ReservationOrder``.
 
@@ -3563,9 +3599,10 @@ class ReservationOrderOperations:
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param body: Information needed for calculate or purchase reservation. Is one of the following
-         types: PurchaseRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.reservations.models.PurchaseRequest or JSON or IO[bytes]
+        :param body: Information needed for calculate or purchase reservation. Is either a
+         PurchaseRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.reservations.models.PurchaseRequest or
+         ~azure.mgmt.reservations.types.PurchaseRequest or IO[bytes]
         :return: An instance of LROPoller that returns ReservationOrderResponse. The
          ReservationOrderResponse is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.reservations.models.ReservationOrderResponse]
@@ -3733,7 +3770,12 @@ class ReservationOrderOperations:
 
     @overload
     def change_directory(
-        self, reservation_order_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        reservation_order_id: str,
+        body: _types.ChangeDirectoryRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.ChangeDirectoryResponse:
         """Change directory of ``ReservationOrder``.
 
@@ -3743,7 +3785,7 @@ class ReservationOrderOperations:
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
         :param body: Information needed to change directory of reservation order. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.reservations.types.ChangeDirectoryRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3775,7 +3817,10 @@ class ReservationOrderOperations:
 
     @distributed_trace
     def change_directory(
-        self, reservation_order_id: str, body: Union[_models.ChangeDirectoryRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        reservation_order_id: str,
+        body: Union[_models.ChangeDirectoryRequest, _types.ChangeDirectoryRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.ChangeDirectoryResponse:
         """Change directory of ``ReservationOrder``.
 
@@ -3784,9 +3829,10 @@ class ReservationOrderOperations:
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param body: Information needed to change directory of reservation order. Is one of the
-         following types: ChangeDirectoryRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.reservations.models.ChangeDirectoryRequest or JSON or IO[bytes]
+        :param body: Information needed to change directory of reservation order. Is either a
+         ChangeDirectoryRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.reservations.models.ChangeDirectoryRequest or
+         ~azure.mgmt.reservations.types.ChangeDirectoryRequest or IO[bytes]
         :return: ChangeDirectoryResponse. The ChangeDirectoryResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.reservations.models.ChangeDirectoryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3877,14 +3923,14 @@ class ReservationOrderOperations:
 
     @overload
     def calculate(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.PurchaseRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CalculatePriceResponse:
         """Calculate price for a ``ReservationOrder``.
 
         Calculate price for placing a ``ReservationOrder``.
 
         :param body: The request body. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.reservations.types.PurchaseRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3913,15 +3959,15 @@ class ReservationOrderOperations:
 
     @distributed_trace
     def calculate(
-        self, body: Union[_models.PurchaseRequest, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.PurchaseRequest, _types.PurchaseRequest, IO[bytes]], **kwargs: Any
     ) -> _models.CalculatePriceResponse:
         """Calculate price for a ``ReservationOrder``.
 
         Calculate price for placing a ``ReservationOrder``.
 
-        :param body: The request body. Is one of the following types: PurchaseRequest, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.reservations.models.PurchaseRequest or JSON or IO[bytes]
+        :param body: The request body. Is either a PurchaseRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.reservations.models.PurchaseRequest or
+         ~azure.mgmt.reservations.types.PurchaseRequest or IO[bytes]
         :return: CalculatePriceResponse. The CalculatePriceResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.reservations.models.CalculatePriceResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4036,7 +4082,12 @@ class CalculateRefundOperations:
 
     @overload
     def post(
-        self, reservation_order_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        reservation_order_id: str,
+        body: _types.CalculateRefundRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CalculateRefundResponse:
         """Calculate the refund amount of a reservation order.
 
@@ -4045,7 +4096,7 @@ class CalculateRefundOperations:
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
         :param body: Information needed for calculating refund of a reservation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.reservations.types.CalculateRefundRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4076,7 +4127,10 @@ class CalculateRefundOperations:
 
     @distributed_trace
     def post(
-        self, reservation_order_id: str, body: Union[_models.CalculateRefundRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        reservation_order_id: str,
+        body: Union[_models.CalculateRefundRequest, _types.CalculateRefundRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.CalculateRefundResponse:
         """Calculate the refund amount of a reservation order.
 
@@ -4084,9 +4138,10 @@ class CalculateRefundOperations:
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param body: Information needed for calculating refund of a reservation. Is one of the
-         following types: CalculateRefundRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.reservations.models.CalculateRefundRequest or JSON or IO[bytes]
+        :param body: Information needed for calculating refund of a reservation. Is either a
+         CalculateRefundRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.reservations.models.CalculateRefundRequest or
+         ~azure.mgmt.reservations.types.CalculateRefundRequest or IO[bytes]
         :return: CalculateRefundResponse. The CalculateRefundResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.reservations.models.CalculateRefundResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4176,7 +4231,10 @@ class ReturnOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     def _post_initial(
-        self, reservation_order_id: str, body: Union[_models.RefundRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        reservation_order_id: str,
+        body: Union[_models.RefundRequest, _types.RefundRequest, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4273,7 +4331,12 @@ class ReturnOperations:
 
     @overload
     def begin_post(
-        self, reservation_order_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        reservation_order_id: str,
+        body: _types.RefundRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.ReservationOrderResponse]:
         """Return a reservation.
 
@@ -4282,7 +4345,7 @@ class ReturnOperations:
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
         :param body: Information needed for returning reservation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.reservations.types.RefundRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4315,7 +4378,10 @@ class ReturnOperations:
 
     @distributed_trace
     def begin_post(
-        self, reservation_order_id: str, body: Union[_models.RefundRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        reservation_order_id: str,
+        body: Union[_models.RefundRequest, _types.RefundRequest, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.ReservationOrderResponse]:
         """Return a reservation.
 
@@ -4323,9 +4389,10 @@ class ReturnOperations:
 
         :param reservation_order_id: Order Id of the reservation. Required.
         :type reservation_order_id: str
-        :param body: Information needed for returning reservation. Is one of the following types:
-         RefundRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.reservations.models.RefundRequest or JSON or IO[bytes]
+        :param body: Information needed for returning reservation. Is either a RefundRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.reservations.models.RefundRequest or
+         ~azure.mgmt.reservations.types.RefundRequest or IO[bytes]
         :return: An instance of LROPoller that returns ReservationOrderResponse. The
          ReservationOrderResponse is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.reservations.models.ReservationOrderResponse]
@@ -4403,7 +4470,7 @@ class CalculateExchangeOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     def _post_initial(
-        self, body: Union[_models.CalculateExchangeRequest, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.CalculateExchangeRequest, _types.CalculateExchangeRequest, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4496,14 +4563,14 @@ class CalculateExchangeOperations:
 
     @overload
     def begin_post(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.CalculateExchangeRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.CalculateExchangeOperationResultResponse]:
         """Calculates the refund amounts and price of the new purchases.
 
         Calculates price for exchanging ``Reservations`` if there are no policy errors.
 
         :param body: The request body. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.reservations.types.CalculateExchangeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4536,15 +4603,16 @@ class CalculateExchangeOperations:
 
     @distributed_trace
     def begin_post(
-        self, body: Union[_models.CalculateExchangeRequest, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.CalculateExchangeRequest, _types.CalculateExchangeRequest, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.CalculateExchangeOperationResultResponse]:
         """Calculates the refund amounts and price of the new purchases.
 
         Calculates price for exchanging ``Reservations`` if there are no policy errors.
 
-        :param body: The request body. Is one of the following types: CalculateExchangeRequest, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.reservations.models.CalculateExchangeRequest or JSON or IO[bytes]
+        :param body: The request body. Is either a CalculateExchangeRequest type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.reservations.models.CalculateExchangeRequest or
+         ~azure.mgmt.reservations.types.CalculateExchangeRequest or IO[bytes]
         :return: An instance of LROPoller that returns CalculateExchangeOperationResultResponse. The
          CalculateExchangeOperationResultResponse is compatible with MutableMapping
         :rtype:
@@ -4621,7 +4689,9 @@ class ExchangeOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    def _post_initial(self, body: Union[_models.ExchangeRequest, JSON, IO[bytes]], **kwargs: Any) -> Iterator[bytes]:
+    def _post_initial(
+        self, body: Union[_models.ExchangeRequest, _types.ExchangeRequest, IO[bytes]], **kwargs: Any
+    ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4713,14 +4783,14 @@ class ExchangeOperations:
 
     @overload
     def begin_post(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.ExchangeRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.ExchangeOperationResultResponse]:
         """Exchange Reservation(s).
 
         Returns one or more ``Reservations`` in exchange for one or more ``Reservation`` purchases.
 
         :param body: The request body. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.reservations.types.ExchangeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4753,15 +4823,15 @@ class ExchangeOperations:
 
     @distributed_trace
     def begin_post(
-        self, body: Union[_models.ExchangeRequest, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.ExchangeRequest, _types.ExchangeRequest, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.ExchangeOperationResultResponse]:
         """Exchange Reservation(s).
 
         Returns one or more ``Reservations`` in exchange for one or more ``Reservation`` purchases.
 
-        :param body: The request body. Is one of the following types: ExchangeRequest, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.reservations.models.ExchangeRequest or JSON or IO[bytes]
+        :param body: The request body. Is either a ExchangeRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.reservations.models.ExchangeRequest or
+         ~azure.mgmt.reservations.types.ExchangeRequest or IO[bytes]
         :return: An instance of LROPoller that returns ExchangeOperationResultResponse. The
          ExchangeOperationResultResponse is compatible with MutableMapping
         :rtype:

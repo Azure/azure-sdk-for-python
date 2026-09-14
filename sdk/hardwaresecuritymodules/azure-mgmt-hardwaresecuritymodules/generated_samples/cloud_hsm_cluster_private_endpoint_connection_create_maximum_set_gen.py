@@ -46,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-31/CloudHsmClusterPrivateEndpointConnection_Create_MaximumSet_Gen.json
+# x-ms-original-file: 2025-12-01-preview/CloudHsmClusterPrivateEndpointConnection_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

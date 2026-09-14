@@ -43,7 +43,7 @@ def main():
                     "targetRegions": [
                         {
                             "additionalReplicaSets": [
-                                {"regionalReplicaCount": 1, "storageAccountType": "PreviumV2_LRS"}
+                                {"regionalReplicaCount": 1, "storageAccountType": "PremiumV2_LRS"}
                             ],
                             "encryption": {
                                 "dataDiskImages": [
@@ -99,6 +99,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-03/galleryExamples/GalleryImageVersion_Create_WithAdditionalReplicaSets.json
+# x-ms-original-file: 2025-12-03/galleryExamples/GalleryImageVersion_Create_WithAdditionalReplicaSets.json
 if __name__ == "__main__":
     main()

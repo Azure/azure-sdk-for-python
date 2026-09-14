@@ -1,5 +1,11 @@
 # Azure Document Translation client library for Python (conda)
 
+## 2026.09.01
+
+### Packages included
+
+- azure-ai-translation-document-2.0.0
+
 ## 2026.06.01
 
 ### Packages included

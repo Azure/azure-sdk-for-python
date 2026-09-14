@@ -17,10 +17,12 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ._models import QueuePropertiesPaged
 from ._queue_client_async import QueueClient
 from .._encryption import StorageEncryptionMixin
-from .._generated.aio import AzureQueueStorage
-from .._generated.models import KeyInfo, StorageServiceProperties
+from .._generated.aio import QueuesClient as AzureQueueStorage
+from .._generated.models import KeyInfo, QueueServiceProperties as StorageServiceProperties
 from .._models import (
     CorsRule,
+    Metrics,
+    QueueAnalyticsLogging,
     QueueProperties,
     service_properties_deserialize,
     service_stats_deserialize,
@@ -45,7 +47,6 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from datetime import datetime
-    from .._models import Metrics, QueueAnalyticsLogging
     from .._shared.models import UserDelegationKey
 
 
@@ -135,10 +136,8 @@ class QueueServiceClient(  # type: ignore [misc]
         )
         self._client = AzureQueueStorage(
             self.url,
-            get_api_version(api_version),
-            base_url=self.url,
+            version=get_api_version(api_version),
             pipeline=self._pipeline,
-            loop=loop,
         )
         self._loop = loop
         self._configure_encryption(kwargs)
@@ -386,9 +385,9 @@ class QueueServiceClient(  # type: ignore [misc]
                 :caption: Setting queue service properties.
         """
         props = StorageServiceProperties(
-            logging=analytics_logging,
-            hour_metrics=hour_metrics,
-            minute_metrics=minute_metrics,
+            logging=QueueAnalyticsLogging._to_generated(analytics_logging),  # pylint: disable=protected-access
+            hour_metrics=Metrics._to_generated(hour_metrics),  # pylint: disable=protected-access
+            minute_metrics=Metrics._to_generated(minute_metrics),  # pylint: disable=protected-access
             cors=CorsRule._to_generated(cors),  # pylint: disable=protected-access
         )
         try:
@@ -441,7 +440,7 @@ class QueueServiceClient(  # type: ignore [misc]
         """
         include = ["metadata"] if include_metadata else None
         command = functools.partial(
-            self._client.service.list_queues_segment,
+            self._client.service.get_queues,
             prefix=name_starts_with,
             include=include,
             timeout=timeout,

@@ -32,12 +32,12 @@ def main():
 
     response = client.projects.get(
         resource_group_name="rgdiscovery",
-        workspace_name="aa8419d5add7095abd",
-        project_name="4884cf65356e9c3489",
+        workspace_name="80895d77522bf22889",
+        project_name="b8f0217d144f00d223",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/Projects_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/Projects_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

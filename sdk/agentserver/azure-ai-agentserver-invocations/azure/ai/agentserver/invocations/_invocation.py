@@ -22,19 +22,23 @@ from starlette.routing import Route
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentServerHost,
+    FoundryAgentRequestContext,
     create_error_response,
+    reset_request_context,
+    set_request_context,
 )
 from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
-    CHAT_ISOLATION_KEY,
     ERROR_DETAIL,
     ERROR_SOURCE,
+    FOUNDRY_CALL_ID,
     MAX_ERROR_DETAIL_LENGTH,
     PLATFORM_ERROR_TAG,
-    USER_ISOLATION_KEY,
+    USER_ID,
 )
 
 from ._constants import InvocationConstants
 from ._invocation_ws import _WSHandlerMixin
+from ._sse import _with_keep_alive
 
 logger = logging.getLogger("azure.ai.agentserver")
 
@@ -143,6 +147,28 @@ def _sanitize_id(value: str, fallback: str) -> str:
     return value
 
 
+def _platform_context_from_request(
+    request: Request,
+    session_id: str,
+) -> FoundryAgentRequestContext:
+    """Populate request state and return its platform identity context.
+
+    :param request: The incoming invocation request.
+    :type request: ~starlette.requests.Request
+    :param session_id: The sanitized invocation session ID.
+    :type session_id: str
+    :return: Platform identity context for downstream calls.
+    :rtype: ~azure.ai.agentserver.core.FoundryAgentRequestContext
+    """
+    request.state.user_id = request.headers.get(USER_ID, "")
+    request.state.call_id = request.headers.get(FOUNDRY_CALL_ID, "")
+    return FoundryAgentRequestContext(
+        call_id=request.state.call_id or None,
+        user_id=request.state.user_id or None,
+        session_id=session_id or None,
+    )
+
+
 class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
     """Invocation protocol host for Azure AI Hosted Agents.
 
@@ -181,6 +207,15 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
     :param openapi_spec: Optional OpenAPI spec dict.  When provided, the spec
         is served at ``GET /invocations/docs/openapi.json``.
     :type openapi_spec: Optional[dict[str, Any]]
+    :param asyncapi_spec_json: Optional AsyncAPI spec dict.  When provided, the spec
+        is served at ``GET /invocations/docs/asyncapi.json``.  AsyncAPI is the companion
+        to OpenAPI for streaming/bidirectional surfaces (e.g. ``invocations_ws``).
+    :type asyncapi_spec_json: Optional[dict[str, Any]]
+    :param asyncapi_spec_yaml: Optional AsyncAPI spec as raw YAML text.  When provided,
+        the spec is served verbatim at ``GET /invocations/docs/asyncapi.yaml``.  The
+        path extension is authoritative for the returned content type (no ``Accept``
+        negotiation); the platform never converts between JSON and YAML.
+    :type asyncapi_spec_yaml: Optional[str]
     """
 
     _INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer.Invocations"
@@ -189,12 +224,29 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         self,
         *,
         openapi_spec: Optional[dict[str, Any]] = None,
+        asyncapi_spec_json: Optional[dict[str, Any]] = None,
+        asyncapi_spec_yaml: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         self._invoke_fn: Optional[Callable] = None
         self._get_invocation_fn: Optional[Callable] = None
         self._cancel_invocation_fn: Optional[Callable] = None
+        # asyncapi_spec_* are validated eagerly: a stringified dict passed as
+        # asyncapi_spec_yaml is technically valid YAML and would silently reach
+        # clients as a single-line JSON blob. openapi_spec is left unchecked to
+        # preserve backward-compat with existing callers passing dict-like
+        # Mapping subclasses; consider unifying in a future release.
+        if asyncapi_spec_json is not None and not isinstance(asyncapi_spec_json, dict):
+            raise TypeError(
+                f"asyncapi_spec_json must be dict, got {type(asyncapi_spec_json).__name__}"
+            )
+        if asyncapi_spec_yaml is not None and not isinstance(asyncapi_spec_yaml, str):
+            raise TypeError(
+                f"asyncapi_spec_yaml must be str, got {type(asyncapi_spec_yaml).__name__}"
+            )
         self._openapi_spec = openapi_spec
+        self._asyncapi_spec_json = asyncapi_spec_json
+        self._asyncapi_spec_yaml = asyncapi_spec_yaml
 
         # Initialise WS handler slots (no parameters — the keep-alive
         # interval lives on ``AgentConfig`` and is wired into Hypercorn
@@ -208,6 +260,18 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
                 self._get_openapi_spec_endpoint,
                 methods=["GET"],
                 name="get_openapi_spec",
+            ),
+            Route(
+                "/invocations/docs/asyncapi.json",
+                self._get_asyncapi_spec_json_endpoint,
+                methods=["GET"],
+                name="get_asyncapi_spec_json",
+            ),
+            Route(
+                "/invocations/docs/asyncapi.yaml",
+                self._get_asyncapi_spec_yaml_endpoint,
+                methods=["GET"],
+                name="get_asyncapi_spec_yaml",
             ),
             Route(
                 "/invocations",
@@ -235,8 +299,11 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
 
         # --- Invocations startup configuration logging ---
         logger.info(
-            "Invocations protocol: openapi_spec_configured=%s",
+            "Invocations protocol: openapi_spec_configured=%s, "
+            "asyncapi_spec_json_configured=%s, asyncapi_spec_yaml_configured=%s",
             self._openapi_spec is not None,
+            self._asyncapi_spec_json is not None,
+            self._asyncapi_spec_yaml is not None,
         )
 
     # ------------------------------------------------------------------
@@ -339,6 +406,14 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         """Return the stored OpenAPI spec, or None."""
         return self._openapi_spec
 
+    def get_asyncapi_spec_json(self) -> Optional[dict[str, Any]]:
+        """Return the stored AsyncAPI spec (JSON representation), or None."""
+        return self._asyncapi_spec_json
+
+    def get_asyncapi_spec_yaml(self) -> Optional[str]:
+        """Return the stored AsyncAPI spec as raw YAML text, or None."""
+        return self._asyncapi_spec_yaml
+
     # ------------------------------------------------------------------
     # Span attribute helper
     # ------------------------------------------------------------------
@@ -357,11 +432,32 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
             )
         return JSONResponse(spec)
 
+    async def _get_asyncapi_spec_json_endpoint(self, request: Request) -> Response:  # pylint: disable=unused-argument
+        spec = self.get_asyncapi_spec_json()
+        if spec is None:
+            return create_error_response(
+                "not_found", "No AsyncAPI (JSON) spec registered",
+                status_code=404,
+                headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
+            )
+        return JSONResponse(spec)
+
+    async def _get_asyncapi_spec_yaml_endpoint(self, request: Request) -> Response:  # pylint: disable=unused-argument
+        spec = self.get_asyncapi_spec_yaml()
+        if spec is None:
+            return create_error_response(
+                "not_found", "No AsyncAPI (YAML) spec registered",
+                status_code=404,
+                headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
+            )
+        return Response(spec, media_type="application/yaml; charset=utf-8")
+
     def _wrap_streaming_response(
         self,
         response: StreamingResponse,
         invocation_id: str,
         session_id: str,
+        platform_context: FoundryAgentRequestContext | None = None,
     ) -> StreamingResponse:
         """Wrap streaming body iteration with invocation logging/tracing context.
 
@@ -371,6 +467,9 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         :type invocation_id: str
         :param session_id: Session identifier to stamp in context/logging.
         :type session_id: str
+        :param platform_context: Platform context to re-establish for outbound
+            1P calls made during stream iteration (protocol 2.0.0).
+        :type platform_context: ~azure.ai.agentserver.core.FoundryAgentRequestContext | None
         :return: The response with a wrapped body_iterator.
         :rtype: StreamingResponse
         """
@@ -380,6 +479,9 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
             # Re-establish the invocation context for the streaming task.
             stream_inv_token = _invocation_id_var.set(invocation_id)
             stream_session_token = _session_id_var.set(session_id)
+            stream_ctx_token = (
+                set_request_context(platform_context) if platform_context is not None else None
+            )
             try:
                 async for chunk in original_iterator:
                     yield chunk
@@ -398,28 +500,33 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
             finally:
                 _invocation_id_var.reset(stream_inv_token)
                 _session_id_var.reset(stream_session_token)
+                if stream_ctx_token is not None:
+                    reset_request_context(stream_ctx_token)
 
-        response.body_iterator = _wrapped_body()
+        wrapped_body = _wrapped_body()
+        content_type = response.headers.get("content-type") or response.media_type or ""
+        if content_type.lower().startswith("text/event-stream"):
+            response.body_iterator = _with_keep_alive(
+                wrapped_body,
+                self.config.sse_keepalive_interval,
+            )
+        else:
+            response.body_iterator = wrapped_body
         return response
 
     async def _create_invocation_endpoint(self, request: Request) -> Response:
-        generated_id = str(uuid.uuid4())
-        raw_invocation_id = request.headers.get(InvocationConstants.INVOCATION_ID_HEADER) or ""
-        invocation_id = _sanitize_id(raw_invocation_id, generated_id)
+        invocation_id = _sanitize_id(
+            request.headers.get(InvocationConstants.INVOCATION_ID_HEADER) or "",
+            str(uuid.uuid4()),
+        )
         request.state.invocation_id = invocation_id
 
         # Session ID: query param overrides env var / generated UUID
-        raw_session_id = (
-            request.query_params.get("agent_session_id")
-            or self.config.session_id
-            or ""
+        session_id = _sanitize_id(
+            request.query_params.get("agent_session_id") or self.config.session_id or "",
+            str(uuid.uuid4()),
         )
-        session_id = _sanitize_id(raw_session_id, str(uuid.uuid4()))
         request.state.session_id = session_id
-
-        # Platform isolation headers — expose to handlers
-        request.state.user_isolation_key = request.headers.get(USER_ISOLATION_KEY, "")
-        request.state.chat_isolation_key = request.headers.get(CHAT_ISOLATION_KEY, "")
 
         # Incoming baggage and trace context are already attached by
         # BaggageMiddleware and the Starlette OTel instrumentor.
@@ -437,6 +544,10 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         _ensure_log_filter()
         inv_token = _invocation_id_var.set(invocation_id)
         session_token = _session_id_var.set(session_id)
+        # Bind platform context so outbound 1P calls (and handler/tool code) can
+        # forward the per-request call ID and user ID (protocol 2.0.0).
+        platform_ctx = _platform_context_from_request(request, session_id)
+        ctx_token = set_request_context(platform_ctx)
         try:
             response = await self._dispatch_invoke(request)
             response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
@@ -477,6 +588,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
             # tokens it sets for stream iteration.
             _invocation_id_var.reset(inv_token)
             _session_id_var.reset(session_token)
+            reset_request_context(ctx_token)
             try:
                 _otel_context.detach(baggage_token)
             except ValueError:
@@ -485,7 +597,9 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         # Wrap streaming response body so exceptions during iteration are
         # recorded on the current trace span and logged as invocation errors.
         if isinstance(response, StreamingResponse):
-            response = self._wrap_streaming_response(response, invocation_id, session_id)
+            response = self._wrap_streaming_response(
+                response, invocation_id, session_id, platform_ctx
+            )
 
         return response
 
@@ -499,12 +613,27 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         invocation_id = _sanitize_id(raw_invocation_id, raw_invocation_id)
         request.state.invocation_id = invocation_id
 
-        raw_session_id = request.query_params.get("agent_session_id", "")
+        # Per the invocation protocol spec (`invocation-protocol-spec.md`
+        # §1.2 GET, §1.3 cancel), neither GET nor cancel has a
+        # platform-defined ``agent_session_id`` query parameter — the
+        # session is implicit and sourced from the
+        # ``FOUNDRY_AGENT_SESSION_ID`` env var the platform sets on the
+        # container (surfaced via ``self.config.session_id``). We still
+        # honour a caller-provided ``agent_session_id`` query param if
+        # one happens to be present (callers can pass any
+        # non-platform-defined query params and the spec forwards them
+        # transparently), but fall back to the env var when absent so
+        # custom cancel/get handlers can find their per-session state in
+        # the hosted contract without the caller needing to know about
+        # the env var.
+        raw_session_id = request.query_params.get("agent_session_id") or self.config.session_id or ""
         session_id = _sanitize_id(raw_session_id, "") if raw_session_id else ""
+        request.state.session_id = session_id
 
         _ensure_log_filter()
         inv_token = _invocation_id_var.set(invocation_id)
         session_token = _session_id_var.set(session_id)
+        ctx_token = set_request_context(_platform_context_from_request(request, session_id))
         try:
             response = await dispatch(request)
             response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
@@ -525,6 +654,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         finally:
             _invocation_id_var.reset(inv_token)
             _session_id_var.reset(session_token)
+            reset_request_context(ctx_token)
 
     async def _get_invocation_endpoint(self, request: Request) -> Response:
         return await self._traced_invocation_endpoint(

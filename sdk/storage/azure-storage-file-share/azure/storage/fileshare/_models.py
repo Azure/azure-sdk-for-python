@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -14,6 +15,7 @@ from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 
+from ._generated.models._patch import _BackCompatMixin
 from ._generated._utils.serialization import Deserializer
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
@@ -25,14 +27,16 @@ from ._generated.models import ShareNfsSettingsEncryptionInTransit as GeneratedN
 from ._generated.models import ShareProtocolSettings as GeneratedShareProtocolSettings
 from ._generated.models import ShareSmbSettings as GeneratedShareSmbSettings
 from ._generated.models import ShareSmbSettingsEncryptionInTransit as GeneratedSmbEncryptionInTransit
+from ._generated.models import SignedIdentifier as GeneratedSignedIdentifier
 from ._generated.models import SmbMultichannel as GeneratedSmbMultichannel
 from ._generated.models import StorageServiceProperties as GeneratedStorageServiceProperties
 from ._shared.models import DictMixin, get_enum_value
+from ._shared.request_handlers import serialize_iso
 from ._shared.response_handlers import process_storage_error, return_context_and_deserialized
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from ._generated.models import ShareRootSquash
+    from ._generated.models import ShareFileRangeList, ShareRootSquash
 
 
 def _wrap_item(item):
@@ -41,7 +45,7 @@ def _wrap_item(item):
     return {"name": item.name, "size": item.properties.content_length, "is_directory": False}
 
 
-class RetentionPolicy(GeneratedRetentionPolicy):
+class RetentionPolicy(_BackCompatMixin):
     """The retention policy which determines how long the associated data should
     persist.
 
@@ -60,6 +64,16 @@ class RetentionPolicy(GeneratedRetentionPolicy):
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained.
         All data older than this value will be deleted."""
 
+    _validation = {
+        "enabled": {"required": True},
+        "days": {"maximum": 365, "minimum": 1},
+    }
+
+    _attribute_map = {
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "days": {"key": "Days", "type": "int"},
+    }
+
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
         self.enabled = enabled
         self.days = days
@@ -75,8 +89,14 @@ class RetentionPolicy(GeneratedRetentionPolicy):
             days=generated.days,
         )
 
+    def _to_generated(self):
+        return GeneratedRetentionPolicy(
+            enabled=self.enabled,
+            days=self.days,
+        )
 
-class Metrics(GeneratedMetrics):
+
+class Metrics(_BackCompatMixin):
     """A summary of request statistics grouped by API in hour or minute aggregates
     for files.
 
@@ -101,6 +121,18 @@ class Metrics(GeneratedMetrics):
     retention_policy: RetentionPolicy = RetentionPolicy()
     """Determines how long the associated data should persist."""
 
+    _validation = {
+        "version": {"required": True},
+        "enabled": {"required": True},
+    }
+
+    _attribute_map = {
+        "version": {"key": "Version", "type": "str"},
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "include_apis": {"key": "IncludeAPIs", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
+    }
+
     def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get("version", "1.0")
         self.enabled = kwargs.get("enabled", False)
@@ -120,8 +152,23 @@ class Metrics(GeneratedMetrics):
             ),
         )
 
+    @staticmethod
+    def _to_generated(metrics: Optional["Metrics"]) -> Optional[GeneratedMetrics]:
+        if metrics is None:
+            return None
+        return GeneratedMetrics(
+            version=metrics.version,
+            enabled=metrics.enabled,
+            include_apis=metrics.include_apis,
+            retention_policy=(
+                metrics.retention_policy._to_generated()  # pylint: disable=protected-access
+                if metrics.retention_policy
+                else None
+            ),
+        )
 
-class CorsRule(GeneratedCorsRule):
+
+class CorsRule(_BackCompatMixin):
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
     security restriction known as same-origin policy that prevents a web page
@@ -166,6 +213,22 @@ class CorsRule(GeneratedCorsRule):
     max_age_in_seconds: int
     """The number of seconds that the client/browser should cache a pre-flight response."""
 
+    _validation = {
+        "allowed_origins": {"required": True},
+        "allowed_methods": {"required": True},
+        "allowed_headers": {"required": True},
+        "exposed_headers": {"required": True},
+        "max_age_in_seconds": {"required": True, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "allowed_origins": {"key": "AllowedOrigins", "type": "str"},
+        "allowed_methods": {"key": "AllowedMethods", "type": "str"},
+        "allowed_headers": {"key": "AllowedHeaders", "type": "str"},
+        "exposed_headers": {"key": "ExposedHeaders", "type": "str"},
+        "max_age_in_seconds": {"key": "MaxAgeInSeconds", "type": "int"},
+    }
+
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
         self.allowed_origins = ",".join(allowed_origins)
         self.allowed_methods = ",".join(allowed_methods)
@@ -202,7 +265,7 @@ class CorsRule(GeneratedCorsRule):
         )
 
 
-class SmbMultichannel(GeneratedSmbMultichannel):
+class SmbMultichannel(_BackCompatMixin):
     """Settings for Multichannel.
 
     :keyword bool enabled: If SMB Multichannel is enabled.
@@ -211,11 +274,25 @@ class SmbMultichannel(GeneratedSmbMultichannel):
     enabled: bool
     """If SMB Multichannel is enabled."""
 
-    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:
+    _attribute_map = {
+        "enabled": {"key": "Enabled", "type": "bool"},
+    }
+    _xml_map = {"name": "Multichannel"}
+
+    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.enabled = enabled
 
+    def _to_generated(self):
+        return GeneratedSmbMultichannel(enabled=self.enabled)
 
-class SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit):
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return None
+        return cls(enabled=generated.enabled)
+
+
+class SmbEncryptionInTransit(_BackCompatMixin):
     """Settings for encryption in transit.
 
     :keyword bool required: If encryption in transit is required.
@@ -224,11 +301,24 @@ class SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit):
     required: bool
     """If encryption in transit is enabled."""
 
-    def __init__(self, *, required: bool, **kwargs: Any) -> None:
+    _attribute_map = {
+        "required": {"key": "Required", "type": "bool"},
+    }
+
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.required = required
 
+    def _to_generated(self):
+        return GeneratedSmbEncryptionInTransit(required=self.required)
 
-class ShareSmbSettings(GeneratedShareSmbSettings):
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return None
+        return cls(required=generated.required)
+
+
+class ShareSmbSettings(_BackCompatMixin):
     """Settings for the SMB protocol.
 
     :keyword SmbMultichannel multichannel: Sets the multichannel settings.
@@ -240,7 +330,13 @@ class ShareSmbSettings(GeneratedShareSmbSettings):
     encryption_in_transit: Optional[SmbEncryptionInTransit]
     """Sets the encryption in transit settings."""
 
-    def __init__(
+    _attribute_map = {
+        "multichannel": {"key": "Multichannel", "type": "SmbMultichannel"},
+        "encryption_in_transit": {"key": "EncryptionInTransit", "type": "SmbEncryptionInTransit"},
+    }
+    _xml_map = {"name": "SMB"}
+
+    def __init__(  # pylint: disable=unused-argument
         self,
         *,
         multichannel: Optional[SmbMultichannel] = None,
@@ -252,8 +348,31 @@ class ShareSmbSettings(GeneratedShareSmbSettings):
         if self.multichannel is None and self.encryption_in_transit is None:
             raise ValueError("The value 'multichannel' or 'encryption_in_transit' must be specified.")
 
+    def _to_generated(self):
+        return GeneratedShareSmbSettings(
+            multichannel=(
+                self.multichannel._to_generated() if self.multichannel else None  # pylint: disable=protected-access
+            ),
+            encryption_in_transit=(
+                self.encryption_in_transit._to_generated()  # pylint: disable=protected-access
+                if self.encryption_in_transit
+                else None
+            ),
+        )
 
-class NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit):
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return None
+        return cls(
+            multichannel=SmbMultichannel._from_generated(generated.multichannel),  # pylint: disable=protected-access
+            encryption_in_transit=SmbEncryptionInTransit._from_generated(  # pylint: disable=protected-access
+                generated.encryption_in_transit
+            ),
+        )
+
+
+class NfsEncryptionInTransit(_BackCompatMixin):
     """Settings for encryption in transit.
 
     :keyword bool required: If encryption in transit is required.
@@ -262,11 +381,24 @@ class NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit):
     required: bool
     """If encryption in transit is enabled."""
 
-    def __init__(self, *, required: bool, **kwargs: Any) -> None:
+    _attribute_map = {
+        "required": {"key": "Required", "type": "bool"},
+    }
+
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.required = required
 
+    def _to_generated(self):
+        return GeneratedNfsEncryptionInTransit(required=self.required)
 
-class ShareNfsSettings(GeneratedShareNfsSettings):
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return None
+        return cls(required=generated.required)
+
+
+class ShareNfsSettings(_BackCompatMixin):
     """Settings for the NFS protocol.
 
     :keyword NfsEncryptionInTransit encryption_in_transit: Sets the encryption in transit settings.
@@ -275,11 +407,37 @@ class ShareNfsSettings(GeneratedShareNfsSettings):
     encryption_in_transit: NfsEncryptionInTransit
     """Sets the encryption in transit settings."""
 
-    def __init__(self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any) -> None:
+    _attribute_map = {
+        "encryption_in_transit": {"key": "EncryptionInTransit", "type": "NfsEncryptionInTransit"},
+    }
+    _xml_map = {"name": "NFS"}
+
+    def __init__(
+        self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any  # pylint: disable=unused-argument
+    ) -> None:
         self.encryption_in_transit = encryption_in_transit
 
+    def _to_generated(self):
+        return GeneratedShareNfsSettings(
+            encryption_in_transit=(
+                self.encryption_in_transit._to_generated()  # pylint: disable=protected-access
+                if self.encryption_in_transit
+                else None
+            ),
+        )
 
-class ShareProtocolSettings(GeneratedShareProtocolSettings):
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return None
+        return cls(
+            encryption_in_transit=NfsEncryptionInTransit._from_generated(  # pylint: disable=protected-access
+                generated.encryption_in_transit
+            ),
+        )
+
+
+class ShareProtocolSettings(_BackCompatMixin):
     """Protocol Settings class used by the set and get service properties methods in the share service.
 
     Contains protocol properties of the share service such as the SMB and NFS setting of the share service.
@@ -293,7 +451,13 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
     nfs: Optional[ShareNfsSettings]
     """Sets the NFS settings."""
 
-    def __init__(
+    _attribute_map = {
+        "smb": {"key": "SMB", "type": "ShareSmbSettings"},
+        "nfs": {"key": "NFS", "type": "ShareNfsSettings"},
+    }
+    _xml_map = {"name": "ProtocolSettings"}
+
+    def __init__(  # pylint: disable=unused-argument
         self, *, smb: Optional[ShareSmbSettings] = None, nfs: Optional[ShareNfsSettings] = None, **kwargs: Any
     ) -> None:
         self.smb = smb
@@ -303,7 +467,21 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
 
     @classmethod
     def _from_generated(cls, generated):
-        return cls(smb=generated.smb, nfs=generated.nfs)
+        if not generated:
+            return None
+        return cls(
+            smb=ShareSmbSettings._from_generated(generated.smb),  # pylint: disable=protected-access
+            nfs=ShareNfsSettings._from_generated(generated.nfs),  # pylint: disable=protected-access
+        )
+
+    @staticmethod
+    def _to_generated(settings: Optional["ShareProtocolSettings"]) -> Optional[GeneratedShareProtocolSettings]:
+        if settings is None:
+            return None
+        return GeneratedShareProtocolSettings(
+            smb=settings.smb._to_generated() if settings.smb else None,  # pylint: disable=protected-access
+            nfs=settings.nfs._to_generated() if settings.nfs else None,  # pylint: disable=protected-access
+        )
 
 
 class ShareSasPermissions:
@@ -383,7 +561,7 @@ class ShareSasPermissions:
         return parsed
 
 
-class AccessPolicy(GenAccessPolicy):
+class AccessPolicy(_BackCompatMixin):
     """Access Policy class used by the set and get acl methods in each service.
 
     A stored access policy can specify the start time, expiry time, and
@@ -435,6 +613,12 @@ class AccessPolicy(GenAccessPolicy):
     start: Optional[Union["datetime", str]]  # type: ignore [assignment]
     """The time at which the shared access signature becomes valid."""
 
+    _attribute_map = {
+        "start": {"key": "Start", "type": "str"},
+        "expiry": {"key": "Expiry", "type": "str"},
+        "permission": {"key": "Permission", "type": "str"},
+    }
+
     def __init__(
         self,
         permission: Optional[Union[ShareSasPermissions, str]] = None,
@@ -444,6 +628,57 @@ class AccessPolicy(GenAccessPolicy):
         self.start = start
         self.expiry = expiry
         self.permission = permission
+
+    def _to_generated(self) -> GenAccessPolicy:
+        permission = self.permission
+        if isinstance(permission, ShareSasPermissions):
+            permission = str(permission)
+        return GenAccessPolicy(
+            start=serialize_iso(self.start),
+            expiry=serialize_iso(self.expiry),
+            permission=permission,
+        )
+
+    @classmethod
+    def _from_generated(cls, generated: Optional[GenAccessPolicy]) -> Optional["AccessPolicy"]:
+        if generated is None:
+            return None
+        return cls(
+            permission=generated.permission,
+            expiry=generated.expiry,
+            start=generated.start,
+        )
+
+
+class SignedIdentifier(DictMixin):
+    """Signed identifier representing a stored access policy associated with a share.
+
+    :param str id:
+        A unique id.
+    :param access_policy:
+        The access policy associated with the id.
+    :type access_policy: ~azure.storage.fileshare.AccessPolicy
+    """
+
+    id: str
+    """A unique id."""
+    access_policy: Optional[AccessPolicy]
+    """The access policy associated with the id."""
+
+    def __init__(
+        self,
+        id: str,  # pylint: disable=redefined-builtin
+        access_policy: Optional[AccessPolicy] = None,
+    ) -> None:
+        self.id = id
+        self.access_policy = access_policy
+
+    @classmethod
+    def _from_generated(cls, generated: GeneratedSignedIdentifier) -> "SignedIdentifier":
+        return cls(
+            id=generated.id,
+            access_policy=AccessPolicy._from_generated(generated.access_policy),  # pylint: disable=protected-access
+        )
 
 
 class LeaseProperties(DictMixin):
@@ -558,7 +793,7 @@ class ShareProperties(DictMixin):
     snapshot: Optional[str] = None
     """Snapshot of the share."""
     deleted: Optional[bool] = None
-    """Whether this share was deleted. 
+    """Whether this share was deleted.
         This is a service returned value, and the value will be set when list shared including deleted ones."""
     deleted_time: Optional["datetime"] = None
     """A datetime object representing the time at which the share was deleted.
@@ -1114,6 +1349,96 @@ class DirectoryPropertiesPaged(PageIterator):
             FileProperties._from_generated(i)  # pylint: disable = protected-access
             for i in self._response.segment.file_items
         )
+        return self._response.next_marker or None, self.current_page
+
+
+class FileRange(DictMixin):
+    """File Range.
+
+    :param int start:
+        Start of file range in bytes.
+    :param int end:
+        End of file range in bytes.
+    """
+
+    start: int
+    """Start of file range in bytes."""
+    end: int
+    """End of file range in bytes."""
+    cleared: bool
+    """Whether the range has been cleared. Only applicable when using list_ranges_diff."""
+
+    def __init__(self, start: int, end: int, *, cleared: bool = False) -> None:
+        self.start = start
+        self.end = end
+        self.cleared = cleared
+
+
+def parse_file_range_list(ranges: "ShareFileRangeList") -> List[FileRange]:
+    file_ranges = ranges.ranges or []
+    clear_ranges = ranges.clear_ranges or []
+
+    result: List[FileRange] = []
+    f_i, c_i = 0, 0
+
+    # Combine file ranges and clear ranges into a single list, sorted by start
+    while f_i < len(file_ranges) and c_i < len(clear_ranges):
+        f, c = file_ranges[f_i], clear_ranges[c_i]
+        if f.start < c.start:
+            result.append(FileRange(start=f.start, end=f.end, cleared=False))
+            f_i += 1
+        else:
+            result.append(FileRange(start=c.start, end=c.end, cleared=True))
+            c_i += 1
+
+    # Grab remaining elements in either list
+    result += [FileRange(start=r.start, end=r.end, cleared=False) for r in file_ranges[f_i:]]
+    result += [FileRange(start=r.start, end=r.end, cleared=True) for r in clear_ranges[c_i:]]
+
+    return result
+
+
+class FileRangePaged(PageIterator):
+    """An iterable of File Ranges.
+
+    :param Callable command: Function to retrieve the next page of items.
+    :param Optional[int] results_per_page: The maximum number of file ranges to retrieve per call.
+    :param Optional[str] continuation_token: An opaque continuation token to retrieve the next page of results.
+    """
+
+    results_per_page: Optional[int] = None
+    """The maximum number of results retrieved per API call."""
+    location_mode: Optional[str] = None
+    """The location mode being used to list results.
+        The available options include "primary" and "secondary"."""
+    current_page: List[FileRange]
+    """The current page of listed results."""
+
+    def __init__(
+        self, command: Callable, results_per_page: Optional[int] = None, continuation_token: Optional[str] = None
+    ) -> None:
+        super(FileRangePaged, self).__init__(
+            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
+        )
+        self._command = command
+        self.results_per_page = results_per_page
+        self.location_mode = None
+        self.current_page = []
+
+    def _get_next_cb(self, continuation_token):
+        try:
+            return self._command(
+                marker=continuation_token or None,
+                maxresults=self.results_per_page,
+                cls=return_context_and_deserialized,
+                use_location=self.location_mode,
+            )
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    def _extract_data_cb(self, get_next_return):
+        self.location_mode, self._response = get_next_return
+        self.current_page = parse_file_range_list(self._response)
         return self._response.next_marker or None, self.current_page
 
 

@@ -37,3 +37,66 @@ class TestAgentConfigIsHosted:
         # Changing the env var after creation must not affect the already-created config.
         monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT")
         assert config.is_hosted is True
+
+
+class TestAgentConfigAgentGuid:
+    """Tests for the FOUNDRY_AGENT_ID (agent_guid) resolution."""
+
+    def test_agent_guid_from_env(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("FOUNDRY_AGENT_ID", "11111111-2222-3333-4444-555555555555")
+        config = AgentConfig.from_env()
+        assert config.agent_guid == "11111111-2222-3333-4444-555555555555"
+
+    def test_agent_guid_empty_when_absent(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.delenv("FOUNDRY_AGENT_ID", raising=False)
+        config = AgentConfig.from_env()
+        assert config.agent_guid == ""
+
+    def test_agent_guid_distinct_from_composite_agent_id(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """agent_guid (GUID) is independent of the name:version composite agent_id."""
+        monkeypatch.setenv("FOUNDRY_AGENT_NAME", "weather")
+        monkeypatch.setenv("FOUNDRY_AGENT_VERSION", "1")
+        monkeypatch.setenv("FOUNDRY_AGENT_ID", "guid-abc")
+        config = AgentConfig.from_env()
+        assert config.agent_id == "weather:1"
+        assert config.agent_guid == "guid-abc"
+
+
+class TestAgentConfigSessionGuid:
+    """Tests for the FOUNDRY_AGENT_SESSION_GUID resolution."""
+
+    def test_session_guid_from_hosted_env(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "production")
+        monkeypatch.setenv("FOUNDRY_AGENT_SESSION_GUID", "a" * 32)
+
+        config = AgentConfig.from_env()
+
+        assert config.session_guid == "a" * 32
+
+    def test_session_guid_empty_when_absent(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.delenv("FOUNDRY_AGENT_SESSION_GUID", raising=False)
+
+        config = AgentConfig.from_env()
+
+        assert config.session_guid == ""
+
+    @pytest.mark.parametrize("value", ["A" * 32, "a" * 31, "g" * 32, "not-a-guid"])
+    def test_invalid_hosted_session_guid_raises(
+        self, monkeypatch: pytest.MonkeyPatch, value: str
+    ) -> None:
+        monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "production")
+        monkeypatch.setenv("FOUNDRY_AGENT_SESSION_GUID", value)
+
+        with pytest.raises(ValueError, match="FOUNDRY_AGENT_SESSION_GUID"):
+            AgentConfig.from_env()
+
+    def test_non_hosted_invalid_session_guid_is_not_trusted(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT", raising=False)
+        monkeypatch.setenv("FOUNDRY_AGENT_SESSION_GUID", "local-value")
+
+        config = AgentConfig.from_env()
+
+        assert config.is_hosted is False
+        assert config.session_guid == "local-value"

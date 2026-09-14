@@ -19,7 +19,6 @@ from azure.ai.voicelive.models import (
     AzureStandardVoice,
     AzureVoiceType,
     EchoCancellationReferenceSource,
-    EouThresholdLevel,
     FileSearchResult,
     InputAudioContentPart,
     InputTextContentPart,
@@ -46,20 +45,14 @@ from azure.ai.voicelive.models import (
     ResponseMCPListToolItem,
     ResponseSession,
     ResponseWebSearchCallItem,
-    RtcCallErrorDetails,
     ServerEventMcpListToolsCompleted,
     ServerEventMcpListToolsFailed,
     ServerEventMcpListToolsInProgress,
-    ServerEventOutputAudioBufferStarted,
-    ServerEventOutputAudioBufferStopped,
     ServerEventResponseInvocationDelta,
     ServerEventResponseMcpCallArgumentsDelta,
     ServerEventResponseMcpCallArgumentsDone,
-    ServerEventRtcCallError,
-    ServerEventRtcCallSdpCreated,
     ServerEventType,
     ServerVad,
-    SmartEndOfTurnDetection,
     SystemMessageItem,
     ToolType,
     TranscriptionPhrase,
@@ -390,26 +383,6 @@ class TestAudioEchoCancellationModel:
         assert session.input_audio_echo_cancellation is not None
         assert session.input_audio_echo_cancellation.reference_source == EchoCancellationReferenceSource.SERVER
         assert session.input_audio_echo_cancellation.channels == 1
-
-
-class TestEndOfTurnDetectionModels:
-    """Test smart end-of-turn detection models."""
-
-    def test_smart_end_of_turn_detection_basic(self):
-        """Test SmartEndOfTurnDetection model."""
-        detection = SmartEndOfTurnDetection(threshold_level=EouThresholdLevel.MEDIUM, timeout_ms=750)
-
-        assert detection.model == "smart_end_of_turn_detection"
-        assert detection.threshold_level == EouThresholdLevel.MEDIUM
-        assert detection.timeout_ms == 750
-
-    def test_server_vad_with_smart_end_of_turn_detection(self):
-        """Test ServerVad using SmartEndOfTurnDetection."""
-        detection = SmartEndOfTurnDetection(threshold_level=EouThresholdLevel.HIGH, timeout_ms=1000)
-        turn_detection = ServerVad(end_of_utterance_detection=detection)
-
-        assert turn_detection.end_of_utterance_detection is not None
-        assert turn_detection.end_of_utterance_detection.model == "smart_end_of_turn_detection"
 
 
 class TestMCPModels:
@@ -854,22 +827,6 @@ class TestMCPServerEvents:
 class TestRealtimeAndRtcServerEvents:
     """Test realtime playback and RTC server event models."""
 
-    def test_server_event_output_audio_buffer_started(self):
-        """Test output audio buffer started event."""
-        event = ServerEventOutputAudioBufferStarted(event_id="evt-1", response_id="resp-123")
-
-        assert event.type == ServerEventType.OUTPUT_AUDIO_BUFFER_STARTED
-        assert event.event_id == "evt-1"
-        assert event.response_id == "resp-123"
-
-    def test_server_event_output_audio_buffer_stopped(self):
-        """Test output audio buffer stopped event."""
-        event = ServerEventOutputAudioBufferStopped(event_id="evt-2", response_id="resp-456")
-
-        assert event.type == ServerEventType.OUTPUT_AUDIO_BUFFER_STOPPED
-        assert event.event_id == "evt-2"
-        assert event.response_id == "resp-456"
-
     def test_server_event_response_invocation_delta(self):
         """Test hosted agent invocation delta event."""
         delta = {"type": "trace", "message": "partial hosted agent event"}
@@ -878,34 +835,6 @@ class TestRealtimeAndRtcServerEvents:
         assert event.type == ServerEventType.RESPONSE_INVOCATION_DELTA
         assert event.event_id == "evt-3"
         assert event.delta == delta
-
-    def test_server_event_rtc_call_sdp_created(self):
-        """Test RTC SDP created event."""
-        event = ServerEventRtcCallSdpCreated(
-            event_id="evt-4",
-            rtc_call_id="rtc-123",
-            sdp_answer="v=0\r\no=- 1 2 IN IP4 127.0.0.1",
-        )
-
-        assert event.type == ServerEventType.RTC_CALL_SDP_CREATED
-        assert event.rtc_call_id == "rtc-123"
-        assert event.sdp_answer.startswith("v=0")
-
-    def test_server_event_rtc_call_error(self):
-        """Test RTC call error event."""
-        error = RtcCallErrorDetails(type="server_error", message="RTC negotiation failed", code="rtc_failed")
-        event = ServerEventRtcCallError(
-            error=error,
-            operation="rtc.call.sdp.create",
-            rtc_call_id="rtc-123",
-            event_id="evt-5",
-        )
-
-        assert event.type == ServerEventType.RTC_CALL_ERROR
-        assert event.error.code == "rtc_failed"
-        assert event.error.message == "RTC negotiation failed"
-        assert event.operation == "rtc.call.sdp.create"
-        assert event.rtc_call_id == "rtc-123"
 
 
 class TestMCPApprovalType:

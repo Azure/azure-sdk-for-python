@@ -32,15 +32,16 @@ def main():
 
     response = client.supercomputers.begin_update(
         resource_group_name="rgdiscovery",
-        supercomputer_name="a60016ec51d9d8e35d",
+        supercomputer_name="1d951e48d0e7383455",
         properties={
-            "properties": {"identities": {"workloadIdentities": {"key3032": {}}}},
-            "tags": {"key9318": "xawwf"},
+            "identity": {"type": "SystemAssigned"},
+            "properties": {"identities": {"workloadIdentities": {"key7289": {}}}},
+            "tags": {"key40": "guakqh"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/Supercomputers_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/Supercomputers_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -23,7 +23,10 @@ import uuid
 from typing import Dict
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import recorded_by_proxy
-from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
+from testpreparer import (
+    ContentUnderstandingPreparer,
+    ContentUnderstandingClientTestBase,
+)
 from azure.ai.contentunderstanding.models import (
     ContentAnalyzer,
     ContentAnalyzerConfig,
@@ -83,7 +86,9 @@ class TestSampleCreateAnalyzer(ContentUnderstandingClientTestBase):
                     estimate_source_and_confidence=True,
                 ),
                 "document_summary": ContentFieldDefinition(
-                    type="string", method="generate", description="A brief summary of the document content"
+                    type="string",
+                    method="generate",
+                    description="A brief summary of the document content",
                 ),
                 "document_type": ContentFieldDefinition(
                     type="string",
@@ -105,7 +110,11 @@ class TestSampleCreateAnalyzer(ContentUnderstandingClientTestBase):
             assert (
                 field_def.type and field_def.method and field_def.description
             ), f"Field {field_name} should have type, method, and description"
-            assert field_def.method in ["extract", "generate", "classify"], f"Field {field_name} method should be valid"
+            assert field_def.method in [
+                "extract",
+                "generate",
+                "classify",
+            ], f"Field {field_name} method should be valid"
 
         # Verify enum for classify field
         document_type_field = field_schema.fields["document_type"]
@@ -132,7 +141,7 @@ class TestSampleCreateAnalyzer(ContentUnderstandingClientTestBase):
             description="Custom analyzer for extracting company information",
             config=config,
             field_schema=field_schema,
-            models={"completion": "gpt-4.1", "embedding": "text-embedding-3-large"},
+            models={"completion": "gpt-5.2", "embedding": "text-embedding-3-large"},
         )
 
         assert custom_analyzer.base_analyzer_id == "prebuilt-document", "Base analyzer should be prebuilt-document"

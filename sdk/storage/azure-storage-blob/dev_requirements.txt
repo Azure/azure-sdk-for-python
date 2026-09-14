@@ -4,3 +4,4 @@
 ../azure-storage-extensions
 azure-mgmt-storage==20.1.0
 aiohttp>=3.13.5
+nanoarrow>=0.7.0

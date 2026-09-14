@@ -212,6 +212,8 @@ MODEL_CLASS_ATTRIBUTES: Dict[Type["Model"], Tuple[str, ...]] = {
         "support_ordering",
         "message_count_details",
         "subscription_count",
+        "sql_filter_count",
+        "correlation_filter_count",
         "auto_delete_on_idle",
         "enable_partitioning",
         "entity_availability_status",

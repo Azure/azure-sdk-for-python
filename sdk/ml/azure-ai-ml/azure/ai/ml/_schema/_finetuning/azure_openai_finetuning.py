@@ -9,7 +9,7 @@ from marshmallow import post_load
 
 
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
-from azure.ai.ml._restclient.v2024_01_01_preview.models import ModelProvider
+from azure.ai.ml._restclient.arm_ml_service.models import ModelProvider
 from azure.ai.ml._schema._finetuning.azure_openai_hyperparameters import AzureOpenAIHyperparametersSchema
 from azure.ai.ml._schema._finetuning.finetuning_vertical import FineTuningVerticalSchema
 from azure.ai.ml.entities._job.finetuning.azure_openai_hyperparameters import AzureOpenAIHyperparameters

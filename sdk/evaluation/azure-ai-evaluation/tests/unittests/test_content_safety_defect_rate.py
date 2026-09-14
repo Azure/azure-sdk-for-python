@@ -6,6 +6,7 @@ import pytest
 
 from azure.ai.evaluation import ContentSafetyEvaluator
 from azure.ai.evaluation._evaluate._evaluate import _aggregate_metrics
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 def _get_file(name):
@@ -23,3 +24,22 @@ class TestContentSafetyDefectRate:
         metrics = _aggregate_metrics(df, {"content_safety": ContentSafetyEvaluator})
 
         assert metrics["content_safety.hate_unfairness_defect_rate"] == 0.33
+
+    @pytest.mark.parametrize(
+        "kwargs",
+        [
+            {"violence_threshold": 0.5},
+            {"sexual_threshold": "3"},
+            {"self_harm_threshold": None},
+            {"hate_unfairness_threshold": [3]},
+        ],
+    )
+    def test_invalid_threshold_type_error_metadata(self, kwargs):
+        """Test that a non-int threshold raises EvaluationException with correct metadata."""
+        with pytest.raises(EvaluationException) as exc_info:
+            ContentSafetyEvaluator(credential=None, azure_ai_project=None, **kwargs)  # type: ignore
+
+        exc = exc_info.value
+        assert exc.blame == ErrorBlame.USER_ERROR
+        assert exc.category == ErrorCategory.INVALID_VALUE
+        assert exc.target == ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR

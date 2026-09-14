@@ -2,13 +2,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import pytest
 import os
 
-from azure.storage.blob import BlobServiceClient
+import pytest
 from opentelemetry.trace import SpanKind, StatusCode
 from opentelemetry.sdk.trace import ReadableSpan
 from devtools_testutils import get_credential
+
+from azure.storage.blob import BlobServiceClient
 
 
 class TestTracing:

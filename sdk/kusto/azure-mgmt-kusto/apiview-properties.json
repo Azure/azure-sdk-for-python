@@ -309,5 +309,5 @@
         "azure.mgmt.kusto.operations.OperationsResultsLocationOperations.get": "Microsoft.Kusto.OperationsResultsOperationGroup.getLocation",
         "azure.mgmt.kusto.aio.operations.OperationsResultsLocationOperations.get": "Microsoft.Kusto.OperationsResultsOperationGroup.getLocation"
     },
-    "CrossLanguageVersion": "f7e9ae0c60a2"
+    "CrossLanguageVersion": "83d311262432"
 }

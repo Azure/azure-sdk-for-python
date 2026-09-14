@@ -58,6 +58,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-31/PaymentHsm_CreateOrUpdate_WithManagementProfile.json
+# x-ms-original-file: 2025-12-01-preview/PaymentHsm_CreateOrUpdate_WithManagementProfile.json
 if __name__ == "__main__":
     main()

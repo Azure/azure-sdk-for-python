@@ -63,6 +63,7 @@ class TestCosmosDBManagementFleetOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.fleet.update(
             resource_group_name=resource_group.name,
             fleet_name="str",
+            body={"properties": {"provisioningState": "str"}, "tags": {"str": "str"}},
         )
 
         # please add some check logic here by yourself

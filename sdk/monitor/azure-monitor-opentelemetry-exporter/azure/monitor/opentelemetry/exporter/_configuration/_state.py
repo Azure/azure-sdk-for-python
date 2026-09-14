@@ -4,6 +4,7 @@
 
 This module provides global access functions for the Configuration Manager singleton.
 """
+import logging
 import os
 from typing import Optional, TYPE_CHECKING
 
@@ -11,6 +12,8 @@ from azure.monitor.opentelemetry.exporter._constants import _APPLICATIONINSIGHTS
 
 if TYPE_CHECKING:
     from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
+
+logger = logging.getLogger(__name__)
 
 # Global singleton instance for easy access throughout the codebase
 _configuration_manager = None
@@ -27,6 +30,10 @@ def get_configuration_manager() -> Optional["_ConfigurationManager"]:
     """
     disabled = os.environ.get(_APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED)
     if disabled is not None and disabled.lower() == "true":
+        logger.debug(
+            "OneSettings control plane disabled via %s; using built-in SDK default configuration.",
+            _APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED,
+        )
         return None
     global _configuration_manager  # pylint: disable=global-statement
     if _configuration_manager is None:

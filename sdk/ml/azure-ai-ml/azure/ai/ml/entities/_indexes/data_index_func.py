@@ -69,28 +69,28 @@ def index_data(
     Create a PipelineJob object which can be used inside dsl.pipeline.
 
     :keyword data_index: The data index configuration.
-    :type data_index: DataIndex
+    :paramtype data_index: DataIndex
     :keyword description: Description of the job.
-    :type description: str
+    :paramtype description: str
     :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
+    :paramtype tags: dict[str, str]
     :keyword name: Name of the job.
-    :type name: str
+    :paramtype name: str
     :keyword display_name: Display name of the job.
-    :type display_name: str
+    :paramtype display_name: str
     :keyword experiment_name: Name of the experiment the job will be created under.
-    :type experiment_name: str
+    :paramtype experiment_name: str
     :keyword compute: The compute resource the job runs on.
-    :type compute: str
+    :paramtype compute: str
     :keyword serverless_instance_type: The instance type to use for serverless compute.
-    :type serverless_instance_type: Optional[str]
+    :paramtype serverless_instance_type: Optional[str]
     :keyword ml_client: The ml client to use for the job.
-    :type ml_client: Any
+    :paramtype ml_client: Any
     :keyword identity: Identity configuration for the job.
-    :type identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]]
+    :paramtype identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]]
     :keyword input_data_override: Input data override for the job.
         Used to pipe output of step into DataIndex Job in a pipeline.
-    :type input_data_override: Optional[Input]
+    :paramtype input_data_override: Optional[Input]
     :return: A PipelineJob object.
     :rtype: ~azure.ai.ml.entities.PipelineJob.
     """

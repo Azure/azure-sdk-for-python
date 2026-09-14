@@ -5,17 +5,14 @@
 # pylint: disable=protected-access
 
 from contextlib import contextmanager
-from typing import Any, Generator, Iterable, Optional, Union, cast
+from typing import Any, Generator, Iterable, Optional, cast
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
-)
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
-from azure.ai.ml._restclient.v2023_04_01_preview.models import EnvironmentVersion, ListViewType
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient042023Preview
+from azure.ai.ml._restclient.arm_ml_service.models import EnvironmentContainer, EnvironmentVersion, ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -32,9 +29,14 @@ from azure.ai.ml._utils._asset_utils import (
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
+    begin_create_or_update_registry_versioned_asset,
+    begin_import_registry_asset,
     get_asset_body_for_registry_storage,
     get_registry_client,
+    get_registry_container_asset,
+    get_registry_versioned_asset,
     get_sas_uri_for_registry_asset,
+    list_registry_assets,
 )
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, AzureMLResourceType
 from azure.ai.ml.entities._assets import Environment, WorkspaceAssetReference
@@ -57,11 +59,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace
-        resources (ServiceClient042023Preview or ServiceClient102021Dataplane).
-    :type service_client: typing.Union[
-        ~azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
-        ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
-        AzureMachineLearningWorkspaces]
+        resources.
+    :type service_client:
+        ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient
     :param all_operations: All operations classes of an MLClient object.
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
     """
@@ -70,7 +70,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient042023Preview, ServiceClient102021Dataplane],
+        service_client: ServiceClient042023Preview,
         all_operations: OperationsContainer,
         **kwargs: Any,
     ):
@@ -80,6 +80,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         self._containers_operations = service_client.environment_containers
         self._version_operations = service_client.environment_versions
         self._service_client = service_client
+        self._registry_service_client = kwargs.pop("registry_service_client", None)
         self._all_operations = all_operations
         self._datastore_operation = all_operations.all_operations[AzureMLResourceType.DATASTORE]
 
@@ -117,6 +118,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     resource_group_name=self._operation_scope.resource_group_name,
                     workspace_name=self._workspace_name,
                     registry_name=self._registry_name,
+                    registry_service_client=self._registry_service_client,
+                    asset_plural="environments",
                     **self._kwargs,
                 )
                 # If user not passing the version, SDK will try to update the latest version
@@ -127,11 +130,13 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 if isinstance(environment, WorkspaceAssetReference):
                     # verify that environment is not already in registry
                     try:
-                        self._version_operations.get(
-                            name=environment.name,
-                            version=environment.version,
-                            resource_group_name=self._resource_group_name,
-                            registry_name=self._registry_name,
+                        get_registry_versioned_asset(
+                            self._registry_service_client,
+                            "environments",
+                            environment.name,
+                            environment.version,
+                            self._resource_group_name,
+                            self._registry_name,
                         )
                     except Exception as err:  # pylint: disable=W0718
                         if isinstance(err, ResourceNotFoundError):
@@ -148,19 +153,19 @@ class EnvironmentOperations(_ScopeDependentOperations):
                         )
 
                     environment_rest = environment._to_rest_object()
-                    result = self._service_client.resource_management_asset_reference.begin_import_method(
-                        resource_group_name=self._resource_group_name,
-                        registry_name=self._registry_name,
-                        body=environment_rest,
-                        **self._kwargs,
-                    ).result()
+                    result = begin_import_registry_asset(
+                        self._registry_service_client,
+                        self._resource_group_name,
+                        self._registry_name,
+                        environment_rest,
+                    )
 
                     if not result:
                         env_rest_obj = self._get(name=environment.name, version=environment.version)
                         return Environment._from_rest_object(env_rest_obj)
 
                 sas_uri = get_sas_uri_for_registry_asset(
-                    service_client=self._service_client,
+                    service_client=self._registry_service_client,
                     name=environment.name,
                     version=environment.version,
                     resource_group=self._resource_group_name,
@@ -183,17 +188,22 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     show_progress=self._show_progress,
                 )
             env_version_resource = environment._to_rest_object()
-            env_rest_obj = (
-                self._version_operations.begin_create_or_update(
-                    name=environment.name,
-                    version=environment.version,
-                    registry_name=self._registry_name,
-                    body=env_version_resource,
-                    **self._scope_kwargs,
-                    **self._kwargs,
-                ).result()
-                if self._registry_name
-                else self._version_operations.create_or_update(
+            if self._registry_name:
+                registry_rest_obj = begin_create_or_update_registry_versioned_asset(
+                    self._registry_service_client,
+                    "environments",
+                    environment.name,
+                    environment.version,
+                    self._operation_scope.resource_group_name,
+                    self._registry_name,
+                    env_version_resource,
+                )
+                # The registry create LRO can complete with an empty body; only deserialize a
+                # non-None result, otherwise fall through to the re-fetch guard below (a bare
+                # ``_deserialize(None, [])`` would raise ``'NoneType' object has no attribute 'items'``).
+                env_rest_obj = EnvironmentVersion._deserialize(registry_rest_obj, []) if registry_rest_obj else None
+            else:
+                env_rest_obj = self._version_operations.create_or_update(
                     name=environment.name,
                     version=environment.version,
                     workspace_name=self._workspace_name,
@@ -201,8 +211,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     **self._scope_kwargs,
                     **self._kwargs,
                 )
-            )
-            if not env_rest_obj and self._registry_name:
+            if self._registry_name and (env_rest_obj is None or getattr(env_rest_obj, "id", None) is None):
+                # The registry create LRO body can be incomplete (missing the asset id, which
+                # ``_from_rest_object`` parses via AMLVersionedArmId); re-fetch the full resource.
                 env_rest_obj = self._get(name=str(environment.name), version=environment.version)
             return Environment._from_rest_object(env_rest_obj)
         except Exception as ex:  # pylint: disable=W0718
@@ -233,12 +244,16 @@ class EnvironmentOperations(_ScopeDependentOperations):
     def _get(self, name: str, version: Optional[str] = None) -> EnvironmentVersion:
         if version:
             return (
-                self._version_operations.get(
-                    name=name,
-                    version=version,
-                    registry_name=self._registry_name,
-                    **self._scope_kwargs,
-                    **self._kwargs,
+                EnvironmentVersion._deserialize(
+                    get_registry_versioned_asset(
+                        self._registry_service_client,
+                        "environments",
+                        name,
+                        version,
+                        self._resource_group_name,
+                        self._registry_name,
+                    ),
+                    [],
                 )
                 if self._registry_name
                 else self._version_operations.get(
@@ -250,11 +265,15 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 )
             )
         return (
-            self._containers_operations.get(
-                name=name,
-                registry_name=self._registry_name,
-                **self._scope_kwargs,
-                **self._kwargs,
+            EnvironmentContainer._deserialize(
+                get_registry_container_asset(
+                    self._registry_service_client,
+                    "environments",
+                    name,
+                    self._resource_group_name,
+                    self._registry_name,
+                ),
+                [],
             )
             if self._registry_name
             else self._containers_operations.get(
@@ -329,7 +348,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :type name: Optional[str]
         :keyword list_view_type: View type for including/excluding (for example) archived environments.
             Default: ACTIVE_ONLY.
-        :type list_view_type: Optional[ListViewType]
+        :paramtype list_view_type: Optional[ListViewType]
         :return: An iterator like instance of Environment objects.
         :rtype: ~azure.core.paging.ItemPaged[Environment]
 
@@ -346,12 +365,14 @@ class EnvironmentOperations(_ScopeDependentOperations):
             return cast(
                 Iterable[Environment],
                 (
-                    self._version_operations.list(
-                        name=name,
-                        registry_name=self._registry_name,
-                        cls=lambda objs: [Environment._from_rest_object(obj) for obj in objs],
-                        **self._scope_kwargs,
-                        **self._kwargs,
+                    list_registry_assets(
+                        self._registry_service_client,
+                        "environments",
+                        name,
+                        self._resource_group_name,
+                        self._registry_name,
+                        EnvironmentVersion,
+                        Environment._from_rest_object,
                     )
                     if self._registry_name
                     else self._version_operations.list(
@@ -367,11 +388,14 @@ class EnvironmentOperations(_ScopeDependentOperations):
         return cast(
             Iterable[Environment],
             (
-                self._containers_operations.list(
-                    registry_name=self._registry_name,
-                    cls=lambda objs: [Environment._from_container_rest_object(obj) for obj in objs],
-                    **self._scope_kwargs,
-                    **self._kwargs,
+                list_registry_assets(
+                    self._registry_service_client,
+                    "environments",
+                    None,
+                    self._resource_group_name,
+                    self._registry_name,
+                    EnvironmentContainer,
+                    Environment._from_container_rest_object,
                 )
                 if self._registry_name
                 else self._containers_operations.list(
@@ -420,6 +444,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             label=label,
+            asset_plural="environments",
+            version_arm_cls=EnvironmentVersion,
+            container_arm_cls=EnvironmentContainer,
         )
 
     @monitor_with_activity(ops_logger, "Environment.Restore", ActivityType.PUBLICAPI)
@@ -458,6 +485,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             label=label,
+            asset_plural="environments",
+            version_arm_cls=EnvironmentVersion,
+            container_arm_cls=EnvironmentContainer,
         )
 
     def _get_latest_version(self, name: str) -> Environment:
@@ -477,6 +507,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
             self._resource_group_name,
             self._workspace_name,
             self._registry_name,
+            registry_service_client=self._registry_service_client,
+            asset_plural="environments",
+            arm_cls=EnvironmentVersion,
         )
         return Environment._from_rest_object(result)
 
@@ -545,16 +578,18 @@ class EnvironmentOperations(_ScopeDependentOperations):
         sub_ = self._operation_scope._subscription_id
         registry_ = self._operation_scope.registry_name
         client_ = self._service_client
+        registry_service_client_ = self._registry_service_client
         environment_versions_operation_ = self._version_operations
 
         try:
-            _client, _rg, _sub, _model_client = get_registry_client(
+            _client, _rg, _sub, _model_client, _arm_client = get_registry_client(
                 self._service_client._config.credential, registry_name
             )
             self._operation_scope.registry_name = registry_name
             self._operation_scope._resource_group_name = _rg
             self._operation_scope._subscription_id = _sub
             self._service_client = _client
+            self._registry_service_client = _arm_client
             self._version_operations = _client.environment_versions
             yield
         finally:
@@ -562,6 +597,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
             self._operation_scope._resource_group_name = rg_
             self._operation_scope._subscription_id = sub_
             self._service_client = client_
+            self._registry_service_client = registry_service_client_
             self._version_operations = environment_versions_operation_
 
 

@@ -14,6 +14,7 @@ from azure.ai.evaluation._exceptions import (
 )
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
+from azure.ai.evaluation._common.utils import _log_safe_summary, _stringify_tool_result
 from azure.ai.evaluation._common._experimental import experimental
 
 logger = logging.getLogger(__name__)
@@ -283,7 +284,7 @@ def _get_tool_calls_results(agent_response_msgs):
             for content in msg.get("content", []):
                 if content.get("type") == "tool_result":
                     result = content.get("tool_result")
-                    tool_results[msg["tool_call_id"]] = f"[TOOL_RESULT] {result}"
+                    tool_results[msg["tool_call_id"]] = f"[TOOL_RESULT] {_stringify_tool_result(result)}"
 
     # Second pass: parse assistant messages and tool calls
     for msg in agent_response_msgs:
@@ -320,18 +321,23 @@ def _reformat_tool_calls_results(response, logger=None):
             # fallback to the original response in that case
             if logger:
                 logger.warning(
-                    f"Empty agent response extracted, likely due to input schema change. "
-                    f"Falling back to using the original response"
+                    "Empty agent response extracted, likely due to input schema change. "
+                    "Falling back to using the original response. %s",
+                    _log_safe_summary(response),
                 )
             return response
         return "\n".join(agent_response)
-    except Exception:
+    except Exception as e:  # pylint: disable=broad-except
         # If the agent response cannot be parsed for whatever
         # reason (e.g. the converter format changed), the original response is returned
         # This is a fallback to ensure that the evaluation can still proceed.
         # See comments on reformat_conversation_history for more details.
         if logger:
-            logger.warning(f"Agent response could not be parsed, falling back to original response")
+            logger.warning(
+                "Agent response could not be parsed, falling back to original response. Error: %s. %s",
+                e,
+                _log_safe_summary(response),
+            )
         return response
 
 
@@ -345,12 +351,14 @@ def _reformat_tool_definitions(tool_definitions, logger=None):
             param_names = ", ".join(params.keys()) if params else "no parameters"
             output_lines.append(f"- {name}: {desc} (inputs: {param_names})")
         return "\n".join(output_lines)
-    except Exception:
+    except Exception as e:  # pylint: disable=broad-except
         # If the tool definitions cannot be parsed for whatever reason, the original tool definitions are returned
         # This is a fallback to ensure that the evaluation can still proceed.
         # See comments on reformat_conversation_history for more details.
         if logger:
             logger.warning(
-                f"Tool definitions could not be parsed, falling back to original definitions: {tool_definitions}"
+                "Tool definitions could not be parsed; falling back to raw definitions. Input shape: %s. Error: %s",
+                _log_safe_summary(tool_definitions),
+                e,
             )
         return tool_definitions

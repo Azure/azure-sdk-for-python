@@ -1,0 +1,45 @@
+{
+  "properties": {
+    "experimentName": "smoke-distillation",
+    "fineTuningDetails": {
+      "hyperParameters": {
+        "learning_rate_multiplier": "0.1"
+      },
+      "model": {
+        "jobInputType": "mlflow_model",
+        "uri": "azureml://registries/azureml-meta/models/Meta-Llama-3.1-8B-Instruct/versions/2"
+      },
+      "modelProvider": "Custom",
+      "taskType": "ChatCompletion",
+      "trainingData": {
+        "jobInputType": "uri_file",
+        "uri": "azureml://datastores/workspaceblobstore/paths/train.jsonl"
+      },
+      "validationData": {
+        "jobInputType": "uri_file",
+        "uri": "azureml://datastores/workspaceblobstore/paths/valid.jsonl"
+      }
+    },
+    "isArchived": false,
+    "jobType": "FineTuning",
+    "outputs": {
+      "registered_model": {
+        "assetName": "smoke-distilled-model",
+        "jobOutputType": "mlflow_model"
+      }
+    },
+    "properties": {
+      "azureml.connection_information": "{\"name\": \"smoke-teacher-conn\", \"tags\": {}, \"type\": \"serverless\", \"target\": \"https://smoke-teacher.eastus.models.ai.azure.com\", \"credentials\": {\"type\": \"api_key\", \"key\": \"smoke-teacher-key\"}, \"is_shared\": true, \"metadata\": {}, \"api_key\": \"smoke-teacher-key\", \"endpoint\": \"https://smoke-teacher.eastus.models.ai.azure.com\"}",
+      "azureml.data_generation_task_type": "MATH",
+      "azureml.data_generation_type": "label_generation",
+      "azureml.enable_chain_of_density": "False",
+      "azureml.enable_chain_of_thought": "True",
+      "azureml.enable_distillation": "True",
+      "azureml.min_endpoint_success_ratio": "0.8",
+      "azureml.teacher_model.endpoint_name": "smoke-teacher-conn",
+      "azureml.teacher_model.max_tokens": "100",
+      "azureml.teacher_model.temperature": "0.7"
+    },
+    "tags": {}
+  }
+}

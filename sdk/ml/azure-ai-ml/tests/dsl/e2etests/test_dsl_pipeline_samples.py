@@ -12,6 +12,7 @@ import pydash
 import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel
+from azure.core.serialization import as_attribute_dict
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml.entities import Component as ComponentEntity
@@ -32,8 +33,8 @@ def assert_job_completed(pipeline, client: MLClient):
 
 
 def assert_dsl_curated(pipeline: PipelineJob, job_yaml, omit_fields):
-    dsl_pipeline_job_dict = pipeline._to_rest_object().as_dict()
-    pipeline_job_dict = load_job(source=job_yaml)._to_rest_object().as_dict()
+    dsl_pipeline_job_dict = as_attribute_dict(pipeline._to_rest_object())
+    pipeline_job_dict = as_attribute_dict(load_job(source=job_yaml)._to_rest_object())
 
     dsl_pipeline_job_dict = pydash.omit(dsl_pipeline_job_dict, omit_fields)
     pipeline_job_dict = pydash.omit(pipeline_job_dict, omit_fields)
@@ -264,7 +265,6 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
-    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_parallel_components_with_tabular_input_pipeline_output(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.parallel_component_with_tabular_input.pipeline import (
             generate_dsl_pipeline as pipeline_with_parallel_components,
@@ -274,7 +274,6 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
-    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_parallel_components(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.parallel_component.pipeline import (
             generate_dsl_pipeline as pipeline_with_parallel_components,

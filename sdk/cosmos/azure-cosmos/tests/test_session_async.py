@@ -200,6 +200,143 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.key_db.delete_container(test_container_ref)  # control-plane
 
+    # The three async tests below check that a query targeted at a single
+    # partition sends only that partition's session token on every request,
+    # including each page and the partition_key entry point.
+
+    async def test_feed_range_query_session_token_matches_partition_lsn_async(self):
+        # Async twin: a single feed-range query must send only that partition's token.
+        test_container_ref = await self.key_db.create_container(
+            "Container fr token value async " + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            offer_throughput=11000,
+        )
+        test_container = self.created_db.get_container_client(test_container_ref.id)
+        try:
+            for i in range(60):
+                await test_container.create_item({"id": str(uuid.uuid4()), "pk": f"pk_{i:04d}"})
+
+            feed_ranges = [fr async for fr in test_container.read_feed_ranges()]
+            self.assertGreater(len(feed_ranges), 1)
+
+            captured = {"token": None}
+
+            def capture(request):
+                captured["token"] = request.http_request.headers.get(HttpHeaders.SessionToken)
+
+            _ = [item async for item in test_container.query_items(
+                query="SELECT * FROM c",
+                feed_range=feed_ranges[0],
+                raw_request_hook=capture,
+            )]
+
+            wire_token = captured["token"]
+            self.assertIsNotNone(wire_token)
+            self.assertNotIn(",", wire_token, f"Got compound token on the wire: {wire_token!r}")
+            self.assertIn(":", wire_token, f"Expected single-partition token shape: {wire_token!r}")
+            pk_range_id, _, vector_part = wire_token.partition(":")
+            self.assertNotEqual(pk_range_id, "", f"Partition range id should not be empty: {wire_token!r}")
+            self.assertTrue(vector_part, f"Vector portion should not be empty: {wire_token!r}")
+        finally:
+            await self.key_db.delete_container(test_container_ref)
+
+    async def test_feed_range_query_session_token_single_partition_across_pages_async(self):
+        # Async twin: every page must send a single-partition token.
+        test_container_ref = await self.key_db.create_container(
+            "Container fr pagination async " + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            offer_throughput=11000,
+        )
+        test_container = self.created_db.get_container_client(test_container_ref.id)
+        try:
+            # Build multi-partition session state first so this test can catch
+            # regressions that accidentally send a compound token.
+            for i in range(60):
+                await test_container.create_item({"id": str(uuid.uuid4()), "pk": f"pk_{i:04d}"})
+
+            for i in range(20):
+                await test_container.create_item({
+                    "id": str(uuid.uuid4()),
+                    "pk": "pinned_pk",
+                    "i": i,
+                })
+
+            feed_ranges = [fr async for fr in test_container.read_feed_ranges()]
+            self.assertGreater(len(feed_ranges), 1, "Expected multiple feed ranges")
+
+            target_fr = await test_container.feed_range_from_partition_key("pinned_pk")
+
+            captured_tokens = []
+
+            def capture(request):
+                token = request.http_request.headers.get(HttpHeaders.SessionToken)
+                if token:
+                    captured_tokens.append(token)
+
+            pager = test_container.query_items(
+                query="SELECT * FROM c",
+                feed_range=target_fr,
+                max_item_count=2,
+                raw_request_hook=capture,
+            ).by_page()
+            page_count = 0
+            async for page in pager:
+                _ = [item async for item in page]
+                page_count += 1
+
+            self.assertGreaterEqual(page_count, 1)
+            self.assertGreater(len(captured_tokens), 0)
+            prefixes = set()
+            for token in captured_tokens:
+                self.assertNotIn(
+                    ",", token,
+                    f"Compound token leaked on a paginated request: {token!r}",
+                )
+                self.assertIn(":", token, f"Bad token shape on paginated request: {token!r}")
+                prefixes.add(token.split(":", 1)[0])
+            self.assertEqual(
+                len(prefixes), 1,
+                f"Single-partition query produced tokens for multiple partition range ids: {prefixes}",
+            )
+        finally:
+            await self.key_db.delete_container(test_container_ref)
+
+    async def test_query_with_partition_key_only_sends_single_partition_token_async(self):
+        # Async twin: a query scoped by partition_key must also send only
+        # the relevant partition's token.
+        test_container_ref = await self.key_db.create_container(
+            "Container pk-only session async " + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            offer_throughput=11000,
+        )
+        test_container = self.created_db.get_container_client(test_container_ref.id)
+        try:
+            for i in range(60):
+                await test_container.create_item({"id": str(uuid.uuid4()), "pk": f"pk_{i:04d}"})
+
+            captured_tokens = []
+
+            def capture(request):
+                token = request.http_request.headers.get(HttpHeaders.SessionToken)
+                if token:
+                    captured_tokens.append(token)
+
+            _ = [item async for item in test_container.query_items(
+                query="SELECT * FROM c WHERE c.pk = @pk",
+                parameters=[{"name": "@pk", "value": "pk_0001"}],
+                partition_key="pk_0001",
+                raw_request_hook=capture,
+            )]
+
+            self.assertGreater(len(captured_tokens), 0)
+            for token in captured_tokens:
+                self.assertNotIn(
+                    ",", token,
+                    f"partitionKey-only query leaked a compound token: {token!r}",
+                )
+        finally:
+            await self.key_db.delete_container(test_container_ref)
+
     async def test_manual_session_token_override_async(self):
         # Create an item to get a valid session token from the response
         created_document = await self.created_container.create_item(
