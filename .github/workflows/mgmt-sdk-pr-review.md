@@ -390,51 +390,53 @@ Interpret each `apiVersionDrift` entry independently:
 - `unverified`: add an unverified check using the entry's exact `error`. Do not infer a revision or
   API version.
 
-## Step 4 - Attribute introduced breaking changes
+## Step 4 - Check introduced breaking changes for TypeSpec evidence
 
 For each item in every `breakingChangeContext.introducedEntries` list:
 
 1. Preserve the release heading, complete multiline entry text, `changeKind`, and recorded line
     location. Exclude historical entries not present in this list. If a changed CHANGELOG has an
-    empty Breaking Changes section, report that fact only under unverified checks when collection
+    empty Breaking Changes section, leave it to human review when collection
     evidence indicates analysis was expected but could not be completed.
 2. Compare package provenance at the merge base and pinned head. When
     `releaseBaseline.differsFromMergeBase` is true, use the release baseline provenance for causal
-    comparison and explain the different PR and changelog baselines. The inferred tag is evidence,
+    comparison. The inferred tag is evidence,
     not proof of the changelog generator's exact comparison target; preserve the recorded `basis`
-    uncertainty. If the release baseline is unavailable, say so.
-3. Examine `_metadata.json`, `tsp-location.yaml`, TypeSpec configuration, generation manifests,
-    dependency locks, and available `api.md` evidence recorded by the collector. Distinguish a
-    version range from a resolved dependency version. Do not infer an exact installed version from
-    a range such as `^0.37.1`, or infer an unchanged toolchain from one unchanged version field.
+    uncertainty internally. If a missing or ambiguous baseline prevents connecting a TypeSpec
+    change to the SDK entry, leave that entry to human review with a short reason.
+3. Use `_metadata.json`, `tsp-location.yaml`, TypeSpec configuration, and permitted API artifacts
+    to identify the old and new specification sources and selected API versions. Focus on whether
+    a specific TypeSpec change directly explains the named SDK breaking change.
 4. From each validated `specificationSources` repository and immutable revision, fetch only the
     files needed to trace the named model, enum, operation, or parameter. Follow source-directory
     moves, imports/shared models, client naming decorators, versioning annotations, API-version
     selection, and renamed files. Bound investigation to 20 repository searches/file fetches and
     1 MiB of fetched text per package. Validate repository names and full 40-character SHAs before
-    fetching. Surface access failures, search truncation, ambiguous matches, and exhausted limits.
-5. When toolchain causation is plausible, inspect immutable release notes, changelogs, or source
-    for the specifically implicated emitter/compiler/generator behavior. An emitter version bump
-    alone is not causal evidence. A specification commit change alone is not causal evidence.
-    Configuration changes must be named as configuration changes, not automatically categorized as
-    emitter changes. Do not perform old/new specification by old/new toolchain regeneration.
+    fetching. Stop investigating an entry once direct evidence explains it. If access failures,
+    search truncation, ambiguous matches, or exhausted limits prevent a conclusion, leave it to
+    human review.
+5. Do not investigate emitter/compiler/generator causes, dependency locks, or toolchain release
+    notes. Neither a specification commit change nor an emitter version bump alone proves a cause.
+    Absence of TypeSpec evidence does not prove that the toolchain caused the change or that the
+    TypeSpec was unchanged. Do not perform regeneration experiments.
 6. Prefer permitted API artifacts such as `api.md` when available. Do not fetch or analyze files
     excluded by the authoritative review rules merely to bypass those exclusions. Never execute,
     build, import, regenerate, or check out pull-request-controlled code.
 
-Classify each entry using exactly one cause:
+Use exactly one outcome in the Cause column for each entry:
 
-- `TypeSpec/API`: a specific source definition, decorator, versioning annotation, or API-version
-  selection change explains the SDK change.
-- `Emitter/toolchain`: a specifically documented or source-supported generation behavior change
-  explains the SDK change after source and configuration differences are accounted for.
-- `Mixed`: evidence identifies concrete contributions from both TypeSpec/API and toolchain.
-- `Unverified`: available evidence cannot distinguish the cause or establish the relevant baseline.
+- `TypeSpec/API`: direct evidence from a specific source definition, decorator, versioning
+    annotation, or API-version selection change explains the named SDK change. Show the relevant
+    old/new source or an explicit versioning annotation connecting them. A related model change
+    alone is not sufficient to explain an enum removal without evidence connecting the enum.
+- `Human review`: no direct TypeSpec evidence was established. Write "Needs human review" and a
+    short entry-specific reason or question. Do not speculate about other causes or require the
+    author to provide dependency locks as a routine follow-up.
 
-For confidence, use `High`, `Medium`, or `Low` and give an evidence-based rationale. `High` requires
-direct immutable evidence that accounts for plausible alternatives. `Medium` requires corroborated
-evidence with a named gap. `Low` means circumstantial or incomplete evidence and normally pairs
-with `Unverified`. For `Unverified`, state the specific evidence needed to resolve the attribution.
+Use `High` confidence only for direct evidence connecting the TypeSpec change to the SDK entry;
+otherwise use `Human review` with `N/A` confidence instead of a tentative attribution. This
+classification establishes a TypeSpec contribution, not that all toolchain contributions have
+been ruled out.
 Link only to immutable commit, tag-object, or release URLs. Do not claim candidate replacements are
 proven mappings without source evidence connecting them.
 
@@ -449,7 +451,7 @@ state that limitation alongside the immutable file link rather than inventing an
 commit and release pages do not require code-line anchors.
 
 Attribution is explanatory. Do not create or escalate a rule-violation finding solely because a
-breaking change is classified, including `Unverified`.
+breaking change is classified or left to human review.
 
 ## Step 5 - Post one review comment
 
@@ -478,7 +480,10 @@ findings, replace the findings table with:
 **Findings:** None.
 ```
 
-Follow it with:
+Reserve unverified checks for required MGMT SDK review rules and API-version drift checks that
+could not be completed. Do not list attribution baseline uncertainty, unresolved enum causation,
+or missing toolchain dependencies here; keep any relevant handoff in the attribution row.
+Follow the findings with:
 
 ```markdown
 ### Unverified checks
@@ -501,13 +506,17 @@ Then include a distinct attribution section after unverified checks:
 
 | Package / release | Changelog entry | Cause | Evidence and explanation | Confidence |
 | --- | --- | --- | --- | --- |
-| Package and release heading | Full introduced or modified entry linked to its changelog lines | `TypeSpec/API`, `Emitter/toolchain`, `Mixed`, or `Unverified` | Immutable links with verified line anchors, baseline, concise explanation, and specific missing evidence when unverified | `High`, `Medium`, or `Low` with rationale |
+| Package and release heading | Full introduced or modified entry linked to its changelog lines | `TypeSpec/API` or `Human review` | Direct TypeSpec evidence with immutable line links and a concise explanation, or "Needs human review" with a short reason | `High` with rationale, or `N/A` for human review |
 ```
 
 Use one row per introduced entry. Preserve multiline entry meaning while converting line breaks to
 `<br>`, and escape Markdown table delimiters. If no introduced Breaking Changes entries were found
 and collection completed, write `**Breaking-change attribution:** No newly added or modified
 entries.` Do not merge attribution rows into the findings table.
+
+If collection is incomplete, identify the affected package or changelog under this attribution
+section as needing human review; do not imply that all introduced entries were checked. Do not
+add a separate attribution limitations table or repeat handoff reasons under unverified checks.
 
 Finish with a brief `### Review summary` naming every affected package and the checks completed.
 
