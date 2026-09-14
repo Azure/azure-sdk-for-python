@@ -22,7 +22,7 @@ from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import BlobClient
-from .._generated import AzureDataLakeStorageRESTAPI
+from .._generated import DataLakeClient as AzureDataLakeStorageRESTAPI
 from .._models import (
     AccessControlChangeResult,
     AccessControlChanges,

@@ -39,17 +39,24 @@ class TestContainerRegistryManagementConnectedRegistriesOperations(AzureMgmtReco
             connected_registry_name="str",
             connected_registry_create_parameters={
                 "id": "str",
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "name": "str",
                 "properties": {
                     "mode": "str",
                     "parent": {
                         "syncProperties": {
                             "messageTtl": "1 day, 0:00:00",
-                            "tokenId": "str",
+                            "authType": "str",
                             "gatewayEndpoint": "str",
                             "lastSyncTime": "2020-02-20 00:00:00",
                             "schedule": "str",
                             "syncWindow": "1 day, 0:00:00",
+                            "tokenId": "str",
                         },
                         "id": "str",
                     },
@@ -74,10 +81,12 @@ class TestContainerRegistryManagementConnectedRegistriesOperations(AzureMgmtReco
                     },
                     "statusDetails": [
                         {
+                            "availableGib": 0.0,
                             "code": "str",
                             "correlationId": "str",
                             "description": "str",
                             "timestamp": "2020-02-20 00:00:00",
+                            "totalGib": 0.0,
                             "type": "str",
                         }
                     ],
@@ -106,17 +115,24 @@ class TestContainerRegistryManagementConnectedRegistriesOperations(AzureMgmtReco
             registry_name="str",
             connected_registry_name="str",
             connected_registry_update_parameters={
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "properties": {
                     "clientTokenIds": ["str"],
                     "garbageCollection": {"enabled": bool, "schedule": "str"},
                     "logging": {"auditLogStatus": "str", "logLevel": "str"},
                     "notificationsList": ["str"],
                     "syncProperties": {
+                        "authType": "str",
                         "messageTtl": "1 day, 0:00:00",
                         "schedule": "str",
                         "syncWindow": "1 day, 0:00:00",
                     },
-                }
+                },
             },
         ).result()  # call '.result()' to poll until service return final result
 

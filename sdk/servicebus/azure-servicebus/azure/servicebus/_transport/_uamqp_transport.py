@@ -56,7 +56,7 @@ try:
     )
     from ._base import AmqpTransport
     from ..amqp._constants import AmqpMessageBodyType
-    from .._common.utils import utc_from_timestamp, utc_now
+    from .._common.utils import utc_from_timestamp, utc_now, get_attempt_timeout
     from .._common.tracing import get_receive_links, receive_trace_context_manager
     from .._common.constants import (
         UAMQP_LIBRARY,
@@ -818,7 +818,7 @@ try:
             # pylint: disable=protected-access
             try:
                 receiver._receive_context.set()
-                receiver._open()
+                receiver._open(get_attempt_timeout(None, receiver._config.try_timeout))
                 if not receiver._message_iter:
                     receiver._message_iter = receiver._handler.receive_messages_iter()
                 uamqp_message = next(cast(Iterator["Message"], receiver._message_iter))

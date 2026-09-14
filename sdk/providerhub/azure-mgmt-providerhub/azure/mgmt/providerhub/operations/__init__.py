@@ -22,6 +22,7 @@ from ._operations import ResourceTypeRegistrationsOperations  # type: ignore
 from ._operations import SkusOperations  # type: ignore
 from ._operations import AuthorizedApplicationsOperations  # type: ignore
 from ._operations import ProviderMonitorSettingsOperations  # type: ignore
+from ._operations import ManifestsOperations  # type: ignore
 from ._operations import ResourceActionsOperations  # type: ignore
 from ._operations import _ProviderHubMgmtClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 
@@ -40,6 +41,7 @@ __all__ = [
     "SkusOperations",
     "AuthorizedApplicationsOperations",
     "ProviderMonitorSettingsOperations",
+    "ManifestsOperations",
     "ResourceActionsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

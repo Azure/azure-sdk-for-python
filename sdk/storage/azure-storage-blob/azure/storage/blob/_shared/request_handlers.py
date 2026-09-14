@@ -262,6 +262,11 @@ def _make_body_from_sub_request(sub_request):
     # append remaining headers (this will set the Content-Length, as it was set on `sub-request`)
     for header_name, header_value in headers.items():
         if header_value is not None:
+            if "\r" in header_name or "\n" in header_name or "\r" in header_value or "\n" in header_value:
+                raise ValueError(
+                    f"Invalid header {header_name!r} in batch sub-request: the header name or its value "
+                    r"contains a '\r' or '\n' character, which is not permitted."
+                )
             sub_request_body.append(header_name)
             sub_request_body.append(": ")
             sub_request_body.append(header_value)

@@ -215,6 +215,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :paramtype availability_strategy: Union[bool, dict[str, Any]]
     :keyword ~concurrent.futures.thread.ThreadPoolExecutor availability_strategy_executor:
         Optional ThreadPoolExecutor for handling concurrent operations.
+    :keyword bool enable_compact_utf8_item_writes:
+        Use compact UTF-8 when serializing item bodies for create, upsert, replace, patch, and transactional batch
+        operations. The default is False.
 
     .. admonition:: Example:
 
@@ -237,6 +240,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         """
 
         auth = _build_auth(credential)
+        enable_compact_utf8_item_writes = kwargs.pop("enable_compact_utf8_item_writes", False)
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
             url_connection=url,
@@ -245,6 +249,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             connection_policy=connection_policy,
             availability_strategy=kwargs.pop("availability_strategy", False),
             availability_strategy_executor=kwargs.pop("availability_strategy_executor", None),
+            enable_compact_utf8_item_writes=enable_compact_utf8_item_writes,
             **kwargs
         )
 

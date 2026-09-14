@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-06-01/FleetMembers_Delete.json
+# x-ms-original-file: 2026-06-02-preview/FleetMembers_Delete.json
 if __name__ == "__main__":
     main()
