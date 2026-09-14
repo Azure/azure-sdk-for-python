@@ -7,8 +7,6 @@ import os
 import warnings
 from typing import Dict, Optional, Any
 
-import requests
-
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.rest import HttpRequest
@@ -28,10 +26,18 @@ class ServiceFabricCredential(MsalManagedIdentityClient):
     def get_unavailable_message(self, desc: str = "") -> str:
         return f"Service Fabric managed identity configuration not found in environment. {desc}"
 
-    def _create_http_client(self, **kwargs: Any) -> requests.Session:
+    def _create_http_client(self, **kwargs: Any) -> Any:
+        import requests
+
         ignored_options = [
             name
-            for name in ("transport", "raw_request_hook", "raw_response_hook", "retry_policy", "proxy_policy")
+            for name in (
+                "transport",
+                "raw_request_hook",
+                "raw_response_hook",
+                "retry_policy",
+                "proxy_policy",
+            )
             if kwargs.get(name) is not None
         ]
         if ignored_options:

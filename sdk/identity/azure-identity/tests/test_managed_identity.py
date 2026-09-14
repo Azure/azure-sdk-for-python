@@ -107,10 +107,7 @@ def test_service_fabric_close():
     session = requests.Session()
     with (
         mock.patch.dict("os.environ", SERVICE_FABRIC_ENVIRON, clear=True),
-        mock.patch(
-            "azure.identity._credentials.service_fabric.requests.Session",
-            return_value=session,
-        ),
+        mock.patch.object(requests, "Session", return_value=session),
         mock.patch.object(session, "close") as close,
     ):
         credential = ManagedIdentityCredential()
@@ -123,10 +120,7 @@ def test_service_fabric_context_manager():
     session = requests.Session()
     with (
         mock.patch.dict("os.environ", SERVICE_FABRIC_ENVIRON, clear=True),
-        mock.patch(
-            "azure.identity._credentials.service_fabric.requests.Session",
-            return_value=session,
-        ),
+        mock.patch.object(requests, "Session", return_value=session),
         mock.patch.object(session, "close") as close,
     ):
         with ManagedIdentityCredential():
