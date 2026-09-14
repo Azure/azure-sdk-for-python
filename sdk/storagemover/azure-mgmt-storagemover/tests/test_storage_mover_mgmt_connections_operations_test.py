@@ -47,6 +47,7 @@ REAL_PRIVATE_LINK_SERVICE_ID = (
 )
 
 
+@pytest.mark.live_test_only
 class TestStorageMoverMgmtConnectionsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(StorageMoverMgmtClient)

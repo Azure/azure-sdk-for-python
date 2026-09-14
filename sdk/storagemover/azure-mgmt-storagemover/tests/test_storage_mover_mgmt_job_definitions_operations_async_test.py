@@ -104,6 +104,7 @@ AWS_PUBLIC_S3_BUCKET_ID = (
 STORAGE_BLOB_DATA_CONTRIBUTOR_ROLE_DEF_GUID = "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
 
 
+@pytest.mark.live_test_only
 class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(StorageMoverMgmtClient, is_async=True)
