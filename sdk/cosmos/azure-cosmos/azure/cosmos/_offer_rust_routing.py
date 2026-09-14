@@ -107,7 +107,7 @@ def build_read_offer_prepared_request(
     :type req_headers: Mapping[str, Any]
     :param options: Normalized request options for this call.
     :type options: Mapping[str, Any]
-    :rtype: ~azure.cosmos._backend.base.PreparedRequest
+    :rtype: ~azure.cosmos._backend.cosmos_backend.PreparedRequest
     """
     normalized_container_link = base.TrimBeginningAndEndingSlashes(container_link)
     body_bytes = serialize_body_to_bytes(dict(offer_query))
@@ -336,7 +336,7 @@ def build_replace_offer_prepared_request(
     :type req_headers: Mapping[str, Any]
     :param options: Normalized request options for this call.
     :type options: Mapping[str, Any]
-    :rtype: ~azure.cosmos._backend.base.PreparedRequest
+    :rtype: ~azure.cosmos._backend.cosmos_backend.PreparedRequest
     """
     normalized_container_link = base.TrimBeginningAndEndingSlashes(container_link)
     body_bytes = serialize_body_to_bytes(dict(offer))

@@ -31,9 +31,10 @@ from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._constants import _Constants as Constants
-from azure.cosmos.aio._backend.base import AsyncCosmosBackend
+from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
+from azure.cosmos.aio._helpers.legacy_item_helper import AsyncLegacyItemHelper
 
 
 def _async_dispatch_backend(response):
@@ -44,6 +45,9 @@ def _async_dispatch_backend(response):
 
     class _CapturingBackend(AsyncCosmosBackend):
         name = "rust"
+
+        async def resolve_container_metadata(self, link):
+            return BackendResponse(200, 0, {}, b'{"_rid":"rid-cached"}', None)
 
         async def execute(self, prepared):
             return response
@@ -75,7 +79,7 @@ class TestAsyncReplaceItem(unittest.TestCase):
         body = {"id": "order-42", "pk": "customerA", "total": 129.0}
 
         async def _run():
-            return await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).replace_item(
+            return await AsyncLegacyItemHelper(cc).replace_item(
                 container_link="dbs/db/colls/c",
                 document_link="dbs/db/colls/c/docs/order-42",
                 item_id="order-42",
@@ -103,7 +107,7 @@ class TestAsyncReplaceItem(unittest.TestCase):
         )
 
         async def _run():
-            return await AsyncItemHelper(_async_dispatch_backend(response), cc).replace_item(
+            return await AsyncItemHelper(_async_dispatch_backend(response)).replace_item(
                 container_link="dbs/db/colls/c",
                 document_link="dbs/db/colls/c/docs/order-42",
                 item_id="order-42",
@@ -122,7 +126,7 @@ class TestAsyncReplaceItem(unittest.TestCase):
         cc = _connection_with_cache()
 
         async def _run():
-            await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).replace_item(
+            await AsyncLegacyItemHelper(cc).replace_item(
                 container_link="dbs/db/colls/c",
                 document_link="dbs/db/colls/c/docs/order-42",
                 item_id="order-42",
@@ -152,7 +156,7 @@ class TestAsyncReplaceItem(unittest.TestCase):
         cc.ReplaceItem = AsyncMock(return_value="ok")
 
         async def _run():
-            await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).replace_item(
+            await AsyncLegacyItemHelper(cc).replace_item(
                 container_link="dbs/db/colls/c",
                 document_link="dbs/db/colls/c/docs/x",
                 item_id="x",

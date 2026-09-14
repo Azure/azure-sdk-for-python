@@ -21,7 +21,7 @@ it, these calls would read ``client_connection._backend`` and branch -- try the
 rust engine, else run the legacy routing-map code -- inside the customer-facing
 proxy method. Instead each function uses the concrete backend stored by the
 client and drives the work through
-:meth:`~azure.cosmos._backend.base.CosmosBackend.run_operation`, so the proxy
+:meth:`~azure.cosmos._backend.cosmos_backend.CosmosBackend.run_operation`, so the proxy
 method is a thin delegate that names no engine. This mirrors
 :class:`~azure.cosmos._helpers.item_helper.ItemHelper` and the throughput
 coordinator.
@@ -105,7 +105,7 @@ def read_feed_ranges(
             ]
 
         cached = backend.run_operation(
-            build_prepared=lambda: build_read_feed_ranges_prepared_request(
+            prepare_request=lambda: build_read_feed_ranges_prepared_request(
                 container_link=container_link,
                 force_refresh=force_refresh,
             ),
@@ -138,7 +138,7 @@ def feed_range_from_partition_key(
     selected_backend = client_connection._backend
     backend = selected_backend
     return backend.run_operation(
-        build_prepared=lambda: build_feed_range_from_partition_key_prepared_request(
+        prepare_request=lambda: build_feed_range_from_partition_key_prepared_request(
             container_link=container_link,
             partition_key_value=partition_key_value,
         ),
@@ -177,7 +177,7 @@ def is_feed_range_subset(
         return child.get_normalized_range().is_subset(parent.get_normalized_range())
 
     return backend.run_operation(
-        build_prepared=lambda: build_is_feed_range_subset_prepared_request(
+        prepare_request=lambda: build_is_feed_range_subset_prepared_request(
             parent_feed_range=parent_feed_range,
             child_feed_range=child_feed_range,
         ),
@@ -216,7 +216,7 @@ def read_feed_ranges_async(
         nonlocal cached
         if cached is not None:
             return cached
-        async def build_prepared():
+        async def prepare_request():
             return build_read_feed_ranges_prepared_request(
                 container_link=container_link,
                 force_refresh=force_refresh,
@@ -241,7 +241,7 @@ def read_feed_ranges_async(
             ]
 
         cached = await backend.run_operation(
-            build_prepared=build_prepared,
+            prepare_request=prepare_request,
             legacy_operation=LegacyOperation(op="read_feed_ranges", invoke=run_legacy),
             parse_response=lambda response: parse_read_feed_ranges_payload(
                 parse_backend_response(
@@ -271,7 +271,7 @@ async def feed_range_from_partition_key_async(
     selected_backend = client_connection._backend
     backend = selected_backend
 
-    async def build_prepared():
+    async def prepare_request():
         return build_feed_range_from_partition_key_prepared_request(
             container_link=container_link,
             partition_key_value=partition_key_value,
@@ -283,7 +283,7 @@ async def feed_range_from_partition_key_async(
         ).to_dict()
 
     return await backend.run_operation(
-        build_prepared=build_prepared,
+        prepare_request=prepare_request,
         legacy_operation=LegacyOperation(
             op="feed_range_from_partition_key", invoke=run_legacy
         ),
@@ -310,7 +310,7 @@ async def is_feed_range_subset_async(
     selected_backend = client_connection._backend
     backend = selected_backend
 
-    async def build_prepared():
+    async def prepare_request():
         return build_is_feed_range_subset_prepared_request(
             parent_feed_range=parent_feed_range,
             child_feed_range=child_feed_range,
@@ -322,7 +322,7 @@ async def is_feed_range_subset_async(
         return child.get_normalized_range().is_subset(parent.get_normalized_range())
 
     return await backend.run_operation(
-        build_prepared=build_prepared,
+        prepare_request=prepare_request,
         legacy_operation=LegacyOperation(op="is_feed_range_subset", invoke=run_legacy),
         parse_response=lambda response: parse_is_feed_range_subset_payload(
             parse_backend_response(

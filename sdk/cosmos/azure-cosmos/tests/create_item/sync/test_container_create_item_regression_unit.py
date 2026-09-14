@@ -40,6 +40,7 @@ from unittest.mock import MagicMock, patch
 
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.container import ContainerProxy
+from azure.cosmos._helpers._item_context import ItemClientContext
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 
 
@@ -71,7 +72,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
     cc._backend = LEGACY_BACKEND
     cc.CreateItem = MagicMock(return_value={"id": "x", "_rid": rid})
 
-    proxy = ContainerProxy(cc, "dbs/db", "c")
+    proxy = ContainerProxy(cc, "dbs/db", "c", _item_context=ItemClientContext(cc._backend))
 
     # Stub ``ContainerProxy.read`` so a cache miss does not actually
     # hit the network. The fake records the kwargs it received and

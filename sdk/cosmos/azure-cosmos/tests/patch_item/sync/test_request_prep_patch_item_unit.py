@@ -6,7 +6,7 @@
 """Unit tests for the ``patch_item`` request-prep path — no network, no emulator.
 
 These pin ``build_patch_operations_payload`` and
-``build_patch_item_prepared``.
+``build_patch_item_request``.
 
 Two things are checked: the body never carries a condition, and the prep
 never emits an ``If-Match`` / ``If-None-Match`` header (a patch with a
@@ -30,7 +30,7 @@ from azure.cosmos._helpers._item_dispatch import (
     build_patch_item_request_options,
     merge_patch_item_explicit_kwargs,
 )
-from azure.cosmos._helpers._request_item import build_patch_item_prepared, build_patch_operations_payload
+from azure.cosmos._helpers._request_item import build_patch_item_request, build_patch_operations_payload
 
 
 _SET_OP = {"op": "set", "path": "/status", "value": "shipped"}
@@ -91,7 +91,7 @@ def test_payload_never_carries_a_condition():
 
 
 # ---------------------------------------------------------------------------
-# build_patch_item_prepared -- baseline shape
+# build_patch_item_request -- baseline shape
 # ---------------------------------------------------------------------------
 
 
@@ -99,7 +99,7 @@ def test_baseline_is_operations_body_with_item_id():
     """A patch carries the operations payload (serialised to JSON bytes) and
     the id of the document to patch on ``item_id``. The op tag is
     ``OP_PATCH_ITEM``."""
-    prepared = build_patch_item_prepared(
+    prepared = build_patch_item_request(
         container_link="dbs/d/colls/orders",
         item_id="order-42",
         patch_operations=[
@@ -128,7 +128,7 @@ def test_baseline_is_operations_body_with_item_id():
 
 def test_body_round_trips_to_patch_instructions_shape():
     """The serialised bytes parse back to ``{"operations": [...]}``."""
-    prepared = build_patch_item_prepared(
+    prepared = build_patch_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         patch_operations=[_SET_OP],
@@ -152,7 +152,7 @@ def test_prep_never_emits_if_match_or_if_none_match():
     a caller-set precondition on a patch. (In practice a guarded patch is
     routed to the legacy path before this builder runs; this checks the
     builder itself never sets a precondition.)"""
-    prepared = build_patch_item_prepared(
+    prepared = build_patch_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         patch_operations=[_SET_OP],
@@ -173,7 +173,7 @@ def test_prep_never_emits_if_match_or_if_none_match():
 def test_initial_headers_are_flattened_into_outer_headers():
     """``initial_headers={'x-trace-id': 'abc'}`` is kept as a nested
     ``initialHeaders`` dict so the binding forwards each entry verbatim."""
-    prepared = build_patch_item_prepared(
+    prepared = build_patch_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         patch_operations=[_SET_OP],
@@ -189,7 +189,7 @@ def test_trigger_priority_bucket_no_response_land_as_option_keys():
     """The option set reaches the headers map under the internal option-key
     names. ``no_response`` is kept on patch (a patch returns the patched
     document, unlike delete / read)."""
-    prepared = build_patch_item_prepared(
+    prepared = build_patch_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         patch_operations=[_SET_OP],
@@ -214,7 +214,7 @@ def test_timeout_kwarg_is_forwarded_under_sentinel_header():
     """``timeout=30`` is forwarded as ``__overall_timeout_seconds: 30`` so
     the binding can lift it into the driver's own timeout setting -- the
     same mechanism as every other migrated operation."""
-    prepared = build_patch_item_prepared(
+    prepared = build_patch_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         patch_operations=[_SET_OP],
@@ -230,7 +230,7 @@ def test_compose_consumes_recognised_kwargs():
     from the input dict, so the caller doesn't forward them again to the
     legacy path."""
     kwargs = {"pre_trigger_include": "validateOrder", "extra_unknown": "left-alone"}
-    build_patch_item_prepared(
+    build_patch_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         patch_operations=[_SET_OP],

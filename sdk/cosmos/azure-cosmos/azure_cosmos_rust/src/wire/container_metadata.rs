@@ -22,7 +22,7 @@ pub(crate) fn resolve_container_metadata<'py>(
     let result = py.allow_threads(|| {
         runtime_ctx
             .tokio_rt
-            .block_on(driver.resolve_container(&database_name, &container_name))
+            .block_on(driver.resolve_container(&database_name, &container_name, Default::default()))
     });
     tuple_from_container_metadata_result(py, result)
 }
@@ -38,7 +38,7 @@ pub(crate) fn resolve_container_metadata_async<'py>(
     let runtime_ctx = require_runtime_context("resolve_container_metadata_async")?;
     let join = runtime_ctx.tokio_rt.spawn(async move {
         driver
-            .resolve_container(&database_name, &container_name)
+            .resolve_container(&database_name, &container_name, Default::default())
             .await
     });
     let abort_guard = AbortOnDrop(join.abort_handle());

@@ -19,7 +19,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any, List, Optional, Union
 
-from .._base import ParsePaths
+from ._paths import parse_paths
 from ..partition_key import (
     _Empty,
     _PartitionKeyKind,
@@ -52,7 +52,7 @@ def extract_partition_key_value(
         ret: List[Optional[Union[str, float, bool]]] = []
         for partition_key_level in partition_key_definition["paths"]:
             # Parse one path into a token per property, then walk to its leaf.
-            partition_key_parts = ParsePaths([partition_key_level])
+            partition_key_parts = parse_paths([partition_key_level])
             is_system_key = partition_key_definition.get("systemKey", False)
             val = _retrieve_partition_key(partition_key_parts, document, is_system_key)
             if isinstance(val, (_Undefined, _Empty)):
@@ -60,7 +60,7 @@ def extract_partition_key_value(
             ret.append(val)
         return ret
 
-    partition_key_parts = ParsePaths(partition_key_definition["paths"])
+    partition_key_parts = parse_paths(partition_key_definition["paths"])
     is_system_key = partition_key_definition.get("systemKey", False)
     return _retrieve_partition_key(partition_key_parts, document, is_system_key)
 
@@ -103,4 +103,3 @@ def _retrieve_partition_key(
     if (match_count != expected_match_count) or isinstance(partition_key, Mapping):
         return _return_undefined_or_empty_partition_key(is_system_key)
     return partition_key
-

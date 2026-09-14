@@ -46,6 +46,7 @@ from azure.core import MatchConditions
 
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.container import ContainerProxy
+from azure.cosmos._helpers._item_context import ItemClientContext
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 
 
@@ -72,7 +73,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
     cc._backend = LEGACY_BACKEND
     cc.ReplaceItem = MagicMock(return_value={"id": "order-42", "_rid": rid})
 
-    proxy = ContainerProxy(cc, "dbs/db", "c")
+    proxy = ContainerProxy(cc, "dbs/db", "c", _item_context=ItemClientContext(cc._backend))
 
     def _fake_read(**kwargs):
         cache[container_link] = {"_rid": rid, "_read_kwargs": kwargs}
@@ -206,7 +207,7 @@ class TestContainerReplaceItemPreservesLegacyBehaviour(unittest.TestCase):
         ``item`` must not retarget the write to the wrong document."""
         from azure.core.utils import CaseInsensitiveDict
 
-        from azure.cosmos._backend.base import CosmosBackend
+        from azure.cosmos._backend.cosmos_backend import CosmosBackend
         from azure.cosmos._backend.contracts import BackendResponse
 
         proxy, cc, _ = _make_proxy_with_mock_connection()
@@ -214,6 +215,9 @@ class TestContainerReplaceItemPreservesLegacyBehaviour(unittest.TestCase):
 
         class _CapturingBackend(CosmosBackend):
             name = "rust"
+
+            def resolve_container_metadata(self, link):
+                return BackendResponse(200, 0, {}, b'{"_rid":"rid-cached"}', None)
 
             def execute(self, prepared):
                 captured["prepared"] = prepared
@@ -225,6 +229,7 @@ class TestContainerReplaceItemPreservesLegacyBehaviour(unittest.TestCase):
                 )
 
         cc._backend = _CapturingBackend()
+        proxy._item_context = ItemClientContext(cc._backend)
 
         # Bare string id -> item_id is the string; the legacy ReplaceItem is
         # not called (the backend handled it).

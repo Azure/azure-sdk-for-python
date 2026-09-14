@@ -12,6 +12,11 @@ import inspect
 import pathlib
 import sys
 import unittest
+from types import SimpleNamespace
+
+import pytest
+from azure.core.paging import ItemPaged
+from azure.core.async_paging import AsyncItemPaged
 
 
 _REPO_ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -40,6 +45,41 @@ def _load_plugin():
 # operation could be left out of the plugin's registry, or the plugin could turn a
 # sync method into a coroutine or emit a false difference, and the audit would
 # silently miss or misreport that operation.
+@pytest.mark.parametrize("surface", ("sync", "aio"))
+@pytest.mark.parametrize("server_response", (True, False))
+def test_point_error_capture_uses_exception_headers(monkeypatch, surface, server_response):
+    from azure.cosmos.exceptions import CosmosHttpResponseError
+
+    plugin = _load_plugin()
+    emitted = []
+    owner = SimpleNamespace(client_connection=SimpleNamespace(last_response_headers={"stale": "old"}))
+    error = CosmosHttpResponseError(status_code=400, message="invalid") if server_response else ValueError("invalid")
+    if server_response:
+        error.headers = {"x-ms-activity-id": "current"}
+    monkeypatch.setattr(plugin._STATE, "current_nodeid", "tests/test_replace.py::TestX::test_error")
+    monkeypatch.setattr(plugin, "_emit_block", emitted.append)
+    monkeypatch.setattr(plugin, "_rust_operation_count", lambda: 0)
+    monkeypatch.setattr(plugin, "_rust_fallback_count", lambda: 0)
+
+    def original(_self):
+        raise error
+
+    async def async_original(_self):
+        raise error
+
+    with pytest.raises(type(error)) as caught:
+        if surface == "sync":
+            plugin._build_sync_wrapper("replace_container", surface, original)(owner)
+        else:
+            asyncio.run(plugin._build_aio_wrapper("replace_container", surface, async_original)(owner))
+    assert caught.value is error
+    assert len(emitted) == 1
+    assert emitted[0]["response_headers"] == ({"x-ms-activity-id": "current"} if server_response else {})
+    if server_response:
+        error.headers["later"] = "not part of the captured response"
+        assert "later" not in emitted[0]["response_headers"]
+
+
 class PluginRegistryTests(unittest.TestCase):
     """The plugin must stay reusable across migrated CRUD operations."""
 
@@ -63,14 +103,26 @@ class PluginRegistryTests(unittest.TestCase):
             "read_feed_ranges",
             "feed_range_from_partition_key",
             "create_database",
+            "create_database_if_not_exists",
             "list_databases",
             "read_database",
+            "replace_container",
         ):
             self.assertIn(op, registry)
             self.assertIn("sync", registry[op])
             self.assertIn("aio", registry[op])
             self.assertTrue(callable(registry[op]["sync"]))
             self.assertTrue(callable(registry[op]["aio"]))
+
+    def test_replacement_targets_preserve_sync_and_async_shapes(self):
+        for surface in ("sync", "aio"):
+            module, class_name, method_name = self.plugin._OP_REGISTRY["replace_container"][surface]()
+            self.assertEqual(class_name, "DatabaseProxy")
+            self.assertEqual(method_name, "replace_container")
+            self.assertEqual(
+                inspect.iscoroutinefunction(getattr(getattr(module, class_name), method_name)),
+                surface == "aio",
+            )
 
     def test_sync_calls_outside_a_test_are_not_captured(self):
         """Session setup operations must not create unknown-node audit rows."""
@@ -259,6 +311,104 @@ class PluginRegistryTests(unittest.TestCase):
             self.plugin._rust_fallback_count = original_fallback  # noqa: SLF001
         self.assertEqual(evidence["executed_engine"], "core-python")
         self.assertEqual(evidence["rust_fallback_delta"], 1)
+
+
+@pytest.fixture(params=[False, True], ids=["sync", "async"])
+def captured_listing(request, monkeypatch):
+    plugin = _load_plugin()
+    emitted = []
+    fetches = []
+    client = SimpleNamespace(client_connection=SimpleNamespace(
+        _backend=SimpleNamespace(name="rust"), last_response_headers={"activity": "stale"}
+    ))
+    monkeypatch.setattr(plugin, "_emit_block", emitted.append)
+    monkeypatch.setattr(plugin._STATE, "current_nodeid", "tests/test_list.py::test_list")
+    monkeypatch.setattr(plugin, "_rust_operation_count", lambda: len(fetches))
+    monkeypatch.setattr(plugin, "_rust_fallback_count", lambda: 0)
+
+    def fetch(token):
+        fetches.append(token)
+        if token == "error":
+            raise ValueError("page failed")
+        client.client_connection.last_response_headers = {"activity": str(len(fetches))}
+        if token == "empty":
+            return None, []
+        if token:
+            return None, [{"id": "db-3"}]
+        return "next", [{"id": "db-1"}, {"id": "db-2"}]
+
+    async def async_fetch(token):
+        return fetch(token)
+
+    async def async_extract(block):
+        return block
+
+    def original(_client):
+        if request.param:
+            return AsyncItemPaged(async_fetch, async_extract)
+        return ItemPaged(fetch, lambda block: block)
+
+    wrapper = plugin._build_sync_wrapper("list_databases", "aio" if request.param else "sync", original)
+    return wrapper(client), emitted, fetches, request.param
+
+
+@pytest.mark.asyncio
+async def test_paged_capture_preserves_lazy_partial_iteration(captured_listing):
+    result, emitted, fetches, is_async = captured_listing
+    assert emitted == fetches == []
+    if is_async:
+        iterator = result.__aiter__()
+        row = await iterator.__anext__()
+        assert result.__aiter__() is iterator
+        assert await result.__anext__() == {"id": "db-2"}
+    else:
+        iterator = iter(result)
+        row = next(iterator)
+        assert iter(result) is iterator
+        assert next(result) == {"id": "db-2"}
+    assert row == {"id": "db-1"}
+    assert fetches == [None]
+    assert len(emitted) == 1
+    assert emitted[0]["return_value"] == [{"id": "db-1"}, {"id": "db-2"}]
+    assert emitted[0]["executed_engine"] == "rust"
+    assert emitted[0]["rust_operation_delta"] == 1
+
+
+@pytest.mark.asyncio
+async def test_paged_capture_preserves_continuation_replay_empty_pages_and_errors(captured_listing):
+    result, emitted, fetches, is_async = captured_listing
+
+    async def page_rows(pages):
+        if is_async:
+            return [row async for row in await pages.__anext__()]
+        return list(next(pages))
+
+    pages = result.by_page()
+    assert await page_rows(pages) == [{"id": "db-1"}, {"id": "db-2"}]
+    token = pages.continuation_token
+    assert token == "next"
+    assert await page_rows(pages) == [{"id": "db-3"}]
+    assert await page_rows(result.by_page(token)) == [{"id": "db-3"}]
+    assert fetches == [None, "next", "next"]
+    assert [block["request"]["continuation"] for block in emitted] == fetches
+    assert [block["response_headers"]["activity"] for block in emitted] == ["1", "2", "3"]
+    stop = StopAsyncIteration if is_async else StopIteration
+    if is_async:
+        with pytest.raises(stop):
+            await pages.__anext__()
+    else:
+        with pytest.raises(stop):
+            next(pages)
+    assert len(emitted) == 3
+    assert await page_rows(result.by_page("empty")) == []
+    assert emitted[-1]["return_value"] == []
+    with pytest.raises(ValueError, match="page failed"):
+        await page_rows(result.by_page("error"))
+    assert emitted[-1]["status"] == "raised"
+    assert emitted[-1]["response_headers"] == {}
+    assert len(emitted) == len(fetches) == 5
+    assert all(block["rust_operation_delta"] == 1 for block in emitted)
+    assert all(block["rust_fallback_delta"] == 0 for block in emitted)
 
 
 if __name__ == "__main__":

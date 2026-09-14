@@ -37,7 +37,7 @@ import pytest
 
 import azure.cosmos.aio._cosmos_client as async_cosmos_client_module
 import azure.cosmos.cosmos_client as sync_cosmos_client_module
-from azure.cosmos._backend.base import CosmosBackend
+from azure.cosmos._backend.cosmos_backend import CosmosBackend
 from azure.cosmos._backend.contracts import (
     BackendResponse,
     LegacyOperation,
@@ -513,8 +513,8 @@ def test_rust_backend_resolves_container_metadata_through_binding(monkeypatch):
     assert b'"rid-1"' in response.body
 
 
-def test_rust_backend_metadata_resolution_allows_older_binding(monkeypatch):
-    """Prove sync metadata reads work with an older Rust extension."""
+def test_rust_backend_metadata_resolution_rejects_older_binding(monkeypatch):
+    """Missing metadata capability must fail instead of consulting Python."""
     class OlderBinding:
         """Provide only the entry point available in an older extension."""
 
@@ -527,7 +527,8 @@ def test_rust_backend_metadata_resolution_allows_older_binding(monkeypatch):
     )
     backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
 
-    assert backend.resolve_container_metadata("dbs/d/colls/c") is None
+    with pytest.raises(NotImplementedError, match="resolve_container_metadata"):
+        backend.resolve_container_metadata("dbs/d/colls/c")
 
 
 # The next two tests cover the newly-migrated query_items and read_feed_ranges on
@@ -965,7 +966,8 @@ def test_async_rust_backend_metadata_resolution_allows_older_binding(monkeypatch
         backend = AsyncRustBackend(
             endpoint="https://x.documents.azure.com", master_key="k"
         )
-        assert await backend.resolve_container_metadata("dbs/d/colls/c") is None
+        with pytest.raises(NotImplementedError, match="resolve_container_metadata_async"):
+            await backend.resolve_container_metadata("dbs/d/colls/c")
 
     asyncio.run(_run())
 
@@ -1510,6 +1512,9 @@ def test_helper_parses_backend_response_into_cosmos_dict(monkeypatch):
             self.captured = prepared
             return self._response
 
+        def resolve_container_metadata(self, link):
+            return BackendResponse(200, 0, {}, b'{"_rid":"rid"}', None)
+
     backend = _RustDispatchBackend(
         BackendResponse(
             status_code=201,
@@ -1523,7 +1528,7 @@ def test_helper_parses_backend_response_into_cosmos_dict(monkeypatch):
         )
     )
 
-    helper = ItemHelper(backend, client_connection=MagicMock())
+    helper = ItemHelper(backend)
     result = helper.create_item(
         container_link="dbs/x/colls/y",
         body={"id": "order-42", "pk": "customerA"},
@@ -2748,6 +2753,8 @@ def _make_sync_container_with_backend(backend):
     mock_cc._backend = backend
     container = ContainerProxy.__new__(ContainerProxy)
     container.client_connection = mock_cc
+    from azure.cosmos._helpers._item_context import ItemClientContext
+    container._item_context = ItemClientContext(backend)
     container.id = "test"
     container.database_link = "dbs/test"
     container.container_link = "dbs/test/colls/test"
@@ -2771,6 +2778,7 @@ def test_container_dispatch_routes_to_rust_backend(monkeypatch):
     fake_module = MagicMock()
     fake_module.init_client.return_value = "h"
     fake_module.create_item.return_value = (201, 0, {}, b"{}")
+    fake_module.resolve_container_metadata.return_value = (200, 0, {}, b'{"_rid":"rid"}')
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
 
     container = _make_sync_container_with_backend(_new_rust_backend())
@@ -2788,10 +2796,11 @@ def test_container_dispatch_rejects_missing_backend():
     bare_cc = MagicMock(spec=[])  # a connection with no backend set at all
     container = ContainerProxy.__new__(ContainerProxy)
     container.client_connection = bare_cc
+    container._item_context = None
     container.id = "test"
     container.database_link = "dbs/test"
     container.container_link = "dbs/test/colls/test"
-    with pytest.raises(RuntimeError, match="concrete Cosmos backend"):
+    with pytest.raises(RuntimeError, match="context supplied by CosmosClient"):
         container.create_item(body={"id": "x", "pk": "a"})
 
 
@@ -2800,12 +2809,15 @@ def test_async_container_dispatch_routes_to_async_rust_backend(monkeypatch):
     fake_module = MagicMock()
     fake_module.init_client.return_value = "h"
     fake_module.create_item_async = AsyncMock(return_value=(201, 0, {}, b"{}"))
+    fake_module.resolve_container_metadata_async = AsyncMock(return_value=(200, 0, {}, b'{"_rid":"rid"}'))
     monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
 
     mock_cc = MagicMock()
     mock_cc._backend = _new_async_rust_backend()
     container = AsyncContainerProxy.__new__(AsyncContainerProxy)
     container.client_connection = mock_cc
+    from azure.cosmos._helpers._item_context import ItemClientContext
+    container._item_context = ItemClientContext(mock_cc._backend)
     container.id = "test"
     container.database_link = "dbs/test"
     container.container_link = "dbs/test/colls/test"
@@ -3061,9 +3073,8 @@ def test_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_b
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
 
     container = _make_sync_container_with_backend(_new_rust_backend())
-    container._is_system_key = True
     container._get_properties = MagicMock(
-        return_value={"partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2}}
+        return_value={"partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2, "systemKey": True}}
     )
 
     feed_range = container.feed_range_from_partition_key(NonePartitionKeyValue)
@@ -3191,9 +3202,8 @@ def test_async_container_feed_range_from_partition_key_empty_sentinel_routes_to_
     container.id = "test"
     container.database_link = "dbs/test"
     container.container_link = "dbs/test/colls/test"
-    container._is_system_key = True
-    container._get_properties_with_options = AsyncMock(
-        return_value={"partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2}}
+    container._get_properties = AsyncMock(
+        return_value={"partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2, "systemKey": True}}
     )
 
     async def _run():
@@ -4051,7 +4061,7 @@ def test_sync_backend_maps_transport_error_to_service_response_error(monkeypatch
     def boom(handle, prepared):
         raise transport_exc_type(message)
 
-    monkeypatch.setattr(rust_mod, "_resolve_dispatch", lambda op: boom)
+    monkeypatch.setattr(rust_mod, "_resolve_binding_function", lambda op: boom)
 
     with pytest.raises(ServiceResponseError) as excinfo:
         backend.execute(_transport_test_request())
@@ -4077,7 +4087,7 @@ def test_async_backend_maps_transport_error_to_service_response_error(monkeypatc
     async def boom(handle, prepared):
         raise transport_exc_type(message)
 
-    monkeypatch.setattr(async_rust_mod, "_resolve_async_dispatch", lambda op: boom)
+    monkeypatch.setattr(async_rust_mod, "_resolve_async_binding_function", lambda op: boom)
 
     async def run():
         with pytest.raises(ServiceResponseError) as excinfo:
@@ -4109,7 +4119,7 @@ def test_sync_list_databases_transport_error_does_not_replay_legacy(monkeypatch)
 
     with pytest.raises(ServiceResponseError):
         backend.run_page_operation(
-            build_prepared=lambda: PreparedQuery(op=OP_LIST_DATABASES, container_link="", headers={}),
+            prepare_request=lambda: PreparedQuery(op=OP_LIST_DATABASES, container_link="", headers={}),
             legacy_operation=LegacyOperation(
                 op=OP_LIST_DATABASES,
                 invoke=lambda: legacy_calls.append("legacy"),
@@ -4140,12 +4150,12 @@ def test_async_list_databases_transport_error_does_not_replay_legacy(monkeypatch
     legacy_calls = []
 
     async def run():
-        async def build_prepared():
+        async def prepare_request():
             return PreparedQuery(op=OP_LIST_DATABASES, container_link="", headers={})
 
         with pytest.raises(ServiceResponseError):
             await backend.run_page_operation(
-                build_prepared=build_prepared,
+                prepare_request=prepare_request,
                 legacy_operation=LegacyOperation(
                     op=OP_LIST_DATABASES,
                     invoke=lambda: legacy_calls.append("legacy"),

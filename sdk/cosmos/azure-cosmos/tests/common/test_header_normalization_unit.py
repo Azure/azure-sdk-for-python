@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Unit tests for ``_backend.base.normalize_response_headers``.
+"""Unit tests for ``_backend.cosmos_backend.normalize_response_headers``.
 
 ``normalize_response_headers`` is a pure type-normalisation step at the
 Rust backend boundary: the binding hands back a plain dict keyed by the

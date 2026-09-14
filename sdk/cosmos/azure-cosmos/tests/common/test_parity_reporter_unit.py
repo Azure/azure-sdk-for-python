@@ -664,5 +664,39 @@ class ReporterRenderingTests(unittest.TestCase):
         self.assertTrue(any("lazy pager object" in e for e in errors))
 
 
+def test_v4_replacement_report_accepts_isolated_baseline_and_long_summary(tmp_path):
+    reporter = _load_reporter()
+    paths = []
+    for backend in ("core-python", "rust"):
+        prefix = ("docs/V5/_parity_runs/replace_container_corepy_fixture/sync"
+                  if backend == "core-python" else "tests/replace_container/sync/legacy")
+        nodeid = f"{prefix}/test_copy.py::TestX::test_y"
+        path = tmp_path / f"{backend}.txt"
+        path.write_text(
+            nodeid + "\n"
+            + _make_block("11111111", nodeid=nodeid, backend=backend,
+                          plugin_version="v4", op="replace_container")
+            + "PASSED\n================ 1 passed in 90.10s (0:01:30) ================\n",
+            encoding="utf-8",
+        )
+        paths.append(str(path))
+    assert reporter.main([
+        "--op", "replace_container", "--corepy", paths[0], "--rust", paths[1],
+        "--out", str(tmp_path / "audit.md"), "--expected-count", "1",
+    ]) == 0
+
+
+def test_report_rejects_unsupported_capture_versions(tmp_path):
+    reporter = _load_reporter()
+    for version in ("v2", "v5"):
+        path = tmp_path / f"{version}.txt"
+        path.write_text(_make_block("11111111", plugin_version=version), encoding="utf-8")
+        blocks = reporter.parse_captures(str(path))
+        errors = reporter._validate_audit_inputs(
+            op="read_item", corepy=[], rust=[], corepy_blocks=blocks, rust_blocks=[],
+        )
+        assert any("v3 or v4 execution evidence is required" in error for error in errors)
+
+
 if __name__ == "__main__":
     unittest.main()

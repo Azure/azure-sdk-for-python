@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import os
 import uuid
-import warnings
 from collections.abc import Mapping
 
 import pytest
@@ -147,43 +146,44 @@ async def test_query_databases_continuation_replay_async(database_ids):
 
 
 @pytest.mark.asyncio
-async def test_query_databases_options_hook_and_ignored_session_token_async(database_ids):
-    """Async request options preserve the ignored-session-token warning contract."""
+async def test_query_databases_options_and_page_hooks_async(database_ids):
+    """Supported options and hooks apply to each fetched async query page."""
 
     async def _do(client):
-        """Run with all options set and capture hook calls and deprecation warnings."""
+        """Capture actual page headers without invoking the hook eagerly."""
 
         async def _target():
-            """Execute the full-options query and return diagnostic counters."""
             hook_calls = []
-            with warnings.catch_warnings(record=True) as caught:
-                warnings.simplefilter("always")
-                rows = [
-                    row
-                    async for row in client.query_databases(
-                        query="SELECT * FROM root r",
-                        max_item_count=2,
-                        initial_headers={"x-query-databases-test": "aio"},
-                        response_hook=lambda headers: hook_calls.append(headers),
-                        session_token="ignored-session-token",
-                        throughput_bucket=1,
-                    )
-                ]
-            return {
-                "target_ids": sorted(row["id"] for row in rows if row.get("id") in database_ids),
-                "hook_count": len(hook_calls),
-                "hook_received_mapping": bool(hook_calls) and isinstance(hook_calls[0], Mapping),
-                # ResourceWarning entries are garbage-collector noise that can
-                # land in this capture from unrelated objects, so they are
-                # filtered out to keep the comparison about this call.
-                "warning_categories": [
-                    warning.category.__name__
-                    for warning in caught
-                    if not issubclass(warning.category, ResourceWarning)
+            iterable = client.query_databases(
+                query="SELECT * FROM root r WHERE r.id IN (@id0, @id1, @id2)",
+                parameters=[
+                    {"name": "@id{}".format(index), "value": database_id}
+                    for index, database_id in enumerate(database_ids)
                 ],
-                "warning_mentions_session_token": any(
-                    "session_token" in str(warning.message) for warning in caught
-                ),
+                max_item_count=1,
+                initial_headers={"x-query-databases-test": "aio"},
+                response_hook=hook_calls.append,
+                throughput_bucket=1,
+                timeout=10,
+            )
+            assert hook_calls == []
+            rows = []
+            page_count = 0
+            async for page in iterable.by_page():
+                page_count += 1
+                assert len(hook_calls) == page_count
+                headers = hook_calls[-1]
+                assert isinstance(headers, Mapping)
+                assert headers["x-ms-activity-id"] == client.client_connection.last_response_headers["x-ms-activity-id"]
+                assert float(headers["x-ms-request-charge"]) > 0
+                if client.client_connection._backend.name == "rust":
+                    assert headers["x-ms-cosmos-sdk-diagnostics"]
+                rows.extend([row async for row in page])
+            return {
+                "target_ids": sorted(row["id"] for row in rows),
+                "hook_count": len(hook_calls),
+                "page_count": page_count,
+                "distinct_page_headers": len({headers["x-ms-activity-id"] for headers in hook_calls}),
             }
 
         return await run_target_operation_async(client, _target)
@@ -194,7 +194,5 @@ async def test_query_databases_options_hook_and_ignored_session_token_async(data
     comparison.assert_functional_parity()
     result = comparison.rust.return_value
     assert result["target_ids"] == sorted(database_ids)
-    assert result["hook_count"] >= 1
-    assert result["hook_received_mapping"]
-    assert result["warning_categories"] == ["DeprecationWarning"]
-    assert result["warning_mentions_session_token"]
+    assert result["hook_count"] == result["page_count"] == result["distinct_page_headers"]
+    assert result["page_count"] >= 3

@@ -226,6 +226,8 @@ mod query;
 
 pub(crate) use containers::{
     create_container, create_container_async, list_containers, list_containers_async,
+    delete_container, delete_container_async,
+    replace_container, replace_container_async,
     query_containers, query_containers_async, read_container, read_container_async,
     resolve_container_metadata, resolve_container_metadata_async,
 };

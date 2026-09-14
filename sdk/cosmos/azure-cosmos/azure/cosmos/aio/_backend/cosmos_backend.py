@@ -3,9 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""The abstract async backend that every concrete async backend implements.
+"""The abstract async Cosmos backend that every concrete async backend implements.
 
-Same as the sync :class:`~azure.cosmos._backend.base.CosmosBackend`, except
+Same as the sync :class:`~azure.cosmos._backend.cosmos_backend.CosmosBackend`, except
 ``execute`` is a coroutine so async callers can await it without blocking the
 event-loop thread. ``execute_pages`` is implemented for the operations registered
 in ``QUERY_TO_BINDING_METHOD``; ``execute_batch`` is reserved and raises
@@ -39,7 +39,10 @@ __all__ = ["AsyncCosmosBackend"]
 class AsyncCosmosBackend(abc.ABC):
     """Abstract dispatch target for any Cosmos operation (async).
 
-    A per-family async coordinator (``AsyncItemHelper``, ``AsyncThroughputHelper``,
+    Migrated items use ``run_item_operation`` exclusively, with no legacy
+    callback. The other dispatch methods remain migration ports for other families.
+
+    A still-migrating async coordinator (``AsyncThroughputHelper``,
     ``AsyncFeedRangeHelper``) holds one of these by interface and drives its
     operations through :meth:`run_operation` or :meth:`run_page_operation`
     without knowing which concrete backend it has. Engine selection and legacy
@@ -85,10 +88,22 @@ class AsyncCosmosBackend(abc.ABC):
         """Resolve container metadata through this backend when supported."""
         return None
 
+    async def run_item_operation(
+        self,
+        *,
+        prepare_request: Callable[[], Awaitable[PreparedRequest]],
+        parse_response: Callable[[BackendResponse], Any],
+    ) -> Any:
+        """Build, execute, parse an item without a legacy callback or retry."""
+        response = await self.execute(await prepare_request())
+        if response is None:
+            raise BackendProtocolError("The backend returned no item response")
+        return parse_response(response)
+
     async def run_operation(
         self,
         *,
-        build_prepared: Callable[[], Awaitable[PreparedRequest]],
+        prepare_request: Callable[[], Awaitable[PreparedRequest]],
         legacy_operation: LegacyOperation,
         parse_response: Callable[[BackendResponse], Any],
         rust_eligible: bool = True,
@@ -99,13 +114,13 @@ class AsyncCosmosBackend(abc.ABC):
         """Run one engine-selected operation end to end and return the final result.
 
         The async twin of
-        :meth:`azure.cosmos._backend.base.CosmosBackend.run_operation`: the
+        :meth:`azure.cosmos._backend.cosmos_backend.CosmosBackend.run_operation`: the
         single entry point every async family coordinator uses so none of them
         ever interpret ``None`` from selection or ``execute`` to decide the
         legacy path.
 
         The default is the engine (rust) flow: when the request is representable
-        by this engine (``rust_eligible``), await ``build_prepared`` to construct
+        by this engine (``rust_eligible``), await ``prepare_request`` to construct
         the ``PreparedRequest`` lazily, await :meth:`execute`, then parse the
         reply (``parse_response`` is synchronous, matching the legacy path);
         otherwise await the supplied legacy operation. ``AsyncLegacyBackend``
@@ -119,10 +134,10 @@ class AsyncCosmosBackend(abc.ABC):
         ``allow_legacy_fallback=False`` turns the silent switch into an error the
         customer can read and act on.
 
-        :keyword build_prepared: Awaitable builder for the rust ``PreparedRequest``
+        :keyword prepare_request: Awaitable builder for the rust ``PreparedRequest``
             (invoked only on the rust path).
         :keyword legacy_operation: Typed port to the legacy call; see
-            :class:`~azure.cosmos._backend.base.LegacyOperation`. Its ``invoke``
+            :class:`~azure.cosmos._backend.cosmos_backend.LegacyOperation`. Its ``invoke``
             returns an awaitable of the final result.
         :keyword parse_response: Synchronous parser from ``BackendResponse`` to
             the final result.
@@ -149,7 +164,7 @@ class AsyncCosmosBackend(abc.ABC):
                 )
             return await legacy_operation.invoke()
         try:
-            prepared = await build_prepared()
+            prepared = await prepare_request()
             response = await self.execute(prepared)
             assert response is not None  # execute() only returns None for a None prepared request
             return parse_response(response)
@@ -162,26 +177,34 @@ class AsyncCosmosBackend(abc.ABC):
     async def run_page_operation(  # pylint: disable=too-many-arguments
         self,
         *,
-        build_prepared: Callable[[], Awaitable[PreparedQuery]],
+        prepare_request: Callable[[], Awaitable[PreparedQuery]],
         legacy_operation: LegacyOperation,
         parse_response: Callable[[QueryPage], Any],
         rust_eligible: bool = True,
         fallback_exceptions: tuple[type[BaseException], ...] = (),
+        allow_legacy_fallback: bool = True,
+        unsupported_message: Optional[str] = None,
     ) -> Any:
         """Run one backend-selected page without exposing fallback sentinels.
 
         Async twin of
-        :meth:`azure.cosmos._backend.base.CosmosBackend.run_page_operation`.
+        :meth:`azure.cosmos._backend.cosmos_backend.CosmosBackend.run_page_operation`.
         An ineligible request or an explicit capability exception runs the
-        supplied legacy operation. An empty page iterator is a backend contract
+        supplied legacy operation unless ``allow_legacy_fallback`` is false,
+        in which case it raises instead. An empty page iterator is a backend contract
         violation and propagates as ``BackendProtocolError``; it never replays
         the request through legacy.
         """
         if not rust_eligible:
+            if not allow_legacy_fallback:
+                raise NotImplementedError(
+                    unsupported_message
+                    or "{} is not supported by the Rust backend for this request".format(legacy_operation.op)
+                )
             return await legacy_operation.invoke()
         page: Optional[QueryPage] = None
         try:
-            pages = self.execute_pages(await build_prepared())
+            pages = self.execute_pages(await prepare_request())
             try:
                 # ``pages.__anext__()`` rather than the ``anext`` builtin: the
                 # package supports Python 3.9, where that builtin does not exist.
@@ -202,6 +225,8 @@ class AsyncCosmosBackend(abc.ABC):
                 if aclose is not None:
                     await aclose()
         except fallback_exceptions:
+            if not allow_legacy_fallback:
+                raise
             record_rust_compatibility_fallback()
             return await legacy_operation.invoke()
         if page is None:

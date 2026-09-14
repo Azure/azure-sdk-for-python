@@ -12,8 +12,9 @@ use azure_core::http::headers::{HeaderName, HeaderValue};
 use azure_data_cosmos_driver::{
     models::{PartitionKey, PartitionKeyValue},
     options::{
-        AvailabilityStrategy, ContentResponseOnWrite, EndToEndOperationLatencyPolicy,
-        ExcludedRegions, HedgeThreshold, HedgingStrategy, OperationOptionsBuilder,
+        AvailabilityStrategy, BinaryEncodingOptions, ContentResponseOnWrite,
+        EndToEndOperationLatencyPolicy, ExcludedRegions, HedgeThreshold, HedgingStrategy,
+        OperationOptionsBuilder,
     },
 };
 
@@ -451,7 +452,9 @@ pub(super) fn build_operation_options(
     availability_strategy: Option<AvailabilityStrategy>,
     custom_headers: HashMap<HeaderName, HeaderValue>,
 ) -> azure_data_cosmos_driver::options::OperationOptions {
-    let mut builder = OperationOptionsBuilder::new();
+    // Python consumes text JSON; driver 0.8 otherwise negotiates binary responses.
+    let mut builder = OperationOptionsBuilder::new()
+        .with_binary_encoding(BinaryEncodingOptions::new().with_enabled(false));
     if let Some(cr) = content_response {
         builder = builder.with_content_response_on_write(cr);
     }
@@ -749,6 +752,12 @@ mod tests {
     use pyo3::prelude::*;
     use pyo3::types::PyDict;
     use std::time::Duration;
+
+    #[test]
+    fn operation_options_preserve_the_python_text_json_contract() {
+        let options = super::build_operation_options(None, None, None, None, Default::default());
+        assert!(!options.binary_encoding.unwrap().enabled);
+    }
 
     // Tests for the per-operation parsers: the container-link split, the
     // partition-key header parse, the body-id read, and the per-value

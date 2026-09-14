@@ -26,7 +26,7 @@ from typing import Any, Iterator, Optional
 
 from azure.core.exceptions import ServiceResponseError
 
-from .base import CosmosBackend
+from .cosmos_backend import CosmosBackend
 from .operations import (
     OP_LIST_CONTAINERS,
     OP_LIST_DATABASES,
@@ -73,7 +73,7 @@ _UNSUPPORTED_QUERY_ERROR = driver_unsupported_query_error_type(_rust_module)
 # Look up the binding's function for an operation. Read live from ``_rust_module``
 # rather than cached at import, so the tests can swap in a fake binding; the extra
 # getattr per call is tiny next to the network round trip.
-def _resolve_dispatch(op: str) -> Optional[Any]:
+def _resolve_binding_function(op: str) -> Optional[Any]:
     """Return the binding's ``<op>`` function, or ``None`` if the op is unsupported
     or the compiled module is absent."""
     method = OP_TO_BINDING_METHOD.get(op)
@@ -244,8 +244,8 @@ class RustBackend(RustBackendShared, CosmosBackend):
 
         handle = self._ensure_handle()
         # Look up the binding's function for this op; None if unsupported.
-        dispatch = _resolve_dispatch(prepared.op)
-        if dispatch is None:
+        binding_function = _resolve_binding_function(prepared.op)
+        if binding_function is None:
             raise NotImplementedError(
                 "RustBackend.execute does not yet support op={!r}.".format(prepared.op)
             )
@@ -263,7 +263,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
         # DriverTransportError; translate it to azure-core's ServiceResponseError
         # so customer handlers and transport-retry policies match the legacy path.
         try:
-            raw_response = dispatch(handle, prepared)
+            raw_response = binding_function(handle, prepared)
         except _DRIVER_TRANSPORT_ERROR as exc:
             raise ServiceResponseError(message=str(exc)) from exc
         return build_backend_response(*raw_response)
@@ -290,7 +290,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
             )
         dispatch = getattr(_rust_module, "resolve_container_metadata", None)
         if dispatch is None:
-            return None
+            raise NotImplementedError("The Rust binding does not expose resolve_container_metadata")
         handle = self._ensure_handle()
         try:
             raw_response = dispatch(handle, container_link)

@@ -22,7 +22,7 @@
 import logging
 from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Tuple, Any, Optional, TYPE_CHECKING, Mapping
+from typing import Tuple, Any, Optional, TYPE_CHECKING, Mapping, Union
 
 from azure.core.utils import CaseInsensitiveDict
 
@@ -30,8 +30,7 @@ from azure.cosmos import _base, exceptions
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._query_builder import _QueryBuilder
 from azure.cosmos._helpers.item_helper import ItemHelper
-from azure.cosmos._helpers._item_dispatch import pick_backend
-from azure.cosmos._backend.legacy import LEGACY_BACKEND
+from azure.cosmos._helpers.legacy_item_helper import LegacyItemHelper
 from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition
 from azure.cosmos import CosmosList
 if TYPE_CHECKING:
@@ -56,6 +55,7 @@ class ReadItemsHelperSync:
             **kwargs: Any
     ):
         self.client = client
+        self._item_context = kwargs.pop("_item_context", None)
         self.collection_link = collection_link
         self.items = items
         self.options = dict(options) if options is not None else {}
@@ -104,6 +104,7 @@ class ReadItemsHelperSync:
         """
         indexed_results = []
         total_request_charge = 0.0
+        diagnostics = []
         futures = []
         # Create a clear mapping of futures to chunks for better error handling
         future_to_chunk = {}
@@ -116,9 +117,11 @@ class ReadItemsHelperSync:
 
         try:
             for future in as_completed(futures):
-                chunk_results, chunk_ru_charge = future.result()
+                chunk_results, chunk_ru_charge, chunk_diagnostics = future.result()
                 indexed_results.extend(chunk_results)
                 total_request_charge += chunk_ru_charge
+                if chunk_diagnostics is not None:
+                    diagnostics.append(chunk_diagnostics)
         except (Exception, KeyboardInterrupt) as e:
             self.logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug,do-not-log-raised-errors
                 "Error in query execution: %s", str(e))
@@ -138,6 +141,8 @@ class ReadItemsHelperSync:
 
         final_headers = CaseInsensitiveDict()
         final_headers['x-ms-request-charge'] = str(total_request_charge)
+        if diagnostics:
+            final_headers['x-ms-cosmos-sdk-diagnostics'] = "; ".join(diagnostics)
 
         cosmos_list = CosmosList(results, response_headers=final_headers)
 
@@ -205,13 +210,13 @@ class ReadItemsHelperSync:
 
     def _execute_query_chunk_worker(
             self, partition_id: str, chunk_partition_items: Sequence[Tuple[int, str, "PartitionKeyType"]]
-    ) -> Tuple[list[Tuple[int, dict[str, Any]]], float]:
+    ) -> Tuple[list[Tuple[int, dict[str, Any]]], float, Optional[str]]:
         """Synchronous worker to build and execute a query for a chunk of items.
 
         :param str partition_id: The ID of the partition to query.
         :param list[tuple[int, str, any]] chunk_partition_items: A chunk of items to be queried.
-        :return: A tuple containing the list of query results with original indices and the request charge.
-        :rtype: tuple[list[tuple[int, dict[str, any]]], float]
+        :return: Indexed query results, request charge, and any SDK diagnostics.
+        :rtype: tuple[list[tuple[int, dict[str, any]]], float, str or None]
         """
         id_to_idx = {item[1]: item[0] for item in chunk_partition_items}
         items_for_query = [(item[1], item[2]) for item in chunk_partition_items]
@@ -232,7 +237,7 @@ class ReadItemsHelperSync:
             except (ValueError, TypeError):
                 self.logger.warning("Invalid request charge format: %s", charge)
 
-        return chunk_results, total_ru_charge
+        return chunk_results, total_ru_charge, headers.get('x-ms-cosmos-sdk-diagnostics')
 
     def _execute_query(
             self,
@@ -325,8 +330,7 @@ class ReadItemsHelperSync:
         # by partition, and a single-item group is read here as a point read (a
         # multi-item group becomes a query in _execute_query). Route that point read
         # through the shared ItemHelper -- the same read path container.read_item
-        # uses -- so it runs on the rust backend when one is configured and falls
-        # back to the legacy ReadItem otherwise. point_read_options (this item's
+        # uses -- with explicit parity selected separately. point_read_options (this item's
         # partition key plus the operation's options) is passed as request_options,
         # so the request matches the one the legacy point read would send. The
         # multi-item (query) legs deliberately stay on legacy (see _execute_query),
@@ -334,22 +338,20 @@ class ReadItemsHelperSync:
         # on legacy. The not-found case is caught here (not inside the helper) so a
         # missing item is left out of the result, as before.
         request_kwargs["request_options"] = point_read_options
-        # read_timeout has no equivalent on the rust point-read path (the driver
-        # exposes no per-request read timeout), so honor it by keeping this leg on
-        # legacy -- the same choice the query gate makes (see _query_rust_routing).
-        # This keeps a read_items call's point legs and query legs consistent when
-        # the caller sets read_timeout. Any other call still routes to rust. Force
-        # legacy with the explicit LEGACY_BACKEND, never a None sentinel; the
-        # ItemHelper holds one backend by interface either way.
-        backend = pick_backend(self.client)
-        if self.options.get(Constants.Kwargs.READ_TIMEOUT) is not None:
-            backend = LEGACY_BACKEND
+        # This read-many coordinator is still connection-owned. Its Rust point
+        # leg requires independently propagated context, never connection discovery.
+        context = self._item_context
+        helper: Union[ItemHelper, LegacyItemHelper]
+        if context is None:
+            helper = LegacyItemHelper.from_legacy_connection(self.client)
+        elif context.backend.name == "core-python":
+            helper = LegacyItemHelper(self.client)
+        else:
+            helper = ItemHelper(
+                context.backend, context.defaults, context.response_state,
+            )
         try:
-            result = ItemHelper(
-                backend,
-                self.client,
-                ensure_container_cached=None,
-            ).read_item(
+            result = helper.read_item(
                 container_link=self.collection_link,
                 document_link=doc_link,
                 item_id=item_id,

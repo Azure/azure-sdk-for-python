@@ -19,9 +19,10 @@
 - Non-2xx (and non-304): raise the typed exception subclass for the
   status code via ``map_backend_response_to_exception``.
 
-In all paths the headers are also written to
-``client_connection.last_response_headers`` (the one documented side
-effect, matching the legacy behaviour). When the Rust backend provides
+Item callers publish headers to a narrow client-owned response state. The
+legacy connection exposes the same state through ``last_response_headers``
+for compatibility; the parser needs no connection for items. Unmigrated
+families can still supply ``client_connection``. When the Rust backend provides
 diagnostics, they are surfaced through the synthetic header
 ``x-ms-cosmos-sdk-diagnostics`` on the same header map.
 
@@ -33,12 +34,14 @@ and goes straight to the legacy client-connection methods
 from __future__ import annotations
 
 import json
+from copy import deepcopy
 from typing import Any, Callable, Mapping, Optional
 
 from azure.core.utils import CaseInsensitiveDict
 
 from .._backend.contracts import BackendResponse
 from .._cosmos_responses import CosmosDict
+from ._item_context import ResponseHeaderState
 from ._exceptions import (
     extract_message_from_body,
     is_success_status,
@@ -53,10 +56,56 @@ _REQUEST_CHARGE_HEADER = "x-ms-request-charge"
 _DIAGNOSTICS_HEADER = "x-ms-cosmos-sdk-diagnostics"
 
 
+def with_response_header_snapshot(
+    response_hook: Optional[Callable[[Mapping[str, Any], Any], None]],
+    *,
+    copy_body: bool = False,
+) -> Optional[Callable[[Mapping[str, Any], Any], None]]:
+    """Give the response hook copied headers and, when requested, a copied body."""
+    if response_hook is None:
+        return None
+
+    def on_response(headers: Mapping[str, Any], body: Any) -> None:
+        response_hook(CaseInsensitiveDict(headers), deepcopy(body) if copy_body else body)
+
+    return on_response
+
+
+def parse_database_read_response(
+    response: BackendResponse,
+    *,
+    client_connection: Any,
+    response_hook: Optional[Callable[[Mapping[str, Any], Any], None]] = None,
+) -> CosmosDict:
+    """Preserve the legacy database-read hook's None body on a 304 response."""
+    def on_response(headers: Mapping[str, Any], body: Any) -> None:
+        if response_hook is not None:
+            response_hook(headers, None if response.status_code == 304 else body)
+
+    return parse_backend_response(
+        response,
+        client_connection=client_connection,
+        response_hook=on_response if response_hook is not None else None,
+    )
+
+
+def parse_delete_response(
+    response: BackendResponse,
+    *,
+    client_connection: Any,
+    response_hook: Optional[Callable[[Mapping[str, Any], None], None]] = None,
+) -> None:
+    """Parse errors and headers while preserving the no-body deletion contract."""
+    result = parse_backend_response(response, client_connection=client_connection)
+    if response_hook is not None:
+        response_hook(result.get_response_headers(), None)
+
+
 def parse_backend_response(
     response: BackendResponse,
     *,
     client_connection: Optional[Any] = None,
+    response_state: Optional[ResponseHeaderState] = None,
     response_hook: Optional[Callable[[Mapping[str, Any], Any], None]] = None,
 ) -> CosmosDict:
     """Translate a ``BackendResponse`` into a ``CosmosDict``.
@@ -69,6 +118,9 @@ def parse_backend_response(
         ``last_response_headers`` attribute is updated with the parsed
         headers. ``None`` skips that side effect (used by tests).
     :type client_connection: Optional[Any]
+    :param response_state: Narrow client-owned header state for connection-free
+        item callers. The connection argument remains for unmigrated families.
+    :type response_state: Optional[ResponseHeaderState]
     :param response_hook: Optional callable invoked exactly once on
         success with ``(headers, parsed_body)``. Not invoked on failure.
     :type response_hook: Optional[Callable[[Mapping[str, Any], Any], None]]
@@ -85,6 +137,8 @@ def parse_backend_response(
 
     if client_connection is not None:
         client_connection.last_response_headers = headers
+    if response_state is not None:
+        response_state.last_response_headers = headers
 
     # 304 Not Modified is the conditional-GET success signal on
     # read_item (see module docstring). It is < 400 but not in the
@@ -156,7 +210,7 @@ def _normalise_request_charge_header(headers: CaseInsensitiveDict) -> None:
 
 
 def _attach_diagnostics_header(headers: CaseInsensitiveDict, diagnostics: Any) -> None:
-    """Expose backend diagnostics through response headers for parity paths."""
+    """Expose the SDK's additive diagnostic summary on every Rust response path."""
     if diagnostics is None:
         return
     if isinstance(diagnostics, str):

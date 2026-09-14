@@ -53,7 +53,7 @@ from azure.cosmos._backend.constants import BACKEND_NAME_RUST
 
 from azure.core.exceptions import ServiceResponseError
 
-from .base import AsyncCosmosBackend
+from .cosmos_backend import AsyncCosmosBackend
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -83,7 +83,7 @@ _UNSUPPORTED_QUERY_ERROR = driver_unsupported_query_error_type(_rust_module)
 # Look up the binding's ``<op>_async`` function for an operation. Read live from
 # ``_rust_module`` rather than cached at import, so the tests can swap in a fake
 # binding; the extra getattr per call is tiny next to the network round trip.
-def _resolve_async_dispatch(op: str) -> Optional[Any]:
+def _resolve_async_binding_function(op: str) -> Optional[Any]:
     """Return the binding's ``<op>_async`` function, or ``None`` if the op is
     unsupported or the compiled module is absent."""
     method = OP_TO_BINDING_METHOD.get(op)
@@ -350,8 +350,8 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
 
         handle = await self._ensure_handle()
         # Look up the binding's *_item_async function for this op; None if unsupported.
-        dispatch = _resolve_async_dispatch(prepared.op)
-        if dispatch is None:
+        binding_function = _resolve_async_binding_function(prepared.op)
+        if binding_function is None:
             raise NotImplementedError(
                 "AsyncRustBackend.execute does not yet support op={!r}.".format(prepared.op)
             )
@@ -373,7 +373,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
         # translate it to azure-core's ServiceResponseError so customer handlers
         # and transport-retry policies match the legacy path.
         try:
-            result = await dispatch(handle, prepared)
+            result = await binding_function(handle, prepared)
         except _DRIVER_TRANSPORT_ERROR as exc:
             raise ServiceResponseError(message=str(exc)) from exc
         return build_backend_response(*result)
@@ -389,7 +389,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
             )
         dispatch = getattr(_rust_module, "resolve_container_metadata_async", None)
         if dispatch is None:
-            return None
+            raise NotImplementedError("The Rust binding does not expose resolve_container_metadata_async")
         handle = await self._ensure_handle()
         try:
             result = await dispatch(handle, container_link)

@@ -18,12 +18,14 @@ read. These tests cover:
 3. The async provider: the same rid and extraction behaviour, awaited.
 """
 import asyncio
+import json
 import unittest
 from unittest.mock import AsyncMock, MagicMock
 
 from azure.cosmos._helpers._metadata_provider import ContainerMetadataProvider
 from azure.cosmos._helpers._pk_extract import extract_partition_key_value
 from azure.cosmos._backend._binding_conversions import build_backend_response
+from azure.cosmos._backend.errors import BackendProtocolError
 from azure.cosmos.aio._helpers._metadata_provider import AsyncContainerMetadataProvider
 from azure.cosmos.partition_key import _Empty, _Undefined
 
@@ -79,10 +81,12 @@ class TestPureExtractor(unittest.TestCase):
 # ---------------------------------------------------------------------------
 
 def _cc_with_props(props):
-    """Return a fake connection with cached container properties."""
-    cc = MagicMock()
-    cc._container_properties_cache = {_LINK: props}
-    return cc
+    """Return a backend supplying container metadata, with no Python cache."""
+    backend = MagicMock(spec=["resolve_container_metadata"])
+    backend.resolve_container_metadata.return_value = build_backend_response(
+        200, 0, {}, json.dumps(props).encode()
+    )
+    return backend
 
 
 class TestSyncProvider(unittest.TestCase):
@@ -100,7 +104,9 @@ class TestSyncProvider(unittest.TestCase):
                 b'{"_rid":"rust-rid","partitionKey":{"paths":["/pk"],"kind":"Hash","version":2}}',
             )
         )
-        provider = ContainerMetadataProvider(cc, resolve_through_backend=resolver)
+        backend = MagicMock(spec=["resolve_container_metadata"])
+        backend.resolve_container_metadata = resolver
+        provider = ContainerMetadataProvider(backend)
         options = {}
 
         self.assertEqual(provider.container_rid(_LINK, options), "rust-rid")
@@ -114,22 +120,19 @@ class TestSyncProvider(unittest.TestCase):
         provider = ContainerMetadataProvider(_cc_with_props({"_rid": "R", "partitionKey": _HASH_DEF}))
         self.assertEqual(provider.container_rid(_LINK, {}), "R")
 
-    def test_container_rid_none_when_absent(self):
-        """Prove missing cached resource IDs return ``None``."""
+    def test_container_rid_missing_is_protocol_failure(self):
+        """An absent rid is invalid metadata, not a successful lookup."""
         provider = ContainerMetadataProvider(_cc_with_props({"partitionKey": _HASH_DEF}))
-        self.assertIsNone(provider.container_rid(_LINK, {}))
+        with self.assertRaises(BackendProtocolError):
+            provider.container_rid(_LINK, {})
 
     def test_container_rid_cache_miss_triggers_one_refresh(self):
         """Prove a cache miss refreshes metadata once before returning the ID."""
-        cc = MagicMock()
-        cache = {}
-        cc._container_properties_cache = cache
-        cc._refresh_container_properties_cache = MagicMock(
-            side_effect=lambda link: cache.__setitem__(link, {"_rid": "R2"})
-        )
-        provider = ContainerMetadataProvider(cc)
+        backend = _cc_with_props({"_rid": "R2"})
+        provider = ContainerMetadataProvider(backend)
         self.assertEqual(provider.container_rid(_LINK, {}), "R2")
-        cc._refresh_container_properties_cache.assert_called_once_with(_LINK)
+        self.assertEqual(provider.container_rid(_LINK, {}), "R2")
+        backend.resolve_container_metadata.assert_called_once_with(_LINK)
 
     def test_extract_partition_key_from_body(self):
         """Prove the provider extracts and stores a body partition key."""
@@ -175,7 +178,9 @@ class TestAsyncProvider(unittest.TestCase):
                 b'{"_rid":"rust-rid","partitionKey":{"paths":["/a","/b"],"kind":"MultiHash","version":2}}',
             )
         )
-        provider = AsyncContainerMetadataProvider(cc, resolve_through_backend=resolver)
+        backend = MagicMock(spec=["resolve_container_metadata"])
+        backend.resolve_container_metadata = resolver
+        provider = AsyncContainerMetadataProvider(backend)
 
         async def run():
             options = {}
@@ -193,25 +198,23 @@ class TestAsyncProvider(unittest.TestCase):
 
     def test_async_container_rid_cache_miss_awaits_refresh(self):
         """Prove an async cache miss waits for one metadata refresh."""
-        cc = MagicMock()
-        cache = {}
-        cc._container_properties_cache = cache
-
-        async def refresh(link):
-            cache[link] = {"_rid": "R-async"}
-
-        cc._refresh_container_properties_cache = AsyncMock(side_effect=refresh)
-        provider = AsyncContainerMetadataProvider(cc)
+        backend = MagicMock(spec=["resolve_container_metadata"])
+        backend.resolve_container_metadata = AsyncMock(
+            return_value=build_backend_response(200, 0, {}, b'{"_rid":"R-async"}')
+        )
+        provider = AsyncContainerMetadataProvider(backend)
 
         rid = asyncio.run(provider.container_rid(_LINK, {}))
         self.assertEqual(rid, "R-async")
-        cc._refresh_container_properties_cache.assert_awaited_once_with(_LINK)
+        backend.resolve_container_metadata.assert_awaited_once_with(_LINK)
 
     def test_async_extract_partition_key_from_body(self):
         """Prove async extraction preserves hierarchical key order."""
-        cc = MagicMock()
-        cc._container_properties_cache = {_LINK: {"_rid": "R", "partitionKey": _MULTI_DEF}}
-        provider = AsyncContainerMetadataProvider(cc)
+        backend = MagicMock(spec=["resolve_container_metadata"])
+        backend.resolve_container_metadata = AsyncMock(return_value=build_backend_response(
+            200, 0, {}, json.dumps({"_rid": "R", "partitionKey": _MULTI_DEF}).encode()
+        ))
+        provider = AsyncContainerMetadataProvider(backend)
         options = {}
         value = asyncio.run(provider.extract_partition_key(_LINK, {"a": "x", "b": "y"}, options))
         self.assertEqual(value, ["x", "y"])

@@ -53,6 +53,8 @@ from .partition_key import _Empty, _Undefined
 # core-python ``build_options`` consume the same mapping table.
 # The leading-underscore alias is kept here for source compatibility.
 from ._helpers._options import COMMON_OPTIONS as _COMMON_OPTIONS
+from ._helpers._options import get_match_headers
+from ._helpers._paths import parse_paths
 
 if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
@@ -74,28 +76,8 @@ _VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]*$")
 
 
 def _get_match_headers(kwargs: dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
-    if_match = kwargs.pop('if_match', None)
-    if_none_match = kwargs.pop('if_none_match', None)
-    match_condition = kwargs.pop('match_condition', None)
-    if match_condition == MatchConditions.IfNotModified:
-        if_match = kwargs.pop('etag', None)
-        if not if_match:
-            raise ValueError("'match_condition' specified without 'etag'.")
-    elif match_condition == MatchConditions.IfPresent:
-        if_match = '*'
-    elif match_condition == MatchConditions.IfModified:
-        if_none_match = kwargs.pop('etag', None)
-        if not if_none_match:
-            raise ValueError("'match_condition' specified without 'etag'.")
-    elif match_condition == MatchConditions.IfMissing:
-        if_none_match = '*'
-    elif match_condition is None:
-        etag = kwargs.pop('etag', None)
-        if etag is not None:
-            raise ValueError("'etag' specified without 'match_condition'.")
-    else:
-        raise TypeError("Invalid match condition: {}".format(match_condition))
-    return if_match, if_none_match
+    """Compatibility entrypoint for the shared public conditional-request utility."""
+    return get_match_headers(kwargs)
 
 
 def build_options(kwargs: dict[str, Any]) -> dict[str, Any]:
@@ -862,55 +844,8 @@ def TrimBeginningAndEndingSlashes(path: str) -> str:
 
 # Parses the paths into a list of token each representing a property
 def ParsePaths(paths: list[str]) -> list[str]:
-    segmentSeparator = "/"
-    tokens = []
-    for path in paths:
-        currentIndex = 0
-
-        while currentIndex < len(path):
-            if path[currentIndex] != segmentSeparator:
-                raise ValueError(f"Invalid path character at index {currentIndex}")
-
-            currentIndex += 1
-            if currentIndex == len(path):
-                break
-
-            # " and ' are treated specially in the sense that they can have the / (segment separator)
-            # between them which is considered part of the token
-            if path[currentIndex] == '"' or path[currentIndex] == "'":
-                quote = path[currentIndex]
-                newIndex = currentIndex + 1
-
-                while True:
-                    newIndex = path.find(quote, newIndex)
-                    if newIndex == -1:
-                        raise ValueError(f"Invalid path character at index {currentIndex}")
-
-                    # check if the quote itself is escaped by a preceding \ in which case it's part of the token
-                    if path[newIndex - 1] != "\\":
-                        break
-                    newIndex += 1
-
-                # This will extract the token excluding the quote chars
-                token = path[currentIndex + 1: newIndex]
-                tokens.append(token)
-                currentIndex = newIndex + 1
-            else:
-                newIndex = path.find(segmentSeparator, currentIndex)
-                token = None
-                if newIndex == -1:
-                    # This will extract the token from currentIndex to end of the string
-                    token = path[currentIndex:]
-                    currentIndex = len(path)
-                else:
-                    # This will extract the token from currentIndex to the char before the segmentSeparator
-                    token = path[currentIndex:newIndex]
-                    currentIndex = newIndex
-
-                token = token.strip()
-                tokens.append(token)
-
-    return tokens
+    """Compatibility entrypoint for the transport-independent property-path parser."""
+    return parse_paths(paths)
 
 
 def create_scope_from_url(url: str) -> str:

@@ -198,6 +198,8 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::list_containers);
     add_pyfn!(m, documents::query_containers);
     add_pyfn!(m, documents::read_container);
+    add_pyfn!(m, documents::delete_container);
+    add_pyfn!(m, documents::replace_container);
     add_pyfn!(m, documents::resolve_container_metadata);
     // Async siblings: each returns a Python awaitable that completes on the
     // driver's runtime, so the async backend holds no worker thread per call.
@@ -223,6 +225,8 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::list_containers_async);
     add_pyfn!(m, documents::query_containers_async);
     add_pyfn!(m, documents::read_container_async);
+    add_pyfn!(m, documents::delete_container_async);
+    add_pyfn!(m, documents::replace_container_async);
     add_pyfn!(m, documents::resolve_container_metadata_async);
     // Concrete backend provenance: a counter incremented inside the binding on
     // every operation, so the perf harness can prove the Rust path actually ran

@@ -7,8 +7,9 @@
 
 Three public methods land here. ``create_database`` sends one request.
 ``DatabaseProxy.read`` sends one request -- a customer asking for a database's
-properties. ``create_database_if_not_exists`` sends one or two: read the
-database, and create it only if the read comes back not-found. The Rust driver
+properties. ``create_database_if_not_exists`` reads the database and creates it
+only if the read comes back not-found. A creation conflict adds one final read.
+The Rust driver
 has a read call and a create call but no combined one, so Python decides between
 them.
 
@@ -27,10 +28,8 @@ What the read-specific tests cover, and the customer behavior behind each:
 * the request the rust engine is handed -- database name, no body, the headers
   built from the caller's options, and the per-call ``timeout``. If any of that
   is wrong the call reads the wrong database or drops an option.
-* routing away from rust when rust cannot honor an option exactly -- a
-  sub-second ``timeout``, a socket-level ``read_timeout``, or a transport
-  keyword. A customer who sets ``timeout=0.5`` must get 0.5 seconds, not a
-  silently rounded-up value.
+* rejecting Rust reads when an option cannot be honored exactly, without
+  replaying through legacy transport or silently rounding a deadline.
 * ``response_hook`` firing exactly once, with the response headers and the
   properties, on **both** engines. Customers use it for cost and audit logging,
   so firing twice double-counts and firing zero times loses the record.
@@ -54,15 +53,18 @@ from __future__ import annotations
 import asyncio
 import inspect
 import json
+import warnings
 from types import SimpleNamespace
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import ANY, AsyncMock, MagicMock
 
 import pytest
 from azure.core import MatchConditions
+from azure.core.exceptions import ServiceRequestError
 from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import _base as base
-from azure.cosmos._backend.base import CosmosBackend
+from azure.cosmos._backend.cosmos_backend import CosmosBackend
+from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._backend.operations import (
@@ -83,7 +85,7 @@ from azure.cosmos._helpers._request_database import (
     is_read_database_rust_eligible,
 )
 from azure.cosmos._helpers.database_helper import DatabaseHelper
-from azure.cosmos.aio._backend.base import AsyncCosmosBackend
+from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.aio._cosmos_client_connection_async import (
     CosmosClientConnection as AsyncClientConnection,
@@ -93,7 +95,7 @@ from azure.cosmos.aio._database import DatabaseProxy as AsyncDatabaseProxy
 from azure.cosmos.aio._helpers.database_helper import AsyncDatabaseHelper
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.database import DatabaseProxy
-from azure.cosmos.exceptions import CosmosResourceExistsError, CosmosResourceNotFoundError
+from azure.cosmos.exceptions import CosmosHttpResponseError, CosmosResourceExistsError, CosmosResourceNotFoundError
 from azure.cosmos.offer import ThroughputProperties
 
 
@@ -251,8 +253,8 @@ def test_read_database_prepared_rejects_empty_normalized_id(database_id):
         ({}, {"timeout": -1}, False),
         ({}, {"timeout": float("-inf")}, False),
         ({}, {"timeout": "1"}, False),
-        ({}, {"timeout": float("nan")}, True),
-        ({}, {"timeout": float("inf")}, True),
+        ({}, {"timeout": float("nan")}, False),
+        ({}, {"timeout": float("inf")}, False),
         ({"read_timeout": 2}, {"read_timeout": 2}, False),
         ({}, {"connection_timeout": 2}, False),
         ({}, {"raw_request_hook": object()}, False),
@@ -398,7 +400,7 @@ def test_sync_read_database_routes_to_rust_and_parses_response():
 
 
 def test_sync_read_database_keeps_legacy_path_and_read_timeout():
-    """Core Python and per-call socket timeouts retain the legacy read behavior."""
+    """Explicit legacy helper selection retains its internal timeout plumbing."""
     response_headers = {"x-ms-request-charge": "1.0"}
     legacy_body = {"id": "db1", "_rid": "legacy"}
     hook_calls = []
@@ -416,9 +418,7 @@ def test_sync_read_database_keeps_legacy_path_and_read_timeout():
         ReadDatabase=MagicMock(side_effect=legacy_read),
         last_response_headers=response_headers,
     )
-    backend = _RustBackend()
-
-    result = DatabaseHelper(connection, backend).read_database(
+    result = DatabaseHelper(connection, LEGACY_BACKEND).read_database(
         "db1",
         {Constants.Kwargs.READ_TIMEOUT: 2},
         response_hook=response_hook,
@@ -426,13 +426,12 @@ def test_sync_read_database_keeps_legacy_path_and_read_timeout():
     )
 
     assert result == {"id": "db1", "_rid": "legacy"}
-    assert backend.prepared is None
     connection.ReadDatabase.assert_called_once_with(
         "dbs/db1",
         options={Constants.Kwargs.READ_TIMEOUT: 2},
         **{
             Constants.Kwargs.READ_TIMEOUT: 2,
-            "response_hook": response_hook,
+            "response_hook": ANY,
         },
     )
     assert hook_calls == [
@@ -484,8 +483,8 @@ def test_sync_database_proxy_read_selects_rust_backend():
     connection.ReadDatabase.assert_not_called()
 
 
-def test_sync_database_proxy_read_drops_deprecated_session_token():
-    """The ignored session token must not reach the Rust wire request."""
+def test_sync_database_proxy_read_rejects_deprecated_session_token():
+    """Obsolete session-token usage fails before dispatch."""
     backend = _RustBackend(
         BackendResponse(
             status_code=200,
@@ -495,10 +494,296 @@ def test_sync_database_proxy_read_drops_deprecated_session_token():
     )
     connection = SimpleNamespace(_backend=backend, last_response_headers={})
 
-    with pytest.warns(DeprecationWarning, match="session_token"):
+    with pytest.raises(TypeError, match="session_token"):
         DatabaseProxy(connection, "db1").read(session_token="ignored")
 
-    assert "sessionToken" not in backend.prepared.headers
+    assert backend.prepared is None
+
+
+@pytest.fixture(params=["sync", "async"])
+def database_read_case(request):
+    response = BackendResponse(
+        status_code=200,
+        headers=CaseInsensitiveDict({"x-ms-activity-id": "read-one", "x-ms-request-charge": "1.5"}),
+        body=b'{"id":"db1","_etag":"v1"}',
+        diagnostics="activity=read-one requests=1",
+    )
+    is_async = request.param == "async"
+    backend = _AsyncRustBackend(response) if is_async else _RustBackend(response)
+    mock_type = AsyncMock if is_async else MagicMock
+    backend.execute = mock_type(wraps=backend.execute)
+    connection = SimpleNamespace(_backend=backend, last_response_headers={})
+
+    def legacy_read(*args, **kwargs):
+        headers = CaseInsensitiveDict({"x-ms-activity-id": "read-one", "x-ms-request-charge": "1.5"})
+        body = {"id": "db1", "_etag": "v1"}
+        connection.last_response_headers = headers
+        result = CosmosDict(body, response_headers=headers)
+        hook = kwargs.get("response_hook")
+        if hook:
+            hook(headers, body)
+        return result
+
+    connection.ReadDatabase = mock_type(side_effect=legacy_read)
+    proxy_type = AsyncDatabaseProxy if is_async else DatabaseProxy
+    return SimpleNamespace(
+        proxy=proxy_type(connection, "db1", properties={"id": "db1", "_etag": "old"}),
+        connection=connection,
+        backend=backend,
+        legacy_backend=ASYNC_LEGACY_BACKEND if is_async else LEGACY_BACKEND,
+    )
+
+
+def _call_database_read(case, *args, **kwargs):
+    result = case.proxy.read(*args, **kwargs)
+    return asyncio.run(result) if inspect.isawaitable(result) else result
+
+
+@pytest.mark.parametrize("use_legacy", [False, True])
+@pytest.mark.parametrize(
+    "option, value",
+    [(option, value) for option in ("session_token", "populate_query_metrics")
+     for value in (None, False, True, "unused")]
+    + [("read_timeout", value) for value in (False, True, "unused")],
+)
+def test_database_read_rejects_obsolete_and_socket_options(database_read_case, use_legacy, option, value):
+    case = database_read_case
+    if use_legacy:
+        case.connection._backend = case.legacy_backend
+    hook = MagicMock()
+    with pytest.raises(TypeError, match=option):
+        _call_database_read(case, response_hook=hook, **{option: value})
+    hook.assert_not_called()
+    case.backend.execute.assert_not_called()
+    case.connection.ReadDatabase.assert_not_called()
+    assert case.proxy._properties["_etag"] == "old"
+
+
+@pytest.mark.parametrize("value", [None, False, True])
+def test_database_read_is_keyword_only(database_read_case, value):
+    with pytest.raises(TypeError):
+        _call_database_read(database_read_case, value)
+    database_read_case.backend.execute.assert_not_called()
+    database_read_case.connection.ReadDatabase.assert_not_called()
+
+
+@pytest.mark.parametrize("timeout", [None, 1, 3.5, 10, float(2**64 - 2048)])
+def test_database_read_preserves_supported_options_and_refreshes_properties(database_read_case, timeout):
+    case = database_read_case
+    result = _call_database_read(
+        case, timeout=timeout, read_timeout=None, throughput_bucket=7,
+        initial_headers={"x-my-app": "catalog"},
+    )
+    assert isinstance(result, CosmosDict)
+    assert result == {"id": "db1", "_etag": "v1"}
+    assert case.proxy._properties is result
+    prepared = case.backend.prepared
+    assert prepared.op == OP_READ_DATABASE
+    assert prepared.item_id == "db1"
+    assert prepared.body_bytes == b""
+    assert prepared.headers["initialHeaders"] == {"x-my-app": "catalog"}
+    assert prepared.headers["throughputBucket"] == 7
+    assert prepared.headers.get(Constants.OVERALL_TIMEOUT_SECONDS) == timeout
+    if timeout is None:
+        assert Constants.OVERALL_TIMEOUT_SECONDS not in prepared.headers
+    _call_database_read(case)
+    assert case.backend.execute.call_count == 2
+    case.connection.ReadDatabase.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "timeout",
+    [False, True, 0, -1, 0.5, "10", float("nan"), float("inf"), -float("inf"),
+     2**64 - 1, 2**64, 10**400],
+    ids=["false", "true", "zero", "negative", "subsecond", "string", "nan", "inf",
+         "negative-inf", "rounds-out-of-range", "out-of-range", "overflow"],
+)
+def test_database_read_invalid_timeout_never_reaches_a_transport(database_read_case, timeout):
+    case = database_read_case
+    before = rust_compatibility_fallback_count()
+    with pytest.raises(NotImplementedError, match="DatabaseProxy.read.*legacy Python"):
+        _call_database_read(case, timeout=timeout)
+    case.backend.execute.assert_not_called()
+    case.connection.ReadDatabase.assert_not_called()
+    assert rust_compatibility_fallback_count() == before
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"connection_timeout": 1},
+        {"raw_request_hook": lambda request: None},
+        {"raw_response_hook": lambda response: None},
+        {"unknown_option": True},
+        {"initial_headers": {"User-Agent": "custom"}},
+        {"initial_headers": {"X-MS-VERSION": "custom"}},
+        {"initial_headers": {"Accept": "custom"}},
+        {"initial_headers": {"Cache-Control": "custom"}},
+        {"request_options": {"timeout": 10}},
+    ],
+)
+def test_database_read_unsupported_settings_never_fall_back(database_read_case, kwargs):
+    case = database_read_case
+    hook = MagicMock()
+    with pytest.raises(NotImplementedError, match="DatabaseProxy.read.*legacy Python"):
+        _call_database_read(case, response_hook=hook, **kwargs)
+    hook.assert_not_called()
+    case.backend.execute.assert_not_called()
+    case.connection.ReadDatabase.assert_not_called()
+
+
+@pytest.mark.parametrize("use_legacy", [False, True])
+def test_database_read_hook_snapshot_is_isolated_and_falsey_callable_runs(database_read_case, use_legacy):
+    case = database_read_case
+    if use_legacy:
+        case.connection._backend = case.legacy_backend
+    calls = []
+
+    class Hook:
+        def __bool__(self):
+            return False
+
+        def __call__(self, headers, body):
+            assert headers["X-MS-ACTIVITY-ID"] == "read-one"
+            assert body == {"id": "db1", "_etag": "v1"}
+            assert type(body) is dict
+            calls.append(headers)
+            headers["x-ms-request-charge"] = "modified"
+            assert case.connection.last_response_headers["x-ms-request-charge"] == "1.5"
+
+    result = _call_database_read(case, response_hook=Hook())
+    assert len(calls) == 1
+    assert result.get_response_headers()["x-ms-request-charge"] == "1.5"
+    assert calls[0] is not result.get_response_headers()
+    assert calls[0] is not case.connection.last_response_headers
+    case.connection.last_response_headers["x-ms-activity-id"] = "later"
+    assert calls[0]["x-ms-activity-id"] == "read-one"
+    if use_legacy:
+        case.backend.execute.assert_not_called()
+        case.connection.ReadDatabase.assert_called_once()
+    else:
+        case.backend.execute.assert_called_once()
+        case.connection.ReadDatabase.assert_not_called()
+        assert "x-ms-cosmos-sdk-diagnostics" in calls[0]
+
+
+@pytest.mark.parametrize("use_legacy", [False, True])
+@pytest.mark.parametrize(
+    "kwargs, expected",
+    [
+        ({}, {}),
+        ({"etag": "v1", "match_condition": MatchConditions.IfNotModified}, {"If-Match": "v1"}),
+        ({"etag": "v1", "match_condition": MatchConditions.IfModified}, {"If-None-Match": "v1"}),
+        ({"match_condition": MatchConditions.IfPresent}, {"If-Match": "*"}),
+        ({"match_condition": MatchConditions.IfMissing}, {"If-None-Match": "*"}),
+        ({"etag": "unused", "match_condition": MatchConditions.IfPresent}, {"If-Match": "*"}),
+        ({"etag": "unused", "match_condition": MatchConditions.IfMissing}, {"If-None-Match": "*"}),
+        ({"if_match": "v1"}, {"If-Match": "v1"}),
+        ({"if_none_match": "v1"}, {"If-None-Match": "v1"}),
+    ],
+)
+def test_database_read_preserves_conditional_headers(database_read_case, use_legacy, kwargs, expected):
+    from azure.cosmos._helpers._request_headers import flatten_options_to_headers
+
+    case = database_read_case
+    if use_legacy:
+        case.connection._backend = case.legacy_backend
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        _call_database_read(case, **kwargs)
+    assert caught == []
+    if use_legacy:
+        call = case.connection.ReadDatabase.call_args
+        headers = flatten_options_to_headers(call.kwargs["options"])
+        assert "etag" not in call.kwargs
+        case.backend.execute.assert_not_called()
+    else:
+        headers = case.backend.prepared.headers
+        case.connection.ReadDatabase.assert_not_called()
+    assert {key: headers[key] for key in ("If-Match", "If-None-Match") if key in headers} == expected
+
+
+@pytest.mark.parametrize("use_legacy", [False, True])
+@pytest.mark.parametrize(
+    "kwargs, error_type",
+    [
+        ({"etag": "v1"}, ValueError),
+        ({"match_condition": MatchConditions.IfNotModified}, ValueError),
+        ({"match_condition": MatchConditions.IfModified}, ValueError),
+        ({"etag": "", "match_condition": MatchConditions.IfNotModified}, ValueError),
+        ({"etag": "v1", "match_condition": "invalid"}, TypeError),
+    ],
+)
+def test_database_read_invalid_guards_fail_before_dispatch(database_read_case, use_legacy, kwargs, error_type):
+    case = database_read_case
+    if use_legacy:
+        case.connection._backend = case.legacy_backend
+    with pytest.raises(error_type):
+        _call_database_read(case, **kwargs)
+    case.backend.execute.assert_not_called()
+    case.connection.ReadDatabase.assert_not_called()
+
+
+@pytest.mark.parametrize("failure_source", ["hook", "backend"])
+@pytest.mark.parametrize("error_type", [ValueError, ServiceRequestError, NotImplementedError, asyncio.CancelledError])
+def test_database_read_exceptions_never_replay_or_replace_cached_properties(
+    database_read_case, failure_source, error_type
+):
+    case = database_read_case
+    error = error_type("read failed")
+    hook = MagicMock(side_effect=error if failure_source == "hook" else None)
+    if failure_source == "backend":
+        case.backend.execute.side_effect = error
+    before = rust_compatibility_fallback_count()
+    with pytest.raises(error_type) as raised:
+        _call_database_read(case, response_hook=hook)
+    assert raised.value is error
+    assert case.proxy._properties["_etag"] == "old"
+    case.backend.execute.assert_called_once()
+    case.connection.ReadDatabase.assert_not_called()
+    assert hook.call_count == (1 if failure_source == "hook" else 0)
+    assert rust_compatibility_fallback_count() == before
+
+
+@pytest.mark.parametrize("status", [403, 404, 408, 412, 429, 500])
+def test_database_read_service_errors_never_replay(database_read_case, status):
+    case = database_read_case
+    case.backend.responses = [BackendResponse(
+        status_code=status,
+        headers=CaseInsensitiveDict({"x-ms-activity-id": "failed-read"}),
+        body=b'{"message":"read failed"}',
+    )]
+    hook = MagicMock()
+    with pytest.raises(CosmosHttpResponseError) as raised:
+        _call_database_read(case, etag="v1", match_condition=MatchConditions.IfNotModified, response_hook=hook)
+    assert raised.value.status_code == status
+    if status == 404:
+        assert isinstance(raised.value, CosmosResourceNotFoundError)
+    assert case.backend.prepared.headers["If-Match"] == "v1"
+    assert case.proxy._properties["_etag"] == "old"
+    hook.assert_not_called()
+    case.backend.execute.assert_called_once()
+    case.connection.ReadDatabase.assert_not_called()
+
+
+def test_database_read_not_modified_preserves_empty_response_and_hook(database_read_case):
+    case = database_read_case
+    case.backend.responses = [BackendResponse(
+        status_code=304,
+        headers=CaseInsensitiveDict({"etag": "v1"}),
+        body=b"",
+    )]
+    calls = []
+    result = _call_database_read(
+        case, etag="v1", match_condition=MatchConditions.IfModified,
+        response_hook=lambda headers, body: calls.append((headers, body)),
+    )
+    assert result == {}
+    assert result.get_response_headers()["etag"] == "v1"
+    assert calls == [({"etag": "v1"}, None)]
+    assert calls[0][0] is not result.get_response_headers()
+    assert case.proxy._properties is result
+    case.connection.ReadDatabase.assert_not_called()
 
 
 def test_sync_helper_keeps_legacy_create_database_behind_boundary():
@@ -656,14 +941,8 @@ def test_sync_if_not_exists_rust_404_then_rust_create_without_legacy_calls():
     connection.CreateDatabase.assert_not_called()
 
 
-def test_sync_if_not_exists_rust_create_race_propagates_conflict():
-    """Someone else created the database between the read and the create.
-
-    The read said not-found and the create then came back 409 Conflict. There is
-    a gap between the two requests that nothing can close, so the error is passed
-    to the caller rather than swallowed -- their throughput settings were not
-    applied, and pretending the call succeeded would hide that.
-    """
+def test_sync_if_not_exists_rust_create_race_reads_winning_database():
+    """Return the winning caller's database after a creation conflict."""
     connection = SimpleNamespace(
         ReadDatabase=MagicMock(side_effect=AssertionError("legacy read called")),
         CreateDatabase=MagicMock(side_effect=AssertionError("legacy create called")),
@@ -681,18 +960,24 @@ def test_sync_if_not_exists_rust_create_race_propagates_conflict():
                 headers=CaseInsensitiveDict({"x-ms-substatus": "0"}),
                 body=b'{"message":"database exists"}',
             ),
+            BackendResponse(
+                status_code=200,
+                headers=CaseInsensitiveDict({"x-ms-request-charge": "1.0"}),
+                body=b'{"id":"db1","_rid":"winner"}',
+            ),
         ]
     )
 
-    with pytest.raises(CosmosResourceExistsError):
-        DatabaseHelper(connection, backend).create_database_if_not_exists(
-            {"id": "db1"},
-            {"offerThroughput": 400},
-        )
+    result = DatabaseHelper(connection, backend).create_database_if_not_exists(
+        {"id": "db1"},
+        {"offerThroughput": 400},
+    )
 
+    assert result["_rid"] == "winner"
     assert [request.op for request in backend.prepared_requests] == [
         OP_READ_DATABASE,
         OP_CREATE_DATABASE,
+        OP_READ_DATABASE,
     ]
     connection.ReadDatabase.assert_not_called()
     connection.CreateDatabase.assert_not_called()
@@ -733,13 +1018,14 @@ def test_sync_if_not_exists_legacy_returns_existing_without_create_headers():
     ]
 
 
-def test_sync_if_not_exists_legacy_creates_only_after_404_and_propagates_409():
-    """The legacy path creates only after the existence read returns 404 (not found).
-    If two callers race and the create loses with a 409 ("already exists"), that 409 is
-    handed to the customer rather than hidden behind a second read."""
+def test_sync_if_not_exists_legacy_reads_winning_database_after_conflict():
+    """The shared Python coordinator also recovers when using legacy transport."""
     connection = SimpleNamespace(
         ReadDatabase=MagicMock(
-            side_effect=CosmosResourceNotFoundError(status_code=404, message="missing")
+            side_effect=[
+                CosmosResourceNotFoundError(status_code=404, message="missing"),
+                {"id": "db1", "_rid": "winner"},
+            ]
         ),
         CreateDatabase=MagicMock(
             side_effect=CosmosResourceExistsError(status_code=409, message="race")
@@ -747,13 +1033,13 @@ def test_sync_if_not_exists_legacy_creates_only_after_404_and_propagates_409():
         last_response_headers={},
     )
 
-    with pytest.raises(CosmosResourceExistsError):
-        DatabaseHelper(connection, LEGACY_BACKEND).create_database_if_not_exists(
-            {"id": "db1"},
-            {"offerThroughput": 400},
-        )
+    result = DatabaseHelper(connection, LEGACY_BACKEND).create_database_if_not_exists(
+        {"id": "db1"},
+        {"offerThroughput": 400},
+    )
 
-    connection.ReadDatabase.assert_called_once()
+    assert result["_rid"] == "winner"
+    assert connection.ReadDatabase.call_count == 2
     connection.CreateDatabase.assert_called_once_with(
         database={"id": "db1"},
         options={"offerThroughput": 400},
@@ -988,9 +1274,9 @@ def test_async_connection_read_database_forwards_initial_headers():
 
 
 def test_async_read_database_keeps_legacy_read_timeout():
-    """Async per-call socket timeouts continue through the legacy transport."""
+    """Explicit async legacy helper selection retains internal timeout plumbing."""
     async def run():
-        """Verify that a ``read_timeout`` kwarg routes the async read to legacy and fires the hook once."""
+        """The explicitly selected legacy path fires the hook once."""
         response_headers = {"x-ms-request-charge": "1.0"}
         legacy_body = {"id": "db1", "_rid": "legacy"}
         hook_calls = []
@@ -1004,9 +1290,7 @@ def test_async_read_database_keeps_legacy_read_timeout():
             ReadDatabase=AsyncMock(side_effect=legacy_read),
             last_response_headers=response_headers,
         )
-        backend = _AsyncRustBackend()
-
-        result = await AsyncDatabaseHelper(connection, backend).read_database(
+        result = await AsyncDatabaseHelper(connection, ASYNC_LEGACY_BACKEND).read_database(
             "db1",
             {Constants.Kwargs.READ_TIMEOUT: 2},
             response_hook=lambda headers, body: hook_calls.append((headers, body)),
@@ -1014,7 +1298,6 @@ def test_async_read_database_keeps_legacy_read_timeout():
         )
 
         assert result == {"id": "db1", "_rid": "legacy"}
-        assert backend.prepared is None
         connection.ReadDatabase.assert_awaited_once()
         link, = connection.ReadDatabase.await_args.args
         awaited_kwargs = connection.ReadDatabase.await_args.kwargs
@@ -1079,36 +1362,27 @@ def test_async_read_database_maps_not_found_and_skips_hook():
         {"raw_response_hook": object()},
     ],
 )
-def test_read_database_falls_back_to_legacy_for_options_rust_cannot_honor(
+def test_read_database_rejects_options_rust_cannot_honor(
     operation_kwargs,
 ):
-    """A plain read still succeeds -- on the engine that honors the option.
-
-    Unlike ``create_database_if_not_exists``, a single read has nothing to keep
-    consistent across two requests, so falling back to legacy is better than
-    failing: the caller gets the option they asked for and a database back.
-    """
+    """Unsupported reads never cross from Rust to legacy transport."""
     connection = SimpleNamespace(
         ReadDatabase=MagicMock(return_value={"id": "db1", "_rid": "legacy"}),
         last_response_headers={},
     )
     backend = _RustBackend()
 
-    result = DatabaseHelper(connection, backend).read_database(
-        "db1",
-        {},
-        kwargs=dict(operation_kwargs),
-    )
+    with pytest.raises(NotImplementedError, match="DatabaseProxy.read.*legacy Python"):
+        DatabaseHelper(connection, backend).read_database(
+            "db1", {}, kwargs=dict(operation_kwargs),
+        )
 
-    assert result == {"id": "db1", "_rid": "legacy"}
     assert backend.prepared is None
-    connection.ReadDatabase.assert_called_once_with(
-        "dbs/db1", options={}, **operation_kwargs
-    )
+    connection.ReadDatabase.assert_not_called()
 
 
-def test_read_database_falls_back_when_driver_would_replace_initial_header():
-    """Prove sync reads use Python when Rust would change a caller header."""
+def test_read_database_rejects_driver_owned_initial_header():
+    """Driver-owned header overrides fail without a legacy request."""
     request_options = {"initialHeaders": {"Accept": "application/custom"}}
     connection = SimpleNamespace(
         ReadDatabase=MagicMock(return_value={"id": "db1", "_rid": "legacy"}),
@@ -1116,17 +1390,11 @@ def test_read_database_falls_back_when_driver_would_replace_initial_header():
     )
     backend = _RustBackend()
 
-    result = DatabaseHelper(connection, backend).read_database(
-        "db1",
-        request_options,
-    )
+    with pytest.raises(NotImplementedError, match="DatabaseProxy.read.*legacy Python"):
+        DatabaseHelper(connection, backend).read_database("db1", request_options)
 
-    assert result == {"id": "db1", "_rid": "legacy"}
     assert backend.prepared is None
-    connection.ReadDatabase.assert_called_once_with(
-        "dbs/db1",
-        options=request_options,
-    )
+    connection.ReadDatabase.assert_not_called()
 
 
 @pytest.mark.parametrize(
@@ -1140,37 +1408,33 @@ def test_read_database_falls_back_when_driver_would_replace_initial_header():
         {"raw_response_hook": object()},
     ],
 )
-def test_async_read_database_falls_back_to_legacy_for_options_rust_cannot_honor(
+def test_async_read_database_rejects_options_rust_cannot_honor(
     operation_kwargs,
 ):
-    """Async twin of the single-read fallback."""
+    """Async reads also reject unsupported calls without fallback."""
     async def run():
-        """Read with an unsupported kwarg and confirm legacy is used and Rust backend is untouched."""
+        """No backend receives an unsupported request."""
         connection = SimpleNamespace(
             ReadDatabase=AsyncMock(return_value={"id": "db1", "_rid": "legacy"}),
             last_response_headers={},
         )
         backend = _AsyncRustBackend()
 
-        result = await AsyncDatabaseHelper(connection, backend).read_database(
-            "db1",
-            {},
-            kwargs=dict(operation_kwargs),
-        )
+        with pytest.raises(NotImplementedError, match="DatabaseProxy.read.*legacy Python"):
+            await AsyncDatabaseHelper(connection, backend).read_database(
+                "db1", {}, kwargs=dict(operation_kwargs),
+            )
 
-        assert result == {"id": "db1", "_rid": "legacy"}
         assert backend.prepared is None
-        connection.ReadDatabase.assert_awaited_once_with(
-            "dbs/db1", options={}, **operation_kwargs
-        )
+        connection.ReadDatabase.assert_not_awaited()
 
     asyncio.run(run())
 
 
-def test_async_read_database_falls_back_when_driver_would_replace_initial_header():
-    """Prove async reads use Python when Rust would change a caller header."""
+def test_async_read_database_rejects_driver_owned_initial_header():
+    """Async driver-owned header overrides fail without fallback."""
     async def run():
-        """Read with a caller-owned header Rust would overwrite and confirm legacy is used instead."""
+        """Neither transport should receive this unsupported call."""
         request_options = {"initialHeaders": {"x-ms-version": "2018-12-31"}}
         connection = SimpleNamespace(
             ReadDatabase=AsyncMock(return_value={"id": "db1", "_rid": "legacy"}),
@@ -1178,17 +1442,11 @@ def test_async_read_database_falls_back_when_driver_would_replace_initial_header
         )
         backend = _AsyncRustBackend()
 
-        result = await AsyncDatabaseHelper(connection, backend).read_database(
-            "db1",
-            request_options,
-        )
+        with pytest.raises(NotImplementedError, match="DatabaseProxy.read.*legacy Python"):
+            await AsyncDatabaseHelper(connection, backend).read_database("db1", request_options)
 
-        assert result == {"id": "db1", "_rid": "legacy"}
         assert backend.prepared is None
-        connection.ReadDatabase.assert_awaited_once_with(
-            "dbs/db1",
-            options=request_options,
-        )
+        connection.ReadDatabase.assert_not_awaited()
 
     asyncio.run(run())
 
@@ -1220,10 +1478,10 @@ def test_async_database_proxy_read_selects_rust_backend():
     asyncio.run(run())
 
 
-def test_async_database_proxy_read_drops_deprecated_session_token():
-    """The async proxy also drops the deprecated token before Rust dispatch."""
+def test_async_database_proxy_read_rejects_deprecated_session_token():
+    """The async proxy also rejects the obsolete token before dispatch."""
     async def run():
-        """Pass a deprecated ``session_token`` through the async proxy and confirm it is absent from the Rust request."""
+        """No request is prepared for an obsolete option."""
         backend = _AsyncRustBackend(
             BackendResponse(
                 status_code=200,
@@ -1233,10 +1491,10 @@ def test_async_database_proxy_read_drops_deprecated_session_token():
         )
         connection = SimpleNamespace(_backend=backend, last_response_headers={})
 
-        with pytest.warns(DeprecationWarning, match="session_token"):
+        with pytest.raises(TypeError, match="session_token"):
             await AsyncDatabaseProxy(connection, "db1").read(session_token="ignored")
 
-        assert "sessionToken" not in backend.prepared.headers
+        assert backend.prepared is None
 
     asyncio.run(run())
 
@@ -1379,6 +1637,8 @@ def test_sync_public_create_database_returns_proxy_and_properties():
     client = object.__new__(CosmosClient)
     client.client_connection = SimpleNamespace(last_response_headers={})
     client._backend = _RustBackend()
+    from azure.cosmos._helpers._item_context import ItemClientContext
+    client._item_context = ItemClientContext(client._backend)
     hook_calls = []
 
     proxy, properties = client.create_database(
@@ -1401,6 +1661,8 @@ def test_sync_public_create_database_preserves_zero_autoscale_increment():
     client.client_connection = SimpleNamespace(last_response_headers={})
     backend = _RustBackend()
     client._backend = backend
+    from azure.cosmos._helpers._item_context import ItemClientContext
+    client._item_context = ItemClientContext(backend)
 
     client.create_database(
         "db1",
@@ -1424,6 +1686,8 @@ def test_async_public_create_database_returns_proxy_and_properties():
         client = object.__new__(AsyncCosmosClient)
         client.client_connection = SimpleNamespace(last_response_headers={})
         client._backend = _AsyncRustBackend()
+        from azure.cosmos._helpers._item_context import ItemClientContext
+        client._item_context = ItemClientContext(client._backend)
         hook_calls = []
 
         proxy, properties = await client.create_database(
@@ -1463,6 +1727,8 @@ def test_public_create_database_if_not_exists_returns_final_properties_sync_and_
         )
     )
     sync_client._backend = sync_backend
+    from azure.cosmos._helpers._item_context import ItemClientContext
+    sync_client._item_context = ItemClientContext(sync_backend)
 
     proxy, properties = sync_client.create_database_if_not_exists(
         "db1",
@@ -1488,6 +1754,7 @@ def test_public_create_database_if_not_exists_returns_final_properties_sync_and_
             )
         )
         async_client._backend = async_backend
+        async_client._item_context = ItemClientContext(async_backend)
         async_proxy, async_properties = await async_client.create_database_if_not_exists(
             "db1",
             return_properties=True,
@@ -1499,78 +1766,256 @@ def test_public_create_database_if_not_exists_returns_final_properties_sync_and_
     asyncio.run(run())
 
 
-@pytest.mark.parametrize(
-    "method_name",
-    ["create_database", "create_database_if_not_exists"],
-)
-def test_sync_database_operations_really_ignore_inapplicable_conditions(method_name):
-    """``session_token``, ``etag``, and ``match_condition`` don't apply to creating a
-    database, so both create methods warn once for each and never place those
-    conditions on the wire -- a customer who passes them gets a heads-up, not a
-    silently conditional create."""
-    client = object.__new__(CosmosClient)
+@pytest.fixture(params=[False, True], ids=["sync", "aio"])
+def create_database_client(request):
+    client_type = AsyncCosmosClient if request.param else CosmosClient
+    client = object.__new__(client_type)
     client.client_connection = SimpleNamespace(
-        ReadDatabase=MagicMock(return_value={"id": "db1"}),
-        CreateDatabase=MagicMock(),
         last_response_headers={},
+        CreateDatabase=MagicMock(side_effect=AssertionError("legacy create called")),
+        ReadDatabase=MagicMock(side_effect=AssertionError("legacy read called")),
     )
-    backend = _RustBackend()
-    client._backend = backend
+    client._backend = _AsyncRustBackend() if request.param else _RustBackend()
+    from azure.cosmos._helpers._item_context import ItemClientContext
+    client._item_context = ItemClientContext(client._backend)
+    return client
 
-    with pytest.warns(UserWarning) as warnings_seen:
-        getattr(client, method_name)(
-            "db1",
-            session_token="session",
-            etag="etag",
-            match_condition=MatchConditions.IfPresent,
-        )
 
-    assert len(warnings_seen) == 3
-    if method_name == "create_database":
-        assert "sessionToken" not in backend.prepared.headers
-        assert "accessCondition" not in backend.prepared.headers
-    else:
-        assert backend.prepared.op == OP_READ_DATABASE
-        assert "sessionToken" not in backend.prepared.headers
-        assert "accessCondition" not in backend.prepared.headers
+def _call_create_database(client, *args, method_name="create_database", **kwargs):
+    result = getattr(client, method_name)(*args, **kwargs)
+    return asyncio.run(result) if inspect.isawaitable(result) else result
+
+
+@pytest.mark.parametrize("option", ["populate_query_metrics", "session_token", "etag", "match_condition"])
+@pytest.mark.parametrize("value", [None, False, True, "value"])
+@pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
+def test_create_database_rejects_inapplicable_options(create_database_client, option, value, method_name):
+    client = create_database_client
+    hook = MagicMock()
+
+    with pytest.raises(TypeError, match=f"'{option}'"):
+        _call_create_database(client, "db1", method_name=method_name, response_hook=hook, **{option: value})
+
+    assert client._backend.prepared_requests == []
+    client.client_connection.CreateDatabase.assert_not_called()
+    client.client_connection.ReadDatabase.assert_not_called()
+    hook.assert_not_called()
 
 
 @pytest.mark.parametrize(
-    "method_name",
-    ["create_database", "create_database_if_not_exists"],
+    "args, kwargs",
+    [
+        (("db1", False, 400), {}),
+        (("db1", None, 400), {}),
+        (("db1", 400), {}),
+        ((), {}),
+        (("db1",), {"id": "other"}),
+    ],
 )
-def test_async_database_operations_really_ignore_inapplicable_conditions(method_name):
-    """Async twin of
-    ``test_sync_database_operations_really_ignore_inapplicable_conditions``."""
-    async def run():
-        """Pass inapplicable conditions to the async method and confirm they are warned about and absent from the Rust request."""
-        client = object.__new__(AsyncCosmosClient)
-        client.client_connection = SimpleNamespace(
-            ReadDatabase=AsyncMock(return_value={"id": "db1"}),
-            CreateDatabase=AsyncMock(),
-            last_response_headers={},
-        )
-        backend = _AsyncRustBackend()
-        client._backend = backend
+@pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
+def test_create_database_rejects_invalid_argument_binding(create_database_client, args, kwargs, method_name):
+    client = create_database_client
+    with pytest.raises(TypeError):
+        _call_create_database(client, *args, method_name=method_name, **kwargs)
+    assert client._backend.prepared_requests == []
+    client.client_connection.CreateDatabase.assert_not_called()
+    client.client_connection.ReadDatabase.assert_not_called()
 
-        with pytest.warns(DeprecationWarning) as warnings_seen:
-            await getattr(client, method_name)(
-                "db1",
-                session_token="session",
-                etag="etag",
-                match_condition=MatchConditions.IfPresent,
+
+@pytest.mark.parametrize("keyword_id", [False, True])
+@pytest.mark.parametrize("return_properties", [False, True])
+@pytest.mark.parametrize("throughput", [None, 400, ThroughputProperties(auto_scale_max_throughput=4000)])
+@pytest.mark.parametrize("workflow", ["create", "existing", "missing", "race"])
+def test_create_database_preserves_supported_settings(
+    create_database_client, keyword_id, return_properties, throughput, workflow
+):
+    client = create_database_client
+    method_name = "create_database" if workflow == "create" else "create_database_if_not_exists"
+    if workflow in ("missing", "race"):
+        client._backend.responses = [
+            BackendResponse(
+                status_code=404,
+                headers=CaseInsensitiveDict({}),
+                body=b'{"code":"NotFound","message":"missing"}',
+            ),
+            _created_response(),
+        ]
+        if workflow == "race":
+            client._backend.responses.insert(
+                1,
+                BackendResponse(
+                    status_code=409,
+                    headers=CaseInsensitiveDict({"x-ms-request-charge": "2.0"}),
+                    body=b'{"code":"Conflict","message":"another caller created db1"}',
+                ),
             )
+            client._backend.responses[-1] = BackendResponse(
+                status_code=200,
+                headers=CaseInsensitiveDict({"x-ms-request-charge": "5.25"}),
+                body=b'{"id":"db1","_rid":"rid1"}',
+            )
+    elif workflow == "existing":
+        client._backend.responses = [
+            BackendResponse(
+                status_code=200,
+                headers=CaseInsensitiveDict({"x-ms-request-charge": "5.25"}),
+                body=b'{"id":"db1","_rid":"rid1"}',
+            )
+        ]
+    hook = MagicMock()
+    kwargs = {
+        "offer_throughput": throughput,
+        "return_properties": return_properties,
+        "response_hook": hook,
+        "initial_headers": {"x-custom": "value"},
+        "throughput_bucket": 9,
+        "timeout": 3.5,
+    }
+    args = () if keyword_id else ("db1",)
+    if keyword_id:
+        kwargs["id"] = "db1"
 
-        assert len(warnings_seen) == 3
-        if method_name == "create_database":
-            assert "sessionToken" not in backend.prepared.headers
-            assert "accessCondition" not in backend.prepared.headers
-        else:
-            assert backend.prepared.op == OP_READ_DATABASE
-            assert "sessionToken" not in backend.prepared.headers
-            assert "accessCondition" not in backend.prepared.headers
+    result = _call_create_database(client, *args, method_name=method_name, **kwargs)
 
-    asyncio.run(run())
+    proxy_type = AsyncDatabaseProxy if isinstance(client, AsyncCosmosClient) else DatabaseProxy
+    if return_properties:
+        proxy, properties = result
+        assert isinstance(properties, CosmosDict)
+        assert properties == {"id": "db1", "_rid": "rid1"}
+    else:
+        proxy = result
+    assert isinstance(proxy, proxy_type)
+    assert proxy.id == "db1"
+    headers = client._backend.prepared.headers
+    assert headers["initialHeaders"] == {"x-custom": "value"}
+    assert headers["throughputBucket"] == 9
+    assert headers[Constants.OVERALL_TIMEOUT_SECONDS] == 3.5
+    if throughput is None or workflow in ("existing", "race"):
+        assert "offerThroughput" not in headers
+        assert "autoUpgradePolicy" not in headers
+    elif isinstance(throughput, int):
+        assert headers["offerThroughput"] == throughput
+    else:
+        assert json.loads(headers["autoUpgradePolicy"])["maxThroughput"] == 4000
+    hook.assert_called_once_with(
+        {"x-ms-request-charge": "5.25"}, {"id": "db1", "_rid": "rid1"}
+    )
+    client.client_connection.CreateDatabase.assert_not_called()
+    client.client_connection.ReadDatabase.assert_not_called()
+    expected_operations = {
+        "create": [OP_CREATE_DATABASE],
+        "existing": [OP_READ_DATABASE],
+        "missing": [OP_READ_DATABASE, OP_CREATE_DATABASE],
+        "race": [OP_READ_DATABASE, OP_CREATE_DATABASE, OP_READ_DATABASE],
+    }
+    assert [p.op for p in client._backend.prepared_requests] == expected_operations[workflow]
+    if workflow != "create":
+        read_headers = client._backend.prepared_requests[0].headers
+        assert "offerThroughput" not in read_headers
+        assert "autoUpgradePolicy" not in read_headers
+    if workflow == "race":
+        assert headers == read_headers
+        create_headers = client._backend.prepared_requests[1].headers
+        if isinstance(throughput, int):
+            assert create_headers["offerThroughput"] == throughput
+        elif throughput is not None:
+            assert json.loads(create_headers["autoUpgradePolicy"])["maxThroughput"] == 4000
+
+
+@pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
+@pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
+def test_create_database_signature_is_keyword_only_after_id(client_type, method_name):
+    parameters = inspect.signature(getattr(client_type, method_name)).parameters
+    assert parameters["id"].kind == inspect.Parameter.POSITIONAL_OR_KEYWORD
+    assert parameters["id"].default is inspect.Parameter.empty
+    assert parameters["offer_throughput"].kind == inspect.Parameter.KEYWORD_ONLY
+    assert not any(p.kind == inspect.Parameter.VAR_POSITIONAL for p in parameters.values())
+
+
+def test_if_not_exists_unsupported_option_does_not_recommend_legacy(create_database_client):
+    client = create_database_client
+    with pytest.raises(NotImplementedError) as error:
+        _call_create_database(
+            client, "db1", method_name="create_database_if_not_exists", read_timeout=1
+        )
+    message = str(error.value)
+    assert "read_timeout" in message
+    assert "constructing CosmosClient" in message
+    assert "core-python" not in message
+    assert client._backend.prepared_requests == []
+    client.client_connection.ReadDatabase.assert_not_called()
+    client.client_connection.CreateDatabase.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "statuses",
+    [
+        [409],
+        [403],
+        [404, 403],
+        [404, 500],
+        [404, 409, 404],
+        [404, 409, 403],
+        [404, 409, 409],
+        [404, 409, 500],
+    ],
+)
+def test_if_not_exists_recovery_is_bounded_and_preserves_errors(create_database_client, statuses):
+    client = create_database_client
+    client._backend.responses = [
+        BackendResponse(
+            status_code=status,
+            headers=CaseInsensitiveDict({"x-ms-activity-id": f"step-{index}"}),
+            body=json.dumps({"message": f"failure-{index}"}).encode(),
+        )
+        for index, status in enumerate(statuses)
+    ]
+    hook = MagicMock()
+
+    with pytest.raises(CosmosHttpResponseError) as error:
+        _call_create_database(
+            client, "db1", method_name="create_database_if_not_exists", response_hook=hook
+        )
+
+    assert error.value.status_code == statuses[-1]
+    assert f"failure-{len(statuses) - 1}" in str(error.value)
+    assert [p.op for p in client._backend.prepared_requests] == [
+        OP_READ_DATABASE, OP_CREATE_DATABASE, OP_READ_DATABASE
+    ][:len(statuses)]
+    assert client.client_connection.last_response_headers["x-ms-activity-id"] == f"step-{len(statuses) - 1}"
+    hook.assert_not_called()
+    client.client_connection.ReadDatabase.assert_not_called()
+    client.client_connection.CreateDatabase.assert_not_called()
+
+
+@pytest.mark.parametrize("failure_type", [ServiceRequestError, asyncio.CancelledError])
+def test_if_not_exists_follow_up_read_preserves_transport_error_or_cancellation(
+    create_database_client, failure_type
+):
+    client = create_database_client
+    failure = failure_type("follow-up interrupted")
+    responses = [
+        BackendResponse(status_code=404, headers={}, body=b'{"message":"missing"}'),
+        BackendResponse(status_code=409, headers={}, body=b'{"message":"exists"}'),
+        failure,
+    ]
+    mock_type = AsyncMock if isinstance(client, AsyncCosmosClient) else MagicMock
+    execute = mock_type(side_effect=responses)
+    client._backend.execute = execute
+    hook = MagicMock()
+
+    with pytest.raises(failure_type) as error:
+        _call_create_database(
+            client, "db1", method_name="create_database_if_not_exists", response_hook=hook
+        )
+
+    assert error.value is failure
+    assert [call.args[0].op for call in execute.call_args_list] == [
+        OP_READ_DATABASE, OP_CREATE_DATABASE, OP_READ_DATABASE
+    ]
+    hook.assert_not_called()
+    client.client_connection.ReadDatabase.assert_not_called()
+    client.client_connection.CreateDatabase.assert_not_called()
 
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
@@ -1695,11 +2140,10 @@ def test_async_if_not_exists_rust_404_then_rust_create_without_legacy_calls():
     asyncio.run(run())
 
 
-def test_async_if_not_exists_rust_create_race_propagates_conflict():
-    """Async twin: a database created by someone else between the two requests
-    surfaces as a conflict error instead of a silent success."""
+def test_async_if_not_exists_rust_create_race_reads_winning_database():
+    """Async twin: a creation conflict is followed by one read."""
     async def run():
-        """Read returns 404 then create returns 409; confirm the conflict error propagates and no legacy call is made."""
+        """Return the winning database without invoking legacy transport."""
         connection = SimpleNamespace(
             ReadDatabase=AsyncMock(side_effect=AssertionError("legacy read called")),
             CreateDatabase=AsyncMock(side_effect=AssertionError("legacy create called")),
@@ -1717,21 +2161,27 @@ def test_async_if_not_exists_rust_create_race_propagates_conflict():
                     headers=CaseInsensitiveDict({"x-ms-substatus": "0"}),
                     body=b'{"message":"database exists"}',
                 ),
+                BackendResponse(
+                    status_code=200,
+                    headers=CaseInsensitiveDict({"x-ms-request-charge": "1.0"}),
+                    body=b'{"id":"db1","_rid":"winner"}',
+                ),
             ]
         )
 
-        with pytest.raises(CosmosResourceExistsError):
-            await AsyncDatabaseHelper(
-                connection,
-                backend,
-            ).create_database_if_not_exists(
-                {"id": "db1"},
-                {"offerThroughput": 400},
-            )
+        result = await AsyncDatabaseHelper(
+            connection,
+            backend,
+        ).create_database_if_not_exists(
+            {"id": "db1"},
+            {"offerThroughput": 400},
+        )
 
+        assert result["_rid"] == "winner"
         assert [request.op for request in backend.prepared_requests] == [
             OP_READ_DATABASE,
             OP_CREATE_DATABASE,
+            OP_READ_DATABASE,
         ]
         connection.ReadDatabase.assert_not_awaited()
         connection.CreateDatabase.assert_not_awaited()
@@ -1857,8 +2307,8 @@ def test_async_if_not_exists_read_timeout_never_crosses_from_rust_to_legacy(
 
 def test_sync_if_not_exists_non_404_read_error_propagates_without_create():
     """A read error other than 404 (e.g. 403 Forbidden) propagates immediately
-    without ever attempting the create.  The race-contract (404 -> 409 propagates)
-    is a separate concern; this locks in that only 404 triggers create."""
+    without ever attempting the create. Recovery from a creation conflict is a
+    separate concern; this locks in that only 404 triggers create."""
     connection = SimpleNamespace(
         ReadDatabase=MagicMock(
             side_effect=CosmosResourceExistsError(status_code=409, message="conflict")
@@ -1914,6 +2364,287 @@ def _deleted_response() -> BackendResponse:
         headers=CaseInsensitiveDict({"x-ms-request-charge": "4.24"}),
         body=b"",
     )
+
+
+@pytest.fixture(params=[False, True], ids=["sync", "aio"])
+def delete_database_client(request):
+    is_async = request.param
+    client_type = AsyncCosmosClient if is_async else CosmosClient
+    client = object.__new__(client_type)
+    delete_mock = AsyncMock if is_async else MagicMock
+    client.client_connection = SimpleNamespace(
+        DeleteDatabase=delete_mock(side_effect=AssertionError("legacy delete called")),
+        last_response_headers=CaseInsensitiveDict({"x-ms-activity-id": "stale"}),
+    )
+    response = BackendResponse(
+        status_code=204,
+        headers=CaseInsensitiveDict({
+            "x-ms-request-charge": "4.24",
+            "x-ms-activity-id": "delete-one",
+        }),
+        body=b"",
+        diagnostics="activity=delete-one requests=1",
+    )
+    client._backend = _AsyncRustBackend(response) if is_async else _RustBackend(response)
+    client._backend.execute = delete_mock(wraps=client._backend.execute)
+    return client
+
+
+def _call_delete_database(client, *args, **kwargs):
+    result = client.delete_database(*args, **kwargs)
+    return asyncio.run(result) if inspect.isawaitable(result) else result
+
+
+def _use_legacy_delete(client):
+    is_async = isinstance(client, AsyncCosmosClient)
+    client._backend = ASYNC_LEGACY_BACKEND if is_async else LEGACY_BACKEND
+
+    def delete(*_args, **_kwargs):
+        client.client_connection.last_response_headers = CaseInsensitiveDict({
+            "x-ms-request-charge": "4.24",
+            "x-ms-activity-id": "delete-one",
+        })
+
+    client.client_connection.DeleteDatabase.side_effect = delete
+
+
+@pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
+@pytest.mark.parametrize("option", ["session_token", "populate_query_metrics"])
+@pytest.mark.parametrize("value", [None, False, True, "unused"])
+def test_delete_database_rejects_obsolete_options_before_dispatch(
+    delete_database_client, use_legacy, option, value
+):
+    client = delete_database_client
+    rust_backend = client._backend
+    if use_legacy:
+        _use_legacy_delete(client)
+    hook = MagicMock()
+    with pytest.raises(TypeError, match=f"'{option}'"):
+        _call_delete_database(client, "db1", response_hook=hook, **{option: value})
+    rust_backend.execute.assert_not_called()
+    client.client_connection.DeleteDatabase.assert_not_called()
+    hook.assert_not_called()
+
+
+@pytest.mark.parametrize("value", [None, False, True])
+def test_delete_database_rejects_positional_query_metrics(delete_database_client, value):
+    client = delete_database_client
+    with pytest.raises(TypeError):
+        _call_delete_database(client, "db1", value)
+    client._backend.execute.assert_not_called()
+    client.client_connection.DeleteDatabase.assert_not_called()
+
+
+@pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
+def test_delete_database_hook_receives_an_isolated_case_insensitive_snapshot(delete_database_client, use_legacy):
+    client = delete_database_client
+    rust_backend = client._backend
+    if use_legacy:
+        _use_legacy_delete(client)
+    calls = []
+
+    def hook(headers):
+        assert client.client_connection.last_response_headers["x-ms-activity-id"] == "delete-one"
+        assert headers["X-MS-ACTIVITY-ID"] == "delete-one"
+        assert headers["X-MS-REQUEST-CHARGE"] == "4.24"
+        calls.append(headers)
+
+    assert _call_delete_database(client, "db1", response_hook=hook) is None
+    assert len(calls) == 1
+    assert calls[0] is not client.client_connection.last_response_headers
+    if use_legacy:
+        rust_backend.execute.assert_not_called()
+        client.client_connection.DeleteDatabase.assert_called_once()
+    else:
+        rust_backend.execute.assert_called_once()
+        client.client_connection.DeleteDatabase.assert_not_called()
+        assert calls[0]["x-ms-cosmos-sdk-diagnostics"] == "activity=delete-one requests=1"
+    client.client_connection.last_response_headers["x-ms-activity-id"] = "later-operation"
+    assert calls[0]["x-ms-activity-id"] == "delete-one"
+    calls[0].clear()
+    assert client.client_connection.last_response_headers["x-ms-request-charge"] == "4.24"
+
+
+def test_delete_database_invokes_falsey_callable_hook(delete_database_client):
+    class Hook:
+        calls = 0
+
+        def __bool__(self):
+            return False
+
+        def __call__(self, headers):
+            assert headers["x-ms-activity-id"] == "delete-one"
+            self.calls += 1
+
+    hook = Hook()
+    _call_delete_database(delete_database_client, "db1", response_hook=hook)
+    assert hook.calls == 1
+
+
+@pytest.mark.parametrize("error_type", [ValueError, NotImplementedError, asyncio.CancelledError])
+def test_delete_database_hook_failure_never_replays(delete_database_client, error_type):
+    client = delete_database_client
+    error = error_type("callback failed")
+    hook = MagicMock(side_effect=error)
+    before = rust_compatibility_fallback_count()
+    with pytest.raises(error_type) as raised:
+        _call_delete_database(client, "db1", response_hook=hook)
+    assert raised.value is error
+    hook.assert_called_once()
+    client._backend.execute.assert_called_once()
+    client.client_connection.DeleteDatabase.assert_not_called()
+    assert rust_compatibility_fallback_count() == before
+
+
+@pytest.mark.parametrize("error_type", [ServiceRequestError, NotImplementedError, asyncio.CancelledError])
+def test_delete_database_backend_failure_never_replays(delete_database_client, error_type):
+    client = delete_database_client
+    error = error_type("backend failed")
+    client._backend.execute.side_effect = error
+    hook = MagicMock()
+    before = rust_compatibility_fallback_count()
+    with pytest.raises(error_type) as raised:
+        _call_delete_database(client, "db1", response_hook=hook)
+    assert raised.value is error
+    hook.assert_not_called()
+    client._backend.execute.assert_called_once()
+    client.client_connection.DeleteDatabase.assert_not_called()
+    assert rust_compatibility_fallback_count() == before
+
+
+@pytest.mark.parametrize("status", [403, 404, 412, 429, 500])
+def test_delete_database_service_error_never_fires_success_hook_or_replays(delete_database_client, status):
+    client = delete_database_client
+    client._backend.responses = [BackendResponse(
+        status_code=status,
+        headers=CaseInsensitiveDict({"x-ms-activity-id": "failed-delete"}),
+        body=b'{"message":"delete failed"}',
+    )]
+    hook = MagicMock()
+    before = rust_compatibility_fallback_count()
+    with pytest.raises(CosmosHttpResponseError) as raised:
+        _call_delete_database(
+            client, "db1", etag="known-etag",
+            match_condition=MatchConditions.IfNotModified, response_hook=hook,
+        )
+    assert raised.value.status_code == status
+    assert client._backend.prepared.headers["If-Match"] == "known-etag"
+    assert client.client_connection.last_response_headers["x-ms-activity-id"] == "failed-delete"
+    hook.assert_not_called()
+    client._backend.execute.assert_called_once()
+    client.client_connection.DeleteDatabase.assert_not_called()
+    assert rust_compatibility_fallback_count() == before
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"read_timeout": 0.5},
+        {"timeout": 0.5},
+        {"timeout": 0},
+        {"timeout": "invalid"},
+        {"connection_timeout": 1},
+        {"raw_request_hook": lambda request: None},
+        {"raw_response_hook": lambda response: None},
+        {"initial_headers": {"user-agent": "custom"}},
+        {"initial_headers": {"X-MS-VERSION": "2020-07-15"}},
+        {"unknown_option": True},
+    ],
+)
+def test_delete_database_unsupported_options_never_fall_back(delete_database_client, kwargs):
+    client = delete_database_client
+    hook = MagicMock()
+    before = rust_compatibility_fallback_count()
+    with pytest.raises(NotImplementedError, match="delete_database.*legacy Python"):
+        _call_delete_database(client, "db1", response_hook=hook, **kwargs)
+    hook.assert_not_called()
+    client._backend.execute.assert_not_called()
+    client.client_connection.DeleteDatabase.assert_not_called()
+    assert rust_compatibility_fallback_count() == before
+
+
+@pytest.mark.parametrize("timeout", [None, 1, 3.5])
+def test_delete_database_preserves_supported_deadlines_and_options(delete_database_client, timeout):
+    client = delete_database_client
+    assert _call_delete_database(
+        client, "db1", timeout=timeout, throughput_bucket=7,
+        initial_headers={"x-my-app": "catalog-service"},
+    ) is None
+    prepared = client._backend.prepared
+    assert prepared.headers["throughputBucket"] == 7
+    assert prepared.headers["initialHeaders"]["x-my-app"] == "catalog-service"
+    if timeout is None:
+        assert Constants.OVERALL_TIMEOUT_SECONDS not in prepared.headers
+    else:
+        assert prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == timeout
+    client._backend.execute.assert_called_once()
+    client.client_connection.DeleteDatabase.assert_not_called()
+
+
+@pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
+@pytest.mark.parametrize(
+    "kwargs, expected",
+    [
+        ({}, {}),
+        ({"etag": "v1", "match_condition": MatchConditions.IfNotModified}, {"If-Match": "v1"}),
+        ({"etag": "v1", "match_condition": MatchConditions.IfModified}, {"If-None-Match": "v1"}),
+        ({"match_condition": MatchConditions.IfPresent}, {"If-Match": "*"}),
+        ({"match_condition": MatchConditions.IfMissing}, {"If-None-Match": "*"}),
+        ({"etag": "unused", "match_condition": MatchConditions.IfPresent}, {"If-Match": "*"}),
+        ({"etag": "unused", "match_condition": MatchConditions.IfMissing}, {"If-None-Match": "*"}),
+        ({"if_match": "v1"}, {"If-Match": "v1"}),
+        ({"if_none_match": "v1"}, {"If-None-Match": "v1"}),
+    ],
+)
+def test_delete_database_preserves_conditional_headers_on_both_backends(
+    delete_database_client, use_legacy, kwargs, expected
+):
+    client = delete_database_client
+    rust_backend = client._backend
+    if use_legacy:
+        _use_legacy_delete(client)
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        assert _call_delete_database(client, "db1", **kwargs) is None
+    assert caught == []
+    if use_legacy:
+        rust_backend.execute.assert_not_called()
+        client.client_connection.DeleteDatabase.assert_called_once()
+        call = client.client_connection.DeleteDatabase.call_args
+        from azure.cosmos._helpers._request_headers import flatten_options_to_headers
+        headers = flatten_options_to_headers(call.kwargs["options"])
+        assert "etag" not in call.kwargs
+    else:
+        client.client_connection.DeleteDatabase.assert_not_called()
+        rust_backend.execute.assert_called_once()
+        headers = rust_backend.prepared.headers
+    assert {key: headers[key] for key in ("If-Match", "If-None-Match") if key in headers} == expected
+
+
+@pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
+@pytest.mark.parametrize(
+    "kwargs, error",
+    [
+        ({"etag": "v1"}, ValueError),
+        ({"match_condition": MatchConditions.IfNotModified}, ValueError),
+        ({"match_condition": MatchConditions.IfModified}, ValueError),
+        ({"etag": "", "match_condition": MatchConditions.IfNotModified}, ValueError),
+        ({"etag": "v1", "match_condition": "invalid"}, TypeError),
+    ],
+)
+def test_delete_database_invalid_guards_fail_before_dispatch(
+    delete_database_client, use_legacy, kwargs, error
+):
+    client = delete_database_client
+    rust_backend = client._backend
+    if use_legacy:
+        _use_legacy_delete(client)
+    hook = MagicMock()
+    with pytest.raises(error):
+        _call_delete_database(client, "db1", response_hook=hook, **kwargs)
+    hook.assert_not_called()
+    rust_backend.execute.assert_not_called()
+    client.client_connection.DeleteDatabase.assert_not_called()
 
 
 def test_delete_database_is_registered_as_single_response_operation():
@@ -2018,25 +2749,23 @@ def test_sync_delete_database_raises_not_found_for_a_missing_database():
         DatabaseHelper(connection, backend).delete_database("dbs/db1", {})
 
 
-def test_sync_delete_database_keeps_legacy_path_for_read_timeout():
-    """A socket-level ``read_timeout`` has no per-request equivalent on the Rust
-    path, so the delete stays on legacy rather than accepting the number and not
-    applying it."""
+def test_sync_delete_database_rejects_unsupported_read_timeout_without_fallback():
+    """The timeout eligibility rule is unchanged, but no legacy delete is allowed."""
     connection = SimpleNamespace(
         DeleteDatabase=MagicMock(return_value=None),
         last_response_headers={},
     )
     backend = _RustBackend(_deleted_response())
 
-    DatabaseHelper(connection, backend).delete_database(
-        "dbs/db1",
-        {Constants.Kwargs.READ_TIMEOUT: 2},
-        kwargs={},
-    )
+    with pytest.raises(NotImplementedError, match="delete_database.*legacy Python"):
+        DatabaseHelper(connection, backend).delete_database(
+            "dbs/db1",
+            {Constants.Kwargs.READ_TIMEOUT: 2},
+            kwargs={},
+        )
 
     assert backend.prepared is None
-    connection.DeleteDatabase.assert_called_once()
-    assert connection.DeleteDatabase.call_args.args[0] == "dbs/db1"
+    connection.DeleteDatabase.assert_not_called()
 
 
 def test_async_delete_database_routes_to_rust_and_never_calls_legacy():
@@ -2064,24 +2793,25 @@ def test_async_delete_database_routes_to_rust_and_never_calls_legacy():
     asyncio.run(run())
 
 
-def test_async_delete_database_keeps_legacy_path_for_read_timeout():
-    """Prove async database deletion uses Python for ``read_timeout``."""
+def test_async_delete_database_rejects_unsupported_read_timeout_without_fallback():
+    """The async delete uses the same no-fallback policy."""
     async def run():
-        """Drive the async delete with ``read_timeout`` and verify legacy was used, not Rust."""
+        """An unsupported timeout must not reach either transport."""
         connection = SimpleNamespace(
             DeleteDatabase=AsyncMock(return_value=None),
             last_response_headers={},
         )
         backend = _AsyncRustBackend(_deleted_response())
 
-        await AsyncDatabaseHelper(connection, backend).delete_database(
-            "dbs/db1",
-            {Constants.Kwargs.READ_TIMEOUT: 2},
-            kwargs={},
-        )
+        with pytest.raises(NotImplementedError, match="delete_database.*legacy Python"):
+            await AsyncDatabaseHelper(connection, backend).delete_database(
+                "dbs/db1",
+                {Constants.Kwargs.READ_TIMEOUT: 2},
+                kwargs={},
+            )
 
         assert backend.prepared is None
-        connection.DeleteDatabase.assert_awaited_once()
+        connection.DeleteDatabase.assert_not_awaited()
 
     asyncio.run(run())
 
@@ -2140,14 +2870,8 @@ def test_public_sync_delete_database_fires_response_hook_with_headers_only():
     assert hook_calls[0]["x-ms-request-charge"] == "4.24"
 
 
-def test_sync_delete_database_forwards_the_conditions_it_warns_about():
-    """The sync method warns once each for ``session_token``, ``etag`` and
-    ``match_condition`` -- but, exactly as in the released v4 SDK, it still forwards
-    them to ``build_options``. So ``match_condition`` really does put an ``If-Match``
-    on the wire; only ``session_token`` is dropped, because a database is a master
-    resource and the legacy ``GetHeaders`` never attaches a session token to one.
-    Treating the warnings as if they meant "silently discarded" would make the rust
-    path send an unconditional delete for a caller who asked for a conditional one."""
+def test_sync_delete_database_preserves_access_conditions_without_warnings():
+    """A guarded delete remains guarded without misleading deprecation warnings."""
     client = object.__new__(CosmosClient)
     client.client_connection = SimpleNamespace(
         DeleteDatabase=MagicMock(side_effect=AssertionError("legacy delete called")),
@@ -2156,15 +2880,15 @@ def test_sync_delete_database_forwards_the_conditions_it_warns_about():
     backend = _RustBackend(_deleted_response())
     client._backend = backend
 
-    with pytest.warns(UserWarning) as warnings_seen:
+    with warnings.catch_warnings(record=True) as warnings_seen:
+        warnings.simplefilter("always")
         client.delete_database(
             "db1",
-            session_token="session",
             etag="etag",
             match_condition=MatchConditions.IfNotModified,
         )
 
-    assert len(warnings_seen) == 3
+    assert warnings_seen == []
     prepared = backend.prepared
     assert prepared is not None
     assert prepared.item_id == "db1"
@@ -2173,41 +2897,33 @@ def test_sync_delete_database_forwards_the_conditions_it_warns_about():
     assert "x-ms-session-token" not in prepared.headers
 
 
-def test_sync_delete_database_stays_on_legacy_when_build_options_leaves_an_etag():
-    """``MatchConditions.IfPresent`` sets ``If-Match: *`` and -- a quirk of
-    ``_get_match_headers`` that predates the rust path -- leaves ``etag`` behind in
-    the kwargs. A leftover kwarg is exactly what the eligibility gate exists to catch:
-    it means something the rust request builder has not accounted for, so the call
-    stays on the legacy transport, which receives the kwarg just as it does in v4."""
+def test_sync_delete_database_preserves_wildcard_guard_without_fallback():
+    """An unused ETag must not force fallback or remove the validated wildcard guard."""
     client = object.__new__(CosmosClient)
     client.client_connection = SimpleNamespace(
-        DeleteDatabase=MagicMock(),
+        DeleteDatabase=MagicMock(side_effect=AssertionError("legacy delete called")),
         last_response_headers={},
     )
     backend = _RustBackend(_deleted_response())
     client._backend = backend
 
-    with pytest.warns(UserWarning) as warnings_seen:
+    with warnings.catch_warnings(record=True) as warnings_seen:
+        warnings.simplefilter("always")
         client.delete_database(
             "db1",
-            session_token="session",
             etag="etag",
             match_condition=MatchConditions.IfPresent,
         )
 
-    assert len(warnings_seen) == 3
-    assert backend.prepared is None
-    call = client.client_connection.DeleteDatabase.call_args
-    assert call.kwargs["options"]["accessCondition"] == {"type": "IfMatch", "condition": "*"}
-    assert call.kwargs["etag"] == "etag"
+    assert warnings_seen == []
+    assert backend.prepared.headers["If-Match"] == "*"
+    client.client_connection.DeleteDatabase.assert_not_called()
 
 
-def test_async_delete_database_forwards_the_conditions_it_warns_about():
-    """Prove the async method forwards conditions and emits ``DeprecationWarning``
-    warns with ``UserWarning``. That difference predates the rust path and routing
-    through the coordinator must not change it."""
+def test_async_delete_database_preserves_access_conditions_without_warnings():
+    """Async deletes retain conditional headers without deprecation warnings."""
     async def run():
-        """Verify the async public method forwards conditions to ``build_options`` and emits ``DeprecationWarning``."""
+        """Verify the condition reaches the Rust request."""
         client = object.__new__(AsyncCosmosClient)
         client.client_connection = SimpleNamespace(
             DeleteDatabase=AsyncMock(side_effect=AssertionError("legacy delete called")),
@@ -2216,15 +2932,15 @@ def test_async_delete_database_forwards_the_conditions_it_warns_about():
         backend = _AsyncRustBackend(_deleted_response())
         client._backend = backend
 
-        with pytest.warns(DeprecationWarning) as warnings_seen:
+        with warnings.catch_warnings(record=True) as warnings_seen:
+            warnings.simplefilter("always")
             await client.delete_database(
                 "db1",
-                session_token="session",
                 etag="etag",
                 match_condition=MatchConditions.IfNotModified,
             )
 
-        assert len(warnings_seen) == 3
+        assert warnings_seen == []
         prepared = backend.prepared
         assert prepared is not None
         assert prepared.item_id == "db1"

@@ -46,7 +46,7 @@ def _is_partitioned_execution_info(e):
 
 def _is_hybrid_search_query(query, e):
     # had to add this logic since error returned from service is different, will need to ask Neil
-    if e.status_code == StatusCodes.INTERNAL_SERVER_ERROR:
+    if query is not None and e.status_code == StatusCodes.INTERNAL_SERVER_ERROR:
         if "RRF" in query or "FullTextContains" in query or "FullTextScore" in query:
             return True
     return False

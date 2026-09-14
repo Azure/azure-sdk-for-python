@@ -8,16 +8,23 @@ from __future__ import annotations
 from typing import Any, Callable, Mapping, Optional
 
 from ..._backend.contracts import LegacyOperation
-from ..._backend.operations import OP_CREATE_CONTAINER, OP_READ_CONTAINER
+from ..._backend.operations import OP_CREATE_CONTAINER, OP_READ_CONTAINER, OP_DELETE_CONTAINER, OP_REPLACE_CONTAINER
 from ..._cosmos_responses import CosmosDict
 from ..._helpers._request_container import (
+    RUST_CREATE_CONTAINER_UNSUPPORTED_MESSAGE,
+    RUST_DELETE_CONTAINER_UNSUPPORTED_MESSAGE,
+    RUST_READ_CONTAINER_UNSUPPORTED_MESSAGE,
+    RUST_REPLACE_CONTAINER_UNSUPPORTED_MESSAGE,
     build_create_container_prepared,
+    build_delete_container_prepared,
     build_read_container_prepared,
+    build_replace_container_prepared,
     is_create_container_rust_eligible,
+    is_delete_container_rust_eligible,
     is_read_container_rust_eligible,
 )
-from ..._helpers._response_parse import parse_backend_response
-from .._backend.base import AsyncCosmosBackend
+from ..._helpers._response_parse import parse_backend_response, parse_delete_response, with_response_header_snapshot
+from .._backend.cosmos_backend import AsyncCosmosBackend
 
 
 class AsyncContainerHelper:
@@ -41,7 +48,7 @@ class AsyncContainerHelper:
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
 
-        async def build_prepared():
+        async def prepare_request():
             """Build the prepared create-container request.
 
             The async backend awaits this callback, so the shared synchronous
@@ -55,7 +62,7 @@ class AsyncContainerHelper:
             )
 
         result = await self._backend.run_operation(
-            build_prepared=build_prepared,
+            prepare_request=prepare_request,
             legacy_operation=LegacyOperation(
                 op=OP_CREATE_CONTAINER,
                 invoke=lambda: self._client_connection.CreateContainer(
@@ -73,6 +80,8 @@ class AsyncContainerHelper:
                 request_options,
                 operation_kwargs,
             ),
+            allow_legacy_fallback=False,
+            unsupported_message=RUST_CREATE_CONTAINER_UNSUPPORTED_MESSAGE,
         )
         # Headers come off the result, not off ``client_connection``. The
         # connection's ``last_response_headers`` is shared mutable state that any
@@ -89,12 +98,15 @@ class AsyncContainerHelper:
         *,
         response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
+        rust_eligible: bool = True,
+        allow_legacy_fallback: bool = False,
+        unsupported_message: str = RUST_READ_CONTAINER_UNSUPPORTED_MESSAGE,
     ) -> CosmosDict:
         """Read a container and return its properties."""
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
 
-        async def build_prepared():
+        async def prepare_request():
             """Build the prepared read-container request.
 
             The async backend awaits this callback, so the shared synchronous
@@ -107,7 +119,7 @@ class AsyncContainerHelper:
             )
 
         result = await self._backend.run_operation(
-            build_prepared=build_prepared,
+            prepare_request=prepare_request,
             legacy_operation=LegacyOperation(
                 op=OP_READ_CONTAINER,
                 invoke=lambda: self._client_connection.ReadContainer(
@@ -120,13 +132,88 @@ class AsyncContainerHelper:
                 response,
                 client_connection=self._client_connection,
             ),
-            rust_eligible=is_read_container_rust_eligible(
+            rust_eligible=rust_eligible and is_read_container_rust_eligible(
                 request_options,
                 operation_kwargs,
             ),
+            allow_legacy_fallback=allow_legacy_fallback,
+            unsupported_message=unsupported_message,
         )
-        # Headers come off the result, not off ``client_connection`` -- see the
-        # note in ``create_container`` for why the shared field is unsafe here.
-        if response_hook is not None:
-            response_hook(result.get_response_headers(), result)
+        on_response = with_response_header_snapshot(response_hook, copy_body=True)
+        if on_response is not None:
+            on_response(result.get_response_headers(), result)
+        return result
+
+    async def delete_container(
+        self,
+        container_link: Any,
+        request_options: Mapping[str, Any],
+        *,
+        response_hook: Optional[Callable[[Mapping[str, Any], None], None]] = None,
+        kwargs: Optional[Mapping[str, Any]] = None,
+    ) -> None:
+        """Delete through the selected backend without Rust-to-legacy replay."""
+        operation_kwargs = dict(kwargs or {})
+        operation_kwargs.pop("response_hook", None)
+        on_response = with_response_header_snapshot(response_hook)
+        if on_response is not None:
+            operation_kwargs["response_hook"] = on_response
+
+        async def prepare_request():
+            return build_delete_container_prepared(
+                container_link, request_options, kwargs=operation_kwargs,
+            )
+
+        await self._backend.run_operation(
+            prepare_request=prepare_request,
+            legacy_operation=LegacyOperation(
+                op=OP_DELETE_CONTAINER,
+                invoke=lambda: self._client_connection.DeleteContainer(
+                    container_link, options=request_options, **operation_kwargs,
+                ),
+            ),
+            parse_response=lambda response: parse_delete_response(
+                response, client_connection=self._client_connection, response_hook=on_response,
+            ),
+            rust_eligible=is_delete_container_rust_eligible(request_options, operation_kwargs),
+            allow_legacy_fallback=False,
+            unsupported_message=RUST_DELETE_CONTAINER_UNSUPPORTED_MESSAGE,
+        )
+
+    async def replace_container(
+        self,
+        container_link: Any,
+        container_definition: Mapping[str, Any],
+        request_options: Mapping[str, Any],
+        *,
+        response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
+        kwargs: Optional[Mapping[str, Any]] = None,
+    ) -> CosmosDict:
+        """Replace properties without legacy replay or callback mutation of the result."""
+        operation_kwargs = dict(kwargs or {})
+        operation_kwargs.pop("response_hook", None)
+
+        async def prepare_request():
+            return build_replace_container_prepared(
+                container_link, container_definition, request_options, kwargs=operation_kwargs,
+            )
+
+        result = await self._backend.run_operation(
+            prepare_request=prepare_request,
+            legacy_operation=LegacyOperation(
+                op=OP_REPLACE_CONTAINER,
+                invoke=lambda: self._client_connection.ReplaceContainer(
+                    container_link, collection=container_definition, options=request_options, **operation_kwargs,
+                ),
+            ),
+            parse_response=lambda response: parse_backend_response(
+                response, client_connection=self._client_connection,
+            ),
+            rust_eligible=is_create_container_rust_eligible(request_options, operation_kwargs),
+            allow_legacy_fallback=False,
+            unsupported_message=RUST_REPLACE_CONTAINER_UNSUPPORTED_MESSAGE,
+        )
+        on_response = with_response_header_snapshot(response_hook, copy_body=True)
+        if on_response is not None:
+            on_response(result.get_response_headers(), result)
         return result

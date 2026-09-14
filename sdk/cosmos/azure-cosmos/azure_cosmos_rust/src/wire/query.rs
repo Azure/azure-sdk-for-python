@@ -216,7 +216,7 @@ async fn run_query_future(
     body_bytes: Vec<u8>,
 ) -> Result<Option<CosmosResponse>, CosmosError> {
     let container = driver
-        .resolve_container(&database_name, &container_name)
+        .resolve_container(&database_name, &container_name, Default::default())
         .await?;
     let feed_range = match query_target {
         QueryTarget::Partition(partition_key) => {
@@ -254,7 +254,7 @@ async fn run_read_all_items_future(
     modifiers: OpModifiers,
 ) -> Result<Option<CosmosResponse>, CosmosError> {
     let container = driver
-        .resolve_container(&database_name, &container_name)
+        .resolve_container(&database_name, &container_name, Default::default())
         .await?;
     let mut op = match ReadAllItemsExecution::from(query_target) {
         // The public Python API currently produces full-container scope. Keep the

@@ -16,8 +16,9 @@ from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.operations import OP_PATCH_ITEM
-from azure.cosmos.aio._backend.base import AsyncCosmosBackend
+from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos.aio._container import ContainerProxy
+from azure.cosmos._helpers._item_context import ItemClientContext
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 
 
@@ -39,7 +40,7 @@ def _make_async_proxy(rid="rid-cached"):
     cc._backend = ASYNC_LEGACY_BACKEND
     cc.PatchItem = AsyncMock(return_value={"id": "patch_item", "_rid": rid})
 
-    proxy = ContainerProxy(cc, "dbs/db", "c")
+    proxy = ContainerProxy(cc, "dbs/db", "c", _item_context=ItemClientContext(cc._backend))
     return proxy, cc
 
 
@@ -51,6 +52,9 @@ class _CapturingAsyncBackend(AsyncCosmosBackend):
     def __init__(self):
         self.executed = False
         self.prepared = None
+
+    async def resolve_container_metadata(self, link):
+        return BackendResponse(200, 0, {}, b'{"_rid":"rid-cached"}', None)
 
     async def execute(self, prepared):
         self.executed = True
@@ -86,6 +90,7 @@ class TestAsyncContainerPatchItemRouting(unittest.IsolatedAsyncioTestCase):
         proxy, cc = _make_async_proxy()
         backend = _CapturingAsyncBackend()
         cc._backend = backend
+        proxy._item_context = ItemClientContext(backend)
 
         await proxy.patch_item("patch_item", "a", _OPERATIONS)
 
@@ -94,24 +99,21 @@ class TestAsyncContainerPatchItemRouting(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(backend.prepared.op, OP_PATCH_ITEM)
         self.assertEqual(backend.prepared.item_id, "patch_item")
 
-    async def test_filter_predicate_patch_falls_back_to_legacy(self):
-        """A patch with a filter goes to the existing client, not the Rust
-        backend."""
+    async def test_filter_predicate_patch_raises_without_legacy(self):
+        """An unsupported filter fails without crossing engines."""
         proxy, cc = _make_async_proxy()
         backend = _CapturingAsyncBackend()
         cc._backend = backend
+        proxy._item_context = ItemClientContext(backend)
 
-        await proxy.patch_item(
-            "patch_item", "a", _OPERATIONS,
-            filter_predicate="from root where root.number = 3",
-        )
+        with self.assertRaises(NotImplementedError):
+            await proxy.patch_item(
+                "patch_item", "a", _OPERATIONS,
+                filter_predicate="from root where root.number = 3",
+            )
 
         self.assertFalse(backend.executed)
-        cc.PatchItem.assert_awaited_once()
-        self.assertEqual(
-            cc.PatchItem.call_args.kwargs["options"]["filterPredicate"],
-            "from root where root.number = 3",
-        )
+        cc.PatchItem.assert_not_awaited()
 
 
 if __name__ == "__main__":

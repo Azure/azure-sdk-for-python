@@ -444,11 +444,11 @@ without checking the backend type throughout its code.
 The two paths receive different forms on purpose:
 
 ```text
-RustBackend   -> call build_prepared() -> send PreparedRequest -> parse BackendResponse
+RustBackend   -> call prepare_request() -> send PreparedRequest -> parse BackendResponse
 LegacyBackend -> invoke LegacyOperation made from the original Python arguments
 ```
 
-If Contoso uses the legacy client, `build_prepared()` is never called. The old
+If Contoso uses the legacy client, `prepare_request()` is never called. The old
 implementation keeps receiving its historically shaped arguments, while the Rust
 path receives the new frozen record.
 

@@ -274,6 +274,20 @@ def overrides_driver_owned_header(request_options: Mapping[str, Any]) -> bool:
     )
 
 
+def is_supported_operation_timeout(timeout: Any) -> bool:
+    """Whether a duration survives Rust's one-second minimum and f64 conversion."""
+    if timeout is None:
+        return True
+    if isinstance(timeout, bool) or not isinstance(timeout, (int, float)):
+        return False
+    try:
+        seconds = float(timeout)
+    except OverflowError:
+        return False
+    # These comparisons also reject NaN and infinity.
+    return 1.0 <= seconds < 2**64
+
+
 def _timeout_is_representable(operation_kwargs: Mapping[str, Any]) -> bool:
     """Return whether the caller's ``timeout`` survives the trip to the driver.
 

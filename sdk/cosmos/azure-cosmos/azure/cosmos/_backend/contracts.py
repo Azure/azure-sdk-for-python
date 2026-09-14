@@ -13,7 +13,7 @@ is. Keeping the objects here, rather than beside either backend, is what lets
 redefining them.
 
 The three request/reply pairs correspond to the three dispatch methods on
-:class:`~azure.cosmos._backend.base.CosmosBackend`:
+:class:`~azure.cosmos._backend.cosmos_backend.CosmosBackend`:
 
 * :class:`PreparedRequest` / :class:`BackendResponse` -- one request, one reply,
   for every single-reply operation (database create, item CRUD, feed-range,

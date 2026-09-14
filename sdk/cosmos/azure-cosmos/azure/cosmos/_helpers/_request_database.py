@@ -12,7 +12,7 @@ account-scoped, so these requests carry no partition key and no container link.
 The eligibility predicates are here rather than beside the caller because they
 encode the same knowledge the builders do: exactly which per-call arguments and
 headers the Rust path can honour for these operations, and therefore when a call
-has to stay on the legacy path instead of being silently downgraded.
+must fail rather than silently dropping a setting or falling back to legacy.
 """
 from __future__ import annotations
 
@@ -24,7 +24,12 @@ from .._base import _validate_resource
 from .._constants import _Constants as Constants
 
 from ._body_wire import serialize_body_to_bytes
-from ._request_headers import _account_level_headers, _timeout_is_representable, overrides_driver_owned_header
+from ._request_headers import (
+    _account_level_headers,
+    _timeout_is_representable,
+    is_supported_operation_timeout,
+    overrides_driver_owned_header,
+)
 
 
 # The only per-call keyword arguments a database read can carry onto the Rust
@@ -32,8 +37,8 @@ from ._request_headers import _account_level_headers, _timeout_is_representable,
 # ``response_hook`` is invoked by the coordinator after the response is parsed,
 # so it never has to reach the binding. Anything else -- ``connection_timeout``,
 # ``raw_request_hook``, ``raw_response_hook`` -- is consumed by the legacy
-# azure-core pipeline, which the Rust path does not run, so its presence sends
-# the read to the legacy path instead of dropping it (see
+# azure-core pipeline, which the Rust path does not run, so its presence rejects
+# the Rust read instead of dropping it (see
 # ``is_read_database_rust_eligible``).
 _RUST_READ_DATABASE_SUPPORTED_KWARGS = frozenset({
     Constants.Kwargs.TIMEOUT,
@@ -122,10 +127,8 @@ def is_read_database_rust_eligible(
     * any operation kwarg outside ``_RUST_READ_DATABASE_SUPPORTED_KWARGS`` --
       for example ``connection_timeout`` or ``raw_request_hook``, which the
       legacy azure-core pipeline consumes and the Rust path never sees.
-    * a ``timeout`` below 1 second, including zero and negative values, or a
-      non-numeric timeout. The driver clamps positive sub-second values and
-      ignores non-positive values, while the legacy path either honors the
-      exact value or raises its established validation error.
+    * a ``timeout`` that is not a finite, non-boolean numeric duration of at least
+      one second within Rust's duration range.
     * ``initial_headers`` containing a standard header the driver always
       overwrites. The legacy pipeline preserves those caller overrides.
 
@@ -141,6 +144,20 @@ def is_read_database_rust_eligible(
     :returns: ``True`` when the Rust path preserves every option the caller set.
     :rtype: bool
     """
+    timeout = operation_kwargs.get(Constants.Kwargs.TIMEOUT)
+    option_timeout = request_options.get(Constants.Kwargs.TIMEOUT)
+    # The prepared request forwards kwargs, not a timeout supplied only in options.
+    if option_timeout is not None and option_timeout != timeout:
+        return False
+    return _database_request_options_are_supported(request_options, operation_kwargs) and (
+        is_supported_operation_timeout(timeout)
+    )
+
+
+def _database_request_options_are_supported(
+    request_options: Mapping[str, Any],
+    operation_kwargs: Mapping[str, Any],
+) -> bool:
     if (
         request_options.get(Constants.Kwargs.READ_TIMEOUT) is not None
         or operation_kwargs.get(Constants.Kwargs.READ_TIMEOUT) is not None
@@ -150,7 +167,7 @@ def is_read_database_rust_eligible(
         return False
     if overrides_driver_owned_header(request_options):
         return False
-    return _timeout_is_representable(operation_kwargs)
+    return True
 
 
 def build_delete_database_prepared(
@@ -195,8 +212,24 @@ def is_delete_database_rust_eligible(
     request_options: Mapping[str, Any],
     operation_kwargs: Mapping[str, Any],
 ) -> bool:
-    """Return whether Rust supports every option on this database delete."""
-    return is_read_database_rust_eligible(request_options, operation_kwargs)
+    """Keep deletion's existing deadline policy while sharing option checks."""
+    return _database_request_options_are_supported(request_options, operation_kwargs) and (
+        _timeout_is_representable(operation_kwargs)
+    )
+
+
+RUST_READ_DATABASE_UNSUPPORTED_MESSAGE = (
+    "DatabaseProxy.read cannot run on the Rust backend for this call because a "
+    "per-call setting, request hook, or header override cannot be honored. "
+    "Remove the unsupported option. The request will not be sent through legacy Python."
+)
+
+
+RUST_DELETE_DATABASE_UNSUPPORTED_MESSAGE = (
+    "delete_database cannot run on the Rust backend for this call because a "
+    "per-call setting, request hook, or header override cannot be honored. "
+    "Remove the unsupported option. The request will not be sent through legacy Python."
+)
 
 
 # Shown when a get-or-create cannot run on the Rust backend. The read and the
@@ -208,5 +241,6 @@ RUST_GET_OR_CREATE_DATABASE_UNSUPPORTED_MESSAGE = (
     "it was given a per-call option the Rust path cannot honor (read_timeout, a "
     "timeout the driver would interpret differently, an overridden standard "
     "request header, or a transport keyword such as connection_timeout). "
-    "Remove the option, or build the client with the core-python backend."
+    "Remove the unsupported per-call option; configure connection and read timeouts "
+    "when constructing CosmosClient."
 )

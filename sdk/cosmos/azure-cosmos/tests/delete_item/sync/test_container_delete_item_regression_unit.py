@@ -20,11 +20,12 @@ from unittest.mock import MagicMock, patch
 from azure.core import MatchConditions
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos._backend.base import CosmosBackend
+from azure.cosmos._backend.cosmos_backend import CosmosBackend
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.operations import OP_DELETE_ITEM
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.container import ContainerProxy
+from azure.cosmos._helpers._item_context import ItemClientContext
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 
 
@@ -48,7 +49,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
     cc._backend = LEGACY_BACKEND
     cc.DeleteItem = MagicMock(return_value=None)
 
-    proxy = ContainerProxy(cc, "dbs/db", "c")
+    proxy = ContainerProxy(cc, "dbs/db", "c", _item_context=ItemClientContext(cc._backend))
 
     def _fake_read(**kwargs):
         cache[container_link] = {"_rid": rid, "_read_kwargs": kwargs}
@@ -164,6 +165,9 @@ class _CapturingBackend(CosmosBackend):
         self.executed = False
         self.prepared = None
 
+    def resolve_container_metadata(self, link):
+        return BackendResponse(200, 0, {}, b'{"_rid":"rid-cached"}', None)
+
     def execute(self, prepared):
         self.executed = True
         self.prepared = prepared
@@ -185,6 +189,7 @@ class TestContainerDeleteItemBackendRouting(unittest.TestCase):
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()
         cc._backend = backend
+        proxy._item_context = ItemClientContext(backend)
 
         result = proxy.delete_item("delete_item", "a")
 

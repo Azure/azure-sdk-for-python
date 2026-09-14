@@ -2127,6 +2127,19 @@ confirmed. This document should not invent a YAML setting.
 
 ### Reuse the existing `cibuildwheel` precedent
 
+`cibuildwheel` is a third-party, open-source Python command-line tool maintained
+as a Python Packaging Authority (PyPA) project. It is not a Cosmos-specific
+script or an Azure DevOps service. The build environment installs it as a
+Python package and can invoke it with `python -m cibuildwheel`. Its upstream
+source and setup documentation are at `https://github.com/pypa/cibuildwheel`.
+
+The shared pipeline supplies the build machines and invokes the tool.
+`cibuildwheel` reads the selected build configuration, prepares the Python
+build environments, invokes the package build, optionally runs configured
+wheel tests, and collects the wheels. The SDK-owned custom backend and Maturin
+still perform the package-specific build work; they are not replaced by
+`cibuildwheel`.
+
 The shared Azure SDK pipeline already uses `cibuildwheel` to ship the native
 C-based Python Storage Extension. That implementation is the preferred
 precedent for selecting build environments, collecting completed wheels, and

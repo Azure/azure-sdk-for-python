@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""The abstract backend that every concrete sync backend implements.
+"""The abstract Cosmos backend that every concrete sync backend implements.
 
 ``RustBackend`` is the backend going forward and the only one intended for
 production use. The "core-python" selection runs the legacy in-place
@@ -56,8 +56,10 @@ from .errors import BackendProtocolError
 class CosmosBackend(abc.ABC):
     """Abstract dispatch target for any Cosmos operation (sync).
 
-    A per-family coordinator (:class:`~azure.cosmos._helpers.item_helper.ItemHelper`,
-    the throughput functions in
+    Migrated item operations use ``run_item_operation``, whose contract has no
+    legacy port. The migration dispatch methods below remain for other families.
+
+    A still-migrating family coordinator (the throughput functions in
     :mod:`~azure.cosmos._helpers.container_throughput_helper` and
     :mod:`~azure.cosmos._helpers.database_throughput_helper`, and the feed-range
     functions in :mod:`~azure.cosmos._helpers.feed_range_helper`) holds one of
@@ -99,10 +101,22 @@ class CosmosBackend(abc.ABC):
         """Resolve container metadata through this backend when supported."""
         return None
 
+    def run_item_operation(
+        self,
+        *,
+        prepare_request: Callable[[], PreparedRequest],
+        parse_response: Callable[[BackendResponse], Any],
+    ) -> Any:
+        """Build, execute, parse an item. No fallback port or exception replay exists."""
+        response = self.execute(prepare_request())
+        if response is None:
+            raise BackendProtocolError("The backend returned no item response")
+        return parse_response(response)
+
     def run_operation(
         self,
         *,
-        build_prepared: Callable[[], PreparedRequest],
+        prepare_request: Callable[[], PreparedRequest],
         legacy_operation: LegacyOperation,
         parse_response: Callable[[BackendResponse], Any],
         rust_eligible: bool = True,
@@ -112,8 +126,8 @@ class CosmosBackend(abc.ABC):
     ) -> Any:
         """Run one engine-selected operation end to end and return the final result.
 
-        This is the single entry point every family coordinator uses (items,
-        throughput, feed-range) so none of them ever has to interpret ``None``
+        This is the migration entry point for throughput and feed-range
+        coordinators, so none of them ever has to interpret ``None``
         from selection or from ``execute`` to decide whether to call the legacy
         path -- the chosen backend does that here, behind the interface.
 
@@ -129,7 +143,7 @@ class CosmosBackend(abc.ABC):
         separate, typed argument here (see :class:`LegacyOperation`), never
         something attached to the request object:
 
-        * ``build_prepared`` builds the ``PreparedRequest``; it is invoked only
+        * ``prepare_request`` builds the ``PreparedRequest``; it is invoked only
           on the rust path, so a core-python client never does the extra
           partition-key / body work.
         * ``legacy_operation`` names the op and runs the legacy
@@ -147,7 +161,7 @@ class CosmosBackend(abc.ABC):
         those, ``allow_legacy_fallback=False`` turns the silent switch into an
         error the customer can read and act on.
 
-        :keyword build_prepared: Zero-arg builder for the rust ``PreparedRequest``.
+        :keyword prepare_request: Zero-arg builder for the rust ``PreparedRequest``.
         :keyword legacy_operation: Typed port to the legacy call; see
             :class:`LegacyOperation`.
         :keyword parse_response: Parser from ``BackendResponse`` to final result.
@@ -174,7 +188,7 @@ class CosmosBackend(abc.ABC):
                 )
             return legacy_operation.invoke()
         try:
-            prepared = build_prepared()
+            prepared = prepare_request()
             response = self.execute(prepared)
             assert response is not None  # execute() only returns None for a None prepared request
             return parse_response(response)
@@ -187,16 +201,19 @@ class CosmosBackend(abc.ABC):
     def run_page_operation(  # pylint: disable=too-many-arguments
         self,
         *,
-        build_prepared: Callable[[], PreparedQuery],
+        prepare_request: Callable[[], PreparedQuery],
         legacy_operation: LegacyOperation,
         parse_response: Callable[[QueryPage], Any],
         rust_eligible: bool = True,
         fallback_exceptions: tuple[type[BaseException], ...] = (),
+        allow_legacy_fallback: bool = True,
+        unsupported_message: Optional[str] = None,
     ) -> Any:
         """Run one backend-selected page without exposing fallback sentinels.
 
         An ineligible request or an explicit capability exception runs the
-        supplied legacy operation. An empty page iterator is a backend contract
+        supplied legacy operation unless ``allow_legacy_fallback`` is false,
+        in which case it raises instead. An empty page iterator is a backend contract
         violation and propagates as ``BackendProtocolError``; it never replays
         the request through legacy.
 
@@ -205,10 +222,15 @@ class CosmosBackend(abc.ABC):
         the same feed twice -- once on Rust and again on legacy.
         """
         if not rust_eligible:
+            if not allow_legacy_fallback:
+                raise NotImplementedError(
+                    unsupported_message
+                    or "{} is not supported by the Rust backend for this request".format(legacy_operation.op)
+                )
             return legacy_operation.invoke()
         page: Optional[QueryPage] = None
         try:
-            pages = self.execute_pages(build_prepared())
+            pages = self.execute_pages(prepare_request())
             try:
                 page = next(pages)
             except StopIteration:
@@ -225,6 +247,8 @@ class CosmosBackend(abc.ABC):
                 if close is not None:
                     close()
         except fallback_exceptions:
+            if not allow_legacy_fallback:
+                raise
             record_rust_compatibility_fallback()
             return legacy_operation.invoke()
         if page is None:

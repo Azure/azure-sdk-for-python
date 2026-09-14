@@ -29,6 +29,7 @@ from azure.core.async_paging import AsyncPageIterator
 from azure.cosmos._constants import _Constants, TimeoutScope
 from azure.cosmos._execution_context.aio import execution_dispatcher
 from azure.cosmos import exceptions
+from azure.cosmos._helpers._page_response_hook import PageResponseHookError
 
 # pylint: disable=protected-access
 
@@ -121,7 +122,10 @@ class QueryIterable(AsyncPageIterator):  # pylint: disable=too-many-instance-att
             if elapsed >= timeout:
                 raise exceptions.CosmosClientTimeoutError()
 
-        block = await self._ex_context.fetch_next_block()
+        try:
+            block = await self._ex_context.fetch_next_block()
+        except PageResponseHookError as error:
+            raise error.original from None
 
         if not block:
             raise StopAsyncIteration

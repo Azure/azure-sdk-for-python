@@ -31,6 +31,7 @@ from azure.cosmos import PartitionKey
 from azure.cosmos._helpers._request_headers import flatten_options_to_headers
 from azure.cosmos._helpers._request_container import is_create_container_rust_eligible
 from azure.cosmos._helpers._request_database import is_delete_database_rust_eligible
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
 
 
 @pytest.mark.cosmosEmulator
@@ -85,7 +86,9 @@ class TestAccessConditionPassthroughUnit(unittest.TestCase):
         """The same guard must survive ``DatabaseProxy.create_container``."""
         import azure.cosmos.database as database_module
 
-        database = database_module.DatabaseProxy(mock.MagicMock(), "db-id")
+        connection = mock.MagicMock()
+        connection._backend = LEGACY_BACKEND
+        database = database_module.DatabaseProxy(connection, "db-id")
         captured = {}
 
         def fake_create(database_link, definition, request_options, **kwargs):

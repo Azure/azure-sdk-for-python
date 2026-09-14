@@ -114,6 +114,7 @@ import re
 import secrets
 import sys
 import threading
+from collections.abc import Mapping
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import pytest
@@ -135,7 +136,7 @@ import pytest
 #:         carry-over described below.
 #:   v3 -- records the Rust binding operation-count delta so backend selection
 #:         cannot be mistaken for actual Rust execution.
-PLUGIN_VERSION = "v3"
+PLUGIN_VERSION = "v4"
 
 
 # ---------------------------------------------------------------------------
@@ -244,6 +245,27 @@ _register_op(
     "create_database",
     sync=_sync_create_database_target,
     aio=_aio_create_database_target,
+)
+
+
+# create_database_if_not_exists -----------------------------------------------
+
+def _sync_create_database_if_not_exists_target() -> Tuple[Any, str, str]:
+    """Return the synchronous get-or-create method to record."""
+    from azure.cosmos import cosmos_client as _sync_client_mod
+    return _sync_client_mod, "CosmosClient", "create_database_if_not_exists"
+
+
+def _aio_create_database_if_not_exists_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous get-or-create method to record."""
+    from azure.cosmos.aio import _cosmos_client as _aio_client_mod
+    return _aio_client_mod, "CosmosClient", "create_database_if_not_exists"
+
+
+_register_op(
+    "create_database_if_not_exists",
+    sync=_sync_create_database_if_not_exists_target,
+    aio=_aio_create_database_if_not_exists_target,
 )
 
 
@@ -662,6 +684,27 @@ _register_op(
 )
 
 
+# replace_container -----------------------------------------------------------
+
+def _sync_replace_container_target() -> Tuple[Any, str, str]:
+    """Return the synchronous container replacement method."""
+    from azure.cosmos import database as _sync_database_mod
+    return _sync_database_mod, "DatabaseProxy", "replace_container"
+
+
+def _aio_replace_container_target() -> Tuple[Any, str, str]:
+    """Return the asynchronous container replacement method."""
+    from azure.cosmos.aio import _database as _aio_database_mod
+    return _aio_database_mod, "DatabaseProxy", "replace_container"
+
+
+_register_op(
+    "replace_container",
+    sync=_sync_replace_container_target,
+    aio=_aio_replace_container_target,
+)
+
+
 # read_container --------------------------------------------------------------
 # ContainerProxy.read returns the container's own definition -- partition key,
 # indexing policy, and the optional quota and statistics blocks. Named
@@ -864,6 +907,17 @@ def _snapshot_result_headers(result: Any, container_self: Any) -> Dict[str, str]
     return _snapshot_headers(container_self)
 
 
+def _snapshot_exception_headers(exc: BaseException, owner: Any, before: int) -> Dict[str, str]:
+    """Use the failed response, not stale headers from an earlier successful call."""
+    headers = getattr(exc, "headers", None)
+    if isinstance(headers, Mapping):
+        return {str(key): str(value) for key, value in headers.items()}
+    after = _snapshot_headers_identity(owner)
+    if after and after != before:
+        return _snapshot_headers(owner)
+    return {}
+
+
 def _rust_operation_count() -> Optional[int]:
     """Return the Rust operation count when the extension exposes it."""
     try:
@@ -986,6 +1040,122 @@ _LAZY_CAPTURE_OPS = frozenset((
     "query_containers",
 ))
 
+
+class _CapturedPageIterator:
+    """Delegate paging attributes and record only pages the caller requests."""
+
+    def __init__(self, pages, emit, client):
+        self._pages = pages
+        self._emit = emit
+        self._client = client
+
+    def __getattr__(self, name):
+        return getattr(self._pages, name)
+
+    def _before(self):
+        return (
+            _rust_operation_count(),
+            _rust_fallback_count(),
+            _snapshot_headers_identity(self._client),
+            self._pages.continuation_token,
+        )
+
+    def _record(self, before, rows, error=None, exhausted=False):
+        evidence = _execution_evidence(before[0], before[1])
+        fresh_headers = _snapshot_headers_identity(self._client) != before[2]
+        if exhausted and not fresh_headers and not evidence["rust_operation_delta"]:
+            return
+        headers = _snapshot_headers(self._client) if error is None or fresh_headers else {}
+        self._emit(rows, headers, evidence, before[3], error)
+
+
+class _CapturedSyncPageIterator(_CapturedPageIterator):
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        before = self._before()
+        try:
+            rows = list(next(self._pages))
+        except StopIteration:
+            self._record(before, [], exhausted=True)
+            raise
+        except BaseException as error:  # pylint: disable=broad-except
+            self._record(before, None, error)
+            raise
+        self._record(before, rows)
+        return iter(rows)
+
+
+class _CapturedAsyncPageIterator(_CapturedPageIterator):
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        before = self._before()
+        try:
+            page = await self._pages.__anext__()
+            rows = [row async for row in page]
+        except StopAsyncIteration:
+            self._record(before, [], exhausted=True)
+            raise
+        except BaseException as error:  # pylint: disable=broad-except
+            self._record(before, None, error)
+            raise
+        self._record(before, rows)
+
+        async def items():
+            for row in rows:
+                yield row
+
+        return items()
+
+
+class _CapturedPagedResult:
+    def __init__(self, result, emit, client):
+        self._result = result
+        self._emit = emit
+        self._client = client
+        self._items = None
+
+    def __getattr__(self, name):
+        return getattr(self._result, name)
+
+    def by_page(self, *args, **kwargs):
+        pages = self._result.by_page(*args, **kwargs)
+        wrapper = _CapturedAsyncPageIterator if hasattr(pages, "__aiter__") else _CapturedSyncPageIterator
+        return wrapper(pages, self._emit, self._client)
+
+
+class _CapturedSyncPagedResult(_CapturedPagedResult):
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self._items is None:
+            self._items = self._iterate()
+        return next(self._items)
+
+    def _iterate(self):
+        for page in self.by_page():
+            yield from page
+
+
+class _CapturedAsyncPagedResult(_CapturedPagedResult):
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if self._items is None:
+            self._items = self._iterate()
+        return await self._items.__anext__()
+
+    async def _iterate(self):
+        async for page in self.by_page():
+            async for row in page:
+                yield row
+
+
 def _build_sync_wrapper(op_name: str, surface: str,
                         original: Callable[..., Any]) -> Callable[..., Any]:
     """Wrap a synchronous method to record its request and response."""
@@ -1013,6 +1183,27 @@ def _build_sync_wrapper(op_name: str, surface: str,
         headers_id_before = _snapshot_headers_identity(self_container)
         try:
             result = original(self_container, *args, **kwargs)
+            if op_name in _LAZY_CAPTURE_OPS and callable(getattr(result, "by_page", None)):
+                def _emit_page(rows, headers, evidence, continuation, error):
+                    payload = {
+                        "nodeid": nodeid,
+                        "backend": backend,
+                        "surface": surface,
+                        "op": op_name,
+                        "ordinal": _STATE.next_ordinal(nodeid),
+                        "plugin_version": PLUGIN_VERSION,
+                        "status": "raised" if error is not None else "ok",
+                        "test_doc": test_doc,
+                        "request": {**request_view, "continuation": continuation},
+                        "return_value": _coerce_json_safe(rows),
+                        "response_headers": headers,
+                        "exception": _serialise_exception(error) if error is not None else None,
+                        **evidence,
+                    }
+                    _emit_block(payload)
+
+                wrapper = _CapturedAsyncPagedResult if hasattr(result, "__aiter__") else _CapturedSyncPagedResult
+                return wrapper(result, _emit_page, self_container)
             # These operations are lazy on both sync and aio surfaces: the
             # method returns a pager, and the HTTP call happens when the pager
             # is drained. Capture at drain-time so the evidence covers the
@@ -1022,11 +1213,9 @@ def _build_sync_wrapper(op_name: str, surface: str,
                     try:
                         materialized = [item async for item in result]
                     except BaseException as iter_exc:  # pylint: disable=broad-except
-                        headers_id_after = _snapshot_headers_identity(self_container)
-                        if headers_id_after != headers_id_before and headers_id_after != 0:
-                            response_headers = _snapshot_headers(self_container)
-                        else:
-                            response_headers = {}
+                        response_headers = _snapshot_exception_headers(
+                            iter_exc, self_container, headers_id_before
+                        )
                         payload = {
                             "nodeid": nodeid,
                             "backend": backend,
@@ -1070,11 +1259,9 @@ def _build_sync_wrapper(op_name: str, surface: str,
                     try:
                         materialized = list(result)
                     except BaseException as iter_exc:  # pylint: disable=broad-except
-                        headers_id_after = _snapshot_headers_identity(self_container)
-                        if headers_id_after != headers_id_before and headers_id_after != 0:
-                            response_headers = _snapshot_headers(self_container)
-                        else:
-                            response_headers = {}
+                        response_headers = _snapshot_exception_headers(
+                            iter_exc, self_container, headers_id_before
+                        )
                         payload = {
                             "nodeid": nodeid,
                             "backend": backend,
@@ -1130,16 +1317,7 @@ def _build_sync_wrapper(op_name: str, surface: str,
             _emit_block(payload)
             return result
         except BaseException as exc:  # pylint: disable=broad-except
-            headers_id_after = _snapshot_headers_identity(self_container)
-            if headers_id_after != headers_id_before and headers_id_after != 0:
-                response_headers = _snapshot_headers(self_container)
-            else:
-                # Client-side raise: no HTTP call happened, the SDK
-                # did not refresh ``last_response_headers``, anything
-                # there is a stale carry-over from a previous call.
-                # Emit an empty dict so the audit doc doesn't display
-                # stale headers.
-                response_headers = {}
+            response_headers = _snapshot_exception_headers(exc, self_container, headers_id_before)
             payload = {
                 "nodeid": nodeid,
                 "backend": backend,
@@ -1200,12 +1378,7 @@ def _build_aio_wrapper(op_name: str, surface: str,
             _emit_block(payload)
             return result
         except BaseException as exc:  # pylint: disable=broad-except
-            headers_id_after = _snapshot_headers_identity(self_container)
-            if headers_id_after != headers_id_before and headers_id_after != 0:
-                response_headers = _snapshot_headers(self_container)
-            else:
-                # See sync wrapper for the rationale; same logic.
-                response_headers = {}
+            response_headers = _snapshot_exception_headers(exc, self_container, headers_id_before)
             payload = {
                 "nodeid": nodeid,
                 "backend": backend,

@@ -3,39 +3,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""The explicit core-python (legacy) backend for the single-item path.
+"""The explicit core-python backend for migration coordinators.
 
-``LegacyBackend`` makes the core-python engine a full
-:class:`~azure.cosmos._backend.base.CosmosBackend` rather than the *absence* of a
-backend. Representing core-python as ``None`` instead would make ``None`` mean two
-things at once (no backend / run legacy) and force every coordinator to branch on
-it. With an explicit backend, every family coordinator (``ItemHelper``,
-``ThroughputHelper``, ``FeedRangeHelper``, ``DatabaseHelper``) always holds one
-backend by interface and never interprets ``None``. Selecting rust gives a
-:class:`~azure.cosmos._backend.rust.RustBackend`; selecting core-python (or
-forcing legacy for a single call) gives this backend. The item family runs
-through :meth:`~azure.cosmos._backend.base.CosmosBackend.run_operation`.
+This stateless backend runs the ``LegacyOperation`` supplied by families still
+using migration dispatch. It does not execute wire-shaped prepared requests.
+The shared ``LEGACY_BACKEND`` also identifies explicit core-python selection.
 
-The legacy engine is **not** ``PreparedRequest``-driven: its work is the
-original public call arguments (``document_link`` / ``options`` / body / kwargs),
-which a wire-shaped ``PreparedRequest`` does not carry. So this backend does not
-implement the wire primitive ``execute``; it runs the :class:`LegacyOperation`
-the coordinator hands to ``run_operation``. ``LegacyOperation`` is a small, named,
-typed request/context object (not a bare callable attached to
-``PreparedRequest``) -- see its docstring in ``base`` for why a fully generic
-reconstruction from wire-shaped fields is not safe here: the six legacy item
-calls (``CreateItem`` / ``DeleteItem`` / ...) take differently-shaped positional
-arguments that a ``PreparedRequest`` cannot carry losslessly, so the coordinator
-still builds the concrete zero-arg call, and this backend just runs it by
-``invoke()``. That object already closes over the connection and the per-call
-arguments, so this backend holds no per-client state and a single shared
-instance (:data:`LEGACY_BACKEND`) serves every core-python client.
+Point operations select ``LegacyItemHelper`` separately for parity; their Rust
+``ItemHelper`` has no legacy operation or fallback port. The item adapter retains
+the original Python method signatures rather than reconstructing legacy calls
+from a ``PreparedRequest``. Other families' migration dispatch is unchanged.
 """
 from __future__ import annotations
 
 from typing import Any, Callable, Optional
 
-from .base import CosmosBackend
+from .cosmos_backend import CosmosBackend
 from .contracts import BackendResponse, LegacyOperation, PreparedQuery, PreparedRequest, QueryPage
 from .constants import BACKEND_NAME_CORE_PYTHON
 
@@ -43,7 +26,7 @@ from .constants import BACKEND_NAME_CORE_PYTHON
 class LegacyBackend(CosmosBackend):
     """Core-python backend: runs the legacy ``client_connection`` call.
 
-    Stateless -- it only forwards to the :class:`~azure.cosmos._backend.base.LegacyOperation`
+    Stateless -- it only forwards to the :class:`~azure.cosmos._backend.cosmos_backend.LegacyOperation`
     the coordinator supplies -- so :data:`LEGACY_BACKEND` is shared by every
     core-python client instead of one instance per client.
     """
@@ -70,7 +53,7 @@ class LegacyBackend(CosmosBackend):
     def run_operation(
         self,
         *,
-        build_prepared: Callable[[], PreparedRequest],
+        prepare_request: Callable[[], PreparedRequest],
         legacy_operation: LegacyOperation,
         parse_response: Callable[[BackendResponse], Any],
         rust_eligible: bool = True,
@@ -81,9 +64,9 @@ class LegacyBackend(CosmosBackend):
         """Run the operation on the legacy core-python path.
 
         Always runs ``legacy_operation.invoke()`` and returns its already-parsed
-        result; ``build_prepared`` / ``parse_response`` / ``rust_eligible`` are
+        result; ``prepare_request`` / ``parse_response`` / ``rust_eligible`` are
         ignored because this backend never builds a wire request. Reading only
-        ``legacy_operation`` (never ``build_prepared`` / ``rust_eligible``) is
+        ``legacy_operation`` (never ``prepare_request`` / ``rust_eligible``) is
         this backend's whole "always fall back to legacy" behavior -- no ``None``
         or backend-type check anywhere in this method.
         """
@@ -92,15 +75,17 @@ class LegacyBackend(CosmosBackend):
     def run_page_operation(  # pylint: disable=too-many-arguments
         self,
         *,
-        build_prepared: Callable[[], PreparedQuery],
+        prepare_request: Callable[[], PreparedQuery],
         legacy_operation: LegacyOperation,
         parse_response: Callable[[QueryPage], Any],
         rust_eligible: bool = True,
         fallback_exceptions: tuple[type[BaseException], ...] = (),
+        allow_legacy_fallback: bool = True,
+        unsupported_message: Optional[str] = None,
     ) -> Any:
         """Run the paged operation on the legacy core-python path.
 
-        Mirrors :meth:`run_operation` for feeds: ``build_prepared`` /
+        Mirrors :meth:`run_operation` for feeds: ``prepare_request`` /
         ``parse_response`` / ``rust_eligible`` / ``fallback_exceptions`` are
         ignored because this backend never builds a wire request, so
         ``execute_pages`` is never reached.

@@ -84,6 +84,10 @@ from .._constants import _Constants as Constants
 from .._query_advisor import get_query_advice_info
 from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
 from .._query_rust_routing import (
+    RUST_LIST_CONTAINERS_UNSUPPORTED_MESSAGE,
+    RUST_LIST_DATABASES_UNSUPPORTED_MESSAGE,
+    RUST_QUERY_DATABASES_UNSUPPORTED_MESSAGE,
+    RUST_QUERY_CONTAINERS_UNSUPPORTED_MESSAGE,
     build_list_databases_prepared_query,
     build_query_databases_prepared_query,
     build_list_containers_prepared_query,
@@ -100,7 +104,8 @@ from .._query_rust_routing import (
 )
 from .. import http_constants, exceptions
 from . import _query_iterable_async as query_iterable
-from ._backend.base import AsyncCosmosBackend
+from ._backend.cosmos_backend import AsyncCosmosBackend
+from .._helpers._item_context import ResponseHeaderState
 from ._backend.legacy import ASYNC_LEGACY_BACKEND
 from .. import _runtime_constants as runtime_constants
 from .. import _request_object
@@ -157,6 +162,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     # default string precision
     _DefaultStringHashPrecision = 3
     _DefaultStringRangePrecision = -1
+
+    @property
+    def last_response_headers(self) -> CaseInsensitiveDict:
+        """Historical header view shared with connection-free item execution."""
+        return self._response_state.last_response_headers
+
+    @last_response_headers.setter
+    def last_response_headers(self, headers: CaseInsensitiveDict) -> None:
+        self._response_state.last_response_headers = headers
 
     def __init__( # pylint: disable=too-many-statements
             self,
@@ -228,7 +242,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
         # Keeps the latest response headers from the server.
-        self.last_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
+        self._response_state = kwargs.pop("_response_state", None) or ResponseHeaderState()
         self.UseMultipleWriteLocations = False
         self._global_endpoint_manager = _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(self)
 
@@ -3208,7 +3222,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         options=options,
                         req_headers=list_headers,
                     )
-                build_prepared_page = _build_list_databases_page
+                prepare_request_page = _build_list_databases_page
             elif resource_type == http_constants.ResourceType.Collection:
                 page_op = OP_LIST_CONTAINERS
                 rust_eligible = can_use_rust_backend_for_list_containers_page(
@@ -3238,7 +3252,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         options=options,
                         req_headers=list_headers,
                     )
-                build_prepared_page = _build_list_containers_page
+                prepare_request_page = _build_list_containers_page
             else:
                 page_op = OP_READ_ALL_ITEMS
                 rust_eligible = can_use_rust_backend_for_read_all_items_page(
@@ -3282,7 +3296,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         options=options,
                         req_headers=read_headers,
                     )
-                build_prepared_page = _build_read_all_items_page
+                prepare_request_page = _build_read_all_items_page
 
             def _parse_rust_page(page):
                 parsed_page = parse_and_finalize_rust_page(
@@ -3296,11 +3310,17 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 return __GetBodiesFromQueryResult(parsed_page.body)
 
             return await self._backend.run_page_operation(
-                build_prepared=build_prepared_page,
+                prepare_request=prepare_request_page,
                 legacy_operation=LegacyOperation(op=page_op, invoke=_run_legacy_read_feed),
                 parse_response=_parse_rust_page,
                 rust_eligible=rust_eligible,
                 fallback_exceptions=(PageNotSupportedByBackendError,),
+                allow_legacy_fallback=page_op not in (OP_LIST_DATABASES, OP_LIST_CONTAINERS),
+                unsupported_message=(
+                    RUST_LIST_DATABASES_UNSUPPORTED_MESSAGE if page_op == OP_LIST_DATABASES
+                    else RUST_LIST_CONTAINERS_UNSUPPORTED_MESSAGE if page_op == OP_LIST_CONTAINERS
+                    else None
+                ),
             )
 
         query = self.__CheckAndUnifyQueryFormat(query)
@@ -3785,11 +3805,17 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             return __GetBodiesFromQueryResult(parsed_page.body)
 
         return await self._backend.run_page_operation(
-            build_prepared=_build_query_page,
+            prepare_request=_build_query_page,
             legacy_operation=LegacyOperation(op=page_op, invoke=_run_legacy_query_page),
             parse_response=_parse_rust_query_page,
             rust_eligible=rust_eligible,
             fallback_exceptions=(PageNotSupportedByBackendError,),
+            allow_legacy_fallback=page_op not in (OP_QUERY_DATABASES, OP_QUERY_CONTAINERS),
+            unsupported_message=(
+                RUST_QUERY_DATABASES_UNSUPPORTED_MESSAGE if page_op == OP_QUERY_DATABASES
+                else RUST_QUERY_CONTAINERS_UNSUPPORTED_MESSAGE if page_op == OP_QUERY_CONTAINERS
+                else None
+            ),
         )
 
     def __CheckAndUnifyQueryFormat(

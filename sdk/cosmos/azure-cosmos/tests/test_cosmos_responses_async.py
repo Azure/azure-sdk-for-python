@@ -94,13 +94,25 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         assert isinstance(first_response, DatabaseProxy)
 
     async def test_create_database_if_not_exists_headers_async(self):
-        first_response = await self.client.create_database_if_not_exists(id="responses_test" + str(uuid.uuid4()), return_properties=True)
-        assert len(first_response[1].get_response_headers()) > 0
+        database_id = "responses_test" + str(uuid.uuid4())
+        first_response = await self.client.create_database_if_not_exists(id=database_id, return_properties=True)
+        try:
+            assert first_response[1]["id"] == database_id
+            assert len(first_response[1].get_response_headers()) > 0
+        finally:
+            await self.client.delete_database(database_id)
 
     async def test_create_database_if_not_exists_headers_negative_async(self):
-        first_response = await self.client.create_database_if_not_exists(id="responses_test", return_properties=True)
-        second_response = await self.client.create_database_if_not_exists(id="responses_test", return_properties=True)
-        assert len(second_response[1].get_response_headers()) > 0
+        database_id = "responses_test" + str(uuid.uuid4())
+        _, existing = await self.client.create_database(id=database_id, return_properties=True)
+        try:
+            first_response = await self.client.create_database_if_not_exists(id=database_id, return_properties=True)
+            second_response = await self.client.create_database_if_not_exists(id=database_id, return_properties=True)
+            assert first_response[1]["id"] == second_response[1]["id"] == database_id
+            assert first_response[1]["_rid"] == second_response[1]["_rid"] == existing["_rid"]
+            assert len(second_response[1].get_response_headers()) > 0
+        finally:
+            await self.client.delete_database(database_id)
 
     async def test_create_container_headers_async(self):
         first_response = await self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),

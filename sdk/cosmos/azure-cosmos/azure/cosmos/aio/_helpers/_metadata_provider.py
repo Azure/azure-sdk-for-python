@@ -3,100 +3,48 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Async version of the container metadata provider.
-
-Same role as the sync ``ContainerMetadataProvider``: it reads the container's
-resource id and partition-key definition off one container read. Only the read
-is awaited here; the partition-key extraction is plain and shared with the sync
-side via ``_pk_extract``.
-"""
+"""Async metadata resolution exclusively through the Rust backend."""
 from __future__ import annotations
 
-from typing import Any, Awaitable, Callable, Dict, Optional
+from typing import Any, Dict, Optional
 
+from ..._helpers._metadata_provider import parse_container_metadata
+from ..._helpers._item_context import ResponseHeaderState
 from ..._helpers._pk_extract import extract_partition_key_value
-from ..._helpers._response_parse import parse_backend_response
 from ...partition_key import _Empty
+from .._backend.cosmos_backend import AsyncCosmosBackend
 
 
 class AsyncContainerMetadataProvider:
-    """Async version of ``ContainerMetadataProvider``.
-
-    See the sync class for the full notes; this awaits the container read and
-    otherwise behaves identically.
-    """
+    """Per-operation reuse of metadata from the driver's shared cache."""
 
     def __init__(
-        self,
-        client_connection: Any,
-        ensure_container_cached: Optional[Callable[[Dict[str, Any]], Awaitable[Any]]] = None,
-        resolve_through_backend: Optional[Callable[[str], Awaitable[Any]]] = None,
+        self, backend: AsyncCosmosBackend, response_state: Optional[ResponseHeaderState] = None
     ) -> None:
-        """Store the functions used to read and cache container properties."""
-        self._client_connection = client_connection
-        self._ensure_container_cached = ensure_container_cached
-        self._resolve_through_backend = resolve_through_backend
+        self._backend = backend
+        self._response_state = response_state
         self._resolved_properties: Dict[str, Any] = {}
 
-    async def _container_properties(
-        self,
-        container_link: str,
-        request_options: Dict[str, Any],
-    ) -> Any:
-        """Return the cached container properties, awaiting the one container
-        read if they are not cached yet.
-        """
-        if container_link in self._resolved_properties:
-            return self._resolved_properties[container_link]
-        if self._resolve_through_backend is not None:
-            response = await self._resolve_through_backend(container_link)
-            if response is not None:
-                properties = parse_backend_response(
-                    response,
-                    client_connection=self._client_connection,
-                    response_hook=None,
-                )
-                self._resolved_properties[container_link] = properties
-                return properties
-        if self._ensure_container_cached is not None:
-            await self._ensure_container_cached(request_options)
-        else:
-            cache = self._client_connection._container_properties_cache
-            if container_link not in cache:
-                await self._client_connection._refresh_container_properties_cache(container_link)
-        properties = self._client_connection._container_properties_cache[container_link]
-        self._resolved_properties[container_link] = properties
-        return properties
+    async def _container_properties(self, container_link: str, request_options: Dict[str, Any]) -> Dict[str, Any]:
+        if container_link not in self._resolved_properties:
+            self._resolved_properties[container_link] = parse_container_metadata(
+                await self._backend.resolve_container_metadata(container_link), self._response_state
+            )
+        return self._resolved_properties[container_link]
 
-    async def container_rid(
-        self,
-        container_link: str,
-        request_options: Dict[str, Any],
-    ) -> Optional[str]:
-        """Return the container's resource id, or ``None`` if it is absent."""
-        cached = await self._container_properties(container_link, request_options)
-        rid_value = cached.get("_rid") if isinstance(cached, dict) else None
-        return rid_value if isinstance(rid_value, str) else None
+    async def container_rid(self, container_link: str, request_options: Dict[str, Any]) -> str:
+        """Return the rid, propagating lookup/protocol failures."""
+        return (await self._container_properties(container_link, request_options))["_rid"]
 
     async def extract_partition_key(
-        self,
-        container_link: str,
-        document: Dict[str, Any],
-        request_options: Dict[str, Any],
+        self, container_link: str, document: Dict[str, Any], request_options: Dict[str, Any]
     ) -> Any:
-        """Return the partition-key value for ``document``.
-
-        Returns the value already in the options when present; otherwise reads
-        the partition-key definition off the same container read and extracts
-        the value, the same way the connection's ``_AddPartitionKey`` does. The
-        extraction itself is plain and synchronous.
-        """
+        """Extract using resolved metadata; never consult a Python connection cache."""
         if "partitionKey" in request_options:
             return request_options["partitionKey"]
-        cached = await self._container_properties(container_link, request_options)
-        partition_key_definition = cached.get("partitionKey") if isinstance(cached, dict) else None
-        if partition_key_definition:
-            value = extract_partition_key_value(partition_key_definition, document)
+        definition = (await self._container_properties(container_link, request_options)).get("partitionKey")
+        if definition:
+            value = extract_partition_key_value(definition, document)
             request_options["partitionKey"] = value
             return value
         return _Empty()

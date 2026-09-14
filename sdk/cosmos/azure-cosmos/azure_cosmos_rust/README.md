@@ -44,10 +44,42 @@ Current surface:
 - item ops (async): `*_item_async` for the same six operations
 - feed/query ops (sync): `query_items`, `read_feed_ranges`
 - feed/query ops (async): `query_items_async`, `read_feed_ranges_async`
+- container deletion: `delete_container`, `delete_container_async`
+- container replacement: `replace_container`, `replace_container_async`
+- container reads: `read_container`, `read_container_async`
 - diagnostics/provenance: `operation_count`, `DriverTransportError`, `__version__`
 
 `init_client` requires **exactly one** auth input: either `master_key` or
 `credential` (token credential), never both.
+
+The response body passed to Python is text JSON (or empty for operations such
+as deletion). The shared operation-options builder explicitly disables binary
+encoding: driver 0.8 defaults to binary responses, which Python's current JSON
+parser cannot consume. Rebuilding against that driver must not silently change
+the binding's response format.
+
+Container deletion takes database/container names from the prepared request.
+The binding asks the Rust driver to resolve the container, then execute DELETE;
+Python does not fetch metadata. Conditions and customer headers apply only to
+DELETE, and an explicit timeout covers the lookup and deletion together.
+
+Container replacement follows the same resolution pattern, using the shared
+lookup-options and timeout helpers. Its conditions and customer headers apply
+only to PUT, never the metadata GET. One timeout covers lookup plus replacement.
+Both Python return shapes need the returned container ID, so the binding requests
+a response body even when `return_properties` is false. No Rust-driver changes
+are required for this integration; avoiding the cold-cache lookup remains a
+driver optimization.
+
+Container reads use `CosmosOperation::read_container_by_name` directly; unlike
+delete/replace, they need no separate preliminary resolution step. The existing
+request-header translations carry quota and partition-statistics flags, and the
+returned body/headers retain the requested statistics and quota/usage values.
+Python now allows these options through its Rust eligibility gate and rejects
+unsupported settings instead of silently replaying the read through legacy
+Python. Response-hook deep-copy isolation is also handled in Python. No new
+driver API or binding rebuild is needed for that integration. This does not
+resolve the broader original-HTTP-response-header gap.
 
 ## Where the Rust driver actually lives
 

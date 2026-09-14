@@ -28,6 +28,8 @@ OP_CREATE_CONTAINER = "create_container"
 OP_READ_CONTAINER = "read_container"
 OP_CREATE_ITEM = "create_item"
 OP_DELETE_DATABASE = "delete_database"
+OP_DELETE_CONTAINER = "delete_container"
+OP_REPLACE_CONTAINER = "replace_container"
 OP_DELETE_ITEM = "delete_item"
 OP_READ_DATABASE = "read_database"
 OP_READ_ITEM = "read_item"
@@ -60,6 +62,8 @@ OP_TO_BINDING_METHOD = {
     OP_DELETE_DATABASE: "delete_database",
     OP_CREATE_CONTAINER: "create_container",
     OP_READ_CONTAINER: "read_container",
+    OP_DELETE_CONTAINER: "delete_container",
+    OP_REPLACE_CONTAINER: "replace_container",
     OP_CREATE_ITEM: "create_item",
     OP_UPSERT_ITEM: "upsert_item",
     OP_REPLACE_ITEM: "replace_item",

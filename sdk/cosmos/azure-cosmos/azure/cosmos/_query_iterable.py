@@ -27,6 +27,7 @@ from azure.core.paging import PageIterator  # type: ignore
 from azure.cosmos._constants import _Constants, TimeoutScope
 from azure.cosmos._execution_context import execution_dispatcher
 from azure.cosmos import exceptions
+from azure.cosmos._helpers._page_response_hook import PageResponseHookError
 
 # pylint: disable=protected-access
 
@@ -115,7 +116,10 @@ class QueryIterable(PageIterator):  # pylint: disable=too-many-instance-attribut
             if elapsed >= timeout:
                 raise exceptions.CosmosClientTimeoutError()
 
-        block = self._ex_context.fetch_next_block()
+        try:
+            block = self._ex_context.fetch_next_block()
+        except PageResponseHookError as error:
+            raise error.original from None
 
         if not block:
             raise StopIteration

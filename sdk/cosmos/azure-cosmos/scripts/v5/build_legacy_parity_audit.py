@@ -80,8 +80,9 @@ def _load_parity_helpers():
 #   tests/test_xxx.py::Cls::method FAILED
 #   tests/test_xxx.py::Cls::method SKIPPED (reason)
 #   tests/test_xxx.py::Cls::method ERROR
+_TEST_PATH = r"(?:tests|docs[/\\]V5[/\\]_parity_runs)[/\\][^\s:]+\.py"
 _RESULT_LINE = re.compile(
-    r"^(?P<path>tests[/\\][^\s:]+\.py)::(?P<cls>[A-Za-z_][\w]*)::(?P<method>[A-Za-z_][\w\[\]\-_.]*)"
+    rf"^(?P<path>{_TEST_PATH})::(?P<cls>[A-Za-z_][\w]*)::(?P<method>[A-Za-z_][\w\[\]\-_.]*)"
     r"\s+(?P<outcome>PASSED|FAILED|SKIPPED|ERROR|XFAIL|XPASS)"
     r"(?:\s+\((?P<reason>[^)]*)\))?",
 )
@@ -96,7 +97,7 @@ _RESULT_LINE = re.compile(
 # outcome keyword. ``_PENDING_NODEID_LINE`` matches the first half;
 # ``_BARE_OUTCOME_LINE`` matches the second.
 _PENDING_NODEID_LINE = re.compile(
-    r"^(?P<path>tests[/\\][^\s:]+\.py)::(?P<cls>[A-Za-z_][\w]*)::"
+    rf"^(?P<path>{_TEST_PATH})::(?P<cls>[A-Za-z_][\w]*)::"
     r"(?P<method>[A-Za-z_][\w\[\]\-_.]*)\s*$",
 )
 _BARE_OUTCOME_LINE = re.compile(
@@ -449,7 +450,10 @@ def parse_captures(
     return captures
 
 
-_PYTEST_SUMMARY_RE = re.compile(r"=+\s*(?P<body>.+?)\s+in\s+[\d.]+s\s*=+\s*$")
+_PYTEST_SUMMARY_RE = re.compile(
+    r"=+\s*(?P<body>.+?)\s+in\s+[\d.]+s"
+    r"(?:\s+\(\d+:\d{2}(?::\d{2})?\))?\s*=+\s*$"
+)
 _PYTEST_COUNT_RE = re.compile(
     r"(?P<count>\d+)\s+"
     r"(?P<kind>passed|failed|skipped|error|errors|xfailed|xpassed)"
@@ -1027,30 +1031,29 @@ def emit_markdown(
     lines.append("**Verdict categories**")
     lines.append("")
     lines.append(
-        "* **FULL PARITY** -- the two backends returned the same response body "
-        "and the same response headers. Nothing for the rust team to fix and "
-        "nothing for the customer to notice."
+        "* **FULL PARITY** -- the captured outcomes match under the configured "
+        "body and header comparison rules. This applies only to the tested cases."
     )
     lines.append(
         "* **FUNCTIONAL PARITY, HEADER GAP** -- the operation behaved the "
         "same on both backends (same body returned, or same exception raised) "
-        "but the response-header surface differs. These are header-only "
-        "regressions; the per-test block lists them grouped by the entry in "
-        "``docs/V5/RUST_PARITY_PUSHBACKS.md`` that already tracks them, and "
-        "flags any header that isn't tracked yet so the next reviewer can "
-        "file a new pushback."
+        "but the response-header surface differs. The per-test block groups "
+        "documented differences by their current entry in "
+        "``docs/V5/RUST_PARITY_PUSHBACKS.md`` and flags unrecorded observations. "
+        "A difference is not automatically a Rust defect: verify matching "
+        "test state and distinguish lost service headers from SDK-added metadata."
     )
     lines.append(
         "* **FUNCTIONAL DIVERGENCE** -- the operation behaved differently: "
         "the response bodies differ, or one backend succeeded while the "
-        "other raised. This is a real customer-visible difference and the "
-        "rust binding needs work before the operation can ship."
+        "other raised. Investigate the inputs, starting state, and accepted "
+        "API differences before attributing the mismatch to the Rust binding."
     )
     lines.append(
         "* **EXCEPTION DIVERGENCE** -- both backends raised, but with a "
-        "different typed exception or status code. Same severity as "
-        "FUNCTIONAL DIVERGENCE: customer error-handling code that switches "
-        "on the exception type will behave differently on rust."
+        "different exception types, status codes, substatuses, or normalized "
+        "messages. Same severity as FUNCTIONAL DIVERGENCE: customer "
+        "error-handling code may observe different failure details."
     )
     lines.append("")
     lines.append("**Fallback labels (only when a column has no captured call to diff)**")
@@ -1249,9 +1252,9 @@ def _validate_audit_inputs(
                     label, sorted(versions)
                 )
             )
-        if versions and versions != {"v3"}:
+        if versions - {"v3", "v4"}:
             errors.append(
-                "{} transcript uses capture-plugin version(s) {}; v3 execution evidence is required".format(
+                "{} transcript uses capture-plugin version(s) {}; v3 or v4 execution evidence is required".format(
                     label, sorted(versions)
                 )
             )

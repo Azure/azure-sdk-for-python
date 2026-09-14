@@ -21,15 +21,14 @@
 
 import logging
 import asyncio # pylint: disable=C4763  # Used for Semaphore and gather, not for sleep
-from typing import Tuple, Any, Sequence, Optional, TYPE_CHECKING, Mapping
+from typing import Tuple, Any, Sequence, Optional, TYPE_CHECKING, Mapping, Union
 
 from azure.cosmos import _base, exceptions
 from azure.cosmos._constants import _Constants as Constants
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._query_builder import _QueryBuilder
 from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
-from azure.cosmos._helpers._item_dispatch import pick_backend
-from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
+from azure.cosmos.aio._helpers.legacy_item_helper import AsyncLegacyItemHelper
 from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition, PartitionKeyType
 from azure.cosmos import CosmosList
 
@@ -56,6 +55,7 @@ class ReadItemsHelperAsync:
             **kwargs: Any
     ):
         self.client = client
+        self._item_context = kwargs.pop("_item_context", None)
         self.collection_link = collection_link
         self.items = items
         self.options = dict(options) if options is not None else {}
@@ -163,6 +163,7 @@ class ReadItemsHelperAsync:
         semaphore = asyncio.Semaphore(self.max_concurrency)
         indexed_results = []
         total_request_charge = 0.0
+        diagnostics = []
 
         async def execute_chunk_query(partition_id, chunk_partition_items):
             async with semaphore:
@@ -179,7 +180,7 @@ class ReadItemsHelperAsync:
                         partition_id, items_for_query, id_to_idx, request_kwargs)
 
                 request_charge = self._extract_request_charge(headers)
-                return chunk_results, request_charge
+                return chunk_results, request_charge, headers.get('x-ms-cosmos-sdk-diagnostics')
 
         tasks = [
             asyncio.create_task(execute_chunk_query(partition_id, items))
@@ -196,11 +197,15 @@ class ReadItemsHelperAsync:
             await asyncio.gather(*tasks, return_exceptions=True)
             raise
 
-        for chunk_result, ru_charge in all_chunk_results:
+        for chunk_result, ru_charge, chunk_diagnostics in all_chunk_results:
             indexed_results.extend(chunk_result)
             total_request_charge += ru_charge
+            if chunk_diagnostics is not None:
+                diagnostics.append(chunk_diagnostics)
 
         final_headers = CaseInsensitiveDict({'x-ms-request-charge': str(total_request_charge)})
+        if diagnostics:
+            final_headers['x-ms-cosmos-sdk-diagnostics'] = "; ".join(diagnostics)
         return indexed_results, final_headers
 
     def _extract_request_charge(self, headers: CaseInsensitiveDict) -> float:
@@ -253,8 +258,7 @@ class ReadItemsHelperAsync:
         # by partition, and a single-item group is read here as a point read (a
         # multi-item group becomes a query in _execute_query). Route that point read
         # through the shared AsyncItemHelper -- the same read path the async
-        # container.read_item uses -- so it runs on the rust backend when one is
-        # configured and falls back to the legacy ReadItem otherwise.
+        # container.read_item uses -- with explicit parity selected separately.
         # point_read_options (this item's partition key plus the operation's options)
         # is passed as request_options, so the request matches the one the legacy
         # point read would send. The multi-item (query) legs deliberately stay on
@@ -262,22 +266,20 @@ class ReadItemsHelperAsync:
         # rust and its batched queries on legacy. The not-found case is caught here
         # so a missing item is left out, as before.
         request_kwargs["request_options"] = point_read_options
-        # read_timeout has no equivalent on the rust point-read path (the driver
-        # exposes no per-request read timeout), so honor it by keeping this leg on
-        # legacy -- the same choice the query gate makes (see _query_rust_routing).
-        # This keeps a read_items call's point legs and query legs consistent when
-        # the caller sets read_timeout. Any other call still routes to rust. Force
-        # legacy with the explicit ASYNC_LEGACY_BACKEND, never a None sentinel; the
-        # AsyncItemHelper holds one backend by interface either way.
-        backend = pick_backend(self.client)
-        if self.options.get(Constants.Kwargs.READ_TIMEOUT) is not None:
-            backend = ASYNC_LEGACY_BACKEND
+        # Read-many remains connection-owned; its Rust point leg cannot replay
+        # unsupported options through legacy.
+        context = self._item_context
+        helper: Union[AsyncItemHelper, AsyncLegacyItemHelper]
+        if context is None:
+            helper = AsyncLegacyItemHelper.from_legacy_connection(self.client)
+        elif context.backend.name == "core-python":
+            helper = AsyncLegacyItemHelper(self.client)
+        else:
+            helper = AsyncItemHelper(
+                context.backend, context.defaults, context.response_state,
+            )
         try:
-            result = await AsyncItemHelper(
-                backend,
-                self.client,
-                ensure_container_cached=None,
-            ).read_item(
+            result = await helper.read_item(
                 container_link=self.collection_link,
                 document_link=doc_link,
                 item_id=item_id,

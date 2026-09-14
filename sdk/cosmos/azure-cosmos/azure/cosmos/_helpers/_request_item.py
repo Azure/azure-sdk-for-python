@@ -13,10 +13,9 @@ These differ from the database and container builders in that the caller has
 already resolved the container metadata and extracted the partition key from
 the document. What is left here is pure: mint an id if the operation needs one,
 serialize the body, serialize the partition key to its header form, and flatten
-the options. The Rust backend consumes the resulting ``PreparedRequest``; the
-core-Python backend receives a separate ``LegacyOperation``. On a
-Rust-selected client, that legacy operation is also the temporary fallback for
-request shapes that have not been migrated yet.
+the options. The Rust backend consumes the resulting ``PreparedRequest``.
+Core-Python parity uses a separate item adapter and never runs these builders.
+Unsupported Rust request shapes raise; they do not fall back to that adapter.
 """
 from __future__ import annotations
 
@@ -41,7 +40,7 @@ from ._pk_wire import serialize_partition_key_to_wire
 from ._request_headers import apply_no_response_on_write_default, flatten_options_to_headers
 
 
-def build_create_item_prepared(
+def build_create_item_request(
     *,
     container_link: str,
     body: Dict[str, Any],
@@ -152,7 +151,7 @@ def build_create_item_prepared(
     return prepared, item_id
 
 
-def build_delete_item_prepared(
+def build_delete_item_request(
     *,
     container_link: str,
     item_id: str,
@@ -225,7 +224,7 @@ def build_delete_item_prepared(
     )
 
 
-def build_read_item_prepared(
+def build_read_item_request(
     *,
     container_link: str,
     item_id: str,
@@ -236,7 +235,7 @@ def build_read_item_prepared(
     """Build a ``PreparedRequest`` for a single ``read_item`` call.
 
     Pure: does not read caches. Same structure as
-    ``build_delete_item_prepared`` — both are bodiless, both translate
+    ``build_delete_item_request`` — both are bodiless, both translate
     ``accessCondition`` to ``If-Match`` / ``If-None-Match``, both carry
     the document id on ``PreparedRequest.item_id``. Read adds one
     header: ``x-ms-dedicatedgateway-max-age`` from
@@ -317,8 +316,8 @@ def _build_write_with_body_prepared(
 ) -> PreparedRequest:
     """Build a ``PreparedRequest`` for a write-with-body op that never mints an id.
 
-    Shared by ``build_upsert_item_prepared`` and
-    ``build_replace_item_prepared`` -- the two are byte-identical on the
+    Shared by ``build_upsert_item_request`` and
+    ``build_replace_item_request`` -- the two are byte-identical on the
     wire except for the ``op`` discriminator (which the backend maps to
     the binding's ``upsert_item`` vs ``replace_item`` entry point, i.e. an
     insert-or-replace POST vs an overwrite-only PUT) and the ``item_id``
@@ -330,7 +329,7 @@ def _build_write_with_body_prepared(
       legacy ``UpsertItem`` / ``ReplaceItem`` contract;
     * honour ``etag`` / ``match_condition`` by emitting the matching
       ``If-Match`` / ``If-None-Match`` header from ``access_condition``
-      (the same translation ``build_delete_item_prepared`` does).
+      (the same translation ``build_delete_item_request`` does).
 
     The difference is *which* id the wire URL uses. Upsert has no separate
     ``item`` argument, so it leaves ``item_id`` unset and the binding reads
@@ -447,7 +446,7 @@ def _build_write_with_body_prepared(
     )
 
 
-def build_upsert_item_prepared(
+def build_upsert_item_request(
     *,
     container_link: str,
     body: Dict[str, Any],
@@ -483,7 +482,7 @@ def build_upsert_item_prepared(
     )
 
 
-def build_replace_item_prepared(
+def build_replace_item_request(
     *,
     container_link: str,
     body: Dict[str, Any],
@@ -559,7 +558,7 @@ def build_patch_operations_payload(patch_operations: Any) -> Dict[str, Any]:
     return {"operations": translated}
 
 
-def build_patch_item_prepared(
+def build_patch_item_request(
     *,
     container_link: str,
     item_id: str,

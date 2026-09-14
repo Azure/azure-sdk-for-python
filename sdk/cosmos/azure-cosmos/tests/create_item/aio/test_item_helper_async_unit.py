@@ -18,6 +18,7 @@ from unittest.mock import MagicMock, AsyncMock
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
+from azure.cosmos.aio._helpers.legacy_item_helper import AsyncLegacyItemHelper
 
 
 class TestAsyncItemHelper(unittest.TestCase):
@@ -39,7 +40,7 @@ class TestAsyncItemHelper(unittest.TestCase):
         cc.CreateItem = AsyncMock(return_value="async-result")
 
         async def _run():
-            return await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).create_item(
+            return await AsyncLegacyItemHelper(cc).create_item(
                 container_link="dbs/db/colls/c",
                 body={"id": "x"},
             )
@@ -65,7 +66,7 @@ class TestAsyncItemHelper(unittest.TestCase):
         cc.CreateItem = AsyncMock(return_value="ok")
 
         async def _run():
-            await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).create_item(
+            await AsyncLegacyItemHelper(cc).create_item(
                 container_link="dbs/db/colls/c",
                 body={"id": "x"},
             )

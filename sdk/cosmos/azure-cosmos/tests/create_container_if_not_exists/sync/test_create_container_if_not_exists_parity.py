@@ -48,11 +48,12 @@ import uuid
 
 import pytest
 
-from azure.cosmos import ContainerProxy, CosmosClient
+from azure.cosmos import ContainerProxy, CosmosClient, exceptions
 from azure.cosmos.partition_key import PartitionKey
 from common._parity_helpers import (
     _observed_backend_name,
     run_on_both_backends,
+    run_target_operation,
     skip_unless_emulator,
     skip_unless_rust_binding,
 )
@@ -81,20 +82,19 @@ def _normalize_container(properties):
     }
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def database_id():
     """A throwaway database, deleted after the test along with everything created in it."""
-    client = _admin_client()
     name = "parity_ccine_" + uuid.uuid4().hex[:8]
-    client.create_database(id=name)
-    try:
-        yield name
-    finally:
+    with _admin_client() as client:
         try:
-            client.delete_database(name)
-        except Exception:  # pylint: disable=broad-except
-            pass
-        client.close()
+            client.create_database(id=name)
+            yield name
+        finally:
+            try:
+                client.delete_database(name)
+            except exceptions.CosmosResourceNotFoundError:
+                pass
 
 
 @pytest.fixture
@@ -124,10 +124,10 @@ def test_create_leg(database_id):
     def _do(client):
         """Call ``create_container_if_not_exists`` on a fresh id and return its type and settings."""
         database = client.get_database_client(database_id)
-        container = database.create_container_if_not_exists(
+        container = run_target_operation(client, lambda: database.create_container_if_not_exists(
             id="fresh_" + _observed_backend_name(client).replace("-", "_"),
             partition_key=PartitionKey(path="/pk", kind="Hash"),
-        )
+        ))
         return {
             "is_proxy": isinstance(container, ContainerProxy),
             "settings": _normalize_container(container.read()),
@@ -137,6 +137,8 @@ def test_create_leg(database_id):
         _do, description="create_container_if_not_exists, create leg"
     )
     comparison.print_report()
+    assert comparison.core_python.raised is None
+    assert comparison.rust.raised is None
     comparison.assert_functional_parity()
     assert comparison.rust.return_value["is_proxy"] is True
     assert comparison.rust.return_value["settings"]["partitionKey"]["paths"] == ["/pk"]
@@ -150,16 +152,18 @@ def test_existing_leg_returns_existing_container(database_id, existing_container
     def _do(client):
         """Call ``create_container_if_not_exists`` on an existing id and return the proxy and its id."""
         database = client.get_database_client(database_id)
-        container = database.create_container_if_not_exists(
+        container = run_target_operation(client, lambda: database.create_container_if_not_exists(
             id=existing_container_id,
             partition_key=PartitionKey(path="/original", kind="Hash"),
-        )
+        ))
         return {"is_proxy": isinstance(container, ContainerProxy), "id": container.id}
 
     comparison = run_on_both_backends(
         _do, description="create_container_if_not_exists, existing leg"
     )
     comparison.print_report()
+    assert comparison.core_python.raised is None
+    assert comparison.rust.raised is None
     comparison.assert_functional_parity()
     assert comparison.core_python.return_value["id"] == existing_container_id
     assert comparison.rust.return_value["id"] == existing_container_id
@@ -167,24 +171,25 @@ def test_existing_leg_returns_existing_container(database_id, existing_container
 
 def test_existing_leg_preserves_settings(database_id, existing_container_id):
     """The existing container keeps the settings it was created with on both engines."""
-    # This is what catches the worst failure available to this call: taking the
-    # create leg on a container that already exists would replace a customer's
-    # container, and the returned proxy would look correct while the settings
-    # underneath it silently reverted to the ones passed in.
+    # Request different settings to prove that the existing definition is not reconciled.
 
     def _do(client):
         """Call ``create_container_if_not_exists`` on an existing id and return the normalised settings."""
         database = client.get_database_client(database_id)
-        container = database.create_container_if_not_exists(
+        container = run_target_operation(client, lambda: database.create_container_if_not_exists(
             id=existing_container_id,
-            partition_key=PartitionKey(path="/original", kind="Hash"),
-        )
+            partition_key=PartitionKey(path="/different", kind="Hash"),
+            default_ttl=99,
+            indexing_policy={"indexingMode": "none"},
+        ))
         return _normalize_container(container.read())
 
     comparison = run_on_both_backends(
         _do, description="create_container_if_not_exists, existing settings preserved"
     )
     comparison.print_report()
+    assert comparison.core_python.raised is None
+    assert comparison.rust.raised is None
     comparison.assert_functional_parity()
     assert comparison.rust.return_value["partitionKey"]["paths"] == ["/original"]
     assert "/excluded/*" in comparison.rust.return_value["excludedPaths"]
@@ -199,11 +204,11 @@ def test_existing_leg_return_properties_shape(database_id, existing_container_id
     def _do(client):
         """Call ``create_container_if_not_exists`` with ``return_properties`` and return the result shape."""
         database = client.get_database_client(database_id)
-        result = database.create_container_if_not_exists(
+        result = run_target_operation(client, lambda: database.create_container_if_not_exists(
             id=existing_container_id,
             partition_key=PartitionKey(path="/original", kind="Hash"),
             return_properties=True,
-        )
+        ))
         return {
             "pair_length": len(result),
             "first_is_proxy": isinstance(result[0], ContainerProxy),
@@ -214,6 +219,8 @@ def test_existing_leg_return_properties_shape(database_id, existing_container_id
         _do, description="create_container_if_not_exists, existing leg with properties"
     )
     comparison.print_report()
+    assert comparison.core_python.raised is None
+    assert comparison.rust.raised is None
     comparison.assert_functional_parity()
     assert comparison.rust.return_value == {
         "pair_length": 2,

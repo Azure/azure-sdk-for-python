@@ -22,11 +22,12 @@ from unittest.mock import MagicMock, patch
 from azure.core import MatchConditions
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos._backend.base import CosmosBackend
+from azure.cosmos._backend.cosmos_backend import CosmosBackend
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.operations import OP_PATCH_ITEM
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.container import ContainerProxy
+from azure.cosmos._helpers._item_context import ItemClientContext
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 
 
@@ -56,7 +57,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
     cc._backend = LEGACY_BACKEND
     cc.PatchItem = MagicMock(return_value={"id": "patch_item", "_rid": rid})
 
-    proxy = ContainerProxy(cc, "dbs/db", "c")
+    proxy = ContainerProxy(cc, "dbs/db", "c", _item_context=ItemClientContext(cc._backend))
 
     def _fake_read(**kwargs):
         cache[container_link] = {"_rid": rid, "_read_kwargs": kwargs}
@@ -199,6 +200,9 @@ class _CapturingBackend(CosmosBackend):
         self.executed = False
         self.prepared = None
 
+    def resolve_container_metadata(self, link):
+        return BackendResponse(200, 0, {}, b'{"_rid":"rid-cached"}', None)
+
     def execute(self, prepared):
         self.executed = True
         self.prepared = prepared
@@ -224,6 +228,7 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()
         cc._backend = backend
+        proxy._item_context = ItemClientContext(backend)
 
         proxy.patch_item("patch_item", "a", _OPERATIONS)
 
@@ -242,43 +247,37 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
             ]},
         )
 
-    def test_filter_predicate_patch_falls_back_to_legacy(self):
-        """A patch with a filter does not go to the Rust backend (which
-        can't apply it). It goes to the existing client, which can."""
+    def test_filter_predicate_patch_raises_without_legacy(self):
+        """Unsupported filters fail without crossing engines."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()
         cc._backend = backend
+        proxy._item_context = ItemClientContext(backend)
 
-        proxy.patch_item(
-            "patch_item", "a", _OPERATIONS,
-            filter_predicate="from root where root.number = 3",
-        )
+        with self.assertRaises(NotImplementedError):
+            proxy.patch_item(
+                "patch_item", "a", _OPERATIONS,
+                filter_predicate="from root where root.number = 3",
+            )
 
         self.assertFalse(backend.executed)
-        cc.PatchItem.assert_called_once()
-        self.assertEqual(
-            cc.PatchItem.call_args.kwargs["options"]["filterPredicate"],
-            "from root where root.number = 3",
-        )
+        cc.PatchItem.assert_not_called()
 
-    def test_version_guarded_patch_falls_back_to_legacy(self):
-        """A patch with a version guard (etag) does not go to the Rust
-        backend. It goes to the existing client, which applies the guard."""
+    def test_version_guarded_patch_raises_without_legacy(self):
+        """Unsupported guards fail without crossing engines."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()
         cc._backend = backend
+        proxy._item_context = ItemClientContext(backend)
 
-        proxy.patch_item(
-            "patch_item", "a", _OPERATIONS,
-            etag="abc", match_condition=MatchConditions.IfNotModified,
-        )
+        with self.assertRaises(NotImplementedError):
+            proxy.patch_item(
+                "patch_item", "a", _OPERATIONS,
+                etag="abc", match_condition=MatchConditions.IfNotModified,
+            )
 
         self.assertFalse(backend.executed)
-        cc.PatchItem.assert_called_once()
-        self.assertEqual(
-            cc.PatchItem.call_args.kwargs["options"]["accessCondition"],
-            {"type": "IfMatch", "condition": "abc"},
-        )
+        cc.PatchItem.assert_not_called()
 
 
 if __name__ == "__main__":

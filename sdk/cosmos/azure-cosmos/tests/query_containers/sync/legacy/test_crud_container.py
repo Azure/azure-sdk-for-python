@@ -9,7 +9,8 @@ convention, goes through here. If rust returned no rows for a query that
 matches, the caller concludes the container does not exist and may recreate it.
 
 What it does: one real v4 test copied from ``tests/test_crud_container.py``,
-changed in one place -- the client is built with ``_backend="rust"``.
+with its assertions retained and the client built with ``_backend="rust"``.
+Cleanup is registered before setup so partial setup failures do not leak resources.
 ``test_collection_crud`` queries for the container it just created by id and
 asserts the result is non-empty.
 
@@ -64,15 +65,16 @@ class TestCRUDContainerOperations(unittest.TestCase):
 
     def setUp(self) -> None:
         self.key_client = CosmosClient(HOST, KEY, _backend="rust")
+        self.addCleanup(self.key_client.close)
         self._database_id = "query_containers_legacy_" + str(uuid.uuid4())
+        self.addCleanup(self._delete_owned_database)
         self.databaseForTest = self.key_client.create_database(self._database_id)
 
-    def tearDown(self) -> None:
+    def _delete_owned_database(self) -> None:
         try:
             self.key_client.delete_database(self._database_id)
-        except Exception:  # pylint: disable=broad-except
+        except exceptions.CosmosResourceNotFoundError:
             pass
-        self.key_client.close()
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         try:

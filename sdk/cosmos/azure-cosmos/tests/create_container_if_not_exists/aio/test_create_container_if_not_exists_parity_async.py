@@ -47,12 +47,13 @@ import uuid
 
 import pytest
 
-from azure.cosmos import CosmosClient
+from azure.cosmos import CosmosClient, exceptions
 from azure.cosmos.aio import ContainerProxy
 from azure.cosmos.partition_key import PartitionKey
 from common._parity_helpers import (
     _observed_backend_name,
     run_on_both_backends_async,
+    run_target_operation_async,
     skip_unless_emulator,
     skip_unless_rust_binding,
 )
@@ -81,20 +82,19 @@ def _normalize_container(properties):
     }
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def database_id():
     """A throwaway database, deleted after the test along with everything created in it."""
-    client = _admin_client()
     name = "parity_ccine_a_" + uuid.uuid4().hex[:8]
-    client.create_database(id=name)
-    try:
-        yield name
-    finally:
+    with _admin_client() as client:
         try:
-            client.delete_database(name)
-        except Exception:  # pylint: disable=broad-except
-            pass
-        client.close()
+            client.create_database(id=name)
+            yield name
+        finally:
+            try:
+                client.delete_database(name)
+            except exceptions.CosmosResourceNotFoundError:
+                pass
 
 
 @pytest.fixture
@@ -123,10 +123,10 @@ async def test_create_leg_async(database_id):
     async def _do(client):
         """Await ``create_container_if_not_exists`` on a fresh id and return its type and settings."""
         database = client.get_database_client(database_id)
-        container = await database.create_container_if_not_exists(
+        container = await run_target_operation_async(client, lambda: database.create_container_if_not_exists(
             id="fresh_" + _observed_backend_name(client).replace("-", "_"),
             partition_key=PartitionKey(path="/pk", kind="Hash"),
-        )
+        ))
         return {
             "is_proxy": isinstance(container, ContainerProxy),
             "settings": _normalize_container(await container.read()),
@@ -136,6 +136,8 @@ async def test_create_leg_async(database_id):
         _do, description="async create_container_if_not_exists, create leg"
     )
     comparison.print_report()
+    assert comparison.core_python.raised is None
+    assert comparison.rust.raised is None
     comparison.assert_functional_parity()
     assert comparison.rust.return_value["is_proxy"] is True
     assert comparison.rust.return_value["settings"]["partitionKey"]["paths"] == ["/pk"]
@@ -149,16 +151,18 @@ async def test_existing_leg_returns_existing_container_async(database_id, existi
     async def _do(client):
         """Await ``create_container_if_not_exists`` on an existing id and return the proxy and its id."""
         database = client.get_database_client(database_id)
-        container = await database.create_container_if_not_exists(
+        container = await run_target_operation_async(client, lambda: database.create_container_if_not_exists(
             id=existing_container_id,
             partition_key=PartitionKey(path="/original", kind="Hash"),
-        )
+        ))
         return {"is_proxy": isinstance(container, ContainerProxy), "id": container.id}
 
     comparison = await run_on_both_backends_async(
         _do, description="async create_container_if_not_exists, existing leg"
     )
     comparison.print_report()
+    assert comparison.core_python.raised is None
+    assert comparison.rust.raised is None
     comparison.assert_functional_parity()
     assert comparison.core_python.return_value["id"] == existing_container_id
     assert comparison.rust.return_value["id"] == existing_container_id
@@ -166,24 +170,25 @@ async def test_existing_leg_returns_existing_container_async(database_id, existi
 
 async def test_existing_leg_preserves_settings_async(database_id, existing_container_id):
     """The existing container keeps the settings it was created with on both engines."""
-    # This is what catches the worst failure available to this call: taking the
-    # create leg on a container that already exists would replace a customer's
-    # container, and the returned proxy would look correct while the settings
-    # underneath it silently reverted to the ones passed in.
+    # Request different settings to prove that the existing definition is not reconciled.
 
     async def _do(client):
         """Await ``create_container_if_not_exists`` on an existing id and return the normalised settings."""
         database = client.get_database_client(database_id)
-        container = await database.create_container_if_not_exists(
+        container = await run_target_operation_async(client, lambda: database.create_container_if_not_exists(
             id=existing_container_id,
-            partition_key=PartitionKey(path="/original", kind="Hash"),
-        )
+            partition_key=PartitionKey(path="/different", kind="Hash"),
+            default_ttl=99,
+            indexing_policy={"indexingMode": "none"},
+        ))
         return _normalize_container(await container.read())
 
     comparison = await run_on_both_backends_async(
         _do, description="async create_container_if_not_exists, existing settings preserved"
     )
     comparison.print_report()
+    assert comparison.core_python.raised is None
+    assert comparison.rust.raised is None
     comparison.assert_functional_parity()
     assert comparison.rust.return_value["partitionKey"]["paths"] == ["/original"]
     assert "/excluded/*" in comparison.rust.return_value["excludedPaths"]
@@ -198,11 +203,11 @@ async def test_existing_leg_return_properties_shape_async(database_id, existing_
     async def _do(client):
         """Await ``create_container_if_not_exists`` with ``return_properties`` and return the result shape."""
         database = client.get_database_client(database_id)
-        result = await database.create_container_if_not_exists(
+        result = await run_target_operation_async(client, lambda: database.create_container_if_not_exists(
             id=existing_container_id,
             partition_key=PartitionKey(path="/original", kind="Hash"),
             return_properties=True,
-        )
+        ))
         return {
             "pair_length": len(result),
             "first_is_proxy": isinstance(result[0], ContainerProxy),
@@ -213,6 +218,8 @@ async def test_existing_leg_return_properties_shape_async(database_id, existing_
         _do, description="async create_container_if_not_exists, existing leg with properties"
     )
     comparison.print_report()
+    assert comparison.core_python.raised is None
+    assert comparison.rust.raised is None
     comparison.assert_functional_parity()
     assert comparison.rust.return_value == {
         "pair_length": 2,

@@ -20,11 +20,13 @@ import logging
 import unittest
 from unittest.mock import MagicMock
 
-from azure.cosmos._backend.base import CosmosBackend
+from azure.cosmos._backend.cosmos_backend import CosmosBackend
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._helpers.item_helper import ItemHelper
+from azure.cosmos._helpers.legacy_item_helper import LegacyItemHelper
+from azure.cosmos._backend.errors import BackendProtocolError
 
 
 # ---------------------------------------------------------------------------
@@ -64,6 +66,9 @@ def _capturing_backend(response):
         def __init__(self) -> None:
             self.prepared = None
 
+        def resolve_container_metadata(self, link):
+            return BackendResponse(200, 0, {}, b'{"_rid":"rid-cached"}', None)
+
         def execute(self, prepared):
             self.prepared = prepared
             return response
@@ -92,7 +97,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(return_value="ok")
 
-        ItemHelper(LEGACY_BACKEND, cc).create_item(
+        LegacyItemHelper(cc).create_item(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             enable_automatic_id_generation=False,
@@ -105,7 +110,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(return_value="ok")
 
-        ItemHelper(LEGACY_BACKEND, cc).create_item(
+        LegacyItemHelper(cc).create_item(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             enable_automatic_id_generation=True,
@@ -118,7 +123,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(return_value="ok")
 
-        ItemHelper(LEGACY_BACKEND, cc).create_item(
+        LegacyItemHelper(cc).create_item(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             indexing_directive=1,
@@ -132,7 +137,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         cc = _make_cc_with_cache_hit(rid="rid-from-cache")
         cc.CreateItem = MagicMock(return_value="ok")
 
-        ItemHelper(LEGACY_BACKEND, cc).create_item(
+        LegacyItemHelper(cc).create_item(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
         )
@@ -155,7 +160,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         )
         cc.CreateItem = MagicMock(return_value="ok")
 
-        ItemHelper(LEGACY_BACKEND, cc).create_item(
+        LegacyItemHelper(cc).create_item(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
         )
@@ -189,7 +194,7 @@ class TestItemHelperConfiguredBackend(unittest.TestCase):
             diagnostics=None,
         ))
 
-        ItemHelper(backend, cc).create_item(
+        ItemHelper(backend).create_item(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
         )
@@ -215,7 +220,7 @@ class TestItemHelperConfiguredBackend(unittest.TestCase):
             diagnostics=None,
         ))
 
-        result = ItemHelper(backend, cc).create_item(
+        result = ItemHelper(backend).create_item(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
         )
@@ -235,26 +240,13 @@ class TestItemHelperRidResolutionLogging(unittest.TestCase):
     container. The helper logs a warning so this is not silent.
     """
 
-    def test_unresolvable_rid_logs_warning_and_returns_none(self):
-        """A missing resource id is logged and the helper returns nothing."""
-        cc = MagicMock()
-        cc._container_properties_cache = {}  # empty: the container is not here
-        # The refresh does not add it, so the later lookup fails -- the
-        # case a real connection would only hit on a genuine problem.
-        cc._refresh_container_properties_cache = MagicMock()
-
-        helper = ItemHelper(LEGACY_BACKEND, cc)
-
-        with self.assertLogs(
-            "azure.cosmos._helpers.item_helper", level=logging.WARNING
-        ) as captured:
-            rid = helper._resolve_container_rid("dbs/db/colls/c", {})
-
-        self.assertIsNone(rid)
-        self.assertTrue(
-            any("intended-collection-rid" in line for line in captured.output),
-            captured.output,
-        )
+    def test_unresolvable_rid_fails_without_sending_item(self):
+        """Missing backend metadata is not a successful unpartitioned lookup."""
+        backend = _capturing_backend(None)
+        backend.resolve_container_metadata = lambda link: None
+        with self.assertRaises(BackendProtocolError):
+            ItemHelper(backend).create_item(container_link="dbs/db/colls/c", body={"id": "x"})
+        self.assertIsNone(backend.prepared)
 
 
 if __name__ == "__main__":

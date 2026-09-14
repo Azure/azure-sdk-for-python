@@ -25,6 +25,7 @@ from unittest.mock import AsyncMock, MagicMock
 from azure.core import MatchConditions
 
 from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
+from azure.cosmos.aio._helpers.legacy_item_helper import AsyncLegacyItemHelper
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 
 
@@ -51,7 +52,7 @@ class TestAsyncUpsertItem(unittest.TestCase):
         body = {"id": "order-42", "pk": "customerA"}
 
         async def _run():
-            return await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).upsert_item(
+            return await AsyncLegacyItemHelper(cc).upsert_item(
                 container_link="dbs/db/colls/c",
                 body=body,
             )
@@ -71,7 +72,7 @@ class TestAsyncUpsertItem(unittest.TestCase):
         cc = _connection_with_cache()
 
         async def _run():
-            await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).upsert_item(
+            await AsyncLegacyItemHelper(cc).upsert_item(
                 container_link="dbs/db/colls/c",
                 body={"id": "x", "pk": "customerA"},
                 match_condition=MatchConditions.IfMissing,
@@ -98,7 +99,7 @@ class TestAsyncUpsertItem(unittest.TestCase):
         cc.UpsertItem = AsyncMock(return_value="ok")
 
         async def _run():
-            await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).upsert_item(
+            await AsyncLegacyItemHelper(cc).upsert_item(
                 container_link="dbs/db/colls/c",
                 body={"id": "x", "pk": "a"},
             )

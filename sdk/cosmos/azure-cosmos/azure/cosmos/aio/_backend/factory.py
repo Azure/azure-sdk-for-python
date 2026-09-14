@@ -36,7 +36,7 @@ from azure.cosmos._backend.factory import (
 )
 from azure.cosmos._backend.transport_settings import reject_unsupported_transport_settings
 
-from .base import AsyncCosmosBackend
+from .cosmos_backend import AsyncCosmosBackend
 from .legacy import ASYNC_LEGACY_BACKEND
 from .rust import AsyncRustBackend
 

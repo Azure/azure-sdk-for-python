@@ -93,6 +93,8 @@ mod query;
 
 pub(crate) use containers::{
     run_create_container_operation, run_create_container_operation_async,
+    run_delete_container_operation, run_delete_container_operation_async,
+    run_replace_container_operation, run_replace_container_operation_async,
     run_list_containers_operation, run_list_containers_operation_async,
     run_query_containers_operation, run_query_containers_operation_async,
     run_read_container_operation, run_read_container_operation_async,

@@ -25,7 +25,7 @@ fall back to the legacy ``QueryOffers`` / ``ReplaceOffer`` calls -- inside the
 customer-facing method, putting engine-selection code in the public API surface.
 Instead, each function uses the concrete backend stored by the client and drives
 the work through
-:meth:`~azure.cosmos._backend.base.CosmosBackend.run_operation`, so the proxy
+:meth:`~azure.cosmos._backend.cosmos_backend.CosmosBackend.run_operation`, so the proxy
 method is a thin delegate that names no engine.
 """
 from __future__ import annotations
@@ -65,7 +65,7 @@ def get_container_throughput(
     selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(client_connection, container_rid, kwargs)
     backend = selected_backend
     offers = backend.run_operation(
-        build_prepared=lambda: prepare_read_offer_request(
+        prepare_request=lambda: prepare_read_offer_request(
             client_connection=client_connection,
             container_link=container_link,
             offer_query=query_spec,
@@ -120,7 +120,7 @@ async def get_container_throughput_async(
         ]
 
     offers = await backend.run_operation(
-        build_prepared=lambda: prepare_read_offer_request_async(
+        prepare_request=lambda: prepare_read_offer_request_async(
             client_connection=client_connection,
             container_link=container_link,
             offer_query=query_spec,
@@ -169,7 +169,7 @@ def replace_container_throughput(
         kwargs=rust_kwargs,
     )
     offers = backend.run_operation(
-        build_prepared=lambda: prepare_read_offer_request(
+        prepare_request=lambda: prepare_read_offer_request(
             client_connection=client_connection,
             container_link=container_link,
             offer_query=query_spec,
@@ -187,7 +187,7 @@ def replace_container_throughput(
     new_offer = offers[0].copy()
     _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
     updated_offer = backend.run_operation(
-        build_prepared=lambda: prepare_replace_offer_request(
+        prepare_request=lambda: prepare_replace_offer_request(
                 client_connection=client_connection,
                 container_link=container_link,
                 offer=new_offer,
@@ -250,7 +250,7 @@ async def replace_container_throughput_async(
         ]
 
     offers = await backend.run_operation(
-        build_prepared=lambda: prepare_read_offer_request_async(
+        prepare_request=lambda: prepare_read_offer_request_async(
             client_connection=client_connection,
             container_link=container_link,
             offer_query=query_spec,
@@ -274,7 +274,7 @@ async def replace_container_throughput_async(
         )
 
     updated_offer = await backend.run_operation(
-        build_prepared=lambda: prepare_replace_offer_request_async(
+        prepare_request=lambda: prepare_replace_offer_request_async(
                 client_connection=client_connection,
                 container_link=container_link,
                 offer=new_offer,

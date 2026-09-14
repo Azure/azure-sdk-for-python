@@ -49,6 +49,7 @@ from ._helpers._item_dispatch import (
 )
 from ._helpers.item_helper import ItemHelper
 from ._helpers.container_helper import ContainerHelper
+from ._helpers._request_container import validate_container_create_kwargs
 from ._helpers.feed_range_helper import (
     feed_range_from_partition_key as _feed_range_from_partition_key,
     is_feed_range_subset as _is_feed_range_subset,
@@ -100,21 +101,43 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         client_connection: CosmosClientConnection,
         database_link: str,
         id: str,
-        properties: Optional[dict[str, Any]] = None
+        properties: Optional[dict[str, Any]] = None,
+        *,
+        _item_context: Any = None,
     ) -> None:
         self.id = id
         self.container_link = "{}/colls/{}".format(database_link, self.id)
         self.client_connection = client_connection
+        self._item_context = _item_context
         self.container_cache_lock = threading.Lock()
-        self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
-        if properties:
+        if properties and client_connection is not None:
             self.client_connection._set_container_properties_cache(self.container_link,
                                                                    _build_properties_cache(properties,
                                                                                            self.container_link))
 
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
+
+    def _create_item_helper(self) -> Any:
+        """Select parity before entering the connection-free Rust helper."""
+        context = self._item_context
+        if context is None:
+            from ._helpers.legacy_item_helper import LegacyItemHelper
+            return LegacyItemHelper.from_legacy_connection(self.client_connection, self._get_properties_with_options)
+        if context.backend.name == "core-python":
+            from ._helpers.legacy_item_helper import LegacyItemHelper
+            return LegacyItemHelper(self.client_connection, self._get_properties_with_options)
+        return ItemHelper(context.backend, context.defaults, context.response_state)
+
+    def _set_item_partition_key(self, partition_key: PartitionKeyType) -> PartitionKeyType:
+        """Leave Rust sentinel resolution to its own metadata provider."""
+        if self._item_context is not None and self._item_context.backend.name != "core-python":
+            return partition_key
+        if self._item_context is None:
+            from ._helpers.legacy_item_helper import require_legacy_item_connection
+            require_legacy_item_connection(self.client_connection)
+        return self._set_partition_key(partition_key)
 
     def _get_properties_with_options(self, options: Optional[dict[str, Any]] = None) -> dict[str, Any]:
         kwargs = {}
@@ -138,12 +161,21 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @property
     def is_system_key(self) -> bool:
-        if self._is_system_key is None:
-            properties = self._get_properties()
-            self._is_system_key = (
-                properties["partitionKey"]["systemKey"] if "systemKey" in properties["partitionKey"] else False
-            )
-        return self._is_system_key
+        """Whether the container uses a legacy system-defined partition key.
+
+        Primarily used for SDK compatibility handling; administration tools can
+        also use it to identify legacy system-key containers. This does not
+        choose a partition key or migrate data.
+
+        Reads container metadata if it is not cached. Otherwise this is local,
+        including after a metadata refresh through :meth:`read`.
+
+        :returns: The current cached ``systemKey`` flag, or ``False`` if absent.
+        :rtype: bool
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If required metadata cannot be read.
+        """
+        properties = self._get_properties()
+        return properties["partitionKey"].get("systemKey", False)
 
     @property
     def scripts(self) -> ScriptsProxy:
@@ -177,10 +209,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def read(  # pylint:disable=docstring-missing-param
         self,
-        populate_query_metrics: Optional[bool] = None,
+        *,
         populate_partition_key_range_statistics: Optional[bool] = None,
         populate_quota_info: Optional[bool] = None,
-        *,
         priority: Optional[Literal["High", "Low"]] = None,
         initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
@@ -188,39 +219,35 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     ) -> CosmosDict:
         """Read the container properties.
 
-        :param bool populate_partition_key_range_statistics: Enable returning partition key
-            range statistics in response headers.
-        :param bool populate_quota_info: Enable returning collection storage quota information in response headers.
-        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        All optional arguments must be passed by keyword. Session/query-metrics
+        options and non-``None`` per-call ``read_timeout`` are rejected.
+        Unsupported Rust settings raise rather than using legacy Python.
+        The response hook receives independent copies of the response headers
+        and container properties, including nested values.
+
+        :keyword bool populate_partition_key_range_statistics: Include partition key range
+            statistics in the returned container properties.
+        :keyword bool populate_quota_info: Include collection storage quota and usage response headers.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A response hook invoked after success with copied headers and properties.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
-        :returns: Dict representing the retrieved container.
-        :rtype: dict[str, Any]
+        :raises TypeError: A positional argument, retired option, or non-None per-call read_timeout is supplied.
+        :raises NotImplementedError: Rust cannot honor the requested settings.
+        :returns: Container properties with response headers available through ``get_response_headers()``.
+        :rtype: ~azure.cosmos.CosmosDict
         """
-        session_token = kwargs.get('session_token')
-        if session_token is not None:
-            warnings.warn(
-                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
+        validate_container_create_kwargs(kwargs, method_name="ContainerProxy.read")
         if priority is not None:
             kwargs['priority'] = priority
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
-        if response_hook is not None:
-            kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
-        if populate_query_metrics:
-            warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
-                DeprecationWarning,
-            )
+        kwargs.pop("etag", None)
         if populate_partition_key_range_statistics is not None:
             request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
         if populate_quota_info is not None:
@@ -332,14 +359,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         # Put the partition key in the options, keeping any options the
         # caller already passed.
         request_options = kwargs.setdefault("request_options", {})
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        request_options["partitionKey"] = self._set_item_partition_key(partition_key)
         item_id = item if isinstance(item, str) else item["id"]
 
-        return ItemHelper(
-            pick_backend(self.client_connection),
-            self.client_connection,
-            ensure_container_cached=self._get_properties_with_options,
-        ).read_item(
+        return self._create_item_helper().read_item(
             container_link=self.container_link,
             document_link=doc_link,
             item_id=item_id,
@@ -423,6 +446,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         item_tuples = [(item_id, self._set_partition_key(pk)) for item_id, pk in items]
 
         return self.client_connection.read_items(
+            _item_context=self._item_context,
             collection_link=self.container_link,
             items=item_tuples,
             options=query_options,
@@ -1291,11 +1315,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook=response_hook,
         )
 
-        return ItemHelper(
-            pick_backend(self.client_connection),
-            self.client_connection,
-            ensure_container_cached=self._get_properties_with_options,
-        ).replace_item(
+        return self._create_item_helper().replace_item(
             container_link=self.container_link,
             document_link=item_link,
             item_id=item_id,
@@ -1386,11 +1406,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook=response_hook,
         )
 
-        return ItemHelper(
-            pick_backend(self.client_connection),
-            self.client_connection,
-            ensure_container_cached=self._get_properties_with_options,
-        ).upsert_item(
+        return self._create_item_helper().upsert_item(
             container_link=self.container_link,
             body=body,
             populate_query_metrics=populate_query_metrics,
@@ -1490,11 +1506,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         # back through this proxy, so the existing container-cache
         # lock and per-call options (excluded_locations, timeouts)
         # still reach the refresh path.
-        return ItemHelper(
-            pick_backend(self.client_connection),
-            self.client_connection,
-            ensure_container_cached=self._get_properties_with_options,
-        ).create_item(
+        return self._create_item_helper().create_item(
             container_link=self.container_link,
             body=body,
             populate_query_metrics=populate_query_metrics,
@@ -1591,15 +1603,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         # Put the partition key in the options, keeping any options the
         # caller already passed.
         request_options = kwargs.setdefault("request_options", {})
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        request_options["partitionKey"] = self._set_item_partition_key(partition_key)
         document_link = self._get_document_link(item)
         item_id = item if isinstance(item, str) else item["id"]
 
-        return ItemHelper(
-            pick_backend(self.client_connection),
-            self.client_connection,
-            ensure_container_cached=self._get_properties_with_options,
-        ).patch_item(
+        return self._create_item_helper().patch_item(
             container_link=self.container_link,
             document_link=document_link,
             item_id=item_id,
@@ -1786,15 +1794,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         # Put the partition key in the options, keeping any options the
         # caller already passed.
         request_options = kwargs.setdefault("request_options", {})
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        request_options["partitionKey"] = self._set_item_partition_key(partition_key)
         document_link = self._get_document_link(item)
         item_id = item if isinstance(item, str) else item["id"]
 
-        return ItemHelper(
-            pick_backend(self.client_connection),
-            self.client_connection,
-            ensure_container_cached=self._get_properties_with_options,
-        ).delete_item(
+        return self._create_item_helper().delete_item(
             container_link=self.container_link,
             document_link=document_link,
             item_id=item_id,

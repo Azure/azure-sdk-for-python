@@ -9,21 +9,16 @@ and on request its storage usage. If rust returned a different partition key
 path on the async path only, async applications would break while sync ones
 kept working.
 
-What it does: two real v4 tests copied from
+What it does: three original v4 tests copied from
 ``tests/test_crud_container_async.py``, changed in one place -- the client is
 built with ``_backend="rust"``. ``test_collection_crud_async`` creates a
 container, reads it back and checks the indexing mode and partition key
 survived the round trip. ``test_partitioned_collection_async`` checks the
 partition key on a container created with throughput.
 
-Not copied: ``test_partitioned_collection_quota_async``. Its read asks for
-per-partition statistics and quota usage, and a read carrying either of those
-options is sent down the legacy path on purpose -- the rust path has no way to
-request them, and a reply with them silently missing would read as "this
-container has no statistics" rather than "the SDK dropped your request".
-Copying it here would have recorded a rust run that never touched rust. That
-fallback is pinned instead in
-``read_container/aio/test_read_container_parity_async.py``.
+``test_partitioned_collection_quota_async`` also verifies partition statistics
+and quota usage through Rust. Every container read is guarded by a binding-operation
+counter and a zero-fallback assertion.
 
 This is NOT the side-by-side comparison. The comparison tests
 (``read_container/aio/test_read_container_parity_async.py``) run the same call
@@ -44,12 +39,16 @@ Run with::
 import os
 import unittest
 import uuid
+from functools import wraps
+from types import SimpleNamespace
+from unittest.mock import patch
 
 import pytest
 
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
-from azure.cosmos.aio import CosmosClient
+from azure.cosmos.aio import CosmosClient, ContainerProxy
+from common._parity_helpers import run_target_operation_async
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
@@ -66,15 +65,33 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self) -> None:
         self.key_client = CosmosClient(HOST, KEY, _backend="rust")
+        self.addAsyncCleanup(self.key_client.close)
         self._database_id = "read_container_legacy_async_" + str(uuid.uuid4())
+        self.addAsyncCleanup(self._delete_owned_database)
         self.database_for_test = await self.key_client.create_database(self._database_id)
+        self.configs = SimpleNamespace(TEST_MULTI_PARTITION_CONTAINER_ID="quota_target")
+        if self._testMethodName == "test_partitioned_collection_quota_async":
+            await self.database_for_test.create_container(
+                self.configs.TEST_MULTI_PARTITION_CONTAINER_ID,
+                PartitionKey(path="/id"), offer_throughput=10100,
+            )
+        original_read = ContainerProxy.read
 
-    async def asyncTearDown(self) -> None:
+        @wraps(original_read)
+        async def guarded_read(container, *args, **kwargs):
+            return await run_target_operation_async(
+                self.key_client, lambda: original_read(container, *args, **kwargs)
+            )
+
+        read_patch = patch.object(ContainerProxy, "read", guarded_read)
+        read_patch.start()
+        self.addCleanup(read_patch.stop)
+
+    async def _delete_owned_database(self) -> None:
         try:
             await self.key_client.delete_database(self._database_id)
-        except Exception:  # pylint: disable=broad-except
+        except exceptions.CosmosResourceNotFoundError:
             pass
-        await self.key_client.close()
 
     async def __assert_http_failure_with_status(self, status_code, func, *args, **kwargs):
         try:
@@ -152,6 +169,20 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         assert expected_offer.offer_throughput == offer_throughput
 
         await created_db.delete_container(created_collection.id)
+
+
+    async def test_partitioned_collection_quota_async(self):
+        # Source: tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync.test_partitioned_collection_quota_async
+        created_db = self.database_for_test
+
+        created_collection = self.database_for_test.get_container_client(
+            self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+
+        retrieved_collection_properties = await created_collection.read(
+            populate_partition_key_range_statistics=True,
+            populate_quota_info=True)
+        assert retrieved_collection_properties.get("statistics") is not None
+        assert created_db.client_connection.last_response_headers.get("x-ms-resource-usage") is not None
 
 
 if __name__ == "__main__":

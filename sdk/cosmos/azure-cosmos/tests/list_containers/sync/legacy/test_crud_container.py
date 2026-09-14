@@ -9,8 +9,8 @@ container all start here. If rust returned a short list, a list in a different
 shape, or omitted a container that exists, callers would conclude the container
 is absent and act on that -- creating a duplicate, or skipping data.
 
-What it does: one real v4 test copied from ``tests/test_crud_container.py``,
-changed in one place -- the client is built with ``_backend="rust"``.
+What it does: one real v4 test copied from ``tests/test_crud_container.py``.
+Its assertions are preserved, with a Rust-selected client and owned-resource cleanup.
 ``test_collection_crud`` lists the containers before and after a create and
 asserts the count moved by exactly one, which is the property callers depend on.
 
@@ -58,15 +58,16 @@ class TestCRUDContainerOperations(unittest.TestCase):
 
     def setUp(self) -> None:
         self.key_client = CosmosClient(HOST, KEY, _backend="rust")
+        self.addCleanup(self.key_client.close)
         self._database_id = "list_containers_legacy_" + str(uuid.uuid4())
+        self.addCleanup(self._delete_owned_database)
         self.databaseForTest = self.key_client.create_database(self._database_id)
 
-    def tearDown(self) -> None:
+    def _delete_owned_database(self) -> None:
         try:
             self.key_client.delete_database(self._database_id)
-        except Exception:  # pylint: disable=broad-except
+        except exceptions.CosmosResourceNotFoundError:
             pass
-        self.key_client.close()
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         try:

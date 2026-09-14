@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 """Unit tests for the ``replace_item`` request-prep path — no network, no emulator.
 
-These pin ``build_replace_item_prepared`` -- the overwrite-only,
+These pin ``build_replace_item_request`` -- the overwrite-only,
 body-carrying builder added for the migrated ``replace_item``.
 
 ``replace_item`` shares one builder with ``upsert_item``: both carry the
@@ -39,7 +39,7 @@ from azure.cosmos._backend.operations import OP_REPLACE_ITEM, OP_UPSERT_ITEM
 from azure.cosmos._backend.contracts import PreparedRequest
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._helpers._item_dispatch import build_upsert_item_request_options
-from azure.cosmos._helpers._request_item import build_replace_item_prepared, build_upsert_item_prepared
+from azure.cosmos._helpers._request_item import build_replace_item_request, build_upsert_item_request
 
 
 # ---------------------------------------------------------------------------
@@ -51,7 +51,7 @@ def test_baseline_is_write_with_body_with_item_id():
     """A replace carries the new body (serialised to JSON bytes) and the id
     of the document to overwrite on ``item_id`` -- both at once. The op tag
     is ``OP_REPLACE_ITEM``."""
-    prepared = build_replace_item_prepared(
+    prepared = build_replace_item_request(
         container_link="dbs/d/colls/orders",
         body={"id": "order-42", "pk": "customerA", "total": 129.0},
         item_id="order-42",
@@ -78,7 +78,7 @@ def test_url_id_comes_from_item_id_not_body():
     with ``item`` must not change which document the URL targets (the server
     then rejects the id change).
     """
-    prepared = build_replace_item_prepared(
+    prepared = build_replace_item_request(
         container_link="dbs/d/colls/c",
         body={"id": "B", "pk": "a"},   # body's own id
         item_id="A",                   # the document the customer named
@@ -97,7 +97,7 @@ def test_body_bytes_round_trip_to_the_same_dict():
     """The serialised bytes parse back to the body the customer passed --
     replace never rewrites the body."""
     body = {"id": "order-42", "pk": "customerA"}
-    prepared = build_replace_item_prepared(
+    prepared = build_replace_item_request(
         container_link="dbs/d/colls/c",
         body=body,
         item_id="order-42",
@@ -118,7 +118,7 @@ def test_missing_body_id_is_not_minted_and_body_is_not_mutated():
     document named by ``item``). A body without one is serialised as-is and
     the server rejects it -- the prep must not invent one."""
     body = {"pk": "customerA", "total": 129.0}
-    prepared = build_replace_item_prepared(
+    prepared = build_replace_item_request(
         container_link="dbs/d/colls/c",
         body=body,
         item_id="order-42",
@@ -144,7 +144,7 @@ def test_etag_if_not_modified_translates_to_if_match_guarded_replace():
     })
     assert options["accessCondition"] == {"type": "IfMatch", "condition": "abc"}
 
-    prepared = build_replace_item_prepared(
+    prepared = build_replace_item_request(
         container_link="dbs/d/colls/c",
         body={"id": "order-42", "pk": "customerA"},
         item_id="order-42",
@@ -162,7 +162,7 @@ def test_if_missing_translates_to_if_none_match_wildcard():
     same translation upsert uses; on a replace it is rare but must still
     emit the header (it goes through the shared access-condition step)."""
     options = build_upsert_item_request_options({"match_condition": MatchConditions.IfMissing})
-    prepared = build_replace_item_prepared(
+    prepared = build_replace_item_request(
         container_link="dbs/d/colls/c",
         body={"id": "order-42", "pk": "customerA"},
         item_id="order-42",
@@ -179,7 +179,7 @@ def test_no_access_condition_emits_no_precondition_headers():
     """A plain replace (no etag / match_condition) carries neither
     ``If-Match`` nor ``If-None-Match``, and never leaks the raw internal
     ``accessCondition`` shape onto the wire."""
-    prepared = build_replace_item_prepared(
+    prepared = build_replace_item_request(
         container_link="dbs/d/colls/c",
         body={"id": "x", "pk": "a"},
         item_id="x",
@@ -209,7 +209,7 @@ def test_etag_without_match_condition_raises_value_error_up_front():
 def test_initial_headers_are_flattened_into_outer_headers():
     """``initial_headers={'x-trace-id': 'abc'}`` is kept as a nested
     ``initialHeaders`` dict so the binding forwards each entry verbatim."""
-    prepared = build_replace_item_prepared(
+    prepared = build_replace_item_request(
         container_link="dbs/d/colls/c",
         body={"id": "x", "pk": "a"},
         item_id="x",
@@ -226,7 +226,7 @@ def test_trigger_priority_bucket_no_response_land_as_option_keys():
     """The body-carrying option set reaches the headers map under the
     internal option-key names. ``no_response`` is kept on replace (a replace
     returns a body, unlike delete / read)."""
-    prepared = build_replace_item_prepared(
+    prepared = build_replace_item_request(
         container_link="dbs/d/colls/c",
         body={"id": "x", "pk": "a"},
         item_id="x",
@@ -251,7 +251,7 @@ def test_timeout_kwarg_is_forwarded_under_sentinel_header():
     """``timeout=30`` is forwarded as ``__overall_timeout_seconds: 30`` so
     the binding can lift it into the driver's own timeout setting -- the
     same mechanism as every other migrated operation."""
-    prepared = build_replace_item_prepared(
+    prepared = build_replace_item_request(
         container_link="dbs/d/colls/c",
         body={"id": "x", "pk": "a"},
         item_id="x",
@@ -267,7 +267,7 @@ def test_compose_consumes_recognised_kwargs():
     from the input dict, so the caller doesn't forward them again to the
     legacy path."""
     kwargs = {"pre_trigger_include": "validateOrder", "extra_unknown": "left-alone"}
-    build_replace_item_prepared(
+    build_replace_item_request(
         container_link="dbs/d/colls/c",
         body={"id": "x", "pk": "a"},
         item_id="x",
@@ -285,7 +285,7 @@ def test_compose_consumes_recognised_kwargs():
 
 
 def test_replace_and_upsert_prep_differ_only_by_op_and_item_id():
-    """``build_replace_item_prepared`` and ``build_upsert_item_prepared``
+    """``build_replace_item_request`` and ``build_upsert_item_request``
     both delegate to one shared builder, so for the same inputs every field
     on the wire must be identical except the ``op`` tag and the ``item_id``
     slot (replace names a target; upsert takes the id from the body). This
@@ -299,10 +299,10 @@ def test_replace_and_upsert_prep_differ_only_by_op_and_item_id():
         container_rid="RID==",
         access_condition={"type": "IfMatch", "condition": "abc"},
     )
-    replace_prepared = build_replace_item_prepared(
+    replace_prepared = build_replace_item_request(
         **shared, item_id="order-42", kwargs={"priority": "High"}
     )
-    upsert_prepared = build_upsert_item_prepared(**shared, kwargs={"priority": "High"})
+    upsert_prepared = build_upsert_item_request(**shared, kwargs={"priority": "High"})
 
     assert replace_prepared.op == OP_REPLACE_ITEM
     assert upsert_prepared.op == OP_UPSERT_ITEM

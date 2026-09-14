@@ -16,8 +16,9 @@ from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.operations import OP_READ_ITEM
-from azure.cosmos.aio._backend.base import AsyncCosmosBackend
+from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos.aio._container import ContainerProxy
+from azure.cosmos._helpers._item_context import ItemClientContext
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 
 
@@ -37,7 +38,7 @@ def _make_async_proxy(rid="rid-cached"):
     cc._backend = ASYNC_LEGACY_BACKEND
     cc.ReadItem = AsyncMock(return_value={"id": "read_item", "_rid": rid})
 
-    proxy = ContainerProxy(cc, "dbs/db", "c")
+    proxy = ContainerProxy(cc, "dbs/db", "c", _item_context=ItemClientContext(cc._backend))
     return proxy, cc
 
 
@@ -49,6 +50,9 @@ class _CapturingAsyncBackend(AsyncCosmosBackend):
     def __init__(self):
         self.executed = False
         self.prepared = None
+
+    async def resolve_container_metadata(self, link):
+        return BackendResponse(200, 0, {}, b'{"_rid":"rid-cached"}', None)
 
     async def execute(self, prepared):
         self.executed = True
@@ -96,6 +100,7 @@ class TestAsyncContainerReadItemRouting(unittest.IsolatedAsyncioTestCase):
         proxy, cc = _make_async_proxy()
         backend = _CapturingAsyncBackend()
         cc._backend = backend
+        proxy._item_context = ItemClientContext(backend)
 
         result = await proxy.read_item("read_item", "a")
 

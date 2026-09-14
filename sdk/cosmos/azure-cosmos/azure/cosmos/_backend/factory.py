@@ -60,7 +60,7 @@ from __future__ import annotations
 import os
 from typing import Any, Optional, Sequence
 
-from .base import CosmosBackend
+from .cosmos_backend import CosmosBackend
 from .client_config import build_client_config
 from .constants import (
     BACKEND_ENV_VAR,

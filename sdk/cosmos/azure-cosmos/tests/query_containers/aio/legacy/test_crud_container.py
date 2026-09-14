@@ -48,15 +48,16 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self) -> None:
         self.key_client = CosmosClient(HOST, KEY, _backend="rust")
+        self.addAsyncCleanup(self.key_client.close)
         self._database_id = "query_containers_legacy_async_" + str(uuid.uuid4())
+        self.addAsyncCleanup(self._delete_owned_database)
         self.database_for_test = await self.key_client.create_database(self._database_id)
 
-    async def asyncTearDown(self) -> None:
+    async def _delete_owned_database(self) -> None:
         try:
             await self.key_client.delete_database(self._database_id)
-        except Exception:  # pylint: disable=broad-except
+        except exceptions.CosmosResourceNotFoundError:
             pass
-        await self.key_client.close()
 
     async def __assert_http_failure_with_status(self, status_code, func, *args, **kwargs):
         try:

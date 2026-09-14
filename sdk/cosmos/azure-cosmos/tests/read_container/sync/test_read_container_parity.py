@@ -7,10 +7,9 @@
 
 Here, parity means matching public behavior between Python and Rust. These
 tests prove that stored partition-key and indexing settings match and that a
-missing container raises the same typed error. They also prove that options
-Rust cannot honor stay on Python, so requested statistics and quota data are
-not silently omitted. Customers use these settings to route queries and
-understand request costs.
+missing container raises the same typed error. Quota and partition statistics
+must use the selected backend and retain their requested data. Customers use
+these settings to inspect storage and request costs.
 """
 from __future__ import annotations
 
@@ -18,11 +17,12 @@ import os
 import uuid
 
 import pytest
+from azure.core import MatchConditions
 
 from azure.cosmos import CosmosClient, exceptions
 from azure.cosmos.partition_key import PartitionKey
 from common._parity_helpers import (
-    _binding_operation_count,
+    run_target_operation,
     run_on_both_backends,
     skip_unless_emulator,
     skip_unless_rust_binding,
@@ -33,7 +33,7 @@ pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 
 def _admin_client():
     """A privileged client for database and container setup and teardown, not the client under test."""
-    return CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
+    return CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
 
 
 def _normalize_container(properties):
@@ -53,37 +53,38 @@ def _normalize_container(properties):
     }
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def database_id():
     """A throwaway database, deleted after the test."""
     client = _admin_client()
-    name = "parity_read_container_" + uuid.uuid4().hex[:8]
-    client.create_database(id=name)
+    name = "parity_read_container_" + uuid.uuid4().hex
     try:
+        client.create_database(id=name)
         yield name
     finally:
         try:
             client.delete_database(name)
-        except Exception:  # pylint: disable=broad-except
+        except exceptions.CosmosResourceNotFoundError:
             pass
-        client.close()
+        finally:
+            client.close()
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def container_id(database_id):
     """A container with a non-default indexing policy, so the read has something to lose."""
     client = _admin_client()
     name = "read_target_" + uuid.uuid4().hex[:8]
-    client.get_database_client(database_id).create_container(
-        id=name,
-        partition_key=PartitionKey(path="/pk", kind="Hash"),
-        indexing_policy={
-            "indexingMode": "consistent",
-            "includedPaths": [{"path": "/*"}],
-            "excludedPaths": [{"path": "/excluded/*"}],
-        },
-    )
     try:
+        client.get_database_client(database_id).create_container(
+            id=name,
+            partition_key=PartitionKey(path="/pk", kind="Hash"),
+            indexing_policy={
+                "indexingMode": "consistent",
+                "includedPaths": [{"path": "/*"}],
+                "excludedPaths": [{"path": "/excluded/*"}],
+            },
+        )
         yield name
     finally:
         client.close()
@@ -95,7 +96,7 @@ def test_read_container_properties(database_id, container_id):
     def _do(client):
         """Read the container and return its normalised properties."""
         container = client.get_database_client(database_id).get_container_client(container_id)
-        return _normalize_container(container.read())
+        return _normalize_container(run_target_operation(client, container.read))
 
     comparison = run_on_both_backends(_do, description="container read, custom indexing policy")
     comparison.print_report()
@@ -104,32 +105,66 @@ def test_read_container_properties(database_id, container_id):
     assert "/excluded/*" in comparison.core_python.return_value["excludedPaths"]
 
 
-def test_read_container_with_quota_and_statistics_stays_on_legacy_path(database_id, container_id):
-    """A read asking for statistics or quota usage does not go to rust, on either engine."""
-    # Unsupported options stay on Python so requested fields are not dropped.
-    client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
-    try:
+@pytest.mark.parametrize("quota,statistics", [(True, False), (False, True), (True, True), (False, False), (None, None)])
+def test_read_container_quota_and_statistics_use_selected_backend(database_id, container_id, quota, statistics):
+    """Requested statistics and quota values match, with no Rust-to-Python fallback."""
+    def read_metadata(client):
         container = client.get_database_client(database_id).get_container_client(container_id)
-        before = _binding_operation_count()
-        properties = container.read(
-            populate_partition_key_range_statistics=True,
-            populate_quota_info=True,
+        properties = run_target_operation(
+            client, lambda: container.read(
+                populate_partition_key_range_statistics=statistics,
+                populate_quota_info=quota, read_timeout=None,
+            ),
         )
-        after = _binding_operation_count()
+        headers = properties.get_response_headers()
+        assert ("statistics" in properties) == bool(statistics)
+        assert ("x-ms-resource-usage" in headers) == bool(quota)
+        assert ("x-ms-resource-quota" in headers) == bool(quota)
+        return {
+            "properties": _normalize_container(properties),
+            "statistics": properties.get("statistics"),
+            "quota": headers.get("x-ms-resource-quota"),
+            "usage": headers.get("x-ms-resource-usage"),
+        }
 
-        assert properties.get("statistics") is not None, (
-            "the caller asked for per-partition statistics and did not get them"
-        )
-        assert (
-            client.client_connection.last_response_headers.get("x-ms-resource-usage") is not None
-        ), "the caller asked for quota usage and did not get it"
-        assert after == before, (
-            "a read requesting statistics or quota info reached rust; the driver may now "
-            "support these options, in which case is_read_container_rust_eligible should "
-            "stop excluding them"
-        )
-    finally:
-        client.close()
+    comparison = run_on_both_backends(read_metadata, description="container metadata extras")
+    comparison.print_report()
+    comparison.assert_functional_parity()
+
+
+@pytest.mark.parametrize("condition", [MatchConditions.IfPresent, MatchConditions.IfNotModified])
+def test_read_container_conditions(database_id, container_id, condition):
+    def read_conditionally(client):
+        container = client.get_database_client(database_id).get_container_client(container_id)
+        etag = container.read()["_etag"] if condition == MatchConditions.IfNotModified else '"unused"'
+        return _normalize_container(run_target_operation(
+            client, lambda: container.read(etag=etag, match_condition=condition),
+        ))
+
+    run_on_both_backends(read_conditionally, description="conditional container read").assert_functional_parity()
+
+
+def test_read_container_response_hook_cannot_change_cached_partition_key(database_id, container_id):
+    def read_with_hook(client):
+        container = client.get_database_client(database_id).get_container_client(container_id)
+        calls = []
+
+        def response_hook(headers, properties):
+            calls.append(properties["id"])
+            headers.clear()
+            properties["partitionKey"]["paths"][0] = "/changed-by-hook"
+            properties["indexingPolicy"].clear()
+
+        properties = run_target_operation(client, lambda: container.read(response_hook=response_hook))
+        assert calls == [container_id]
+        assert properties.get_response_headers()
+        assert properties["partitionKey"]["paths"] == ["/pk"]
+        assert properties["indexingPolicy"]
+        cached = client.client_connection._container_properties_cache[container.container_link]
+        assert cached["partitionKey"]["paths"] == ["/pk"]
+        return _normalize_container(properties)
+
+    run_on_both_backends(read_with_hook, description="container response-hook isolation").assert_functional_parity()
 
 
 def test_read_missing_container_raises_404(database_id):
@@ -139,7 +174,7 @@ def test_read_missing_container_raises_404(database_id):
     def _do(client):
         """Attempt to read a container that does not exist, expecting a 404 error."""
         container = client.get_database_client(database_id).get_container_client(missing_id)
-        return container.read()
+        return run_target_operation(client, container.read)
 
     comparison = run_on_both_backends(_do, description="container read, missing container")
     comparison.print_report()

@@ -15,7 +15,9 @@ headers.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, Mapping
+from typing import Any, Dict, Mapping, Optional, Tuple
+
+from azure.core import MatchConditions
 
 from .._constants import _Constants as Constants
 
@@ -50,7 +52,7 @@ def compose_options_from_kwargs(kwargs: Dict[str, Any]) -> Dict[str, Any]:
 
     Handles only the kwarg-name -> option-key translation. Does not
     stamp timing fields, does not handle ``etag`` / ``match_condition``
-    (those go through the legacy match-headers helper), and does not
+    (``compose_item_options`` handles those), and does not
     pull ``read_timeout`` / ``timeout``.
 
     A pre-existing ``request_options`` dict in ``kwargs`` is consumed
@@ -66,6 +68,58 @@ def compose_options_from_kwargs(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     for kwarg_name, option_key in COMMON_OPTIONS.items():
         if kwarg_name in kwargs:
             options[option_key] = kwargs.pop(kwarg_name)
+    return options
+
+
+def get_match_headers(kwargs: Dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
+    """Normalize the public conditional-request contract without transport state.
+
+    Consumes only the supplied working dictionary. Both wrappers use this
+    utility so their validation messages and conditional-header precedence agree.
+    """
+    if_match = kwargs.pop("if_match", None)
+    if_none_match = kwargs.pop("if_none_match", None)
+    match_condition = kwargs.pop("match_condition", None)
+    if match_condition == MatchConditions.IfNotModified:
+        if_match = kwargs.pop("etag", None)
+        if not if_match:
+            raise ValueError("'match_condition' specified without 'etag'.")
+    elif match_condition == MatchConditions.IfPresent:
+        if_match = "*"
+    elif match_condition == MatchConditions.IfModified:
+        if_none_match = kwargs.pop("etag", None)
+        if not if_none_match:
+            raise ValueError("'match_condition' specified without 'etag'.")
+    elif match_condition == MatchConditions.IfMissing:
+        if_none_match = "*"
+    elif match_condition is None:
+        etag = kwargs.pop("etag", None)
+        if etag is not None:
+            raise ValueError("'etag' specified without 'match_condition'.")
+    else:
+        raise TypeError("Invalid match condition: {}".format(match_condition))
+    return if_match, if_none_match
+
+
+def compose_item_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    """Build Rust item options from a local kwargs copy, not legacy build_options.
+
+    Owns conditional-request normalization and copies supplied option mappings.
+    It generates no Python pipeline timing/retry bookkeeping. Consumed kwargs
+    are removed only from the helper's working copy, never the caller's mapping.
+    """
+    feed_options = kwargs.pop("feed_options", {})
+    if "request_options" not in kwargs:
+        kwargs["request_options"] = feed_options
+    options = compose_options_from_kwargs(kwargs)
+    for key in (Constants.Kwargs.READ_TIMEOUT, Constants.Kwargs.TIMEOUT):
+        if key in kwargs:
+            options[key] = kwargs[key]
+    if_match, if_none_match = get_match_headers(kwargs)
+    if if_match:
+        options["accessCondition"] = {"type": "IfMatch", "condition": if_match}
+    if if_none_match:
+        options["accessCondition"] = {"type": "IfNoneMatch", "condition": if_none_match}
     return options
 
 

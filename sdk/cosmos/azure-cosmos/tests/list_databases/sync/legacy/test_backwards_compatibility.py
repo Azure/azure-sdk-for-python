@@ -13,6 +13,9 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.skip(
+    reason="accepted-vnext-change: RUST_MIGRATION_STATUS.md list_databases rejects session_token; covered offline"
+)
 class TestBackwardsCompatibility(unittest.TestCase):
     configs = test_config.TestConfig
 

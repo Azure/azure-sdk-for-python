@@ -3,12 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Pure helpers shared by the sync and async item-helper classes.
+"""Public item keyword merging and legacy-only request-option adapters.
 
-The sync ``ItemHelper`` and async ``AsyncItemHelper`` only differ in
-where they ``await``; the dispatch decision, option-dict build, and
-kwarg-stamping logic are identical. This module centralises them so
-the two helpers cannot drift. Nothing here performs I/O.
+The merge_* utilities belong to the public wrapper and serve both engines.
+The build_*_request_options functions are used only by explicit legacy parity;
+they import legacy option preparation when invoked. Rust item helpers instead
+use _options.compose_item_options. Nothing here performs I/O.
 """
 from __future__ import annotations
 
@@ -16,7 +16,6 @@ import warnings
 from typing import Any, Dict, Optional
 
 from .._availability_strategy_config import _validate_request_hedging_strategy
-from .._base import build_options
 from .._constants import _Constants as Constants
 
 
@@ -66,15 +65,19 @@ def merge_create_item_explicit_kwargs(
 
 
 def pick_backend(client_connection: Any) -> Any:
-    """Return the concrete backend stored on the client connection.
+    """Retrieve the already-selected backend from the client connection.
 
-    Production client connections always store a Rust or legacy backend object.
-    A missing or ``None`` value violates the backend invariant and raises rather
-    than silently changing the selected engine.
+    Unmigrated connection-owned coordinators use this accessor. Public point
+    operations instead receive their backend directly through ItemClientContext.
+    This function does not select or construct a backend.
+
+    Read ``_backend`` from the connection's ``__dict__`` (its stored instance
+    attributes) when available; otherwise use attribute lookup.
 
     :param client_connection: The connection that owns the ``_backend``
-        attribute. A missing attribute is tolerated.
+        attribute containing the selected Rust or legacy backend.
     :returns: The stored concrete backend.
+    :raises RuntimeError: If ``_backend`` is missing or ``None``.
     """
     connection_dict = getattr(client_connection, "__dict__", None)
     if isinstance(connection_dict, dict):
@@ -115,6 +118,7 @@ def build_create_item_request_options(
     :returns: The request-options dict.
     :rtype: Dict[str, Any]
     """
+    from .._base import build_options
     request_options = build_options(kwargs)
     request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
     if populate_query_metrics:
@@ -184,6 +188,7 @@ def build_delete_item_request_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     already drops ``populate_query_metrics`` (with a deprecation
     warning) before kwargs reach here.
     """
+    from .._base import build_options
     return build_options(kwargs)
 
 
@@ -247,6 +252,7 @@ def build_read_item_request_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     by the sync public method before reaching here. The async sibling
     does not expose ``populate_query_metrics`` at all.
     """
+    from .._base import build_options
     return build_options(kwargs)
 
 
@@ -331,6 +337,7 @@ def build_upsert_item_request_options(
     legacy ``upsert_item`` behaviour, which warned for any explicit value
     including ``False``.
     """
+    from .._base import build_options
     request_options = build_options(kwargs)
     request_options["disableAutomaticIdGeneration"] = True
     if populate_query_metrics is not None:
@@ -395,6 +402,7 @@ def build_patch_item_request_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     are folded into ``accessCondition`` by ``build_options``. The helper
     sets ``filterPredicate`` itself; it is not a ``build_options`` key.
     """
+    from .._base import build_options
     request_options = build_options(kwargs)
     request_options["disableAutomaticIdGeneration"] = True
     return request_options

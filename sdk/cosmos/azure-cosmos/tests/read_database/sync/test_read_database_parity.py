@@ -14,16 +14,17 @@ the same on both. These tests run each scenario twice, once per engine, against
 a real account and compare the results. A unit test with fakes cannot do that,
 because the thing being checked is what the service actually sends back.
 
-Three scenarios, matching what customers do with this call:
+Scenarios covering the public read contract:
 
 * baseline -- the properties dict is identical on both engines. Customers read
   ``id`` and ``_rid`` out of it directly, so a difference here is a broken
   application, not a cosmetic one.
-* options and callbacks -- a custom header, a ``session_token`` that this method
-  ignores by design, and a ``response_hook``. Each must be treated the same way
-  on both engines, including the hook firing once with real response headers.
+* options and callbacks -- a custom header, an operation timeout, and a
+  ``response_hook`` that fires once with isolated real response headers.
 * missing database -- the same typed not-found exception on both. Customers
   catch that exception by type to decide whether to create the database.
+* conditional reads -- matching If-None-Match produces an empty result and a
+  None hook body; stale If-Match retains the service's existing GET behavior.
 
 ``assert_functional_parity`` deliberately allows one known difference: the rust
 engine reports a smaller set of response headers today. That gap is tracked
@@ -38,6 +39,7 @@ import os
 import uuid
 
 import pytest
+from azure.core import MatchConditions
 
 from common._parity_helpers import (
     run_on_both_backends,
@@ -46,6 +48,7 @@ from common._parity_helpers import (
     skip_unless_rust_binding,
 )
 from azure.cosmos import CosmosClient
+from azure.cosmos.exceptions import CosmosResourceNotFoundError
 
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
@@ -54,15 +57,15 @@ pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 @pytest.fixture(scope="module")
 def readable_database_id():
     database_id = "parity_read_db_" + uuid.uuid4().hex[:12]
-    client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
-    client.create_database(database_id)
-    try:
-        yield database_id
-    finally:
+    with CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"]) as client:
         try:
-            client.delete_database(database_id)
+            client.create_database(database_id)
+            yield database_id
         finally:
-            client.close()
+            try:
+                client.delete_database(database_id)
+            except CosmosResourceNotFoundError:
+                pass  # A failed create may not have reached the service.
 
 
 def test_read_database_baseline_properties(readable_database_id):
@@ -76,29 +79,37 @@ def test_read_database_baseline_properties(readable_database_id):
             for key in ("id", "_rid", "_self", "_etag", "_colls", "_users")
         }
 
-    run_on_both_backends(
+    comparison = run_on_both_backends(
         _call,
         description="read_database baseline properties",
-    ).assert_functional_parity()
+    )
+    assert comparison.core_python.raised is None
+    assert comparison.rust.raised is None
+    comparison.assert_functional_parity()
 
 
 def test_read_database_options_and_response_hook(readable_database_id):
-    """Initial headers, ignored session tokens and response hooks retain parity."""
+    """Supported options and isolated response hooks retain parity."""
 
     def _call(client):
         hook_calls = []
         database = client.get_database_client(readable_database_id)
-        with pytest.warns(DeprecationWarning, match="session_token"):
-            properties = run_target_operation(
-                client,
-                lambda: database.read(
-                    initial_headers={"x-ms-cosmos-throughput-bucket": "1"},
-                    session_token="ignored",
-                    response_hook=lambda headers, body: hook_calls.append(
-                        (dict(headers), dict(body))
-                    ),
-                ),
-            )
+        def hook(headers, body):
+            assert "X-MS-REQUEST-CHARGE" in headers
+            hook_calls.append((headers, dict(body)))
+            headers["x-test-hook-only"] = "not-sdk-state"
+
+        properties = run_target_operation(
+            client,
+            lambda: database.read(
+                initial_headers={"x-ms-cosmos-throughput-bucket": "1"},
+                timeout=10,
+                response_hook=hook,
+            ),
+        )
+        assert len(hook_calls) == 1
+        assert "x-test-hook-only" not in properties.get_response_headers()
+        assert "x-test-hook-only" not in client.client_connection.last_response_headers
         return {
             "database_id_matches": properties["id"] == readable_database_id,
             "hook_count": len(hook_calls),
@@ -108,15 +119,63 @@ def test_read_database_options_and_response_hook(readable_database_id):
             },
         }
 
-    run_on_both_backends(
+    comparison = run_on_both_backends(
         _call,
         description="read_database options and response hook",
         request_kwargs={
             "initial_headers": {"x-ms-cosmos-throughput-bucket": "1"},
-            "session_token": "ignored",
+            "timeout": 10,
             "response_hook": "<callable>",
         },
-    ).assert_functional_parity()
+    )
+    assert comparison.core_python.raised is None
+    assert comparison.rust.raised is None
+    comparison.assert_functional_parity()
+
+
+@pytest.mark.parametrize(
+    "condition, empty_body",
+    [(MatchConditions.IfNotModified, False), (MatchConditions.IfModified, True),
+     (MatchConditions.IfPresent, False)],
+)
+def test_read_database_conditional_read(readable_database_id, condition, empty_body):
+    def _call(client):
+        database = client.get_database_client(readable_database_id)
+        original = database.read()
+        hook_calls = []
+        properties = run_target_operation(
+            client,
+            lambda: database.read(
+                etag="unused" if condition == MatchConditions.IfPresent else original["_etag"],
+                match_condition=condition,
+                response_hook=lambda headers, body: hook_calls.append((headers, body)),
+            ),
+        )
+        assert len(hook_calls) == 1
+        assert hook_calls[0][1] == (None if empty_body else properties)
+        assert properties == ({} if empty_body else original)
+        return {"body": dict(properties), "etag": properties.get_response_headers()["etag"]}
+
+    comparison = run_on_both_backends(_call, description=f"read_database conditional {condition.name}")
+    assert comparison.core_python.raised is None
+    assert comparison.rust.raised is None
+    comparison.assert_functional_parity()
+
+
+def test_read_database_preserves_service_behavior_for_stale_if_match(readable_database_id):
+    """The service does not enforce If-Match on this GET; do not invent a 412."""
+    def _call(client):
+        database = client.get_database_client(readable_database_id)
+        return run_target_operation(
+            client, lambda: database.read(etag='"stale-version"', match_condition=MatchConditions.IfNotModified),
+        )
+
+    comparison = run_on_both_backends(_call, description="read_database stale If-Match")
+    assert comparison.core_python.raised is None
+    assert comparison.rust.raised is None
+    assert comparison.core_python.return_value["id"] == readable_database_id
+    assert comparison.rust.return_value["id"] == readable_database_id
+    comparison.assert_functional_parity()
 
 
 def test_read_database_missing_maps_404():

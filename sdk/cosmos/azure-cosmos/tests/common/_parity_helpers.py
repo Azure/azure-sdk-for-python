@@ -255,6 +255,11 @@ class BackendComparison:
             lines.append("  response headers ({} total):".format(len(hdrs)))
             for k in sorted(hdrs):
                 lines.append("    {}: {}".format(k, hdrs[k]))
+        accepted_additions = _accepted_rust_header_additions(self.core_python, self.rust)
+        if accepted_additions:
+            lines.append("--- ACCEPTED vNext ADDITIONS (not gaps) ---")
+            for name in sorted(accepted_additions):
+                lines.append("  {}: SDK-generated Rust diagnostics; not a legacy service header.".format(name))
         lines.append("--- DIFFS ---")
         if not self.diffs:
             lines.append("  (none -- full parity)")
@@ -294,29 +299,10 @@ class BackendComparison:
     # recorded" so the next reviewer knows whether to file a new entry
     # or strengthen an existing one.
     _PUSHBACK_RAW_HEADERS: ClassVar[Tuple[int, str]] = (
-        6,
-        "raw-headers accessor on the diagnostics object — half-landed "
-        "(error path shipped in driver v0.4.0; success path still open)",
-    )
-    _PUSHBACK_CONTAINER_IDENTITY: ClassVar[Tuple[int, str]] = (
-        7,
-        "container-identity headers parsed but pub(crate) in the driver "
-        "— wont-fix (revisit only with a customer escalation)",
-    )
-    _PUSHBACK_DIAGNOSTIC_HEADERS: ClassVar[Tuple[int, str]] = (
-        17,
-        "diagnostic/networking headers that differ by backend — low "
-        "customer impact, tracked for audit-signal cleanup",
-    )
-    _PUSHBACK_THROUGHPUT_RANGE_HEADERS: ClassVar[Tuple[int, str]] = (
-        29,
-        "the offer response headers reporting the throughput range a "
-        "database or container is allowed to be set to are not surfaced "
-        "on the rust path",
+        26,
+        "The original HTTP response headers are discarded",
     )
     _HEADER_TO_PUSHBACK: ClassVar[Dict[str, Tuple[int, str]]] = {
-        # #6 — HTTP framing headers azure-core surfaces but the rust
-        # binding's typed projection drops.
         "date": _PUSHBACK_RAW_HEADERS,
         "server": _PUSHBACK_RAW_HEADERS,
         "content-type": _PUSHBACK_RAW_HEADERS,
@@ -326,22 +312,7 @@ class BackendComparison:
         "pragma": _PUSHBACK_RAW_HEADERS,
         "strict-transport-security": _PUSHBACK_RAW_HEADERS,
         "transfer-encoding": _PUSHBACK_RAW_HEADERS,
-        # #7 — container-identity headers explicitly declined.
-        "x-ms-alt-content-path": _PUSHBACK_CONTAINER_IDENTITY,
-        "x-ms-content-path": _PUSHBACK_CONTAINER_IDENTITY,
-        # #21 — diagnostic/networking headers that differ by backend
-        # (one dropped by rust, two added only by rust). No body impact.
-        "x-ms-thinclient-route-via-proxy": _PUSHBACK_DIAGNOSTIC_HEADERS,
-        "x-ms-cosmos-internal-partition-id": _PUSHBACK_DIAGNOSTIC_HEADERS,
-        "x-ms-cosmos-sdk-diagnostics": _PUSHBACK_DIAGNOSTIC_HEADERS,
-        "x-ms-cosmos-query-execution-info": _PUSHBACK_DIAGNOSTIC_HEADERS,
-        "x-ms-cosmos-is-partition-key-delete-pending": _PUSHBACK_DIAGNOSTIC_HEADERS,
-        # #29 — offer-response headers reporting the allowed throughput
-        # range. Only appear on offer responses, so only throughput
-        # audits see them.
-        "x-ms-cosmos-min-throughput": _PUSHBACK_THROUGHPUT_RANGE_HEADERS,
-        "x-ms-cosmos-offer-max-allowed-throughput": _PUSHBACK_THROUGHPUT_RANGE_HEADERS,
-        "x-ms-cosmos-instant-scale-up-value": _PUSHBACK_THROUGHPUT_RANGE_HEADERS,
+        "x-ms-cosmos-min-throughput": _PUSHBACK_RAW_HEADERS,
     }
 
     def _is_header_diff(self, line: str) -> bool:
@@ -401,7 +372,7 @@ class BackendComparison:
         if core_ok != rust_ok:
             return ("FUNCTIONAL DIVERGENCE: one backend succeeded, the other "
                     "raised. The operation behaves differently -- investigate.")
-        if core_ok and rust_ok:
+        if core_ok or all(self._is_header_diff(diff) for diff in self.diffs):
             header_diffs = [d for d in self.diffs if self._is_header_diff(d)]
             body_diffs = [d for d in self.diffs if not self._is_header_diff(d)]
             if body_diffs:
@@ -422,15 +393,18 @@ class BackendComparison:
                         unrecorded.append(name)
                     else:
                         grouped.setdefault(pb, []).append(name)
+            outcome_description = (
+                "both backends performed the operation successfully and returned response bodies "
+                "that match under the comparison rules (which ignore "
+                "id, _rid, _self, _ts, _etag, and _attachments). "
+                if core_ok else
+                "both backends raised equivalent exceptions under the comparison rules. "
+            )
             out: List[str] = [
-                "FUNCTIONAL PARITY, HEADER GAP: both backends performed "
-                "the operation successfully and returned response bodies "
-                "that match on every customer-visible field (the harness "
-                "filters the six per-document server-stamped fields it "
-                "treats as test noise: id, _rid, _self, _ts, _etag, "
-                "_attachments). The header-surface differences below are "
-                "all known rust-binding gaps; the tracked pushback for each "
-                "follows."
+                "FUNCTIONAL PARITY, HEADER GAP: " + outcome_description +
+                "Header differences are grouped by documented pushback below; "
+                "unrecorded observations require triage and are not "
+                "automatically Rust defects."
             ]
             # Render recorded buckets in pushback-number order.
             for pb_key in sorted(grouped.keys(), key=lambda k: k[0]):
@@ -450,8 +424,8 @@ class BackendComparison:
                     "already tracked as a known pushback."
                 )
             return "\n".join(out)
-        return ("EXCEPTION DIVERGENCE: both backends raised, but the typed "
-                "exception or status code differs.")
+        return ("EXCEPTION DIVERGENCE: both backends raised, but the exception type, "
+                "status, substatus, or normalized message differs.")
 
 
     def print_report(self):
@@ -863,6 +837,21 @@ def _normalize_exception_message(exc: BaseException) -> str:
     return text
 
 
+def _accepted_rust_header_additions(core: CallOutcome, rust: CallOutcome) -> frozenset[str]:
+    """Recognize only the explicitly accepted, nonempty Rust diagnostic addition.
+
+    Keep it in captured headers and reports. Do not exempt a missing Rust header,
+    an empty value, or any unrelated extra/missing service header.
+    """
+    name = "x-ms-cosmos-sdk-diagnostics"
+    core_names = {key.lower() for key in (core.response_headers or {})}
+    rust_headers = {key.lower(): value for key, value in (rust.response_headers or {}).items()}
+    value = rust_headers.get(name)
+    if name not in core_names and isinstance(value, str) and value.strip():
+        return frozenset({name})
+    return frozenset()
+
+
 def diff_outcomes(
     core: CallOutcome,
     rust: CallOutcome,
@@ -923,6 +912,8 @@ def diff_outcomes(
     # Response headers are customer-visible on both success and error paths.
     ch = _filtered_headers(core.response_headers, ignored_headers)
     rh = _filtered_headers(rust.response_headers, ignored_headers)
+    for name in _accepted_rust_header_additions(core, rust):
+        rh.pop(name, None)
     if set(ch) != set(rh):
         only_core = sorted(set(ch) - set(rh))
         only_rust = sorted(set(rh) - set(ch))

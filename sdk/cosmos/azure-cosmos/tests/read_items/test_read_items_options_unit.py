@@ -7,9 +7,10 @@
 from __future__ import annotations
 
 import base64
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import documents, http_constants
 from azure.cosmos._base import GetHeaders
@@ -17,6 +18,8 @@ from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._helpers._options import COMMON_OPTIONS
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos.container import ContainerProxy
+from azure.cosmos._read_items_helper import ReadItemsHelperSync
+from azure.cosmos.aio._read_items_helper_async import ReadItemsHelperAsync
 
 _DATABASE_LINK = "dbs/testdb"
 _CONTAINER_ID = "testcontainer"
@@ -73,6 +76,51 @@ def _make_async_proxy():
     proxy._get_properties_with_options = get_properties
     proxy._set_partition_key = set_partition_key
     return proxy, captured
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("is_async", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize("diagnosed_ids", [(), ("b",), ("b", "a", "missing")])
+async def test_read_items_retains_available_chunk_diagnostics(is_async, diagnosed_ids):
+    hook = MagicMock()
+    items = [("b", "pk-b"), ("a", "pk-a"), ("missing", "pk-missing")]
+    helper_type = ReadItemsHelperAsync if is_async else ReadItemsHelperSync
+    helper = helper_type(
+        MagicMock(), _CONTAINER_LINK, items, {}, {"paths": ["/pk"]},
+        max_concurrency=2, response_hook=hook,
+    )
+    partitions = {str(index): [(index, item_id, pk)] for index, (item_id, pk) in enumerate(items)}
+    mock_type = AsyncMock if is_async else MagicMock
+    helper._partition_items_by_range = mock_type(return_value=partitions)
+
+    def read(item_id, _pk, _kwargs):
+        headers = CaseInsensitiveDict({"x-ms-request-charge": "2"})
+        if item_id in diagnosed_ids:
+            headers["x-ms-cosmos-sdk-diagnostics"] = f"activity={item_id} requests=1"
+        return (None if item_id == "missing" else {"id": item_id}), headers
+
+    helper._execute_point_read = mock_type(side_effect=read)
+    result = await helper.read_items() if is_async else helper.read_items()
+    assert result == [{"id": "b"}, {"id": "a"}]
+    headers = result.get_response_headers()
+    assert headers["x-ms-request-charge"] == "6.0"
+    if diagnosed_ids:
+        assert set(headers["x-ms-cosmos-sdk-diagnostics"].split("; ")) == {
+            f"activity={item_id} requests=1" for item_id in diagnosed_ids
+        }
+    else:
+        assert "x-ms-cosmos-sdk-diagnostics" not in headers
+    hook.assert_called_once_with(headers, result)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("is_async", [False, True], ids=["sync", "async"])
+async def test_empty_read_items_does_not_invent_diagnostics(is_async):
+    helper_type = ReadItemsHelperAsync if is_async else ReadItemsHelperSync
+    helper = helper_type(MagicMock(), _CONTAINER_LINK, [], {}, {"paths": ["/pk"]})
+    result = await helper.read_items() if is_async else helper.read_items()
+    assert result == []
+    assert not result.get_response_headers()
 
 
 def test_consistency_level_has_no_common_options_entry():

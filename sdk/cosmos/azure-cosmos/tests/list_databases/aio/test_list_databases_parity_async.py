@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import os
 import uuid
-import warnings
 from collections.abc import Mapping
 
 import pytest
@@ -104,37 +103,37 @@ async def test_list_databases_continuation_replay_async(database_ids):
 
 
 @pytest.mark.asyncio
-async def test_list_databases_options_hook_and_ignored_session_token_async(database_ids):
-    """Async request options preserve the ignored-session-token warning contract."""
+async def test_list_databases_options_and_page_hooks_async(database_ids):
+    """Supported async options preserve lazy per-page metadata on both backends."""
 
     async def _do(client):
         async def _target():
             hook_calls = []
-            with warnings.catch_warnings(record=True) as caught:
-                warnings.simplefilter("always")
-                rows = [
-                    row
-                    async for row in client.list_databases(
-                        max_item_count=2,
-                        initial_headers={"x-list-databases-test": "aio"},
-                        response_hook=lambda headers: hook_calls.append(headers),
-                        session_token="ignored-session-token",
-                        throughput_bucket=1,
-                    )
-                ]
+            iterable = client.list_databases(
+                max_item_count=2,
+                initial_headers={"x-list-databases-test": "aio"},
+                response_hook=hook_calls.append,
+                throughput_bucket=1,
+                timeout=10,
+            )
+            assert hook_calls == []
+            rows = []
+            page_count = 0
+            async for page in iterable.by_page():
+                page_count += 1
+                assert len(hook_calls) == page_count
+                headers = hook_calls[-1]
+                assert isinstance(headers, Mapping)
+                assert headers["x-ms-activity-id"] == client.client_connection.last_response_headers["x-ms-activity-id"]
+                assert float(headers["x-ms-request-charge"]) > 0
+                if client.client_connection._backend.name == "rust":
+                    assert headers["x-ms-cosmos-sdk-diagnostics"]
+                rows.extend([row async for row in page])
             return {
                 "target_ids": sorted(row["id"] for row in rows if row.get("id") in database_ids),
                 "hook_count": len(hook_calls),
-                "hook_received_mapping": bool(hook_calls) and isinstance(hook_calls[0], Mapping),
-                # Ignore unrelated cleanup warnings captured during the call.
-                "warning_categories": [
-                    warning.category.__name__
-                    for warning in caught
-                    if not issubclass(warning.category, ResourceWarning)
-                ],
-                "warning_mentions_session_token": any(
-                    "session_token" in str(warning.message) for warning in caught
-                ),
+                "page_count": page_count,
+                "distinct_page_headers": len({headers["x-ms-activity-id"] for headers in hook_calls}),
             }
 
         return await run_target_operation_async(client, _target)
@@ -145,7 +144,5 @@ async def test_list_databases_options_hook_and_ignored_session_token_async(datab
     comparison.assert_functional_parity()
     result = comparison.rust.return_value
     assert result["target_ids"] == sorted(database_ids)
-    assert result["hook_count"] == 1
-    assert result["hook_received_mapping"]
-    assert result["warning_categories"] == ["DeprecationWarning"]
-    assert result["warning_mentions_session_token"]
+    assert result["hook_count"] == result["page_count"] == result["distinct_page_headers"]
+    assert result["page_count"] >= 2

@@ -10,9 +10,11 @@ use crate::wire::{
     resolve_container_metadata as run_resolve_container_metadata,
     resolve_container_metadata_async as run_resolve_container_metadata_async,
     run_create_container_operation, run_create_container_operation_async,
+    run_delete_container_operation, run_delete_container_operation_async,
     run_list_containers_operation, run_list_containers_operation_async,
     run_query_containers_operation, run_query_containers_operation_async,
     run_read_container_operation, run_read_container_operation_async,
+    run_replace_container_operation, run_replace_container_operation_async,
 };
 
 const CREATE_CONTAINER_DATABASE_REQUIRED: &str =
@@ -112,6 +114,82 @@ pub(crate) fn read_container_async<'py>(
         database_id,
         container_id,
         "read_container_async",
+    )
+}
+
+/// Delete a container identified by database and container name.
+#[pyfunction]
+pub(crate) fn delete_container<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
+    run_delete_container_operation(
+        py,
+        handle,
+        modifiers,
+        database_id,
+        container_id,
+        "delete_container",
+    )
+}
+
+/// Return an awaitable that deletes a container.
+#[pyfunction]
+pub(crate) fn delete_container_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
+    run_delete_container_operation_async(
+        py,
+        handle,
+        modifiers,
+        database_id,
+        container_id,
+        "delete_container_async",
+    )
+}
+
+/// Replace a container's properties using its database and container names.
+#[pyfunction]
+pub(crate) fn replace_container<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
+    let body_bytes = extract_body_bytes(prepared)?;
+    run_replace_container_operation(
+        py,
+        handle,
+        modifiers,
+        database_id,
+        container_id,
+        body_bytes,
+        "replace_container",
+    )
+}
+
+/// Return an awaitable that replaces a container's properties.
+#[pyfunction]
+pub(crate) fn replace_container_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
+    let body_bytes = extract_body_bytes(prepared)?;
+    run_replace_container_operation_async(
+        py,
+        handle,
+        modifiers,
+        database_id,
+        container_id,
+        body_bytes,
+        "replace_container_async",
     )
 }
 

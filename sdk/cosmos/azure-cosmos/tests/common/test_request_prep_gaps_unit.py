@@ -24,10 +24,10 @@ from __future__ import annotations
 from azure.cosmos.http_constants import HttpHeaders
 from azure.cosmos._helpers._request_headers import apply_no_response_on_write_default, flatten_options_to_headers
 from azure.cosmos._helpers._request_item import (
-    build_create_item_prepared,
-    build_patch_item_prepared,
-    build_replace_item_prepared,
-    build_upsert_item_prepared,
+    build_create_item_request,
+    build_patch_item_request,
+    build_replace_item_request,
+    build_upsert_item_request,
 )
 
 # The internal option-key the binding lifts into ContentResponseOnWrite.
@@ -56,7 +56,7 @@ def test_consistency_level_falsy_emits_no_header():
 def test_consistency_level_reaches_wire_through_request_options_on_create():
     """The override the customer hand-builds in ``request_options`` survives the
     full create prep as the proper wire header."""
-    prepared, _ = build_create_item_prepared(
+    prepared, _ = build_create_item_request(
         container_link="dbs/d/colls/orders",
         body={"id": "order-1", "pk": "a"},
         partition_key_value="a",
@@ -173,7 +173,7 @@ def test_percall_value_wins_over_default():
 
 def _create_headers(*, default, kwargs):
     """Return headers prepared for an item create request."""
-    prepared, _ = build_create_item_prepared(
+    prepared, _ = build_create_item_request(
         container_link="dbs/d/colls/orders",
         body={"id": "o", "pk": "a"},
         partition_key_value="a",
@@ -186,7 +186,7 @@ def _create_headers(*, default, kwargs):
 
 def _upsert_headers(*, default, kwargs):
     """Return headers prepared for an item upsert request."""
-    return build_upsert_item_prepared(
+    return build_upsert_item_request(
         container_link="dbs/d/colls/orders",
         body={"id": "o", "pk": "a"},
         partition_key_value="a",
@@ -198,7 +198,7 @@ def _upsert_headers(*, default, kwargs):
 
 def _replace_headers(*, default, kwargs):
     """Return headers prepared for an item replace request."""
-    return build_replace_item_prepared(
+    return build_replace_item_request(
         container_link="dbs/d/colls/orders",
         body={"id": "o", "pk": "a"},
         item_id="o",
@@ -211,7 +211,7 @@ def _replace_headers(*, default, kwargs):
 
 def _patch_headers(*, default, kwargs):
     """Return headers prepared for an item patch request."""
-    return build_patch_item_prepared(
+    return build_patch_item_request(
         container_link="dbs/d/colls/orders",
         item_id="o",
         patch_operations=[{"op": "set", "path": "/total", "value": 1}],

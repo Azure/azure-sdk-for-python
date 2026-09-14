@@ -9,18 +9,14 @@ container and how much it costs them. If rust returned a different partition
 key path or dropped the indexing policy, application code that branches on
 those fields would take the wrong branch.
 
-What it does: one real v4 test copied from ``tests/test_crud_container.py``,
+What it does: original v4 tests copied from ``tests/test_crud_container.py``,
 changed in one place -- the client is built with ``_backend="rust"``.
 ``test_collection_crud`` creates a container, reads it back and checks the
 indexing mode and partition key survived the round trip.
 
-Not copied: ``test_partitioned_collection``. Its read asks for per-partition
-statistics and quota usage, and a read carrying either of those options is sent
-down the legacy path on purpose -- the rust path has no way to request them, and
-a reply with them silently missing would read as "this container has no
-statistics" rather than "the SDK dropped your request". Copying it here would
-have recorded a rust run that never touched rust. That fallback is pinned
-instead in ``read_container/sync/test_read_container_parity.py``.
+``test_partitioned_collection`` also verifies partition statistics and quota
+usage through Rust. Every container read is guarded by a binding-operation
+counter and a zero-fallback assertion.
 
 This is NOT the side-by-side comparison. The comparison tests
 (``read_container/sync/test_read_container_parity.py``) run the same call on
@@ -40,11 +36,15 @@ Run with::
 import os
 import unittest
 import uuid
+from functools import wraps
+from unittest.mock import patch
 
 import pytest
 
 import azure.cosmos.exceptions as exceptions
-from azure.cosmos import CosmosClient
+import azure.cosmos.documents as documents
+from azure.cosmos import CosmosClient, ContainerProxy
+from common._parity_helpers import run_target_operation
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
@@ -61,15 +61,25 @@ class TestCRUDContainerOperations(unittest.TestCase):
 
     def setUp(self) -> None:
         self.key_client = CosmosClient(HOST, KEY, _backend="rust")
+        self.addCleanup(self.key_client.close)
         self._database_id = "read_container_legacy_" + str(uuid.uuid4())
+        self.addCleanup(self._delete_owned_database)
         self.databaseForTest = self.key_client.create_database(self._database_id)
+        original_read = ContainerProxy.read
 
-    def tearDown(self) -> None:
+        @wraps(original_read)
+        def guarded_read(container, *args, **kwargs):
+            return run_target_operation(self.key_client, lambda: original_read(container, *args, **kwargs))
+
+        read_patch = patch.object(ContainerProxy, "read", guarded_read)
+        read_patch.start()
+        self.addCleanup(read_patch.stop)
+
+    def _delete_owned_database(self) -> None:
         try:
             self.key_client.delete_database(self._database_id)
-        except Exception:  # pylint: disable=broad-except
+        except exceptions.CosmosResourceNotFoundError:
             pass
-        self.key_client.close()
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         try:
@@ -116,6 +126,44 @@ class TestCRUDContainerOperations(unittest.TestCase):
         created_container = created_db.get_container_client(created_collection.id)
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            created_container.read)
+
+
+    def test_partitioned_collection(self):
+        # Source: tests/test_crud_container.py::TestCRUDContainerOperations.test_partitioned_collection
+        created_db = self.databaseForTest
+
+        collection_definition = {'id': 'test_partitioned_collection ' + str(uuid.uuid4()),
+                                 'partitionKey':
+                                     {
+                                         'paths': ['/id'],
+                                         'kind': documents.PartitionKind.Hash
+                                     }
+                                 }
+
+        offer_throughput = 10100
+        created_collection = created_db.create_container(id=collection_definition['id'],
+                                                         partition_key=collection_definition['partitionKey'],
+                                                         offer_throughput=offer_throughput)
+
+        self.assertEqual(collection_definition.get('id'), created_collection.id)
+
+        created_collection_properties = created_collection.read(
+            populate_partition_key_range_statistics=True,
+            populate_quota_info=True)
+        self.assertEqual(collection_definition.get('partitionKey').get('paths')[0],
+                         created_collection_properties['partitionKey']['paths'][0])
+        self.assertEqual(collection_definition.get('partitionKey').get('kind'),
+                         created_collection_properties['partitionKey']['kind'])
+        self.assertIsNotNone(created_collection_properties.get("statistics"))
+        self.assertIsNotNone(created_db.client_connection.last_response_headers.get("x-ms-resource-usage"))
+
+        expected_offer = created_collection.get_throughput()
+
+        self.assertIsNotNone(expected_offer)
+
+        self.assertEqual(expected_offer.offer_throughput, offer_throughput)
+
+        created_db.delete_container(created_collection.id)
 
 
 if __name__ == "__main__":

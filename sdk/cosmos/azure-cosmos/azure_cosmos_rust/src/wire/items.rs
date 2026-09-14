@@ -182,7 +182,7 @@ async fn run_singleton_future(
     build_op: impl FnOnce(ItemReference) -> CosmosOperation + Send,
 ) -> Result<CosmosResponse, CosmosError> {
     let container = driver
-        .resolve_container(&database_name, &container_name)
+        .resolve_container(&database_name, &container_name, Default::default())
         .await?;
     let item_ref = ItemReference::from_name(&container, partition_key, item_id);
     let mut op = build_op(item_ref);

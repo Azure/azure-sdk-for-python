@@ -57,6 +57,7 @@ _STRUCTURED_SKIP_TAGS = (
     "driver-gap",       # blocked on a known rust driver / binding gap
     "sync-only",        # the operation's async surface has no equivalent test
     "async-only",       # the operation's sync surface has no equivalent test
+    "accepted-vnext-change",  # an explicitly documented major-version contract change
 )
 
 #: Decorator names that mean "skip this test".
@@ -281,4 +282,3 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

@@ -238,11 +238,11 @@ async fn run_read_feed_ranges_future(
     CosmosError,
 > {
     let container = driver
-        .resolve_container(&database_name, &container_name)
+        .resolve_container(&database_name, &container_name, Default::default())
         .await?;
-    Ok(driver
+    driver
         .resolve_all_partition_key_ranges(&container, force_refresh)
-        .await)
+        .await
 }
 
 /// Driver work for `feed_range_from_partition_key`: resolve container metadata,
@@ -255,7 +255,7 @@ async fn run_feed_range_from_partition_key_future(
     partition_key_input: FeedRangePartitionKeyInput,
 ) -> Result<FeedRangeFromPartitionKeyPayload, FeedRangeFromPartitionKeyError> {
     let container = driver
-        .resolve_container(&database_name, &container_name)
+        .resolve_container(&database_name, &container_name, Default::default())
         .await
         .map_err(FeedRangeFromPartitionKeyError::Cosmos)?;
     let definition = container.partition_key_definition();

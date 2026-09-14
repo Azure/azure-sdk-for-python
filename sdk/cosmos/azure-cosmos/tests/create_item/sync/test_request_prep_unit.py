@@ -3,9 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Unit tests for ``build_create_item_prepared`` — no network, no emulator.
+"""Unit tests for ``build_create_item_request`` — no network, no emulator.
 
-``build_create_item_prepared`` takes a customer ``create_item`` call and
+``build_create_item_request`` takes a customer ``create_item`` call and
 builds everything the backend needs to send the request. It does five
 small things in order:
 
@@ -33,7 +33,7 @@ import uuid
 
 from azure.cosmos._backend.contracts import PreparedRequest
 from azure.cosmos._constants import _Constants as Constants
-from azure.cosmos._helpers._request_item import build_create_item_prepared
+from azure.cosmos._helpers._request_item import build_create_item_request
 from azure.cosmos._helpers._request_headers import flatten_options_to_headers
 from azure.cosmos.partition_key import _Empty, _Undefined
 
@@ -54,7 +54,7 @@ class TestHappyPathComposition(unittest.TestCase):
 
     def test_returns_prepared_request_and_id(self):
         """A normal call returns a ``PreparedRequest`` with every field filled in."""
-        prepared, item_id = build_create_item_prepared(
+        prepared, item_id = build_create_item_request(
             container_link="dbs/db/colls/orders",
             body={"id": "order-42", "pk": "customerA", "total": 99.5},
             partition_key_value="customerA",
@@ -91,7 +91,7 @@ class TestHappyPathComposition(unittest.TestCase):
             "priority": "High",
             "extra_unknown": "left-alone",
         }
-        build_create_item_prepared(
+        build_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
@@ -107,7 +107,7 @@ class TestHappyPathComposition(unittest.TestCase):
         """The serialised body bytes parse back into the dict the body now
         carries (after the id is minted)."""
         body = {"v": 1}  # No id, so one is minted.
-        prepared, item_id = build_create_item_prepared(
+        prepared, item_id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body=body,
             partition_key_value="pk",
@@ -130,7 +130,7 @@ class TestAutoIdGeneration(unittest.TestCase):
         """When the body has no id, the prep mints one, writes it into the
         body, returns it, and includes it in the bytes."""
         body = {"total": 99.5}
-        prepared, item_id = build_create_item_prepared(
+        prepared, item_id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body=body,
             partition_key_value="pk",
@@ -146,7 +146,7 @@ class TestAutoIdGeneration(unittest.TestCase):
         """With ``enable_automatic_id_generation=False`` no id is minted: the
         body stays as it was and ``item_id`` comes back as an empty string."""
         body = {"total": 99.5}
-        prepared, item_id = build_create_item_prepared(
+        prepared, item_id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body=body,
             partition_key_value="pk",
@@ -163,7 +163,7 @@ class TestAutoIdGeneration(unittest.TestCase):
     def test_disable_flag_lands_in_options(self):
         """``enable_automatic_id_generation=False`` sets the
         ``disableAutomaticIdGeneration`` header to True, as the legacy path did."""
-        prepared, _id = build_create_item_prepared(
+        prepared, _id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
@@ -175,7 +175,7 @@ class TestAutoIdGeneration(unittest.TestCase):
     def test_enabled_flag_lands_in_options(self):
         """``enable_automatic_id_generation=True`` sets the
         ``disableAutomaticIdGeneration`` header to False."""
-        prepared, _id = build_create_item_prepared(
+        prepared, _id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
@@ -196,7 +196,7 @@ class TestPartitionKeyShapes(unittest.TestCase):
 
     def test_scalar_pk_renders_as_one_element_array(self):
         """A scalar integer partition key becomes ``"[42]"`` in the partition-key header."""
-        prepared, _id = build_create_item_prepared(
+        prepared, _id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value=42,
@@ -206,7 +206,7 @@ class TestPartitionKeyShapes(unittest.TestCase):
 
     def test_hierarchical_pk_renders_in_order(self):
         """A hierarchical partition-key list becomes a JSON array in the order given."""
-        prepared, _id = build_create_item_prepared(
+        prepared, _id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value=["t1", "r1"],
@@ -216,7 +216,7 @@ class TestPartitionKeyShapes(unittest.TestCase):
 
     def test_undefined_pk_renders_reserved_shape(self):
         """An ``_Undefined`` partition key becomes the reserved ``"[{}]"`` shape."""
-        prepared, _id = build_create_item_prepared(
+        prepared, _id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value=_Undefined(),
@@ -227,7 +227,7 @@ class TestPartitionKeyShapes(unittest.TestCase):
     def test_empty_pk_renders_reserved_shape(self):
         """An ``_Empty`` partition key becomes the reserved ``"[]"`` shape (a
         partitionless container from the early SDK days)."""
-        prepared, _id = build_create_item_prepared(
+        prepared, _id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value=_Empty(),
@@ -247,7 +247,7 @@ class TestContainerRidOptional(unittest.TestCase):
 
     def test_none_rid_skips_stamping(self):
         """With ``container_rid=None`` the headers carry no ``Constants.ContainerRID`` entry."""
-        prepared, _id = build_create_item_prepared(
+        prepared, _id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
@@ -257,7 +257,7 @@ class TestContainerRidOptional(unittest.TestCase):
 
     def test_supplied_rid_lands_in_headers_under_constant_key(self):
         """A supplied rid lands in the headers under ``Constants.ContainerRID``."""
-        prepared, _id = build_create_item_prepared(
+        prepared, _id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
@@ -277,7 +277,7 @@ class TestIndexingDirective(unittest.TestCase):
 
     def test_indexing_directive_lands_when_supplied(self):
         """A supplied ``indexing_directive=N`` lands in the headers as ``"indexingDirective"``."""
-        prepared, _id = build_create_item_prepared(
+        prepared, _id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
@@ -288,7 +288,7 @@ class TestIndexingDirective(unittest.TestCase):
 
     def test_indexing_directive_omitted_when_not_supplied(self):
         """Left at the default (``None``), there is no ``"indexingDirective"`` key in the headers."""
-        prepared, _id = build_create_item_prepared(
+        prepared, _id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
@@ -305,7 +305,7 @@ class TestIndexingDirective(unittest.TestCase):
         (This guards a regression where an earlier build emitted
         ``x-ms-indexing-directive: 0``.)
         """
-        prepared, _id = build_create_item_prepared(
+        prepared, _id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
@@ -327,7 +327,7 @@ class TestThroughputBucketGate(unittest.TestCase):
 
     def test_throughput_bucket_zero_omitted(self):
         """``throughput_bucket=0`` emits no ``"throughputBucket"`` header (``0`` is falsy)."""
-        prepared, _id = build_create_item_prepared(
+        prepared, _id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
@@ -338,7 +338,7 @@ class TestThroughputBucketGate(unittest.TestCase):
 
     def test_throughput_bucket_nonzero_emitted(self):
         """A real bucket value (``3``) lands in the headers under ``"throughputBucket"``."""
-        prepared, _id = build_create_item_prepared(
+        prepared, _id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
@@ -353,7 +353,7 @@ class TestPreparedRequestImmutability(unittest.TestCase):
 
     def test_assigning_to_field_raises(self):
         """Assigning to any field on the returned ``PreparedRequest`` raises (it is frozen)."""
-        prepared, _id = build_create_item_prepared(
+        prepared, _id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
@@ -375,7 +375,7 @@ class TestRoundTripWithMintedId(unittest.TestCase):
     def test_minted_id_appears_identically_in_three_places(self):
         """A minted id is the same string in the body dict, the serialised bytes, and the return value."""
         body = {"pk": "customerA", "total": 99.5}
-        prepared, item_id = build_create_item_prepared(
+        prepared, item_id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body=body,
             partition_key_value="customerA",
@@ -401,7 +401,7 @@ class TestTriggerIncludeSerialization(unittest.TestCase):
 
     def test_single_string_pre_trigger_passes_through(self):
         """A plain-string ``pre_trigger_include`` is emitted unchanged."""
-        prepared, _id = build_create_item_prepared(
+        prepared, _id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
@@ -412,7 +412,7 @@ class TestTriggerIncludeSerialization(unittest.TestCase):
 
     def test_list_pre_trigger_is_comma_joined(self):
         """A list ``pre_trigger_include`` is comma-joined — not turned into a Python repr."""
-        prepared, _id = build_create_item_prepared(
+        prepared, _id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
@@ -423,7 +423,7 @@ class TestTriggerIncludeSerialization(unittest.TestCase):
 
     def test_tuple_post_trigger_is_comma_joined(self):
         """A tuple ``post_trigger_include`` is comma-joined the same way."""
-        prepared, _id = build_create_item_prepared(
+        prepared, _id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
@@ -434,7 +434,7 @@ class TestTriggerIncludeSerialization(unittest.TestCase):
 
     def test_single_element_list_has_no_brackets_or_comma(self):
         """A one-element list is just the bare id — no brackets, no trailing comma."""
-        prepared, _id = build_create_item_prepared(
+        prepared, _id = build_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",

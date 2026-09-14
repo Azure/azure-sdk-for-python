@@ -30,9 +30,10 @@ from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._constants import _Constants as Constants
-from azure.cosmos.aio._backend.base import AsyncCosmosBackend
+from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
+from azure.cosmos.aio._helpers.legacy_item_helper import AsyncLegacyItemHelper
 
 
 _OPERATIONS = [
@@ -52,6 +53,9 @@ class _CapturingBackend(AsyncCosmosBackend):
 
     def __init__(self, response):
         self.execute_mock = AsyncMock(return_value=response)
+
+    async def resolve_container_metadata(self, link):
+        return BackendResponse(200, 0, {}, b'{"_rid":"rid-cached"}', None)
 
     async def execute(self, prepared):
         return await self.execute_mock(prepared)
@@ -83,7 +87,7 @@ class TestAsyncPatchItem(unittest.TestCase):
         cc = _connection_with_cache()
 
         async def _run():
-            return await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).patch_item(
+            return await AsyncLegacyItemHelper(cc).patch_item(
                 container_link="dbs/db/colls/c",
                 document_link="dbs/db/colls/c/docs/patch_item",
                 item_id="patch_item",
@@ -112,7 +116,7 @@ class TestAsyncPatchItem(unittest.TestCase):
         )
 
         async def _run():
-            return await AsyncItemHelper(_async_dispatch_backend(response), cc).patch_item(
+            return await AsyncItemHelper(_async_dispatch_backend(response)).patch_item(
                 container_link="dbs/db/colls/c",
                 document_link="dbs/db/colls/c/docs/patch_item",
                 item_id="patch_item",
@@ -125,17 +129,15 @@ class TestAsyncPatchItem(unittest.TestCase):
         self.assertEqual(result.get_response_headers()["etag"], "v2")
         cc.PatchItem.assert_not_awaited()
 
-    def test_async_filter_predicate_falls_back_to_legacy(self):
-        """A ``filter_predicate`` patch never reaches the backend (its payload
-        has no condition field); ``execute`` is not awaited and the call falls
-        through to the legacy ``PatchItem``, which honours the filter."""
+    def test_async_filter_predicate_raises_without_legacy(self):
+        """An unsupported filter fails without invoking either transport."""
         cc = _connection_with_cache()
         backend = _async_dispatch_backend(
             BackendResponse(status_code=200, sub_status=0, headers=None, body=b"{}")
         )
 
         async def _run():
-            await AsyncItemHelper(backend, cc).patch_item(
+            await AsyncItemHelper(backend).patch_item(
                 container_link="dbs/db/colls/c",
                 document_link="dbs/db/colls/c/docs/patch_item",
                 item_id="patch_item",
@@ -144,26 +146,20 @@ class TestAsyncPatchItem(unittest.TestCase):
                 request_options={"partitionKey": "a"},
             )
 
-        asyncio.run(_run())
+        with self.assertRaises(NotImplementedError):
+            asyncio.run(_run())
         backend.execute_mock.assert_not_awaited()
-        cc.PatchItem.assert_awaited_once()
-        self.assertEqual(
-            cc.PatchItem.call_args.kwargs["options"]["filterPredicate"],
-            "from root where root.number = 3",
-        )
+        cc.PatchItem.assert_not_awaited()
 
-    def test_async_version_guard_falls_back_to_legacy(self):
-        """An ``etag`` / ``match_condition`` patch never reaches the backend
-        (the driver owns ``If-Match`` for its loop and rejects a caller
-        precondition); ``execute`` is not awaited and the call falls through
-        to the legacy ``PatchItem``, which honours the guard."""
+    def test_async_version_guard_raises_without_legacy(self):
+        """An unsupported guard fails without invoking either transport."""
         cc = _connection_with_cache()
         backend = _async_dispatch_backend(
             BackendResponse(status_code=200, sub_status=0, headers=None, body=b"{}")
         )
 
         async def _run():
-            await AsyncItemHelper(backend, cc).patch_item(
+            await AsyncItemHelper(backend).patch_item(
                 container_link="dbs/db/colls/c",
                 document_link="dbs/db/colls/c/docs/patch_item",
                 item_id="patch_item",
@@ -173,13 +169,10 @@ class TestAsyncPatchItem(unittest.TestCase):
                 request_options={"partitionKey": "a"},
             )
 
-        asyncio.run(_run())
+        with self.assertRaises(NotImplementedError):
+            asyncio.run(_run())
         backend.execute_mock.assert_not_awaited()
-        cc.PatchItem.assert_awaited_once()
-        self.assertEqual(
-            cc.PatchItem.call_args.kwargs["options"]["accessCondition"],
-            {"type": "IfMatch", "condition": "abc"},
-        )
+        cc.PatchItem.assert_not_awaited()
 
     def test_async_cache_miss_awaits_refresh_and_stamps_rid(self):
         """Async cache miss: ``_refresh_container_properties_cache`` is
@@ -195,7 +188,7 @@ class TestAsyncPatchItem(unittest.TestCase):
         cc.PatchItem = AsyncMock(return_value="ok")
 
         async def _run():
-            await AsyncItemHelper(ASYNC_LEGACY_BACKEND, cc).patch_item(
+            await AsyncLegacyItemHelper(cc).patch_item(
                 container_link="dbs/db/colls/c",
                 document_link="dbs/db/colls/c/docs/x",
                 item_id="x",
