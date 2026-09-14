@@ -15,7 +15,7 @@ from azure.mgmt.resource.policy import PolicyClient
     pip install azure-identity
     pip install azure-mgmt-resource-policy
 # USAGE
-    python delete_variable_value_at_management_group.py
+    python update_policy_assignment_with_resource_percentage_selector.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,20 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.variable_values.delete_at_management_group(
-        management_group_id="DevOrg",
-        variable_name="DemoTestVariable",
-        variable_value_name="TestValue",
+    response = client.policy_assignments.update(
+        scope="subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2",
+        policy_assignment_name="CostManagement",
+        parameters={
+            "properties": {
+                "resourceSelectors": [
+                    {"name": "SDPRollout", "selectors": [{"kind": "resourcePercentage", "progress": 80}]}
+                ]
+            }
+        },
     )
+    print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/deleteVariableValueAtManagementGroup.json
+# x-ms-original-file: 2026-07-01/updatePolicyAssignmentWithResourcePercentageSelector.json
 if __name__ == "__main__":
     main()

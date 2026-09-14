@@ -24,13 +24,9 @@ from .operations import (
     PolicyAssignmentsOperations,
     PolicyDefinitionVersionsOperations,
     PolicyDefinitionsOperations,
-    PolicyEnrollmentsOperations,
-    PolicyExemptionsOperations,
     PolicySetDefinitionVersionsOperations,
     PolicySetDefinitionsOperations,
     PolicyTokensOperations,
-    VariableValuesOperations,
-    VariablesOperations,
 )
 
 if sys.version_info >= (3, 11):
@@ -59,22 +55,12 @@ class PolicyClient:  # pylint: disable=too-many-instance-attributes,docstring-ke
     :ivar policy_definition_versions: PolicyDefinitionVersionsOperations operations
     :vartype policy_definition_versions:
      azure.mgmt.resource.policy.aio.operations.PolicyDefinitionVersionsOperations
-    :ivar policy_enrollments: PolicyEnrollmentsOperations operations
-    :vartype policy_enrollments:
-     azure.mgmt.resource.policy.aio.operations.PolicyEnrollmentsOperations
-    :ivar policy_exemptions: PolicyExemptionsOperations operations
-    :vartype policy_exemptions:
-     azure.mgmt.resource.policy.aio.operations.PolicyExemptionsOperations
     :ivar policy_set_definitions: PolicySetDefinitionsOperations operations
     :vartype policy_set_definitions:
      azure.mgmt.resource.policy.aio.operations.PolicySetDefinitionsOperations
     :ivar policy_set_definition_versions: PolicySetDefinitionVersionsOperations operations
     :vartype policy_set_definition_versions:
      azure.mgmt.resource.policy.aio.operations.PolicySetDefinitionVersionsOperations
-    :ivar variables: VariablesOperations operations
-    :vartype variables: azure.mgmt.resource.policy.aio.operations.VariablesOperations
-    :ivar variable_values: VariableValuesOperations operations
-    :vartype variable_values: azure.mgmt.resource.policy.aio.operations.VariableValuesOperations
     :ivar policy_tokens: PolicyTokensOperations operations
     :vartype policy_tokens: azure.mgmt.resource.policy.aio.operations.PolicyTokensOperations
     :param credential: Credential used to authenticate requests to the service. Required.
@@ -86,10 +72,9 @@ class PolicyClient:  # pylint: disable=too-many-instance-attributes,docstring-ke
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2026-01-01-preview" and None. Default value is None. If not set, the operation's default API
-     version will be used. Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-07-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -154,20 +139,12 @@ class PolicyClient:  # pylint: disable=too-many-instance-attributes,docstring-ke
         self.policy_definition_versions = PolicyDefinitionVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.policy_enrollments = PolicyEnrollmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.policy_exemptions = PolicyExemptionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.policy_set_definitions = PolicySetDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.policy_set_definition_versions = PolicySetDefinitionVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.variables = VariablesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.variable_values = VariableValuesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.policy_tokens = PolicyTokensOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
