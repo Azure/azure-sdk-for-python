@@ -3,17 +3,18 @@
 """JSON serialization helpers for Foundry storage envelope payloads."""
 
 from __future__ import annotations
+from .. import models as _public_models
+
 
 import json
 from typing import Any, Iterable
 
 from ..models._wire import to_wire_dict
-from ..models import OutputItem, ResponseObject
 
 
 def serialize_create_request(
-    response: ResponseObject,
-    input_items: Iterable[OutputItem] | None,
+    response: _public_models.ResponseObject,
+    input_items: Iterable[_public_models.OutputItem] | None,
     history_item_ids: Iterable[str] | None,
 ) -> bytes:
     """Serialize a create-response request envelope to JSON bytes.
@@ -35,7 +36,7 @@ def serialize_create_request(
     return json.dumps(payload).encode("utf-8")
 
 
-def serialize_response(response: ResponseObject) -> bytes:
+def serialize_response(response: _public_models.ResponseObject) -> bytes:
     """Serialize a single :class:`ResponseObject` wire snapshot to JSON bytes.
 
     :param response: The response model to encode.
@@ -57,7 +58,7 @@ def serialize_batch_request(item_ids: list[str]) -> bytes:
     return json.dumps({"item_ids": item_ids}).encode("utf-8")
 
 
-def deserialize_response(body: str) -> ResponseObject:
+def deserialize_response(body: str) -> _public_models.ResponseObject:
     """Deserialize a JSON response body into a response wire payload.
 
     :param body: The raw JSON response text from the storage API.
@@ -68,7 +69,7 @@ def deserialize_response(body: str) -> ResponseObject:
     return json.loads(body)
 
 
-def deserialize_paged_items(body: str) -> list[OutputItem]:
+def deserialize_paged_items(body: str) -> list[_public_models.OutputItem]:
     """Deserialize a paged-response JSON body, extracting the ``data`` array.
 
     Items are returned as dict-native ``OutputItem`` wire payloads.
@@ -82,7 +83,7 @@ def deserialize_paged_items(body: str) -> list[OutputItem]:
     return list(data.get("data", []))
 
 
-def deserialize_items_array(body: str) -> list[OutputItem | None]:
+def deserialize_items_array(body: str) -> list[_public_models.OutputItem | None]:
     """Deserialize a JSON array of items, preserving ``null`` gaps.
 
     Null entries in the array indicate that no item was found for the
@@ -94,7 +95,7 @@ def deserialize_items_array(body: str) -> list[OutputItem | None]:
     :rtype: list[OutputItem | None]
     """
     raw_items: list[dict | None] = json.loads(body)
-    result: list[OutputItem | None] = []
+    result: list[_public_models.OutputItem | None] = []
     for item in raw_items:
         if item is None:
             result.append(None)

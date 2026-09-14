@@ -3,12 +3,14 @@
 """Runtime state management for the Responses server."""
 
 from __future__ import annotations
+from .. import models as _public_models
+
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
 from typing import Any, cast
 
-from ..models import OutputItem
+
 from ..models.runtime import ResponseExecution
 from ..streaming._helpers import strip_nulls
 
@@ -160,7 +162,7 @@ class _RuntimeState:
             return True  # No enforcement when created without a key
         return stored_key == request_user_id_key
 
-    async def get_input_items(self, response_id: str) -> list[OutputItem]:
+    async def get_input_items(self, response_id: str) -> list[_public_models.OutputItem]:
         """Retrieve the full input item chain for a response, including ancestors.
 
         Walks the ``previous_response_id`` chain to build the complete ordered
@@ -183,7 +185,7 @@ class _RuntimeState:
             if not record.visible_via_get:
                 raise KeyError(f"response '{response_id}' not found")
 
-            history: list[OutputItem] = []
+            history: list[_public_models.OutputItem] = []
             cursor = record.previous_response_id
             visited: set[str] = set()
 

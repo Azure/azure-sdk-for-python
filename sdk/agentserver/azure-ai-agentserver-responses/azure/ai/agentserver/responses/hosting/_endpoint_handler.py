@@ -12,14 +12,17 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import contextvars
+from contextlib import aclosing
 import logging
 import threading
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, AsyncGenerator, cast
 
+from anyio import CancelScope
 from opentelemetry import baggage as _otel_baggage
 from opentelemetry import context as _otel_context
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
+from starlette.types import Message, Send
 
 from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-in-module
     FoundryAgentRequestContext,
@@ -43,15 +46,12 @@ from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-erro
     streams,
 )
 
-from ..models._generated import (
-    AgentReference,
-    CreateResponse,
-)
+from ..models import _generated as _generated_models
 
 from .._id_generator import IdGenerator
 from .._egress import strip_internal_metadata
 from .._options import ResponsesServerOptions
-from .._response_context import PlatformContext, ResponseContext
+from .._response_context import PlatformContext, ResponseContext, _resolve_history_item_ids
 from ..models._helpers import get_input_expanded, to_output_item
 from ..models.runtime import (
     ResponseExecution,
@@ -117,6 +117,67 @@ if TYPE_CHECKING:
     from ._routing import ResponsesAgentServerHost
 
 logger = logging.getLogger("azure.ai.agentserver")
+
+
+async def _flush_spans_async() -> None:
+    """Drain the bounded core flush off the event loop, even during cancellation."""
+    with CancelScope(shield=True):
+        flush_task = asyncio.create_task(asyncio.to_thread(flush_spans))
+        cancellation: asyncio.CancelledError | None = None
+        while not flush_task.done():
+            try:
+                await asyncio.shield(flush_task)
+            except asyncio.CancelledError as exc:
+                # A direct asyncio cancellation must not orphan the exporter.
+                cancellation = exc
+        flush_task.result()
+        if cancellation is not None:
+            raise cancellation
+
+
+class _CreateStreamingResponse(StreamingResponse):
+    """Close request-owned iterators and flush before HTTP stream completion."""
+
+    def __init__(
+        self,
+        source: AsyncGenerator[str, None],
+        interval_seconds: float | None,
+        *,
+        headers: dict[str, str],
+    ) -> None:
+        self._source = source
+        self._stream = cast(AsyncGenerator[str, None], with_keep_alive(source, interval_seconds))
+        super().__init__(self._stream, media_type="text/event-stream", headers=headers)
+
+    async def stream_response(self, send: Send) -> None:
+        """Flush after stream work, including on send errors and disconnects."""
+        finalized = False
+
+        async def finalize() -> None:
+            nonlocal finalized
+            if finalized:
+                return
+            finalized = True
+            # Starlette's older ASGI path cancels this task's AnyIO scope on
+            # disconnect. Finish iterator cleanup before flushing ended spans.
+            with CancelScope(shield=True):
+                try:
+                    await self._stream.aclose()
+                finally:
+                    try:
+                        await self._source.aclose()
+                    finally:
+                        await _flush_spans_async()
+
+        async def send_with_flush(message: Message) -> None:
+            if message["type"] == "http.response.body" and not message.get("more_body", False):
+                await finalize()
+            await send(message)
+
+        try:
+            await super().stream_response(send_with_flush)
+        finally:
+            await finalize()
 
 
 def _extract_platform_context(request: Request) -> PlatformContext:
@@ -414,9 +475,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
     def _build_execution_context(
         self,
         *,
-        parsed: CreateResponse,
+        parsed: _generated_models.CreateResponse,
         response_id: str,
-        agent_reference: AgentReference | dict[str, Any],
+        agent_reference: _generated_models.AgentReference | dict[str, Any],
         agent_session_id: str | None = None,
         agent_session_guid: str | None = None,
         span: CreateSpan,
@@ -575,11 +636,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         _hdrs = self._session_headers(agent_session_id)
         try:
             _context = ctx.context.platform_context if ctx.context else None
-            prefetched = await self._provider.get_history_item_ids(
+            prefetched = await _resolve_history_item_ids(
+                self._provider,
                 ctx.previous_response_id,
                 ctx.conversation_id,
                 self._runtime_options.default_fetch_history_count,
                 context=_context,
+                request_context=ctx.context,
             )
             ctx.prefetched_history_ids = prefetched
             if ctx.context is not None:
@@ -753,9 +816,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         platform_ctx_token = set_request_context(platform_context)
 
         disconnect_task: asyncio.Task[None] | None = None
+        stream_owns_flush = False
         try:
             if ctx.stream:
-                raw_iter = self._orchestrator.run_stream(ctx)
+                raw_iter = cast(AsyncGenerator[str, None], self._orchestrator.run_stream(ctx))
 
                 # B17: monitor client disconnect for non-background streams
                 if not ctx.background:
@@ -773,8 +837,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 async def _iter_with_context():  # type: ignore[return]
                     stream_ctx_token = set_request_context(platform_context)
                     try:
-                        async for chunk in raw_iter:
-                            yield chunk
+                        async with aclosing(raw_iter):
+                            async for chunk in raw_iter:
+                                yield chunk
                     except (asyncio.CancelledError, GeneratorExit):
                         # B17: Hypercorn cancels the generator when the client
                         # disconnects. For a NON-background stream, stamp
@@ -797,14 +862,14 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         if disconnect_task and not disconnect_task.done():
                             disconnect_task.cancel()
 
-                sse_response = StreamingResponse(
-                    with_keep_alive(
-                        _iter_with_context(),
-                        self._runtime_options.sse_keep_alive_interval_seconds,
-                    ),
-                    media_type="text/event-stream",
+                sse_response = _CreateStreamingResponse(
+                    _iter_with_context(),
+                    # Ephemeral orchestration already owns heartbeats. A second
+                    # pump would advance its handler ahead of HTTP sends.
+                    self._runtime_options.sse_keep_alive_interval_seconds if ctx.store else None,
                     headers={**self._sse_headers, **self._session_headers(agent_session_id)},
                 )
+                stream_owns_flush = True
                 return sse_response
 
             if not ctx.background:
@@ -949,15 +1014,16 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             _conversation_id_var.reset(cid_token)
             _streaming_var.reset(str_token)
             reset_request_context(platform_ctx_token)
-            # Flush pending spans before the response is sent.
-            # BatchSpanProcessor exports on a timer; in hosted sandboxes
-            # the platform may freeze the process after the HTTP response,
-            # losing any buffered spans (e.g. LangGraph per-node spans).
-            flush_spans()
             try:
-                _otel_context.detach(baggage_token)
-            except ValueError:
-                pass
+                # A lazy streaming body owns its flush: no handler spans exist
+                # yet, and flushing here delays the first real SSE event.
+                if not stream_owns_flush:
+                    await _flush_spans_async()
+            finally:
+                try:
+                    _otel_context.detach(baggage_token)
+                except ValueError:
+                    pass
 
     async def handle_get(self, request: Request) -> Response:  # pylint: disable=too-many-branches
         """Route handler for ``GET /responses/{response_id}``.

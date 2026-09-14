@@ -7,6 +7,8 @@ as a :class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
 """
 
 from __future__ import annotations
+from ..models import _generated as _generated_models
+
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
@@ -24,22 +26,19 @@ from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseContext
 from .._version import VERSION as _RESPONSES_VERSION
-from ..models._generated import CreateResponse, ResponseStreamEvent
+
 from ..streaming._checkpoint import ResponseCheckpointEvent
 from ..store._base import ResponseProviderProtocol
 from ..store._memory import InMemoryResponseProvider
 from ._endpoint_handler import _ResponseEndpointHandler
-from ._orchestrator import _ResponseOrchestrator
+from ._orchestrator import _ResponseOrchestrator, _close_iterator
 from ._runtime_state import _RuntimeState
 
-CreateHandlerEvent = Union[ResponseStreamEvent, ResponseCheckpointEvent, dict[str, Any]]
+CreateHandlerEvent = Union["_generated_models.ResponseStreamEvent", ResponseCheckpointEvent, dict[str, Any]]
 
 CreateHandlerFn = Callable[
-    [CreateResponse, ResponseContext, asyncio.Event],
-    Union[
-        AsyncIterable[CreateHandlerEvent],
-        Awaitable[AsyncIterable[CreateHandlerEvent]],
-    ],
+    ["_generated_models.CreateResponse", ResponseContext, asyncio.Event],
+    Union[AsyncIterable[CreateHandlerEvent], Awaitable[AsyncIterable[CreateHandlerEvent]]],
 ]
 """Type alias for the user-registered create-response handler function.
 
@@ -74,8 +73,11 @@ async def _sync_to_async_gen(sync_gen: types.GeneratorType) -> AsyncIterator:
     :return: An async iterator yielding items from the synchronous generator.
     :rtype: AsyncIterator
     """
-    for item in sync_gen:
-        yield item
+    try:
+        for item in sync_gen:
+            yield item
+    finally:
+        sync_gen.close()
 
 
 def _serialize_event_payload(payload: Any) -> bytes:
@@ -640,10 +642,10 @@ class ResponsesAgentServerHost(AgentServerHost):
 
     def _dispatch_create(
         self,
-        request: CreateResponse,
+        request: _generated_models.CreateResponse,
         context: ResponseContext,
         cancellation_signal: asyncio.Event,
-    ) -> AsyncIterator[ResponseStreamEvent]:
+    ) -> AsyncIterator[_generated_models.ResponseStreamEvent]:
         """Dispatch to the registered create handler.
 
         Called by the orchestrator when processing a create request.
@@ -669,7 +671,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         result = self._create_fn(request, context, cancellation_signal)
         return self._normalize_handler_result(result)
 
-    def _normalize_handler_result(self, result: Any) -> AsyncIterator[ResponseStreamEvent]:
+    def _normalize_handler_result(self, result: Any) -> AsyncIterator[_generated_models.ResponseStreamEvent]:
         """Convert a handler result into an AsyncIterator.
 
         Supports sync generators, async generators, coroutines (async def
@@ -692,7 +694,7 @@ class ResponsesAgentServerHost(AgentServerHost):
             return result.__aiter__()  # type: ignore[union-attr, return-value]
         return result  # type: ignore[return-value]
 
-    async def _await_and_normalize(self, coro: Any) -> AsyncIterator[ResponseStreamEvent]:  # type: ignore[misc]
+    async def _await_and_normalize(self, coro: Any) -> AsyncIterator[_generated_models.ResponseStreamEvent]:  # type: ignore[misc]
         """Await a coroutine and yield events from its normalised result.
 
         :param coro: A coroutine to await.
@@ -701,5 +703,9 @@ class ResponsesAgentServerHost(AgentServerHost):
         :rtype: AsyncIterator[ResponseStreamEvent]
         """
         inner = await coro
-        async for event in self._normalize_handler_result(inner):
-            yield event
+        iterator = self._normalize_handler_result(inner)
+        try:
+            async for event in iterator:
+                yield event
+        finally:
+            await _close_iterator(iterator)

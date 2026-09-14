@@ -27,13 +27,14 @@ would on fresh entry (Spec 033 FR-002b — fixes the prior drop-to-``{}`` bug).
 """
 
 from __future__ import annotations
+from ..models import _generated as _generated_models
+
 
 import json
 from typing import Any, cast
 
-from ..models._generated import CreateResponse
-from .._response_context import PlatformContext
 
+from .._response_context import PlatformContext
 
 # Keys emitted by :meth:`ResilientResponseInput.to_task_input` / consumed by
 # :meth:`from_task_input`. Kept as named constants so the single producer and
@@ -166,7 +167,7 @@ class ResilientResponseInput:
     def __init__(
         self,
         *,
-        request: CreateResponse,
+        request: _generated_models.CreateResponse,
         response_id: str,
         disposition: str,
         agent_reference: Any = None,
@@ -253,7 +254,9 @@ class ResilientResponseInput:
         raw_request = params.get(_K_REQUEST)
         if raw_request is None:
             raise ValueError("ResilientResponseInput missing required 'request'")
-        request = cast(CreateResponse, raw_request) if isinstance(raw_request, dict) else raw_request
+        request = (
+            cast("_generated_models.CreateResponse", raw_request) if isinstance(raw_request, dict) else raw_request
+        )
 
         return cls(
             request=request,

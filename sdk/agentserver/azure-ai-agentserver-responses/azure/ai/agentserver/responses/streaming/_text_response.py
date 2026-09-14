@@ -14,6 +14,8 @@ Pass any text source to ``text=``:
 """
 
 from __future__ import annotations
+from .. import models as _public_models
+
 
 import inspect
 from collections.abc import AsyncIterable
@@ -24,7 +26,7 @@ from ._event_stream import ResponseEventStream
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
-    from ..models import CreateResponse, ResponseObject
+
 
 #: Union of all accepted text sources.
 TextSource = Union[str, Callable[[], Union[str, Awaitable[str]]], AsyncIterable[str]]
@@ -76,10 +78,10 @@ class TextResponse:
     def __init__(
         self,
         context: "ResponseContext",
-        request: "CreateResponse",
+        request: "_public_models.CreateResponse",
         *,
         text: TextSource,
-        configure: Callable[["ResponseObject"], None] | None = None,
+        configure: Callable[["_public_models.ResponseObject"], None] | None = None,
     ) -> None:
         self._context = context
         self._request = request

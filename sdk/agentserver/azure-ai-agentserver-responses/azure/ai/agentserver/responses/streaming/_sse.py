@@ -3,6 +3,8 @@
 """Server-sent events helpers for Responses streaming."""
 
 from __future__ import annotations
+from ..models import _generated as _generated_models
+
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import itertools
@@ -12,8 +14,9 @@ from copy import deepcopy
 from datetime import date, datetime, time, timedelta
 from typing import Any, AsyncIterator, Mapping, cast
 
+from anyio import CancelScope
+
 from .._egress import strip_internal_metadata
-from ..models._generated import ResponseStreamEvent
 
 _stream_counter_var: ContextVar[itertools.count] = ContextVar("_stream_counter_var")
 
@@ -140,7 +143,7 @@ def _build_sse_frame(event_type: str, payload: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-def encode_sse_event(event: ResponseStreamEvent) -> str:
+def encode_sse_event(event: _generated_models.ResponseStreamEvent) -> str:
     """Encode a response stream event into SSE wire format.
 
     The serialised payload is passed through :func:`strip_internal_metadata`
@@ -173,7 +176,7 @@ def encode_sse_event(event: ResponseStreamEvent) -> str:
     return _build_sse_frame(event_type, frame_payload)
 
 
-def encode_sse_any_event(event: ResponseStreamEvent) -> str:
+def encode_sse_any_event(event: _generated_models.ResponseStreamEvent) -> str:
     """Encode a ``ResponseStreamEvent`` model instance to SSE format.
 
     Delegates to :func:`encode_sse_event`.
@@ -257,7 +260,8 @@ async def with_keep_alive(
     finally:
         # Stop the pump and any pending get, and await them so the source's finally
         # (finalize, request-context reset) runs before returning.
-        pending = [task for task in (pump_task, get_task) if task is not None]
-        for task in pending:
-            task.cancel()
-        await asyncio.gather(*pending, return_exceptions=True)
+        with CancelScope(shield=True):
+            pending = [task for task in (pump_task, get_task) if task is not None]
+            for task in pending:
+                task.cancel()
+            await asyncio.gather(*pending, return_exceptions=True)
