@@ -504,12 +504,15 @@ Then include a distinct attribution section after unverified checks:
 ```markdown
 ### Breaking-change attribution
 
-| Package / release | Changelog entry | Cause | Evidence and explanation | Confidence |
-| --- | --- | --- | --- | --- |
-| Package and release heading | Full introduced or modified entry linked to its changelog lines | `TypeSpec/API` or `Human review` | Direct TypeSpec evidence with immutable line links and a concise explanation, or "Needs human review" with a short reason | `High` with rationale, or `N/A` for human review |
+**Package: package name | Release: release heading**
+
+| Changelog entry | Cause | Evidence and explanation | Confidence |
+| --- | --- | --- | --- |
+| Full introduced or modified entry linked to its changelog lines | `TypeSpec/API` or `Human review` | Direct TypeSpec evidence with immutable line links and a concise explanation, or "Needs human review" with a short reason | `High` with rationale, or `N/A` for human review |
 ```
 
-Use one row per introduced entry. Preserve multiline entry meaning while converting line breaks to
+Group entries by package and release, with a label above each group's table; do not repeat package
+or release in a table column. Use one row per introduced entry. Preserve multiline entry meaning while converting line breaks to
 `<br>`, and escape Markdown table delimiters. If no introduced Breaking Changes entries were found
 and collection completed, write `**Breaking-change attribution:** No newly added or modified
 entries.` Do not merge attribution rows into the findings table.
