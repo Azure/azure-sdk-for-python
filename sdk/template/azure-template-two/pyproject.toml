@@ -1,0 +1,92 @@
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
+
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-template-two"
+authors = [
+    { name = "Microsoft Corporation", email = "azuresdkengsysadmins@microsoft.com" },
+]
+description = "Microsoft Azure Template Package (Binary) Client Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+requires-python = ">=3.10"
+dependencies = []
+keywords = ["azure", "azure sdk"]
+dynamic = ["version", "readme"]
+
+[project.urls]
+"Bug Reports" = "https://github.com/Azure/azure-sdk-for-python/issues"
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/template/azure-template-two"
+
+[tool.setuptools.dynamic]
+version = { attr = "azure.template.two._version.VERSION" }
+readme = { file = ["README.md"], content-type = "text/markdown" }
+
+# `azure` and `azure.template` are namespace directories owned by other
+# distributions, so only the leaf package is shipped from here. The C sources
+# live in a `src` directory rather than one named after the extension so that
+# they cannot shadow the compiled module when importing from the source tree.
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "samples*",
+    "doc*",
+    "azure",
+    "azure.template",
+    "azure.template.two.src",
+]
+
+[tool.azure-sdk-build]
+# This package is a C extension with no public Python surface beyond a single
+# function, so the Python-oriented checks are not meaningful here. This mirrors
+# the settings used by the other binary package in the repo,
+# sdk/storage/azure-storage-extensions.
+mypy = false
+pyright = false
+type_check_samples = false
+verifytypes = false
+pylint = false
+sphinx = false
+verifysdist = false
+verifywhl = false
+sdist = false
+breaking = false
+suppressed_skip_warnings = ["*"]
+
+[tool.azure-sdk-conda]
+in_bundle = false
+
+# One CPython 3.10 build per platform. Because the extension is compiled
+# against the limited API the resulting wheels are tagged abi3 and remain
+# importable on later interpreters, so this is the smallest matrix that still
+# covers all three operating systems.
+[tool.cibuildwheel]
+build = ["cp310-*"]
+skip = ["*musllinux*"]
+test-requires = "pytest"
+test-command = "pytest {project}/tests"
+
+[tool.cibuildwheel.linux]
+archs = "x86_64"
+
+[tool.cibuildwheel.macos]
+archs = "arm64"
+
+[tool.cibuildwheel.windows]
+archs = "AMD64"
