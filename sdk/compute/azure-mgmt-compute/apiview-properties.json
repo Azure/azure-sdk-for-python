@@ -1303,5 +1303,5 @@
         "azure.mgmt.compute.operations.GallerySharingProfileOperations.begin_update": "ComputeGallery.Galleries.gallerySharingProfileUpdate",
         "azure.mgmt.compute.aio.operations.GallerySharingProfileOperations.begin_update": "ComputeGallery.Galleries.gallerySharingProfileUpdate"
     },
-    "CrossLanguageVersion": "d417af4698c9"
+    "CrossLanguageVersion": "61785c24b70e"
 }
