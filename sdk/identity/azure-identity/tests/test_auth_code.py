@@ -91,7 +91,9 @@ def test_auth_code_credential(get_token_method, enable_cae):
     expected_refresh_token = "refresh"
     expected_scope = "scope"
 
-    auth_response = build_aad_response(access_token=expected_access_token, refresh_token=expected_refresh_token)
+    auth_response = build_aad_response(
+        access_token=expected_access_token, refresh_token=expected_refresh_token, uid="uid", utid="utid"
+    )
     transport = validating_transport(
         requests=[
             Request(  # first call should redeem the auth code
@@ -171,7 +173,9 @@ def test_multitenant_authentication(get_token_method):
         tenant = parsed.path.split("/")[1]
         assert tenant in (first_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
         token = first_token if tenant == first_tenant else second_token
-        return mock_response(json_payload=build_aad_response(access_token=token, refresh_token="**"))
+        return mock_response(
+            json_payload=build_aad_response(access_token=token, refresh_token="**", uid="uid", utid="utid")
+        )
 
     credential = AuthorizationCodeCredential(
         first_tenant,
@@ -213,7 +217,9 @@ def test_multitenant_authentication_not_allowed(get_token_method):
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
         token = expected_token if tenant == expected_tenant else expected_token * 2
-        return mock_response(json_payload=build_aad_response(access_token=token, refresh_token="**"))
+        return mock_response(
+            json_payload=build_aad_response(access_token=token, refresh_token="**", uid="uid", utid="utid")
+        )
 
     credential = AuthorizationCodeCredential(
         expected_tenant,
@@ -245,3 +251,178 @@ def test_multitenant_authentication_not_allowed(get_token_method):
             kwargs = {"options": kwargs}
         token = getattr(credential, get_token_method)("scope", **kwargs)
         assert token.token == expected_token
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_no_cross_user_token_from_shared_cache(get_token_method):
+    """A credential holding an unredeemed authorization code must not return another account's cached token.
+
+    Regression test for AZSDK-H03: when multiple AuthorizationCodeCredential instances share a token cache (e.g. a
+    persistent cache), a credential constructed with user B's authorization code must redeem that code and return
+    B's token rather than returning a token already cached for a different account (user A).
+    """
+
+    shared_cache = msal.TokenCache()
+    tenant_id = "tenant-id"
+    client_id = "client-id"
+
+    def make_send(expected_code, access_token, uid, redeemed):
+        def send(request, **kwargs):
+            if request.body.get("code") == expected_code:
+                redeemed.append(True)
+            return mock_response(json_payload=build_aad_response(access_token=access_token, uid=uid, utid="utid"))
+
+        return send
+
+    # user A redeems its code first, populating the shared cache with A's token
+    a_redeemed = []
+    credential_a = AuthorizationCodeCredential(
+        tenant_id,
+        client_id,
+        "CODE-A",
+        "https://localhost",
+        transport=Mock(send=make_send("CODE-A", "ACCESS-TOKEN-A", "uid-a", a_redeemed)),
+        cache=shared_cache,
+    )
+    token_a = getattr(credential_a, get_token_method)("scope")
+    assert token_a.token == "ACCESS-TOKEN-A"
+    assert a_redeemed
+
+    # user B's credential shares the cache but hasn't redeemed its own code yet
+    b_redeemed = []
+    credential_b = AuthorizationCodeCredential(
+        tenant_id,
+        client_id,
+        "CODE-B",
+        "https://localhost",
+        transport=Mock(send=make_send("CODE-B", "ACCESS-TOKEN-B", "uid-b", b_redeemed)),
+        cache=shared_cache,
+    )
+    token_b = getattr(credential_b, get_token_method)("scope")
+
+    assert token_b.token == "ACCESS-TOKEN-B", "credential returned another account's cached token"
+    assert b_redeemed, "credential did not redeem its own authorization code"
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_no_cross_user_refresh_token_from_shared_cache(get_token_method):
+    """A credential must not use another account's cached refresh token either.
+
+    After B's initial exchange establishes its account, removing B's cached access token should cause the
+    credential to redeem a refresh token bound to B's account rather than one belonging to A.
+    """
+
+    shared_cache = msal.TokenCache()
+    tenant_id = "tenant-id"
+    client_id = "client-id"
+
+    def make_send(user, access_token, refresh_token, redemptions):
+        def send(request, **kwargs):
+            body = request.body
+            if body.get("grant_type") == "authorization_code":
+                redemptions.append(("code", user))
+            elif body.get("grant_type") == "refresh_token":
+                assert body["refresh_token"] == refresh_token, "used another account's refresh token"
+                redemptions.append(("refresh_token", user))
+            return mock_response(
+                json_payload=build_aad_response(
+                    access_token=access_token, refresh_token=refresh_token, uid="uid-" + user, utid="utid"
+                )
+            )
+
+        return send
+
+    a_events = []
+    credential_a = AuthorizationCodeCredential(
+        tenant_id,
+        client_id,
+        "CODE-A",
+        "https://localhost",
+        transport=Mock(send=make_send("a", "ACCESS-TOKEN-A", "REFRESH-TOKEN-A", a_events)),
+        cache=shared_cache,
+    )
+    getattr(credential_a, get_token_method)("scope")
+
+    b_events = []
+    credential_b = AuthorizationCodeCredential(
+        tenant_id,
+        client_id,
+        "CODE-B",
+        "https://localhost",
+        transport=Mock(send=make_send("b", "ACCESS-TOKEN-B", "REFRESH-TOKEN-B", b_events)),
+        cache=shared_cache,
+    )
+    token_b = getattr(credential_b, get_token_method)("scope")
+    assert token_b.token == "ACCESS-TOKEN-B"
+
+    # remove B's cached access token so the credential must fall back to a cached refresh token
+    cached = list(
+        shared_cache.search(shared_cache.CredentialType.ACCESS_TOKEN, query={"home_account_id": "uid-b.utid"})
+    )
+    assert cached
+    shared_cache.remove_at(cached[0])
+
+    token_b_again = getattr(credential_b, get_token_method)("scope")
+    assert token_b_again.token == "ACCESS-TOKEN-B"
+    assert ("refresh_token", "b") in b_events, "credential should have redeemed its own refresh token"
+    assert ("refresh_token", "a") not in b_events, "credential must not redeem another account's refresh token"
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_no_cross_user_token_without_client_info(get_token_method):
+    """The account-binding protection must also work when the STS omits "client_info", falling back to the ID
+    token's "sub" claim (mirroring MSAL's own fallback behavior)."""
+
+    from helpers import build_id_token
+
+    shared_cache = msal.TokenCache()
+    tenant_id = "tenant-id"
+    client_id = "client-id"
+
+    def make_send(expected_code, access_token, sub, redeemed):
+        def send(request, **kwargs):
+            if request.body.get("code") == expected_code:
+                redeemed.append(True)
+            return mock_response(
+                json_payload=build_aad_response(
+                    access_token=access_token, id_token=build_id_token(aud=client_id, sub=sub)
+                )
+            )
+
+        return send
+
+    a_redeemed = []
+    credential_a = AuthorizationCodeCredential(
+        tenant_id,
+        client_id,
+        "CODE-A",
+        "https://localhost",
+        transport=Mock(send=make_send("CODE-A", "ACCESS-TOKEN-A", "subject-a", a_redeemed)),
+        cache=shared_cache,
+    )
+    token_a = getattr(credential_a, get_token_method)("scope")
+    assert token_a.token == "ACCESS-TOKEN-A"
+    assert a_redeemed
+    # the fallback must have parsed "subject-a" from the ID token's "sub" claim, not left the account unbound
+    assert credential_a._client.last_home_account_id == "subject-a"
+
+    b_redeemed = []
+    credential_b = AuthorizationCodeCredential(
+        tenant_id,
+        client_id,
+        "CODE-B",
+        "https://localhost",
+        transport=Mock(send=make_send("CODE-B", "ACCESS-TOKEN-B", "subject-b", b_redeemed)),
+        cache=shared_cache,
+    )
+    token_b = getattr(credential_b, get_token_method)("scope")
+
+    assert token_b.token == "ACCESS-TOKEN-B", "credential returned another account's cached token"
+    assert b_redeemed, "credential did not redeem its own authorization code"
+    # confirms the ID-token fallback, not merely the "auth code still unredeemed" gate, established B's identity
+    assert credential_b._client.last_home_account_id == "subject-b"
+
+    # a subsequent call must use B's account-scoped cache entry, not A's, proving the fallback identity is honored
+    token_b_second = getattr(credential_b, get_token_method)("scope")
+    assert token_b_second.token == "ACCESS-TOKEN-B"
+    assert len(b_redeemed) == 1, "second call should have used the cache, not redeemed a new code"
