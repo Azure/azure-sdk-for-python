@@ -61,7 +61,7 @@
         "endpointValue": "[format('https://{0}-{1}{2}', parameters('baseName'), parameters('azConfigPrefix'), parameters('azConfigEndpointSuffix'))]",
         "azureKeyVaultUrl": "[format('https://{0}{1}/', parameters('baseName'), parameters('keyVaultEndpointSuffix'))]",
         "azureKeyVaultSecretUrl": "[format('https://{0}{1}/secrets/TestSecret', parameters('baseName'), parameters('keyVaultEndpointSuffix'))]",
-        "azureKeyVaultSecretUrl2": "[format('https://{0}{1}/secrets/TestSecret2', parameters('baseName'), parameters('keyVaultEndpointSuffix'))]"
+        "azureKeyVaultSecretUrl2": "[format('https://{0}{1}/secrets/SecondSecret', parameters('baseName'), parameters('keyVaultEndpointSuffix'))]"
     },
     "resources": [
         {
@@ -127,7 +127,7 @@
         },
         {
             "type": "Microsoft.KeyVault/vaults/secrets",
-            "name": "[concat(parameters('baseName'), '/TestSecret2')]",
+            "name": "[concat(parameters('baseName'), '/SecondSecret')]",
             "apiVersion": "2016-10-01",
             "location": "[parameters('location')]",
             "dependsOn": [
