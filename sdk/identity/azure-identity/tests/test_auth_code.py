@@ -264,9 +264,7 @@ def test_no_cross_user_token_from_shared_cache(get_token_method):
         def send(request, **kwargs):
             if request.body.get("code") == expected_code:
                 redeemed.append(True)
-            return mock_response(
-                json_payload=build_aad_response(access_token=access_token, uid=uid, utid="utid")
-            )
+            return mock_response(json_payload=build_aad_response(access_token=access_token, uid=uid, utid="utid"))
 
         return send
 
@@ -352,7 +350,9 @@ def test_no_cross_user_refresh_token_from_shared_cache(get_token_method):
     assert token_b.token == "ACCESS-TOKEN-B"
 
     # remove B's cached access token so the credential must fall back to a cached refresh token
-    cached = list(shared_cache.search(shared_cache.CredentialType.ACCESS_TOKEN, query={"home_account_id": "uid-b.utid"}))
+    cached = list(
+        shared_cache.search(shared_cache.CredentialType.ACCESS_TOKEN, query={"home_account_id": "uid-b.utid"})
+    )
     assert cached
     shared_cache.remove_at(cached[0])
 
