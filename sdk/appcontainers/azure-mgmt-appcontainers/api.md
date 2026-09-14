@@ -2920,7 +2920,7 @@ namespace azure.mgmt.appcontainers.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
+            ) -> AsyncLROPoller[SandboxGroup]: ...
 
         @overload
         async def begin_update(
@@ -2931,7 +2931,7 @@ namespace azure.mgmt.appcontainers.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
+            ) -> AsyncLROPoller[SandboxGroup]: ...
 
         @overload
         async def begin_update(
@@ -2942,7 +2942,7 @@ namespace azure.mgmt.appcontainers.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
+            ) -> AsyncLROPoller[SandboxGroup]: ...
 
         @distributed_trace_async
         @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'sandbox_group_name', 'accept']}, api_versions_list=['2026-07-01'])
@@ -11471,7 +11471,7 @@ namespace azure.mgmt.appcontainers.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> LROPoller[None]: ...
+            ) -> LROPoller[SandboxGroup]: ...
 
         @overload
         def begin_update(
@@ -11482,7 +11482,7 @@ namespace azure.mgmt.appcontainers.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> LROPoller[None]: ...
+            ) -> LROPoller[SandboxGroup]: ...
 
         @overload
         def begin_update(
@@ -11493,7 +11493,7 @@ namespace azure.mgmt.appcontainers.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> LROPoller[None]: ...
+            ) -> LROPoller[SandboxGroup]: ...
 
         @distributed_trace
         @api_version_validation(method_added_on='2026-07-01', params_added_on={'2026-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'sandbox_group_name', 'accept']}, api_versions_list=['2026-07-01'])

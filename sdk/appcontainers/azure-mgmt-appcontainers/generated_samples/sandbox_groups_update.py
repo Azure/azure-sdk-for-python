@@ -31,7 +31,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.sandbox_groups.begin_update(
+    response = client.sandbox_groups.begin_update(
         resource_group_name="examplerg",
         sandbox_group_name="testgroup",
         properties={
@@ -41,6 +41,7 @@ def main():
             "tags": {"environment": "test"},
         },
     ).result()
+    print(response)
 
 
 # x-ms-original-file: 2026-07-01/SandboxGroups_Update.json

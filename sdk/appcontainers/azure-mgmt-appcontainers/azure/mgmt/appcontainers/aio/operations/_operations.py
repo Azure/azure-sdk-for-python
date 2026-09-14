@@ -1691,7 +1691,7 @@ class SandboxGroupsOperations:  # pylint: disable=docstring-missing-param
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.SandboxGroup]:
         """Patches a SandboxGroup.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1704,8 +1704,9 @@ class SandboxGroupsOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns SandboxGroup. The SandboxGroup is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.SandboxGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1718,7 +1719,7 @@ class SandboxGroupsOperations:  # pylint: disable=docstring-missing-param
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.SandboxGroup]:
         """Patches a SandboxGroup.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1731,8 +1732,9 @@ class SandboxGroupsOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns SandboxGroup. The SandboxGroup is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.SandboxGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1745,7 +1747,7 @@ class SandboxGroupsOperations:  # pylint: disable=docstring-missing-param
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.SandboxGroup]:
         """Patches a SandboxGroup.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1758,8 +1760,9 @@ class SandboxGroupsOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns SandboxGroup. The SandboxGroup is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.SandboxGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1784,7 +1787,7 @@ class SandboxGroupsOperations:  # pylint: disable=docstring-missing-param
         sandbox_group_name: str,
         properties: Union[_models.SandboxGroupPatch, _types.SandboxGroupPatch, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.SandboxGroup]:
         """Patches a SandboxGroup.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1796,15 +1799,16 @@ class SandboxGroupsOperations:  # pylint: disable=docstring-missing-param
          a IO[bytes] type. Required.
         :type properties: ~azure.mgmt.appcontainers.models.SandboxGroupPatch or
          ~azure.mgmt.appcontainers.types.SandboxGroupPatch or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns SandboxGroup. The SandboxGroup is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.SandboxGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SandboxGroup] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -1822,9 +1826,12 @@ class SandboxGroupsOperations:  # pylint: disable=docstring-missing-param
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.SandboxGroup, response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -1839,13 +1846,15 @@ class SandboxGroupsOperations:  # pylint: disable=docstring-missing-param
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
+            return AsyncLROPoller[_models.SandboxGroup].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[_models.SandboxGroup](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @api_version_validation(
         method_added_on="2026-07-01",
