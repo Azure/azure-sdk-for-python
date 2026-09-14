@@ -36,7 +36,7 @@ JWT_BEARER_ASSERTION = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
 _LOGGER = logging.getLogger(__name__)
 
 
-class AadClientBase(abc.ABC):
+class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
     _POST = ["POST"]
 
     def __init__(
