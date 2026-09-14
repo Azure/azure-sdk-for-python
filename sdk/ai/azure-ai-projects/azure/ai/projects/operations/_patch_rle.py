@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import logging
 import math
+import ssl
 import threading
 import time
 from typing import (
@@ -37,8 +38,13 @@ from typing import (
 )
 from urllib.parse import parse_qsl, quote, urlencode, urlsplit, urlunsplit
 
+from websockets.exceptions import InvalidMessage, InvalidStatus
 from websockets.sync.client import ClientConnection, connect as websocket_connect
 from websockets.typing import Subprotocol
+try:
+    from websockets.exceptions import InvalidProxyStatus as _InvalidProxyStatus
+except ImportError:  # websockets 14.0 doesn't define InvalidProxyStatus.
+    _InvalidProxyStatus = InvalidStatus
 
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.paging import ItemPaged
@@ -77,6 +83,9 @@ _DEFAULT_POLL_INTERVAL_S = 5.0
 _MAX_PAGINATION_LIMIT = 100
 _QUOTA_EXCEEDED_CODE = "QuotaExceeded"
 _INSTANCE_GROUP_AT_CAPACITY_CODE = "InstanceGroupAtCapacity"
+_WEBSOCKET_CONNECT_ATTEMPTS = 3
+_WEBSOCKET_RETRY_BACKOFF_S = (1.0, 2.0)
+_WEBSOCKET_TRANSIENT_STATUS_CODES = frozenset((408, 429, 500, 502, 503, 504))
 _LOGGER = logging.getLogger(__name__)
 _TRANSIENT_HEALTH_STATUS_CODES = frozenset(
     (404, 408, 409, 425, 429, 500, 502, 503, 504)
@@ -93,6 +102,65 @@ class _RedactingWebSocketLogger(logging.LoggerAdapter):
 _WEBSOCKET_LOGGER = _RedactingWebSocketLogger(
     logging.getLogger(f"{__name__}.websocket"), {}
 )
+
+
+def _is_retryable_websocket_error(exc: Exception) -> bool:
+    if isinstance(exc, ssl.SSLCertVerificationError):
+        return False
+    if isinstance(exc, (EOFError, OSError, TimeoutError)):
+        return True
+    if isinstance(exc, InvalidMessage) and isinstance(exc.__cause__, EOFError):
+        return True
+    response = getattr(exc, "response", None)
+    return getattr(response, "status_code", None) in _WEBSOCKET_TRANSIENT_STATUS_CODES
+
+
+def _remaining_websocket_timeout(deadline: Optional[float]) -> Optional[float]:
+    if deadline is None:
+        return None
+    remaining = deadline - time.monotonic()
+    if remaining <= 0:
+        raise TimeoutError("timed out while opening the OpenEnv WebSocket")
+    return remaining
+
+
+def _connect_openenv_websocket(
+    url: str,
+    *,
+    token: str,
+    open_timeout: Optional[float],
+    subprotocols: Optional[Sequence[Subprotocol]],
+) -> ClientConnection:
+    deadline = None if open_timeout is None else time.monotonic() + open_timeout
+    for attempt in range(_WEBSOCKET_CONNECT_ATTEMPTS):
+        try:
+            return websocket_connect(
+                url,
+                additional_headers={"Authorization": f"Bearer {token}"},
+                open_timeout=_remaining_websocket_timeout(deadline),
+                subprotocols=subprotocols,
+                logger=_WEBSOCKET_LOGGER,
+            )
+        except (
+            EOFError,
+            OSError,
+            TimeoutError,
+            InvalidMessage,
+            InvalidStatus,
+            _InvalidProxyStatus,
+        ) as exc:
+            if (
+                attempt == _WEBSOCKET_CONNECT_ATTEMPTS - 1
+                or not _is_retryable_websocket_error(exc)
+            ):
+                raise
+            backoff = _WEBSOCKET_RETRY_BACKOFF_S[attempt]
+            if deadline is not None and deadline - time.monotonic() <= backoff:
+                raise TimeoutError(
+                    "timed out while opening the OpenEnv WebSocket"
+                ) from exc
+            time.sleep(backoff)
+    raise AssertionError("unreachable")
 
 
 class _OpenEnvWebSocketConfig:
@@ -195,7 +263,10 @@ class OpenEnvWebSocket:
     Create this connection with :meth:`OpenEnvInstance.open_websocket` and use it as a context
     manager. Text and binary messages are supported. The service preserves message fragmentation,
     negotiates requested subprotocols with the sandbox, and propagates peer close status and reason.
-    Automatic reconnect and application-level session resumption aren't supported.
+    The opening handshake makes up to three attempts for transient connectivity failures and HTTP
+    408, 429, 500, 502, 503, and 504 responses, using one- and two-second backoffs within the
+    ``open_timeout`` budget. After the connection is established, automatic reconnect and
+    application-level session resumption aren't supported.
 
     :param url: Public RLE WebSocket URL. Required.
     :type url: str
@@ -239,12 +310,11 @@ class OpenEnvWebSocket:
             raise RLEError("OpenEnv WebSocket context is already entered")
         try:
             token = self._credential.get_token(*self._credential_scopes)
-            self._connection = websocket_connect(
+            self._connection = _connect_openenv_websocket(
                 self._url,
-                additional_headers={"Authorization": f"Bearer {token.token}"},
+                token=token.token,
                 open_timeout=self._open_timeout,
                 subprotocols=self._subprotocols,
-                logger=_WEBSOCKET_LOGGER,
             )
         except BaseException:
             self.close()

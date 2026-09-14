@@ -27,7 +27,12 @@ from typing import (
 )
 
 from websockets.asyncio.client import ClientConnection, connect as websocket_connect
+from websockets.exceptions import InvalidMessage, InvalidStatus
 from websockets.typing import Subprotocol
+try:
+    from websockets.exceptions import InvalidProxyStatus as _InvalidProxyStatus
+except ImportError:  # websockets 14.0 doesn't define InvalidProxyStatus.
+    _InvalidProxyStatus = InvalidStatus
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import AzureError, HttpResponseError
@@ -56,12 +61,16 @@ from ...operations._patch_rle import (
     _OpenEnvWebSocketConfig,
     _TRANSIENT_HEALTH_STATUS_CODES,
     _WEBSOCKET_LOGGER,
+    _WEBSOCKET_CONNECT_ATTEMPTS,
+    _WEBSOCKET_RETRY_BACKOFF_S,
     _build_openenv_websocket_url,
     _capacity_retry,
     _error_code,
     _is_quota_exceeded_error,
     _parse_retry_after,
     _status_matches,
+    _is_retryable_websocket_error,
+    _remaining_websocket_timeout,
     _validate_instance_acquire_timeout,
     _validate_pagination_limit,
     _validate_poll_interval,
@@ -86,13 +95,55 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
+async def _connect_openenv_websocket(
+    url: str,
+    *,
+    token: str,
+    open_timeout: Optional[float],
+    subprotocols: Optional[Sequence[Subprotocol]],
+) -> ClientConnection:
+    deadline = None if open_timeout is None else time.monotonic() + open_timeout
+    for attempt in range(_WEBSOCKET_CONNECT_ATTEMPTS):
+        try:
+            return await websocket_connect(
+                url,
+                additional_headers={"Authorization": f"Bearer {token}"},
+                open_timeout=_remaining_websocket_timeout(deadline),
+                subprotocols=subprotocols,
+                logger=_WEBSOCKET_LOGGER,
+            )
+        except (
+            EOFError,
+            OSError,
+            TimeoutError,
+            InvalidMessage,
+            InvalidStatus,
+            _InvalidProxyStatus,
+        ) as exc:
+            if (
+                attempt == _WEBSOCKET_CONNECT_ATTEMPTS - 1
+                or not _is_retryable_websocket_error(exc)
+            ):
+                raise
+            backoff = _WEBSOCKET_RETRY_BACKOFF_S[attempt]
+            if deadline is not None and deadline - time.monotonic() <= backoff:
+                raise TimeoutError(
+                    "timed out while opening the OpenEnv WebSocket"
+                ) from exc
+            await asyncio.sleep(backoff)
+    raise AssertionError("unreachable")
+
+
 class AsyncOpenEnvWebSocket:
     """An asynchronous WebSocket connection to a leased OpenEnv instance.
 
     Create this connection with :meth:`AsyncOpenEnvInstance.open_websocket` and use it as an async
     context manager. Text and binary messages are supported. The service preserves message
     fragmentation, negotiates requested subprotocols with the sandbox, and propagates peer close
-    status and reason. Automatic reconnect and application-level session resumption aren't supported.
+    status and reason. The opening handshake makes up to three attempts for transient connectivity
+    failures and HTTP 408, 429, 500, 502, 503, and 504 responses, using one- and two-second backoffs
+    within the ``open_timeout`` budget. After the connection is established, automatic reconnect and
+    application-level session resumption aren't supported.
 
     :param url: Public RLE WebSocket URL. Required.
     :type url: str
@@ -136,12 +187,11 @@ class AsyncOpenEnvWebSocket:
             raise RLEError("OpenEnv WebSocket context is already entered")
         try:
             token = await self._credential.get_token(*self._credential_scopes)
-            self._connection = await websocket_connect(
+            self._connection = await _connect_openenv_websocket(
                 self._url,
-                additional_headers={"Authorization": f"Bearer {token.token}"},
+                token=token.token,
                 open_timeout=self._open_timeout,
                 subprotocols=self._subprotocols,
-                logger=_WEBSOCKET_LOGGER,
             )
         except BaseException:
             await self.close()
