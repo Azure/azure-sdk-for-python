@@ -213,7 +213,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 azpysdk apistub .
 $apiStubExitCode = $LASTEXITCODE
-.\GeneratePublicMethods.ps1 -PythonExecutable $pythonExecutable
+.\docs\GeneratePublicMethodsDoc.ps1 -PythonExecutable $pythonExecutable
 if ($apiStubExitCode -ne 0) {
     throw "API stub generation failed with exit code $apiStubExitCode."
 }
