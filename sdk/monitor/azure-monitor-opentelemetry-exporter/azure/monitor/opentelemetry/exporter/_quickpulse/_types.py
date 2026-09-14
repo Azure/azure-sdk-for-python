@@ -127,6 +127,8 @@ class _DependencyData(_TelemetryData):
                         db_system,
                         attributes,
                     )
+                    # Use query text when available, otherwise fall back to the operation name.
+                    # Support both stable and deprecated semantic conventions.
                     if DB_QUERY_TEXT in attributes:
                         data = attributes[DB_QUERY_TEXT]
                     elif SpanAttributes.DB_STATEMENT in attributes:

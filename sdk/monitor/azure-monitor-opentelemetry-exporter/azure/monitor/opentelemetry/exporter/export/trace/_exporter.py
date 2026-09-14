@@ -440,9 +440,8 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     data.type = "SQL"
                 else:
                     data.type = db_system
-                # data is the full statement or operation
-                # Prefer new `db.query.text` / `db.operation.name`,
-                # fall back to deprecated `db.statement` / `db.operation`.
+                # Use query text when available, otherwise fall back to the operation name.
+                # Support both stable and deprecated semantic conventions.
                 if DB_QUERY_TEXT in span.attributes:
                     data.data = span.attributes[DB_QUERY_TEXT]
                 elif SpanAttributes.DB_STATEMENT in span.attributes:
