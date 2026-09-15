@@ -145,7 +145,7 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
         # discards a WebSocket upgrade, since azure-core's HTTP pipeline has no way to keep the
         # resulting socket alive -- with our hand-written client that manages a real,
         # long-lived connection.
-        self.realtime = BetaRealtime(self)
+        self.realtime = BetaRealtime(self)  # type: ignore[assignment]
 
 
 class BetaOperations(GeneratedBetaOperations):
