@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-01-01",
+  "apiVersions": {
+    "Microsoft.App": "2026-01-01"
+  },
+  "commit": "431bfdd102a3a4f63b74380462b055f0c1fc5f2f",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/app/resource-manager/Microsoft.App/SreAgent",
+  "emitterVersion": "0.63.7",
+  "httpClientPythonVersion": "^0.37.2"
+}
