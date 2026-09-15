@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Hardened local Prompty image resolution so only relative files within the Prompty directory are inlined.
+
 ### Other Changes
 
 ## 1.18.5 (2026-09-02)
