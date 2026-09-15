@@ -208,18 +208,20 @@ class TestSessionTokenUnitTest(unittest.TestCase):
 
     def test_validate_session_token_comparison(self):
         self._different_merge_scenarios()
-        os.environ["AZURE_COSMOS_SESSION_TOKEN_FALSE_PROGRESS_MERGE"] = "false"
-        self._different_merge_scenarios()
-        del os.environ["AZURE_COSMOS_SESSION_TOKEN_FALSE_PROGRESS_MERGE"]
+        with mock.patch.dict(os.environ, {"AZURE_COSMOS_SESSION_TOKEN_FALSE_PROGRESS_MERGE": "false"}):
+            self._different_merge_scenarios()
 
     def test_session_token_false_progress_merge(self):
         for false_progress_enabled in [True, False]:
-            self.validate_different_session_token_false_progress_merge_scenarios(false_progress_enabled)
+            with mock.patch.dict(
+                os.environ,
+                {"AZURE_COSMOS_SESSION_TOKEN_FALSE_PROGRESS_MERGE": str(false_progress_enabled)},
+            ):
+                self.validate_different_session_token_false_progress_merge_scenarios(false_progress_enabled)
 
     def validate_different_session_token_false_progress_merge_scenarios(self, false_progress_enabled: bool):
         # Test that false progress merge is enabled by default and that global lsn is used from higher version token
         # when enabled
-        os.environ["AZURE_COSMOS_SESSION_TOKEN_FALSE_PROGRESS_MERGE"] = str(false_progress_enabled)
         session_token1 = VectorSessionToken.create("1#200#1=20#2=5#3=30")
         session_token2 = VectorSessionToken.create("2#100#1=10#2=8#3=30")
         self.assertIsNotNone(session_token1)

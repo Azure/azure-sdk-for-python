@@ -1,6 +1,5 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-import os
 import unittest
 import uuid
 import re
@@ -58,10 +57,10 @@ class TestUserAgent(unittest.TestCase):
 
     def test_user_agent_with_features(self):
         def _run_case(use_suffix: bool) -> None:
-            os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
             user_agent_value = "customString"
             mock_handler = test_config.MockHandler()
             logger = create_logger("testloggerdefault_sync", mock_handler)
+            previous_env = test_config.set_environment_variables(AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER="True")
             try:
                 kwargs: dict[str, Any] = {"logger": logger}
                 if use_suffix:
@@ -74,7 +73,7 @@ class TestUserAgent(unittest.TestCase):
                 container.create_item(body={"id": "testItem" + str(uuid.uuid4()), "content": "testContent"})
                 container.create_item(body={"id": "testItem" + str(uuid.uuid4()), "content": "testContent"})
             finally:
-                os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "False"
+                test_config.restore_environment_variables(previous_env)
 
             # Examine log messages for User-Agent header
             for log_message in mock_handler.messages:
