@@ -30,7 +30,7 @@ class TestCrossPartitionQuery(unittest.TestCase):
     masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
     TEST_DATABASE_ID = config.TEST_DATABASE_ID
-    TEST_CONTAINER_ID = "Multi Partition Test Collection With Custom PK " + str(uuid.uuid4())
+    TEST_CONTAINER_ID_PREFIX = "Multi Partition Test Collection With Custom PK "
 
     @classmethod
     def setUpClass(cls):
@@ -48,8 +48,9 @@ class TestCrossPartitionQuery(unittest.TestCase):
             test_config.TestConfig.create_test_clients(cls.TEST_DATABASE_ID, multiple_write_locations=use_multiple_write_locations))
 
     def setUp(self):
+        self.container_id = self.TEST_CONTAINER_ID_PREFIX + str(uuid.uuid4())
         created_container_ref = self.key_db.create_container(
-            id=self.TEST_CONTAINER_ID,
+            id=self.container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS)
         self.created_container = self.created_db.get_container_client(created_container_ref.id)
@@ -59,7 +60,7 @@ class TestCrossPartitionQuery(unittest.TestCase):
 
     def tearDown(self):
         try:
-            self.key_db.delete_container(self.TEST_CONTAINER_ID)
+            self.key_db.delete_container(self.container_id)
         except exceptions.CosmosHttpResponseError:
             pass
 

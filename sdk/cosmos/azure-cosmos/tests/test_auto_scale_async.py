@@ -82,7 +82,7 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
         database_id = None
         try:
             # Testing auto_scale_settings for the create_database method
-            database_id = "db1_" + str(uuid.uuid4())
+            database_id = test_config.unique_database_id("db1")
             created_database = await self.key_client.create_database(database_id, offer_throughput=ThroughputProperties(
                 auto_scale_max_throughput=5000,
                 auto_scale_increment_percent=0))
@@ -95,7 +95,7 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
             await self.key_client.delete_database(created_database.id)
 
             # Testing auto_scale_settings for the create_database_if_not_exists method
-            database_id = "db2_" + str(uuid.uuid4())
+            database_id = test_config.unique_database_id("db2")
             created_database = await self.key_client.create_database_if_not_exists(database_id, offer_throughput=ThroughputProperties(
                 auto_scale_max_throughput=9000,
                 auto_scale_increment_percent=11))
@@ -108,7 +108,7 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
             await self.key_client.delete_database(database_id)
 
     async def test_replace_throughput_async(self):
-        database_id = "replace_db" + str(uuid.uuid4())
+        database_id = test_config.unique_database_id("replace-db")
         container_id = None
         try:
             created_database = await self.key_client.create_database(database_id, offer_throughput=ThroughputProperties(

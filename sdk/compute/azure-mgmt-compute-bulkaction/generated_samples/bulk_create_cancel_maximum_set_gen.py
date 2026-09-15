@@ -15,7 +15,7 @@ from azure.mgmt.compute.bulkaction import ComputeBulkActionsMgmtClient
     pip install azure-identity
     pip install azure-mgmt-compute-bulkaction
 # USAGE
-    python launch_bulk_instances_operation_get_operation_status_maximum_set_gen.py
+    python bulk_create_cancel_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.launch_bulk_instances_operation.get_operation_status(
-        location="useast2euap",
-        async_operation_id="8596407e-8834-4a62-8d3c-9231af92d785",
-    )
-    print(response)
+    client.bulk_create.begin_cancel(
+        resource_group_name="rgBulkactions",
+        location="eastus",
+        name="20496756-e4bc-402c-8e7e-8ffed8e00c41",
+    ).result()
 
 
-# x-ms-original-file: 2026-08-06-preview/LaunchBulkInstancesOperation_GetOperationStatus_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-06-preview/BulkCreate_Cancel_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

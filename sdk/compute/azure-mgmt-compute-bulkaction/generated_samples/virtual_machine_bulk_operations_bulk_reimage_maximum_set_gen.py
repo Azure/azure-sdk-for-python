@@ -35,9 +35,7 @@ def main():
         resource_group_name="rgBulkactions",
         location="useast2euap",
         request_body={
-            "executionParameters": {
-                "retryPolicy": {"onFailureAction": "Unknown", "retryCount": 2, "retryWindowInMinutes": 19}
-            },
+            "executionParameters": {"retryPolicy": {"retryCount": 2, "retryWindowInMinutes": 19}},
             "reimageParameters": {
                 "baseProfile": {
                     "exactVersion": "zjmkrnqjmzs",
@@ -68,6 +66,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-08-06-preview/VirtualMachineBulkOperations_BulkReimage_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-06-preview/VirtualMachineBulkOperations_BulkReimage_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
