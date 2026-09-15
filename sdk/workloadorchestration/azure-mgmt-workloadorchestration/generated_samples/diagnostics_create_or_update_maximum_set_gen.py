@@ -34,15 +34,15 @@ def main():
         resource_group_name="rgconfigurationmanager",
         diagnostic_name="testname",
         resource={
-            "extendedLocation": {"name": "szjrwimeqyiue", "type": "EdgeZone"},
-            "location": "ouwfvnokjvivmjzqpupwrbsmls",
+            "extendedLocation": {"name": "ggfwkwklvvkrmlysvvhcj", "type": "EdgeZone"},
+            "location": "xxriixfihzwn",
             "properties": {},
-            "tags": {"key4304": "mdrwpsdrcicagvximokxrrp"},
+            "tags": {},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/Diagnostics_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/Diagnostics_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

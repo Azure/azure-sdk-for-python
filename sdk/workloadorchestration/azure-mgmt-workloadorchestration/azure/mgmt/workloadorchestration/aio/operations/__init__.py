@@ -21,6 +21,8 @@ from ._operations import TargetsOperations  # type: ignore
 from ._operations import DynamicSchemaVersionsOperations  # type: ignore
 from ._operations import SchemaReferencesOperations  # type: ignore
 from ._operations import SolutionsOperations  # type: ignore
+from ._operations import SolutionMetadatasOperations  # type: ignore
+from ._operations import SolutionMetadataVersionsOperations  # type: ignore
 from ._operations import SolutionTemplateVersionsOperations  # type: ignore
 from ._operations import SolutionTemplatesOperations  # type: ignore
 from ._operations import InstancesOperations  # type: ignore
@@ -33,6 +35,12 @@ from ._operations import ExecutionsOperations  # type: ignore
 from ._operations import DiagnosticsOperations  # type: ignore
 from ._operations import ContextsOperations  # type: ignore
 from ._operations import SiteReferencesOperations  # type: ignore
+from ._operations import SolutionSchemasOperations  # type: ignore
+from ._operations import ConfigTemplateSchemasOperations  # type: ignore
+from ._operations import ConfigTemplateMetadatasOperations  # type: ignore
+from ._operations import HierarchyConfigurationMetadatasOperations  # type: ignore
+from ._operations import HierarchyConfigurationMetadataVersionsOperations  # type: ignore
+from ._operations import SolutionDeploymentsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -48,6 +56,8 @@ __all__ = [
     "DynamicSchemaVersionsOperations",
     "SchemaReferencesOperations",
     "SolutionsOperations",
+    "SolutionMetadatasOperations",
+    "SolutionMetadataVersionsOperations",
     "SolutionTemplateVersionsOperations",
     "SolutionTemplatesOperations",
     "InstancesOperations",
@@ -60,6 +70,12 @@ __all__ = [
     "DiagnosticsOperations",
     "ContextsOperations",
     "SiteReferencesOperations",
+    "SolutionSchemasOperations",
+    "ConfigTemplateSchemasOperations",
+    "ConfigTemplateMetadatasOperations",
+    "HierarchyConfigurationMetadatasOperations",
+    "HierarchyConfigurationMetadataVersionsOperations",
+    "SolutionDeploymentsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

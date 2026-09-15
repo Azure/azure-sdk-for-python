@@ -34,19 +34,19 @@ def main():
         resource_group_name="rgconfigurationmanager",
         solution_template_name="testname",
         resource={
-            "location": "zheaaqvadewftnctxzpinrgeproqs",
+            "location": "jrsskqyliezys",
             "properties": {
-                "capabilities": ["dfoyxbbknrhvlunhmuyyt"],
-                "description": "psrftehgzngcdlccivhjmwsmiz",
+                "capabilities": ["xhycgngfkknnrm"],
+                "description": "baglpvguwonbgw",
                 "enableExternalValidation": True,
                 "state": "active",
             },
-            "tags": {"key5091": "dov"},
+            "tags": {},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/SolutionTemplates_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/SolutionTemplates_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

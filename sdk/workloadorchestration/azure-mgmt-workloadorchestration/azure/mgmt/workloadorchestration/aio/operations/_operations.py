@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -33,19 +33,32 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
+    build_config_template_metadatas_create_or_update_request,
+    build_config_template_metadatas_delete_request,
+    build_config_template_metadatas_get_request,
+    build_config_template_metadatas_list_by_config_template_request,
+    build_config_template_metadatas_update_request,
+    build_config_template_schemas_get_request,
+    build_config_template_schemas_list_by_config_template_version_request,
+    build_config_template_versions_create_or_update_request,
+    build_config_template_versions_delete_request,
     build_config_template_versions_get_request,
     build_config_template_versions_list_by_config_template_request,
+    build_config_template_versions_update_request,
     build_config_templates_create_or_update_request,
     build_config_templates_create_version_request,
     build_config_templates_delete_request,
     build_config_templates_get_request,
+    build_config_templates_link_to_hierarchies_request,
     build_config_templates_list_by_resource_group_request,
     build_config_templates_list_by_subscription_request,
     build_config_templates_remove_version_request,
+    build_config_templates_un_link_from_hierarchies_request,
     build_config_templates_update_request,
     build_contexts_create_or_update_request,
     build_contexts_delete_request,
@@ -74,6 +87,10 @@ from ...operations._operations import (
     build_executions_get_request,
     build_executions_list_by_workflow_version_request,
     build_executions_update_request,
+    build_hierarchy_configuration_metadata_versions_get_request,
+    build_hierarchy_configuration_metadata_versions_list_by_parent_request,
+    build_hierarchy_configuration_metadatas_get_request,
+    build_hierarchy_configuration_metadatas_list_by_parent_request,
     build_instance_histories_get_request,
     build_instance_histories_list_by_instance_request,
     build_instances_create_or_update_request,
@@ -83,8 +100,11 @@ from ...operations._operations import (
     build_instances_update_request,
     build_jobs_get_request,
     build_jobs_list_by_target_request,
+    build_schema_references_create_or_update_request,
+    build_schema_references_delete_request,
     build_schema_references_get_request,
     build_schema_references_list_by_resource_group_request,
+    build_schema_references_update_request,
     build_schema_versions_create_or_update_request,
     build_schema_versions_delete_request,
     build_schema_versions_get_request,
@@ -103,10 +123,26 @@ from ...operations._operations import (
     build_site_references_get_request,
     build_site_references_list_by_context_request,
     build_site_references_update_request,
+    build_solution_deployments_create_or_update_request,
+    build_solution_deployments_delete_request,
+    build_solution_deployments_get_request,
+    build_solution_deployments_list_by_resource_group_request,
+    build_solution_deployments_list_by_subscription_request,
+    build_solution_deployments_update_request,
+    build_solution_metadata_versions_get_request,
+    build_solution_metadata_versions_list_by_parent_request,
+    build_solution_metadatas_get_request,
+    build_solution_metadatas_list_by_parent_request,
+    build_solution_schemas_get_request,
+    build_solution_schemas_list_by_solution_template_version_request,
     build_solution_template_versions_bulk_deploy_solution_request,
     build_solution_template_versions_bulk_publish_solution_request,
+    build_solution_template_versions_bulk_review_solution_request,
+    build_solution_template_versions_create_or_update_request,
+    build_solution_template_versions_delete_request,
     build_solution_template_versions_get_request,
     build_solution_template_versions_list_by_solution_template_request,
+    build_solution_template_versions_update_request,
     build_solution_templates_create_or_update_request,
     build_solution_templates_create_version_request,
     build_solution_templates_delete_request,
@@ -136,6 +172,7 @@ from ...operations._operations import (
     build_targets_resolve_configuration_request,
     build_targets_review_solution_version_request,
     build_targets_uninstall_solution_request,
+    build_targets_unstage_solution_version_request,
     build_targets_update_external_validation_status_request,
     build_targets_update_request,
     build_workflow_versions_create_or_update_request,
@@ -151,12 +188,11 @@ from ...operations._operations import (
 )
 from .._configuration import WorkloadOrchestrationMgmtClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class DynamicSchemasOperations:
+class DynamicSchemasOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -219,6 +255,7 @@ class DynamicSchemasOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -233,11 +270,14 @@ class DynamicSchemasOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DynamicSchema, response.json())
 
@@ -251,7 +291,7 @@ class DynamicSchemasOperations:
         resource_group_name: str,
         schema_name: str,
         dynamic_schema_name: str,
-        resource: Union[_models.DynamicSchema, JSON, IO[bytes]],
+        resource: Union[_models.DynamicSchema, _types.DynamicSchema, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -291,6 +331,7 @@ class DynamicSchemasOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -304,7 +345,10 @@ class DynamicSchemasOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -314,7 +358,7 @@ class DynamicSchemasOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -359,7 +403,7 @@ class DynamicSchemasOperations:
         resource_group_name: str,
         schema_name: str,
         dynamic_schema_name: str,
-        resource: JSON,
+        resource: _types.DynamicSchema,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -374,7 +418,7 @@ class DynamicSchemasOperations:
         :param dynamic_schema_name: The name of the DynamicSchema. Required.
         :type dynamic_schema_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.workloadorchestration.types.DynamicSchema
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -423,7 +467,7 @@ class DynamicSchemasOperations:
         resource_group_name: str,
         schema_name: str,
         dynamic_schema_name: str,
-        resource: Union[_models.DynamicSchema, JSON, IO[bytes]],
+        resource: Union[_models.DynamicSchema, _types.DynamicSchema, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DynamicSchema]:
         """Create or update a DynamicSchema Resource.
@@ -435,9 +479,10 @@ class DynamicSchemasOperations:
         :type schema_name: str
         :param dynamic_schema_name: The name of the DynamicSchema. Required.
         :type dynamic_schema_name: str
-        :param resource: Resource create parameters. Is one of the following types: DynamicSchema,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.workloadorchestration.models.DynamicSchema or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a DynamicSchema type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.DynamicSchema or
+         ~azure.mgmt.workloadorchestration.types.DynamicSchema or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DynamicSchema. The DynamicSchema is
          compatible with MutableMapping
         :rtype:
@@ -533,7 +578,7 @@ class DynamicSchemasOperations:
         resource_group_name: str,
         schema_name: str,
         dynamic_schema_name: str,
-        properties: JSON,
+        properties: _types.DynamicSchema,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -548,7 +593,7 @@ class DynamicSchemasOperations:
         :param dynamic_schema_name: The name of the DynamicSchema. Required.
         :type dynamic_schema_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.workloadorchestration.types.DynamicSchema
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -593,7 +638,7 @@ class DynamicSchemasOperations:
         resource_group_name: str,
         schema_name: str,
         dynamic_schema_name: str,
-        properties: Union[_models.DynamicSchema, JSON, IO[bytes]],
+        properties: Union[_models.DynamicSchema, _types.DynamicSchema, IO[bytes]],
         **kwargs: Any
     ) -> _models.DynamicSchema:
         """update a DynamicSchema Resource.
@@ -605,9 +650,10 @@ class DynamicSchemasOperations:
         :type schema_name: str
         :param dynamic_schema_name: The name of the DynamicSchema. Required.
         :type dynamic_schema_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         DynamicSchema, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.DynamicSchema or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a DynamicSchema type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.DynamicSchema or
+         ~azure.mgmt.workloadorchestration.types.DynamicSchema or IO[bytes]
         :return: DynamicSchema. The DynamicSchema is compatible with MutableMapping
         :rtype: ~azure.mgmt.workloadorchestration.models.DynamicSchema
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -649,6 +695,7 @@ class DynamicSchemasOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -663,11 +710,14 @@ class DynamicSchemasOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DynamicSchema, response.json())
 
@@ -706,6 +756,7 @@ class DynamicSchemasOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -719,7 +770,10 @@ class DynamicSchemasOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -727,7 +781,7 @@ class DynamicSchemasOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -815,7 +869,7 @@ class DynamicSchemasOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.DynamicSchema]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.DynamicSchema]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -854,7 +908,10 @@ class DynamicSchemasOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -867,7 +924,10 @@ class DynamicSchemasOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DynamicSchema], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.DynamicSchema],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -883,7 +943,10 @@ class DynamicSchemasOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -891,7 +954,7 @@ class DynamicSchemasOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SchemasOperations:
+class SchemasOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -949,6 +1012,7 @@ class SchemasOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -963,11 +1027,14 @@ class SchemasOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Schema, response.json())
 
@@ -980,7 +1047,7 @@ class SchemasOperations:
         self,
         resource_group_name: str,
         schema_name: str,
-        resource: Union[_models.Schema, JSON, IO[bytes]],
+        resource: Union[_models.Schema, _types.Schema, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1019,6 +1086,7 @@ class SchemasOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1032,7 +1100,10 @@ class SchemasOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1042,7 +1113,7 @@ class SchemasOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1082,7 +1153,7 @@ class SchemasOperations:
         self,
         resource_group_name: str,
         schema_name: str,
-        resource: JSON,
+        resource: _types.Schema,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1095,7 +1166,7 @@ class SchemasOperations:
         :param schema_name: The name of the Schema. Required.
         :type schema_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.workloadorchestration.types.Schema
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1138,7 +1209,7 @@ class SchemasOperations:
         self,
         resource_group_name: str,
         schema_name: str,
-        resource: Union[_models.Schema, JSON, IO[bytes]],
+        resource: Union[_models.Schema, _types.Schema, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Schema]:
         """Create or update a Schema Resource.
@@ -1148,9 +1219,10 @@ class SchemasOperations:
         :type resource_group_name: str
         :param schema_name: The name of the Schema. Required.
         :type schema_name: str
-        :param resource: Resource create parameters. Is one of the following types: Schema, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.workloadorchestration.models.Schema or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Schema type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.Schema or
+         ~azure.mgmt.workloadorchestration.types.Schema or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Schema. The Schema is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.Schema]
@@ -1213,7 +1285,7 @@ class SchemasOperations:
         self,
         resource_group_name: str,
         schema_name: str,
-        properties: _models.Schema,
+        properties: _models.SchemaUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1226,7 +1298,7 @@ class SchemasOperations:
         :param schema_name: The name of the Schema. Required.
         :type schema_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.Schema
+        :type properties: ~azure.mgmt.workloadorchestration.models.SchemaUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1240,7 +1312,7 @@ class SchemasOperations:
         self,
         resource_group_name: str,
         schema_name: str,
-        properties: JSON,
+        properties: _types.SchemaUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1253,7 +1325,7 @@ class SchemasOperations:
         :param schema_name: The name of the Schema. Required.
         :type schema_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.workloadorchestration.types.SchemaUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1294,7 +1366,7 @@ class SchemasOperations:
         self,
         resource_group_name: str,
         schema_name: str,
-        properties: Union[_models.Schema, JSON, IO[bytes]],
+        properties: Union[_models.SchemaUpdate, _types.SchemaUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.Schema:
         """update a Schema Resource.
@@ -1304,9 +1376,10 @@ class SchemasOperations:
         :type resource_group_name: str
         :param schema_name: The name of the Schema. Required.
         :type schema_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         Schema, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.Schema or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a SchemaUpdate type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.SchemaUpdate or
+         ~azure.mgmt.workloadorchestration.types.SchemaUpdate or IO[bytes]
         :return: Schema. The Schema is compatible with MutableMapping
         :rtype: ~azure.mgmt.workloadorchestration.models.Schema
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1347,6 +1420,7 @@ class SchemasOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1361,11 +1435,14 @@ class SchemasOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Schema, response.json())
 
@@ -1401,6 +1478,7 @@ class SchemasOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1414,7 +1492,10 @@ class SchemasOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1422,7 +1503,7 @@ class SchemasOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1490,7 +1571,7 @@ class SchemasOperations:
         self,
         resource_group_name: str,
         schema_name: str,
-        body: Union[_models.SchemaVersionWithUpdateType, JSON, IO[bytes]],
+        body: Union[_models.SchemaVersionWithUpdateType, _types.SchemaVersionWithUpdateType, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1529,6 +1610,7 @@ class SchemasOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1542,7 +1624,10 @@ class SchemasOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1550,7 +1635,7 @@ class SchemasOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1591,7 +1676,7 @@ class SchemasOperations:
         self,
         resource_group_name: str,
         schema_name: str,
-        body: JSON,
+        body: _types.SchemaVersionWithUpdateType,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1604,7 +1689,7 @@ class SchemasOperations:
         :param schema_name: The name of the Schema. Required.
         :type schema_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.workloadorchestration.types.SchemaVersionWithUpdateType
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1649,7 +1734,7 @@ class SchemasOperations:
         self,
         resource_group_name: str,
         schema_name: str,
-        body: Union[_models.SchemaVersionWithUpdateType, JSON, IO[bytes]],
+        body: Union[_models.SchemaVersionWithUpdateType, _types.SchemaVersionWithUpdateType, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SchemaVersion]:
         """Create a Schema Version Resource.
@@ -1659,10 +1744,10 @@ class SchemasOperations:
         :type resource_group_name: str
         :param schema_name: The name of the Schema. Required.
         :type schema_name: str
-        :param body: The content of the action request. Is one of the following types:
-         SchemaVersionWithUpdateType, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.workloadorchestration.models.SchemaVersionWithUpdateType or JSON or
-         IO[bytes]
+        :param body: The content of the action request. Is either a SchemaVersionWithUpdateType type or
+         a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.SchemaVersionWithUpdateType or
+         ~azure.mgmt.workloadorchestration.types.SchemaVersionWithUpdateType or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SchemaVersion. The SchemaVersion is
          compatible with MutableMapping
         :rtype:
@@ -1692,14 +1777,10 @@ class SchemasOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.SchemaVersion, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -1757,7 +1838,7 @@ class SchemasOperations:
         self,
         resource_group_name: str,
         schema_name: str,
-        body: JSON,
+        body: _types.VersionParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1770,7 +1851,7 @@ class SchemasOperations:
         :param schema_name: The name of the Schema. Required.
         :type schema_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.workloadorchestration.types.VersionParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1811,7 +1892,7 @@ class SchemasOperations:
         self,
         resource_group_name: str,
         schema_name: str,
-        body: Union[_models.VersionParameter, JSON, IO[bytes]],
+        body: Union[_models.VersionParameter, _types.VersionParameter, IO[bytes]],
         **kwargs: Any
     ) -> _models.RemoveVersionResponse:
         """Remove Schema Version Resource.
@@ -1821,9 +1902,10 @@ class SchemasOperations:
         :type resource_group_name: str
         :param schema_name: The name of the Schema. Required.
         :type schema_name: str
-        :param body: The content of the action request. Is one of the following types:
-         VersionParameter, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.workloadorchestration.models.VersionParameter or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a VersionParameter type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.VersionParameter or
+         ~azure.mgmt.workloadorchestration.types.VersionParameter or IO[bytes]
         :return: RemoveVersionResponse. The RemoveVersionResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.workloadorchestration.models.RemoveVersionResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1864,6 +1946,7 @@ class SchemasOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1878,11 +1961,14 @@ class SchemasOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RemoveVersionResponse, response.json())
 
@@ -1906,7 +1992,7 @@ class SchemasOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Schema]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Schema]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1944,7 +2030,10 @@ class SchemasOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1957,7 +2046,10 @@ class SchemasOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Schema], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.Schema],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1973,7 +2065,10 @@ class SchemasOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1992,7 +2087,7 @@ class SchemasOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Schema]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Schema]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2029,7 +2124,10 @@ class SchemasOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2042,7 +2140,10 @@ class SchemasOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Schema], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.Schema],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2058,7 +2159,10 @@ class SchemasOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2066,7 +2170,7 @@ class SchemasOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SchemaVersionsOperations:
+class SchemaVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2129,6 +2233,7 @@ class SchemaVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2143,11 +2248,14 @@ class SchemaVersionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SchemaVersion, response.json())
 
@@ -2161,7 +2269,7 @@ class SchemaVersionsOperations:
         resource_group_name: str,
         schema_name: str,
         schema_version_name: str,
-        resource: Union[_models.SchemaVersion, JSON, IO[bytes]],
+        resource: Union[_models.SchemaVersion, _types.SchemaVersion, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2201,6 +2309,7 @@ class SchemaVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2214,7 +2323,10 @@ class SchemaVersionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2224,7 +2336,7 @@ class SchemaVersionsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2269,7 +2381,7 @@ class SchemaVersionsOperations:
         resource_group_name: str,
         schema_name: str,
         schema_version_name: str,
-        resource: JSON,
+        resource: _types.SchemaVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2284,7 +2396,7 @@ class SchemaVersionsOperations:
         :param schema_version_name: The name of the SchemaVersion. Required.
         :type schema_version_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.workloadorchestration.types.SchemaVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2333,7 +2445,7 @@ class SchemaVersionsOperations:
         resource_group_name: str,
         schema_name: str,
         schema_version_name: str,
-        resource: Union[_models.SchemaVersion, JSON, IO[bytes]],
+        resource: Union[_models.SchemaVersion, _types.SchemaVersion, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SchemaVersion]:
         """Create or update a Schema Version Resource.
@@ -2345,9 +2457,10 @@ class SchemaVersionsOperations:
         :type schema_name: str
         :param schema_version_name: The name of the SchemaVersion. Required.
         :type schema_version_name: str
-        :param resource: Resource create parameters. Is one of the following types: SchemaVersion,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.workloadorchestration.models.SchemaVersion or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a SchemaVersion type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.SchemaVersion or
+         ~azure.mgmt.workloadorchestration.types.SchemaVersion or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SchemaVersion. The SchemaVersion is
          compatible with MutableMapping
         :rtype:
@@ -2443,7 +2556,7 @@ class SchemaVersionsOperations:
         resource_group_name: str,
         schema_name: str,
         schema_version_name: str,
-        properties: JSON,
+        properties: _types.SchemaVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2458,7 +2571,7 @@ class SchemaVersionsOperations:
         :param schema_version_name: The name of the SchemaVersion. Required.
         :type schema_version_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.workloadorchestration.types.SchemaVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2503,7 +2616,7 @@ class SchemaVersionsOperations:
         resource_group_name: str,
         schema_name: str,
         schema_version_name: str,
-        properties: Union[_models.SchemaVersion, JSON, IO[bytes]],
+        properties: Union[_models.SchemaVersion, _types.SchemaVersion, IO[bytes]],
         **kwargs: Any
     ) -> _models.SchemaVersion:
         """update a Schema Version Resource.
@@ -2515,9 +2628,10 @@ class SchemaVersionsOperations:
         :type schema_name: str
         :param schema_version_name: The name of the SchemaVersion. Required.
         :type schema_version_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         SchemaVersion, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.SchemaVersion or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a SchemaVersion type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.SchemaVersion or
+         ~azure.mgmt.workloadorchestration.types.SchemaVersion or IO[bytes]
         :return: SchemaVersion. The SchemaVersion is compatible with MutableMapping
         :rtype: ~azure.mgmt.workloadorchestration.models.SchemaVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2559,6 +2673,7 @@ class SchemaVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2573,11 +2688,14 @@ class SchemaVersionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SchemaVersion, response.json())
 
@@ -2616,6 +2734,7 @@ class SchemaVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2629,7 +2748,10 @@ class SchemaVersionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2637,7 +2759,7 @@ class SchemaVersionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2725,7 +2847,7 @@ class SchemaVersionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.SchemaVersion]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.SchemaVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2764,7 +2886,10 @@ class SchemaVersionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2777,7 +2902,10 @@ class SchemaVersionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SchemaVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.SchemaVersion],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2793,7 +2921,10 @@ class SchemaVersionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2801,7 +2932,7 @@ class SchemaVersionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SolutionVersionsOperations:
+class SolutionVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2867,6 +2998,7 @@ class SolutionVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2881,11 +3013,14 @@ class SolutionVersionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SolutionVersion, response.json())
 
@@ -2900,7 +3035,7 @@ class SolutionVersionsOperations:
         target_name: str,
         solution_name: str,
         solution_version_name: str,
-        resource: Union[_models.SolutionVersion, JSON, IO[bytes]],
+        resource: Union[_models.SolutionVersion, _types.SolutionVersion, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2941,6 +3076,7 @@ class SolutionVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2954,7 +3090,10 @@ class SolutionVersionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2964,7 +3103,7 @@ class SolutionVersionsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3013,7 +3152,7 @@ class SolutionVersionsOperations:
         target_name: str,
         solution_name: str,
         solution_version_name: str,
-        resource: JSON,
+        resource: _types.SolutionVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3030,7 +3169,7 @@ class SolutionVersionsOperations:
         :param solution_version_name: Name of the solution version. Required.
         :type solution_version_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.workloadorchestration.types.SolutionVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3083,7 +3222,7 @@ class SolutionVersionsOperations:
         target_name: str,
         solution_name: str,
         solution_version_name: str,
-        resource: Union[_models.SolutionVersion, JSON, IO[bytes]],
+        resource: Union[_models.SolutionVersion, _types.SolutionVersion, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SolutionVersion]:
         """Create or update a Solution Version Resource.
@@ -3097,9 +3236,10 @@ class SolutionVersionsOperations:
         :type solution_name: str
         :param solution_version_name: Name of the solution version. Required.
         :type solution_version_name: str
-        :param resource: Resource create parameters. Is one of the following types: SolutionVersion,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.workloadorchestration.models.SolutionVersion or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a SolutionVersion type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.SolutionVersion or
+         ~azure.mgmt.workloadorchestration.types.SolutionVersion or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SolutionVersion. The SolutionVersion is
          compatible with MutableMapping
         :rtype:
@@ -3166,7 +3306,7 @@ class SolutionVersionsOperations:
         target_name: str,
         solution_name: str,
         solution_version_name: str,
-        properties: Union[_models.SolutionVersion, JSON, IO[bytes]],
+        properties: Union[_models.SolutionVersion, _types.SolutionVersion, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3207,6 +3347,7 @@ class SolutionVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3220,7 +3361,10 @@ class SolutionVersionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3228,7 +3372,7 @@ class SolutionVersionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3277,7 +3421,7 @@ class SolutionVersionsOperations:
         target_name: str,
         solution_name: str,
         solution_version_name: str,
-        properties: JSON,
+        properties: _types.SolutionVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3294,7 +3438,7 @@ class SolutionVersionsOperations:
         :param solution_version_name: Name of the solution version. Required.
         :type solution_version_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.workloadorchestration.types.SolutionVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3347,7 +3491,7 @@ class SolutionVersionsOperations:
         target_name: str,
         solution_name: str,
         solution_version_name: str,
-        properties: Union[_models.SolutionVersion, JSON, IO[bytes]],
+        properties: Union[_models.SolutionVersion, _types.SolutionVersion, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SolutionVersion]:
         """Update a Solution Version Resource.
@@ -3361,9 +3505,10 @@ class SolutionVersionsOperations:
         :type solution_name: str
         :param solution_version_name: Name of the solution version. Required.
         :type solution_version_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         SolutionVersion, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.SolutionVersion or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a SolutionVersion type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.SolutionVersion or
+         ~azure.mgmt.workloadorchestration.types.SolutionVersion or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SolutionVersion. The SolutionVersion is
          compatible with MutableMapping
         :rtype:
@@ -3455,6 +3600,7 @@ class SolutionVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3468,7 +3614,10 @@ class SolutionVersionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3476,7 +3625,7 @@ class SolutionVersionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3569,7 +3718,7 @@ class SolutionVersionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.SolutionVersion]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.SolutionVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3609,7 +3758,10 @@ class SolutionVersionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3622,7 +3774,10 @@ class SolutionVersionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SolutionVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.SolutionVersion],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3638,7 +3793,10 @@ class SolutionVersionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3646,7 +3804,7 @@ class SolutionVersionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class JobsOperations:
+class JobsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3703,6 +3861,7 @@ class JobsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3717,11 +3876,14 @@ class JobsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Job, response.json())
 
@@ -3744,7 +3906,7 @@ class JobsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Job]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Job]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3781,7 +3943,10 @@ class JobsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3794,7 +3959,10 @@ class JobsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Job], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.Job],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3810,7 +3978,10 @@ class JobsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3818,7 +3989,7 @@ class JobsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class TargetsOperations:  # pylint: disable=too-many-public-methods
+class TargetsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3876,6 +4047,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3890,11 +4062,14 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Target, response.json())
 
@@ -3907,7 +4082,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        resource: Union[_models.Target, JSON, IO[bytes]],
+        resource: Union[_models.Target, _types.Target, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3946,6 +4121,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3959,7 +4135,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3969,7 +4148,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4009,7 +4188,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        resource: JSON,
+        resource: _types.Target,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4022,7 +4201,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         :param target_name: Name of the target. Required.
         :type target_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.workloadorchestration.types.Target
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4065,7 +4244,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        resource: Union[_models.Target, JSON, IO[bytes]],
+        resource: Union[_models.Target, _types.Target, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Target]:
         """Create or update a Target Resource.
@@ -4075,9 +4254,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param target_name: Name of the target. Required.
         :type target_name: str
-        :param resource: Resource create parameters. Is one of the following types: Target, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.workloadorchestration.models.Target or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Target type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.Target or
+         ~azure.mgmt.workloadorchestration.types.Target or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Target. The Target is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.Target]
@@ -4139,7 +4319,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        properties: Union[_models.Target, JSON, IO[bytes]],
+        properties: Union[_models.TargetUpdate, _types.TargetUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4178,6 +4358,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4191,7 +4372,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4199,7 +4383,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4211,7 +4395,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        properties: _models.Target,
+        properties: _models.TargetUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4224,7 +4408,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         :param target_name: Name of the target. Required.
         :type target_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.Target
+        :type properties: ~azure.mgmt.workloadorchestration.models.TargetUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4239,7 +4423,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        properties: JSON,
+        properties: _types.TargetUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4252,7 +4436,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         :param target_name: Name of the target. Required.
         :type target_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.workloadorchestration.types.TargetUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4295,7 +4479,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        properties: Union[_models.Target, JSON, IO[bytes]],
+        properties: Union[_models.TargetUpdate, _types.TargetUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Target]:
         """update a Target Resource.
@@ -4305,9 +4489,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param target_name: Name of the target. Required.
         :type target_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         Target, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.Target or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a TargetUpdate type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.TargetUpdate or
+         ~azure.mgmt.workloadorchestration.types.TargetUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Target. The Target is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.Target]
@@ -4395,6 +4580,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4408,7 +4594,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4416,7 +4605,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4500,7 +4689,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Target]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Target]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4538,7 +4727,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4551,7 +4743,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Target], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.Target],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4567,7 +4762,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4586,7 +4784,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Target]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Target]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4623,7 +4821,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4636,7 +4837,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Target], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.Target],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4652,7 +4856,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4663,7 +4870,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: Union[_models.InstallSolutionParameter, JSON, IO[bytes]],
+        body: Union[_models.InstallSolutionParameter, _types.InstallSolutionParameter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4702,6 +4909,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4715,14 +4923,17 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4761,7 +4972,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: JSON,
+        body: _types.InstallSolutionParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4774,7 +4985,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         :param target_name: Name of the target. Required.
         :type target_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.workloadorchestration.types.InstallSolutionParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4815,7 +5026,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: Union[_models.InstallSolutionParameter, JSON, IO[bytes]],
+        body: Union[_models.InstallSolutionParameter, _types.InstallSolutionParameter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Post request to deploy.
@@ -4825,10 +5036,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param target_name: Name of the target. Required.
         :type target_name: str
-        :param body: The content of the action request. Is one of the following types:
-         InstallSolutionParameter, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.workloadorchestration.models.InstallSolutionParameter or JSON or
-         IO[bytes]
+        :param body: The content of the action request. Is either a InstallSolutionParameter type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.InstallSolutionParameter or
+         ~azure.mgmt.workloadorchestration.types.InstallSolutionParameter or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4884,7 +5095,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: Union[_models.UninstallSolutionParameter, JSON, IO[bytes]],
+        body: Union[_models.UninstallSolutionParameter, _types.UninstallSolutionParameter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4923,6 +5134,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4936,14 +5148,17 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4982,7 +5197,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: JSON,
+        body: _types.UninstallSolutionParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4995,7 +5210,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         :param target_name: Name of the target. Required.
         :type target_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.workloadorchestration.types.UninstallSolutionParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5036,7 +5251,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: Union[_models.UninstallSolutionParameter, JSON, IO[bytes]],
+        body: Union[_models.UninstallSolutionParameter, _types.UninstallSolutionParameter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Post request to uninstall.
@@ -5046,10 +5261,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param target_name: Name of the target. Required.
         :type target_name: str
-        :param body: The content of the action request. Is one of the following types:
-         UninstallSolutionParameter, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.workloadorchestration.models.UninstallSolutionParameter or JSON or
-         IO[bytes]
+        :param body: The content of the action request. Is either a UninstallSolutionParameter type or
+         a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.UninstallSolutionParameter or
+         ~azure.mgmt.workloadorchestration.types.UninstallSolutionParameter or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5105,7 +5320,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: Union[_models.RemoveRevisionParameter, JSON, IO[bytes]],
+        body: Union[_models.RemoveRevisionParameter, _types.RemoveRevisionParameter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5144,6 +5359,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5157,14 +5373,17 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5203,7 +5422,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: JSON,
+        body: _types.RemoveRevisionParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5216,7 +5435,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         :param target_name: Name of the target. Required.
         :type target_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.workloadorchestration.types.RemoveRevisionParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5257,7 +5476,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: Union[_models.RemoveRevisionParameter, JSON, IO[bytes]],
+        body: Union[_models.RemoveRevisionParameter, _types.RemoveRevisionParameter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Post request to remove solution version revision.
@@ -5267,10 +5486,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param target_name: Name of the target. Required.
         :type target_name: str
-        :param body: The content of the action request. Is one of the following types:
-         RemoveRevisionParameter, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.workloadorchestration.models.RemoveRevisionParameter or JSON or
-         IO[bytes]
+        :param body: The content of the action request. Is either a RemoveRevisionParameter type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.RemoveRevisionParameter or
+         ~azure.mgmt.workloadorchestration.types.RemoveRevisionParameter or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5326,7 +5545,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: Union[_models.SolutionTemplateParameter, JSON, IO[bytes]],
+        body: Union[_models.SolutionTemplateParameter, _types.SolutionTemplateParameter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5365,6 +5584,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5378,7 +5598,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5386,7 +5609,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5427,7 +5650,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: JSON,
+        body: _types.SolutionTemplateParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5440,7 +5663,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         :param target_name: Name of the target. Required.
         :type target_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.workloadorchestration.types.SolutionTemplateParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5485,7 +5708,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: Union[_models.SolutionTemplateParameter, JSON, IO[bytes]],
+        body: Union[_models.SolutionTemplateParameter, _types.SolutionTemplateParameter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ResolvedConfiguration]:
         """Post request to resolve configuration.
@@ -5495,10 +5718,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param target_name: Name of the target. Required.
         :type target_name: str
-        :param body: The content of the action request. Is one of the following types:
-         SolutionTemplateParameter, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.workloadorchestration.models.SolutionTemplateParameter or JSON or
-         IO[bytes]
+        :param body: The content of the action request. Is either a SolutionTemplateParameter type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.SolutionTemplateParameter or
+         ~azure.mgmt.workloadorchestration.types.SolutionTemplateParameter or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ResolvedConfiguration. The
          ResolvedConfiguration is compatible with MutableMapping
         :rtype:
@@ -5528,14 +5751,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ResolvedConfiguration, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -5565,7 +5784,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: Union[_models.SolutionTemplateParameter, JSON, IO[bytes]],
+        body: Union[_models.SolutionTemplateParameter, _types.SolutionTemplateParameter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5604,6 +5823,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5617,7 +5837,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5625,7 +5848,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5666,7 +5889,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: JSON,
+        body: _types.SolutionTemplateParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5679,7 +5902,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         :param target_name: Name of the target. Required.
         :type target_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.workloadorchestration.types.SolutionTemplateParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5724,7 +5947,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: Union[_models.SolutionTemplateParameter, JSON, IO[bytes]],
+        body: Union[_models.SolutionTemplateParameter, _types.SolutionTemplateParameter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SolutionVersion]:
         """Post request to review configuration.
@@ -5734,10 +5957,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param target_name: Name of the target. Required.
         :type target_name: str
-        :param body: The content of the action request. Is one of the following types:
-         SolutionTemplateParameter, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.workloadorchestration.models.SolutionTemplateParameter or JSON or
-         IO[bytes]
+        :param body: The content of the action request. Is either a SolutionTemplateParameter type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.SolutionTemplateParameter or
+         ~azure.mgmt.workloadorchestration.types.SolutionTemplateParameter or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SolutionVersion. The SolutionVersion is
          compatible with MutableMapping
         :rtype:
@@ -5767,14 +5990,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.SolutionVersion, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -5804,7 +6023,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: Union[_models.SolutionVersionParameter, JSON, IO[bytes]],
+        body: Union[_models.SolutionVersionParameter, _types.SolutionVersionParameter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5843,6 +6062,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5856,7 +6076,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5864,7 +6087,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5905,7 +6128,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: JSON,
+        body: _types.SolutionVersionParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5918,7 +6141,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         :param target_name: Name of the target. Required.
         :type target_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.workloadorchestration.types.SolutionVersionParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5963,7 +6186,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: Union[_models.SolutionVersionParameter, JSON, IO[bytes]],
+        body: Union[_models.SolutionVersionParameter, _types.SolutionVersionParameter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SolutionVersion]:
         """Post request to publish.
@@ -5973,10 +6196,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param target_name: Name of the target. Required.
         :type target_name: str
-        :param body: The content of the action request. Is one of the following types:
-         SolutionVersionParameter, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.workloadorchestration.models.SolutionVersionParameter or JSON or
-         IO[bytes]
+        :param body: The content of the action request. Is either a SolutionVersionParameter type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.SolutionVersionParameter or
+         ~azure.mgmt.workloadorchestration.types.SolutionVersionParameter or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SolutionVersion. The SolutionVersion is
          compatible with MutableMapping
         :rtype:
@@ -6006,14 +6229,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.SolutionVersion, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -6043,7 +6262,9 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: Union[_models.UpdateExternalValidationStatusParameter, JSON, IO[bytes]],
+        body: Union[
+            _models.UpdateExternalValidationStatusParameter, _types.UpdateExternalValidationStatusParameter, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -6082,6 +6303,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6095,7 +6317,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -6103,7 +6328,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6144,7 +6369,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: JSON,
+        body: _types.UpdateExternalValidationStatusParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6157,7 +6382,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         :param target_name: Name of the target. Required.
         :type target_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.workloadorchestration.types.UpdateExternalValidationStatusParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6202,7 +6427,9 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         target_name: str,
-        body: Union[_models.UpdateExternalValidationStatusParameter, JSON, IO[bytes]],
+        body: Union[
+            _models.UpdateExternalValidationStatusParameter, _types.UpdateExternalValidationStatusParameter, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SolutionVersion]:
         """Post request to update external validation status.
@@ -6212,10 +6439,10 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param target_name: Name of the target. Required.
         :type target_name: str
-        :param body: The content of the action request. Is one of the following types:
-         UpdateExternalValidationStatusParameter, JSON, IO[bytes] Required.
+        :param body: The content of the action request. Is either a
+         UpdateExternalValidationStatusParameter type or a IO[bytes] type. Required.
         :type body: ~azure.mgmt.workloadorchestration.models.UpdateExternalValidationStatusParameter or
-         JSON or IO[bytes]
+         ~azure.mgmt.workloadorchestration.types.UpdateExternalValidationStatusParameter or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SolutionVersion. The SolutionVersion is
          compatible with MutableMapping
         :rtype:
@@ -6245,14 +6472,277 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
+            deserialized = _deserialize(_models.SolutionVersion, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.SolutionVersion].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.SolutionVersion](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={
+            "2025-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "target_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    async def _unstage_solution_version_initial(
+        self,
+        resource_group_name: str,
+        target_name: str,
+        body: Union[_models.SolutionVersionParameter, _types.SolutionVersionParameter, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_targets_unstage_solution_version_request(
+            resource_group_name=resource_group_name,
+            target_name=target_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_unstage_solution_version(
+        self,
+        resource_group_name: str,
+        target_name: str,
+        body: _models.SolutionVersionParameter,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SolutionVersion]:
+        """Post request to unstage solution version.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param target_name: Name of the target. Required.
+        :type target_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.SolutionVersionParameter
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SolutionVersion. The SolutionVersion is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.SolutionVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_unstage_solution_version(
+        self,
+        resource_group_name: str,
+        target_name: str,
+        body: _types.SolutionVersionParameter,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SolutionVersion]:
+        """Post request to unstage solution version.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param target_name: Name of the target. Required.
+        :type target_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.workloadorchestration.types.SolutionVersionParameter
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SolutionVersion. The SolutionVersion is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.SolutionVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_unstage_solution_version(
+        self,
+        resource_group_name: str,
+        target_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SolutionVersion]:
+        """Post request to unstage solution version.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param target_name: Name of the target. Required.
+        :type target_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SolutionVersion. The SolutionVersion is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.SolutionVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={
+            "2025-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "target_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    async def begin_unstage_solution_version(
+        self,
+        resource_group_name: str,
+        target_name: str,
+        body: Union[_models.SolutionVersionParameter, _types.SolutionVersionParameter, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SolutionVersion]:
+        """Post request to unstage solution version.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param target_name: Name of the target. Required.
+        :type target_name: str
+        :param body: The content of the action request. Is either a SolutionVersionParameter type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.SolutionVersionParameter or
+         ~azure.mgmt.workloadorchestration.types.SolutionVersionParameter or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns SolutionVersion. The SolutionVersion is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.SolutionVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SolutionVersion] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._unstage_solution_version_initial(
+                resource_group_name=resource_group_name,
+                target_name=target_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
             deserialized = _deserialize(_models.SolutionVersion, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -6279,7 +6769,7 @@ class TargetsOperations:  # pylint: disable=too-many-public-methods
         )
 
 
-class DynamicSchemaVersionsOperations:
+class DynamicSchemaVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6304,7 +6794,7 @@ class DynamicSchemaVersionsOperations:
         resource_group_name: str,
         schema_name: str,
         dynamic_schema_name: str,
-        schema_version_name: str,
+        dynamic_schema_version_name: str,
         **kwargs: Any
     ) -> _models.DynamicSchemaVersion:
         """Get a Dynamic Schema Version Resource.
@@ -6316,8 +6806,8 @@ class DynamicSchemaVersionsOperations:
         :type schema_name: str
         :param dynamic_schema_name: The name of the DynamicSchema. Required.
         :type dynamic_schema_name: str
-        :param schema_version_name: The name of the SchemaVersion. Required.
-        :type schema_version_name: str
+        :param dynamic_schema_version_name: The name of the DynamicSchemaVersion. Required.
+        :type dynamic_schema_version_name: str
         :return: DynamicSchemaVersion. The DynamicSchemaVersion is compatible with MutableMapping
         :rtype: ~azure.mgmt.workloadorchestration.models.DynamicSchemaVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6339,7 +6829,7 @@ class DynamicSchemaVersionsOperations:
             resource_group_name=resource_group_name,
             schema_name=schema_name,
             dynamic_schema_name=dynamic_schema_name,
-            schema_version_name=schema_version_name,
+            dynamic_schema_version_name=dynamic_schema_version_name,
             subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -6350,6 +6840,7 @@ class DynamicSchemaVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6364,11 +6855,14 @@ class DynamicSchemaVersionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DynamicSchemaVersion, response.json())
 
@@ -6382,8 +6876,8 @@ class DynamicSchemaVersionsOperations:
         resource_group_name: str,
         schema_name: str,
         dynamic_schema_name: str,
-        schema_version_name: str,
-        resource: Union[_models.DynamicSchemaVersion, JSON, IO[bytes]],
+        dynamic_schema_version_name: str,
+        resource: Union[_models.DynamicSchemaVersion, _types.DynamicSchemaVersion, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -6411,7 +6905,7 @@ class DynamicSchemaVersionsOperations:
             resource_group_name=resource_group_name,
             schema_name=schema_name,
             dynamic_schema_name=dynamic_schema_name,
-            schema_version_name=schema_version_name,
+            dynamic_schema_version_name=dynamic_schema_version_name,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6424,6 +6918,7 @@ class DynamicSchemaVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6437,7 +6932,10 @@ class DynamicSchemaVersionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -6447,7 +6945,7 @@ class DynamicSchemaVersionsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6460,7 +6958,7 @@ class DynamicSchemaVersionsOperations:
         resource_group_name: str,
         schema_name: str,
         dynamic_schema_name: str,
-        schema_version_name: str,
+        dynamic_schema_version_name: str,
         resource: _models.DynamicSchemaVersion,
         *,
         content_type: str = "application/json",
@@ -6475,8 +6973,8 @@ class DynamicSchemaVersionsOperations:
         :type schema_name: str
         :param dynamic_schema_name: The name of the DynamicSchema. Required.
         :type dynamic_schema_name: str
-        :param schema_version_name: The name of the SchemaVersion. Required.
-        :type schema_version_name: str
+        :param dynamic_schema_version_name: The name of the DynamicSchemaVersion. Required.
+        :type dynamic_schema_version_name: str
         :param resource: Resource create parameters. Required.
         :type resource: ~azure.mgmt.workloadorchestration.models.DynamicSchemaVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -6495,8 +6993,8 @@ class DynamicSchemaVersionsOperations:
         resource_group_name: str,
         schema_name: str,
         dynamic_schema_name: str,
-        schema_version_name: str,
-        resource: JSON,
+        dynamic_schema_version_name: str,
+        resource: _types.DynamicSchemaVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6510,10 +7008,10 @@ class DynamicSchemaVersionsOperations:
         :type schema_name: str
         :param dynamic_schema_name: The name of the DynamicSchema. Required.
         :type dynamic_schema_name: str
-        :param schema_version_name: The name of the SchemaVersion. Required.
-        :type schema_version_name: str
+        :param dynamic_schema_version_name: The name of the DynamicSchemaVersion. Required.
+        :type dynamic_schema_version_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.workloadorchestration.types.DynamicSchemaVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6530,7 +7028,7 @@ class DynamicSchemaVersionsOperations:
         resource_group_name: str,
         schema_name: str,
         dynamic_schema_name: str,
-        schema_version_name: str,
+        dynamic_schema_version_name: str,
         resource: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -6545,8 +7043,8 @@ class DynamicSchemaVersionsOperations:
         :type schema_name: str
         :param dynamic_schema_name: The name of the DynamicSchema. Required.
         :type dynamic_schema_name: str
-        :param schema_version_name: The name of the SchemaVersion. Required.
-        :type schema_version_name: str
+        :param dynamic_schema_version_name: The name of the DynamicSchemaVersion. Required.
+        :type dynamic_schema_version_name: str
         :param resource: Resource create parameters. Required.
         :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -6565,8 +7063,8 @@ class DynamicSchemaVersionsOperations:
         resource_group_name: str,
         schema_name: str,
         dynamic_schema_name: str,
-        schema_version_name: str,
-        resource: Union[_models.DynamicSchemaVersion, JSON, IO[bytes]],
+        dynamic_schema_version_name: str,
+        resource: Union[_models.DynamicSchemaVersion, _types.DynamicSchemaVersion, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DynamicSchemaVersion]:
         """Create or update a Dynamic Schema Version Resource.
@@ -6578,12 +7076,12 @@ class DynamicSchemaVersionsOperations:
         :type schema_name: str
         :param dynamic_schema_name: The name of the DynamicSchema. Required.
         :type dynamic_schema_name: str
-        :param schema_version_name: The name of the SchemaVersion. Required.
-        :type schema_version_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         DynamicSchemaVersion, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.workloadorchestration.models.DynamicSchemaVersion or JSON or
-         IO[bytes]
+        :param dynamic_schema_version_name: The name of the DynamicSchemaVersion. Required.
+        :type dynamic_schema_version_name: str
+        :param resource: Resource create parameters. Is either a DynamicSchemaVersion type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.DynamicSchemaVersion or
+         ~azure.mgmt.workloadorchestration.types.DynamicSchemaVersion or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DynamicSchemaVersion. The
          DynamicSchemaVersion is compatible with MutableMapping
         :rtype:
@@ -6603,7 +7101,7 @@ class DynamicSchemaVersionsOperations:
                 resource_group_name=resource_group_name,
                 schema_name=schema_name,
                 dynamic_schema_name=dynamic_schema_name,
-                schema_version_name=schema_version_name,
+                dynamic_schema_version_name=dynamic_schema_version_name,
                 resource=resource,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -6650,7 +7148,7 @@ class DynamicSchemaVersionsOperations:
         resource_group_name: str,
         schema_name: str,
         dynamic_schema_name: str,
-        schema_version_name: str,
+        dynamic_schema_version_name: str,
         properties: _models.DynamicSchemaVersion,
         *,
         content_type: str = "application/json",
@@ -6665,8 +7163,8 @@ class DynamicSchemaVersionsOperations:
         :type schema_name: str
         :param dynamic_schema_name: The name of the DynamicSchema. Required.
         :type dynamic_schema_name: str
-        :param schema_version_name: The name of the SchemaVersion. Required.
-        :type schema_version_name: str
+        :param dynamic_schema_version_name: The name of the DynamicSchemaVersion. Required.
+        :type dynamic_schema_version_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: ~azure.mgmt.workloadorchestration.models.DynamicSchemaVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -6683,8 +7181,8 @@ class DynamicSchemaVersionsOperations:
         resource_group_name: str,
         schema_name: str,
         dynamic_schema_name: str,
-        schema_version_name: str,
-        properties: JSON,
+        dynamic_schema_version_name: str,
+        properties: _types.DynamicSchemaVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6698,10 +7196,10 @@ class DynamicSchemaVersionsOperations:
         :type schema_name: str
         :param dynamic_schema_name: The name of the DynamicSchema. Required.
         :type dynamic_schema_name: str
-        :param schema_version_name: The name of the SchemaVersion. Required.
-        :type schema_version_name: str
+        :param dynamic_schema_version_name: The name of the DynamicSchemaVersion. Required.
+        :type dynamic_schema_version_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.workloadorchestration.types.DynamicSchemaVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6716,7 +7214,7 @@ class DynamicSchemaVersionsOperations:
         resource_group_name: str,
         schema_name: str,
         dynamic_schema_name: str,
-        schema_version_name: str,
+        dynamic_schema_version_name: str,
         properties: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -6731,8 +7229,8 @@ class DynamicSchemaVersionsOperations:
         :type schema_name: str
         :param dynamic_schema_name: The name of the DynamicSchema. Required.
         :type dynamic_schema_name: str
-        :param schema_version_name: The name of the SchemaVersion. Required.
-        :type schema_version_name: str
+        :param dynamic_schema_version_name: The name of the DynamicSchemaVersion. Required.
+        :type dynamic_schema_version_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -6749,8 +7247,8 @@ class DynamicSchemaVersionsOperations:
         resource_group_name: str,
         schema_name: str,
         dynamic_schema_name: str,
-        schema_version_name: str,
-        properties: Union[_models.DynamicSchemaVersion, JSON, IO[bytes]],
+        dynamic_schema_version_name: str,
+        properties: Union[_models.DynamicSchemaVersion, _types.DynamicSchemaVersion, IO[bytes]],
         **kwargs: Any
     ) -> _models.DynamicSchemaVersion:
         """update a Dynamic Schema Version Resource.
@@ -6762,12 +7260,12 @@ class DynamicSchemaVersionsOperations:
         :type schema_name: str
         :param dynamic_schema_name: The name of the DynamicSchema. Required.
         :type dynamic_schema_name: str
-        :param schema_version_name: The name of the SchemaVersion. Required.
-        :type schema_version_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         DynamicSchemaVersion, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.DynamicSchemaVersion or JSON or
-         IO[bytes]
+        :param dynamic_schema_version_name: The name of the DynamicSchemaVersion. Required.
+        :type dynamic_schema_version_name: str
+        :param properties: The resource properties to be updated. Is either a DynamicSchemaVersion type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.DynamicSchemaVersion or
+         ~azure.mgmt.workloadorchestration.types.DynamicSchemaVersion or IO[bytes]
         :return: DynamicSchemaVersion. The DynamicSchemaVersion is compatible with MutableMapping
         :rtype: ~azure.mgmt.workloadorchestration.models.DynamicSchemaVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6797,7 +7295,7 @@ class DynamicSchemaVersionsOperations:
             resource_group_name=resource_group_name,
             schema_name=schema_name,
             dynamic_schema_name=dynamic_schema_name,
-            schema_version_name=schema_version_name,
+            dynamic_schema_version_name=dynamic_schema_version_name,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6810,6 +7308,7 @@ class DynamicSchemaVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6824,11 +7323,14 @@ class DynamicSchemaVersionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DynamicSchemaVersion, response.json())
 
@@ -6842,7 +7344,7 @@ class DynamicSchemaVersionsOperations:
         resource_group_name: str,
         schema_name: str,
         dynamic_schema_name: str,
-        schema_version_name: str,
+        dynamic_schema_version_name: str,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -6862,7 +7364,7 @@ class DynamicSchemaVersionsOperations:
             resource_group_name=resource_group_name,
             schema_name=schema_name,
             dynamic_schema_name=dynamic_schema_name,
-            schema_version_name=schema_version_name,
+            dynamic_schema_version_name=dynamic_schema_version_name,
             subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -6873,6 +7375,7 @@ class DynamicSchemaVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6886,7 +7389,10 @@ class DynamicSchemaVersionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -6894,7 +7400,7 @@ class DynamicSchemaVersionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6907,7 +7413,7 @@ class DynamicSchemaVersionsOperations:
         resource_group_name: str,
         schema_name: str,
         dynamic_schema_name: str,
-        schema_version_name: str,
+        dynamic_schema_version_name: str,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete a Dynamic Schema Version Resource.
@@ -6919,8 +7425,8 @@ class DynamicSchemaVersionsOperations:
         :type schema_name: str
         :param dynamic_schema_name: The name of the DynamicSchema. Required.
         :type dynamic_schema_name: str
-        :param schema_version_name: The name of the SchemaVersion. Required.
-        :type schema_version_name: str
+        :param dynamic_schema_version_name: The name of the DynamicSchemaVersion. Required.
+        :type dynamic_schema_version_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6937,7 +7443,7 @@ class DynamicSchemaVersionsOperations:
                 resource_group_name=resource_group_name,
                 schema_name=schema_name,
                 dynamic_schema_name=dynamic_schema_name,
-                schema_version_name=schema_version_name,
+                dynamic_schema_version_name=dynamic_schema_version_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -6992,7 +7498,7 @@ class DynamicSchemaVersionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.DynamicSchemaVersion]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.DynamicSchemaVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -7032,7 +7538,10 @@ class DynamicSchemaVersionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7045,7 +7554,10 @@ class DynamicSchemaVersionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DynamicSchemaVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.DynamicSchemaVersion],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -7061,7 +7573,10 @@ class DynamicSchemaVersionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -7069,7 +7584,7 @@ class DynamicSchemaVersionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SchemaReferencesOperations:
+class SchemaReferencesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7126,6 +7641,7 @@ class SchemaReferencesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7140,11 +7656,14 @@ class SchemaReferencesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SchemaReference, response.json())
 
@@ -7152,6 +7671,533 @@ class SchemaReferencesOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    async def _create_or_update_initial(
+        self,
+        resource_uri: str,
+        schema_reference_name: str,
+        resource: Union[_models.SchemaReference, _types.SchemaReference, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_schema_references_create_or_update_request(
+            resource_uri=resource_uri,
+            schema_reference_name=schema_reference_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_uri: str,
+        schema_reference_name: str,
+        resource: _models.SchemaReference,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SchemaReference]:
+        """Create or update a Schema Reference Resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param schema_reference_name: The name of the SchemaReference. Required.
+        :type schema_reference_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.SchemaReference
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SchemaReference. The SchemaReference is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.SchemaReference]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_uri: str,
+        schema_reference_name: str,
+        resource: _types.SchemaReference,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SchemaReference]:
+        """Create or update a Schema Reference Resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param schema_reference_name: The name of the SchemaReference. Required.
+        :type schema_reference_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.types.SchemaReference
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SchemaReference. The SchemaReference is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.SchemaReference]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_uri: str,
+        schema_reference_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SchemaReference]:
+        """Create or update a Schema Reference Resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param schema_reference_name: The name of the SchemaReference. Required.
+        :type schema_reference_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SchemaReference. The SchemaReference is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.SchemaReference]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_create_or_update(
+        self,
+        resource_uri: str,
+        schema_reference_name: str,
+        resource: Union[_models.SchemaReference, _types.SchemaReference, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SchemaReference]:
+        """Create or update a Schema Reference Resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param schema_reference_name: The name of the SchemaReference. Required.
+        :type schema_reference_name: str
+        :param resource: Resource create parameters. Is either a SchemaReference type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.SchemaReference or
+         ~azure.mgmt.workloadorchestration.types.SchemaReference or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns SchemaReference. The SchemaReference is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.SchemaReference]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SchemaReference] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_uri=resource_uri,
+                schema_reference_name=schema_reference_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.SchemaReference, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.SchemaReference].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.SchemaReference](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @overload
+    async def update(
+        self,
+        resource_uri: str,
+        schema_reference_name: str,
+        properties: _models.SchemaReference,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SchemaReference:
+        """update a Schema Reference Resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param schema_reference_name: The name of the SchemaReference. Required.
+        :type schema_reference_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.SchemaReference
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SchemaReference. The SchemaReference is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.SchemaReference
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_uri: str,
+        schema_reference_name: str,
+        properties: _types.SchemaReference,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SchemaReference:
+        """update a Schema Reference Resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param schema_reference_name: The name of the SchemaReference. Required.
+        :type schema_reference_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.types.SchemaReference
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SchemaReference. The SchemaReference is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.SchemaReference
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_uri: str,
+        schema_reference_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SchemaReference:
+        """update a Schema Reference Resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param schema_reference_name: The name of the SchemaReference. Required.
+        :type schema_reference_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SchemaReference. The SchemaReference is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.SchemaReference
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def update(
+        self,
+        resource_uri: str,
+        schema_reference_name: str,
+        properties: Union[_models.SchemaReference, _types.SchemaReference, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.SchemaReference:
+        """update a Schema Reference Resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param schema_reference_name: The name of the SchemaReference. Required.
+        :type schema_reference_name: str
+        :param properties: The resource properties to be updated. Is either a SchemaReference type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.SchemaReference or
+         ~azure.mgmt.workloadorchestration.types.SchemaReference or IO[bytes]
+        :return: SchemaReference. The SchemaReference is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.SchemaReference
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SchemaReference] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_schema_references_update_request(
+            resource_uri=resource_uri,
+            schema_reference_name=schema_reference_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SchemaReference, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    async def _delete_initial(
+        self, resource_uri: str, schema_reference_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_schema_references_delete_request(
+            resource_uri=resource_uri,
+            schema_reference_name=schema_reference_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_delete(self, resource_uri: str, schema_reference_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
+        """Delete a Schema Reference Resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param schema_reference_name: The name of the SchemaReference. Required.
+        :type schema_reference_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_uri=resource_uri,
+                schema_reference_name=schema_reference_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list_by_resource_group(self, resource_uri: str, **kwargs: Any) -> AsyncItemPaged["_models.SchemaReference"]:
@@ -7168,7 +8214,7 @@ class SchemaReferencesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.SchemaReference]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.SchemaReference]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -7205,7 +8251,10 @@ class SchemaReferencesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7218,7 +8267,10 @@ class SchemaReferencesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SchemaReference], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.SchemaReference],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -7234,7 +8286,10 @@ class SchemaReferencesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -7242,7 +8297,7 @@ class SchemaReferencesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SolutionsOperations:
+class SolutionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7305,6 +8360,7 @@ class SolutionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7319,11 +8375,14 @@ class SolutionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Solution, response.json())
 
@@ -7337,7 +8396,7 @@ class SolutionsOperations:
         resource_group_name: str,
         target_name: str,
         solution_name: str,
-        resource: Union[_models.Solution, JSON, IO[bytes]],
+        resource: Union[_models.Solution, _types.Solution, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7377,6 +8436,7 @@ class SolutionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7390,7 +8450,10 @@ class SolutionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -7400,7 +8463,7 @@ class SolutionsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7444,7 +8507,7 @@ class SolutionsOperations:
         resource_group_name: str,
         target_name: str,
         solution_name: str,
-        resource: JSON,
+        resource: _types.Solution,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7459,7 +8522,7 @@ class SolutionsOperations:
         :param solution_name: Name of the solution. Required.
         :type solution_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.workloadorchestration.types.Solution
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7506,7 +8569,7 @@ class SolutionsOperations:
         resource_group_name: str,
         target_name: str,
         solution_name: str,
-        resource: Union[_models.Solution, JSON, IO[bytes]],
+        resource: Union[_models.Solution, _types.Solution, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Solution]:
         """Create or update a Solution Resource.
@@ -7518,9 +8581,10 @@ class SolutionsOperations:
         :type target_name: str
         :param solution_name: Name of the solution. Required.
         :type solution_name: str
-        :param resource: Resource create parameters. Is one of the following types: Solution, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.workloadorchestration.models.Solution or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Solution type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.Solution or
+         ~azure.mgmt.workloadorchestration.types.Solution or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Solution. The Solution is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.Solution]
@@ -7584,7 +8648,7 @@ class SolutionsOperations:
         resource_group_name: str,
         target_name: str,
         solution_name: str,
-        properties: Union[_models.Solution, JSON, IO[bytes]],
+        properties: Union[_models.SolutionUpdate, _types.SolutionUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7624,6 +8688,7 @@ class SolutionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7637,7 +8702,10 @@ class SolutionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -7645,7 +8713,7 @@ class SolutionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7658,7 +8726,7 @@ class SolutionsOperations:
         resource_group_name: str,
         target_name: str,
         solution_name: str,
-        properties: _models.Solution,
+        properties: _models.SolutionUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7673,7 +8741,7 @@ class SolutionsOperations:
         :param solution_name: Name of the solution. Required.
         :type solution_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.Solution
+        :type properties: ~azure.mgmt.workloadorchestration.models.SolutionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7689,7 +8757,7 @@ class SolutionsOperations:
         resource_group_name: str,
         target_name: str,
         solution_name: str,
-        properties: JSON,
+        properties: _types.SolutionUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7704,7 +8772,7 @@ class SolutionsOperations:
         :param solution_name: Name of the solution. Required.
         :type solution_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.workloadorchestration.types.SolutionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7751,7 +8819,7 @@ class SolutionsOperations:
         resource_group_name: str,
         target_name: str,
         solution_name: str,
-        properties: Union[_models.Solution, JSON, IO[bytes]],
+        properties: Union[_models.SolutionUpdate, _types.SolutionUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Solution]:
         """Update a Solution Resource.
@@ -7763,9 +8831,10 @@ class SolutionsOperations:
         :type target_name: str
         :param solution_name: Name of the solution. Required.
         :type solution_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         Solution, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.Solution or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a SolutionUpdate type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.SolutionUpdate or
+         ~azure.mgmt.workloadorchestration.types.SolutionUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Solution. The Solution is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.Solution]
@@ -7854,6 +8923,7 @@ class SolutionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7867,7 +8937,10 @@ class SolutionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -7875,7 +8948,7 @@ class SolutionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7963,7 +9036,7 @@ class SolutionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Solution]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Solution]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -8002,7 +9075,10 @@ class SolutionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8015,7 +9091,10 @@ class SolutionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Solution], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.Solution],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -8031,7 +9110,10 @@ class SolutionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -8039,7 +9121,417 @@ class SolutionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SolutionTemplateVersionsOperations:
+class SolutionMetadatasOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.workloadorchestration.aio.WorkloadOrchestrationMgmtClient`'s
+        :attr:`solution_metadatas` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: WorkloadOrchestrationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={"2025-08-01": ["api_version", "resource_uri", "solution_metadata_name", "accept"]},
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    async def get(self, resource_uri: str, solution_metadata_name: str, **kwargs: Any) -> _models.SolutionMetadata:
+        """Get a Solution resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param solution_metadata_name: Name of the solution metadata. Required.
+        :type solution_metadata_name: str
+        :return: SolutionMetadata. The SolutionMetadata is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.SolutionMetadata
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SolutionMetadata] = kwargs.pop("cls", None)
+
+        _request = build_solution_metadatas_get_request(
+            resource_uri=resource_uri,
+            solution_metadata_name=solution_metadata_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SolutionMetadata, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={"2025-08-01": ["api_version", "resource_uri", "accept"]},
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    def list_by_parent(self, resource_uri: str, **kwargs: Any) -> AsyncItemPaged["_models.SolutionMetadata"]:
+        """List Solution resources.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :return: An iterator like instance of SolutionMetadata
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.workloadorchestration.models.SolutionMetadata]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.SolutionMetadata]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_solution_metadatas_list_by_parent_request(
+                    resource_uri=resource_uri,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models.SolutionMetadata],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class SolutionMetadataVersionsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.workloadorchestration.aio.WorkloadOrchestrationMgmtClient`'s
+        :attr:`solution_metadata_versions` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: WorkloadOrchestrationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={
+            "2025-08-01": [
+                "api_version",
+                "resource_uri",
+                "solution_metadata_name",
+                "solution_metadata_version_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    async def get(
+        self, resource_uri: str, solution_metadata_name: str, solution_metadata_version_name: str, **kwargs: Any
+    ) -> _models.SolutionMetadataVersion:
+        """Get a Solution resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param solution_metadata_name: Name of the solution metadata. Required.
+        :type solution_metadata_name: str
+        :param solution_metadata_version_name: Name of the solution metadata version. Required.
+        :type solution_metadata_version_name: str
+        :return: SolutionMetadataVersion. The SolutionMetadataVersion is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.SolutionMetadataVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SolutionMetadataVersion] = kwargs.pop("cls", None)
+
+        _request = build_solution_metadata_versions_get_request(
+            resource_uri=resource_uri,
+            solution_metadata_name=solution_metadata_name,
+            solution_metadata_version_name=solution_metadata_version_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SolutionMetadataVersion, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={"2025-08-01": ["api_version", "resource_uri", "solution_metadata_name", "accept"]},
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    def list_by_parent(
+        self, resource_uri: str, solution_metadata_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.SolutionMetadataVersion"]:
+        """List Solution resources.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param solution_metadata_name: Name of the solution metadata. Required.
+        :type solution_metadata_name: str
+        :return: An iterator like instance of SolutionMetadataVersion
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.workloadorchestration.models.SolutionMetadataVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.SolutionMetadataVersion]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_solution_metadata_versions_list_by_parent_request(
+                    resource_uri=resource_uri,
+                    solution_metadata_name=solution_metadata_name,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models.SolutionMetadataVersion],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class SolutionTemplateVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8102,6 +9594,7 @@ class SolutionTemplateVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8116,11 +9609,14 @@ class SolutionTemplateVersionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SolutionTemplateVersion, response.json())
 
@@ -8128,6 +9624,641 @@ class SolutionTemplateVersionsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "solution_template_name",
+                "solution_template_version_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01", "2026-05-01-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        solution_template_name: str,
+        solution_template_version_name: str,
+        resource: Union[_models.SolutionTemplateVersion, _types.SolutionTemplateVersion, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_solution_template_versions_create_or_update_request(
+            resource_group_name=resource_group_name,
+            solution_template_name=solution_template_name,
+            solution_template_version_name=solution_template_version_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        solution_template_name: str,
+        solution_template_version_name: str,
+        resource: _models.SolutionTemplateVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SolutionTemplateVersion]:
+        """Create or update a Solution Template Version Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_template_name: The name of the SolutionTemplate. Required.
+        :type solution_template_name: str
+        :param solution_template_version_name: The name of the SolutionTemplateVersion. Required.
+        :type solution_template_version_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.SolutionTemplateVersion
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SolutionTemplateVersion. The
+         SolutionTemplateVersion is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.SolutionTemplateVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        solution_template_name: str,
+        solution_template_version_name: str,
+        resource: _types.SolutionTemplateVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SolutionTemplateVersion]:
+        """Create or update a Solution Template Version Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_template_name: The name of the SolutionTemplate. Required.
+        :type solution_template_name: str
+        :param solution_template_version_name: The name of the SolutionTemplateVersion. Required.
+        :type solution_template_version_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.types.SolutionTemplateVersion
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SolutionTemplateVersion. The
+         SolutionTemplateVersion is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.SolutionTemplateVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        solution_template_name: str,
+        solution_template_version_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SolutionTemplateVersion]:
+        """Create or update a Solution Template Version Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_template_name: The name of the SolutionTemplate. Required.
+        :type solution_template_name: str
+        :param solution_template_version_name: The name of the SolutionTemplateVersion. Required.
+        :type solution_template_version_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SolutionTemplateVersion. The
+         SolutionTemplateVersion is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.SolutionTemplateVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "solution_template_name",
+                "solution_template_version_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01", "2026-05-01-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        solution_template_name: str,
+        solution_template_version_name: str,
+        resource: Union[_models.SolutionTemplateVersion, _types.SolutionTemplateVersion, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SolutionTemplateVersion]:
+        """Create or update a Solution Template Version Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_template_name: The name of the SolutionTemplate. Required.
+        :type solution_template_name: str
+        :param solution_template_version_name: The name of the SolutionTemplateVersion. Required.
+        :type solution_template_version_name: str
+        :param resource: Resource create parameters. Is either a SolutionTemplateVersion type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.SolutionTemplateVersion or
+         ~azure.mgmt.workloadorchestration.types.SolutionTemplateVersion or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns SolutionTemplateVersion. The
+         SolutionTemplateVersion is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.SolutionTemplateVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SolutionTemplateVersion] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                solution_template_name=solution_template_name,
+                solution_template_version_name=solution_template_version_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.SolutionTemplateVersion, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.SolutionTemplateVersion].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.SolutionTemplateVersion](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        solution_template_name: str,
+        solution_template_version_name: str,
+        properties: _models.SolutionTemplateVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SolutionTemplateVersion:
+        """Update a Solution Template Version Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_template_name: The name of the SolutionTemplate. Required.
+        :type solution_template_name: str
+        :param solution_template_version_name: The name of the SolutionTemplateVersion. Required.
+        :type solution_template_version_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.SolutionTemplateVersion
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SolutionTemplateVersion. The SolutionTemplateVersion is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.SolutionTemplateVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        solution_template_name: str,
+        solution_template_version_name: str,
+        properties: _types.SolutionTemplateVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SolutionTemplateVersion:
+        """Update a Solution Template Version Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_template_name: The name of the SolutionTemplate. Required.
+        :type solution_template_name: str
+        :param solution_template_version_name: The name of the SolutionTemplateVersion. Required.
+        :type solution_template_version_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.types.SolutionTemplateVersion
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SolutionTemplateVersion. The SolutionTemplateVersion is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.SolutionTemplateVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        solution_template_name: str,
+        solution_template_version_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SolutionTemplateVersion:
+        """Update a Solution Template Version Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_template_name: The name of the SolutionTemplate. Required.
+        :type solution_template_name: str
+        :param solution_template_version_name: The name of the SolutionTemplateVersion. Required.
+        :type solution_template_version_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SolutionTemplateVersion. The SolutionTemplateVersion is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.SolutionTemplateVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "solution_template_name",
+                "solution_template_version_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01", "2026-05-01-preview"],
+    )
+    async def update(
+        self,
+        resource_group_name: str,
+        solution_template_name: str,
+        solution_template_version_name: str,
+        properties: Union[_models.SolutionTemplateVersion, _types.SolutionTemplateVersion, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.SolutionTemplateVersion:
+        """Update a Solution Template Version Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_template_name: The name of the SolutionTemplate. Required.
+        :type solution_template_name: str
+        :param solution_template_version_name: The name of the SolutionTemplateVersion. Required.
+        :type solution_template_version_name: str
+        :param properties: The resource properties to be updated. Is either a SolutionTemplateVersion
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.SolutionTemplateVersion or
+         ~azure.mgmt.workloadorchestration.types.SolutionTemplateVersion or IO[bytes]
+        :return: SolutionTemplateVersion. The SolutionTemplateVersion is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.SolutionTemplateVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SolutionTemplateVersion] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_solution_template_versions_update_request(
+            resource_group_name=resource_group_name,
+            solution_template_name=solution_template_name,
+            solution_template_version_name=solution_template_version_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SolutionTemplateVersion, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "solution_template_name",
+                "solution_template_version_name",
+            ]
+        },
+        api_versions_list=["2026-03-01", "2026-05-01-preview"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, solution_template_name: str, solution_template_version_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_solution_template_versions_delete_request(
+            resource_group_name=resource_group_name,
+            solution_template_name=solution_template_name,
+            solution_template_version_name=solution_template_version_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "solution_template_name",
+                "solution_template_version_name",
+            ]
+        },
+        api_versions_list=["2026-03-01", "2026-05-01-preview"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, solution_template_name: str, solution_template_version_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a Solution Template Version Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_template_name: The name of the SolutionTemplate. Required.
+        :type solution_template_name: str
+        :param solution_template_version_name: The name of the SolutionTemplateVersion. Required.
+        :type solution_template_version_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                solution_template_name=solution_template_name,
+                solution_template_version_name=solution_template_version_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list_by_solution_template(
@@ -8148,7 +10279,7 @@ class SolutionTemplateVersionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.SolutionTemplateVersion]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.SolutionTemplateVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -8187,7 +10318,10 @@ class SolutionTemplateVersionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8200,7 +10334,10 @@ class SolutionTemplateVersionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SolutionTemplateVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.SolutionTemplateVersion],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -8216,7 +10353,10 @@ class SolutionTemplateVersionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -8228,7 +10368,7 @@ class SolutionTemplateVersionsOperations:
         resource_group_name: str,
         solution_template_name: str,
         solution_template_version_name: str,
-        body: Union[_models.BulkDeploySolutionParameter, JSON, IO[bytes]],
+        body: Union[_models.BulkDeploySolutionParameter, _types.BulkDeploySolutionParameter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8268,6 +10408,7 @@ class SolutionTemplateVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8281,14 +10422,17 @@ class SolutionTemplateVersionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8331,7 +10475,7 @@ class SolutionTemplateVersionsOperations:
         resource_group_name: str,
         solution_template_name: str,
         solution_template_version_name: str,
-        body: JSON,
+        body: _types.BulkDeploySolutionParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8346,7 +10490,7 @@ class SolutionTemplateVersionsOperations:
         :param solution_template_version_name: The name of the SolutionTemplateVersion. Required.
         :type solution_template_version_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.workloadorchestration.types.BulkDeploySolutionParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8391,7 +10535,7 @@ class SolutionTemplateVersionsOperations:
         resource_group_name: str,
         solution_template_name: str,
         solution_template_version_name: str,
-        body: Union[_models.BulkDeploySolutionParameter, JSON, IO[bytes]],
+        body: Union[_models.BulkDeploySolutionParameter, _types.BulkDeploySolutionParameter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Post request for bulk deploy.
@@ -8403,10 +10547,10 @@ class SolutionTemplateVersionsOperations:
         :type solution_template_name: str
         :param solution_template_version_name: The name of the SolutionTemplateVersion. Required.
         :type solution_template_version_name: str
-        :param body: The content of the action request. Is one of the following types:
-         BulkDeploySolutionParameter, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.workloadorchestration.models.BulkDeploySolutionParameter or JSON or
-         IO[bytes]
+        :param body: The content of the action request. Is either a BulkDeploySolutionParameter type or
+         a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.BulkDeploySolutionParameter or
+         ~azure.mgmt.workloadorchestration.types.BulkDeploySolutionParameter or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8464,7 +10608,7 @@ class SolutionTemplateVersionsOperations:
         resource_group_name: str,
         solution_template_name: str,
         solution_template_version_name: str,
-        body: Union[_models.BulkPublishSolutionParameter, JSON, IO[bytes]],
+        body: Union[_models.BulkPublishSolutionParameter, _types.BulkPublishSolutionParameter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8504,6 +10648,7 @@ class SolutionTemplateVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8517,14 +10662,17 @@ class SolutionTemplateVersionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8567,7 +10715,7 @@ class SolutionTemplateVersionsOperations:
         resource_group_name: str,
         solution_template_name: str,
         solution_template_version_name: str,
-        body: JSON,
+        body: _types.BulkPublishSolutionParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8582,7 +10730,7 @@ class SolutionTemplateVersionsOperations:
         :param solution_template_version_name: The name of the SolutionTemplateVersion. Required.
         :type solution_template_version_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.workloadorchestration.types.BulkPublishSolutionParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8627,7 +10775,7 @@ class SolutionTemplateVersionsOperations:
         resource_group_name: str,
         solution_template_name: str,
         solution_template_version_name: str,
-        body: Union[_models.BulkPublishSolutionParameter, JSON, IO[bytes]],
+        body: Union[_models.BulkPublishSolutionParameter, _types.BulkPublishSolutionParameter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Post request for bulk publish.
@@ -8639,10 +10787,10 @@ class SolutionTemplateVersionsOperations:
         :type solution_template_name: str
         :param solution_template_version_name: The name of the SolutionTemplateVersion. Required.
         :type solution_template_version_name: str
-        :param body: The content of the action request. Is one of the following types:
-         BulkPublishSolutionParameter, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.workloadorchestration.models.BulkPublishSolutionParameter or JSON or
-         IO[bytes]
+        :param body: The content of the action request. Is either a BulkPublishSolutionParameter type
+         or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.BulkPublishSolutionParameter or
+         ~azure.mgmt.workloadorchestration.types.BulkPublishSolutionParameter or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8695,8 +10843,276 @@ class SolutionTemplateVersionsOperations:
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={
+            "2025-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "solution_template_name",
+                "solution_template_version_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    async def _bulk_review_solution_initial(
+        self,
+        resource_group_name: str,
+        solution_template_name: str,
+        solution_template_version_name: str,
+        body: Union[_models.BulkReviewSolutionParameter, _types.BulkReviewSolutionParameter, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-class SolutionTemplatesOperations:
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_solution_template_versions_bulk_review_solution_request(
+            resource_group_name=resource_group_name,
+            solution_template_name=solution_template_name,
+            solution_template_version_name=solution_template_version_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_bulk_review_solution(
+        self,
+        resource_group_name: str,
+        solution_template_name: str,
+        solution_template_version_name: str,
+        body: _models.BulkReviewSolutionParameter,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Post request for bulk review.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_template_name: The name of the SolutionTemplate. Required.
+        :type solution_template_name: str
+        :param solution_template_version_name: The name of the SolutionTemplateVersion. Required.
+        :type solution_template_version_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.BulkReviewSolutionParameter
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_bulk_review_solution(
+        self,
+        resource_group_name: str,
+        solution_template_name: str,
+        solution_template_version_name: str,
+        body: _types.BulkReviewSolutionParameter,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Post request for bulk review.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_template_name: The name of the SolutionTemplate. Required.
+        :type solution_template_name: str
+        :param solution_template_version_name: The name of the SolutionTemplateVersion. Required.
+        :type solution_template_version_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.workloadorchestration.types.BulkReviewSolutionParameter
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_bulk_review_solution(
+        self,
+        resource_group_name: str,
+        solution_template_name: str,
+        solution_template_version_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Post request for bulk review.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_template_name: The name of the SolutionTemplate. Required.
+        :type solution_template_name: str
+        :param solution_template_version_name: The name of the SolutionTemplateVersion. Required.
+        :type solution_template_version_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={
+            "2025-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "solution_template_name",
+                "solution_template_version_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    async def begin_bulk_review_solution(
+        self,
+        resource_group_name: str,
+        solution_template_name: str,
+        solution_template_version_name: str,
+        body: Union[_models.BulkReviewSolutionParameter, _types.BulkReviewSolutionParameter, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Post request for bulk review.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_template_name: The name of the SolutionTemplate. Required.
+        :type solution_template_name: str
+        :param solution_template_version_name: The name of the SolutionTemplateVersion. Required.
+        :type solution_template_version_name: str
+        :param body: The content of the action request. Is either a BulkReviewSolutionParameter type or
+         a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.BulkReviewSolutionParameter or
+         ~azure.mgmt.workloadorchestration.types.BulkReviewSolutionParameter or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._bulk_review_solution_initial(
+                resource_group_name=resource_group_name,
+                solution_template_name=solution_template_name,
+                solution_template_version_name=solution_template_version_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class SolutionTemplatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8756,6 +11172,7 @@ class SolutionTemplatesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8770,11 +11187,14 @@ class SolutionTemplatesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SolutionTemplate, response.json())
 
@@ -8787,7 +11207,7 @@ class SolutionTemplatesOperations:
         self,
         resource_group_name: str,
         solution_template_name: str,
-        resource: Union[_models.SolutionTemplate, JSON, IO[bytes]],
+        resource: Union[_models.SolutionTemplate, _types.SolutionTemplate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8826,6 +11246,7 @@ class SolutionTemplatesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8839,7 +11260,10 @@ class SolutionTemplatesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -8849,7 +11273,7 @@ class SolutionTemplatesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8890,7 +11314,7 @@ class SolutionTemplatesOperations:
         self,
         resource_group_name: str,
         solution_template_name: str,
-        resource: JSON,
+        resource: _types.SolutionTemplate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8903,7 +11327,7 @@ class SolutionTemplatesOperations:
         :param solution_template_name: The name of the SolutionTemplate. Required.
         :type solution_template_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.workloadorchestration.types.SolutionTemplate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8948,7 +11372,7 @@ class SolutionTemplatesOperations:
         self,
         resource_group_name: str,
         solution_template_name: str,
-        resource: Union[_models.SolutionTemplate, JSON, IO[bytes]],
+        resource: Union[_models.SolutionTemplate, _types.SolutionTemplate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SolutionTemplate]:
         """Create or update a Solution Template Resource.
@@ -8958,9 +11382,10 @@ class SolutionTemplatesOperations:
         :type resource_group_name: str
         :param solution_template_name: The name of the SolutionTemplate. Required.
         :type solution_template_name: str
-        :param resource: Resource create parameters. Is one of the following types: SolutionTemplate,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.workloadorchestration.models.SolutionTemplate or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a SolutionTemplate type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.SolutionTemplate or
+         ~azure.mgmt.workloadorchestration.types.SolutionTemplate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SolutionTemplate. The SolutionTemplate is
          compatible with MutableMapping
         :rtype:
@@ -9024,7 +11449,7 @@ class SolutionTemplatesOperations:
         self,
         resource_group_name: str,
         solution_template_name: str,
-        properties: _models.SolutionTemplate,
+        properties: _models.SolutionTemplateUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9037,7 +11462,7 @@ class SolutionTemplatesOperations:
         :param solution_template_name: The name of the SolutionTemplate. Required.
         :type solution_template_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.SolutionTemplate
+        :type properties: ~azure.mgmt.workloadorchestration.models.SolutionTemplateUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9051,7 +11476,7 @@ class SolutionTemplatesOperations:
         self,
         resource_group_name: str,
         solution_template_name: str,
-        properties: JSON,
+        properties: _types.SolutionTemplateUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9064,7 +11489,7 @@ class SolutionTemplatesOperations:
         :param solution_template_name: The name of the SolutionTemplate. Required.
         :type solution_template_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.workloadorchestration.types.SolutionTemplateUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9105,7 +11530,7 @@ class SolutionTemplatesOperations:
         self,
         resource_group_name: str,
         solution_template_name: str,
-        properties: Union[_models.SolutionTemplate, JSON, IO[bytes]],
+        properties: Union[_models.SolutionTemplateUpdate, _types.SolutionTemplateUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.SolutionTemplate:
         """update a Solution Template Resource.
@@ -9115,10 +11540,10 @@ class SolutionTemplatesOperations:
         :type resource_group_name: str
         :param solution_template_name: The name of the SolutionTemplate. Required.
         :type solution_template_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         SolutionTemplate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.SolutionTemplate or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a SolutionTemplateUpdate
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.SolutionTemplateUpdate or
+         ~azure.mgmt.workloadorchestration.types.SolutionTemplateUpdate or IO[bytes]
         :return: SolutionTemplate. The SolutionTemplate is compatible with MutableMapping
         :rtype: ~azure.mgmt.workloadorchestration.models.SolutionTemplate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9159,6 +11584,7 @@ class SolutionTemplatesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9173,11 +11599,14 @@ class SolutionTemplatesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SolutionTemplate, response.json())
 
@@ -9190,7 +11619,9 @@ class SolutionTemplatesOperations:
         self,
         resource_group_name: str,
         solution_template_name: str,
-        body: Union[_models.SolutionTemplateVersionWithUpdateType, JSON, IO[bytes]],
+        body: Union[
+            _models.SolutionTemplateVersionWithUpdateType, _types.SolutionTemplateVersionWithUpdateType, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -9229,6 +11660,7 @@ class SolutionTemplatesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9242,7 +11674,10 @@ class SolutionTemplatesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -9250,7 +11685,7 @@ class SolutionTemplatesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -9291,7 +11726,7 @@ class SolutionTemplatesOperations:
         self,
         resource_group_name: str,
         solution_template_name: str,
-        body: JSON,
+        body: _types.SolutionTemplateVersionWithUpdateType,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9304,7 +11739,7 @@ class SolutionTemplatesOperations:
         :param solution_template_name: The name of the SolutionTemplate. Required.
         :type solution_template_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.workloadorchestration.types.SolutionTemplateVersionWithUpdateType
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9349,7 +11784,9 @@ class SolutionTemplatesOperations:
         self,
         resource_group_name: str,
         solution_template_name: str,
-        body: Union[_models.SolutionTemplateVersionWithUpdateType, JSON, IO[bytes]],
+        body: Union[
+            _models.SolutionTemplateVersionWithUpdateType, _types.SolutionTemplateVersionWithUpdateType, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SolutionTemplateVersion]:
         """Create a Solution Template Version Resource.
@@ -9359,10 +11796,10 @@ class SolutionTemplatesOperations:
         :type resource_group_name: str
         :param solution_template_name: The name of the SolutionTemplate. Required.
         :type solution_template_name: str
-        :param body: The content of the action request. Is one of the following types:
-         SolutionTemplateVersionWithUpdateType, JSON, IO[bytes] Required.
+        :param body: The content of the action request. Is either a
+         SolutionTemplateVersionWithUpdateType type or a IO[bytes] type. Required.
         :type body: ~azure.mgmt.workloadorchestration.models.SolutionTemplateVersionWithUpdateType or
-         JSON or IO[bytes]
+         ~azure.mgmt.workloadorchestration.types.SolutionTemplateVersionWithUpdateType or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SolutionTemplateVersion. The
          SolutionTemplateVersion is compatible with MutableMapping
         :rtype:
@@ -9392,14 +11829,10 @@ class SolutionTemplatesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.SolutionTemplateVersion, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -9429,7 +11862,7 @@ class SolutionTemplatesOperations:
         self,
         resource_group_name: str,
         solution_template_name: str,
-        body: Union[_models.VersionParameter, JSON, IO[bytes]],
+        body: Union[_models.VersionParameter, _types.VersionParameter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -9468,6 +11901,7 @@ class SolutionTemplatesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9481,14 +11915,17 @@ class SolutionTemplatesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -9527,7 +11964,7 @@ class SolutionTemplatesOperations:
         self,
         resource_group_name: str,
         solution_template_name: str,
-        body: JSON,
+        body: _types.VersionParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9540,7 +11977,7 @@ class SolutionTemplatesOperations:
         :param solution_template_name: The name of the SolutionTemplate. Required.
         :type solution_template_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.workloadorchestration.types.VersionParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9581,7 +12018,7 @@ class SolutionTemplatesOperations:
         self,
         resource_group_name: str,
         solution_template_name: str,
-        body: Union[_models.VersionParameter, JSON, IO[bytes]],
+        body: Union[_models.VersionParameter, _types.VersionParameter, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Remove Solution Template Version Resource.
@@ -9591,9 +12028,10 @@ class SolutionTemplatesOperations:
         :type resource_group_name: str
         :param solution_template_name: The name of the SolutionTemplate. Required.
         :type solution_template_name: str
-        :param body: The content of the action request. Is one of the following types:
-         VersionParameter, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.workloadorchestration.models.VersionParameter or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a VersionParameter type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.VersionParameter or
+         ~azure.mgmt.workloadorchestration.types.VersionParameter or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9674,6 +12112,7 @@ class SolutionTemplatesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9687,7 +12126,10 @@ class SolutionTemplatesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -9695,7 +12137,7 @@ class SolutionTemplatesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -9778,7 +12220,7 @@ class SolutionTemplatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.SolutionTemplate]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.SolutionTemplate]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -9816,7 +12258,10 @@ class SolutionTemplatesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9829,7 +12274,10 @@ class SolutionTemplatesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SolutionTemplate], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.SolutionTemplate],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -9845,7 +12293,10 @@ class SolutionTemplatesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -9864,7 +12315,7 @@ class SolutionTemplatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.SolutionTemplate]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.SolutionTemplate]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -9901,7 +12352,10 @@ class SolutionTemplatesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9914,7 +12368,10 @@ class SolutionTemplatesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SolutionTemplate], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.SolutionTemplate],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -9930,7 +12387,10 @@ class SolutionTemplatesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -9938,7 +12398,7 @@ class SolutionTemplatesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class InstancesOperations:
+class InstancesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10004,6 +12464,7 @@ class InstancesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10018,11 +12479,14 @@ class InstancesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Instance, response.json())
 
@@ -10037,7 +12501,7 @@ class InstancesOperations:
         target_name: str,
         solution_name: str,
         instance_name: str,
-        resource: Union[_models.Instance, JSON, IO[bytes]],
+        resource: Union[_models.Instance, _types.Instance, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -10078,6 +12542,7 @@ class InstancesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10091,7 +12556,10 @@ class InstancesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -10101,7 +12569,7 @@ class InstancesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10149,7 +12617,7 @@ class InstancesOperations:
         target_name: str,
         solution_name: str,
         instance_name: str,
-        resource: JSON,
+        resource: _types.Instance,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10166,7 +12634,7 @@ class InstancesOperations:
         :param instance_name: Name of the instance. Required.
         :type instance_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.workloadorchestration.types.Instance
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10217,7 +12685,7 @@ class InstancesOperations:
         target_name: str,
         solution_name: str,
         instance_name: str,
-        resource: Union[_models.Instance, JSON, IO[bytes]],
+        resource: Union[_models.Instance, _types.Instance, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Instance]:
         """Create or update Instance Resource.
@@ -10231,9 +12699,10 @@ class InstancesOperations:
         :type solution_name: str
         :param instance_name: Name of the instance. Required.
         :type instance_name: str
-        :param resource: Resource create parameters. Is one of the following types: Instance, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.workloadorchestration.models.Instance or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Instance type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.Instance or
+         ~azure.mgmt.workloadorchestration.types.Instance or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Instance. The Instance is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.Instance]
@@ -10299,7 +12768,7 @@ class InstancesOperations:
         target_name: str,
         solution_name: str,
         instance_name: str,
-        properties: Union[_models.Instance, JSON, IO[bytes]],
+        properties: Union[_models.Instance, _types.Instance, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -10340,6 +12809,7 @@ class InstancesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10353,7 +12823,10 @@ class InstancesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -10361,7 +12834,7 @@ class InstancesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10409,7 +12882,7 @@ class InstancesOperations:
         target_name: str,
         solution_name: str,
         instance_name: str,
-        properties: JSON,
+        properties: _types.Instance,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10426,7 +12899,7 @@ class InstancesOperations:
         :param instance_name: Name of the instance. Required.
         :type instance_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.workloadorchestration.types.Instance
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10477,7 +12950,7 @@ class InstancesOperations:
         target_name: str,
         solution_name: str,
         instance_name: str,
-        properties: Union[_models.Instance, JSON, IO[bytes]],
+        properties: Union[_models.Instance, _types.Instance, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Instance]:
         """Update an Instance Resource.
@@ -10491,9 +12964,10 @@ class InstancesOperations:
         :type solution_name: str
         :param instance_name: Name of the instance. Required.
         :type instance_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         Instance, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.Instance or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a Instance type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.Instance or
+         ~azure.mgmt.workloadorchestration.types.Instance or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Instance. The Instance is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.Instance]
@@ -10584,6 +13058,7 @@ class InstancesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10597,7 +13072,10 @@ class InstancesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -10605,7 +13083,7 @@ class InstancesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10698,7 +13176,7 @@ class InstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Instance]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Instance]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -10738,7 +13216,10 @@ class InstancesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10751,7 +13232,10 @@ class InstancesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Instance], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.Instance],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -10767,7 +13251,10 @@ class InstancesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -10775,7 +13262,7 @@ class InstancesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class InstanceHistoriesOperations:
+class InstanceHistoriesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10850,6 +13337,7 @@ class InstanceHistoriesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10864,11 +13352,14 @@ class InstanceHistoriesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.InstanceHistory, response.json())
 
@@ -10900,7 +13391,7 @@ class InstanceHistoriesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.InstanceHistory]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.InstanceHistory]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -10941,7 +13432,10 @@ class InstanceHistoriesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10954,7 +13448,10 @@ class InstanceHistoriesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.InstanceHistory], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.InstanceHistory],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -10970,7 +13467,10 @@ class InstanceHistoriesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -10978,7 +13478,7 @@ class InstanceHistoriesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ConfigTemplatesOperations:
+class ConfigTemplatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11036,6 +13536,7 @@ class ConfigTemplatesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11050,11 +13551,14 @@ class ConfigTemplatesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ConfigTemplate, response.json())
 
@@ -11067,7 +13571,7 @@ class ConfigTemplatesOperations:
         self,
         resource_group_name: str,
         config_template_name: str,
-        resource: Union[_models.ConfigTemplate, JSON, IO[bytes]],
+        resource: Union[_models.ConfigTemplate, _types.ConfigTemplate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -11106,6 +13610,7 @@ class ConfigTemplatesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11119,7 +13624,10 @@ class ConfigTemplatesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -11129,7 +13637,7 @@ class ConfigTemplatesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -11170,7 +13678,7 @@ class ConfigTemplatesOperations:
         self,
         resource_group_name: str,
         config_template_name: str,
-        resource: JSON,
+        resource: _types.ConfigTemplate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11183,7 +13691,7 @@ class ConfigTemplatesOperations:
         :param config_template_name: The name of the ConfigTemplate. Required.
         :type config_template_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.workloadorchestration.types.ConfigTemplate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11228,7 +13736,7 @@ class ConfigTemplatesOperations:
         self,
         resource_group_name: str,
         config_template_name: str,
-        resource: Union[_models.ConfigTemplate, JSON, IO[bytes]],
+        resource: Union[_models.ConfigTemplate, _types.ConfigTemplate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ConfigTemplate]:
         """Create or update a Config Template Resource.
@@ -11238,9 +13746,10 @@ class ConfigTemplatesOperations:
         :type resource_group_name: str
         :param config_template_name: The name of the ConfigTemplate. Required.
         :type config_template_name: str
-        :param resource: Resource create parameters. Is one of the following types: ConfigTemplate,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.workloadorchestration.models.ConfigTemplate or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a ConfigTemplate type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.ConfigTemplate or
+         ~azure.mgmt.workloadorchestration.types.ConfigTemplate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ConfigTemplate. The ConfigTemplate is
          compatible with MutableMapping
         :rtype:
@@ -11304,7 +13813,7 @@ class ConfigTemplatesOperations:
         self,
         resource_group_name: str,
         config_template_name: str,
-        properties: _models.ConfigTemplate,
+        properties: _models.ConfigTemplateUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11317,7 +13826,7 @@ class ConfigTemplatesOperations:
         :param config_template_name: The name of the ConfigTemplate. Required.
         :type config_template_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.ConfigTemplate
+        :type properties: ~azure.mgmt.workloadorchestration.models.ConfigTemplateUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11331,7 +13840,7 @@ class ConfigTemplatesOperations:
         self,
         resource_group_name: str,
         config_template_name: str,
-        properties: JSON,
+        properties: _types.ConfigTemplateUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11344,7 +13853,7 @@ class ConfigTemplatesOperations:
         :param config_template_name: The name of the ConfigTemplate. Required.
         :type config_template_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.workloadorchestration.types.ConfigTemplateUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11385,7 +13894,7 @@ class ConfigTemplatesOperations:
         self,
         resource_group_name: str,
         config_template_name: str,
-        properties: Union[_models.ConfigTemplate, JSON, IO[bytes]],
+        properties: Union[_models.ConfigTemplateUpdate, _types.ConfigTemplateUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.ConfigTemplate:
         """update a Config Template Resource.
@@ -11395,9 +13904,10 @@ class ConfigTemplatesOperations:
         :type resource_group_name: str
         :param config_template_name: The name of the ConfigTemplate. Required.
         :type config_template_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         ConfigTemplate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.ConfigTemplate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a ConfigTemplateUpdate type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.ConfigTemplateUpdate or
+         ~azure.mgmt.workloadorchestration.types.ConfigTemplateUpdate or IO[bytes]
         :return: ConfigTemplate. The ConfigTemplate is compatible with MutableMapping
         :rtype: ~azure.mgmt.workloadorchestration.models.ConfigTemplate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11438,6 +13948,7 @@ class ConfigTemplatesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11452,11 +13963,14 @@ class ConfigTemplatesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ConfigTemplate, response.json())
 
@@ -11465,11 +13979,513 @@ class ConfigTemplatesOperations:
 
         return deserialized  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={
+            "2025-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "config_template_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    async def _link_to_hierarchies_initial(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        body: Union[_models.HierarchySelector, _types.HierarchySelector, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_config_templates_link_to_hierarchies_request(
+            resource_group_name=resource_group_name,
+            config_template_name=config_template_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_link_to_hierarchies(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        body: _models.HierarchySelector,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Apply a Config Template to a particular hierarchy node.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.HierarchySelector
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_link_to_hierarchies(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        body: _types.HierarchySelector,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Apply a Config Template to a particular hierarchy node.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.workloadorchestration.types.HierarchySelector
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_link_to_hierarchies(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Apply a Config Template to a particular hierarchy node.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={
+            "2025-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "config_template_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    async def begin_link_to_hierarchies(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        body: Union[_models.HierarchySelector, _types.HierarchySelector, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Apply a Config Template to a particular hierarchy node.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param body: The content of the action request. Is either a HierarchySelector type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.HierarchySelector or
+         ~azure.mgmt.workloadorchestration.types.HierarchySelector or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._link_to_hierarchies_initial(
+                resource_group_name=resource_group_name,
+                config_template_name=config_template_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={
+            "2025-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "config_template_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    async def _un_link_from_hierarchies_initial(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        body: Union[_models.HierarchySelector, _types.HierarchySelector, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_config_templates_un_link_from_hierarchies_request(
+            resource_group_name=resource_group_name,
+            config_template_name=config_template_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_un_link_from_hierarchies(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        body: _models.HierarchySelector,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Remove a Config Template from a particular hierarchy node.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.HierarchySelector
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_un_link_from_hierarchies(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        body: _types.HierarchySelector,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Remove a Config Template from a particular hierarchy node.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.workloadorchestration.types.HierarchySelector
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_un_link_from_hierarchies(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Remove a Config Template from a particular hierarchy node.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={
+            "2025-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "config_template_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    async def begin_un_link_from_hierarchies(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        body: Union[_models.HierarchySelector, _types.HierarchySelector, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Remove a Config Template from a particular hierarchy node.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param body: The content of the action request. Is either a HierarchySelector type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.HierarchySelector or
+         ~azure.mgmt.workloadorchestration.types.HierarchySelector or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._un_link_from_hierarchies_initial(
+                resource_group_name=resource_group_name,
+                config_template_name=config_template_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
     async def _create_version_initial(
         self,
         resource_group_name: str,
         config_template_name: str,
-        body: Union[_models.ConfigTemplateVersionWithUpdateType, JSON, IO[bytes]],
+        body: Union[_models.ConfigTemplateVersionWithUpdateType, _types.ConfigTemplateVersionWithUpdateType, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -11508,6 +14524,7 @@ class ConfigTemplatesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11521,7 +14538,10 @@ class ConfigTemplatesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -11529,7 +14549,7 @@ class ConfigTemplatesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -11570,7 +14590,7 @@ class ConfigTemplatesOperations:
         self,
         resource_group_name: str,
         config_template_name: str,
-        body: JSON,
+        body: _types.ConfigTemplateVersionWithUpdateType,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11583,7 +14603,7 @@ class ConfigTemplatesOperations:
         :param config_template_name: The name of the ConfigTemplate. Required.
         :type config_template_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.workloadorchestration.types.ConfigTemplateVersionWithUpdateType
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11628,7 +14648,7 @@ class ConfigTemplatesOperations:
         self,
         resource_group_name: str,
         config_template_name: str,
-        body: Union[_models.ConfigTemplateVersionWithUpdateType, JSON, IO[bytes]],
+        body: Union[_models.ConfigTemplateVersionWithUpdateType, _types.ConfigTemplateVersionWithUpdateType, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ConfigTemplateVersion]:
         """Create or update a Config Template Version Resource with the specified UpdateType.
@@ -11638,10 +14658,10 @@ class ConfigTemplatesOperations:
         :type resource_group_name: str
         :param config_template_name: The name of the ConfigTemplate. Required.
         :type config_template_name: str
-        :param body: The content of the action request. Is one of the following types:
-         ConfigTemplateVersionWithUpdateType, JSON, IO[bytes] Required.
+        :param body: The content of the action request. Is either a ConfigTemplateVersionWithUpdateType
+         type or a IO[bytes] type. Required.
         :type body: ~azure.mgmt.workloadorchestration.models.ConfigTemplateVersionWithUpdateType or
-         JSON or IO[bytes]
+         ~azure.mgmt.workloadorchestration.types.ConfigTemplateVersionWithUpdateType or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ConfigTemplateVersion. The
          ConfigTemplateVersion is compatible with MutableMapping
         :rtype:
@@ -11671,14 +14691,10 @@ class ConfigTemplatesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ConfigTemplateVersion, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -11736,7 +14752,7 @@ class ConfigTemplatesOperations:
         self,
         resource_group_name: str,
         config_template_name: str,
-        body: JSON,
+        body: _types.VersionParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11749,7 +14765,7 @@ class ConfigTemplatesOperations:
         :param config_template_name: The name of the ConfigTemplate. Required.
         :type config_template_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.workloadorchestration.types.VersionParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11790,7 +14806,7 @@ class ConfigTemplatesOperations:
         self,
         resource_group_name: str,
         config_template_name: str,
-        body: Union[_models.VersionParameter, JSON, IO[bytes]],
+        body: Union[_models.VersionParameter, _types.VersionParameter, IO[bytes]],
         **kwargs: Any
     ) -> _models.RemoveVersionResponse:
         """Remove Config Template Version Resource.
@@ -11800,9 +14816,10 @@ class ConfigTemplatesOperations:
         :type resource_group_name: str
         :param config_template_name: The name of the ConfigTemplate. Required.
         :type config_template_name: str
-        :param body: The content of the action request. Is one of the following types:
-         VersionParameter, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.workloadorchestration.models.VersionParameter or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a VersionParameter type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.workloadorchestration.models.VersionParameter or
+         ~azure.mgmt.workloadorchestration.types.VersionParameter or IO[bytes]
         :return: RemoveVersionResponse. The RemoveVersionResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.workloadorchestration.models.RemoveVersionResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11843,6 +14860,7 @@ class ConfigTemplatesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11857,11 +14875,14 @@ class ConfigTemplatesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RemoveVersionResponse, response.json())
 
@@ -11899,6 +14920,7 @@ class ConfigTemplatesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -11912,7 +14934,10 @@ class ConfigTemplatesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -11920,7 +14945,7 @@ class ConfigTemplatesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12003,7 +15028,7 @@ class ConfigTemplatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.ConfigTemplate]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.ConfigTemplate]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -12041,7 +15066,10 @@ class ConfigTemplatesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -12054,7 +15082,10 @@ class ConfigTemplatesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ConfigTemplate], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.ConfigTemplate],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -12070,7 +15101,10 @@ class ConfigTemplatesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -12089,7 +15123,7 @@ class ConfigTemplatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.ConfigTemplate]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.ConfigTemplate]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -12126,7 +15160,10 @@ class ConfigTemplatesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -12139,7 +15176,10 @@ class ConfigTemplatesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ConfigTemplate], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.ConfigTemplate],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -12155,7 +15195,10 @@ class ConfigTemplatesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -12163,7 +15206,7 @@ class ConfigTemplatesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ConfigTemplateVersionsOperations:
+class ConfigTemplateVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12226,6 +15269,7 @@ class ConfigTemplateVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12240,11 +15284,14 @@ class ConfigTemplateVersionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ConfigTemplateVersion, response.json())
 
@@ -12252,6 +15299,641 @@ class ConfigTemplateVersionsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "config_template_name",
+                "config_template_version_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01", "2026-05-01-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_version_name: str,
+        resource: Union[_models.ConfigTemplateVersion, _types.ConfigTemplateVersion, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_config_template_versions_create_or_update_request(
+            resource_group_name=resource_group_name,
+            config_template_name=config_template_name,
+            config_template_version_name=config_template_version_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_version_name: str,
+        resource: _models.ConfigTemplateVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ConfigTemplateVersion]:
+        """Create or update a Config Template Version Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_version_name: The name of the ConfigTemplateVersion. Required.
+        :type config_template_version_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.ConfigTemplateVersion
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ConfigTemplateVersion. The
+         ConfigTemplateVersion is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.ConfigTemplateVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_version_name: str,
+        resource: _types.ConfigTemplateVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ConfigTemplateVersion]:
+        """Create or update a Config Template Version Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_version_name: The name of the ConfigTemplateVersion. Required.
+        :type config_template_version_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.types.ConfigTemplateVersion
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ConfigTemplateVersion. The
+         ConfigTemplateVersion is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.ConfigTemplateVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_version_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ConfigTemplateVersion]:
+        """Create or update a Config Template Version Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_version_name: The name of the ConfigTemplateVersion. Required.
+        :type config_template_version_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ConfigTemplateVersion. The
+         ConfigTemplateVersion is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.ConfigTemplateVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "config_template_name",
+                "config_template_version_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01", "2026-05-01-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_version_name: str,
+        resource: Union[_models.ConfigTemplateVersion, _types.ConfigTemplateVersion, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ConfigTemplateVersion]:
+        """Create or update a Config Template Version Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_version_name: The name of the ConfigTemplateVersion. Required.
+        :type config_template_version_name: str
+        :param resource: Resource create parameters. Is either a ConfigTemplateVersion type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.ConfigTemplateVersion or
+         ~azure.mgmt.workloadorchestration.types.ConfigTemplateVersion or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ConfigTemplateVersion. The
+         ConfigTemplateVersion is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.ConfigTemplateVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ConfigTemplateVersion] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                config_template_name=config_template_name,
+                config_template_version_name=config_template_version_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ConfigTemplateVersion, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ConfigTemplateVersion].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ConfigTemplateVersion](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_version_name: str,
+        properties: _models.ConfigTemplateVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ConfigTemplateVersion:
+        """Update a Config Template Version Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_version_name: The name of the ConfigTemplateVersion. Required.
+        :type config_template_version_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.ConfigTemplateVersion
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ConfigTemplateVersion. The ConfigTemplateVersion is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.ConfigTemplateVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_version_name: str,
+        properties: _types.ConfigTemplateVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ConfigTemplateVersion:
+        """Update a Config Template Version Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_version_name: The name of the ConfigTemplateVersion. Required.
+        :type config_template_version_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.types.ConfigTemplateVersion
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ConfigTemplateVersion. The ConfigTemplateVersion is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.ConfigTemplateVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_version_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ConfigTemplateVersion:
+        """Update a Config Template Version Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_version_name: The name of the ConfigTemplateVersion. Required.
+        :type config_template_version_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ConfigTemplateVersion. The ConfigTemplateVersion is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.ConfigTemplateVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "config_template_name",
+                "config_template_version_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01", "2026-05-01-preview"],
+    )
+    async def update(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_version_name: str,
+        properties: Union[_models.ConfigTemplateVersion, _types.ConfigTemplateVersion, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.ConfigTemplateVersion:
+        """Update a Config Template Version Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_version_name: The name of the ConfigTemplateVersion. Required.
+        :type config_template_version_name: str
+        :param properties: The resource properties to be updated. Is either a ConfigTemplateVersion
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.ConfigTemplateVersion or
+         ~azure.mgmt.workloadorchestration.types.ConfigTemplateVersion or IO[bytes]
+        :return: ConfigTemplateVersion. The ConfigTemplateVersion is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.ConfigTemplateVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ConfigTemplateVersion] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_config_template_versions_update_request(
+            resource_group_name=resource_group_name,
+            config_template_name=config_template_name,
+            config_template_version_name=config_template_version_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ConfigTemplateVersion, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "config_template_name",
+                "config_template_version_name",
+            ]
+        },
+        api_versions_list=["2026-03-01", "2026-05-01-preview"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, config_template_name: str, config_template_version_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_config_template_versions_delete_request(
+            resource_group_name=resource_group_name,
+            config_template_name=config_template_name,
+            config_template_version_name=config_template_version_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "config_template_name",
+                "config_template_version_name",
+            ]
+        },
+        api_versions_list=["2026-03-01", "2026-05-01-preview"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, config_template_name: str, config_template_version_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a Config Template Version Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_version_name: The name of the ConfigTemplateVersion. Required.
+        :type config_template_version_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                config_template_name=config_template_name,
+                config_template_version_name=config_template_version_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list_by_config_template(
@@ -12272,7 +15954,7 @@ class ConfigTemplateVersionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.ConfigTemplateVersion]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.ConfigTemplateVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -12311,7 +15993,10 @@ class ConfigTemplateVersionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -12324,7 +16009,10 @@ class ConfigTemplateVersionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ConfigTemplateVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.ConfigTemplateVersion],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -12340,7 +16028,10 @@ class ConfigTemplateVersionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -12348,7 +16039,7 @@ class ConfigTemplateVersionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class WorkflowsOperations:
+class WorkflowsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12411,6 +16102,7 @@ class WorkflowsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12425,11 +16117,14 @@ class WorkflowsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Workflow, response.json())
 
@@ -12443,7 +16138,7 @@ class WorkflowsOperations:
         resource_group_name: str,
         context_name: str,
         workflow_name: str,
-        resource: Union[_models.Workflow, JSON, IO[bytes]],
+        resource: Union[_models.Workflow, _types.Workflow, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12483,6 +16178,7 @@ class WorkflowsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12496,7 +16192,10 @@ class WorkflowsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -12506,7 +16205,7 @@ class WorkflowsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12550,7 +16249,7 @@ class WorkflowsOperations:
         resource_group_name: str,
         context_name: str,
         workflow_name: str,
-        resource: JSON,
+        resource: _types.Workflow,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12565,7 +16264,7 @@ class WorkflowsOperations:
         :param workflow_name: Name of the workflow. Required.
         :type workflow_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.workloadorchestration.types.Workflow
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12612,7 +16311,7 @@ class WorkflowsOperations:
         resource_group_name: str,
         context_name: str,
         workflow_name: str,
-        resource: Union[_models.Workflow, JSON, IO[bytes]],
+        resource: Union[_models.Workflow, _types.Workflow, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Workflow]:
         """Create or update a Workflow resource.
@@ -12624,9 +16323,10 @@ class WorkflowsOperations:
         :type context_name: str
         :param workflow_name: Name of the workflow. Required.
         :type workflow_name: str
-        :param resource: Resource create parameters. Is one of the following types: Workflow, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.workloadorchestration.models.Workflow or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Workflow type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.Workflow or
+         ~azure.mgmt.workloadorchestration.types.Workflow or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Workflow. The Workflow is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.Workflow]
@@ -12690,7 +16390,7 @@ class WorkflowsOperations:
         resource_group_name: str,
         context_name: str,
         workflow_name: str,
-        properties: Union[_models.Workflow, JSON, IO[bytes]],
+        properties: Union[_models.Workflow, _types.Workflow, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12730,6 +16430,7 @@ class WorkflowsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12743,7 +16444,10 @@ class WorkflowsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -12751,7 +16455,7 @@ class WorkflowsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12795,7 +16499,7 @@ class WorkflowsOperations:
         resource_group_name: str,
         context_name: str,
         workflow_name: str,
-        properties: JSON,
+        properties: _types.Workflow,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12810,7 +16514,7 @@ class WorkflowsOperations:
         :param workflow_name: Name of the workflow. Required.
         :type workflow_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.workloadorchestration.types.Workflow
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12857,7 +16561,7 @@ class WorkflowsOperations:
         resource_group_name: str,
         context_name: str,
         workflow_name: str,
-        properties: Union[_models.Workflow, JSON, IO[bytes]],
+        properties: Union[_models.Workflow, _types.Workflow, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Workflow]:
         """update a Workflow resource.
@@ -12869,9 +16573,10 @@ class WorkflowsOperations:
         :type context_name: str
         :param workflow_name: Name of the workflow. Required.
         :type workflow_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         Workflow, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.Workflow or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a Workflow type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.Workflow or
+         ~azure.mgmt.workloadorchestration.types.Workflow or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Workflow. The Workflow is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.Workflow]
@@ -12960,6 +16665,7 @@ class WorkflowsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -12973,7 +16679,10 @@ class WorkflowsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -12981,7 +16690,7 @@ class WorkflowsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -13069,7 +16778,7 @@ class WorkflowsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Workflow]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Workflow]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -13108,7 +16817,10 @@ class WorkflowsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -13121,7 +16833,10 @@ class WorkflowsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Workflow], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.Workflow],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -13137,7 +16852,10 @@ class WorkflowsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -13145,7 +16863,7 @@ class WorkflowsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class WorkflowVersionsOperations:
+class WorkflowVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13211,6 +16929,7 @@ class WorkflowVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13225,11 +16944,14 @@ class WorkflowVersionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.WorkflowVersion, response.json())
 
@@ -13244,7 +16966,7 @@ class WorkflowVersionsOperations:
         context_name: str,
         workflow_name: str,
         version_name: str,
-        resource: Union[_models.WorkflowVersion, JSON, IO[bytes]],
+        resource: Union[_models.WorkflowVersion, _types.WorkflowVersion, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -13285,6 +17007,7 @@ class WorkflowVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13298,7 +17021,10 @@ class WorkflowVersionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -13308,7 +17034,7 @@ class WorkflowVersionsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -13357,7 +17083,7 @@ class WorkflowVersionsOperations:
         context_name: str,
         workflow_name: str,
         version_name: str,
-        resource: JSON,
+        resource: _types.WorkflowVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13374,7 +17100,7 @@ class WorkflowVersionsOperations:
         :param version_name: The name of the workflowVersion. Required.
         :type version_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.workloadorchestration.types.WorkflowVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13427,7 +17153,7 @@ class WorkflowVersionsOperations:
         context_name: str,
         workflow_name: str,
         version_name: str,
-        resource: Union[_models.WorkflowVersion, JSON, IO[bytes]],
+        resource: Union[_models.WorkflowVersion, _types.WorkflowVersion, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkflowVersion]:
         """Create or update a Workflow Version Resource.
@@ -13441,9 +17167,10 @@ class WorkflowVersionsOperations:
         :type workflow_name: str
         :param version_name: The name of the workflowVersion. Required.
         :type version_name: str
-        :param resource: Resource create parameters. Is one of the following types: WorkflowVersion,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.workloadorchestration.models.WorkflowVersion or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a WorkflowVersion type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.WorkflowVersion or
+         ~azure.mgmt.workloadorchestration.types.WorkflowVersion or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkflowVersion. The WorkflowVersion is
          compatible with MutableMapping
         :rtype:
@@ -13510,7 +17237,7 @@ class WorkflowVersionsOperations:
         context_name: str,
         workflow_name: str,
         version_name: str,
-        properties: Union[_models.WorkflowVersion, JSON, IO[bytes]],
+        properties: Union[_models.WorkflowVersion, _types.WorkflowVersion, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -13551,6 +17278,7 @@ class WorkflowVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13564,7 +17292,10 @@ class WorkflowVersionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -13572,7 +17303,7 @@ class WorkflowVersionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -13621,7 +17352,7 @@ class WorkflowVersionsOperations:
         context_name: str,
         workflow_name: str,
         version_name: str,
-        properties: JSON,
+        properties: _types.WorkflowVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13638,7 +17369,7 @@ class WorkflowVersionsOperations:
         :param version_name: The name of the workflowVersion. Required.
         :type version_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.workloadorchestration.types.WorkflowVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13691,7 +17422,7 @@ class WorkflowVersionsOperations:
         context_name: str,
         workflow_name: str,
         version_name: str,
-        properties: Union[_models.WorkflowVersion, JSON, IO[bytes]],
+        properties: Union[_models.WorkflowVersion, _types.WorkflowVersion, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkflowVersion]:
         """update an WorkflowVersion Resource.
@@ -13705,9 +17436,10 @@ class WorkflowVersionsOperations:
         :type workflow_name: str
         :param version_name: The name of the workflowVersion. Required.
         :type version_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         WorkflowVersion, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.WorkflowVersion or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a WorkflowVersion type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.WorkflowVersion or
+         ~azure.mgmt.workloadorchestration.types.WorkflowVersion or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkflowVersion. The WorkflowVersion is
          compatible with MutableMapping
         :rtype:
@@ -13799,6 +17531,7 @@ class WorkflowVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13812,7 +17545,10 @@ class WorkflowVersionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -13820,7 +17556,7 @@ class WorkflowVersionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -13913,7 +17649,7 @@ class WorkflowVersionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.WorkflowVersion]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.WorkflowVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -13953,7 +17689,10 @@ class WorkflowVersionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -13966,7 +17705,10 @@ class WorkflowVersionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.WorkflowVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.WorkflowVersion],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -13982,7 +17724,10 @@ class WorkflowVersionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -13990,7 +17735,7 @@ class WorkflowVersionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ExecutionsOperations:
+class ExecutionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14065,6 +17810,7 @@ class ExecutionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14079,11 +17825,14 @@ class ExecutionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Execution, response.json())
 
@@ -14099,7 +17848,7 @@ class ExecutionsOperations:
         workflow_name: str,
         version_name: str,
         execution_name: str,
-        resource: Union[_models.Execution, JSON, IO[bytes]],
+        resource: Union[_models.Execution, _types.Execution, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14141,6 +17890,7 @@ class ExecutionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14154,7 +17904,10 @@ class ExecutionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -14164,7 +17917,7 @@ class ExecutionsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -14216,7 +17969,7 @@ class ExecutionsOperations:
         workflow_name: str,
         version_name: str,
         execution_name: str,
-        resource: JSON,
+        resource: _types.Execution,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14235,7 +17988,7 @@ class ExecutionsOperations:
         :param execution_name: The name of the Execution. Required.
         :type execution_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.workloadorchestration.types.Execution
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14290,7 +18043,7 @@ class ExecutionsOperations:
         workflow_name: str,
         version_name: str,
         execution_name: str,
-        resource: Union[_models.Execution, JSON, IO[bytes]],
+        resource: Union[_models.Execution, _types.Execution, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Execution]:
         """Create or update Execution Resource.
@@ -14306,9 +18059,10 @@ class ExecutionsOperations:
         :type version_name: str
         :param execution_name: The name of the Execution. Required.
         :type execution_name: str
-        :param resource: Resource create parameters. Is one of the following types: Execution, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.workloadorchestration.models.Execution or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Execution type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.Execution or
+         ~azure.mgmt.workloadorchestration.types.Execution or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Execution. The Execution is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.Execution]
@@ -14376,7 +18130,7 @@ class ExecutionsOperations:
         workflow_name: str,
         version_name: str,
         execution_name: str,
-        properties: Union[_models.Execution, JSON, IO[bytes]],
+        properties: Union[_models.Execution, _types.Execution, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14418,6 +18172,7 @@ class ExecutionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14431,7 +18186,10 @@ class ExecutionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -14439,7 +18197,7 @@ class ExecutionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -14491,7 +18249,7 @@ class ExecutionsOperations:
         workflow_name: str,
         version_name: str,
         execution_name: str,
-        properties: JSON,
+        properties: _types.Execution,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14510,7 +18268,7 @@ class ExecutionsOperations:
         :param execution_name: The name of the Execution. Required.
         :type execution_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.workloadorchestration.types.Execution
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14565,7 +18323,7 @@ class ExecutionsOperations:
         workflow_name: str,
         version_name: str,
         execution_name: str,
-        properties: Union[_models.Execution, JSON, IO[bytes]],
+        properties: Union[_models.Execution, _types.Execution, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Execution]:
         """update an Execution Resource.
@@ -14581,9 +18339,10 @@ class ExecutionsOperations:
         :type version_name: str
         :param execution_name: The name of the Execution. Required.
         :type execution_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         Execution, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.Execution or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a Execution type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.Execution or
+         ~azure.mgmt.workloadorchestration.types.Execution or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Execution. The Execution is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.Execution]
@@ -14682,6 +18441,7 @@ class ExecutionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14695,7 +18455,10 @@ class ExecutionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -14703,7 +18466,7 @@ class ExecutionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -14807,7 +18570,7 @@ class ExecutionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Execution]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Execution]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -14848,7 +18611,10 @@ class ExecutionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14861,7 +18627,10 @@ class ExecutionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Execution], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.Execution],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -14877,7 +18646,10 @@ class ExecutionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -14885,7 +18657,7 @@ class ExecutionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DiagnosticsOperations:
+class DiagnosticsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14943,6 +18715,7 @@ class DiagnosticsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14957,11 +18730,14 @@ class DiagnosticsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Diagnostic, response.json())
 
@@ -14974,7 +18750,7 @@ class DiagnosticsOperations:
         self,
         resource_group_name: str,
         diagnostic_name: str,
-        resource: Union[_models.Diagnostic, JSON, IO[bytes]],
+        resource: Union[_models.Diagnostic, _types.Diagnostic, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -15013,6 +18789,7 @@ class DiagnosticsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15026,7 +18803,10 @@ class DiagnosticsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -15036,7 +18816,7 @@ class DiagnosticsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -15076,7 +18856,7 @@ class DiagnosticsOperations:
         self,
         resource_group_name: str,
         diagnostic_name: str,
-        resource: JSON,
+        resource: _types.Diagnostic,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15089,7 +18869,7 @@ class DiagnosticsOperations:
         :param diagnostic_name: Name of Diagnostic. Required.
         :type diagnostic_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.workloadorchestration.types.Diagnostic
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15132,7 +18912,7 @@ class DiagnosticsOperations:
         self,
         resource_group_name: str,
         diagnostic_name: str,
-        resource: Union[_models.Diagnostic, JSON, IO[bytes]],
+        resource: Union[_models.Diagnostic, _types.Diagnostic, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Diagnostic]:
         """Creates new or updates existing Diagnostic resource.
@@ -15142,9 +18922,10 @@ class DiagnosticsOperations:
         :type resource_group_name: str
         :param diagnostic_name: Name of Diagnostic. Required.
         :type diagnostic_name: str
-        :param resource: Resource create parameters. Is one of the following types: Diagnostic, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.workloadorchestration.models.Diagnostic or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Diagnostic type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.Diagnostic or
+         ~azure.mgmt.workloadorchestration.types.Diagnostic or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Diagnostic. The Diagnostic is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.Diagnostic]
@@ -15206,7 +18987,7 @@ class DiagnosticsOperations:
         self,
         resource_group_name: str,
         diagnostic_name: str,
-        properties: Union[_models.Diagnostic, JSON, IO[bytes]],
+        properties: Union[_models.DiagnosticUpdate, _types.DiagnosticUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -15245,6 +19026,7 @@ class DiagnosticsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15258,7 +19040,10 @@ class DiagnosticsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -15266,7 +19051,7 @@ class DiagnosticsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -15278,7 +19063,7 @@ class DiagnosticsOperations:
         self,
         resource_group_name: str,
         diagnostic_name: str,
-        properties: _models.Diagnostic,
+        properties: _models.DiagnosticUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15291,7 +19076,7 @@ class DiagnosticsOperations:
         :param diagnostic_name: Name of Diagnostic. Required.
         :type diagnostic_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.Diagnostic
+        :type properties: ~azure.mgmt.workloadorchestration.models.DiagnosticUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15306,7 +19091,7 @@ class DiagnosticsOperations:
         self,
         resource_group_name: str,
         diagnostic_name: str,
-        properties: JSON,
+        properties: _types.DiagnosticUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15319,7 +19104,7 @@ class DiagnosticsOperations:
         :param diagnostic_name: Name of Diagnostic. Required.
         :type diagnostic_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.workloadorchestration.types.DiagnosticUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15362,7 +19147,7 @@ class DiagnosticsOperations:
         self,
         resource_group_name: str,
         diagnostic_name: str,
-        properties: Union[_models.Diagnostic, JSON, IO[bytes]],
+        properties: Union[_models.DiagnosticUpdate, _types.DiagnosticUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Diagnostic]:
         """Updates existing Diagnostic resource.
@@ -15372,9 +19157,10 @@ class DiagnosticsOperations:
         :type resource_group_name: str
         :param diagnostic_name: Name of Diagnostic. Required.
         :type diagnostic_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         Diagnostic, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.Diagnostic or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a DiagnosticUpdate type or
+         a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.DiagnosticUpdate or
+         ~azure.mgmt.workloadorchestration.types.DiagnosticUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Diagnostic. The Diagnostic is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.Diagnostic]
@@ -15461,6 +19247,7 @@ class DiagnosticsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15474,7 +19261,10 @@ class DiagnosticsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -15482,7 +19272,7 @@ class DiagnosticsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -15561,7 +19351,7 @@ class DiagnosticsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Diagnostic]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Diagnostic]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -15599,7 +19389,10 @@ class DiagnosticsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15612,7 +19405,10 @@ class DiagnosticsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Diagnostic], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.Diagnostic],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -15628,7 +19424,10 @@ class DiagnosticsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -15647,7 +19446,7 @@ class DiagnosticsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Diagnostic]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Diagnostic]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -15684,7 +19483,10 @@ class DiagnosticsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15697,7 +19499,10 @@ class DiagnosticsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Diagnostic], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.Diagnostic],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -15713,7 +19518,10 @@ class DiagnosticsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -15721,7 +19529,7 @@ class DiagnosticsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ContextsOperations:
+class ContextsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15779,6 +19587,7 @@ class ContextsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15793,11 +19602,14 @@ class ContextsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Context, response.json())
 
@@ -15810,7 +19622,7 @@ class ContextsOperations:
         self,
         resource_group_name: str,
         context_name: str,
-        resource: Union[_models.Context, JSON, IO[bytes]],
+        resource: Union[_models.Context, _types.Context, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -15849,6 +19661,7 @@ class ContextsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15862,7 +19675,10 @@ class ContextsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -15872,7 +19688,7 @@ class ContextsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -15912,7 +19728,7 @@ class ContextsOperations:
         self,
         resource_group_name: str,
         context_name: str,
-        resource: JSON,
+        resource: _types.Context,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15925,7 +19741,7 @@ class ContextsOperations:
         :param context_name: The name of the Context. Required.
         :type context_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.workloadorchestration.types.Context
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15968,7 +19784,7 @@ class ContextsOperations:
         self,
         resource_group_name: str,
         context_name: str,
-        resource: Union[_models.Context, JSON, IO[bytes]],
+        resource: Union[_models.Context, _types.Context, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Context]:
         """Create or update Context Resource.
@@ -15978,9 +19794,10 @@ class ContextsOperations:
         :type resource_group_name: str
         :param context_name: The name of the Context. Required.
         :type context_name: str
-        :param resource: Resource create parameters. Is one of the following types: Context, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.workloadorchestration.models.Context or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Context type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.Context or
+         ~azure.mgmt.workloadorchestration.types.Context or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Context. The Context is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.Context]
@@ -16042,7 +19859,7 @@ class ContextsOperations:
         self,
         resource_group_name: str,
         context_name: str,
-        properties: Union[_models.Context, JSON, IO[bytes]],
+        properties: Union[_models.ContextUpdate, _types.ContextUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -16081,6 +19898,7 @@ class ContextsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16094,7 +19912,10 @@ class ContextsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -16102,7 +19923,7 @@ class ContextsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -16114,7 +19935,7 @@ class ContextsOperations:
         self,
         resource_group_name: str,
         context_name: str,
-        properties: _models.Context,
+        properties: _models.ContextUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16127,7 +19948,7 @@ class ContextsOperations:
         :param context_name: The name of the Context. Required.
         :type context_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.Context
+        :type properties: ~azure.mgmt.workloadorchestration.models.ContextUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16142,7 +19963,7 @@ class ContextsOperations:
         self,
         resource_group_name: str,
         context_name: str,
-        properties: JSON,
+        properties: _types.ContextUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16155,7 +19976,7 @@ class ContextsOperations:
         :param context_name: The name of the Context. Required.
         :type context_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.workloadorchestration.types.ContextUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16198,7 +20019,7 @@ class ContextsOperations:
         self,
         resource_group_name: str,
         context_name: str,
-        properties: Union[_models.Context, JSON, IO[bytes]],
+        properties: Union[_models.ContextUpdate, _types.ContextUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Context]:
         """update an Context Resource.
@@ -16208,9 +20029,10 @@ class ContextsOperations:
         :type resource_group_name: str
         :param context_name: The name of the Context. Required.
         :type context_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         Context, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.Context or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a ContextUpdate type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.ContextUpdate or
+         ~azure.mgmt.workloadorchestration.types.ContextUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Context. The Context is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.Context]
@@ -16283,7 +20105,7 @@ class ContextsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Context]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Context]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -16321,7 +20143,10 @@ class ContextsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16334,7 +20159,10 @@ class ContextsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Context], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.Context],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -16350,7 +20178,10 @@ class ContextsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -16369,7 +20200,7 @@ class ContextsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Context]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Context]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -16406,7 +20237,10 @@ class ContextsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16419,7 +20253,10 @@ class ContextsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Context], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.Context],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -16435,7 +20272,10 @@ class ContextsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -16469,6 +20309,7 @@ class ContextsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16482,7 +20323,10 @@ class ContextsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -16490,7 +20334,7 @@ class ContextsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -16555,7 +20399,7 @@ class ContextsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class SiteReferencesOperations:
+class SiteReferencesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16618,6 +20462,7 @@ class SiteReferencesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16632,11 +20477,14 @@ class SiteReferencesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SiteReference, response.json())
 
@@ -16650,7 +20498,7 @@ class SiteReferencesOperations:
         resource_group_name: str,
         context_name: str,
         site_reference_name: str,
-        resource: Union[_models.SiteReference, JSON, IO[bytes]],
+        resource: Union[_models.SiteReference, _types.SiteReference, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -16690,6 +20538,7 @@ class SiteReferencesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16703,7 +20552,10 @@ class SiteReferencesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -16713,7 +20565,7 @@ class SiteReferencesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -16758,7 +20610,7 @@ class SiteReferencesOperations:
         resource_group_name: str,
         context_name: str,
         site_reference_name: str,
-        resource: JSON,
+        resource: _types.SiteReference,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16773,7 +20625,7 @@ class SiteReferencesOperations:
         :param site_reference_name: The name of the SiteReference. Required.
         :type site_reference_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.workloadorchestration.types.SiteReference
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16822,7 +20674,7 @@ class SiteReferencesOperations:
         resource_group_name: str,
         context_name: str,
         site_reference_name: str,
-        resource: Union[_models.SiteReference, JSON, IO[bytes]],
+        resource: Union[_models.SiteReference, _types.SiteReference, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SiteReference]:
         """Get Site Reference Resource.
@@ -16834,9 +20686,10 @@ class SiteReferencesOperations:
         :type context_name: str
         :param site_reference_name: The name of the SiteReference. Required.
         :type site_reference_name: str
-        :param resource: Resource create parameters. Is one of the following types: SiteReference,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.workloadorchestration.models.SiteReference or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a SiteReference type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.SiteReference or
+         ~azure.mgmt.workloadorchestration.types.SiteReference or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SiteReference. The SiteReference is
          compatible with MutableMapping
         :rtype:
@@ -16901,7 +20754,7 @@ class SiteReferencesOperations:
         resource_group_name: str,
         context_name: str,
         site_reference_name: str,
-        properties: Union[_models.SiteReference, JSON, IO[bytes]],
+        properties: Union[_models.SiteReference, _types.SiteReference, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -16941,6 +20794,7 @@ class SiteReferencesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16954,7 +20808,10 @@ class SiteReferencesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -16962,7 +20819,7 @@ class SiteReferencesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -17007,7 +20864,7 @@ class SiteReferencesOperations:
         resource_group_name: str,
         context_name: str,
         site_reference_name: str,
-        properties: JSON,
+        properties: _types.SiteReference,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17022,7 +20879,7 @@ class SiteReferencesOperations:
         :param site_reference_name: The name of the SiteReference. Required.
         :type site_reference_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.workloadorchestration.types.SiteReference
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17071,7 +20928,7 @@ class SiteReferencesOperations:
         resource_group_name: str,
         context_name: str,
         site_reference_name: str,
-        properties: Union[_models.SiteReference, JSON, IO[bytes]],
+        properties: Union[_models.SiteReference, _types.SiteReference, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SiteReference]:
         """Get Site Reference Resource.
@@ -17083,9 +20940,10 @@ class SiteReferencesOperations:
         :type context_name: str
         :param site_reference_name: The name of the SiteReference. Required.
         :type site_reference_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         SiteReference, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.workloadorchestration.models.SiteReference or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a SiteReference type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.SiteReference or
+         ~azure.mgmt.workloadorchestration.types.SiteReference or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SiteReference. The SiteReference is
          compatible with MutableMapping
         :rtype:
@@ -17175,6 +21033,7 @@ class SiteReferencesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -17188,7 +21047,10 @@ class SiteReferencesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -17196,7 +21058,7 @@ class SiteReferencesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -17284,7 +21146,7 @@ class SiteReferencesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.SiteReference]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.SiteReference]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -17323,7 +21185,10 @@ class SiteReferencesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -17336,7 +21201,10 @@ class SiteReferencesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SiteReference], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.SiteReference],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -17352,7 +21220,2760 @@ class SiteReferencesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class SolutionSchemasOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.workloadorchestration.aio.WorkloadOrchestrationMgmtClient`'s
+        :attr:`solution_schemas` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: WorkloadOrchestrationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={
+            "2025-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "solution_template_name",
+                "solution_template_version_name",
+                "solution_schema_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    async def get(
+        self,
+        resource_group_name: str,
+        solution_template_name: str,
+        solution_template_version_name: str,
+        solution_schema_name: str,
+        **kwargs: Any
+    ) -> _models.SolutionSchema:
+        """Get a SolutionSchema Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_template_name: The name of the SolutionTemplate. Required.
+        :type solution_template_name: str
+        :param solution_template_version_name: The name of the SolutionTemplateVersion. Required.
+        :type solution_template_version_name: str
+        :param solution_schema_name: The name of the SolutionSchemaProperties. Required.
+        :type solution_schema_name: str
+        :return: SolutionSchema. The SolutionSchema is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.SolutionSchema
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SolutionSchema] = kwargs.pop("cls", None)
+
+        _request = build_solution_schemas_get_request(
+            resource_group_name=resource_group_name,
+            solution_template_name=solution_template_name,
+            solution_template_version_name=solution_template_version_name,
+            solution_schema_name=solution_schema_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SolutionSchema, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={
+            "2025-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "solution_template_name",
+                "solution_template_version_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    def list_by_solution_template_version(
+        self, resource_group_name: str, solution_template_name: str, solution_template_version_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.SolutionSchema"]:
+        """List by SolutionTemplateVersion.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_template_name: The name of the SolutionTemplate. Required.
+        :type solution_template_name: str
+        :param solution_template_version_name: The name of the SolutionTemplateVersion. Required.
+        :type solution_template_version_name: str
+        :return: An iterator like instance of SolutionSchema
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.workloadorchestration.models.SolutionSchema]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.SolutionSchema]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_solution_schemas_list_by_solution_template_version_request(
+                    resource_group_name=resource_group_name,
+                    solution_template_name=solution_template_name,
+                    solution_template_version_name=solution_template_version_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models.SolutionSchema],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class ConfigTemplateSchemasOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.workloadorchestration.aio.WorkloadOrchestrationMgmtClient`'s
+        :attr:`config_template_schemas` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: WorkloadOrchestrationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={
+            "2025-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "config_template_name",
+                "config_template_version_name",
+                "config_template_schema_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    async def get(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_version_name: str,
+        config_template_schema_name: str,
+        **kwargs: Any
+    ) -> _models.ConfigTemplateSchema:
+        """Get a ConfigTemplateSchema Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_version_name: The name of the ConfigTemplateVersion. Required.
+        :type config_template_version_name: str
+        :param config_template_schema_name: The name of the ConfigTemplateSchemaProperties. Required.
+        :type config_template_schema_name: str
+        :return: ConfigTemplateSchema. The ConfigTemplateSchema is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.ConfigTemplateSchema
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ConfigTemplateSchema] = kwargs.pop("cls", None)
+
+        _request = build_config_template_schemas_get_request(
+            resource_group_name=resource_group_name,
+            config_template_name=config_template_name,
+            config_template_version_name=config_template_version_name,
+            config_template_schema_name=config_template_schema_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ConfigTemplateSchema, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={
+            "2025-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "config_template_name",
+                "config_template_version_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    def list_by_config_template_version(
+        self, resource_group_name: str, config_template_name: str, config_template_version_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ConfigTemplateSchema"]:
+        """List by ConfigTemplateVersion.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_version_name: The name of the ConfigTemplateVersion. Required.
+        :type config_template_version_name: str
+        :return: An iterator like instance of ConfigTemplateSchema
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.workloadorchestration.models.ConfigTemplateSchema]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.ConfigTemplateSchema]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_config_template_schemas_list_by_config_template_version_request(
+                    resource_group_name=resource_group_name,
+                    config_template_name=config_template_name,
+                    config_template_version_name=config_template_version_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models.ConfigTemplateSchema],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class ConfigTemplateMetadatasOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.workloadorchestration.aio.WorkloadOrchestrationMgmtClient`'s
+        :attr:`config_template_metadatas` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: WorkloadOrchestrationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={
+            "2025-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "config_template_name",
+                "config_template_metadata_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, config_template_name: str, config_template_metadata_name: str, **kwargs: Any
+    ) -> _models.ConfigTemplateMetadata:
+        """Get a ConfigTemplateMetadata Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_metadata_name: The name of the ConfigTemplateMetadataProperties.
+         Required.
+        :type config_template_metadata_name: str
+        :return: ConfigTemplateMetadata. The ConfigTemplateMetadata is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.ConfigTemplateMetadata
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ConfigTemplateMetadata] = kwargs.pop("cls", None)
+
+        _request = build_config_template_metadatas_get_request(
+            resource_group_name=resource_group_name,
+            config_template_name=config_template_name,
+            config_template_metadata_name=config_template_metadata_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ConfigTemplateMetadata, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "config_template_name",
+                "config_template_metadata_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01", "2026-05-01-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_metadata_name: str,
+        resource: Union[_models.ConfigTemplateMetadata, _types.ConfigTemplateMetadata, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_config_template_metadatas_create_or_update_request(
+            resource_group_name=resource_group_name,
+            config_template_name=config_template_name,
+            config_template_metadata_name=config_template_metadata_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_metadata_name: str,
+        resource: _models.ConfigTemplateMetadata,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ConfigTemplateMetadata]:
+        """Create or update a ConfigTemplateMetadata Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_metadata_name: The name of the ConfigTemplateMetadataProperties.
+         Required.
+        :type config_template_metadata_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.ConfigTemplateMetadata
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ConfigTemplateMetadata. The
+         ConfigTemplateMetadata is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.ConfigTemplateMetadata]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_metadata_name: str,
+        resource: _types.ConfigTemplateMetadata,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ConfigTemplateMetadata]:
+        """Create or update a ConfigTemplateMetadata Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_metadata_name: The name of the ConfigTemplateMetadataProperties.
+         Required.
+        :type config_template_metadata_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.types.ConfigTemplateMetadata
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ConfigTemplateMetadata. The
+         ConfigTemplateMetadata is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.ConfigTemplateMetadata]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_metadata_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ConfigTemplateMetadata]:
+        """Create or update a ConfigTemplateMetadata Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_metadata_name: The name of the ConfigTemplateMetadataProperties.
+         Required.
+        :type config_template_metadata_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ConfigTemplateMetadata. The
+         ConfigTemplateMetadata is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.ConfigTemplateMetadata]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "config_template_name",
+                "config_template_metadata_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01", "2026-05-01-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_metadata_name: str,
+        resource: Union[_models.ConfigTemplateMetadata, _types.ConfigTemplateMetadata, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ConfigTemplateMetadata]:
+        """Create or update a ConfigTemplateMetadata Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_metadata_name: The name of the ConfigTemplateMetadataProperties.
+         Required.
+        :type config_template_metadata_name: str
+        :param resource: Resource create parameters. Is either a ConfigTemplateMetadata type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.ConfigTemplateMetadata or
+         ~azure.mgmt.workloadorchestration.types.ConfigTemplateMetadata or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ConfigTemplateMetadata. The
+         ConfigTemplateMetadata is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.ConfigTemplateMetadata]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ConfigTemplateMetadata] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                config_template_name=config_template_name,
+                config_template_metadata_name=config_template_metadata_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ConfigTemplateMetadata, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ConfigTemplateMetadata].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ConfigTemplateMetadata](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "config_template_name",
+                "config_template_metadata_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01", "2026-05-01-preview"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_metadata_name: str,
+        properties: Union[_models.ConfigTemplateMetadataUpdate, _types.ConfigTemplateMetadataUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_config_template_metadatas_update_request(
+            resource_group_name=resource_group_name,
+            config_template_name=config_template_name,
+            config_template_metadata_name=config_template_metadata_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_metadata_name: str,
+        properties: _models.ConfigTemplateMetadataUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ConfigTemplateMetadata]:
+        """Update a ConfigTemplateMetadata Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_metadata_name: The name of the ConfigTemplateMetadataProperties.
+         Required.
+        :type config_template_metadata_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.ConfigTemplateMetadataUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ConfigTemplateMetadata. The
+         ConfigTemplateMetadata is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.ConfigTemplateMetadata]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_metadata_name: str,
+        properties: _types.ConfigTemplateMetadataUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ConfigTemplateMetadata]:
+        """Update a ConfigTemplateMetadata Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_metadata_name: The name of the ConfigTemplateMetadataProperties.
+         Required.
+        :type config_template_metadata_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.types.ConfigTemplateMetadataUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ConfigTemplateMetadata. The
+         ConfigTemplateMetadata is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.ConfigTemplateMetadata]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_metadata_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ConfigTemplateMetadata]:
+        """Update a ConfigTemplateMetadata Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_metadata_name: The name of the ConfigTemplateMetadataProperties.
+         Required.
+        :type config_template_metadata_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ConfigTemplateMetadata. The
+         ConfigTemplateMetadata is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.ConfigTemplateMetadata]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "config_template_name",
+                "config_template_metadata_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01", "2026-05-01-preview"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        config_template_name: str,
+        config_template_metadata_name: str,
+        properties: Union[_models.ConfigTemplateMetadataUpdate, _types.ConfigTemplateMetadataUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ConfigTemplateMetadata]:
+        """Update a ConfigTemplateMetadata Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_metadata_name: The name of the ConfigTemplateMetadataProperties.
+         Required.
+        :type config_template_metadata_name: str
+        :param properties: The resource properties to be updated. Is either a
+         ConfigTemplateMetadataUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.ConfigTemplateMetadataUpdate or
+         ~azure.mgmt.workloadorchestration.types.ConfigTemplateMetadataUpdate or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ConfigTemplateMetadata. The
+         ConfigTemplateMetadata is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.ConfigTemplateMetadata]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ConfigTemplateMetadata] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                config_template_name=config_template_name,
+                config_template_metadata_name=config_template_metadata_name,
+                properties=properties,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ConfigTemplateMetadata, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ConfigTemplateMetadata].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ConfigTemplateMetadata](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "config_template_name",
+                "config_template_metadata_name",
+            ]
+        },
+        api_versions_list=["2026-03-01", "2026-05-01-preview"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, config_template_name: str, config_template_metadata_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_config_template_metadatas_delete_request(
+            resource_group_name=resource_group_name,
+            config_template_name=config_template_name,
+            config_template_metadata_name=config_template_metadata_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "config_template_name",
+                "config_template_metadata_name",
+            ]
+        },
+        api_versions_list=["2026-03-01", "2026-05-01-preview"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, config_template_name: str, config_template_metadata_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a ConfigTemplateMetadata Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :param config_template_metadata_name: The name of the ConfigTemplateMetadataProperties.
+         Required.
+        :type config_template_metadata_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                config_template_name=config_template_name,
+                config_template_metadata_name=config_template_metadata_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={
+            "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "config_template_name", "accept"]
+        },
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    def list_by_config_template(
+        self, resource_group_name: str, config_template_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ConfigTemplateMetadata"]:
+        """List by ConfigTemplate.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param config_template_name: The name of the ConfigTemplate. Required.
+        :type config_template_name: str
+        :return: An iterator like instance of ConfigTemplateMetadata
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.workloadorchestration.models.ConfigTemplateMetadata]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.ConfigTemplateMetadata]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_config_template_metadatas_list_by_config_template_request(
+                    resource_group_name=resource_group_name,
+                    config_template_name=config_template_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models.ConfigTemplateMetadata],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class HierarchyConfigurationMetadatasOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.workloadorchestration.aio.WorkloadOrchestrationMgmtClient`'s
+        :attr:`hierarchy_configuration_metadatas` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: WorkloadOrchestrationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={
+            "2025-08-01": ["api_version", "resource_uri", "hierarchy_configuration_metadata_name", "accept"]
+        },
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    async def get(
+        self, resource_uri: str, hierarchy_configuration_metadata_name: str, **kwargs: Any
+    ) -> _models.HierarchyConfigurationMetadata:
+        """Get a Hierarchy Configuration Metadata resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param hierarchy_configuration_metadata_name: Name of the hierarchy configuration metadata.
+         Required.
+        :type hierarchy_configuration_metadata_name: str
+        :return: HierarchyConfigurationMetadata. The HierarchyConfigurationMetadata is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.HierarchyConfigurationMetadata
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.HierarchyConfigurationMetadata] = kwargs.pop("cls", None)
+
+        _request = build_hierarchy_configuration_metadatas_get_request(
+            resource_uri=resource_uri,
+            hierarchy_configuration_metadata_name=hierarchy_configuration_metadata_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.HierarchyConfigurationMetadata, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={"2025-08-01": ["api_version", "resource_uri", "accept"]},
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    def list_by_parent(
+        self, resource_uri: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.HierarchyConfigurationMetadata"]:
+        """List Solution resources.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :return: An iterator like instance of HierarchyConfigurationMetadata
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.workloadorchestration.models.HierarchyConfigurationMetadata]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.HierarchyConfigurationMetadata]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_hierarchy_configuration_metadatas_list_by_parent_request(
+                    resource_uri=resource_uri,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models.HierarchyConfigurationMetadata],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class HierarchyConfigurationMetadataVersionsOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.workloadorchestration.aio.WorkloadOrchestrationMgmtClient`'s
+        :attr:`hierarchy_configuration_metadata_versions` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: WorkloadOrchestrationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={
+            "2025-08-01": [
+                "api_version",
+                "resource_uri",
+                "hierarchy_configuration_metadata_name",
+                "hierarchy_configuration_metadata_version_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    async def get(
+        self,
+        resource_uri: str,
+        hierarchy_configuration_metadata_name: str,
+        hierarchy_configuration_metadata_version_name: str,
+        **kwargs: Any
+    ) -> _models.HierarchyConfigurationMetadataVersion:
+        """Get a Hierarchy Configuration Metadata Version resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param hierarchy_configuration_metadata_name: Name of the hierarchy configuration metadata.
+         Required.
+        :type hierarchy_configuration_metadata_name: str
+        :param hierarchy_configuration_metadata_version_name: Name of the hierarchy configuration
+         metadata version. Required.
+        :type hierarchy_configuration_metadata_version_name: str
+        :return: HierarchyConfigurationMetadataVersion. The HierarchyConfigurationMetadataVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.HierarchyConfigurationMetadataVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.HierarchyConfigurationMetadataVersion] = kwargs.pop("cls", None)
+
+        _request = build_hierarchy_configuration_metadata_versions_get_request(
+            resource_uri=resource_uri,
+            hierarchy_configuration_metadata_name=hierarchy_configuration_metadata_name,
+            hierarchy_configuration_metadata_version_name=hierarchy_configuration_metadata_version_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.HierarchyConfigurationMetadataVersion, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01",
+        params_added_on={
+            "2025-08-01": ["api_version", "resource_uri", "hierarchy_configuration_metadata_name", "accept"]
+        },
+        api_versions_list=["2025-08-01", "2025-08-15-preview", "2026-03-01", "2026-05-01-preview"],
+    )
+    def list_by_parent(
+        self, resource_uri: str, hierarchy_configuration_metadata_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.HierarchyConfigurationMetadataVersion"]:
+        """List Hierarchy Configuration Metadata Version resources.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param hierarchy_configuration_metadata_name: Name of the hierarchy configuration metadata.
+         Required.
+        :type hierarchy_configuration_metadata_name: str
+        :return: An iterator like instance of HierarchyConfigurationMetadataVersion
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.workloadorchestration.models.HierarchyConfigurationMetadataVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.HierarchyConfigurationMetadataVersion]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_hierarchy_configuration_metadata_versions_list_by_parent_request(
+                    resource_uri=resource_uri,
+                    hierarchy_configuration_metadata_name=hierarchy_configuration_metadata_name,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models.HierarchyConfigurationMetadataVersion],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class SolutionDeploymentsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.workloadorchestration.aio.WorkloadOrchestrationMgmtClient`'s
+        :attr:`solution_deployments` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: WorkloadOrchestrationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "solution_deployment_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, solution_deployment_name: str, **kwargs: Any
+    ) -> _models.SolutionDeployment:
+        """Get a SolutionDeployment Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_deployment_name: The name of the SolutionDeployment. Required.
+        :type solution_deployment_name: str
+        :return: SolutionDeployment. The SolutionDeployment is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.SolutionDeployment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SolutionDeployment] = kwargs.pop("cls", None)
+
+        _request = build_solution_deployments_get_request(
+            resource_group_name=resource_group_name,
+            solution_deployment_name=solution_deployment_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SolutionDeployment, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "solution_deployment_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        solution_deployment_name: str,
+        resource: Union[_models.SolutionDeployment, _types.SolutionDeployment, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_solution_deployments_create_or_update_request(
+            resource_group_name=resource_group_name,
+            solution_deployment_name=solution_deployment_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        solution_deployment_name: str,
+        resource: _models.SolutionDeployment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SolutionDeployment]:
+        """Create or update a SolutionDeployment Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_deployment_name: The name of the SolutionDeployment. Required.
+        :type solution_deployment_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.SolutionDeployment
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SolutionDeployment. The SolutionDeployment
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.SolutionDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        solution_deployment_name: str,
+        resource: _types.SolutionDeployment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SolutionDeployment]:
+        """Create or update a SolutionDeployment Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_deployment_name: The name of the SolutionDeployment. Required.
+        :type solution_deployment_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.types.SolutionDeployment
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SolutionDeployment. The SolutionDeployment
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.SolutionDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        solution_deployment_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SolutionDeployment]:
+        """Create or update a SolutionDeployment Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_deployment_name: The name of the SolutionDeployment. Required.
+        :type solution_deployment_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SolutionDeployment. The SolutionDeployment
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.SolutionDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "solution_deployment_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        solution_deployment_name: str,
+        resource: Union[_models.SolutionDeployment, _types.SolutionDeployment, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SolutionDeployment]:
+        """Create or update a SolutionDeployment Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_deployment_name: The name of the SolutionDeployment. Required.
+        :type solution_deployment_name: str
+        :param resource: Resource create parameters. Is either a SolutionDeployment type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.workloadorchestration.models.SolutionDeployment or
+         ~azure.mgmt.workloadorchestration.types.SolutionDeployment or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns SolutionDeployment. The SolutionDeployment
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.workloadorchestration.models.SolutionDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SolutionDeployment] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                solution_deployment_name=solution_deployment_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.SolutionDeployment, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.SolutionDeployment].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.SolutionDeployment](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        solution_deployment_name: str,
+        properties: _models.SolutionDeploymentUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SolutionDeployment:
+        """update a SolutionDeployment Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_deployment_name: The name of the SolutionDeployment. Required.
+        :type solution_deployment_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.SolutionDeploymentUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SolutionDeployment. The SolutionDeployment is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.SolutionDeployment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        solution_deployment_name: str,
+        properties: _types.SolutionDeploymentUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SolutionDeployment:
+        """update a SolutionDeployment Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_deployment_name: The name of the SolutionDeployment. Required.
+        :type solution_deployment_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.types.SolutionDeploymentUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SolutionDeployment. The SolutionDeployment is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.SolutionDeployment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        solution_deployment_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SolutionDeployment:
+        """update a SolutionDeployment Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_deployment_name: The name of the SolutionDeployment. Required.
+        :type solution_deployment_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SolutionDeployment. The SolutionDeployment is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.SolutionDeployment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "solution_deployment_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def update(
+        self,
+        resource_group_name: str,
+        solution_deployment_name: str,
+        properties: Union[_models.SolutionDeploymentUpdate, _types.SolutionDeploymentUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.SolutionDeployment:
+        """update a SolutionDeployment Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_deployment_name: The name of the SolutionDeployment. Required.
+        :type solution_deployment_name: str
+        :param properties: The resource properties to be updated. Is either a SolutionDeploymentUpdate
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.workloadorchestration.models.SolutionDeploymentUpdate or
+         ~azure.mgmt.workloadorchestration.types.SolutionDeploymentUpdate or IO[bytes]
+        :return: SolutionDeployment. The SolutionDeployment is compatible with MutableMapping
+        :rtype: ~azure.mgmt.workloadorchestration.models.SolutionDeployment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SolutionDeployment] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_solution_deployments_update_request(
+            resource_group_name=resource_group_name,
+            solution_deployment_name=solution_deployment_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SolutionDeployment, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "solution_deployment_name"]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, solution_deployment_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_solution_deployments_delete_request(
+            resource_group_name=resource_group_name,
+            solution_deployment_name=solution_deployment_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "solution_deployment_name"]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, solution_deployment_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a SolutionDeployment Resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param solution_deployment_name: The name of the SolutionDeployment. Required.
+        :type solution_deployment_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                solution_deployment_name=solution_deployment_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={"2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def list_by_resource_group(
+        self, resource_group_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.SolutionDeployment"]:
+        """List by specified resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of SolutionDeployment
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.workloadorchestration.models.SolutionDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.SolutionDeployment]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_solution_deployments_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models.SolutionDeployment],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={"2026-05-01-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.SolutionDeployment"]:
+        """List by subscription.
+
+        :return: An iterator like instance of SolutionDeployment
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.workloadorchestration.models.SolutionDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.SolutionDeployment]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_solution_deployments_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models.SolutionDeployment],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

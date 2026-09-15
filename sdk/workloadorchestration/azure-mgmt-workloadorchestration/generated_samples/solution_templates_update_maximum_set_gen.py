@@ -35,17 +35,17 @@ def main():
         solution_template_name="testname",
         properties={
             "properties": {
-                "capabilities": ["relsv"],
-                "description": "onqlteg",
+                "capabilities": ["wjgogxhkayhrcn"],
+                "description": "jbsuwcclfsxtzglvk",
                 "enableExternalValidation": True,
                 "state": "active",
             },
-            "tags": {"key8772": "vbdujmqklnwiepis"},
+            "tags": {},
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/SolutionTemplates_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/SolutionTemplates_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
