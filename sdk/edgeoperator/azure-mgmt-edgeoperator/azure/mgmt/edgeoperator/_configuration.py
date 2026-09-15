@@ -19,8 +19,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class EdgeOperatorClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
-    """Configuration for EdgeOperatorClient.
+class EdgeOperatorMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
+    """Configuration for EdgeOperatorMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

@@ -32,7 +32,7 @@ from ... import models as _models
 from ..._utils.model_base import _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import build_operations_list_request, build_system_readiness_operations_get_request
-from .._configuration import EdgeOperatorClientConfiguration
+from .._configuration import EdgeOperatorMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -45,14 +45,14 @@ class Operations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.edgeoperator.aio.EdgeOperatorClient`'s
+        :class:`~azure.mgmt.edgeoperator.aio.EdgeOperatorMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EdgeOperatorClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EdgeOperatorMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -155,14 +155,14 @@ class SystemReadinessOperationsOperations:  # pylint: disable=docstring-missing-
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.edgeoperator.aio.EdgeOperatorClient`'s
+        :class:`~azure.mgmt.edgeoperator.aio.EdgeOperatorMgmtClient`'s
         :attr:`system_readiness_operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EdgeOperatorClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EdgeOperatorMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.edgeoperator import EdgeOperatorClient
+from azure.mgmt.edgeoperator import EdgeOperatorMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.edgeoperator import EdgeOperatorClient
 
 
 def main():
-    client = EdgeOperatorClient(
+    client = EdgeOperatorMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

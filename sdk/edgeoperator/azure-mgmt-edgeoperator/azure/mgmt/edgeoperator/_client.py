@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import EdgeOperatorClientConfiguration
+from ._configuration import EdgeOperatorMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import Operations, SystemReadinessOperationsOperations
 
@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class EdgeOperatorClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
+class EdgeOperatorMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft.EdgeOperator Resource Provider management API for Azure Local Disconnected Operations
     (ALDO) system readiness.
 
@@ -71,7 +71,7 @@ class EdgeOperatorClient:  # pylint: disable=docstring-keyword-should-match-keyw
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = EdgeOperatorClientConfiguration(
+        self._config = EdgeOperatorMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

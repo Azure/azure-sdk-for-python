@@ -20,5 +20,5 @@
         "azure.mgmt.edgeoperator.operations.SystemReadinessOperationsOperations.get": "Microsoft.EdgeOperator.SystemReadinessOperations.get",
         "azure.mgmt.edgeoperator.aio.operations.SystemReadinessOperationsOperations.get": "Microsoft.EdgeOperator.SystemReadinessOperations.get"
     },
-    "CrossLanguageVersion": "8328da92a0f7"
+    "CrossLanguageVersion": "5b1111b5a0c3"
 }

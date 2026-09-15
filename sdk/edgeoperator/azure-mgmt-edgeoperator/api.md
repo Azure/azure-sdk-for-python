@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.edgeoperator
 
-    class azure.mgmt.edgeoperator.EdgeOperatorClient: implements ContextManager 
+    class azure.mgmt.edgeoperator.EdgeOperatorMgmtClient: implements ContextManager 
         operations: Operations
         system_readiness_operations: SystemReadinessOperationsOperations
 
@@ -29,7 +29,7 @@ namespace azure.mgmt.edgeoperator
 
 namespace azure.mgmt.edgeoperator.aio
 
-    class azure.mgmt.edgeoperator.aio.EdgeOperatorClient: implements AsyncContextManager 
+    class azure.mgmt.edgeoperator.aio.EdgeOperatorMgmtClient: implements AsyncContextManager 
         operations: Operations
         system_readiness_operations: SystemReadinessOperationsOperations
 

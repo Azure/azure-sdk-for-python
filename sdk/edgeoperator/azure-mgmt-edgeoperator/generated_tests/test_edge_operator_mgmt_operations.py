@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.edgeoperator import EdgeOperatorClient
+from azure.mgmt.edgeoperator import EdgeOperatorMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,14 +14,14 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestEdgeOperatorSystemReadinessOperationsOperations(AzureMgmtRecordedTestCase):
+class TestEdgeOperatorMgmtOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(EdgeOperatorClient)
+        self.client = self.create_mgmt_client(EdgeOperatorMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_system_readiness_operations_get(self, resource_group):
-        response = self.client.system_readiness_operations.get()
-
+    def test_operations_list(self, resource_group):
+        response = self.client.operations.list()
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
