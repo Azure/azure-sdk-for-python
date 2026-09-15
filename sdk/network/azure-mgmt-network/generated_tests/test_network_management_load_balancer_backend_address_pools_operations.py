@@ -26,7 +26,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             backend_address_pool_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -380,6 +380,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -400,6 +403,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -557,6 +563,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -581,6 +590,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -814,6 +826,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -1245,6 +1260,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -1712,6 +1730,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -1732,6 +1753,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -1967,6 +1991,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -1987,6 +2014,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -2319,6 +2349,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "approvalReference": {"privateEndpointId": "str"},
                                                                 "groupIds": ["str"],
                                                                 "privateLinkServiceConnectionState": {
                                                                     "actionsRequired": "str",
@@ -2924,6 +2955,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "approvalReference": {"privateEndpointId": "str"},
                                                                 "groupIds": ["str"],
                                                                 "privateLinkServiceConnectionState": {
                                                                     "actionsRequired": "str",
@@ -3374,6 +3406,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -3398,6 +3433,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -3527,6 +3565,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                                                     "id": "str",
                                                                                                                                     "name": "str",
                                                                                                                                     "properties": {
+                                                                                                                                        "approvalReference": {
+                                                                                                                                            "privateEndpointId": "str"
+                                                                                                                                        },
                                                                                                                                         "groupIds": [
                                                                                                                                             "str"
                                                                                                                                         ],
@@ -3551,6 +3592,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                                                     "id": "str",
                                                                                                                                     "name": "str",
                                                                                                                                     "properties": {
+                                                                                                                                        "approvalReference": {
+                                                                                                                                            "privateEndpointId": "str"
+                                                                                                                                        },
                                                                                                                                         "groupIds": [
                                                                                                                                             "str"
                                                                                                                                         ],
@@ -3745,6 +3789,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -4103,6 +4150,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -4619,6 +4669,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -4639,6 +4692,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -4758,6 +4814,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -4782,6 +4841,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -4952,6 +5014,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -5282,6 +5347,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -5469,7 +5537,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                 },
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5482,7 +5550,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             backend_address_pool_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5494,7 +5562,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
         response = self.client.load_balancer_backend_address_pools.list(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

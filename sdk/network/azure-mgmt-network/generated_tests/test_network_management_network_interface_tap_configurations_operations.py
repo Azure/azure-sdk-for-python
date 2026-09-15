@@ -26,7 +26,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
             resource_group_name=resource_group.name,
             network_interface_name="str",
             tap_configuration_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -500,6 +500,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -520,6 +523,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -639,6 +645,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -663,6 +672,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -822,6 +834,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -1305,6 +1320,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -2021,6 +2039,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -2041,6 +2062,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -2153,6 +2177,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -2175,6 +2202,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -2328,6 +2358,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "id": "str",
                                                                 "name": "str",
                                                                 "properties": {
+                                                                    "approvalReference": {"privateEndpointId": "str"},
                                                                     "groupIds": ["str"],
                                                                     "privateLinkServiceConnectionState": {
                                                                         "actionsRequired": "str",
@@ -2879,6 +2910,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "id": "str",
                                                                 "name": "str",
                                                                 "properties": {
+                                                                    "approvalReference": {"privateEndpointId": "str"},
                                                                     "groupIds": ["str"],
                                                                     "privateLinkServiceConnectionState": {
                                                                         "actionsRequired": "str",
@@ -3387,6 +3419,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -3407,6 +3442,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -3564,6 +3602,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -3588,6 +3629,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -3747,6 +3791,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -4112,6 +4159,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -4583,6 +4633,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -4603,6 +4656,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -4850,6 +4906,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -4872,6 +4931,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -5025,6 +5087,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "id": "str",
                                                                 "name": "str",
                                                                 "properties": {
+                                                                    "approvalReference": {"privateEndpointId": "str"},
                                                                     "groupIds": ["str"],
                                                                     "privateLinkServiceConnectionState": {
                                                                         "actionsRequired": "str",
@@ -5476,6 +5539,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "id": "str",
                                                                 "name": "str",
                                                                 "properties": {
+                                                                    "approvalReference": {"privateEndpointId": "str"},
                                                                     "groupIds": ["str"],
                                                                     "privateLinkServiceConnectionState": {
                                                                         "actionsRequired": "str",
@@ -5618,7 +5682,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                 },
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5631,7 +5695,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
             resource_group_name=resource_group.name,
             network_interface_name="str",
             tap_configuration_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5643,7 +5707,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
         response = self.client.network_interface_tap_configurations.list(
             resource_group_name=resource_group.name,
             network_interface_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

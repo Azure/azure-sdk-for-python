@@ -24,7 +24,7 @@ class TestNetworkManagementExpressRouteLagsOperations(AzureMgmtRecordedTestCase)
         response = self.client.express_route_lags.get(
             resource_group_name=resource_group.name,
             express_route_lag_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -51,6 +51,7 @@ class TestNetworkManagementExpressRouteLagsOperations(AzureMgmtRecordedTestCase)
                     "allocationDate": "str",
                     "bandwidthInGbps": 0,
                     "billingType": "str",
+                    "circuits": [{"id": "str"}],
                     "encapsulation": "str",
                     "etherType": "str",
                     "lacpTimer": "str",
@@ -102,7 +103,7 @@ class TestNetworkManagementExpressRouteLagsOperations(AzureMgmtRecordedTestCase)
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -123,7 +124,7 @@ class TestNetworkManagementExpressRouteLagsOperations(AzureMgmtRecordedTestCase)
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -135,7 +136,7 @@ class TestNetworkManagementExpressRouteLagsOperations(AzureMgmtRecordedTestCase)
         response = self.client.express_route_lags.begin_delete(
             resource_group_name=resource_group.name,
             express_route_lag_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -146,7 +147,7 @@ class TestNetworkManagementExpressRouteLagsOperations(AzureMgmtRecordedTestCase)
     def test_express_route_lags_list_by_resource_group(self, resource_group):
         response = self.client.express_route_lags.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -156,7 +157,7 @@ class TestNetworkManagementExpressRouteLagsOperations(AzureMgmtRecordedTestCase)
     @recorded_by_proxy
     def test_express_route_lags_list(self, resource_group):
         response = self.client.express_route_lags.list(
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -169,7 +170,7 @@ class TestNetworkManagementExpressRouteLagsOperations(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             express_route_lag_name="str",
             body={"customerName": "str", "members": ["str"]},
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -182,7 +183,7 @@ class TestNetworkManagementExpressRouteLagsOperations(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             express_route_lag_name="str",
             link_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -194,7 +195,7 @@ class TestNetworkManagementExpressRouteLagsOperations(AzureMgmtRecordedTestCase)
         response = self.client.express_route_lags.links_list(
             resource_group_name=resource_group.name,
             express_route_lag_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -208,7 +209,7 @@ class TestNetworkManagementExpressRouteLagsOperations(AzureMgmtRecordedTestCase)
             express_route_lag_name="str",
             link_name="str",
             member_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -221,7 +222,7 @@ class TestNetworkManagementExpressRouteLagsOperations(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             express_route_lag_name="str",
             link_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

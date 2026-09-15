@@ -43,6 +43,58 @@ def main():
             },
             "location": "eastus",
             "properties": {
+                "advancedRoutingConditionSets": [
+                    {
+                        "name": "advancedRoutingConditionSet1",
+                        "properties": {
+                            "routingConditions": [
+                                {
+                                    "conditionType": "Header",
+                                    "propertyName": "X-Client-Tier",
+                                    "propertyValues": ["premium"],
+                                },
+                                {
+                                    "conditionType": "Path",
+                                    "propertyValueMatcher": {
+                                        "ignoreCase": True,
+                                        "negate": False,
+                                        "pattern": "^/api/v2/.*",
+                                    },
+                                },
+                            ]
+                        },
+                    }
+                ],
+                "advancedRoutingMaps": [
+                    {
+                        "name": "advancedRoutingMap1",
+                        "properties": {
+                            "advancedRoutingRules": [
+                                {
+                                    "name": "advancedRoutingRule1",
+                                    "properties": {
+                                        "advancedRoutingConditionSet": {
+                                            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/advancedRoutingConditionSets/advancedRoutingConditionSet1"
+                                        },
+                                        "backendAddressPool": {
+                                            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/backendAddressPools/appgwpool1"
+                                        },
+                                        "backendHttpSettings": {
+                                            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/backendHttpSettingsCollection/appgwbhs"
+                                        },
+                                        "priority": 1,
+                                    },
+                                }
+                            ],
+                            "defaultBackendAddressPool": {
+                                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/backendAddressPools/appgwpool"
+                            },
+                            "defaultBackendHttpSettings": {
+                                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/backendHttpSettingsCollection/appgwbhs"
+                            },
+                        },
+                    }
+                ],
                 "backendAddressPools": [
                     {
                         "name": "appgwpool",
@@ -137,14 +189,19 @@ def main():
                     {
                         "name": "appgwrule",
                         "properties": {
+                            "authConfigs": [
+                                {
+                                    "authenticationPolicy": {
+                                        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/authenticationPolicies/jwtValidationPolicy"
+                                    },
+                                    "name": "boundAuth",
+                                }
+                            ],
                             "backendAddressPool": {
                                 "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/backendAddressPools/appgwpool"
                             },
                             "backendHttpSettings": {
                                 "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/backendHttpSettingsCollection/appgwbhs"
-                            },
-                            "entraJWTValidationConfig": {
-                                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/entraJWTValidationConfigs/entraJWTValidationConfig1"
                             },
                             "httpListener": {
                                 "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/httpListeners/appgwhl"
@@ -155,7 +212,20 @@ def main():
                             },
                             "ruleType": "Basic",
                         },
-                    }
+                    },
+                    {
+                        "name": "appgwadvancedroutingrule",
+                        "properties": {
+                            "advancedRoutingMap": {
+                                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/advancedRoutingMaps/advancedRoutingMap1"
+                            },
+                            "httpListener": {
+                                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/applicationGateways/appgw/httpListeners/appgwhttplistener"
+                            },
+                            "priority": 20,
+                            "ruleType": "AdvancedRouting",
+                        },
+                    },
                 ],
                 "rewriteRuleSets": [
                     {
@@ -227,6 +297,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/ApplicationGatewayCreate.json
+# x-ms-original-file: 2026-01-01/ApplicationGatewayCreate.json
 if __name__ == "__main__":
     main()

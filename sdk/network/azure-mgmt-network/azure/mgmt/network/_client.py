@@ -30,6 +30,7 @@ from .operations import (
     ApplicationGatewayWafDynamicManifestsOperations,
     ApplicationGatewaysOperations,
     ApplicationSecurityGroupsOperations,
+    AuthenticationPoliciesOperations,
     AvailableDelegationsOperations,
     AvailableEndpointServicesOperations,
     AvailablePrivateEndpointTypesOperations,
@@ -216,6 +217,9 @@ class NetworkManagementClient(
     :ivar application_security_groups: ApplicationSecurityGroupsOperations operations
     :vartype application_security_groups:
      azure.mgmt.network.operations.ApplicationSecurityGroupsOperations
+    :ivar authentication_policies: AuthenticationPoliciesOperations operations
+    :vartype authentication_policies:
+     azure.mgmt.network.operations.AuthenticationPoliciesOperations
     :ivar azure_firewalls: AzureFirewallsOperations operations
     :vartype azure_firewalls: azure.mgmt.network.operations.AzureFirewallsOperations
     :ivar bastion_hosts: BastionHostsOperations operations
@@ -717,6 +721,9 @@ class NetworkManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.application_security_groups = ApplicationSecurityGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.authentication_policies = AuthenticationPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.azure_firewalls = AzureFirewallsOperations(self._client, self._config, self._serialize, self._deserialize)

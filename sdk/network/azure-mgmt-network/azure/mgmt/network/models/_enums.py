@@ -141,6 +141,25 @@ class AdvertisedPublicPrefixPropertiesValidationState(  # pylint: disable=name-t
     """SignatureVerificationFailed."""
 
 
+class ApplicationGatewayAdvancedRoutingConditionType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The type of request property that an advanced routing condition is evaluated against."""
+
+    HEADER = "Header"
+    """The condition is evaluated against an HTTP request header identified by propertyName."""
+    QUERY_STRING = "QueryString"
+    """The condition is evaluated against a query string argument identified by propertyName."""
+    PATH = "Path"
+    """The condition is evaluated against the request path. propertyName is not applicable."""
+    CLIENT_IP = "ClientIP"
+    """The condition is evaluated against the client IP address. propertyName and propertyValueMatcher
+    are not applicable."""
+    METHOD = "Method"
+    """The condition is evaluated against the HTTP method. propertyName and propertyValueMatcher are
+    not applicable."""
+
+
 class ApplicationGatewayBackendHealthServerHealth(  # pylint: disable=name-too-long
     str, Enum, metaclass=CaseInsensitiveEnumMeta
 ):
@@ -310,6 +329,8 @@ class ApplicationGatewayRequestRoutingRuleType(str, Enum, metaclass=CaseInsensit
     """Basic."""
     PATH_BASED_ROUTING = "PathBasedRouting"
     """PathBasedRouting."""
+    ADVANCED_ROUTING = "AdvancedRouting"
+    """AdvancedRouting."""
 
 
 class ApplicationGatewayRuleSetStatusOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -353,6 +374,10 @@ class ApplicationGatewaySkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WAF_v2."""
     BASIC = "Basic"
     """Basic."""
+    BASIC_V2 = "Basic_v2"
+    """Basic tier Application Gateway."""
+    BASIC_WAF_V2 = "Basic_WAF_v2"
+    """Basic tier Application Gateway with WAF enabled."""
 
 
 class ApplicationGatewaySslCipherSuite(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -468,6 +493,10 @@ class ApplicationGatewayTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WAF_v2."""
     BASIC = "Basic"
     """Basic."""
+    BASIC_V2 = "Basic_v2"
+    """Basic tier Application Gateway."""
+    BASIC_WAF_V2 = "Basic_WAF_v2"
+    """Basic tier Application Gateway with WAF enabled."""
 
 
 class ApplicationGatewayTierTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -507,6 +536,19 @@ class ApplicationGatewayWafRuleActionTypes(str, Enum, metaclass=CaseInsensitiveE
     """Block."""
     LOG = "Log"
     """Log."""
+
+
+class ApplicationGatewayWafRuleParanoiaLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """OWASP CRS paranoia level of a managed rule. Applicable only for DRS and OWASP rules."""
+
+    PL1 = "PL1"
+    """Baseline detection rules."""
+    PL2 = "PL2"
+    """Adds stricter detection rules."""
+    PL3 = "PL3"
+    """Adds aggressive detection rules."""
+    PL4 = "PL4"
+    """Strictest detection rules."""
 
 
 class ApplicationGatewayWafRuleSensitivityTypes(  # pylint: disable=name-too-long
@@ -1126,15 +1168,6 @@ class EffectiveSecurityRuleProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """Udp."""
     ALL = "All"
     """All."""
-
-
-class EnableOnlyIpv6PeeringState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of IPv6 peering."""
-
-    ENABLED = "Enabled"
-    """IPv6 peering is enabled."""
-    DISABLED = "Disabled"
-    """IPv6 peering is disabled."""
 
 
 class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2324,6 +2357,18 @@ class OfficeTrafficCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """None."""
 
 
+class OnUnauthenticatedRequest(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Action to take when a request is unauthenticated."""
+
+    ALLOW = "allow"
+    """Allow the request to pass through without authentication."""
+    AUTHENTICATE = "authenticate"
+    """Redirect the request to the authentication provider. Only valid for the user authentication
+    capability."""
+    DENY = "deny"
+    """Deny the request when no credential is presented."""
+
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The origin of the issue."""
 
@@ -3043,6 +3088,15 @@ class ServiceUpdateAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PartialUpdate."""
 
 
+class SessionRecordingIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity to use."""
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System assigned identity."""
+    USER_ASSIGNED = "UserAssigned"
+    """User assigned identity."""
+
+
 class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The severity of the issue."""
 
@@ -3142,6 +3196,13 @@ class UseHubGateway(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """False."""
     TRUE = "True"
     """True."""
+
+
+class UserTrustProviderType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the user trust provider."""
+
+    ENTRA = "entra"
+    """Microsoft Entra trust provider type."""
 
 
 class VerbosityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3266,6 +3327,11 @@ class VirtualNetworkGatewayMigrationType(str, Enum, metaclass=CaseInsensitiveEnu
 
     UPGRADE_DEPLOYMENT_TO_STANDARD_IP = "UpgradeDeploymentToStandardIP"
     """Indicates that it is a migration process from basic IP CSES to standard IP VMSS."""
+    UPGRADE_GATEWAY_TO_DUAL_STACK = "UpgradeGatewayToDualStack"
+    """Indicates a migration process to upgrade the virtual network gateway to dual stack (IPv4 and
+    IPv6)."""
+    MIGRATE_GATEWAY_FOR_POINT_TO_SITE_PROFILE = "MigrateGatewayForPointToSiteProfile"
+    """Indicates a migration process for the virtual network gateway's point-to-site profile."""
 
 
 class VirtualNetworkGatewaySkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3635,6 +3701,15 @@ class WebApplicationFirewallPolicyResourceState(  # pylint: disable=name-too-lon
     """Disabled."""
     DELETING = "Deleting"
     """Deleting."""
+
+
+class WebApplicationFirewallPolicyTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Tier of a web application firewall policy."""
+
+    STANDARD = "Standard"
+    """Standard tier web application firewall policy."""
+    BASIC = "Basic"
+    """Basic tier web application firewall policy."""
 
 
 class WebApplicationFirewallRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

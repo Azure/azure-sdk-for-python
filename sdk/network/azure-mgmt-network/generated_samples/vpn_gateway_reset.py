@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/VpnGatewayReset.json
+# x-ms-original-file: 2026-01-01/VpnGatewayReset.json
 if __name__ == "__main__":
     main()

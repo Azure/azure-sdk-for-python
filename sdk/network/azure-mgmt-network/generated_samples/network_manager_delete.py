@@ -36,6 +36,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-09-01/NetworkManagerDelete.json
+# x-ms-original-file: 2026-01-01/NetworkManagerDelete.json
 if __name__ == "__main__":
     main()

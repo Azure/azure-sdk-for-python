@@ -26,7 +26,7 @@ class TestNetworkManagementIpamPoolsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_manager_name="str",
             pool_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -47,6 +47,8 @@ class TestNetworkManagementIpamPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                         "description": "str",
                         "displayName": "str",
                         "ipAddressType": ["str"],
+                        "maxAllocationSize": "str",
+                        "minAllocationSize": "str",
                         "parentPoolName": "str",
                         "provisioningState": "str",
                     },
@@ -64,7 +66,7 @@ class TestNetworkManagementIpamPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -78,7 +80,7 @@ class TestNetworkManagementIpamPoolsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_manager_name="str",
             pool_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -92,7 +94,7 @@ class TestNetworkManagementIpamPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 network_manager_name="str",
                 pool_name="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -105,7 +107,7 @@ class TestNetworkManagementIpamPoolsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.ipam_pools.list(
             resource_group_name=resource_group.name,
             network_manager_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -118,7 +120,7 @@ class TestNetworkManagementIpamPoolsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_manager_name="str",
             pool_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -131,7 +133,7 @@ class TestNetworkManagementIpamPoolsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_manager_name="str",
             pool_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

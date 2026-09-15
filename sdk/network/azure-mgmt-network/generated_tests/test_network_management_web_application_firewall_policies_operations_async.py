@@ -26,7 +26,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
         response = await self.client.web_application_firewall_policies.get(
             resource_group_name=resource_group.name,
             policy_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -49,7 +49,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                             {
                                 "ruleSetType": "str",
                                 "ruleSetVersion": "str",
-                                "computedDisabledRules": [{"ruleGroupName": "str", "rules": ["str"]}],
+                                "computedDisabledRules": [{"ruleGroupName": "str", "rules": [0]}],
                                 "ruleGroupOverrides": [
                                     {
                                         "ruleGroupName": "str",
@@ -105,6 +105,67 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                             "location": "str",
                             "name": "str",
                             "properties": {
+                                "advancedRoutingConditionSets": [
+                                    {
+                                        "etag": "str",
+                                        "id": "str",
+                                        "name": "str",
+                                        "properties": {
+                                            "routingConditions": [
+                                                {
+                                                    "conditionType": "str",
+                                                    "propertyName": "str",
+                                                    "propertyValueMatcher": {
+                                                        "pattern": "str",
+                                                        "ignoreCase": bool,
+                                                        "negate": bool,
+                                                    },
+                                                    "propertyValues": ["str"],
+                                                }
+                                            ],
+                                            "provisioningState": "str",
+                                        },
+                                        "type": "str",
+                                    }
+                                ],
+                                "advancedRoutingMaps": [
+                                    {
+                                        "etag": "str",
+                                        "id": "str",
+                                        "name": "str",
+                                        "properties": {
+                                            "advancedRoutingRules": [
+                                                {
+                                                    "etag": "str",
+                                                    "id": "str",
+                                                    "name": "str",
+                                                    "properties": {
+                                                        "priority": 0,
+                                                        "advancedRoutingConditionSet": {"id": "str"},
+                                                        "authConfigs": [
+                                                            {"authenticationPolicy": {"id": "str"}, "name": "str"}
+                                                        ],
+                                                        "backendAddressPool": {"id": "str"},
+                                                        "backendHttpSettings": {"id": "str"},
+                                                        "provisioningState": "str",
+                                                        "redirectConfiguration": {"id": "str"},
+                                                        "rewriteRuleSet": {"id": "str"},
+                                                    },
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "defaultAuthConfigs": [
+                                                {"authenticationPolicy": {"id": "str"}, "name": "str"}
+                                            ],
+                                            "defaultBackendAddressPool": {"id": "str"},
+                                            "defaultBackendHttpSettings": {"id": "str"},
+                                            "defaultRedirectConfiguration": {"id": "str"},
+                                            "defaultRewriteRuleSet": {"id": "str"},
+                                            "provisioningState": "str",
+                                        },
+                                        "type": "str",
+                                    }
+                                ],
                                 "authenticationCertificates": [
                                     {
                                         "etag": "str",
@@ -531,6 +592,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -555,6 +619,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -732,6 +799,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                                         "id": "str",
                                                                                                                                         "name": "str",
                                                                                                                                         "properties": {
+                                                                                                                                            "approvalReference": {
+                                                                                                                                                "privateEndpointId": "str"
+                                                                                                                                            },
                                                                                                                                             "groupIds": [
                                                                                                                                                 "str"
                                                                                                                                             ],
@@ -756,6 +826,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                                         "id": "str",
                                                                                                                                         "name": "str",
                                                                                                                                         "properties": {
+                                                                                                                                            "approvalReference": {
+                                                                                                                                                "privateEndpointId": "str"
+                                                                                                                                            },
                                                                                                                                             "groupIds": [
                                                                                                                                                 "str"
                                                                                                                                             ],
@@ -1021,6 +1094,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -1498,6 +1574,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -2032,6 +2111,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -2054,6 +2136,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -2344,6 +2429,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -2368,6 +2456,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -2733,6 +2824,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -3436,6 +3530,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -3917,6 +4014,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                                         "id": "str",
                                                                                                                                         "name": "str",
                                                                                                                                         "properties": {
+                                                                                                                                            "approvalReference": {
+                                                                                                                                                "privateEndpointId": "str"
+                                                                                                                                            },
                                                                                                                                             "groupIds": [
                                                                                                                                                 "str"
                                                                                                                                             ],
@@ -3941,6 +4041,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                                         "id": "str",
                                                                                                                                         "name": "str",
                                                                                                                                         "properties": {
+                                                                                                                                            "approvalReference": {
+                                                                                                                                                "privateEndpointId": "str"
+                                                                                                                                            },
                                                                                                                                             "groupIds": [
                                                                                                                                                 "str"
                                                                                                                                             ],
@@ -4070,6 +4173,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                                                             "id": "str",
                                                                                                                                                             "name": "str",
                                                                                                                                                             "properties": {
+                                                                                                                                                                "approvalReference": {
+                                                                                                                                                                    "privateEndpointId": "str"
+                                                                                                                                                                },
                                                                                                                                                                 "groupIds": [
                                                                                                                                                                     "str"
                                                                                                                                                                 ],
@@ -4094,6 +4200,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                                                             "id": "str",
                                                                                                                                                             "name": "str",
                                                                                                                                                             "properties": {
+                                                                                                                                                                "approvalReference": {
+                                                                                                                                                                    "privateEndpointId": "str"
+                                                                                                                                                                },
                                                                                                                                                                 "groupIds": [
                                                                                                                                                                     "str"
                                                                                                                                                                 ],
@@ -4298,6 +4407,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -4660,6 +4772,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -5272,6 +5387,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -5296,6 +5414,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -5425,6 +5546,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                                             "id": "str",
                                                                                                                                             "name": "str",
                                                                                                                                             "properties": {
+                                                                                                                                                "approvalReference": {
+                                                                                                                                                    "privateEndpointId": "str"
+                                                                                                                                                },
                                                                                                                                                 "groupIds": [
                                                                                                                                                     "str"
                                                                                                                                                 ],
@@ -5449,6 +5573,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                                                             "id": "str",
                                                                                                                                             "name": "str",
                                                                                                                                             "properties": {
+                                                                                                                                                "approvalReference": {
+                                                                                                                                                    "privateEndpointId": "str"
+                                                                                                                                                },
                                                                                                                                                 "groupIds": [
                                                                                                                                                     "str"
                                                                                                                                                 ],
@@ -5649,6 +5776,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "approvalReference": {
+                                                                                                                "privateEndpointId": "str"
+                                                                                                            },
                                                                                                             "groupIds": [
                                                                                                                 "str"
                                                                                                             ],
@@ -6011,6 +6141,9 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "approvalReference": {
+                                                                                                                "privateEndpointId": "str"
+                                                                                                            },
                                                                                                             "groupIds": [
                                                                                                                 "str"
                                                                                                             ],
@@ -6405,6 +6538,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "approvalReference": {"privateEndpointId": "str"},
                                                                 "groupIds": ["str"],
                                                                 "privateLinkServiceConnectionState": {
                                                                     "actionsRequired": "str",
@@ -13138,6 +13272,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "approvalReference": {"privateEndpointId": "str"},
                                                                 "groupIds": ["str"],
                                                                 "privateLinkServiceConnectionState": {
                                                                     "actionsRequired": "str",
@@ -14898,6 +15033,8 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                         "id": "str",
                                         "name": "str",
                                         "properties": {
+                                            "advancedRoutingMap": {"id": "str"},
+                                            "authConfigs": [{"authenticationPolicy": {"id": "str"}, "name": "str"}],
                                             "backendAddressPool": {"id": "str"},
                                             "backendHttpSettings": {"id": "str"},
                                             "entraJWTValidationConfig": {"id": "str"},
@@ -14913,6 +15050,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                         "type": "str",
                                     }
                                 ],
+                                "reservedCapacity": 0,
                                 "resourceGuid": "str",
                                 "rewriteRuleSets": [
                                     {
@@ -15163,11 +15301,12 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                     },
                     "provisioningState": "str",
                     "resourceState": "str",
+                    "tier": "str",
                 },
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -15180,7 +15319,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
             await self.client.web_application_firewall_policies.begin_delete(
                 resource_group_name=resource_group.name,
                 policy_name="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -15192,7 +15331,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
     async def test_web_application_firewall_policies_list(self, resource_group):
         response = self.client.web_application_firewall_policies.list(
             resource_group_name=resource_group.name,
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -15202,7 +15341,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
     @recorded_by_proxy_async
     async def test_web_application_firewall_policies_list_all(self, resource_group):
         response = self.client.web_application_firewall_policies.list_all(
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

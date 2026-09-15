@@ -26,7 +26,7 @@ class TestNetworkManagementAddressPrefixSetsOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             application_security_group_name="str",
             address_prefix_set_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestNetworkManagementAddressPrefixSetsOperationsAsync(AzureMgmtRecordedTes
                     "properties": {"addressPrefixes": ["str"], "provisioningState": "str"},
                     "type": "str",
                 },
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -62,7 +62,7 @@ class TestNetworkManagementAddressPrefixSetsOperationsAsync(AzureMgmtRecordedTes
                 resource_group_name=resource_group.name,
                 application_security_group_name="str",
                 address_prefix_set_name="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -75,7 +75,7 @@ class TestNetworkManagementAddressPrefixSetsOperationsAsync(AzureMgmtRecordedTes
         response = self.client.address_prefix_sets.list(
             resource_group_name=resource_group.name,
             application_security_group_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
