@@ -7,6 +7,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Updated internal statsbeat routing to follow the customer's effective ingestion route after an accepted redirect so EU SDK statistics are reported to the EU statsbeat destination
+  ([#48817](https://github.com/Azure/azure-sdk-for-python/pull/48817))
 - Update to the new stable OpenTelemetry database semantic conventions
   (`db.system.name`, `db.query.text`, `db.operation.name`, `db.namespace`) when
   mapping `CLIENT` spans to `RemoteDependencyData`

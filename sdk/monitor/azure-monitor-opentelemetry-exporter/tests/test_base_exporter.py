@@ -1114,7 +1114,9 @@ class TestBaseExporter(unittest.TestCase):
         self.assertFalse(same("foo.applicationinsights.azure.us", "bar.applicationinsights.azure.cn"))
         self.assertFalse(same("foo.applicationinsights.azure.cn", "westus-0.in.applicationinsights.azure.com"))
         # Ports are ignored; only the host is compared.
-        self.assertTrue(same("westus-0.in.applicationinsights.azure.com:443", "westus-0.in.applicationinsights.azure.com"))
+        self.assertTrue(
+            same("westus-0.in.applicationinsights.azure.com:443", "westus-0.in.applicationinsights.azure.com")
+        )
         self.assertTrue(same("custom-ingestion.example.invalid:8080", "custom-ingestion.example.invalid:8080"))
         # Userinfo and trailing dots are normalized away.
         self.assertTrue(same("user@dc.services.visualstudio.com", "westus-0.in.applicationinsights.azure.com."))
