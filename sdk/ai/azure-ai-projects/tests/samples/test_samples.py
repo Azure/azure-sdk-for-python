@@ -114,7 +114,10 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "agent_insights",
-            samples_to_skip=[],
+            samples_to_skip=[
+                "sample_agent_insights_on_demand.py",  # Skipped until recordings are available.
+                "sample_agent_insights_scheduled.py",  # Skipped until recordings are available.
+            ],
         ),
     )
     @agentInsightsServicePreparer()
