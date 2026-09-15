@@ -412,6 +412,12 @@ class FoundryStorageProvider:
     ) -> list[str]:
         """Retrieve the ordered list of item IDs that form the conversation history.
 
+        Resolution is delegated to the hosted ``history/item_ids`` endpoint, which is
+        responsible for applying the replayable-history rule documented on
+        :meth:`ResponseProviderProtocol.get_history_item_ids` (a ``failed`` response
+        contributes neither its input nor its output items). The returned IDs are
+        passed through unchanged; the client cannot tell which response an ID belongs to.
+
         :param previous_response_id: The response whose prior turn should be the history anchor.
         :type previous_response_id: str | None
         :param conversation_id: An explicit conversation scope identifier, if available.

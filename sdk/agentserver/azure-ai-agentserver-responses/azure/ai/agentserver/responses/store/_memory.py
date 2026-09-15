@@ -16,6 +16,7 @@ from ..models._generated import OutputItem, ResponseObject, ResponseStreamEvent
 from ..models._helpers import get_conversation_id
 from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord, _StreamReplayState
 from ._base import ResponseAlreadyExistsError, ResponseProviderProtocol
+from ._history import is_replayable_status
 
 _DEFAULT_REPLAY_EVENT_TTL_SECONDS: int = 600
 """Minimum per-event replay TTL (10 minutes) per spec B35."""
@@ -290,8 +291,11 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
         Collects history, input, and output item IDs from the previous
         response chain and/or all responses within the given conversation.
-        When over *limit*, keeps the most recent N item IDs from the
-        resolved chain, preserving chronological order in the returned slice.
+        A ``failed`` response contributes only its inherited history; its own
+        input and output items are excluded so that the input that made it
+        fail is not replayed into later turns. When over *limit*, keeps the
+        most recent N item IDs from the resolved chain, preserving
+        chronological order in the returned slice.
 
         :param previous_response_id: Optional response ID to chain history from.
         :type previous_response_id: str | None
@@ -312,18 +316,14 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
                 if entry is not None and not entry.deleted:
                     # Resolve history chain for the previous response:
                     # return historyItemIds + inputItemIds + outputItemIds of the previous response
-                    resolved.extend(entry.history_item_ids or [])
-                    resolved.extend(entry.input_item_ids or [])
-                    resolved.extend(entry.output_item_ids or [])
+                    resolved.extend(self._replayable_item_ids_unlocked(entry))
 
             if conversation_id is not None:
                 for response_id in self._conversation_responses.get(conversation_id, []):
                     entry = self._entries.get(response_id)
                     if entry is None or entry.deleted:
                         continue
-                    resolved.extend(entry.history_item_ids or [])
-                    resolved.extend(entry.input_item_ids or [])
-                    resolved.extend(entry.output_item_ids or [])
+                    resolved.extend(self._replayable_item_ids_unlocked(entry))
 
             if limit <= 0:
                 return []
@@ -588,6 +588,28 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
             del self._stream_events[rid]
 
         return len(expired_ids)
+
+    @staticmethod
+    def _replayable_item_ids_unlocked(entry: _StoreEntry) -> list[str]:
+        """Return the item IDs one response contributes to replayable history.
+
+        Must be called while holding ``self._lock``.
+
+        A ``failed`` response contributes only the history it inherited; its
+        own input and output items are excluded so the input that made it
+        fail is not replayed into later turns.
+
+        :param entry: The store entry to read.
+        :type entry: _StoreEntry
+        :returns: Ordered history + input + output item IDs, or history only for a failed response.
+        :rtype: list[str]
+        """
+        resolved = list(entry.history_item_ids or [])
+        status = entry.response.get("status") if entry.response is not None else None
+        if is_replayable_status(status):
+            resolved.extend(entry.input_item_ids or [])
+            resolved.extend(entry.output_item_ids or [])
+        return resolved
 
     def _store_output_items_unlocked(self, response: ResponseObject) -> list[str]:
         """Extract output items from a response, store them in the item store, and return their IDs.

@@ -163,6 +163,15 @@ class ResponseProviderProtocol(Protocol):
     ) -> list[str]:
         """Get history item IDs for a conversation chain scope.
 
+        A response whose stored status is ``failed`` contributes neither its
+        own input items nor its output items to the resolved history: replaying
+        the input that made a turn fail would make every later turn in the
+        same conversation (or chained through ``previous_response_id``) fail in
+        the same way. The failed response's inherited history is still
+        contributed, and its stored items stay retrievable through
+        :meth:`get_input_items` for diagnostics. The exclusion is applied
+        before ``limit`` truncation.
+
         :param previous_response_id: Optional response ID to chain history from.
         :type previous_response_id: str | None
         :param conversation_id: Optional conversation ID to scope history lookup.
