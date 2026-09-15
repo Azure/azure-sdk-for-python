@@ -14,7 +14,7 @@ from typing import Any, Callable, IO, Iterator, Literal, Optional, TYPE_CHECKING
 import urllib.parse
 import uuid
 
-from azure.core import PipelineClient
+from azure.core import MatchConditions, PipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -37,7 +37,7 @@ from .. import models as _models
 from .._configuration import AIProjectClientConfiguration
 from .._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
-from .._utils.utils import prepare_multipart_form_data
+from .._utils.utils import prep_if_match, prep_if_none_match, prepare_multipart_form_data
 
 if TYPE_CHECKING:
     from .. import _unions
@@ -4683,7 +4683,12 @@ def build_beta_voice_agents_telephony_get_binding_request(  # pylint: disable=na
 
 
 def build_beta_voice_agents_telephony_update_binding_request(  # pylint: disable=name-too-long
-    agent_name: str, binding_id: str, *, etag: str, **kwargs: Any
+    agent_name: str,
+    binding_id: str,
+    *,
+    etag: str,
+    match_condition: MatchConditions = MatchConditions.IfNotModified,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -4707,16 +4712,21 @@ def build_beta_voice_agents_telephony_update_binding_request(  # pylint: disable
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    if etag is not None:
-        _headers["If-Match"] = _SERIALIZER.header("if_match", etag, "str")
-
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_beta_voice_agents_telephony_delete_binding_request(  # pylint: disable=name-too-long
-    agent_name: str, binding_id: str, *, etag: str, **kwargs: Any
+    agent_name: str,
+    binding_id: str,
+    *,
+    etag: str,
+    match_condition: MatchConditions = MatchConditions.IfNotModified,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -4735,8 +4745,9 @@ def build_beta_voice_agents_telephony_delete_binding_request(  # pylint: disable
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if etag is not None:
-        _headers["If-Match"] = _SERIALIZER.header("if_match", etag, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -4904,7 +4915,7 @@ def build_beta_voice_agents_telephony_get_transfer_targets_request(  # pylint: d
 
 
 def build_beta_voice_agents_telephony_replace_transfer_targets_request(  # pylint: disable=name-too-long
-    agent_name: str, *, etag: str, **kwargs: Any
+    agent_name: str, *, etag: str, match_condition: MatchConditions = MatchConditions.IfNotModified, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -4925,9 +4936,9 @@ def build_beta_voice_agents_telephony_replace_transfer_targets_request(  # pylin
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if etag is not None:
-        _headers["If-Match"] = _SERIALIZER.header("if_match", etag, "str")
-
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -4993,7 +5004,12 @@ def build_beta_voice_agents_telephony_get_call_job_request(  # pylint: disable=n
 
 
 def build_beta_voice_agents_telephony_cancel_call_job_request(  # pylint: disable=name-too-long
-    agent_name: str, call_job_id: str, *, etag: str, **kwargs: Any
+    agent_name: str,
+    call_job_id: str,
+    *,
+    etag: str,
+    match_condition: MatchConditions = MatchConditions.IfNotModified,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -5014,9 +5030,9 @@ def build_beta_voice_agents_telephony_cancel_call_job_request(  # pylint: disabl
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if etag is not None:
-        _headers["If-Match"] = _SERIALIZER.header("if_match", etag, "str")
-
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -23448,6 +23464,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         body: _models.UpdateTelephonyBindingRequest,
         *,
         etag: str,
+        match_condition: MatchConditions = MatchConditions.IfNotModified,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.TelephonyBinding:
@@ -23463,6 +23480,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: ~azure.ai.projects.models.UpdateTelephonyBindingRequest
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is
+         MatchConditions.IfNotModified.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -23479,6 +23499,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         body: JSON,
         *,
         etag: str,
+        match_condition: MatchConditions = MatchConditions.IfNotModified,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.TelephonyBinding:
@@ -23494,6 +23515,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: JSON
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is
+         MatchConditions.IfNotModified.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -23510,6 +23534,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         body: IO[bytes],
         *,
         etag: str,
+        match_condition: MatchConditions = MatchConditions.IfNotModified,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.TelephonyBinding:
@@ -23525,6 +23550,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is
+         MatchConditions.IfNotModified.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -23541,6 +23569,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         body: Union[_models.UpdateTelephonyBindingRequest, JSON, IO[bytes]],
         *,
         etag: str,
+        match_condition: MatchConditions = MatchConditions.IfNotModified,
         **kwargs: Any
     ) -> _models.TelephonyBinding:
         """Update an agent telephony binding.
@@ -23556,6 +23585,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: ~azure.ai.projects.models.UpdateTelephonyBindingRequest or JSON or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is
+         MatchConditions.IfNotModified.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyBinding
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23585,6 +23617,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
             agent_name=agent_name,
             binding_id=binding_id,
             etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -23632,7 +23665,13 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
     @distributed_trace
     def delete_binding(  # pylint: disable=inconsistent-return-statements
-        self, agent_name: str, binding_id: str, *, etag: str, **kwargs: Any
+        self,
+        agent_name: str,
+        binding_id: str,
+        *,
+        etag: str,
+        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        **kwargs: Any
     ) -> None:
         """Delete an agent telephony binding.
 
@@ -23644,6 +23683,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type binding_id: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is
+         MatchConditions.IfNotModified.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23665,6 +23707,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
             agent_name=agent_name,
             binding_id=binding_id,
             etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -24188,6 +24231,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         agent_name: str,
         *,
         etag: str,
+        match_condition: MatchConditions = MatchConditions.IfNotModified,
         transfer_targets: List[_models.TelephonyTransferTarget],
         content_type: str = "application/json",
         **kwargs: Any
@@ -24200,6 +24244,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type agent_name: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is
+         MatchConditions.IfNotModified.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword transfer_targets: The complete set of destinations to which the voice agent may
          transfer calls. An empty array clears all targets when replacing the configuration. Required.
         :paramtype transfer_targets: list[~azure.ai.projects.models.TelephonyTransferTarget]
@@ -24214,7 +24261,14 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
     @overload
     def replace_transfer_targets(
-        self, agent_name: str, body: JSON, *, etag: str, content_type: str = "application/json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: JSON,
+        *,
+        etag: str,
+        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
         """Replace agent telephony transfer targets.
 
@@ -24226,6 +24280,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: JSON
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is
+         MatchConditions.IfNotModified.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24237,7 +24294,14 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
     @overload
     def replace_transfer_targets(
-        self, agent_name: str, body: IO[bytes], *, etag: str, content_type: str = "application/json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: IO[bytes],
+        *,
+        etag: str,
+        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
         """Replace agent telephony transfer targets.
 
@@ -24249,6 +24313,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is
+         MatchConditions.IfNotModified.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24265,6 +24332,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         etag: str,
+        match_condition: MatchConditions = MatchConditions.IfNotModified,
         transfer_targets: List[_models.TelephonyTransferTarget] = _Unset,
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
@@ -24278,6 +24346,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: JSON or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is
+         MatchConditions.IfNotModified.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword transfer_targets: The complete set of destinations to which the voice agent may
          transfer calls. An empty array clears all targets when replacing the configuration. Required.
         :paramtype transfer_targets: list[~azure.ai.projects.models.TelephonyTransferTarget]
@@ -24315,6 +24386,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         _request = build_beta_voice_agents_telephony_replace_transfer_targets_request(
             agent_name=agent_name,
             etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -24622,7 +24694,13 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
     @distributed_trace
     def cancel_call_job(
-        self, agent_name: str, call_job_id: str, *, etag: str, **kwargs: Any
+        self,
+        agent_name: str,
+        call_job_id: str,
+        *,
+        etag: str,
+        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        **kwargs: Any
     ) -> _models.TelephonyCallJob:
         """Cancel an outbound telephony call job.
 
@@ -24634,6 +24712,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type call_job_id: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is
+         MatchConditions.IfNotModified.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: TelephonyCallJob. The TelephonyCallJob is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyCallJob
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -24655,6 +24736,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
             agent_name=agent_name,
             call_job_id=call_job_id,
             etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
