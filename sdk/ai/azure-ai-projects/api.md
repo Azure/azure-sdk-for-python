@@ -2260,7 +2260,7 @@ namespace azure.ai.projects.aio.operations
                 agent_name: str, 
                 conversation_id: str, 
                 **kwargs: Any
-            ) -> VoiceRecordingResponse: ...
+            ) -> VoiceRecording: ...
 
         @distributed_trace_async
         async def get_audio_item(
@@ -2269,7 +2269,7 @@ namespace azure.ai.projects.aio.operations
                 conversation_id: str, 
                 item_id: str, 
                 **kwargs: Any
-            ) -> VoiceAudioItemResponse: ...
+            ) -> VoiceAudioItem: ...
 
         @distributed_trace_async
         async def get_generated_audio_item(
@@ -2278,7 +2278,7 @@ namespace azure.ai.projects.aio.operations
                 conversation_id: str, 
                 item_id: str, 
                 **kwargs: Any
-            ) -> VoiceGeneratedAudioItemResponse: ...
+            ) -> VoiceGeneratedAudioItem: ...
 
         @distributed_trace_async
         async def get_item(
@@ -2348,15 +2348,6 @@ namespace azure.ai.projects.aio.operations
 
 
     class azure.ai.projects.aio.operations.BetaVoiceAgentsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-
-    class azure.ai.projects.aio.operations.BetaVoiceAgentsRealtimeOperations:
 
         def __init__(
                 self, 
@@ -5218,21 +5209,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.BrowserAutomationTool(Tool, discriminator='browser_automation'):
-        browser_automation: BrowserAutomationToolParameters
-        type: Literal[ToolType.BROWSER_AUTOMATION]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                browser_automation: BrowserAutomationToolParameters
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.BrowserAutomationToolConnectionParameters(_Model):
         project_connection_id: str
 
@@ -5255,27 +5231,6 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 connection: BrowserAutomationToolConnectionParameters
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.BrowserAutomationToolboxTool(ToolboxTool, discriminator='browser_automation'):
-        browser_automation: BrowserAutomationToolParameters
-        description: str
-        name: str
-        tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolboxToolType.BROWSER_AUTOMATION]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                browser_automation: BrowserAutomationToolParameters, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -12783,7 +12738,7 @@ namespace azure.ai.projects.models
         next_attempt_at: Optional[datetime]
         object: Literal["call_job"]
         purpose: Optional[str]
-        retry_policy: TelephonyOutboundRetryPolicyResponse
+        retry_policy: TelephonyOutboundRetryPolicy
         revision: int
         schedule: Optional[TelephonyCallJobSchedule]
         source: str
@@ -12805,7 +12760,7 @@ namespace azure.ai.projects.models
                 id: str, 
                 next_attempt_at: Optional[datetime] = ..., 
                 purpose: Optional[str] = ..., 
-                retry_policy: TelephonyOutboundRetryPolicyResponse, 
+                retry_policy: TelephonyOutboundRetryPolicy, 
                 revision: int, 
                 schedule: Optional[TelephonyCallJobSchedule] = ..., 
                 source: str, 
@@ -13206,7 +13161,7 @@ namespace azure.ai.projects.models
         object: Literal["campaign"]
         published_at: Optional[datetime]
         purpose: Optional[str]
-        retry_policy: TelephonyOutboundRetryPolicyResponse
+        retry_policy: TelephonyOutboundRetryPolicy
         schedule: Optional[TelephonyCampaignSchedule]
         source: str
         updated_at: datetime
@@ -13228,7 +13183,7 @@ namespace azure.ai.projects.models
                 latest_successful_validation_id: Optional[str] = ..., 
                 published_at: Optional[datetime] = ..., 
                 purpose: Optional[str] = ..., 
-                retry_policy: TelephonyOutboundRetryPolicyResponse, 
+                retry_policy: TelephonyOutboundRetryPolicy, 
                 schedule: Optional[TelephonyCampaignSchedule] = ..., 
                 source: str, 
                 updated_at: datetime
@@ -13497,23 +13452,6 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.TelephonyOutboundFixedIntervalRetryPolicy(TelephonyOutboundRetryPolicy, discriminator='fixed_interval'):
-        interval: Optional[timedelta]
-        max_attempts: int
-        type: Literal[TelephonyOutboundRetryPolicyType.FIXED_INTERVAL]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                interval: Optional[timedelta] = ..., 
-                max_attempts: Optional[int] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.TelephonyOutboundFixedIntervalRetryPolicyResponse(TelephonyOutboundRetryPolicyResponse, discriminator='fixed_interval'):
         interval: timedelta
         max_attempts: int
         type: Literal[TelephonyOutboundRetryPolicyType.FIXED_INTERVAL]
@@ -13523,7 +13461,7 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 interval: timedelta, 
-                max_attempts: int
+                max_attempts: Optional[int] = ...
             ) -> None: ...
 
         @overload
@@ -13539,22 +13477,6 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 max_attempts: Optional[int] = ..., 
-                type: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.TelephonyOutboundRetryPolicyResponse(_Model):
-        max_attempts: int
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                max_attempts: int, 
                 type: str
             ) -> None: ...
 
@@ -14238,7 +14160,6 @@ namespace azure.ai.projects.models
         A2A_PREVIEW = "a2a_preview"
         A2_A = "a2a"
         AZURE_AI_SEARCH = "azure_ai_search"
-        BROWSER_AUTOMATION = "browser_automation"
         BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
         CODE_INTERPRETER = "code_interpreter"
         FABRIC_IQ_PREVIEW = "fabric_iq_preview"
@@ -16314,7 +16235,7 @@ namespace azure.ai.projects.models
         WAV = "wav"
 
 
-    class azure.ai.projects.models.VoiceAudioItemResponse(_Model):
+    class azure.ai.projects.models.VoiceAudioItem(_Model):
         blob_uri: Optional[str]
         channels: Optional[int]
         codec: Optional[Union[str, VoiceAudioCodec]]
@@ -16398,7 +16319,7 @@ namespace azure.ai.projects.models
         IN_PROGRESS = "in_progress"
 
 
-    class azure.ai.projects.models.VoiceGeneratedAudioItemResponse(_Model):
+    class azure.ai.projects.models.VoiceGeneratedAudioItem(_Model):
         blob_uri: Optional[str]
         channels: Optional[int]
         codec: Optional[Union[str, VoiceAudioCodec]]
@@ -16459,18 +16380,7 @@ namespace azure.ai.projects.models
         TEXT = "text"
 
 
-    class azure.ai.projects.models.VoiceRecordingChannelLayout(_Model):
-        left: Literal["user"]
-        right: Literal["agent"]
-
-        def __init__(
-                self, 
-                *args: Any, 
-                **kwargs: Any
-            ) -> None: ...
-
-
-    class azure.ai.projects.models.VoiceRecordingResponse(_Model):
+    class azure.ai.projects.models.VoiceRecording(_Model):
         blob_uri: Optional[str]
         channel_layout: VoiceRecordingChannelLayout
         channels: int
@@ -16494,6 +16404,17 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceRecordingChannelLayout(_Model):
+        left: Literal["user"]
+        right: Literal["agent"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
 
 
     class azure.ai.projects.models.VoiceResponse(VoiceResponseBase):
@@ -19022,7 +18943,7 @@ namespace azure.ai.projects.operations
                 agent_name: str, 
                 conversation_id: str, 
                 **kwargs: Any
-            ) -> VoiceRecordingResponse: ...
+            ) -> VoiceRecording: ...
 
         @distributed_trace
         def get_audio_item(
@@ -19031,7 +18952,7 @@ namespace azure.ai.projects.operations
                 conversation_id: str, 
                 item_id: str, 
                 **kwargs: Any
-            ) -> VoiceAudioItemResponse: ...
+            ) -> VoiceAudioItem: ...
 
         @distributed_trace
         def get_generated_audio_item(
@@ -19040,7 +18961,7 @@ namespace azure.ai.projects.operations
                 conversation_id: str, 
                 item_id: str, 
                 **kwargs: Any
-            ) -> VoiceGeneratedAudioItemResponse: ...
+            ) -> VoiceGeneratedAudioItem: ...
 
         @distributed_trace
         def get_item(
@@ -19110,15 +19031,6 @@ namespace azure.ai.projects.operations
 
 
     class azure.ai.projects.operations.BetaVoiceAgentsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-
-    class azure.ai.projects.operations.BetaVoiceAgentsRealtimeOperations:
 
         def __init__(
                 self, 
