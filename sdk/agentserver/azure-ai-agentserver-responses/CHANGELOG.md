@@ -1,5 +1,12 @@
 # Release History
 
+## 2.1.0b2 (Unreleased)
+
+### Bugs Fixed
+
+- Partition `InMemoryResponseProvider` responses, items, history, and legacy replay
+  state by the platform user key, keeping anonymous local state separate.
+
 ## 2.1.0b1 (2026-08-11)
 
 ### Breaking Changes
