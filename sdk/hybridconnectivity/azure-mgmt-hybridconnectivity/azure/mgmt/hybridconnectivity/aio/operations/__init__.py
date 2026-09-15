@@ -16,6 +16,7 @@ from ._operations import Operations  # type: ignore
 from ._operations import EndpointsOperations  # type: ignore
 from ._operations import ServiceConfigurationsOperations  # type: ignore
 from ._operations import GenerateAwsTemplateOperations  # type: ignore
+from ._operations import GenerateGcpTemplateOperations  # type: ignore
 from ._operations import PublicCloudConnectorsOperations  # type: ignore
 from ._operations import SolutionConfigurationsOperations  # type: ignore
 from ._operations import InventoryOperations  # type: ignore
@@ -30,6 +31,7 @@ __all__ = [
     "EndpointsOperations",
     "ServiceConfigurationsOperations",
     "GenerateAwsTemplateOperations",
+    "GenerateGcpTemplateOperations",
     "PublicCloudConnectorsOperations",
     "SolutionConfigurationsOperations",
     "InventoryOperations",
