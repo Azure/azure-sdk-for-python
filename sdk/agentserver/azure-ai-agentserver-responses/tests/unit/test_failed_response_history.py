@@ -108,19 +108,6 @@ def test_is_replayable_status_accepts_enum_members() -> None:
     assert is_replayable_status(_Status.FAILED) is False
 
 
-@pytest.mark.asyncio
-async def test_file_store_indexes_enum_status_as_its_value(tmp_path: Path) -> None:
-    store = FileResponseStore(storage_dir=tmp_path / "store")
-    await store.create_response(
-        _response("r_failed", status=_Status.FAILED, conversation_id="conv-1"), [_input_item("bad_in")], None
-    )
-    indexes = json.loads(
-        store._indexes_path("r_failed").read_text(encoding="utf-8")
-    )  # pylint: disable=protected-access
-    assert indexes["status"] == "failed"
-    assert await store.get_history_item_ids(None, "conv-1", limit=100) == []
-
-
 # ---------------------------------------------------------------------------
 # Conversation scope
 # ---------------------------------------------------------------------------
@@ -265,30 +252,35 @@ async def test_failed_items_do_not_consume_history_limit(tmp_path: Path) -> None
 
 
 # ---------------------------------------------------------------------------
-# File store: stores written before the status was indexed
+# File store: the envelope is the single source of truth for the status
 # ---------------------------------------------------------------------------
 
 
 @pytest.mark.asyncio
-async def test_file_store_reads_status_from_envelope_when_indexes_predate_it(tmp_path: Path) -> None:
-    """Indexes written by older versions have no ``status``; the envelope decides instead."""
+async def test_file_store_reads_status_from_envelope_not_indexes(tmp_path: Path) -> None:
+    """A stale or tampered indexes file cannot make a failed turn replayable again."""
     store = FileResponseStore(storage_dir=tmp_path / "store")
     await store.create_response(
-        _response("r_failed", status="failed", conversation_id="conv-1"),
-        [_input_item("bad_in")],
+        _response("r_1", status="in_progress", conversation_id="conv-1"),
+        [_input_item("in_1")],
         None,
     )
+    await store.update_response(_response("r_1", status="failed", conversation_id="conv-1"))
+
+    # Simulate the worst case: the indexes file says nothing about the status (or lies about it).
+    indexes_path = store._indexes_path("r_1")  # pylint: disable=protected-access
+    indexes = json.loads(indexes_path.read_text(encoding="utf-8"))
+    assert "status" not in indexes
+    indexes["status"] = "in_progress"
+    indexes_path.write_text(json.dumps(indexes), encoding="utf-8")
+
+    assert await store.get_history_item_ids(None, "conv-1", limit=100) == []
+
+
+@pytest.mark.asyncio
+async def test_file_store_enum_status_on_envelope(tmp_path: Path) -> None:
+    store = FileResponseStore(storage_dir=tmp_path / "store")
     await store.create_response(
-        _response("r_ok", conversation_id="conv-1"),
-        [_input_item("ok_in")],
-        None,
+        _response("r_failed", status=_Status.FAILED, conversation_id="conv-1"), [_input_item("bad_in")], None
     )
-
-    # Simulate a pre-existing store by dropping the indexed status.
-    for response_id in ("r_failed", "r_ok"):
-        indexes_path = store._indexes_path(response_id)  # pylint: disable=protected-access
-        indexes = json.loads(indexes_path.read_text(encoding="utf-8"))
-        assert indexes.pop("status") is not None
-        indexes_path.write_text(json.dumps(indexes), encoding="utf-8")
-
-    assert await store.get_history_item_ids(None, "conv-1", limit=100) == ["ok_in"]
+    assert await store.get_history_item_ids(None, "conv-1", limit=100) == []
