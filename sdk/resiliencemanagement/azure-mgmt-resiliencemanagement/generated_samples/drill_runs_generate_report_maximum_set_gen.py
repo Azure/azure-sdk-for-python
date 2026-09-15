@@ -30,14 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.drill_runs.begin_generate_report(
+    response = client.drill_runs.begin_generate_report(
         service_group_name="sampleServiceGroupName",
         drill_name="drill1",
         drill_run_name="ca92602e-53bf-43d2-ae62-d3fc940474b3",
         operation_id="qmn",
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-08-31-preview/DrillRuns_GenerateReport_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-30-preview/DrillRuns_GenerateReport_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

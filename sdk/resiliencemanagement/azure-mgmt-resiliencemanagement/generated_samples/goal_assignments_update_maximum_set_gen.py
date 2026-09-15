@@ -36,12 +36,12 @@ def main():
         goal_assignment_name="ga1",
         properties={
             "properties": {
-                "goalAssignmentType": "Resiliency",
-                "goalTemplateId": "/providers/Microsoft.AzureResilienceManagement/goaltemplates/gt1",
+                "regionalObjectives": {"targetRecoveryPointObjective": "PT15M", "targetRecoveryTimeObjective": "PT1H"},
+                "requireRegionalResiliency": True,
+                "requireZonalResiliency": True,
                 "serviceLevelResources": [
                     {
-                        "serviceLevelIndicatorResourceId": "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/MyResourceGroup/providers/Microsoft.Compute/virtualMachines/MyVirtualMachine",
-                        "serviceLevelObjectiveResourceId": "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/MyResourceGroup/providers/Microsoft.Compute/virtualMachines/MyVirtualMachine",
+                        "serviceLevelIndicatorResourceId": "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/MyResourceGroup/providers/Microsoft.Compute/virtualMachines/MyVirtualMachine"
                     }
                 ],
             }
@@ -49,6 +49,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-08-31-preview/GoalAssignments_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-30-preview/GoalAssignments_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

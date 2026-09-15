@@ -50,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -69,7 +69,7 @@ def build_operation_status_get_request(location: str, operation_id: str, **kwarg
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -96,7 +96,7 @@ def build_goal_assignments_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -124,7 +124,7 @@ def build_goal_assignments_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -154,7 +154,7 @@ def build_goal_assignments_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -184,7 +184,7 @@ def build_goal_assignments_update_goal_resources_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -213,7 +213,7 @@ def build_goal_assignments_refresh_goal_resources_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -239,7 +239,7 @@ def build_goal_assignments_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     # Construct URL
     _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.AzureResilienceManagement/goalAssignments/{goalAssignmentName}"
     path_format_arguments = {
@@ -262,7 +262,7 @@ def build_goal_assignments_recommend_capacity_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -291,143 +291,11 @@ def build_goal_assignments_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.AzureResilienceManagement/goalAssignments"
-    path_format_arguments = {
-        "serviceGroupName": _SERIALIZER.url("service_group_name", service_group_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if skip_token is not None:
-        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
-    if top is not None:
-        _params["$top"] = _SERIALIZER.query("top", top, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_goal_templates_get_request(service_group_name: str, goal_template_name: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.AzureResilienceManagement/goalTemplates/{goalTemplateName}"
-    path_format_arguments = {
-        "serviceGroupName": _SERIALIZER.url("service_group_name", service_group_name, "str"),
-        "goalTemplateName": _SERIALIZER.url("goal_template_name", goal_template_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_goal_templates_create_or_update_request(  # pylint: disable=name-too-long
-    service_group_name: str, goal_template_name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.AzureResilienceManagement/goalTemplates/{goalTemplateName}"
-    path_format_arguments = {
-        "serviceGroupName": _SERIALIZER.url("service_group_name", service_group_name, "str"),
-        "goalTemplateName": _SERIALIZER.url("goal_template_name", goal_template_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_goal_templates_update_request(service_group_name: str, goal_template_name: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.AzureResilienceManagement/goalTemplates/{goalTemplateName}"
-    path_format_arguments = {
-        "serviceGroupName": _SERIALIZER.url("service_group_name", service_group_name, "str"),
-        "goalTemplateName": _SERIALIZER.url("goal_template_name", goal_template_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_goal_templates_delete_request(service_group_name: str, goal_template_name: str, **kwargs: Any) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
-    # Construct URL
-    _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.AzureResilienceManagement/goalTemplates/{goalTemplateName}"
-    path_format_arguments = {
-        "serviceGroupName": _SERIALIZER.url("service_group_name", service_group_name, "str"),
-        "goalTemplateName": _SERIALIZER.url("goal_template_name", goal_template_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_goal_templates_list_request(
-    service_group_name: str, *, skip_token: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.AzureResilienceManagement/goalTemplates"
     path_format_arguments = {
         "serviceGroupName": _SERIALIZER.url("service_group_name", service_group_name, "str"),
     }
@@ -453,7 +321,7 @@ def build_goal_resources_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -486,7 +354,7 @@ def build_goal_resources_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -515,7 +383,7 @@ def build_recovery_plans_get_request(service_group_name: str, recovery_plan_name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -543,7 +411,7 @@ def build_recovery_plans_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -571,7 +439,7 @@ def build_recovery_plans_update_request(service_group_name: str, recovery_plan_n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -597,7 +465,7 @@ def build_recovery_plans_update_request(service_group_name: str, recovery_plan_n
 def build_recovery_plans_delete_request(service_group_name: str, recovery_plan_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     # Construct URL
     _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.AzureResilienceManagement/recoveryPlans/{recoveryPlanName}"
     path_format_arguments = {
@@ -619,7 +487,7 @@ def build_recovery_plans_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -649,7 +517,7 @@ def build_recovery_plan_actions_finalize_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     # Construct URL
     _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.AzureResilienceManagement/recoveryPlans/{recoveryPlanName}/finalize"
     path_format_arguments = {
@@ -675,7 +543,7 @@ def build_recovery_plan_actions_update_resources_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -706,7 +574,7 @@ def build_recovery_plan_actions_validate_for_operation_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     # Construct URL
     _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.AzureResilienceManagement/recoveryPlans/{recoveryPlanName}/validateForOperation"
     path_format_arguments = {
@@ -734,7 +602,7 @@ def build_recovery_plan_actions_validate_for_failover_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -764,7 +632,7 @@ def build_recovery_plan_actions_validate_for_failover_commit_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -793,7 +661,7 @@ def build_recovery_plan_actions_validate_for_test_failover_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -823,7 +691,7 @@ def build_recovery_plan_actions_validate_for_test_failover_cleanup_request(  # p
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -852,7 +720,7 @@ def build_recovery_plan_actions_validate_for_reprotect_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -882,7 +750,7 @@ def build_recovery_plan_actions_check_readiness_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -911,7 +779,7 @@ def build_recovery_plan_actions_failover_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -941,7 +809,7 @@ def build_recovery_plan_actions_failover_commit_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -970,7 +838,7 @@ def build_recovery_plan_actions_reprotect_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1001,7 +869,7 @@ def build_recovery_plan_actions_test_failover_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1032,7 +900,7 @@ def build_recovery_plan_actions_test_failover_cleanup_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1062,7 +930,7 @@ def build_recovery_resources_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1090,7 +958,7 @@ def build_recovery_resources_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1117,7 +985,7 @@ def build_recovery_jobs_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1143,7 +1011,7 @@ def build_recovery_jobs_list_request(service_group_name: str, recovery_plan_name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1171,7 +1039,7 @@ def build_recovery_jobs_cancel_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     # Construct URL
     _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.AzureResilienceManagement/recoveryPlans/{recoveryPlanName}/recoveryJobs/{recoveryJobName}/cancel"
     path_format_arguments = {
@@ -1200,7 +1068,7 @@ def build_recovery_jobs_resume_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     # Construct URL
     _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.AzureResilienceManagement/recoveryPlans/{recoveryPlanName}/recoveryJobs/{recoveryJobName}/resume"
     path_format_arguments = {
@@ -1228,7 +1096,7 @@ def build_recovery_jobs_retry_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     # Construct URL
     _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.AzureResilienceManagement/recoveryPlans/{recoveryPlanName}/recoveryJobs/{recoveryJobName}/retry"
     path_format_arguments = {
@@ -1258,7 +1126,7 @@ def build_recovery_job_resources_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1287,7 +1155,7 @@ def build_recovery_job_resources_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1313,7 +1181,7 @@ def build_drills_get_request(service_group_name: str, drill_name: str, **kwargs:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1339,7 +1207,7 @@ def build_drills_create_request(service_group_name: str, drill_name: str, **kwar
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1367,7 +1235,7 @@ def build_drills_update_request(service_group_name: str, drill_name: str, **kwar
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1393,7 +1261,7 @@ def build_drills_update_request(service_group_name: str, drill_name: str, **kwar
 def build_drills_delete_request(service_group_name: str, drill_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     # Construct URL
     _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.AzureResilienceManagement/drills/{drillName}"
     path_format_arguments = {
@@ -1415,7 +1283,7 @@ def build_drills_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1446,7 +1314,7 @@ def build_drills_validate_for_execution_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1477,7 +1345,7 @@ def build_drills_start_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1508,7 +1376,7 @@ def build_drills_end_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1539,7 +1407,7 @@ def build_drills_add_or_update_resources_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     # Construct URL
     _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.AzureResilienceManagement/drills/{drillName}/addOrUpdateResources"
     path_format_arguments = {
@@ -1566,7 +1434,7 @@ def build_drills_resync_readiness_check_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     # Construct URL
     _url = "/providers/Microsoft.Management/serviceGroups/{serviceGroupName}/providers/Microsoft.AzureResilienceManagement/drills/{drillName}/resyncReadinessCheck"
     path_format_arguments = {
@@ -1591,7 +1459,7 @@ def build_drill_resources_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1624,7 +1492,7 @@ def build_drill_resources_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1655,7 +1523,7 @@ def build_drill_runs_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1681,7 +1549,7 @@ def build_drill_runs_list_request(service_group_name: str, drill_name: str, **kw
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1709,7 +1577,7 @@ def build_drill_runs_fail_over_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1741,7 +1609,7 @@ def build_drill_runs_reprotect_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1773,7 +1641,7 @@ def build_drill_runs_add_notes_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1804,7 +1672,7 @@ def build_drill_runs_resume_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1834,7 +1702,7 @@ def build_drill_runs_mark_as_complete_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1865,7 +1733,7 @@ def build_drill_runs_generate_report_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1895,7 +1763,7 @@ def build_drill_runs_list_report_download_url_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1926,7 +1794,7 @@ def build_drill_run_resources_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1955,7 +1823,7 @@ def build_drill_run_resources_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1983,7 +1851,7 @@ def build_unified_resilience_items_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2012,7 +1880,7 @@ def build_unified_resilience_items_list_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2042,7 +1910,7 @@ def build_usage_plans_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2071,7 +1939,7 @@ def build_usage_plans_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2102,7 +1970,7 @@ def build_usage_plans_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2131,7 +1999,7 @@ def build_usage_plans_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureResilienceManagement/usagePlans/{usagePlanName}"
     path_format_arguments = {
@@ -2154,7 +2022,7 @@ def build_usage_plans_list_by_resource_group_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2181,7 +2049,7 @@ def build_usage_plans_list_by_subscription_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2207,7 +2075,7 @@ def build_enrollments_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2237,7 +2105,7 @@ def build_enrollments_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2267,7 +2135,7 @@ def build_enrollments_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureResilienceManagement/usagePlans/{usagePlanName}/enrollments/{enrollmentName}"
     path_format_arguments = {
@@ -2291,7 +2159,7 @@ def build_enrollments_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3522,7 +3390,13 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def _recommend_capacity_initial(
         self,
@@ -3694,7 +3568,13 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def begin_recommend_capacity(
         self,
@@ -3841,767 +3721,6 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
                 List[_models.GoalAssignment],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-
-class GoalTemplatesOperations:  # pylint: disable=docstring-missing-param
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.resiliencemanagement.ResilienceManagementClient`'s
-        :attr:`goal_templates` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ResilienceManagementClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def get(self, service_group_name: str, goal_template_name: str, **kwargs: Any) -> _models.GoalTemplate:
-        """Get a GoalTemplate.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param goal_template_name: The name of the goalTemplate. Required.
-        :type goal_template_name: str
-        :return: GoalTemplate. The GoalTemplate is compatible with MutableMapping
-        :rtype: ~azure.mgmt.resiliencemanagement.models.GoalTemplate
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.GoalTemplate] = kwargs.pop("cls", None)
-
-        _request = build_goal_templates_get_request(
-            service_group_name=service_group_name,
-            goal_template_name=goal_template_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.GoalTemplate, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    def _create_or_update_initial(
-        self,
-        service_group_name: str,
-        goal_template_name: str,
-        resource: Union[_models.GoalTemplate, _types.GoalTemplate, IO[bytes]],
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
-        else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_goal_templates_create_or_update_request(
-            service_group_name=service_group_name,
-            goal_template_name=goal_template_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 201:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_create_or_update(
-        self,
-        service_group_name: str,
-        goal_template_name: str,
-        resource: _models.GoalTemplate,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.GoalTemplate]:
-        """Create a GoalTemplate.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param goal_template_name: The name of the goalTemplate. Required.
-        :type goal_template_name: str
-        :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.resiliencemanagement.models.GoalTemplate
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns GoalTemplate. The GoalTemplate is compatible
-         with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.resiliencemanagement.models.GoalTemplate]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_or_update(
-        self,
-        service_group_name: str,
-        goal_template_name: str,
-        resource: _types.GoalTemplate,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.GoalTemplate]:
-        """Create a GoalTemplate.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param goal_template_name: The name of the goalTemplate. Required.
-        :type goal_template_name: str
-        :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.resiliencemanagement.types.GoalTemplate
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns GoalTemplate. The GoalTemplate is compatible
-         with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.resiliencemanagement.models.GoalTemplate]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_or_update(
-        self,
-        service_group_name: str,
-        goal_template_name: str,
-        resource: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.GoalTemplate]:
-        """Create a GoalTemplate.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param goal_template_name: The name of the goalTemplate. Required.
-        :type goal_template_name: str
-        :param resource: Resource create parameters. Required.
-        :type resource: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns GoalTemplate. The GoalTemplate is compatible
-         with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.resiliencemanagement.models.GoalTemplate]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_create_or_update(
-        self,
-        service_group_name: str,
-        goal_template_name: str,
-        resource: Union[_models.GoalTemplate, _types.GoalTemplate, IO[bytes]],
-        **kwargs: Any
-    ) -> LROPoller[_models.GoalTemplate]:
-        """Create a GoalTemplate.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param goal_template_name: The name of the goalTemplate. Required.
-        :type goal_template_name: str
-        :param resource: Resource create parameters. Is either a GoalTemplate type or a IO[bytes] type.
-         Required.
-        :type resource: ~azure.mgmt.resiliencemanagement.models.GoalTemplate or
-         ~azure.mgmt.resiliencemanagement.types.GoalTemplate or IO[bytes]
-        :return: An instance of LROPoller that returns GoalTemplate. The GoalTemplate is compatible
-         with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.resiliencemanagement.models.GoalTemplate]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.GoalTemplate] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._create_or_update_initial(
-                service_group_name=service_group_name,
-                goal_template_name=goal_template_name,
-                resource=resource,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.GoalTemplate, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.GoalTemplate].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.GoalTemplate](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    def _update_initial(
-        self,
-        service_group_name: str,
-        goal_template_name: str,
-        properties: Union[_models.GoalTemplate, _types.GoalTemplate, IO[bytes]],
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
-        else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_goal_templates_update_request(
-            service_group_name=service_group_name,
-            goal_template_name=goal_template_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_update(
-        self,
-        service_group_name: str,
-        goal_template_name: str,
-        properties: _models.GoalTemplate,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Update a GoalTemplate.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param goal_template_name: The name of the goalTemplate. Required.
-        :type goal_template_name: str
-        :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.resiliencemanagement.models.GoalTemplate
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_update(
-        self,
-        service_group_name: str,
-        goal_template_name: str,
-        properties: _types.GoalTemplate,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Update a GoalTemplate.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param goal_template_name: The name of the goalTemplate. Required.
-        :type goal_template_name: str
-        :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.resiliencemanagement.types.GoalTemplate
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_update(
-        self,
-        service_group_name: str,
-        goal_template_name: str,
-        properties: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Update a GoalTemplate.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param goal_template_name: The name of the goalTemplate. Required.
-        :type goal_template_name: str
-        :param properties: The resource properties to be updated. Required.
-        :type properties: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_update(
-        self,
-        service_group_name: str,
-        goal_template_name: str,
-        properties: Union[_models.GoalTemplate, _types.GoalTemplate, IO[bytes]],
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Update a GoalTemplate.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param goal_template_name: The name of the goalTemplate. Required.
-        :type goal_template_name: str
-        :param properties: The resource properties to be updated. Is either a GoalTemplate type or a
-         IO[bytes] type. Required.
-        :type properties: ~azure.mgmt.resiliencemanagement.models.GoalTemplate or
-         ~azure.mgmt.resiliencemanagement.types.GoalTemplate or IO[bytes]
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._update_initial(
-                service_group_name=service_group_name,
-                goal_template_name=goal_template_name,
-                properties=properties,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    def _delete_initial(self, service_group_name: str, goal_template_name: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_goal_templates_delete_request(
-            service_group_name=service_group_name,
-            goal_template_name=goal_template_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202, 204]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_delete(self, service_group_name: str, goal_template_name: str, **kwargs: Any) -> LROPoller[None]:
-        """Delete a GoalTemplate.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :param goal_template_name: The name of the goalTemplate. Required.
-        :type goal_template_name: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._delete_initial(
-                service_group_name=service_group_name,
-                goal_template_name=goal_template_name,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @distributed_trace
-    def list(
-        self, service_group_name: str, *, skip_token: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> ItemPaged["_models.GoalTemplate"]:
-        """List GoalTemplate resources by tenant.
-
-        :param service_group_name: The name of the service group. Required.
-        :type service_group_name: str
-        :keyword skip_token: Skip over when retrieving results. Default value is None.
-        :paramtype skip_token: str
-        :keyword top: Number of elements to return when retrieving results. Default value is None.
-        :paramtype top: int
-        :return: An iterator like instance of GoalTemplate
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resiliencemanagement.models.GoalTemplate]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.GoalTemplate]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_goal_templates_list_request(
-                    service_group_name=service_group_name,
-                    skip_token=skip_token,
-                    top=top,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.GoalTemplate],
                 deserialized.get("value", []),
             )
             if cls:
@@ -7063,7 +6182,13 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def _validate_for_reprotect_initial(
         self,
@@ -7258,7 +6383,13 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def begin_validate_for_reprotect(
         self,
@@ -7867,7 +6998,13 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def _reprotect_initial(
         self,
@@ -8059,7 +7196,13 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def begin_reprotect(
         self,
@@ -9049,7 +8192,13 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def _cancel_initial(
         self,
@@ -9248,7 +8397,13 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def begin_cancel(
         self,
@@ -9350,7 +8505,13 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def _resume_initial(
         self,
@@ -9552,7 +8713,13 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def begin_resume(
         self,
@@ -10775,7 +9942,13 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def _validate_for_execution_initial(
         self,
@@ -10957,7 +10130,13 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def begin_validate_for_execution(
         self,
@@ -11519,7 +10698,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-04-01-preview": ["service_group_name", "api_version", "operation_id", "drill_name", "content_type"]
         },
-        api_versions_list=["2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview", "2026-09-30-preview"],
     )
     def _add_or_update_resources_initial(
         self,
@@ -11694,7 +10873,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-04-01-preview": ["service_group_name", "api_version", "operation_id", "drill_name", "content_type"]
         },
-        api_versions_list=["2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview", "2026-09-30-preview"],
     )
     def begin_add_or_update_resources(
         self,
@@ -11772,7 +10951,13 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-03-01-preview",
         params_added_on={"2026-03-01-preview": ["service_group_name", "api_version", "operation_id", "drill_name"]},
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def _resync_readiness_check_initial(
         self, service_group_name: str, drill_name: str, *, operation_id: str, **kwargs: Any
@@ -11842,7 +11027,13 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-03-01-preview",
         params_added_on={"2026-03-01-preview": ["service_group_name", "api_version", "operation_id", "drill_name"]},
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def begin_resync_readiness_check(
         self, service_group_name: str, drill_name: str, *, operation_id: str, **kwargs: Any
@@ -12311,7 +11502,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-06-01-preview", "2026-08-31-preview", "2026-09-30-preview"],
     )
     def _fail_over_initial(
         self,
@@ -12509,7 +11700,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-06-01-preview", "2026-08-31-preview", "2026-09-30-preview"],
     )
     def begin_fail_over(
         self,
@@ -12602,7 +11793,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-06-01-preview", "2026-08-31-preview", "2026-09-30-preview"],
     )
     def _reprotect_initial(
         self,
@@ -12800,7 +11991,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=["2026-06-01-preview", "2026-08-31-preview", "2026-09-30-preview"],
     )
     def begin_reprotect(
         self,
@@ -13534,7 +12725,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-08-31-preview"],
+        api_versions_list=["2026-08-31-preview", "2026-09-30-preview"],
     )
     def _generate_report_initial(
         self, service_group_name: str, drill_name: str, drill_run_name: str, *, operation_id: str, **kwargs: Any
@@ -13614,11 +12805,11 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-08-31-preview"],
+        api_versions_list=["2026-08-31-preview", "2026-09-30-preview"],
     )
     def begin_generate_report(
         self, service_group_name: str, drill_name: str, drill_run_name: str, *, operation_id: str, **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.DrillReportSummary]:
         """This generates, or regenerates, the report for this Drill Run. The action is idempotent and is
         safe to call at any time: a call that arrives while a generation is already running joins it,
         and a call made after a failed attempt retries it. A report that has been finalized is never
@@ -13632,14 +12823,16 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         :type drill_run_name: str
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns DrillReportSummary. The DrillReportSummary is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.resiliencemanagement.models.DrillReportSummary]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DrillReportSummary] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -13657,9 +12850,12 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.DrillReportSummary, response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -13674,13 +12870,15 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[None].from_continuation_token(
+            return LROPoller[_models.DrillReportSummary].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.DrillReportSummary](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @api_version_validation(
         method_added_on="2026-08-31-preview",
@@ -13695,7 +12893,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-08-31-preview"],
+        api_versions_list=["2026-08-31-preview", "2026-09-30-preview"],
     )
     def _list_report_download_url_initial(
         self,
@@ -13790,7 +12988,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         operation_id: str,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.ListReportDownloadUrlResponse]:
         """This returns a short-lived, read-only URL to download the report for this Drill Run. The URL
         expires at the returned expiryTimestamp and grants access to that single report only.
 
@@ -13807,8 +13005,10 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns ListReportDownloadUrlResponse. The
+         ListReportDownloadUrlResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -13823,7 +13023,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         operation_id: str,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.ListReportDownloadUrlResponse]:
         """This returns a short-lived, read-only URL to download the report for this Drill Run. The URL
         expires at the returned expiryTimestamp and grants access to that single report only.
 
@@ -13840,8 +13040,10 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns ListReportDownloadUrlResponse. The
+         ListReportDownloadUrlResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -13856,7 +13058,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         operation_id: str,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.ListReportDownloadUrlResponse]:
         """This returns a short-lived, read-only URL to download the report for this Drill Run. The URL
         expires at the returned expiryTimestamp and grants access to that single report only.
 
@@ -13873,8 +13075,10 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns ListReportDownloadUrlResponse. The
+         ListReportDownloadUrlResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -13892,7 +13096,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-08-31-preview"],
+        api_versions_list=["2026-08-31-preview", "2026-09-30-preview"],
     )
     def begin_list_report_download_url(
         self,
@@ -13903,7 +13107,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         *,
         operation_id: str,
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.ListReportDownloadUrlResponse]:
         """This returns a short-lived, read-only URL to download the report for this Drill Run. The URL
         expires at the returned expiryTimestamp and grants access to that single report only.
 
@@ -13919,15 +13123,17 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
          ~azure.mgmt.resiliencemanagement.types.ListReportDownloadUrlRequest or IO[bytes]
         :keyword operation_id: A GUID that represents the Long Running OperationId. Required.
         :paramtype operation_id: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns ListReportDownloadUrlResponse. The
+         ListReportDownloadUrlResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ListReportDownloadUrlResponse] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -13947,9 +13153,12 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ListReportDownloadUrlResponse, response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -13964,13 +13173,15 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[None].from_continuation_token(
+            return LROPoller[_models.ListReportDownloadUrlResponse].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.ListReportDownloadUrlResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
 
 class DrillRunResourcesOperations:  # pylint: disable=docstring-missing-param
@@ -14391,7 +13602,13 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "usage_plan_name", "accept"]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def get(self, resource_group_name: str, usage_plan_name: str, **kwargs: Any) -> _models.UsagePlan:
         """Get a UsagePlan.
@@ -14474,7 +13691,13 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def _create_or_update_initial(
         self,
@@ -14650,7 +13873,13 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def begin_create_or_update(
         self,
@@ -14739,7 +13968,13 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def _update_initial(
         self,
@@ -14913,7 +14148,13 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def begin_update(
         self,
@@ -14995,7 +14236,13 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "usage_plan_name"]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def _delete_initial(self, resource_group_name: str, usage_plan_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -15062,7 +14309,13 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "usage_plan_name"]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def begin_delete(self, resource_group_name: str, usage_plan_name: str, **kwargs: Any) -> LROPoller[None]:
         """Delete a UsagePlan.
@@ -15124,7 +14377,13 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-03-01-preview",
         params_added_on={"2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.UsagePlan"]:
         """List UsagePlan resources by resource group.
@@ -15226,7 +14485,13 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-03-01-preview",
         params_added_on={"2026-03-01-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.UsagePlan"]:
         """List UsagePlan resources by subscription ID.
@@ -15353,7 +14618,13 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def get(
         self, resource_group_name: str, usage_plan_name: str, enrollment_name: str, **kwargs: Any
@@ -15442,7 +14713,13 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def _create_or_update_initial(
         self,
@@ -15630,7 +14907,13 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def begin_create_or_update(
         self,
@@ -15722,7 +15005,13 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
                 "enrollment_name",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def _delete_initial(
         self, resource_group_name: str, usage_plan_name: str, enrollment_name: str, **kwargs: Any
@@ -15798,7 +15087,13 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
                 "enrollment_name",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def begin_delete(
         self, resource_group_name: str, usage_plan_name: str, enrollment_name: str, **kwargs: Any
@@ -15867,7 +15162,13 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "usage_plan_name", "accept"]
         },
-        api_versions_list=["2026-03-01-preview", "2026-04-01-preview", "2026-06-01-preview", "2026-08-31-preview"],
+        api_versions_list=[
+            "2026-03-01-preview",
+            "2026-04-01-preview",
+            "2026-06-01-preview",
+            "2026-08-31-preview",
+            "2026-09-30-preview",
+        ],
     )
     def list(self, resource_group_name: str, usage_plan_name: str, **kwargs: Any) -> ItemPaged["_models.Enrollment"]:
         """List Enrollments by Usage Plan.

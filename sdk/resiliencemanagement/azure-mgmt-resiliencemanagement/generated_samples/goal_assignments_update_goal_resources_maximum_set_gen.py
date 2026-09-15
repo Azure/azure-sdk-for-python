@@ -38,20 +38,22 @@ def main():
             "resources": [
                 {
                     "properties": {
-                        "disasterRecoveryAttestationStatus": "ManuallyAttested",
-                        "disasterRecoveryGoalParticipation": "Excluded",
-                        "highAvailabilityAttestationStatus": "ManuallyAttested",
-                        "highAvailabilityGoalParticipation": "Excluded",
+                        "regionalResiliency": {
+                            "attestationStatus": "ManuallyAttested",
+                            "goalParticipation": "Excluded",
+                        },
                         "resourceArmId": "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/MyResourceGroup/providers/Microsoft.Compute/virtualMachines/MyVirtualMachine",
+                        "zonalResiliency": {"attestationStatus": "ManuallyAttested", "goalParticipation": "Excluded"},
                     }
                 },
                 {
                     "properties": {
-                        "disasterRecoveryAttestationStatus": "ManuallyAttested",
-                        "disasterRecoveryGoalParticipation": "Excluded",
-                        "highAvailabilityAttestationStatus": "ManuallyAttested",
-                        "highAvailabilityGoalParticipation": "Excluded",
+                        "regionalResiliency": {
+                            "attestationStatus": "ManuallyAttested",
+                            "goalParticipation": "Excluded",
+                        },
                         "resourceArmId": "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/MyResourceGroup/providers/Microsoft.Compute/virtualMachines/MyVirtualMachine1",
+                        "zonalResiliency": {"attestationStatus": "ManuallyAttested", "goalParticipation": "Excluded"},
                     }
                 },
             ]
@@ -59,6 +61,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-08-31-preview/GoalAssignments_UpdateGoalResources_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-30-preview/GoalAssignments_UpdateGoalResources_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

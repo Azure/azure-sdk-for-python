@@ -300,20 +300,6 @@ class ForceInclusionAndUpdate(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disable ForceInclusionAndUpdate."""
 
 
-class GoalAssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Supported type of goal assignment."""
-
-    RESILIENCY = "Resiliency"
-    """Resiliency goal assignment type."""
-
-
-class GoalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Supported type of goal."""
-
-    RESILIENCY = "Resiliency"
-    """Resiliency goal type."""
-
-
 class HAStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HA Status."""
 
@@ -416,17 +402,6 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """User assigned managed identity."""
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
     """System and user assigned managed identity."""
-
-
-class MembershipType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Membership type of the service group to resource."""
-
-    DIRECT = "Direct"
-    """Resource is direct member of service group."""
-    THROUGH_SUBSCRIPTION = "ThroughSubscription"
-    """Resource is member of service group through subscription."""
-    THROUGH_RESOURCE_GROUP = "ThroughResourceGroup"
-    """Resource is member of service group through resource group."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -591,13 +566,15 @@ class RelativeResourceCompositionState(str, Enum, metaclass=CaseInsensitiveEnumM
     """Resources out of sync."""
 
 
-class RequirementSelected(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum for the requirement status of the resource in the goal."""
+class ReplicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Replication mode configured for a protected resource."""
 
-    NOT_REQUIRED = "NotRequired"
-    """The resource is not required for the specified goal."""
-    REQUIRED = "Required"
-    """The resource is required for the specified goal."""
+    NONE = "None"
+    """No replication mode is configured for the protected resource."""
+    ACTIVE_ACTIVE = "ActiveActive"
+    """The resource is active in multiple locations at the same time."""
+    ACTIVE_PASSIVE = "ActivePassive"
+    """The resource has one active location and one or more passive recovery locations."""
 
 
 class ResilienceHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -631,6 +608,15 @@ class ResourceFeasibilityReviewType(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """SKU capacity availability check in the target region or zone."""
 
 
+class ResourceInclusionDisabledReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Reason why a recovery resource cannot be included in a recovery plan."""
+
+    RESOURCE_HIGHLY_AVAILABLE = "ResourceHighlyAvailable"
+    """The resource is highly available and does not require recovery-plan inclusion."""
+    RESOURCE_ACTIVE_ACTIVE_PROTECTION = "ResourceActiveActiveProtection"
+    """The resource uses active-active protection."""
+
+
 class ResourceInclusionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A state type that indicates inclusion of the resource with respect to the resiliency support."""
 
@@ -655,6 +641,19 @@ class ResourceProtectionSolutionType(str, Enum, metaclass=CaseInsensitiveEnumMet
     CUSTOM_RUNBOOK = "CustomRunbook"
     """Resource is not protected with native solution and using custom runbook automation scripts for
     recovery verbs."""
+    AZURE_TEMPLATE = "AzureTemplate"
+    """Resource recovery is orchestrated by deploying an Azure Resource Manager template."""
+    AZURE_STORAGE_ACCOUNT = "AzureStorageAccount"
+    """Resource is protected with Azure Storage account customer-managed failover."""
+    AZURE_SERVICE_BUS = "AzureServiceBus"
+    """Resource is protected with Azure Service Bus geo-replication, where a premium namespace
+    replicates data to a secondary region and recovery promotes that secondary in place."""
+    AZURE_NET_APP_FILES = "AzureNetAppFiles"
+    """Resource is protected with Azure NetApp Files cross-region replication, where recovery fails
+    over to the destination volume."""
+    AZURE_COSMOS_DB = "AzureCosmosDB"
+    """Resource is protected with Azure Cosmos DB multiregion replication using customer-managed
+    failover, where recovery promotes a secondary region to the write region."""
 
 
 class ResourceProtectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -743,8 +742,6 @@ class UnifiedResilienceItemRequirementSelected(str, Enum, metaclass=CaseInsensit
 class UsagePlanType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of usage plan."""
 
-    BASIC = "Basic"
-    """Basic usage plan with restricted functionality without any charges."""
     STANDARD = "Standard"
     """Standard usage plan with comprehensive functionality and usage based charges."""
 

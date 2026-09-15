@@ -269,6 +269,17 @@ class AttentionReason(_Model):  # pylint: disable=docstring-keyword-should-match
      monitoring.
     :vartype sli_attention_statuses:
      list[~azure.mgmt.resiliencemanagement.models.SliAttentionStatus]
+    :ivar drill_rbac_on_goal_assignment: Drill object does not have the necessary RBAC on Goal
+     Assignment. Known values are: "Set" and "NotSet".
+    :vartype drill_rbac_on_goal_assignment: str or
+     ~azure.mgmt.resiliencemanagement.models.RBACState
+    :ivar rbac_needed_for_drill_on_goal_assignment: Permissions needed by the Drill MSI on Goal
+     Assignment.
+    :vartype rbac_needed_for_drill_on_goal_assignment: list[str]
+    :ivar goal_assignment: Goal Assignment not present. Known values are: "Exists" and "NotExists".
+    :vartype goal_assignment: str or ~azure.mgmt.resiliencemanagement.models.ExtensionObjectState
+    :ivar recovery_plan: Recovery plan not present. Known values are: "Exists" and "NotExists".
+    :vartype recovery_plan: str or ~azure.mgmt.resiliencemanagement.models.ExtensionObjectState
     """
 
     drill_rbac_on_chaos_resource: Optional[Union[str, "_models.RBACState"]] = rest_field(
@@ -403,6 +414,23 @@ class AttentionReason(_Model):  # pylint: disable=docstring-keyword-should-match
         name="sliAttentionStatuses", visibility=["read", "create", "update", "delete", "query"]
     )
     """Per-SLI attention status for each SLI selected for Drill monitoring."""
+    drill_rbac_on_goal_assignment: Optional[Union[str, "_models.RBACState"]] = rest_field(
+        name="drillRbacOnGoalAssignment", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Drill object does not have the necessary RBAC on Goal Assignment. Known values are: \"Set\" and
+     \"NotSet\"."""
+    rbac_needed_for_drill_on_goal_assignment: Optional[list[str]] = rest_field(
+        name="rbacNeededForDrillOnGoalAssignment", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Permissions needed by the Drill MSI on Goal Assignment."""
+    goal_assignment: Optional[Union[str, "_models.ExtensionObjectState"]] = rest_field(
+        name="goalAssignment", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Goal Assignment not present. Known values are: \"Exists\" and \"NotExists\"."""
+    recovery_plan: Optional[Union[str, "_models.ExtensionObjectState"]] = rest_field(
+        name="recoveryPlan", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Recovery plan not present. Known values are: \"Exists\" and \"NotExists\"."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -439,6 +467,10 @@ class AttentionReason(_Model):  # pylint: disable=docstring-keyword-should-match
         rbac_needed_for_drill_on_health_model: Optional[list[str]] = None,
         drill_rbac_on_sli: Optional[Union[str, "_models.RBACState"]] = None,
         sli_attention_statuses: Optional[list["_models.SliAttentionStatus"]] = None,
+        drill_rbac_on_goal_assignment: Optional[Union[str, "_models.RBACState"]] = None,
+        rbac_needed_for_drill_on_goal_assignment: Optional[list[str]] = None,
+        goal_assignment: Optional[Union[str, "_models.ExtensionObjectState"]] = None,
+        recovery_plan: Optional[Union[str, "_models.ExtensionObjectState"]] = None,
     ) -> None: ...
 
     @overload
@@ -714,6 +746,9 @@ class DrillProperties(_Model):  # pylint: disable=docstring-keyword-should-match
     :ivar recovery_plan_properties: ROPlan properties.
     :vartype recovery_plan_properties:
      ~azure.mgmt.resiliencemanagement.models.RecoveryPlanPropertiesOfDrill
+    :ivar goal_assignment_properties: Goal Assignment properties.
+    :vartype goal_assignment_properties:
+     ~azure.mgmt.resiliencemanagement.models.GoalAssignmentPropertiesOfDrill
     :ivar drill_asset_properties: Properties for internal resources that are created for the Drill.
     :vartype drill_asset_properties: ~azure.mgmt.resiliencemanagement.models.AssetPropertiesOfDrill
     :ivar chaos_resource_properties: Chaos Resource properties.
@@ -768,6 +803,10 @@ class DrillProperties(_Model):  # pylint: disable=docstring-keyword-should-match
         name="recoveryPlanProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """ROPlan properties."""
+    goal_assignment_properties: Optional["_models.GoalAssignmentPropertiesOfDrill"] = rest_field(
+        name="goalAssignmentProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Goal Assignment properties."""
     drill_asset_properties: Optional["_models.AssetPropertiesOfDrill"] = rest_field(
         name="drillAssetProperties", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -804,7 +843,7 @@ class DrillProperties(_Model):  # pylint: disable=docstring-keyword-should-match
         name="lastResyncReadinessCheckTime", visibility=["read"], format="rfc3339"
     )
     """Last resync and readiness check time."""
-    drill_type: str = rest_discriminator(name="drillType", visibility=["create"])
+    drill_type: str = rest_discriminator(name="drillType", visibility=["read", "create"])
     """The discriminator for the Drill object hierarchy. Required. Known values are: \"Zonal\" and
      \"Regional\"."""
     monitoring_properties: Optional["_models.MonitoringPropertiesOfDrill"] = rest_field(
@@ -828,6 +867,7 @@ class DrillProperties(_Model):  # pylint: disable=docstring-keyword-should-match
         *,
         drill_type: str,
         recovery_plan_properties: Optional["_models.RecoveryPlanPropertiesOfDrill"] = None,
+        goal_assignment_properties: Optional["_models.GoalAssignmentPropertiesOfDrill"] = None,
         drill_asset_properties: Optional["_models.AssetPropertiesOfDrill"] = None,
         chaos_resource_properties: Optional["_models.ChaosResourcePropertiesOfDrill"] = None,
         rbac_setup_mode: Optional[Union[str, "_models.RBACSetupMode"]] = None,
@@ -1028,8 +1068,9 @@ class DrillResourceProperties(_Model):  # pylint: disable=docstring-keyword-shou
     :vartype recovery_plan_exclusion_reason: str or
      ~azure.mgmt.resiliencemanagement.models.RecoveryPlanExclusionReason
     :ivar resource_protection_solution_type: Protection Solution Type of the Drill resource. Known
-     values are: "None", "AzureNative", "AzureSiteRecovery", "CrossZoneVMRecovery", and
-     "CustomRunbook".
+     values are: "None", "AzureNative", "AzureSiteRecovery", "CrossZoneVMRecovery", "CustomRunbook",
+     "AzureTemplate", "AzureStorageAccount", "AzureServiceBus", "AzureNetAppFiles", and
+     "AzureCosmosDB".
     :vartype resource_protection_solution_type: str or
      ~azure.mgmt.resiliencemanagement.models.ResourceProtectionSolutionType
     :ivar readiness_state: Readiness State of the Drill resource. Known values are: "Ready" and
@@ -1094,7 +1135,8 @@ class DrillResourceProperties(_Model):  # pylint: disable=docstring-keyword-shou
         name="resourceProtectionSolutionType", visibility=["read"]
     )
     """Protection Solution Type of the Drill resource. Known values are: \"None\", \"AzureNative\",
-     \"AzureSiteRecovery\", \"CrossZoneVMRecovery\", and \"CustomRunbook\"."""
+     \"AzureSiteRecovery\", \"CrossZoneVMRecovery\", \"CustomRunbook\", \"AzureTemplate\",
+     \"AzureStorageAccount\", \"AzureServiceBus\", \"AzureNetAppFiles\", and \"AzureCosmosDB\"."""
     readiness_state: Optional[Union[str, "_models.DrillResourceReadinessState"]] = rest_field(
         name="readinessState", visibility=["read"]
     )
@@ -1424,6 +1466,9 @@ class DrillRunProperties(
     :vartype current_active_operation_id: str
     :ivar report: Summary of report generation for this Drill Run.
     :vartype report: ~azure.mgmt.resiliencemanagement.models.DrillReportSummary
+    :ivar recovery_time_objective: Recovery time objective for the drill run. Known values are:
+     "PT15M", "PT1H", "PT4H", and "PT24H".
+    :vartype recovery_time_objective: str or ~azure.mgmt.resiliencemanagement.models.IsoDuration
     """
 
     job_type: Literal[JobType.DRILL_RUN] = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -1445,6 +1490,11 @@ class DrillRunProperties(
     """The currently active operationID on this Drill Run. There can be only one active."""
     report: Optional["_models.DrillReportSummary"] = rest_field(visibility=["read"])
     """Summary of report generation for this Drill Run."""
+    recovery_time_objective: Optional[Union[str, "_models.IsoDuration"]] = rest_field(
+        name="recoveryTimeObjective", visibility=["read"]
+    )
+    """Recovery time objective for the drill run. Known values are: \"PT15M\", \"PT1H\", \"PT4H\", and
+     \"PT24H\"."""
 
     @overload
     def __init__(
@@ -1785,6 +1835,9 @@ class DrillUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should
     :ivar recovery_plan_properties: Recovery Plan properties.
     :vartype recovery_plan_properties:
      ~azure.mgmt.resiliencemanagement.models.RecoveryPlanPropertiesOfDrill
+    :ivar goal_assignment_properties: Goal Assignment properties.
+    :vartype goal_assignment_properties:
+     ~azure.mgmt.resiliencemanagement.models.GoalAssignmentPropertiesOfDrill
     :ivar drill_asset_properties: Properties for internal resources that are created for the Drill.
     :vartype drill_asset_properties: ~azure.mgmt.resiliencemanagement.models.AssetPropertiesOfDrill
     :ivar chaos_resource_properties: Chaos Resource properties.
@@ -1810,6 +1863,10 @@ class DrillUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should
         name="recoveryPlanProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """Recovery Plan properties."""
+    goal_assignment_properties: Optional["_models.GoalAssignmentPropertiesOfDrill"] = rest_field(
+        name="goalAssignmentProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Goal Assignment properties."""
     drill_asset_properties: Optional["_models.AssetPropertiesOfDrill"] = rest_field(
         name="drillAssetProperties", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1842,6 +1899,7 @@ class DrillUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should
         self,
         *,
         recovery_plan_properties: Optional["_models.RecoveryPlanPropertiesOfDrill"] = None,
+        goal_assignment_properties: Optional["_models.GoalAssignmentPropertiesOfDrill"] = None,
         drill_asset_properties: Optional["_models.AssetPropertiesOfDrill"] = None,
         chaos_resource_properties: Optional["_models.ChaosResourcePropertiesOfDrill"] = None,
         rbac_setup_mode: Optional[Union[str, "_models.RBACSetupMode"]] = None,
@@ -2307,13 +2365,14 @@ class GoalAssignment(ProxyResource):  # pylint: disable=docstring-keyword-should
 class GoalAssignmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of goal assignment property.
 
-    :ivar goal_template_id: Arm id of the goal template.
-    :vartype goal_template_id: str
-    :ivar goal_assignment_type: The type of goal assignment. "Resiliency"
-    :vartype goal_assignment_type: str or
-     ~azure.mgmt.resiliencemanagement.models.GoalAssignmentType
     :ivar require_zonal_resiliency: Whether zonal resiliency is required for this goal assignment.
+     Required.
     :vartype require_zonal_resiliency: bool
+    :ivar require_regional_resiliency: Whether regional resiliency is required for this goal
+     assignment.
+    :vartype require_regional_resiliency: bool
+    :ivar regional_objectives: Recovery objectives targeted for regional resiliency.
+    :vartype regional_objectives: ~azure.mgmt.resiliencemanagement.models.RegionalObjectives
     :ivar service_level_resources: List of service level resources.
     :vartype service_level_resources:
      list[~azure.mgmt.resiliencemanagement.models.ServiceLevelResource]
@@ -2324,18 +2383,18 @@ class GoalAssignmentProperties(_Model):  # pylint: disable=docstring-keyword-sho
     :vartype error_details: ~azure.mgmt.resiliencemanagement.models.ErrorDetail
     """
 
-    goal_template_id: Optional[str] = rest_field(
-        name="goalTemplateId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Arm id of the goal template."""
-    goal_assignment_type: Optional[Union[str, "_models.GoalAssignmentType"]] = rest_field(
-        name="goalAssignmentType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The type of goal assignment. \"Resiliency\""""
-    require_zonal_resiliency: Optional[bool] = rest_field(
+    require_zonal_resiliency: bool = rest_field(
         name="requireZonalResiliency", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Whether zonal resiliency is required for this goal assignment."""
+    """Whether zonal resiliency is required for this goal assignment. Required."""
+    require_regional_resiliency: Optional[bool] = rest_field(
+        name="requireRegionalResiliency", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether regional resiliency is required for this goal assignment."""
+    regional_objectives: Optional["_models.RegionalObjectives"] = rest_field(
+        name="regionalObjectives", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Recovery objectives targeted for regional resiliency."""
     service_level_resources: Optional[list["_models.ServiceLevelResource"]] = rest_field(
         name="serviceLevelResources", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2352,10 +2411,42 @@ class GoalAssignmentProperties(_Model):  # pylint: disable=docstring-keyword-sho
     def __init__(
         self,
         *,
-        goal_template_id: Optional[str] = None,
-        goal_assignment_type: Optional[Union[str, "_models.GoalAssignmentType"]] = None,
-        require_zonal_resiliency: Optional[bool] = None,
+        require_zonal_resiliency: bool,
+        require_regional_resiliency: Optional[bool] = None,
+        regional_objectives: Optional["_models.RegionalObjectives"] = None,
         service_level_resources: Optional[list["_models.ServiceLevelResource"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GoalAssignmentPropertiesOfDrill(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Goal assignment properties.
+
+    :ivar identity: Identity to use for goal assignment operations. Required.
+    :vartype identity: ~azure.mgmt.resiliencemanagement.models.AssociatedIdentity
+    :ivar goal_assignment_id: Goal assignment id.
+    :vartype goal_assignment_id: str
+    """
+
+    identity: "_models.AssociatedIdentity" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Identity to use for goal assignment operations. Required."""
+    goal_assignment_id: Optional[str] = rest_field(name="goalAssignmentId", visibility=["read"])
+    """Goal assignment id."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity: "_models.AssociatedIdentity",
     ) -> None: ...
 
     @overload
@@ -2416,44 +2507,12 @@ class GoalResourceProperties(_Model):  # pylint: disable=docstring-keyword-shoul
     :ivar resource_arm_id: Arm Id of resource under the SG for which the extension resource is
      maintained. Required.
     :vartype resource_arm_id: str
-    :ivar high_availability_goal_participation: Flag which depicts whether the Arm resource is
-     excluded for high availability recommendation. Known values are: "Excluded" and "Included".
-    :vartype high_availability_goal_participation: str or
-     ~azure.mgmt.resiliencemanagement.models.ExclusionState
-    :ivar high_availability_attestation_status: Flag which depicts whether the Arm resource is
-     manually attested for high availability recommendation. Known values are: "NotAttested" and
-     "ManuallyAttested".
-    :vartype high_availability_attestation_status: str or
-     ~azure.mgmt.resiliencemanagement.models.AttestationState
     :ivar zonal_resiliency: Zonal resiliency posture (participation, attestation, exclusion reason,
      and user confirmations) for the Arm resource.
     :vartype zonal_resiliency: ~azure.mgmt.resiliencemanagement.models.ResiliencyProperties
-    :ivar disaster_recovery_goal_participation: Flag which depicts whether the Arm resource is
-     excluded for disaster recovery recommendation. Known values are: "Excluded" and "Included".
-    :vartype disaster_recovery_goal_participation: str or
-     ~azure.mgmt.resiliencemanagement.models.ExclusionState
-    :ivar disaster_recovery_attestation_status: Flag which depicts whether the Arm resource is
-     manually attested for disaster recovery recommendation. Known values are: "NotAttested" and
-     "ManuallyAttested".
-    :vartype disaster_recovery_attestation_status: str or
-     ~azure.mgmt.resiliencemanagement.models.AttestationState
-    :ivar exclusion_reason_for_high_availability_goals: Reason for exclusion from high availability
-     goals. Known values are: "UserSelectedExclusion", "FailedOverResource", and
-     "UnsupportedResource".
-    :vartype exclusion_reason_for_high_availability_goals: str or
-     ~azure.mgmt.resiliencemanagement.models.ExclusionReason
-    :ivar exclusion_reason_for_disaster_recovery_goals: Reason for exclusion from disaster recovery
-     goals. Known values are: "UserSelectedExclusion", "FailedOverResource", and
-     "UnsupportedResource".
-    :vartype exclusion_reason_for_disaster_recovery_goals: str or
-     ~azure.mgmt.resiliencemanagement.models.ExclusionReason
-    :ivar user_confirmation_for_high_availability: List of user confirmations for high availability
-     solutions.
-    :vartype user_confirmation_for_high_availability:
-     list[~azure.mgmt.resiliencemanagement.models.UserConfirmationItem]
-    :ivar service_group_memberships: List of service groups of which this resource is memberof.
-    :vartype service_group_memberships:
-     list[~azure.mgmt.resiliencemanagement.models.ServiceGroupMembership]
+    :ivar regional_resiliency: Regional resiliency posture (participation, attestation, exclusion
+     reason, and user confirmations) for the Azure resource.
+    :vartype regional_resiliency: ~azure.mgmt.resiliencemanagement.models.ResiliencyProperties
     :ivar provisioning_state: Provisioning state. Known values are: "Succeeded", "Failed",
      "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and "NeedsAttention".
     :vartype provisioning_state: str or ~azure.mgmt.resiliencemanagement.models.ProvisioningState
@@ -2461,49 +2520,16 @@ class GoalResourceProperties(_Model):  # pylint: disable=docstring-keyword-shoul
 
     resource_arm_id: str = rest_field(name="resourceArmId", visibility=["read", "create", "update", "delete", "query"])
     """Arm Id of resource under the SG for which the extension resource is maintained. Required."""
-    high_availability_goal_participation: Optional[Union[str, "_models.ExclusionState"]] = rest_field(
-        name="highAvailabilityGoalParticipation", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Flag which depicts whether the Arm resource is excluded for high availability recommendation.
-     Known values are: \"Excluded\" and \"Included\"."""
-    high_availability_attestation_status: Optional[Union[str, "_models.AttestationState"]] = rest_field(
-        name="highAvailabilityAttestationStatus", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Flag which depicts whether the Arm resource is manually attested for high availability
-     recommendation. Known values are: \"NotAttested\" and \"ManuallyAttested\"."""
     zonal_resiliency: Optional["_models.ResiliencyProperties"] = rest_field(
         name="zonalResiliency", visibility=["read", "create", "update", "delete", "query"]
     )
     """Zonal resiliency posture (participation, attestation, exclusion reason, and user confirmations)
      for the Arm resource."""
-    disaster_recovery_goal_participation: Optional[Union[str, "_models.ExclusionState"]] = rest_field(
-        name="disasterRecoveryGoalParticipation", visibility=["read", "create", "update", "delete", "query"]
+    regional_resiliency: Optional["_models.ResiliencyProperties"] = rest_field(
+        name="regionalResiliency", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Flag which depicts whether the Arm resource is excluded for disaster recovery recommendation.
-     Known values are: \"Excluded\" and \"Included\"."""
-    disaster_recovery_attestation_status: Optional[Union[str, "_models.AttestationState"]] = rest_field(
-        name="disasterRecoveryAttestationStatus", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Flag which depicts whether the Arm resource is manually attested for disaster recovery
-     recommendation. Known values are: \"NotAttested\" and \"ManuallyAttested\"."""
-    exclusion_reason_for_high_availability_goals: Optional[Union[str, "_models.ExclusionReason"]] = rest_field(
-        name="exclusionReasonForHighAvailabilityGoals", visibility=["read"]
-    )
-    """Reason for exclusion from high availability goals. Known values are: \"UserSelectedExclusion\",
-     \"FailedOverResource\", and \"UnsupportedResource\"."""
-    exclusion_reason_for_disaster_recovery_goals: Optional[Union[str, "_models.ExclusionReason"]] = rest_field(
-        name="exclusionReasonForDisasterRecoveryGoals", visibility=["read"]
-    )
-    """Reason for exclusion from disaster recovery goals. Known values are: \"UserSelectedExclusion\",
-     \"FailedOverResource\", and \"UnsupportedResource\"."""
-    user_confirmation_for_high_availability: Optional[list["_models.UserConfirmationItem"]] = rest_field(
-        name="userConfirmationForHighAvailability", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of user confirmations for high availability solutions."""
-    service_group_memberships: Optional[list["_models.ServiceGroupMembership"]] = rest_field(
-        name="serviceGroupMemberships", visibility=["read"]
-    )
-    """List of service groups of which this resource is memberof."""
+    """Regional resiliency posture (participation, attestation, exclusion reason, and user
+     confirmations) for the Azure resource."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -2515,12 +2541,8 @@ class GoalResourceProperties(_Model):  # pylint: disable=docstring-keyword-shoul
         self,
         *,
         resource_arm_id: str,
-        high_availability_goal_participation: Optional[Union[str, "_models.ExclusionState"]] = None,
-        high_availability_attestation_status: Optional[Union[str, "_models.AttestationState"]] = None,
         zonal_resiliency: Optional["_models.ResiliencyProperties"] = None,
-        disaster_recovery_goal_participation: Optional[Union[str, "_models.ExclusionState"]] = None,
-        disaster_recovery_attestation_status: Optional[Union[str, "_models.AttestationState"]] = None,
-        user_confirmation_for_high_availability: Optional[list["_models.UserConfirmationItem"]] = None,
+        regional_resiliency: Optional["_models.ResiliencyProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -2634,125 +2656,6 @@ class GoalsData(_Model):  # pylint: disable=docstring-keyword-should-match-keywo
         regional_recovery_time_actual_in_minutes: Optional[Union[str, "_models.IsoDuration"]] = None,
         require_high_availability: Optional[Union[str, "_models.UnifiedResilienceItemRequirementSelected"]] = None,
         require_disaster_recovery: Optional[Union[str, "_models.UnifiedResilienceItemRequirementSelected"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GoalTemplate(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Goal template a AzureResilienceProviderHub resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.resiliencemanagement.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.resiliencemanagement.models.GoalTemplateProperties
-    """
-
-    properties: Optional["_models.GoalTemplateProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.GoalTemplateProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GoalTemplateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Definition of goal template property.
-
-    :ivar require_high_availability: Option specified by customer under high availability section
-     of goal template. Known values are: "NotRequired" and "Required".
-    :vartype require_high_availability: str or
-     ~azure.mgmt.resiliencemanagement.models.RequirementSelected
-    :ivar require_disaster_recovery: Option specified by customer under disaster recovery section
-     of goal template. Known values are: "NotRequired" and "Required".
-    :vartype require_disaster_recovery: str or
-     ~azure.mgmt.resiliencemanagement.models.RequirementSelected
-    :ivar regional_recovery_point_objective: Regional recovery point objective specified by
-     customer. eg, PT15M for 15 minutes.
-    :vartype regional_recovery_point_objective: str
-    :ivar regional_recovery_time_objective: Regional recovery time objective specified by customer.
-     eg, PT15M for 15 minutes.
-    :vartype regional_recovery_time_objective: str
-    :ivar goal_type: Type of Goal Template created by customer. Required. "Resiliency"
-    :vartype goal_type: str or ~azure.mgmt.resiliencemanagement.models.GoalType
-    :ivar provisioning_state: Provisioning state. Known values are: "Succeeded", "Failed",
-     "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and "NeedsAttention".
-    :vartype provisioning_state: str or ~azure.mgmt.resiliencemanagement.models.ProvisioningState
-    :ivar error_details: Details of any errors encountered during the operation.
-    :vartype error_details: ~azure.mgmt.resiliencemanagement.models.ErrorDetail
-    """
-
-    require_high_availability: Optional[Union[str, "_models.RequirementSelected"]] = rest_field(
-        name="requireHighAvailability", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Option specified by customer under high availability section of goal template. Known values
-     are: \"NotRequired\" and \"Required\"."""
-    require_disaster_recovery: Optional[Union[str, "_models.RequirementSelected"]] = rest_field(
-        name="requireDisasterRecovery", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Option specified by customer under disaster recovery section of goal template. Known values
-     are: \"NotRequired\" and \"Required\"."""
-    regional_recovery_point_objective: Optional[str] = rest_field(
-        name="regionalRecoveryPointObjective", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Regional recovery point objective specified by customer. eg, PT15M for 15 minutes."""
-    regional_recovery_time_objective: Optional[str] = rest_field(
-        name="regionalRecoveryTimeObjective", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Regional recovery time objective specified by customer. eg, PT15M for 15 minutes."""
-    goal_type: Union[str, "_models.GoalType"] = rest_field(
-        name="goalType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Type of Goal Template created by customer. Required. \"Resiliency\""""
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """Provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and \"NeedsAttention\"."""
-    error_details: Optional["_models.ErrorDetail"] = rest_field(name="errorDetails", visibility=["read"])
-    """Details of any errors encountered during the operation."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        goal_type: Union[str, "_models.GoalType"],
-        require_high_availability: Optional[Union[str, "_models.RequirementSelected"]] = None,
-        require_disaster_recovery: Optional[Union[str, "_models.RequirementSelected"]] = None,
-        regional_recovery_point_objective: Optional[str] = None,
-        regional_recovery_time_objective: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3044,6 +2947,8 @@ class LastRunProperties(_Model):
     :ivar last_run_attestation: Attestation state of the last run of this Drill. Known values are:
      "Success" and "Failed".
     :vartype last_run_attestation: str or ~azure.mgmt.resiliencemanagement.models.DrillAttestation
+    :ivar last_run_recovery_time_actual: Actual recovery time of the last run of this Drill.
+    :vartype last_run_recovery_time_actual: ~datetime.timedelta
     """
 
     last_run_time: Optional[datetime.datetime] = rest_field(name="lastRunTime", visibility=["read"], format="rfc3339")
@@ -3058,6 +2963,10 @@ class LastRunProperties(_Model):
         name="lastRunAttestation", visibility=["read"]
     )
     """Attestation state of the last run of this Drill. Known values are: \"Success\" and \"Failed\"."""
+    last_run_recovery_time_actual: Optional[datetime.timedelta] = rest_field(
+        name="lastRunRecoveryTimeActual", visibility=["read"]
+    )
+    """Actual recovery time of the last run of this Drill."""
 
 
 class ListReportDownloadUrlRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -3088,6 +2997,27 @@ class ListReportDownloadUrlRequest(_Model):  # pylint: disable=docstring-keyword
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ListReportDownloadUrlResponse(_Model):
+    """Response containing a short-lived, read-only download URL for a Drill Run report.
+
+    :ivar format: Format of the report the download URL refers to. "Html"
+    :vartype format: str or ~azure.mgmt.resiliencemanagement.models.DrillReportFormat
+    :ivar download_url: Short-lived, read-only URL to download the report.
+    :vartype download_url: str
+    :ivar expiry_timestamp: Timestamp at which the download URL expires.
+    :vartype expiry_timestamp: ~datetime.datetime
+    """
+
+    format: Optional[Union[str, "_models.DrillReportFormat"]] = rest_field(visibility=["read"])
+    """Format of the report the download URL refers to. \"Html\""""
+    download_url: Optional[str] = rest_field(name="downloadUrl", visibility=["read"])
+    """Short-lived, read-only URL to download the report."""
+    expiry_timestamp: Optional[datetime.datetime] = rest_field(
+        name="expiryTimestamp", visibility=["read"], format="rfc3339"
+    )
+    """Timestamp at which the download URL expires."""
 
 
 class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -4119,8 +4049,9 @@ class RecoveryJobResourceProperties(
      "NeedsAttention".
     :vartype provisioning_state: str or ~azure.mgmt.resiliencemanagement.models.ProvisioningState
     :ivar protection_solution_type: A setting that indicates the protection solution selected.
-     Known values are: "None", "AzureNative", "AzureSiteRecovery", "CrossZoneVMRecovery", and
-     "CustomRunbook".
+     Known values are: "None", "AzureNative", "AzureSiteRecovery", "CrossZoneVMRecovery",
+     "CustomRunbook", "AzureTemplate", "AzureStorageAccount", "AzureServiceBus", "AzureNetAppFiles",
+     and "AzureCosmosDB".
     :vartype protection_solution_type: str or
      ~azure.mgmt.resiliencemanagement.models.ResourceProtectionSolutionType
     :ivar recovery_group_action_settings: The recovery action settings.
@@ -4141,7 +4072,9 @@ class RecoveryJobResourceProperties(
         name="protectionSolutionType", visibility=["read"]
     )
     """A setting that indicates the protection solution selected. Known values are: \"None\",
-     \"AzureNative\", \"AzureSiteRecovery\", \"CrossZoneVMRecovery\", and \"CustomRunbook\"."""
+     \"AzureNative\", \"AzureSiteRecovery\", \"CrossZoneVMRecovery\", \"CustomRunbook\",
+     \"AzureTemplate\", \"AzureStorageAccount\", \"AzureServiceBus\", \"AzureNetAppFiles\", and
+     \"AzureCosmosDB\"."""
     recovery_group_action_settings: Optional["_models.RecoveryGroupActionSettings"] = rest_field(
         name="recoveryGroupActionSettings", visibility=["read"]
     )
@@ -4491,6 +4424,10 @@ class RecoveryResourceProperties(_Model):  # pylint: disable=docstring-keyword-s
     :ivar inclusion_state: A state that indicates the resource status with respect to the recovery
      orchestration plan. Known values are: "Included" and "Excluded".
     :vartype inclusion_state: str or ~azure.mgmt.resiliencemanagement.models.ResourceInclusionState
+    :ivar inclusion_disabled_reasons: Reasons why inclusion of the resource in a recovery plan is
+     disabled.
+    :vartype inclusion_disabled_reasons: list[str or
+     ~azure.mgmt.resiliencemanagement.models.ResourceInclusionDisabledReason]
     :ivar needs_attention: Indicating if resource needs user attention and action, details will be
      found in attentionReasons.
     :vartype needs_attention: bool
@@ -4507,7 +4444,8 @@ class RecoveryResourceProperties(_Model):  # pylint: disable=docstring-keyword-s
      list[~azure.mgmt.resiliencemanagement.models.ResourceProtectionSolutionSettings]
     :ivar selected_protection_solution_type: A setting that indicates the protection solution
      selected. Known values are: "None", "AzureNative", "AzureSiteRecovery", "CrossZoneVMRecovery",
-     and "CustomRunbook".
+     "CustomRunbook", "AzureTemplate", "AzureStorageAccount", "AzureServiceBus", "AzureNetAppFiles",
+     and "AzureCosmosDB".
     :vartype selected_protection_solution_type: str or
      ~azure.mgmt.resiliencemanagement.models.ResourceProtectionSolutionType
     :ivar selected_protection_solution_setting: Resource protection solution settings of the
@@ -4547,6 +4485,10 @@ class RecoveryResourceProperties(_Model):  # pylint: disable=docstring-keyword-s
     )
     """A state that indicates the resource status with respect to the recovery orchestration plan.
      Known values are: \"Included\" and \"Excluded\"."""
+    inclusion_disabled_reasons: Optional[list[Union[str, "_models.ResourceInclusionDisabledReason"]]] = rest_field(
+        name="inclusionDisabledReasons", visibility=["read"]
+    )
+    """Reasons why inclusion of the resource in a recovery plan is disabled."""
     needs_attention: Optional[bool] = rest_field(name="needsAttention", visibility=["read"])
     """Indicating if resource needs user attention and action, details will be found in
      attentionReasons."""
@@ -4567,7 +4509,9 @@ class RecoveryResourceProperties(_Model):  # pylint: disable=docstring-keyword-s
         name="selectedProtectionSolutionType", visibility=["read", "create", "update", "delete", "query"]
     )
     """A setting that indicates the protection solution selected. Known values are: \"None\",
-     \"AzureNative\", \"AzureSiteRecovery\", \"CrossZoneVMRecovery\", and \"CustomRunbook\"."""
+     \"AzureNative\", \"AzureSiteRecovery\", \"CrossZoneVMRecovery\", \"CustomRunbook\",
+     \"AzureTemplate\", \"AzureStorageAccount\", \"AzureServiceBus\", \"AzureNetAppFiles\", and
+     \"AzureCosmosDB\"."""
     selected_protection_solution_setting: Optional["_models.ResourceBaseProtectionSolutionSetting"] = rest_field(
         name="selectedProtectionSolutionSetting", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4659,6 +4603,9 @@ class RegionalDrillProperties(
     :ivar recovery_plan_properties: ROPlan properties.
     :vartype recovery_plan_properties:
      ~azure.mgmt.resiliencemanagement.models.RecoveryPlanPropertiesOfDrill
+    :ivar goal_assignment_properties: Goal Assignment properties.
+    :vartype goal_assignment_properties:
+     ~azure.mgmt.resiliencemanagement.models.GoalAssignmentPropertiesOfDrill
     :ivar drill_asset_properties: Properties for internal resources that are created for the Drill.
     :vartype drill_asset_properties: ~azure.mgmt.resiliencemanagement.models.AssetPropertiesOfDrill
     :ivar chaos_resource_properties: Chaos Resource properties.
@@ -4700,7 +4647,7 @@ class RegionalDrillProperties(
     :vartype drill_type: str or ~azure.mgmt.resiliencemanagement.models.REGIONAL
     """
 
-    drill_type: Literal[DrillType.REGIONAL] = rest_discriminator(name="drillType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    drill_type: Literal[DrillType.REGIONAL] = rest_discriminator(name="drillType", visibility=["read", "create"])  # type: ignore
     """The discriminator for the Drill object hierarchy. Required. Regional Drill."""
 
     @overload
@@ -4708,6 +4655,7 @@ class RegionalDrillProperties(
         self,
         *,
         recovery_plan_properties: Optional["_models.RecoveryPlanPropertiesOfDrill"] = None,
+        goal_assignment_properties: Optional["_models.GoalAssignmentPropertiesOfDrill"] = None,
         drill_asset_properties: Optional["_models.AssetPropertiesOfDrill"] = None,
         chaos_resource_properties: Optional["_models.ChaosResourcePropertiesOfDrill"] = None,
         rbac_setup_mode: Optional[Union[str, "_models.RBACSetupMode"]] = None,
@@ -4726,6 +4674,49 @@ class RegionalDrillProperties(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.drill_type = DrillType.REGIONAL  # type: ignore
+
+
+class RegionalObjectives(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Recovery objectives targeted by a goal assignment for regional resiliency.
+
+    :ivar target_recovery_point_objective: Target regional recovery point objective. eg, PT15M for
+     15 minutes. Required. Known values are: "PT15M", "PT1H", "PT4H", and "PT24H".
+    :vartype target_recovery_point_objective: str or
+     ~azure.mgmt.resiliencemanagement.models.IsoDuration
+    :ivar target_recovery_time_objective: Target regional recovery time objective. eg, PT1H for 1
+     hour. Required. Known values are: "PT15M", "PT1H", "PT4H", and "PT24H".
+    :vartype target_recovery_time_objective: str or
+     ~azure.mgmt.resiliencemanagement.models.IsoDuration
+    """
+
+    target_recovery_point_objective: Union[str, "_models.IsoDuration"] = rest_field(
+        name="targetRecoveryPointObjective", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Target regional recovery point objective. eg, PT15M for 15 minutes. Required. Known values are:
+     \"PT15M\", \"PT1H\", \"PT4H\", and \"PT24H\"."""
+    target_recovery_time_objective: Union[str, "_models.IsoDuration"] = rest_field(
+        name="targetRecoveryTimeObjective", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Target regional recovery time objective. eg, PT1H for 1 hour. Required. Known values are:
+     \"PT15M\", \"PT1H\", \"PT4H\", and \"PT24H\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_recovery_point_objective: Union[str, "_models.IsoDuration"],
+        target_recovery_time_objective: Union[str, "_models.IsoDuration"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ReportStageStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -4904,12 +4895,16 @@ class ResourceBaseProtectionSolutionSetting(_Model):  # pylint: disable=docstrin
     orchestration plan.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ResourceNativeProtectionSolutionSetting, ResourceSiteRecoveryProtectionSetting,
-    ResourceCrossZoneVmRecoveryProtectionSetting, ResourceCustomProtectionSetting
+    ResourceCosmosDBProtectionSetting, ResourceNativeProtectionSolutionSetting,
+    ResourceNetAppFilesProtectionSetting, ResourceServiceBusProtectionSetting,
+    ResourceSiteRecoveryProtectionSetting, ResourceStorageAccountProtectionSetting,
+    ResourceAzureTemplateProtectionSetting, ResourceCrossZoneVmRecoveryProtectionSetting,
+    ResourceCustomProtectionSetting
 
     :ivar protection_solution_type: A setting that indicates the resource protected with which
      recovery solution. Required. Known values are: "None", "AzureNative", "AzureSiteRecovery",
-     "CrossZoneVMRecovery", and "CustomRunbook".
+     "CrossZoneVMRecovery", "CustomRunbook", "AzureTemplate", "AzureStorageAccount",
+     "AzureServiceBus", "AzureNetAppFiles", and "AzureCosmosDB".
     :vartype protection_solution_type: str or
      ~azure.mgmt.resiliencemanagement.models.ResourceProtectionSolutionType
     """
@@ -4919,8 +4914,9 @@ class ResourceBaseProtectionSolutionSetting(_Model):  # pylint: disable=docstrin
         name="protectionSolutionType", visibility=["read", "create", "update", "delete", "query"]
     )
     """A setting that indicates the resource protected with which recovery solution. Required. Known
-     values are: \"None\", \"AzureNative\", \"AzureSiteRecovery\", \"CrossZoneVMRecovery\", and
-     \"CustomRunbook\"."""
+     values are: \"None\", \"AzureNative\", \"AzureSiteRecovery\", \"CrossZoneVMRecovery\",
+     \"CustomRunbook\", \"AzureTemplate\", \"AzureStorageAccount\", \"AzureServiceBus\",
+     \"AzureNetAppFiles\", and \"AzureCosmosDB\"."""
 
     @overload
     def __init__(
@@ -4938,6 +4934,101 @@ class ResourceBaseProtectionSolutionSetting(_Model):  # pylint: disable=docstrin
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ResourceAzureTemplateProtectionSetting(
+    ResourceBaseProtectionSolutionSetting, discriminator="AzureTemplate"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Definition of recovery orchestration resource protection using an Azure Resource Manager
+    template.
+
+    :ivar protection_solution_type: A setting that indicates Azure Resource Manager template-based
+     recovery. Required. Resource recovery is orchestrated by deploying an Azure Resource Manager
+     template.
+    :vartype protection_solution_type: str or
+     ~azure.mgmt.resiliencemanagement.models.AZURE_TEMPLATE
+    :ivar template_spec_version_id: The Azure resource ID of the Template Spec version to deploy.
+     Required.
+    :vartype template_spec_version_id: str
+    :ivar deployment_scope: The Azure Resource Manager scope at which the recovery template is
+     deployed. Must be the subscription containing the protected resource, or a resource group
+     within it; deployments above subscription scope are not supported. Required.
+    :vartype deployment_scope: str
+    :ivar deployment_location: The location used to store deployment metadata. Required when
+     deploymentScope is a subscription.
+    :vartype deployment_location: str
+    """
+
+    protection_solution_type: Literal[ResourceProtectionSolutionType.AZURE_TEMPLATE] = rest_discriminator(name="protectionSolutionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """A setting that indicates Azure Resource Manager template-based recovery. Required. Resource
+     recovery is orchestrated by deploying an Azure Resource Manager template."""
+    template_spec_version_id: str = rest_field(
+        name="templateSpecVersionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure resource ID of the Template Spec version to deploy. Required."""
+    deployment_scope: str = rest_field(
+        name="deploymentScope", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Resource Manager scope at which the recovery template is deployed. Must be the
+     subscription containing the protected resource, or a resource group within it; deployments
+     above subscription scope are not supported. Required."""
+    deployment_location: Optional[str] = rest_field(
+        name="deploymentLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The location used to store deployment metadata. Required when deploymentScope is a
+     subscription."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        template_spec_version_id: str,
+        deployment_scope: str,
+        deployment_location: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.protection_solution_type = ResourceProtectionSolutionType.AZURE_TEMPLATE  # type: ignore
+
+
+class ResourceCosmosDBProtectionSetting(ResourceBaseProtectionSolutionSetting, discriminator="AzureCosmosDB"):
+    """Definition of recovery orchestration resource protection using Azure Cosmos DB.
+
+    :ivar protection_solution_type: A setting that indicates Azure Cosmos DB protection. Required.
+     Resource is protected with Azure Cosmos DB multiregion replication using customer-managed
+     failover, where recovery promotes a secondary region to the write region.
+    :vartype protection_solution_type: str or
+     ~azure.mgmt.resiliencemanagement.models.AZURE_COSMOS_DB
+    """
+
+    protection_solution_type: Literal[ResourceProtectionSolutionType.AZURE_COSMOS_DB] = rest_discriminator(name="protectionSolutionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """A setting that indicates Azure Cosmos DB protection. Required. Resource is protected with Azure
+     Cosmos DB multiregion replication using customer-managed failover, where recovery promotes a
+     secondary region to the write region."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.protection_solution_type = ResourceProtectionSolutionType.AZURE_COSMOS_DB  # type: ignore
 
 
 class ResourceCrossZoneVmRecoveryProtectionSetting(
@@ -5246,14 +5337,50 @@ class ResourceNativeProtectionSolutionSetting(ResourceBaseProtectionSolutionSett
         self.protection_solution_type = ResourceProtectionSolutionType.AZURE_NATIVE  # type: ignore
 
 
-class ResourceProtectionSolutionSettings(_Model):
+class ResourceNetAppFilesProtectionSetting(ResourceBaseProtectionSolutionSetting, discriminator="AzureNetAppFiles"):
+    """Definition of recovery orchestration resource protection using Azure NetApp Files.
+
+    :ivar protection_solution_type: A setting that indicates Azure NetApp Files protection.
+     Required. Resource is protected with Azure NetApp Files cross-region replication, where
+     recovery fails over to the destination volume.
+    :vartype protection_solution_type: str or
+     ~azure.mgmt.resiliencemanagement.models.AZURE_NET_APP_FILES
+    """
+
+    protection_solution_type: Literal[ResourceProtectionSolutionType.AZURE_NET_APP_FILES] = rest_discriminator(name="protectionSolutionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """A setting that indicates Azure NetApp Files protection. Required. Resource is protected with
+     Azure NetApp Files cross-region replication, where recovery fails over to the destination
+     volume."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.protection_solution_type = ResourceProtectionSolutionType.AZURE_NET_APP_FILES  # type: ignore
+
+
+class ResourceProtectionSolutionSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of recovery resource resource protection solution settings.
 
     :ivar protection_solution_type: A setting that indicates the resource protected with which
      recovery solution. Known values are: "None", "AzureNative", "AzureSiteRecovery",
-     "CrossZoneVMRecovery", and "CustomRunbook".
+     "CrossZoneVMRecovery", "CustomRunbook", "AzureTemplate", "AzureStorageAccount",
+     "AzureServiceBus", "AzureNetAppFiles", and "AzureCosmosDB".
     :vartype protection_solution_type: str or
      ~azure.mgmt.resiliencemanagement.models.ResourceProtectionSolutionType
+    :ivar replication_mode: Replication mode configured for the protected resource. Known values
+     are: "None", "ActiveActive", and "ActivePassive".
+    :vartype replication_mode: str or ~azure.mgmt.resiliencemanagement.models.ReplicationMode
     :ivar protection_status: A status that indicates the protection status of a resource with an
      Azure solution for regional or zonal recovery. Known values are: "Unknown", "Protected",
      "NotProtected", and "HighlyAvailable".
@@ -5295,8 +5422,14 @@ class ResourceProtectionSolutionSettings(_Model):
         name="protectionSolutionType", visibility=["read"]
     )
     """A setting that indicates the resource protected with which recovery solution. Known values are:
-     \"None\", \"AzureNative\", \"AzureSiteRecovery\", \"CrossZoneVMRecovery\", and
-     \"CustomRunbook\"."""
+     \"None\", \"AzureNative\", \"AzureSiteRecovery\", \"CrossZoneVMRecovery\", \"CustomRunbook\",
+     \"AzureTemplate\", \"AzureStorageAccount\", \"AzureServiceBus\", \"AzureNetAppFiles\", and
+     \"AzureCosmosDB\"."""
+    replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = rest_field(
+        name="replicationMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Replication mode configured for the protected resource. Known values are: \"None\",
+     \"ActiveActive\", and \"ActivePassive\"."""
     protection_status: Optional[Union[str, "_models.ResourceProtectionStatus"]] = rest_field(
         name="protectionStatus", visibility=["read"]
     )
@@ -5338,6 +5471,55 @@ class ResourceProtectionSolutionSettings(_Model):
     )
     """TestFailover state of the recovery orchestration resource. Known values are: \"None\" and
      \"TestFailoverCleanupPending\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceServiceBusProtectionSetting(ResourceBaseProtectionSolutionSetting, discriminator="AzureServiceBus"):
+    """Definition of recovery orchestration resource protection using Azure Service Bus.
+
+    :ivar protection_solution_type: A setting that indicates Azure Service Bus protection.
+     Required. Resource is protected with Azure Service Bus geo-replication, where a premium
+     namespace replicates data to a secondary region and recovery promotes that secondary in place.
+    :vartype protection_solution_type: str or
+     ~azure.mgmt.resiliencemanagement.models.AZURE_SERVICE_BUS
+    """
+
+    protection_solution_type: Literal[ResourceProtectionSolutionType.AZURE_SERVICE_BUS] = rest_discriminator(name="protectionSolutionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """A setting that indicates Azure Service Bus protection. Required. Resource is protected with
+     Azure Service Bus geo-replication, where a premium namespace replicates data to a secondary
+     region and recovery promotes that secondary in place."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.protection_solution_type = ResourceProtectionSolutionType.AZURE_SERVICE_BUS  # type: ignore
 
 
 class ResourceSiteRecoveryProtectionSetting(
@@ -5489,32 +5671,24 @@ class ResourceSiteRecoveryTestFailoverParams(_Model):  # pylint: disable=docstri
         super().__init__(*args, **kwargs)
 
 
-class ServiceGroupMembership(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Model for service group membership.
+class ResourceStorageAccountProtectionSetting(
+    ResourceBaseProtectionSolutionSetting, discriminator="AzureStorageAccount"
+):
+    """Definition of recovery orchestration resource protection using an Azure Storage account.
 
-    :ivar service_group_id: Arm Id of the service group. Required.
-    :vartype service_group_id: str
-    :ivar membership_type: Membership type of the service group to resource. Required. Known values
-     are: "Direct", "ThroughSubscription", and "ThroughResourceGroup".
-    :vartype membership_type: str or ~azure.mgmt.resiliencemanagement.models.MembershipType
+    :ivar protection_solution_type: A setting that indicates Azure Storage account protection.
+     Required. Resource is protected with Azure Storage account customer-managed failover.
+    :vartype protection_solution_type: str or
+     ~azure.mgmt.resiliencemanagement.models.AZURE_STORAGE_ACCOUNT
     """
 
-    service_group_id: str = rest_field(
-        name="serviceGroupId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Arm Id of the service group. Required."""
-    membership_type: Union[str, "_models.MembershipType"] = rest_field(
-        name="membershipType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Membership type of the service group to resource. Required. Known values are: \"Direct\",
-     \"ThroughSubscription\", and \"ThroughResourceGroup\"."""
+    protection_solution_type: Literal[ResourceProtectionSolutionType.AZURE_STORAGE_ACCOUNT] = rest_discriminator(name="protectionSolutionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """A setting that indicates Azure Storage account protection. Required. Resource is protected with
+     Azure Storage account customer-managed failover."""
 
     @overload
     def __init__(
         self,
-        *,
-        service_group_id: str,
-        membership_type: Union[str, "_models.MembershipType"],
     ) -> None: ...
 
     @overload
@@ -5526,6 +5700,7 @@ class ServiceGroupMembership(_Model):  # pylint: disable=docstring-keyword-shoul
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+        self.protection_solution_type = ResourceProtectionSolutionType.AZURE_STORAGE_ACCOUNT  # type: ignore
 
 
 class ServiceLevelResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -5534,25 +5709,18 @@ class ServiceLevelResource(_Model):  # pylint: disable=docstring-keyword-should-
     :ivar service_level_indicator_resource_id: The arm id of the service level indicator resource.
      Required.
     :vartype service_level_indicator_resource_id: str
-    :ivar service_level_objective_resource_id: The arm id of the service level object resource.
-    :vartype service_level_objective_resource_id: str
     """
 
     service_level_indicator_resource_id: str = rest_field(
         name="serviceLevelIndicatorResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
     """The arm id of the service level indicator resource. Required."""
-    service_level_objective_resource_id: Optional[str] = rest_field(
-        name="serviceLevelObjectiveResourceId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The arm id of the service level object resource."""
 
     @overload
     def __init__(
         self,
         *,
         service_level_indicator_resource_id: str,
-        service_level_objective_resource_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -6224,7 +6392,7 @@ class UsagePlan(TrackedResource):  # pylint: disable=docstring-keyword-should-ma
 class UsagePlanProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of usage plan properties.
 
-    :ivar plan_type: The type of the usage plan. Known values are: "Basic" and "Standard".
+    :ivar plan_type: The type of the usage plan. "Standard"
     :vartype plan_type: str or ~azure.mgmt.resiliencemanagement.models.UsagePlanType
     :ivar provisioning_state: Provisioning state of the usage plan. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and "NeedsAttention".
@@ -6236,7 +6404,7 @@ class UsagePlanProperties(_Model):  # pylint: disable=docstring-keyword-should-m
     plan_type: Optional[Union[str, "_models.UsagePlanType"]] = rest_field(
         name="planType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The type of the usage plan. Known values are: \"Basic\" and \"Standard\"."""
+    """The type of the usage plan. \"Standard\""""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -6511,6 +6679,9 @@ class ZonalDrillProperties(
     :ivar recovery_plan_properties: ROPlan properties.
     :vartype recovery_plan_properties:
      ~azure.mgmt.resiliencemanagement.models.RecoveryPlanPropertiesOfDrill
+    :ivar goal_assignment_properties: Goal Assignment properties.
+    :vartype goal_assignment_properties:
+     ~azure.mgmt.resiliencemanagement.models.GoalAssignmentPropertiesOfDrill
     :ivar drill_asset_properties: Properties for internal resources that are created for the Drill.
     :vartype drill_asset_properties: ~azure.mgmt.resiliencemanagement.models.AssetPropertiesOfDrill
     :ivar chaos_resource_properties: Chaos Resource properties.
@@ -6555,7 +6726,7 @@ class ZonalDrillProperties(
     :vartype vms_present: str or ~azure.mgmt.resiliencemanagement.models.VMPresent
     """
 
-    drill_type: Literal[DrillType.ZONAL] = rest_discriminator(name="drillType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    drill_type: Literal[DrillType.ZONAL] = rest_discriminator(name="drillType", visibility=["read", "create"])  # type: ignore
     """The discriminator for the Drill object hierarchy. Required. Zonal Drill."""
     vms_present: Optional[Union[str, "_models.VMPresent"]] = rest_field(name="vmsPresent", visibility=["read"])
     """An indication whether a VM is included in this Zonal Drill. If not, RO is not needed. Known
@@ -6566,6 +6737,7 @@ class ZonalDrillProperties(
         self,
         *,
         recovery_plan_properties: Optional["_models.RecoveryPlanPropertiesOfDrill"] = None,
+        goal_assignment_properties: Optional["_models.GoalAssignmentPropertiesOfDrill"] = None,
         drill_asset_properties: Optional["_models.AssetPropertiesOfDrill"] = None,
         chaos_resource_properties: Optional["_models.ChaosResourcePropertiesOfDrill"] = None,
         rbac_setup_mode: Optional[Union[str, "_models.RBACSetupMode"]] = None,

@@ -85,6 +85,10 @@ class TestResilienceManagementDrillsOperationsAsync(AzureMgmtRecordedTestCase):
                             "faultDurationInMin": 0,
                         },
                         "drillAssetProperties": {"region": "str", "subscription": "str", "resourceGroup": "str"},
+                        "goalAssignmentProperties": {
+                            "identity": {"type": "str", "userAssignedIdentity": "str"},
+                            "goalAssignmentId": "str",
+                        },
                         "healthModelMonitoringProperties": {
                             "discoveryRuleId": "str",
                             "identity": {"type": "str", "userAssignedIdentity": "str"},

@@ -15,7 +15,6 @@ if TYPE_CHECKING:
 from ._operations import Operations  # type: ignore
 from ._operations import OperationStatusOperations  # type: ignore
 from ._operations import GoalAssignmentsOperations  # type: ignore
-from ._operations import GoalTemplatesOperations  # type: ignore
 from ._operations import GoalResourcesOperations  # type: ignore
 from ._operations import RecoveryPlansOperations  # type: ignore
 from ._operations import RecoveryPlanActionsOperations  # type: ignore
@@ -38,7 +37,6 @@ __all__ = [
     "Operations",
     "OperationStatusOperations",
     "GoalAssignmentsOperations",
-    "GoalTemplatesOperations",
     "GoalResourcesOperations",
     "RecoveryPlansOperations",
     "RecoveryPlanActionsOperations",
