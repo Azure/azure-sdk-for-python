@@ -82,6 +82,7 @@ from .._response_context import PlatformContext
 from ..models._generated import OutputItem, ResponseObject
 from ..models._helpers import get_conversation_id
 from ._base import ResponseAlreadyExistsError, ResponseProviderProtocol, ResponseStoreCorruptionError
+from ._history import is_replayable_status, normalize_status
 
 # Sentinel key marking an ``output[]`` entry as a pointer to an item stored
 # under ``items/{id}.json`` (spec 028). A real response output item is a typed
@@ -332,6 +333,7 @@ class FileResponseStore(ResponseProviderProtocol):
                     "input_item_ids": input_ids,
                     "output_item_ids": output_ids,
                     "history_item_ids": history_ids,
+                    "status": normalize_status(response.get("status")),
                 },
             )
             # (Spec 028) Best-effort removal of a legacy per-response
@@ -395,7 +397,7 @@ class FileResponseStore(ResponseProviderProtocol):
             # crash-ordering invariant as create_response).
             output_ids = self._store_output_items_unlocked(response)
             _atomic_write_json(target, self._pointerize_output(response_dict))
-            self._update_indexes_unlocked(response_id, output_item_ids=output_ids)
+            self._update_indexes_unlocked(response_id, output_item_ids=output_ids, status=response.get("status"))
 
     async def delete_response(self, response_id: str, *, context: PlatformContext | None = None) -> None:
         """Soft-delete a stored response envelope by identifier.
@@ -538,6 +540,9 @@ class FileResponseStore(ResponseProviderProtocol):
         - When ``conversation_id`` is set, iterates all non-deleted
           responses in that conversation and contributes their
           ``history_item_ids + input_item_ids + output_item_ids``.
+        - A ``failed`` response contributes only its ``history_item_ids``;
+          its own input and output items are excluded so the input that
+          made it fail is not replayed into later turns.
         - Both may be set; results are concatenated in the same order.
         - When over ``limit``, keeps the most recent N item IDs from the
           resolved chain, preserving chronological order in the returned slice.
@@ -561,23 +566,14 @@ class FileResponseStore(ResponseProviderProtocol):
             resolved: list[str] = []
 
             if previous_response_id is not None and not self._deleted_marker(previous_response_id).exists():
-                indexes = _read_json_or_none(self._indexes_path(previous_response_id))
-                if indexes is not None:
-                    resolved.extend(indexes.get("history_item_ids") or [])
-                    resolved.extend(indexes.get("input_item_ids") or [])
-                    resolved.extend(indexes.get("output_item_ids") or [])
+                resolved.extend(self._replayable_item_ids_unlocked(previous_response_id))
 
             if conversation_id is not None:
                 conv_data = _read_json_or_none(self._conversation_path(conversation_id))
                 for rid in (conv_data or {}).get("response_ids", []):
                     if self._deleted_marker(rid).exists():
                         continue
-                    indexes = _read_json_or_none(self._indexes_path(rid))
-                    if indexes is None:
-                        continue
-                    resolved.extend(indexes.get("history_item_ids") or [])
-                    resolved.extend(indexes.get("input_item_ids") or [])
-                    resolved.extend(indexes.get("output_item_ids") or [])
+                    resolved.extend(self._replayable_item_ids_unlocked(rid))
 
             if limit <= 0:
                 return []
@@ -588,6 +584,35 @@ class FileResponseStore(ResponseProviderProtocol):
     # ------------------------------------------------------------------
     # Internal helpers (must be called with self._lock held)
     # ------------------------------------------------------------------
+
+    def _replayable_item_ids_unlocked(self, response_id: str) -> list[str]:
+        """Return the item IDs one response contributes to replayable history.
+
+        A ``failed`` response contributes only the history it inherited; its
+        own input and output items are excluded so the input that made it
+        fail is not replayed into later turns. The status is read from the
+        indexes file; stores written before the status was indexed fall back
+        to the persisted response envelope.
+
+        :param response_id: The response identifier.
+        :type response_id: str
+        :returns: Ordered history + input + output item IDs, or history only
+            for a failed response. Empty when the response has no indexes.
+        :rtype: list[str]
+        """
+        indexes = _read_json_or_none(self._indexes_path(response_id))
+        if indexes is None:
+            return []
+        resolved = list(indexes.get("history_item_ids") or [])
+        if "status" in indexes:
+            status = indexes.get("status")
+        else:
+            envelope = _read_json_or_none(self._response_path(response_id))
+            status = envelope.get("status") if envelope is not None else None
+        if is_replayable_status(status):
+            resolved.extend(indexes.get("input_item_ids") or [])
+            resolved.extend(indexes.get("output_item_ids") or [])
+        return resolved
 
     def _store_items_unlocked(self, items: Iterable[Any]) -> list[str]:
         """Persist items to the single global ``items/`` store.
@@ -694,6 +719,7 @@ class FileResponseStore(ResponseProviderProtocol):
         input_item_ids: list[str] | None = None,
         output_item_ids: list[str] | None = None,
         history_item_ids: list[str] | None = None,
+        status: Any = None,
     ) -> None:
         """Merge the supplied id lists into the persisted indexes file.
 
@@ -702,6 +728,8 @@ class FileResponseStore(ResponseProviderProtocol):
         :keyword input_item_ids: New input ids to overwrite.
         :keyword output_item_ids: New output ids to overwrite.
         :keyword history_item_ids: New history ids to overwrite.
+        :keyword status: New response status to record, used to decide
+            whether the response's items are replayable history.
         :rtype: None
         """
         path = self._indexes_path(response_id)
@@ -712,6 +740,8 @@ class FileResponseStore(ResponseProviderProtocol):
             current["output_item_ids"] = output_item_ids
         if history_item_ids is not None:
             current["history_item_ids"] = history_item_ids
+        if status is not None:
+            current["status"] = normalize_status(status)
         _atomic_write_json(path, current)
 
     def _add_response_to_conversation_unlocked(self, conversation_id: str, response_id: str) -> None:
