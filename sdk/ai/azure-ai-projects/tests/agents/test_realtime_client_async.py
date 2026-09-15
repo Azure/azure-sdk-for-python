@@ -14,6 +14,7 @@ live service or a recorded transport.
 
 import json
 import inspect
+import logging
 from unittest.mock import AsyncMock, MagicMock, patch
 from urllib.parse import parse_qs, urlparse
 
@@ -416,3 +417,44 @@ class TestAsyncRealtimeConnectionSend:
                 assert json.loads(sent_raw) == {"type": "response.cancel"}
             finally:
                 await manager.__aexit__()
+
+
+async def test_realtime_logging_emits_metadata_without_sensitive_content(caplog):
+    import aiohttp
+
+    fake_ws = _make_fake_ws()
+    fake_ws.send_str = AsyncMock()
+    fake_ws.receive = AsyncMock(
+        return_value=_make_fake_msg(
+            aiohttp.WSMsgType.TEXT,
+            json.dumps({"type": "some.new.event", "text": "secret-inbound-content"}),
+        )
+    )
+    connection_url = "wss://my-account.services.ai.azure.com/custom?sig=secret-query"
+
+    caplog.set_level(logging.DEBUG, logger="azure.ai.projects.aio._realtime")
+    patcher, _ = _patch_client_session(fake_ws)
+    with patcher:
+        manager = _make_manager(
+            connection_url=connection_url,
+            structured_inputs={"value": "secret-structured-input"},
+        )
+        conn = await manager.enter()
+        await conn.send({"type": "response.create", "text": "secret-outbound-content"})
+        await conn.recv()
+        await manager.__aexit__()
+
+    messages = "\n".join(record.getMessage() for record in caplog.records)
+    assert "WebSocket CONNECT target=wss://my-account.services.ai.azure.com/custom" in messages
+    assert "WebSocket CONNECTED target=wss://my-account.services.ai.azure.com/custom" in messages
+    assert "WebSocket SEND type=response.create bytes=" in messages
+    assert "WebSocket RECEIVE type=some.new.event bytes=" in messages
+    assert "WebSocket CLOSE code=1000" in messages
+    for sensitive_value in (
+        "fake-token",
+        "secret-query",
+        "secret-structured-input",
+        "secret-inbound-content",
+        "secret-outbound-content",
+    ):
+        assert sensitive_value not in messages
