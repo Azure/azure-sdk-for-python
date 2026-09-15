@@ -26,6 +26,7 @@
 import base64
 import datetime
 import json
+import logging
 import re
 import types
 import platform
@@ -987,3 +988,30 @@ def test_continuation_token_excludes_request_headers(port, http_request, deseria
     )
     new_polling = LROBasePolling()
     new_polling.initialize(*polling_args)
+
+
+def test_warn_on_cross_host_poll_target_warns_only_when_host_differs(caplog):
+    # The LRO poll target comes from a service response header and is sent through the
+    # client's credentialed pipeline. Warn when it names a host the client was not
+    # configured for (credentials would reach that host); stay quiet otherwise.
+    from azure.core.polling.base_polling import _warn_on_cross_host_poll_target
+
+    logger_name = "azure.core.polling.base_polling"
+    initial = "https://victim.cognitiveservices.azure.com/analyze"
+
+    with caplog.at_level(logging.WARNING, logger=logger_name):
+        _warn_on_cross_host_poll_target(initial, "https://attacker.example/poll")
+    assert any(
+        "differs from the client's configured endpoint host" in r.message for r in caplog.records
+    )
+
+    caplog.clear()
+    with caplog.at_level(logging.WARNING, logger=logger_name):
+        # Same host, same host with an explicit port, and a relative target must be quiet.
+        _warn_on_cross_host_poll_target(initial, "https://victim.cognitiveservices.azure.com/op/1")
+        _warn_on_cross_host_poll_target(
+            "https://victim.cognitiveservices.azure.com:443/analyze",
+            "https://victim.cognitiveservices.azure.com:443/op/1",
+        )
+        _warn_on_cross_host_poll_target(initial, "/operations/1")
+    assert not caplog.records
