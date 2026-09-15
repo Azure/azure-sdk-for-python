@@ -42,6 +42,7 @@ class StatsbeatConfig:
         credential: Optional[Any] = None,
         distro_version: Optional[str] = None,
         connection_string: Optional[str] = None,
+        routing_config: Optional[Dict[str, str]] = None,
     ) -> None:
         # Customer specific information
         self.endpoint = endpoint
@@ -55,6 +56,7 @@ class StatsbeatConfig:
         self.disable_offline_storage = disable_offline_storage
         self.credential = credential
         self.distro_version = distro_version
+        self.routing_config = dict(routing_config) if routing_config else None
         self.connection_string: str = ""
 
         # Use provided connection_string or generate from endpoint
@@ -136,6 +138,7 @@ class StatsbeatConfig:
             credential=base_config.credential,
             distro_version=base_config.distro_version,
             connection_string=connection_string,
+            routing_config=config_dict,
         )
 
     def __eq__(self, other: object) -> bool:
@@ -240,6 +243,7 @@ class StatsbeatManager(metaclass=Singleton):
             if self._initialized:
                 # If already initialized with the same config, return True
                 if self._config and self._config == config:
+                    self._config.routing_config = config.routing_config
                     return True
                 # If config is different, reconfigure
                 return self._reconfigure(config)
@@ -300,6 +304,7 @@ class StatsbeatManager(metaclass=Singleton):
 
             self._config = config
             self._initialized = True
+            set_statsbeat_shutdown(False)
             return True
 
         except Exception as e:  # pylint: disable=broad-except
@@ -401,7 +406,7 @@ class StatsbeatManager(metaclass=Singleton):
 
         return success
 
-    def update_endpoint(self, endpoint: str) -> bool:
+    def update_endpoint(self, endpoint: str) -> bool:  # pylint: disable=too-many-return-statements
         # Point statsbeat at the customer's effective ingestion route after an accepted redirect.
 
         if not endpoint:
@@ -416,17 +421,40 @@ class StatsbeatManager(metaclass=Singleton):
                 return False
 
             try:
-                connection_string = _get_stats_connection_string(endpoint)
+                region = _get_region_from_endpoint(endpoint)
+                connection_string = None
+                if region and self._config.routing_config:
+                    connection_string = _get_connection_string_for_region_from_config(
+                        region, self._config.routing_config
+                    )
+                if connection_string is None:
+                    connection_string = _get_stats_connection_string(endpoint)
+
+                previous_endpoint = self._config.endpoint
+                previous_connection_string = self._config.connection_string
+                exporter_updated = False
                 # Only swap the statsbeat destination when the data boundary actually changes.
-                if connection_string != self._config.connection_string:
-                    if self._exporter is None or not self._exporter._update_connection_string(  # pylint: disable=protected-access
-                        connection_string
+                if connection_string != previous_connection_string:
+                    if (
+                        self._exporter is None
+                        or not self._exporter._update_connection_string(  # pylint: disable=protected-access
+                            connection_string
+                        )
                     ):
                         return False
+                    exporter_updated = True
 
                 if self._metrics is not None:
-                    self._metrics.update_endpoint_host(endpoint)
-                self._config._update_endpoint(endpoint, connection_string)
+                    try:
+                        self._metrics.update_endpoint_host(endpoint)
+                    except Exception:
+                        if exporter_updated and self._exporter is not None:
+                            self._exporter._update_connection_string(  # pylint: disable=protected-access
+                                previous_connection_string
+                            )
+                        self._metrics.update_endpoint_host(previous_endpoint)
+                        raise
+                self._config._update_endpoint(endpoint, connection_string)  # pylint: disable=protected-access
                 return True
             except Exception as e:  # pylint: disable=broad-except
                 logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
@@ -452,6 +480,7 @@ class StatsbeatManager(metaclass=Singleton):
                 credential=self._config.credential,
                 distro_version=self._config.distro_version,
                 connection_string=self._config.connection_string,
+                routing_config=self._config.routing_config,
             )
 
     def is_initialized(self) -> bool:

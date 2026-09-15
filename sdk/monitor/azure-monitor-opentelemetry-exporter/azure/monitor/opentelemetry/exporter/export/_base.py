@@ -771,7 +771,7 @@ class BaseExporter:
         parsed = ConnectionStringParser(connection_string)
         if not parsed.instrumentation_key or not parsed.endpoint:
             return False
-        self._connection_string = parsed._connection_string
+        self._connection_string = parsed._connection_string  # pylint: disable=protected-access
         self._instrumentation_key = parsed.instrumentation_key
         self._endpoint = parsed.endpoint
         self._region = parsed.region

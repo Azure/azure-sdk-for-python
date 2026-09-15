@@ -166,6 +166,7 @@ class TestStatsbeatConfig(unittest.TestCase):
                 new_config.connection_string,
                 "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
             )
+            self.assertEqual(new_config.routing_config, config_dict)
 
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._get_connection_string_for_region_from_config")
     def test_from_config_fallback_connection_string(self, mock_get_cs_for_region):
@@ -463,6 +464,29 @@ class TestStatsbeatManager(unittest.TestCase):
         mock_timer.start.assert_called_once()
         mock_meter_provider.force_flush.assert_not_called()
 
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.set_statsbeat_shutdown")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.threading.Timer")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
+    @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.is_statsbeat_enabled", return_value=True)
+    def test_initialize_clears_shutdown_state(
+        self,
+        _mock_is_enabled,
+        mock_statsbeat_metrics,
+        _mock_exporter_class,
+        _mock_reader_class,
+        _mock_meter_provider_class,
+        _mock_timer_class,
+        mock_set_shutdown,
+    ):
+        mock_statsbeat_metrics.return_value = Mock()
+
+        self.assertTrue(self.manager.initialize(self._create_valid_config()))
+
+        mock_set_shutdown.assert_called_once_with(False)
+
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
     @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
@@ -494,6 +518,19 @@ class TestStatsbeatManager(unittest.TestCase):
         result = self.manager.initialize(config)
 
         self.assertTrue(result)
+
+    @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.is_statsbeat_enabled", return_value=True)
+    def test_initialize_same_route_refreshes_routing_config(self, _mock_is_enabled):
+        current_config = self._create_valid_config()
+        updated_config = self._create_valid_config()
+        updated_config.routing_config = {"EU_REGIONS": '["italynorth"]'}
+        self.manager._initialized = True
+        self.manager._config = current_config
+
+        result = self.manager.initialize(updated_config)
+
+        self.assertTrue(result)
+        self.assertEqual(self.manager._config.routing_config, updated_config.routing_config)
 
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.is_statsbeat_enabled")
     def test_initialize_already_initialized_different_config_cs(self, mock_is_enabled):
@@ -757,6 +794,26 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertEqual(self.manager._config.connection_string, _DEFAULT_NON_EU_STATS_CONNECTION_STRING)
         exporter._update_connection_string.assert_called_once_with(_DEFAULT_NON_EU_STATS_CONNECTION_STRING)
 
+    def test_update_endpoint_uses_onesettings_routing_config(self):
+        custom_eu_connection_string = (
+            "InstrumentationKey=11111111-1111-1111-1111-111111111111;"
+            "IngestionEndpoint=https://custom-eu.example.com/"
+        )
+        exporter = self._setup_initialized_manager_for_update()
+        self.manager._config.routing_config = {
+            "SUPPORTED_DATA_BOUNDARIES": '["EU", "DEFAULT"]',
+            "EU_REGIONS": '["italynorth"]',
+            "EU_STATS_CONNECTION_STRING": custom_eu_connection_string,
+            "DEFAULT_STATS_CONNECTION_STRING": _DEFAULT_NON_EU_STATS_CONNECTION_STRING,
+        }
+
+        result = self.manager.update_endpoint("https://italynorth-1.in.applicationinsights.azure.com/")
+
+        self.assertTrue(result)
+        self.assertEqual(self.manager._config.connection_string, custom_eu_connection_string)
+        self.assertEqual(self.manager._config.region, "italynorth")
+        exporter._update_connection_string.assert_called_once_with(custom_eu_connection_string)
+
     def test_update_endpoint_no_exporter_available(self):
         """Without a live exporter a boundary change cannot be applied, so nothing is mutated."""
         self._setup_initialized_manager_for_update()
@@ -787,6 +844,30 @@ class TestStatsbeatManager(unittest.TestCase):
         self.manager._metrics.update_endpoint_host.side_effect = Exception("boom")
 
         self.assertFalse(self.manager.update_endpoint("https://eastus-8.in.applicationinsights.azure.com/"))
+
+    def test_update_endpoint_boundary_failure_restores_previous_route(self):
+        exporter = self._setup_initialized_manager_for_update()
+        self.manager._metrics.update_endpoint_host.side_effect = [Exception("boom"), None]
+
+        result = self.manager.update_endpoint("https://westeurope-5.in.applicationinsights.azure.com/")
+
+        self.assertFalse(result)
+        self.assertEqual(
+            exporter._update_connection_string.call_args_list,
+            [
+                mock.call(_DEFAULT_EU_STATS_CONNECTION_STRING),
+                mock.call(_DEFAULT_NON_EU_STATS_CONNECTION_STRING),
+            ],
+        )
+        self.assertEqual(
+            self.manager._metrics.update_endpoint_host.call_args_list,
+            [
+                mock.call("https://westeurope-5.in.applicationinsights.azure.com/"),
+                mock.call("https://dc.services.visualstudio.com"),
+            ],
+        )
+        self.assertEqual(self.manager._config.endpoint, "https://dc.services.visualstudio.com")
+        self.assertEqual(self.manager._config.connection_string, _DEFAULT_NON_EU_STATS_CONNECTION_STRING)
 
     def test_get_current_config_not_initialized(self):
         result = self.manager.get_current_config()
