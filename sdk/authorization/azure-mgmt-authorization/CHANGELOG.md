@@ -1,5 +1,11 @@
 # Release History
 
+## 5.0.0b3 (2026-07-08)
+
+### Features Added
+
+  - Model `RoleAssignmentProperties` added property `expiration_time`
+
 ## 5.0.0b2 (2026-04-14)
 
 ### Features Added
