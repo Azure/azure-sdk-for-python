@@ -2,7 +2,10 @@
 
 ## 1.1.0b1 (2026-09-14)
 
-skip changelog generation for data-plane package and please add changelog manually.
+### Features Added
+
+- Added support for Content Provenance Detection operations.
+- Added support for Unified Moderate policy evaluation.
 
 ## 1.0.0 (2023-12-15)
 
