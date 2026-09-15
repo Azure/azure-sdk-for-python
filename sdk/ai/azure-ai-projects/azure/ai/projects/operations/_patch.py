@@ -31,7 +31,6 @@ from ._operations import (
     BetaSkillsOperations,
     BetaVoiceAgentsConversationsOperations,
     BetaVoiceAgentsOperations,
-    BetaVoiceAgentsRealtimeOperations,
     BetaVoiceAgentsTelephonyOperations,
 )
 
@@ -193,7 +192,6 @@ __all__: List[str] = [
     "BetaSkillsOperations",
     "BetaVoiceAgentsConversationsOperations",
     "BetaVoiceAgentsOperations",
-    "BetaVoiceAgentsRealtimeOperations",
     "BetaVoiceAgentsTelephonyOperations",
     "ConnectionsOperations",
     "DatasetsOperations",

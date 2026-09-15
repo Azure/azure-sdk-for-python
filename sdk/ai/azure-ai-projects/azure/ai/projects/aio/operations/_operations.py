@@ -37,7 +37,6 @@ from ... import models as _models
 from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import prepare_multipart_form_data
-from ...models._enums import _AgentDefinitionOptInKeys
 from ...operations._operations import (
     build_agents_create_session_request,
     build_agents_create_version_from_code_request,
@@ -173,7 +172,6 @@ from ...operations._operations import (
     build_beta_voice_agents_conversations_list_request,
     build_beta_voice_agents_conversations_list_response_items_request,
     build_beta_voice_agents_conversations_list_responses_request,
-    build_beta_voice_agents_realtime_connect_voice_agent_request,
     build_beta_voice_agents_telephony_cancel_call_job_request,
     build_beta_voice_agents_telephony_cancel_campaign_request,
     build_beta_voice_agents_telephony_create_binding_request,
@@ -6377,9 +6375,6 @@ class BetaVoiceAgentsOperations:  # pylint: disable=docstring-missing-param
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-        self.realtime = BetaVoiceAgentsRealtimeOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.conversations = BetaVoiceAgentsConversationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -16844,158 +16839,6 @@ class BetaDatasetsOperations:  # pylint: disable=docstring-missing-param
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BetaVoiceAgentsRealtimeOperations:  # pylint: disable=docstring-missing-param
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.aio.AIProjectClient`'s
-        :attr:`realtime` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def _connect_voice_agent(
-        self,
-        agent_name: str,
-        *,
-        foundry_features_query: Optional[Literal[_AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW]] = None,
-        transport: Optional[Union[str, _models._enums.VoiceAgentTransport]] = None,
-        store: Optional[bool] = None,
-        structured_input: Optional[str] = None,
-        websocket_subprotocol: Optional[Union[str, _models._enums.VoiceAgentWebSocketSubprotocol]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Connect to a voice agent.
-
-        Connects to a voice agent over WebSocket. The client must send an HTTP GET with ``Upgrade:
-        websocket``
-        headers. The optional ``realtime`` subprotocol is the only accepted subprotocol value. Supply
-        the
-        ``VoiceAgents=V1Preview`` opt-in through either the ``Foundry-Features`` header or the
-        ``foundry_features``
-        query parameter.
-
-        Handshake failures are evaluated in the following order, independent of the requested
-        ``transport``:
-
-
-
-        1. Agent enablement (any transport): if the target agent is disabled, the handshake fails
-        before the
-        `101 Switching Protocols` upgrade with `409 Conflict`, using the shared Foundry
-        `ApiErrorResponse` shape
-        with `error.code = agent_disabled`. This failure is terminal until the caller enables the
-        agent, and it
-        takes precedence over the WebRTC-specific checks below.
-        2. WebRTC availability (only when `transport=webrtc`, and only once the agent itself is
-        enabled): the agent
-        must have the WebRTC transport capability configured. If the agent is enabled but WebRTC is not
-        available
-        for it, the handshake fails with `404 Not Found`. This is distinct from the `409
-        agent_disabled` case
-        above, which concerns the agent itself rather than its WebRTC capability.
-        3. WebRTC compatibility (only when `transport=webrtc`): WebRTC does not support
-        bring-your-own-model (BYOM)
-        or hosted-agent voice agents; those requests fail with `400 Bad Request`.
-
-        :param agent_name: The name of the voice agent. Required.
-        :type agent_name: str
-        :keyword foundry_features_query: A query alternative to the ``Foundry-Features`` header for
-         clients that cannot set headers during a
-         WebSocket handshake. Set this to ``VoiceAgents=V1Preview``. Either this query parameter or the
-         header is
-         required. VOICE_AGENTS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features_query: str or ~azure.ai.projects.models.VOICE_AGENTS_V1_PREVIEW
-        :keyword transport: Selects the connection transport. Omit or send ``websocket`` for the
-         default, where signaling and audio are
-         exchanged as JSON events over this WebSocket. Send ``webrtc`` to negotiate a WebRTC
-         connection: the WebSocket
-         then carries only SDP signaling (``rtc.call.sdp.create`` / ``rtc.call.sdp.created``) while
-         media and the data
-         channel are peer-to-peer. Known values are: "websocket" and "webrtc". Default value is None.
-        :paramtype transport: str or ~azure.ai.projects.models.VoiceAgentTransport
-        :keyword store: Whether to persist the conversation created by this WebSocket session. If
-         omitted, the service honors the
-         persisted voice agent definition's configured ``store`` value. If supplied, this value
-         overrides the
-         definition's ``store`` setting for this session only. Default value is None.
-        :paramtype store: bool
-        :keyword structured_input: Per-session values for the voice agent's declared
-         ``structured_inputs``, serialized as a JSON object and
-         agent's instructions and session-start greeting for this session only. The decoded value must
-         be a JSON
-         object no larger than 32 KiB with a maximum nesting depth of 16. Default value is None.
-        :paramtype structured_input: str
-        :keyword websocket_subprotocol: Selects a specific version of the voice agent for this
-         session.The requested WebSocket subprotocol. Omit this header or request exactly ``realtime``.
-         "realtime" Default value is None.
-        :paramtype websocket_subprotocol: str or
-         ~azure.ai.projects.models.VoiceAgentWebSocketSubprotocol
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_beta_voice_agents_realtime_connect_voice_agent_request(
-            agent_name=agent_name,
-            foundry_features_query=foundry_features_query,
-            transport=transport,
-            store=store,
-            structured_input=structured_input,
-            websocket_subprotocol=websocket_subprotocol,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [101]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Sec-WebSocket-Protocol"] = self._deserialize(
-            "str", response.headers.get("Sec-WebSocket-Protocol")
-        )
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-
 class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
@@ -17714,7 +17557,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
     @distributed_trace_async
     async def get_audio_item(
         self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
-    ) -> _models.VoiceAudioItemResponse:
+    ) -> _models.VoiceAudioItem:
         """Get a voice agent conversation item's audio metadata.
 
         Returns metadata for a single conversation item's audio segment, including the common playback
@@ -17731,8 +17574,8 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
         :type conversation_id: str
         :param item_id: The id of the conversation item whose audio metadata is retrieved. Required.
         :type item_id: str
-        :return: VoiceAudioItemResponse. The VoiceAudioItemResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VoiceAudioItemResponse
+        :return: VoiceAudioItem. The VoiceAudioItem is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceAudioItem
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -17746,7 +17589,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.VoiceAudioItemResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.VoiceAudioItem] = kwargs.pop("cls", None)
 
         _request = build_beta_voice_agents_conversations_get_audio_item_request(
             agent_name=agent_name,
@@ -17785,7 +17628,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.VoiceAudioItemResponse, response.json())
+            deserialized = _deserialize(_models.VoiceAudioItem, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -17875,7 +17718,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
     @distributed_trace_async
     async def get_generated_audio_item(
         self, agent_name: str, conversation_id: str, item_id: str, **kwargs: Any
-    ) -> _models.VoiceGeneratedAudioItemResponse:
+    ) -> _models.VoiceGeneratedAudioItem:
         """Get a voice agent conversation item's generated audio metadata.
 
         Returns metadata for a conversation item's generated audio. This subordinate artifact is
@@ -17891,9 +17734,8 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
         :param item_id: The id of the conversation item whose generated audio metadata is retrieved.
          Required.
         :type item_id: str
-        :return: VoiceGeneratedAudioItemResponse. The VoiceGeneratedAudioItemResponse is compatible
-         with MutableMapping
-        :rtype: ~azure.ai.projects.models.VoiceGeneratedAudioItemResponse
+        :return: VoiceGeneratedAudioItem. The VoiceGeneratedAudioItem is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceGeneratedAudioItem
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -17907,7 +17749,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.VoiceGeneratedAudioItemResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.VoiceGeneratedAudioItem] = kwargs.pop("cls", None)
 
         _request = build_beta_voice_agents_conversations_get_generated_audio_item_request(
             agent_name=agent_name,
@@ -17946,7 +17788,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.VoiceGeneratedAudioItemResponse, response.json())
+            deserialized = _deserialize(_models.VoiceGeneratedAudioItem, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -18035,7 +17877,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_audio(self, agent_name: str, conversation_id: str, **kwargs: Any) -> _models.VoiceRecordingResponse:
+    async def get_audio(self, agent_name: str, conversation_id: str, **kwargs: Any) -> _models.VoiceRecording:
         """Get a voice agent conversation's merged recording metadata.
 
         Returns metadata for the whole-call merged stereo recording (user audio on the left channel,
@@ -18056,8 +17898,8 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
         :param conversation_id: The id of the conversation whose merged recording metadata is
          retrieved. Required.
         :type conversation_id: str
-        :return: VoiceRecordingResponse. The VoiceRecordingResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.VoiceRecordingResponse
+        :return: VoiceRecording. The VoiceRecording is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.VoiceRecording
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -18071,7 +17913,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.VoiceRecordingResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.VoiceRecording] = kwargs.pop("cls", None)
 
         _request = build_beta_voice_agents_conversations_get_audio_request(
             agent_name=agent_name,
@@ -18109,7 +17951,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.VoiceRecordingResponse, response.json())
+            deserialized = _deserialize(_models.VoiceRecording, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

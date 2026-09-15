@@ -169,13 +169,13 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     A2ATool, A2APreviewTool, ApplyPatchToolParam, AzureAISearchTool, AzureFunctionTool,
-    BingCustomSearchPreviewTool, BingGroundingTool, BrowserAutomationTool,
-    BrowserAutomationPreviewTool, CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool,
-    ComputerUsePreviewTool, CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool,
-    FileSearchTool, FunctionTool, GitHubCopilotToolsetPreview, ImageGenTool, LocalShellToolParam,
-    MCPTool, MemorySearchPreviewTool, NamespaceToolParam, OpenApiTool,
-    ProgrammaticToolCallingParam, SharepointPreviewTool, FunctionShellToolParam,
-    ToolSearchToolParam, WebIQPreviewTool, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
+    BingCustomSearchPreviewTool, BingGroundingTool, BrowserAutomationPreviewTool,
+    CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool, ComputerUsePreviewTool,
+    CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool, FileSearchTool, FunctionTool,
+    GitHubCopilotToolsetPreview, ImageGenTool, LocalShellToolParam, MCPTool,
+    MemorySearchPreviewTool, NamespaceToolParam, OpenApiTool, ProgrammaticToolCallingParam,
+    SharepointPreviewTool, FunctionShellToolParam, ToolSearchToolParam, WebIQPreviewTool,
+    WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer",
      "computer_use_preview", "web_search", "mcp", "code_interpreter", "programmatic_tool_calling",
@@ -280,7 +280,7 @@ class ToolboxTool(_Model):  # pylint: disable=docstring-keyword-should-match-key
     """An abstract representation of a tool stored in a toolbox.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    A2AToolboxTool, A2APreviewToolboxTool, AzureAISearchToolboxTool, BrowserAutomationToolboxTool,
+    A2AToolboxTool, A2APreviewToolboxTool, AzureAISearchToolboxTool,
     BrowserAutomationPreviewToolboxTool, CodeInterpreterToolboxTool, FabricIQPreviewToolboxTool,
     FileSearchToolboxTool, MCPToolboxTool, OpenApiToolboxTool, ReminderPreviewToolboxTool,
     ShellToolboxTool, ToolSearchToolboxTool, ToolboxSearchPreviewToolboxTool,
@@ -289,7 +289,7 @@ class ToolboxTool(_Model):  # pylint: disable=docstring-keyword-should-match-key
     :ivar type: The type of tool. Required. Known values are: "code_interpreter", "file_search",
      "web_search", "mcp", "azure_ai_search", "openapi", "a2a_preview", "browser_automation_preview",
      "reminder_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search",
-     "toolbox_search_preview", "a2a", "shell", "web_iq_preview", and "browser_automation".
+     "toolbox_search_preview", "a2a", "shell", and "web_iq_preview".
     :vartype type: str or ~azure.ai.projects.models.ToolboxToolType
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
@@ -306,8 +306,8 @@ class ToolboxTool(_Model):  # pylint: disable=docstring-keyword-should-match-key
     """The type of tool. Required. Known values are: \"code_interpreter\", \"file_search\",
      \"web_search\", \"mcp\", \"azure_ai_search\", \"openapi\", \"a2a_preview\",
      \"browser_automation_preview\", \"reminder_preview\", \"work_iq_preview\",
-     \"fabric_iq_preview\", \"toolbox_search\", \"toolbox_search_preview\", \"a2a\", \"shell\",
-     \"web_iq_preview\", and \"browser_automation\"."""
+     \"fabric_iq_preview\", \"toolbox_search\", \"toolbox_search_preview\", \"a2a\", \"shell\", and
+     \"web_iq_preview\"."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional user-defined name for this tool or configuration."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4724,92 +4724,6 @@ class BrowserAutomationPreviewToolboxTool(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolboxToolType.BROWSER_AUTOMATION_PREVIEW  # type: ignore
-
-
-class BrowserAutomationTool(
-    Tool, discriminator="browser_automation"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The input definition information for a Browser Automation Tool, as used to configure an Agent.
-
-    :ivar type: The object type, which is always 'browser_automation'. Required.
-     BROWSER_AUTOMATION.
-    :vartype type: str or ~azure.ai.projects.models.BROWSER_AUTOMATION
-    :ivar browser_automation: The Browser Automation Tool parameters. Required.
-    :vartype browser_automation: ~azure.ai.projects.models.BrowserAutomationToolParameters
-    """
-
-    type: Literal[ToolType.BROWSER_AUTOMATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'browser_automation'. Required. BROWSER_AUTOMATION."""
-    browser_automation: "_models.BrowserAutomationToolParameters" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The Browser Automation Tool parameters. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        browser_automation: "_models.BrowserAutomationToolParameters",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.BROWSER_AUTOMATION  # type: ignore
-
-
-class BrowserAutomationToolboxTool(
-    ToolboxTool, discriminator="browser_automation"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A browser automation tool stored in a toolbox.
-
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
-    :ivar type: Required. BROWSER_AUTOMATION.
-    :vartype type: str or ~azure.ai.projects.models.BROWSER_AUTOMATION
-    :ivar browser_automation: The Browser Automation Tool parameters. Required.
-    :vartype browser_automation: ~azure.ai.projects.models.BrowserAutomationToolParameters
-    """
-
-    type: Literal[ToolboxToolType.BROWSER_AUTOMATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. BROWSER_AUTOMATION."""
-    browser_automation: "_models.BrowserAutomationToolParameters" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The Browser Automation Tool parameters. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        browser_automation: "_models.BrowserAutomationToolParameters",
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolboxToolType.BROWSER_AUTOMATION  # type: ignore
 
 
 class BrowserAutomationToolConnectionParameters(
@@ -22027,7 +21941,7 @@ class TelephonyCallJob(_Model):  # pylint: disable=docstring-keyword-should-matc
     :ivar cancellation: The recorded cancellation request, when cancellation was requested.
     :vartype cancellation: ~azure.ai.projects.models.TelephonyCallJobCancellation
     :ivar retry_policy: The frozen provider-attempt retry policy. Required.
-    :vartype retry_policy: ~azure.ai.projects.models.TelephonyOutboundRetryPolicyResponse
+    :vartype retry_policy: ~azure.ai.projects.models.TelephonyOutboundRetryPolicy
     :ivar attempt_count: The number of provider attempts created so far. Required.
     :vartype attempt_count: int
     :ivar next_attempt_at: The Unix timestamp in seconds at which the next retry becomes eligible.
@@ -22095,7 +22009,7 @@ class TelephonyCallJob(_Model):  # pylint: disable=docstring-keyword-should-matc
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The recorded cancellation request, when cancellation was requested."""
-    retry_policy: "_models.TelephonyOutboundRetryPolicyResponse" = rest_field(
+    retry_policy: "_models.TelephonyOutboundRetryPolicy" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The frozen provider-attempt retry policy. Required."""
@@ -22140,7 +22054,7 @@ class TelephonyCallJob(_Model):  # pylint: disable=docstring-keyword-should-matc
         id: str,  # pylint: disable=redefined-builtin
         agent_name: str,
         status: Union[str, "_models.TelephonyCallJobStatus"],
-        retry_policy: "_models.TelephonyOutboundRetryPolicyResponse",
+        retry_policy: "_models.TelephonyOutboundRetryPolicy",
         attempt_count: int,
         revision: int,
         created_at: datetime.datetime,
@@ -22937,7 +22851,7 @@ class TelephonyCampaign(_Model):  # pylint: disable=docstring-keyword-should-mat
      "completed", "failed", and "cancelled".
     :vartype execution_status: str or ~azure.ai.projects.models.TelephonyCampaignExecutionStatus
     :ivar retry_policy: Required.
-    :vartype retry_policy: ~azure.ai.projects.models.TelephonyOutboundRetryPolicyResponse
+    :vartype retry_policy: ~azure.ai.projects.models.TelephonyOutboundRetryPolicy
     :ivar latest_successful_validation_id:
     :vartype latest_successful_validation_id: str
     :ivar active_validation_id:
@@ -22987,7 +22901,7 @@ class TelephonyCampaign(_Model):  # pylint: disable=docstring-keyword-should-mat
     )
     """Required. Known values are: \"none\", \"scheduled\", \"running\", \"paused\", \"completed\",
      \"failed\", and \"cancelled\"."""
-    retry_policy: "_models.TelephonyOutboundRetryPolicyResponse" = rest_field(
+    retry_policy: "_models.TelephonyOutboundRetryPolicy" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Required."""
@@ -23023,7 +22937,7 @@ class TelephonyCampaign(_Model):  # pylint: disable=docstring-keyword-should-mat
         agent_name: str,
         configuration_status: Union[str, "_models.TelephonyCampaignConfigurationStatus"],
         execution_status: Union[str, "_models.TelephonyCampaignExecutionStatus"],
-        retry_policy: "_models.TelephonyOutboundRetryPolicyResponse",
+        retry_policy: "_models.TelephonyOutboundRetryPolicy",
         call_job_counts: "_models.TelephonyCampaignCallJobCounts",
         created_at: datetime.datetime,
         updated_at: datetime.datetime,
@@ -23605,92 +23519,10 @@ class TelephonyOutboundRetryPolicy(_Model):  # pylint: disable=docstring-keyword
 class TelephonyOutboundFixedIntervalRetryPolicy(
     TelephonyOutboundRetryPolicy, discriminator="fixed_interval"
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """A retry policy with a fixed interval between outbound call attempts.
-
-    :ivar max_attempts: The maximum number of provider attempts, including the first attempt.
-     Defaults to 1.
-    :vartype max_attempts: int
-    :ivar type: The fixed-interval retry strategy. Required. Retry after a fixed interval between
-     attempts.
-    :vartype type: str or ~azure.ai.projects.models.FIXED_INTERVAL
-    :ivar interval: The fixed delay in seconds between attempts. It must be 0 when ``max_attempts``
-     is 1, and from 60 through 86400 when retries are enabled.
-    :vartype interval: ~datetime.timedelta
-    """
-
-    type: Literal[TelephonyOutboundRetryPolicyType.FIXED_INTERVAL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The fixed-interval retry strategy. Required. Retry after a fixed interval between attempts."""
-    interval: Optional[datetime.timedelta] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"], format="duration-seconds-int"
-    )
-    """The fixed delay in seconds between attempts. It must be 0 when ``max_attempts`` is 1, and from
-     60 through 86400 when retries are enabled."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        max_attempts: Optional[int] = None,
-        interval: Optional[datetime.timedelta] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = TelephonyOutboundRetryPolicyType.FIXED_INTERVAL  # type: ignore
-
-
-class TelephonyOutboundRetryPolicyResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The frozen retry policy returned for an outbound call or campaign.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    TelephonyOutboundFixedIntervalRetryPolicyResponse
-
-    :ivar type: The retry strategy. Required. "fixed_interval"
-    :vartype type: str or ~azure.ai.projects.models.TelephonyOutboundRetryPolicyType
-    :ivar max_attempts: The maximum number of provider attempts, including the first attempt.
-     Required.
-    :vartype max_attempts: int
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The retry strategy. Required. \"fixed_interval\""""
-    max_attempts: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The maximum number of provider attempts, including the first attempt. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-        max_attempts: int,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TelephonyOutboundFixedIntervalRetryPolicyResponse(
-    TelephonyOutboundRetryPolicyResponse, discriminator="fixed_interval"
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The frozen fixed-interval retry policy returned for an outbound call or campaign.
 
     :ivar max_attempts: The maximum number of provider attempts, including the first attempt.
-     Required.
+     Defaults to 1.
     :vartype max_attempts: int
     :ivar type: The fixed-interval retry strategy. Required. Retry after a fixed interval between
      attempts.
@@ -23710,8 +23542,8 @@ class TelephonyOutboundFixedIntervalRetryPolicyResponse(
     def __init__(
         self,
         *,
-        max_attempts: int,
         interval: datetime.timedelta,
+        max_attempts: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -29903,7 +29735,7 @@ class VoiceAgentTranscriptionWord(_Model):  # pylint: disable=docstring-keyword-
         super().__init__(*args, **kwargs)
 
 
-class VoiceAudioItemResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class VoiceAudioItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata for a single conversation item's audio segment. For bring-your-own-storage (BYOS), the
     response includes ``blob_uri``, a direct customer-storage URI without a SAS token, that the
     customer accesses with their own credentials. For Foundry-managed storage, ``blob_uri`` is
@@ -30116,7 +29948,7 @@ class VoiceConversationEngine(_Model):  # pylint: disable=docstring-keyword-shou
         super().__init__(*args, **kwargs)
 
 
-class VoiceGeneratedAudioItemResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class VoiceGeneratedAudioItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata for a conversation item's generated audio. For bring-your-own-storage (BYOS), the
     response includes ``blob_uri``, a direct customer-storage URI without a SAS token, that the
     customer accesses with their own credentials. For Foundry-managed storage, ``blob_uri`` is
@@ -30257,29 +30089,7 @@ class VoiceHostedAgentConversationEngine(
         self.type = "hosted_agent"  # type: ignore
 
 
-class VoiceRecordingChannelLayout(_Model):  # pylint: disable=docstring-missing-param
-    """The role assigned to each channel of a merged stereo voice recording.
-
-    :ivar left: The role carried on the left channel. Always ``user``. Required. Default value is
-     "user".
-    :vartype left: str
-    :ivar right: The role carried on the right channel. Always ``agent``. Required. Default value
-     is "agent".
-    :vartype right: str
-    """
-
-    left: Literal["user"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The role carried on the left channel. Always ``user``. Required. Default value is \"user\"."""
-    right: Literal["agent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The role carried on the right channel. Always ``agent``. Required. Default value is \"agent\"."""
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.left: Literal["user"] = "user"
-        self.right: Literal["agent"] = "agent"
-
-
-class VoiceRecordingResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class VoiceRecording(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata for the merged, whole-call stereo recording of a voice conversation (user audio on the
     left channel, agent audio on the right). Built once from the per-turn segments after the
     session ends and durably cached. The common metadata (format, sample rate, channels, channel
@@ -30354,6 +30164,28 @@ class VoiceRecordingResponse(_Model):  # pylint: disable=docstring-keyword-shoul
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class VoiceRecordingChannelLayout(_Model):  # pylint: disable=docstring-missing-param
+    """The role assigned to each channel of a merged stereo voice recording.
+
+    :ivar left: The role carried on the left channel. Always ``user``. Required. Default value is
+     "user".
+    :vartype left: str
+    :ivar right: The role carried on the right channel. Always ``agent``. Required. Default value
+     is "agent".
+    :vartype right: str
+    """
+
+    left: Literal["user"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The role carried on the left channel. Always ``user``. Required. Default value is \"user\"."""
+    right: Literal["agent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The role carried on the right channel. Always ``agent``. Required. Default value is \"agent\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.left: Literal["user"] = "user"
+        self.right: Literal["agent"] = "agent"
 
 
 class VoiceResponseBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only

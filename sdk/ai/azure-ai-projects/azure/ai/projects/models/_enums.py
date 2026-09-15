@@ -2155,8 +2155,6 @@ class ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SHELL."""
     WEB_IQ_PREVIEW = "web_iq_preview"
     """WEB_IQ_PREVIEW."""
-    BROWSER_AUTOMATION = "browser_automation"
-    """BROWSER_AUTOMATION."""
 
 
 class ToolChoiceOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2495,15 +2493,6 @@ class VoiceAgentToolResponseScheduling(str, Enum, metaclass=CaseInsensitiveEnumM
     """Create a follow-up response only when no response is active."""
 
 
-class VoiceAgentTransport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The transport used for a voice-agent connection."""
-
-    WEBSOCKET = "websocket"
-    """Signaling and audio are exchanged as JSON events over the WebSocket. This is the default."""
-    WEBRTC = "webrtc"
-    """WebRTC: the WebSocket carries only SDP signaling; media and the data channel are peer-to-peer."""
-
-
 class VoiceAgentTurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The turn-detection strategy. Additional values may be added over time."""
 
@@ -2517,13 +2506,6 @@ class VoiceAgentTurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """English-optimized Azure semantic voice activity detection."""
     AZURE_SEMANTIC_VAD_MULTILINGUAL = "azure_semantic_vad_multilingual"
     """Multilingual Azure semantic voice activity detection."""
-
-
-class VoiceAgentWebSocketSubprotocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The WebSocket subprotocol supported by a voice-agent connection."""
-
-    REALTIME = "realtime"
-    """REALTIME."""
 
 
 class VoiceAudioCodec(str, Enum, metaclass=CaseInsensitiveEnumMeta):
