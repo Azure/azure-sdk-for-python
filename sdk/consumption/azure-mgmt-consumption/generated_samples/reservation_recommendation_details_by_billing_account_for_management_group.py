@@ -15,7 +15,7 @@ from azure.mgmt.consumption import ConsumptionManagementClient
     pip install azure-identity
     pip install azure-mgmt-consumption
 # USAGE
-    python lots_list_by_customer.py
+    python reservation_recommendation_details_by_billing_account_for_management_group.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,17 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.lots.list_by_customer(
-        billing_account_id="1234:5678",
-        customer_id="1234:5678",
+    response = client.reservation_recommendation_details.get(
+        resource_scope="providers/Microsoft.Billing/billingAccounts/00000000",
+        scope="ManagementGroup",
+        region="westus",
+        term="P3Y",
+        look_back_period="Last30Days",
+        product="Standard_DS13_v2",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: 2026-06-01/LotsListByCustomer.json
+# x-ms-original-file: 2026-06-01/ReservationRecommendationDetailsByBillingAccountForManagementGroup.json
 if __name__ == "__main__":
     main()
