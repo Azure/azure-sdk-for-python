@@ -34,14 +34,14 @@ def main():
         resource_group_name="rgconfigurationmanager",
         config_template_name="testname",
         resource={
-            "location": "egqjo",
-            "properties": {"description": "ccdyggozwmhyvemlcwlsnhijwg"},
-            "tags": {"key6936": "vnqujuvnbxonbsgb"},
+            "location": "lltpsbfqidpuumxvdnidshkdsx",
+            "properties": {"description": "fvklsykvqiyosqetvdnjg"},
+            "tags": {},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/ConfigTemplates_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/ConfigTemplates_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

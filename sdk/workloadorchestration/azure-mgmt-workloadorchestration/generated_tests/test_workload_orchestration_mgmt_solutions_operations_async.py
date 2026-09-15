@@ -48,6 +48,7 @@ class TestWorkloadOrchestrationMgmtSolutionsOperationsAsync(AzureMgmtRecordedTes
                         "availableSolutionTemplateVersions": [
                             {"isConfigured": bool, "latestConfigRevision": "str", "solutionTemplateVersion": "str"}
                         ],
+                        "displayName": "str",
                         "provisioningState": "str",
                         "solutionTemplateId": "str",
                     },
@@ -76,26 +77,14 @@ class TestWorkloadOrchestrationMgmtSolutionsOperationsAsync(AzureMgmtRecordedTes
                 target_name="str",
                 solution_name="str",
                 properties={
-                    "eTag": "str",
-                    "extendedLocation": {"name": "str", "type": "str"},
-                    "id": "str",
-                    "name": "str",
                     "properties": {
                         "availableSolutionTemplateVersions": [
                             {"isConfigured": bool, "latestConfigRevision": "str", "solutionTemplateVersion": "str"}
                         ],
+                        "displayName": "str",
                         "provisioningState": "str",
                         "solutionTemplateId": "str",
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str",
-                    },
-                    "type": "str",
+                    }
                 },
             )
         ).result()  # call '.result()' to poll until service return final result

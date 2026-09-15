@@ -34,10 +34,10 @@ def main():
         resource_group_name="rgconfigurationmanager",
         context_name="testname",
         workflow_name="testname",
-        version_name="testname",
+        version_name="abcde",
     ).result()
 
 
-# x-ms-original-file: 2025-06-01/WorkflowVersions_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/WorkflowVersions_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

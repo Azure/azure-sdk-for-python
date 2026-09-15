@@ -32,38 +32,38 @@ def main():
 
     response = client.executions.begin_create_or_update(
         resource_group_name="rgconfigurationmanager",
-        context_name="abcde",
-        workflow_name="abcde",
+        context_name="testname",
+        workflow_name="testname",
         version_name="abcde",
         execution_name="abcde",
         resource={
-            "extendedLocation": {"name": "ugf", "type": "EdgeZone"},
+            "extendedLocation": {"name": "ggfwkwklvvkrmlysvvhcj", "type": "EdgeZone"},
             "properties": {
                 "specification": {},
                 "status": {
                     "stageHistory": [
                         {
-                            "errorMessage": "xsvwgovyatvlacmp",
+                            "errorMessage": "jefiujuafhiwxy",
                             "inputs": {},
                             "isActive": "active",
-                            "nextstage": "wjxvqbrocjxzhzfgmgbzt",
+                            "nextstage": "wsxeqisyvnmbxtecysruavqxdomez",
                             "outputs": {},
-                            "stage": "gsostfpgjcsoeky",
-                            "status": 999,
-                            "statusMessage": "wfymzartwvvqrgrmdwyhfaftszoc",
+                            "stage": "cjlvfnmm",
+                            "status": 29,
+                            "statusMessage": "kldziqu",
                         }
                     ],
-                    "status": 999,
-                    "statusMessage": "ebhukpnhnbu",
-                    "updateTime": "2025-02-17T13:55:20.922Z",
+                    "status": 12,
+                    "statusMessage": "gbxtkgudndjcsmccqh",
+                    "updateTime": "2026-04-03T06:50:41.848Z",
                 },
-                "workflowVersionId": "souenlqwltljsojdcbpc",
+                "workflowVersionId": "ga",
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/Executions_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/Executions_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -43,7 +43,12 @@ class TestWorkloadOrchestrationMgmtDynamicSchemasOperationsAsync(AzureMgmtRecord
                     "eTag": "str",
                     "id": "str",
                     "name": "str",
-                    "properties": {"configurationModel": "str", "configurationType": "str", "provisioningState": "str"},
+                    "properties": {
+                        "configurationModel": "str",
+                        "configurationType": "str",
+                        "displayName": "str",
+                        "provisioningState": "str",
+                    },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
@@ -71,7 +76,12 @@ class TestWorkloadOrchestrationMgmtDynamicSchemasOperationsAsync(AzureMgmtRecord
                 "eTag": "str",
                 "id": "str",
                 "name": "str",
-                "properties": {"configurationModel": "str", "configurationType": "str", "provisioningState": "str"},
+                "properties": {
+                    "configurationModel": "str",
+                    "configurationType": "str",
+                    "displayName": "str",
+                    "provisioningState": "str",
+                },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
