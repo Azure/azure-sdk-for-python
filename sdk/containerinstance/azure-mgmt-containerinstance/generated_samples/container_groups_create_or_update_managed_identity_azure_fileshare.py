@@ -16,7 +16,7 @@ from azure.mgmt.containerinstance import ContainerInstanceManagementClient
     pip install azure-identity
     pip install azure-mgmt-containerinstance
 # USAGE
-    python container_groups_create_or_update.py
+    python container_groups_create_or_update_managed_identity_azure_fileshare.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -91,8 +91,8 @@ def main():
                     {
                         "azureFile": {
                             "shareName": "shareName",
-                            "storageAccountKey": "accountKey",
                             "storageAccountName": "accountName",
+                            "userAssignedIdentityClientId": "00000000-0000-0000-0000-000000000000",
                         },
                         "name": "volume1",
                     },
@@ -108,6 +108,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-01/ContainerGroupsCreateOrUpdate.json
+# x-ms-original-file: 2026-07-01/ContainerGroupsCreateOrUpdateManagedIdentityAzureFileshare.json
 if __name__ == "__main__":
     main()

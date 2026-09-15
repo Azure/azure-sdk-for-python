@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2026-06-01-preview/ContainerGroupUsage.json
+# x-ms-original-file: 2026-07-01/ContainerGroupUsage.json
 if __name__ == "__main__":
     main()
