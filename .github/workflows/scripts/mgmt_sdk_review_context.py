@@ -35,6 +35,7 @@ PROVENANCE_PATHS = (
     "pyproject.toml",
     "TempTypeSpecFiles/package-lock.json",
 )
+MAX_PACKAGE_API_REQUESTS = 4 * len(PROVENANCE_PATHS) + 2 + 2
 
 
 class GitHubApiError(RuntimeError):
@@ -206,6 +207,11 @@ def parse_breaking_changes(content):
     return {"entries": entries, "emptySections": empty_sections, "releases": releases}
 
 
+def release_key(entry):
+    heading = entry.get("release")
+    return heading.split()[0] if heading else None
+
+
 def introduced_breaking_changes(old_entries, new_entries):
     """Return new or modified target entries, excluding exact historical entries."""
     unmatched_old = list(old_entries)
@@ -215,7 +221,7 @@ def introduced_breaking_changes(old_entries, new_entries):
             (
                 index
                 for index, old_entry in enumerate(unmatched_old)
-                if old_entry["release"] == new_entry["release"] and old_entry["text"] == new_entry["text"]
+                if release_key(old_entry) == release_key(new_entry) and old_entry["text"] == new_entry["text"]
             ),
             None,
         )
@@ -223,7 +229,7 @@ def introduced_breaking_changes(old_entries, new_entries):
             unmatched_old.pop(exact_index)
             continue
 
-        candidates = [entry for entry in unmatched_old if entry["release"] == new_entry["release"]]
+        candidates = [entry for entry in unmatched_old if release_key(entry) == release_key(new_entry)]
         previous = None
         similarity = 0.0
         for candidate in candidates:
@@ -526,6 +532,15 @@ def collect():
     )
     commits, commits_truncated = client.paged_get(f"/repos/{repository}/pulls/{pr_number}/commits", max_items=250)
     commit_shas = [item.get("sha") for item in commits if isinstance(item.get("sha"), str)]
+    expected_commits = pull_request.get("commits")
+    commit_discovery_complete = (
+        isinstance(expected_commits, int)
+        and not isinstance(expected_commits, bool)
+        and expected_commits > 0
+        and len(commits) == expected_commits
+        and len(commit_shas) == len(commits)
+        and not commits_truncated
+    )
     if not commit_shas:
         raise GitHubApiError("Pull request metadata returned an empty commit list")
     first_revision = commit_shas[0]
@@ -533,6 +548,44 @@ def collect():
     drift_results = []
     breaking_change_context = []
     for package_path in package_paths:
+        remaining_requests = MAX_API_REQUESTS - client.request_count
+        if remaining_requests < MAX_PACKAGE_API_REQUESTS:
+            reason = (
+                f"Needs human review: evidence collection for {package_path} was skipped because only "
+                f"{remaining_requests} API requests remain; a package requires a budget of up to "
+                f"{MAX_PACKAGE_API_REQUESTS} requests (four provenance snapshots, two changelogs, "
+                "and two tag lookups). Completed package results are preserved."
+            )
+            unavailable = {"status": "unverified", "error": reason}
+            drift_results.append(
+                {
+                    "packagePath": package_path,
+                    "metadataPath": f"{package_path}/_metadata.json",
+                    "status": "unverified",
+                    "firstRevision": first_revision,
+                    "firstApiVersion": None,
+                    "latestRevision": latest_revision,
+                    "latestApiVersion": None,
+                    "error": reason,
+                }
+            )
+            breaking_change_context.append(
+                {
+                    "packagePath": package_path,
+                    "changelogPath": f"{package_path}/CHANGELOG.md",
+                    "baseChangelogPath": None,
+                    "mergeBaseRevision": merge_base_revision,
+                    "latestRevision": latest_revision,
+                    "status": "unverified",
+                    "introducedEntries": [],
+                    "emptyBreakingChangeSections": [],
+                    "collectionIssues": [reason],
+                    "releaseBaseline": unavailable,
+                    "provenance": {"mergeBase": unavailable, "latest": unavailable},
+                    "specificationSources": {"mergeBase": unavailable, "latest": unavailable, "release": unavailable},
+                }
+            )
+            continue
         first_provenance = collect_provenance(client, package_path, first_revision)
         latest_provenance = collect_provenance(client, package_path, latest_revision)
         drift_results.append(
@@ -553,9 +606,14 @@ def collect():
         collection_issues = []
         old_parsed = {"entries": [], "emptySections": [], "releases": []}
         new_parsed = {"entries": [], "emptySections": [], "releases": []}
+        baseline_available = old_file.get("status") == "available" or (
+            old_file.get("status") == "missing"
+            and changelog_change is not None
+            and changelog_change.get("status") == "added"
+        )
         if old_file.get("status") == "available":
             old_parsed = parse_breaking_changes(old_file["content"])
-        else:
+        elif not baseline_available:
             collection_issues.append(
                 old_file.get("error") or f"Merge-base changelog was unavailable: {base_changelog_path}"
             )
@@ -564,7 +622,11 @@ def collect():
         else:
             collection_issues.append(new_file.get("error"))
 
-        introduced = introduced_breaking_changes(old_parsed["entries"], new_parsed["entries"])
+        introduced = (
+            introduced_breaking_changes(old_parsed["entries"], new_parsed["entries"])
+            if baseline_available and new_file.get("status") == "available"
+            else []
+        )
         previous_version = latest_release_version(old_parsed)
         release_baseline = resolve_release_tag(client, package_path.rsplit("/", 1)[-1], previous_version)
         if release_baseline["status"] == "available":
@@ -639,8 +701,16 @@ def collect():
         "latestRevision": latest_revision,
         "mergeBaseRevision": merge_base_revision,
         "commitDiscovery": {
-            "status": "unverified" if commits_truncated else "complete",
-            "error": "PR commit pagination reached its bound" if commits_truncated else None,
+            "status": "complete" if commit_discovery_complete else "unverified",
+            "expectedCommits": expected_commits,
+            "returnedCommits": len(commits),
+            "error": (
+                None
+                if commit_discovery_complete
+                else f"PR commit discovery is incomplete: expected {expected_commits!r}, returned {len(commits)} "
+                f"with {len(commit_shas)} commit SHAs; the commit endpoint is limited to 250 commits "
+                "and bounded pagination may be incomplete."
+            ),
         },
         "apiVersionDrift": drift_results,
         "breakingChangeContext": breaking_change_context,
@@ -649,6 +719,7 @@ def collect():
             "maxTextFileBytes": MAX_TEXT_FILE_BYTES,
             "maxPages": MAX_PAGES,
             "maxApiRequests": MAX_API_REQUESTS,
+            "maxPackageApiRequests": MAX_PACKAGE_API_REQUESTS,
             "apiTimeoutSeconds": API_TIMEOUT_SECONDS,
             "githubApiRequests": client.request_count,
         },
