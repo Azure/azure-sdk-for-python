@@ -20,6 +20,13 @@ from ._base import ResponseAlreadyExistsError, ResponseProviderProtocol
 _DEFAULT_REPLAY_EVENT_TTL_SECONDS: int = 600
 """Minimum per-event replay TTL (10 minutes) per spec B35."""
 
+_StoreKey = tuple[str | None, str]
+
+
+def _store_key(identifier: str, context: PlatformContext | None) -> _StoreKey:
+    """Keep absent identity anonymous; preserve present keys exactly, including empty strings."""
+    return (context.user_id_key if context is not None else None, identifier)
+
 
 class _StoreEntry:
     """Container for one response execution and its replay state."""
@@ -55,15 +62,21 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
     process-wide ``azure.ai.agentserver.core.streaming.streams`` registry,
     configured at host startup; this provider stores only response
     envelopes, input items, and history pointers.
+
+    State is partitioned by the trusted ``PlatformContext.user_id_key``.
+    Missing context or a ``None`` user key selects a separate anonymous
+    partition for local use, never an unrestricted lookup. Empty and whitespace
+    keys remain distinct, matching ``PlatformContext`` semantics. The provider
+    does not authenticate callers or interpret ``call_id``.
     """
 
     def __init__(self) -> None:
         """Initialize in-memory state and an async mutation lock."""
-        self._entries: Dict[str, _StoreEntry] = {}
+        self._entries: Dict[_StoreKey, _StoreEntry] = {}
         self._lock = asyncio.Lock()
-        self._item_store: Dict[str, OutputItem] = {}
-        self._conversation_responses: defaultdict[str, list[str]] = defaultdict(list)
-        self._stream_events: Dict[str, list[ResponseStreamEvent]] = {}
+        self._item_store: Dict[_StoreKey, OutputItem] = {}
+        self._conversation_responses: defaultdict[_StoreKey, list[str]] = defaultdict(list)
+        self._stream_events: Dict[_StoreKey, list[ResponseStreamEvent]] = {}
 
     @contextlib.asynccontextmanager
     async def _locked(self) -> AsyncIterator[None]:
@@ -102,7 +115,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         """
         response_id = str(response.get("id"))
         async with self._locked():
-            entry = self._entries.get(response_id)
+            entry = self._entries.get(_store_key(response_id, context))
             if entry is not None and not entry.deleted:
                 raise ResponseAlreadyExistsError(response_id)
 
@@ -112,12 +125,12 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
                     item_id = self._extract_item_id(item)
                     if item_id is None:
                         continue
-                    self._item_store[item_id] = deepcopy(item)
+                    self._item_store[_store_key(item_id, context)] = deepcopy(item)
                     input_ids.append(item_id)
 
             history_ids = list(history_item_ids) if history_item_ids is not None else []
-            output_ids = self._store_output_items_unlocked(response)
-            self._entries[response_id] = _StoreEntry(
+            output_ids = self._store_output_items_unlocked(response, context=context)
+            self._entries[_store_key(response_id, context)] = _StoreEntry(
                 execution=ResponseExecution(
                     response_id=response_id,
                     mode_flags=self._resolve_mode_flags_from_response(response),
@@ -132,7 +145,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
             conversation_id = get_conversation_id(response)
             if conversation_id is not None:
-                self._conversation_responses[conversation_id].append(response_id)
+                self._conversation_responses[_store_key(conversation_id, context)].append(response_id)
 
     async def get_response(self, response_id: str, *, context: PlatformContext | None = None) -> ResponseObject:
         """Retrieve one response envelope by identifier.
@@ -146,7 +159,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         :raises KeyError: If the response does not exist or has been deleted.
         """
         async with self._locked():
-            entry = self._entries.get(response_id)
+            entry = self._entries.get(_store_key(response_id, context))
             if entry is None or entry.deleted or entry.response is None:
                 raise KeyError(f"response '{response_id}' not found")
             return deepcopy(entry.response)
@@ -166,13 +179,13 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         """
         response_id = str(response.get("id"))
         async with self._locked():
-            entry = self._entries.get(response_id)
+            entry = self._entries.get(_store_key(response_id, context))
             if entry is None or entry.deleted:
                 raise KeyError(f"response '{response_id}' not found")
 
             entry.response = deepcopy(response)
             entry.execution.set_response_snapshot(deepcopy(response))
-            entry.output_item_ids = self._store_output_items_unlocked(response)
+            entry.output_item_ids = self._store_output_items_unlocked(response, context=context)
 
     async def delete_response(self, response_id: str, *, context: PlatformContext | None = None) -> None:
         """Delete a stored response envelope by identifier.
@@ -187,7 +200,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         :raises KeyError: If the response does not exist or has already been deleted.
         """
         async with self._locked():
-            entry = self._entries.get(response_id)
+            entry = self._entries.get(_store_key(response_id, context))
             if entry is None or entry.deleted:
                 raise KeyError(f"response '{response_id}' not found")
             entry.deleted = True
@@ -226,7 +239,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         :raises ValueError: If the response has been deleted.
         """
         async with self._locked():
-            entry = self._entries.get(response_id)
+            entry = self._entries.get(_store_key(response_id, context))
             if entry is None:
                 raise KeyError(f"response '{response_id}' not found")
             if entry.deleted:
@@ -251,9 +264,9 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
             safe_limit = max(1, min(100, int(limit)))
             return [
-                deepcopy(self._item_store[item_id])
+                deepcopy(self._item_store[key])
                 for item_id in ordered_ids[:safe_limit]
-                if item_id in self._item_store
+                if (key := _store_key(item_id, context)) in self._item_store
             ]
 
     async def get_items(
@@ -275,7 +288,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         """
         async with self._locked():
             return [
-                deepcopy(self._item_store[item_id]) if item_id in self._item_store else None for item_id in item_ids
+                deepcopy(self._item_store[key]) if (key := _store_key(item_id, context)) in self._item_store else None
+                for item_id in item_ids
             ]
 
     async def get_history_item_ids(
@@ -308,7 +322,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
             resolved: list[str] = []
 
             if previous_response_id is not None:
-                entry = self._entries.get(previous_response_id)
+                entry = self._entries.get(_store_key(previous_response_id, context))
                 if entry is not None and not entry.deleted:
                     # Resolve history chain for the previous response:
                     # return historyItemIds + inputItemIds + outputItemIds of the previous response
@@ -317,8 +331,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
                     resolved.extend(entry.output_item_ids or [])
 
             if conversation_id is not None:
-                for response_id in self._conversation_responses.get(conversation_id, []):
-                    entry = self._entries.get(response_id)
+                for response_id in self._conversation_responses.get(_store_key(conversation_id, context), []):
+                    entry = self._entries.get(_store_key(response_id, context))
                     if entry is None or entry.deleted:
                         continue
                     resolved.extend(entry.history_item_ids or [])
@@ -331,35 +345,48 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
             # preserving chronological order in the returned slice.
             return resolved[-limit:]
 
-    async def create_execution(self, execution: ResponseExecution, *, ttl_seconds: int | None = None) -> None:
+    async def create_execution(
+        self,
+        execution: ResponseExecution,
+        *,
+        ttl_seconds: int | None = None,
+        context: PlatformContext | None = None,
+    ) -> None:
         """Create a new execution and replay container for ``execution.response_id``.
 
         :param execution: The execution state to store.
         :type execution: ~azure.ai.agentserver.responses.models.runtime.ResponseExecution
         :keyword int or None ttl_seconds: Optional time-to-live in seconds for automatic expiration.
+        :keyword context: Platform context for partitioning; omitted context selects anonymous state.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :rtype: None
         :raises ValueError: If an entry with the same response ID already exists.
         """
         async with self._locked():
-            if execution.response_id in self._entries:
+            key = _store_key(execution.response_id, context)
+            if key in self._entries:
                 raise ValueError(f"response '{execution.response_id}' already exists")
 
-            self._entries[execution.response_id] = _StoreEntry(
+            self._entries[key] = _StoreEntry(
                 execution=deepcopy(execution),
                 replay=_StreamReplayState(response_id=execution.response_id),
                 expires_at=self._compute_expiry(ttl_seconds),
             )
 
-    async def get_execution(self, response_id: str) -> ResponseExecution | None:
+    async def get_execution(
+        self, response_id: str, *, context: PlatformContext | None = None
+    ) -> ResponseExecution | None:
         """Get a defensive copy of execution state for ``response_id`` if present.
 
         :param response_id: The unique identifier of the response execution to retrieve.
         :type response_id: str
+        :keyword context: Platform context for partitioning; omitted context selects anonymous state.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :returns: A deep copy of the execution state, or ``None`` if not found.
         :rtype: ~azure.ai.agentserver.responses.models.runtime.ResponseExecution | None
         """
         async with self._locked():
-            entry = self._entries.get(response_id)
+            entry = self._entries.get(_store_key(response_id, context))
             if entry is None:
                 return None
             return deepcopy(entry.execution)
@@ -370,6 +397,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         response: ResponseObject,
         *,
         ttl_seconds: int | None = None,
+        context: PlatformContext | None = None,
     ) -> bool:
         """Set the latest response snapshot for an existing response execution.
 
@@ -378,11 +406,13 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         :param response: The response snapshot to associate with the execution.
         :type response: ~azure.ai.agentserver.responses.models._generated.Response
         :keyword int or None ttl_seconds: Optional time-to-live in seconds to refresh expiration.
+        :keyword context: Platform context for partitioning; omitted context selects anonymous state.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :returns: ``True`` if the entry was found and updated, ``False`` otherwise.
         :rtype: bool
         """
         async with self._locked():
-            entry = self._entries.get(response_id)
+            entry = self._entries.get(_store_key(response_id, context))
             if entry is None:
                 return False
 
@@ -396,6 +426,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         next_status: ResponseStatus,
         *,
         ttl_seconds: int | None = None,
+        context: PlatformContext | None = None,
     ) -> bool:
         """Transition execution state while preserving lifecycle invariants.
 
@@ -404,11 +435,13 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         :param next_status: The target status to transition to.
         :type next_status: ~azure.ai.agentserver.responses.models.runtime.ResponseStatus
         :keyword int or None ttl_seconds: Optional time-to-live in seconds to refresh expiration.
+        :keyword context: Platform context for partitioning; omitted context selects anonymous state.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :returns: ``True`` if the entry was found and transitioned, ``False`` otherwise.
         :rtype: bool
         """
         async with self._locked():
-            entry = self._entries.get(response_id)
+            entry = self._entries.get(_store_key(response_id, context))
             if entry is None:
                 return False
 
@@ -416,18 +449,26 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
             self._apply_ttl_unlocked(entry, ttl_seconds)
             return True
 
-    async def set_cancel_requested(self, response_id: str, *, ttl_seconds: int | None = None) -> bool:
+    async def set_cancel_requested(
+        self,
+        response_id: str,
+        *,
+        ttl_seconds: int | None = None,
+        context: PlatformContext | None = None,
+    ) -> bool:
         """Mark cancellation requested and enforce lifecycle-safe cancel transitions.
 
         :param response_id: The unique identifier of the response to cancel.
         :type response_id: str
         :keyword int or None ttl_seconds: Optional time-to-live in seconds to refresh expiration.
+        :keyword context: Platform context for partitioning; omitted context selects anonymous state.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :returns: ``True`` if the entry was found and cancel was applied, ``False`` otherwise.
         :rtype: bool
         :raises ValueError: If the execution is already terminal in a non-cancelled state.
         """
         async with self._locked():
-            entry = self._entries.get(response_id)
+            entry = self._entries.get(_store_key(response_id, context))
             if entry is None:
                 return False
 
@@ -469,6 +510,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         event: StreamEventRecord,
         *,
         ttl_seconds: int | None = None,
+        context: PlatformContext | None = None,
     ) -> bool:
         """Append one stream event to replay state for an existing execution.
 
@@ -477,11 +519,13 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         :param event: The stream event record to append.
         :type event: ~azure.ai.agentserver.responses.models.runtime.StreamEventRecord
         :keyword int or None ttl_seconds: Optional time-to-live in seconds to refresh expiration.
+        :keyword context: Platform context for partitioning; omitted context selects anonymous state.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :returns: ``True`` if the entry was found and the event was appended, ``False`` otherwise.
         :rtype: bool
         """
         async with self._locked():
-            entry = self._entries.get(response_id)
+            entry = self._entries.get(_store_key(response_id, context))
             if entry is None:
                 return False
 
@@ -489,7 +533,9 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
             self._apply_ttl_unlocked(entry, ttl_seconds)
             return True
 
-    async def get_replay_events(self, response_id: str) -> list[StreamEventRecord] | None:
+    async def get_replay_events(
+        self, response_id: str, *, context: PlatformContext | None = None
+    ) -> list[StreamEventRecord] | None:
         """Get defensive copies of replay events for ``response_id``, filtering out expired events.
 
         Events older than the entry's ``replay_event_ttl_seconds`` (default 600s / 10 minutes,
@@ -497,18 +543,20 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
         :param response_id: The unique identifier of the response whose events to retrieve.
         :type response_id: str
+        :keyword context: Platform context for partitioning; omitted context selects anonymous state.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :returns: A list of deep-copied stream event records, or ``None`` if not found.
         :rtype: list[~azure.ai.agentserver.responses.models.runtime.StreamEventRecord] | None
         """
         async with self._locked():
-            entry = self._entries.get(response_id)
+            entry = self._entries.get(_store_key(response_id, context))
             if entry is None:
                 return None
             cutoff = datetime.now(timezone.utc) - timedelta(seconds=entry.replay_event_ttl_seconds)
             live = [e for e in entry.replay.events if e.emitted_at >= cutoff]
             return deepcopy(live)
 
-    async def delete(self, response_id: str) -> bool:
+    async def delete(self, response_id: str, *, context: PlatformContext | None = None) -> bool:
         """Delete all state for a response ID if present.
 
         Removes the entry entirely from the store (unlike ``delete_response``
@@ -516,15 +564,18 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
         :param response_id: The unique identifier of the response to remove.
         :type response_id: str
+        :keyword context: Platform context for partitioning; omitted context selects anonymous state.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :returns: ``True`` if an entry was found and removed, ``False`` otherwise.
         :rtype: bool
         """
         async with self._locked():
-            self._stream_events.pop(response_id, None)
-            return self._entries.pop(response_id, None) is not None
+            key = _store_key(response_id, context)
+            self._stream_events.pop(key, None)
+            return self._entries.pop(key, None) is not None
 
     async def purge_expired(self, *, now: datetime | None = None) -> int:
-        """Remove expired entries and return count.
+        """Remove expired entries across all partitions and return count.
 
         :keyword ~datetime.datetime or None now: Optional override for the current time (useful for testing).
         :returns: The number of expired entries that were removed.
@@ -569,33 +620,35 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         :rtype: int
         """
         current_time = now or datetime.now(timezone.utc)
-        expired_ids = [
-            response_id
-            for response_id, entry in self._entries.items()
+        expired_keys = [
+            key
+            for key, entry in self._entries.items()
             if entry.expires_at is not None and entry.expires_at <= current_time
         ]
 
-        for response_id in expired_ids:
-            del self._entries[response_id]
-            self._stream_events.pop(response_id, None)
+        for key in expired_keys:
+            del self._entries[key]
+            self._stream_events.pop(key, None)
 
         # Prune orphaned stream events that have no corresponding entry.
         # Legacy bookkeeping — kept structurally so the in-memory provider
         # still tracks its expiration loop unchanged. Stream events are
         # now persisted by the SDK ``streams`` registry, not here.
-        orphaned_ids = [rid for rid in self._stream_events if rid not in self._entries]
-        for rid in orphaned_ids:
-            del self._stream_events[rid]
+        orphaned_keys = [key for key in self._stream_events if key not in self._entries]
+        for key in orphaned_keys:
+            del self._stream_events[key]
 
-        return len(expired_ids)
+        return len(expired_keys)
 
-    def _store_output_items_unlocked(self, response: ResponseObject) -> list[str]:
+    def _store_output_items_unlocked(self, response: ResponseObject, *, context: PlatformContext | None) -> list[str]:
         """Extract output items from a response, store them in the item store, and return their IDs.
 
         Must be called while holding ``self._lock``.
 
         :param response: The response envelope whose output items should be stored.
         :type response: ~azure.ai.agentserver.responses.models._generated.Response
+        :keyword context: Platform context for partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :returns: Ordered list of output item IDs.
         :rtype: list[str]
         """
@@ -606,7 +659,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         for item in output:
             item_id = self._extract_item_id(item)
             if item_id is not None:
-                self._item_store[item_id] = deepcopy(item)
+                self._item_store[_store_key(item_id, context)] = deepcopy(item)
                 output_ids.append(item_id)
         return output_ids
 

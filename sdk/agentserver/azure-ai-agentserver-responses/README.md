@@ -255,6 +255,21 @@ app = ResponsesAgentServerHost(options=options)
 
 ## Troubleshooting
 
+### In-memory storage identity
+
+`InMemoryResponseProvider` partitions response envelopes, input/output items, and
+history by the exact `PlatformContext.user_id_key` supplied by a trusted host.
+Omitting context or setting the user key to `None` selects a separate anonymous
+partition for local development, not unrestricted access to named users' data.
+Empty and whitespace keys remain distinct; `call_id` does not affect the partition.
+Pass the same user key on every related provider operation, including the legacy
+execution/replay helpers when used directly.
+
+The provider does not authenticate callers. Hosts must establish trustworthy
+platform context before accessing it. This storage boundary is not complete
+end-to-end authorization: runtime routing and the process-wide SSE stream registry
+are separate from the provider's envelope, item, and history storage.
+
 ### Common errors
 
 - **400 Bad Request**: The request body failed validation. Check that optional fields such as `model` (when provided) are valid and that `input` items are well-formed.

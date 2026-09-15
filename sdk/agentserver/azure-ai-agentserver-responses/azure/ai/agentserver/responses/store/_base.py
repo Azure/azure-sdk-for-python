@@ -51,8 +51,9 @@ class ResponseProviderProtocol(Protocol):
 
     Every operation accepts an optional ``context`` parameter (S-018).
     Implementations MUST use it to partition data in multi-tenant
-    deployments.  When ``None``, the provider operates without tenant
-    scoping (suitable for local development).
+    deployments. Providers supporting anonymous local development must keep
+    unkeyed state separate from named users' state; ``None`` must not bypass
+    partitioning.
     """
 
     async def create_response(
