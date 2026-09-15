@@ -39,7 +39,6 @@ from ._operations import (
     BetaSkillsOperations,
     BetaVoiceAgentsConversationsOperations,
     BetaVoiceAgentsOperations as GeneratedBetaVoiceAgentsOperations,
-    BetaVoiceAgentsRealtimeOperations,
     BetaVoiceAgentsTelephonyOperations,
 )
 
@@ -141,10 +140,9 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        # Replace the generated realtime operations -- whose only method opens and immediately
-        # discards a WebSocket upgrade, since azure-core's HTTP pipeline has no way to keep the
-        # resulting socket alive -- with our hand-written client that manages a real,
-        # long-lived connection.
+        # The generator does not emit realtime operations at all, since azure-core's HTTP
+        # pipeline has no way to keep a WebSocket upgrade's resulting socket alive. Add our
+        # hand-written client, which manages a real, long-lived connection, in its place.
         self.realtime = BetaRealtime(self)
 
 
@@ -229,7 +227,6 @@ __all__: List[str] = [
     "BetaSkillsOperations",
     "BetaVoiceAgentsConversationsOperations",
     "BetaVoiceAgentsOperations",
-    "BetaVoiceAgentsRealtimeOperations",
     "BetaVoiceAgentsTelephonyOperations",
     "ClientEvent",
     "ConnectionsOperations",

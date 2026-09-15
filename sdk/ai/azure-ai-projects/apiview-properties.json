@@ -102,8 +102,6 @@
         "azure.ai.projects.models.BotServiceTenantAuthorizationScheme": "Azure.AI.Projects.BotServiceTenantAuthorizationScheme",
         "azure.ai.projects.models.BrowserAutomationPreviewTool": "Azure.AI.Projects.BrowserAutomationPreviewTool",
         "azure.ai.projects.models.BrowserAutomationPreviewToolboxTool": "Azure.AI.Projects.BrowserAutomationPreviewToolboxTool",
-        "azure.ai.projects.models.BrowserAutomationTool": "Azure.AI.Projects.BrowserAutomationTool",
-        "azure.ai.projects.models.BrowserAutomationToolboxTool": "Azure.AI.Projects.BrowserAutomationToolboxTool",
         "azure.ai.projects.models.BrowserAutomationToolConnectionParameters": "Azure.AI.Projects.BrowserAutomationToolConnectionParameters",
         "azure.ai.projects.models.BrowserAutomationToolParameters": "Azure.AI.Projects.BrowserAutomationToolParameters",
         "azure.ai.projects.models.CaptureStructuredOutputsTool": "Azure.AI.Projects.CaptureStructuredOutputsTool",
@@ -483,8 +481,6 @@
         "azure.ai.projects.models.TelephonyOutboundDestination": "Azure.AI.Projects.TelephonyOutboundDestination",
         "azure.ai.projects.models.TelephonyOutboundRetryPolicy": "Azure.AI.Projects.TelephonyOutboundRetryPolicy",
         "azure.ai.projects.models.TelephonyOutboundFixedIntervalRetryPolicy": "Azure.AI.Projects.TelephonyOutboundFixedIntervalRetryPolicy",
-        "azure.ai.projects.models.TelephonyOutboundRetryPolicyResponse": "Azure.AI.Projects.TelephonyOutboundRetryPolicyResponse",
-        "azure.ai.projects.models.TelephonyOutboundFixedIntervalRetryPolicyResponse": "Azure.AI.Projects.TelephonyOutboundFixedIntervalRetryPolicyResponse",
         "azure.ai.projects.models.TelephonyTransferTarget": "Azure.AI.Projects.TelephonyTransferTarget",
         "azure.ai.projects.models.TelephonyTransferTargets": "Azure.AI.Projects.TelephonyTransferTargets",
         "azure.ai.projects.models.TextResponseFormat": "OpenAI.TextResponseFormatConfiguration",
@@ -604,13 +600,13 @@
         "azure.ai.projects.models.VoiceAgentToolboxTool": "Azure.AI.Projects.VoiceAgentToolboxTool",
         "azure.ai.projects.models.VoiceAgentTranscriptionPhrase": "Azure.AI.Projects.VoiceAgentTranscriptionPhrase",
         "azure.ai.projects.models.VoiceAgentTranscriptionWord": "Azure.AI.Projects.VoiceAgentTranscriptionWord",
-        "azure.ai.projects.models.VoiceAudioItemResponse": "Azure.AI.Projects.VoiceAudioItemResponse",
+        "azure.ai.projects.models.VoiceAudioItem": "Azure.AI.Projects.VoiceAudioItem",
         "azure.ai.projects.models.VoiceConversation": "Azure.AI.Projects.VoiceConversation",
         "azure.ai.projects.models.VoiceConversationEngine": "Azure.AI.Projects.VoiceConversationEngine",
-        "azure.ai.projects.models.VoiceGeneratedAudioItemResponse": "Azure.AI.Projects.VoiceGeneratedAudioItemResponse",
+        "azure.ai.projects.models.VoiceGeneratedAudioItem": "Azure.AI.Projects.VoiceGeneratedAudioItem",
         "azure.ai.projects.models.VoiceHostedAgentConversationEngine": "Azure.AI.Projects.VoiceHostedAgentConversationEngine",
+        "azure.ai.projects.models.VoiceRecording": "Azure.AI.Projects.VoiceRecording",
         "azure.ai.projects.models.VoiceRecordingChannelLayout": "Azure.AI.Projects.VoiceRecordingChannelLayout",
-        "azure.ai.projects.models.VoiceRecordingResponse": "Azure.AI.Projects.VoiceRecordingResponse",
         "azure.ai.projects.models.VoiceResponseBase": "Azure.AI.Projects.VoiceResponseBase",
         "azure.ai.projects.models.VoiceResponse": "Azure.AI.Projects.VoiceResponse",
         "azure.ai.projects.models.VoiceResponseAudio": "Azure.AI.Projects.VoiceResponseAudio",
@@ -901,5 +897,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "b02078b56d28"
+    "CrossLanguageVersion": "29ac512b249a"
 }
