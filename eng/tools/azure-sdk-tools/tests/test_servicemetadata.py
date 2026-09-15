@@ -7,7 +7,6 @@ from pathlib import Path
 import pytest
 from packaging_tools.generate_utils import update_metadata_json
 
-
 """
 Create metadata file
 

@@ -537,12 +537,10 @@ def parse_setup_py(
     )
     """
 
-    mock_setup = textwrap.dedent(
-        """\
+    mock_setup = textwrap.dedent("""\
     def setup(*args, **kwargs):
         __setup_calls__.append((args, kwargs))
-    """
-    )
+    """)
     parsed_mock_setup = ast.parse(mock_setup, filename=setup_filename)
 
     content = read_setup_py_content(setup_filename)
