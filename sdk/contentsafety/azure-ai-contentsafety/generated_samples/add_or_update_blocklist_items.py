@@ -24,7 +24,9 @@ def main():
 
     response = client.add_or_update_blocklist_items(
         blocklist_name="TestBlocklist",
-        options={"blocklistItems": [{"blocklistItemId": "str", "text": "str", "description": "str", "isRegex": bool}]},
+        options={
+            "blocklistItems": [{"text": "str", "description": "str", "isRegex": False}]
+        },
     )
     print(response)
 

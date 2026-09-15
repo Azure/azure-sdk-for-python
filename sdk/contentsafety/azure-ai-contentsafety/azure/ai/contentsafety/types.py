@@ -192,7 +192,6 @@ class TextBlocklistItem(TypedDict, total=False):
     """Item in a TextBlocklist.
 
     :ivar blocklistItemId: The service will generate a BlocklistItemId, which will be a UUID.
-     Required.
     :vartype blocklistItemId: str
     :ivar description: BlocklistItem description.
     :vartype description: str
@@ -203,8 +202,8 @@ class TextBlocklistItem(TypedDict, total=False):
     :vartype isRegex: bool
     """
 
-    blocklistItemId: Required[str]
-    """The service will generate a BlocklistItemId, which will be a UUID. Required."""
+    blocklistItemId: str
+    """The service will generate a BlocklistItemId, which will be a UUID."""
     description: str
     """BlocklistItem description."""
     text: Required[str]

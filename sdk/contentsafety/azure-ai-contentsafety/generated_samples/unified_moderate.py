@@ -41,7 +41,7 @@ def main():
             "toolCallId": "str",
             "toolDurationMs": 0.0,
             "toolName": "str",
-            "toolResultIsError": bool,
+            "toolResultIsError": False,
         },
     )
     print(response)

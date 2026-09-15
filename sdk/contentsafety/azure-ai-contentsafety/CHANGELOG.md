@@ -6,6 +6,12 @@
 
 - Added support for Content Provenance Detection operations.
 - Added support for Unified Moderate policy evaluation.
+- Added support for prompt shielding and protected-material detection.
+- Added regular-expression matching for text blocklist items.
+
+### Breaking Changes
+
+- Python 3.10 or later is now required.
 
 ## 1.0.0 (2023-12-15)
 

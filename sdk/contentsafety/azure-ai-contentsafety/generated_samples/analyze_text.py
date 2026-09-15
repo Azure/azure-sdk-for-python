@@ -27,7 +27,7 @@ def main():
             "text": "str",
             "blocklistNames": ["str"],
             "categories": ["str"],
-            "haltOnBlocklistHit": bool,
+            "haltOnBlocklistHit": False,
             "outputType": "str",
         },
     )
