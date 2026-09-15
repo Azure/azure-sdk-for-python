@@ -138,6 +138,42 @@ def _make_scripted_async_client(script):
 class TestPkRangeDrainAsync(unittest.IsolatedAsyncioTestCase):
     """Async drain-loop integration tests for PartitionKeyRangeCache."""
 
+    async def test_existing_child_update_stays_incremental_async(self):
+        link = "dbs/db/colls/default"
+        children = [
+            dict(_full_range("1", "", "80"), parents=["0"], status="online"),
+            dict(_full_range("2", "80", "FF"), parents=["0"], status="online"),
+        ]
+        previous = CollectionRoutingMap.CompleteRoutingMap([(children[0], 11), (children[1], 22)], link, '"etag-prev"')
+        first_update = dict(children[0], status="splitting", throughputFraction=0.25)
+        last_update = dict(first_update, throughputFraction=0.5)
+        client, script = _make_scripted_async_client(
+            [
+                ("page", [first_update], '"etag-update-1"', 200),
+                ("page", [last_update], '"etag-update-2"', 200),
+                ("page", [], '"etag-update-2"', 304),
+            ]
+        )
+        cache = PartitionKeyRangeCache(client)
+        self.addCleanup(cache.release)
+        cache._collection_routing_map_by_item[link] = previous
+
+        result = await cache.get_routing_map(link, {}, force_refresh=True, previous_routing_map=previous)
+
+        self.assertEqual(script.if_none_match_seen, ['"etag-prev"', '"etag-update-1"', '"etag-update-2"'])
+        self.assertEqual(script.calls, 3)
+        self.assertEqual(result.change_feed_etag, '"etag-update-2"')
+        self.assertEqual(result._rangeById["1"][1], 11)
+        self.assertEqual(result._rangeById["2"][1], 22)
+        self.assertEqual(result.get_range_by_partition_key_range_id("1").status, "splitting")
+        self.assertEqual(result.get_range_by_partition_key_range_id("1").throughputFraction, 0.5)
+        self.assertEqual(result.get_range_by_partition_key_range_id("1").parents, ("0",))
+        self.assertIsNone(result.get_range_by_partition_key_range_id("0"))
+        self.assertEqual(result._goneRangeIds, {"0"})
+        self.assertEqual(previous.get_range_by_partition_key_range_id("1")["status"], "online")
+        self.assertEqual(previous.change_feed_etag, '"etag-prev"')
+        self.assertIs(cache._collection_routing_map_by_item[link], result)
+
     async def test_drain_propagates_etag_across_pages_async(self):
         """Three pages with distinct etags drain into one complete map."""
         page1 = [_full_range("0", "", "55")]
