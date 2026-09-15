@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import base64
 import json
+import logging
 from urllib.parse import quote, urlparse
 from typing import (
     Any,
@@ -56,6 +57,8 @@ from ..models._enums import _AgentDefinitionOptInKeys
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 from .._utils.model_base import Model as _Model, SdkJSONEncoder
 from .._version import VERSION
+
+_LOGGER = logging.getLogger(__name__)
 
 # The realtime WebSocket route is voice-agent-specific (see `_to_ws_url`'s
 # `/endpoint/protocols/voice` path), so this is always the correct opt-in value -- callers
@@ -665,6 +668,11 @@ class AsyncBetaRealtimeConnection:  # pylint: disable=too-many-instance-attribut
         raw = msg.data.decode("utf-8") if msg.type == aiohttp.WSMsgType.BINARY else msg.data
         payload: Dict[str, Any] = json.loads(raw)
         event_type = payload.get("type")
+        _LOGGER.debug(
+            "WebSocket RECEIVE type=%s bytes=%d",
+            event_type if isinstance(event_type, str) else "unknown",
+            len(raw.encode("utf-8")),
+        )
         if not isinstance(event_type, str):
             return payload
         event_cls = _SERVER_EVENT_TYPES.get(event_type)
@@ -681,12 +689,19 @@ class AsyncBetaRealtimeConnection:  # pylint: disable=too-many-instance-attribut
         """
         if isinstance(event, str):
             try:
-                json.loads(event)
+                event_payload = json.loads(event)
             except ValueError as exc:
                 raise ValueError(f"'event' is not valid JSON: {exc}") from exc
             payload = event
         else:
             payload = json.dumps(event, cls=SdkJSONEncoder)
+            event_payload = json.loads(payload)
+        event_type = event_payload.get("type") if isinstance(event_payload, dict) else None
+        _LOGGER.debug(
+            "WebSocket SEND type=%s bytes=%d",
+            event_type if isinstance(event_type, str) else "unknown",
+            len(payload.encode("utf-8")),
+        )
         await self._connection.send_str(payload)
 
     async def close(self, *, code: int = 1000, reason: str = "") -> None:
@@ -695,6 +710,7 @@ class AsyncBetaRealtimeConnection:  # pylint: disable=too-many-instance-attribut
         :keyword int code: The WebSocket close code.
         :keyword str reason: The close reason.
         """
+        _LOGGER.debug("WebSocket CLOSE code=%d", code)
         try:
             await self._connection.close(code=code, message=reason.encode("utf-8"))
         finally:
@@ -774,6 +790,9 @@ class AsyncBetaRealtimeConnectionManager:  # pylint: disable=too-many-instance-a
             params["structured_input"] = json.dumps(self._structured_inputs, cls=SdkJSONEncoder)
         params.update(self._extra_query)
 
+        target_url = urlparse(url)._replace(query="", fragment="").geturl()
+        _LOGGER.debug("WebSocket CONNECT target=%s", target_url)
+
         token = await self._credential.get_token(*self._credential_scopes)
         headers: Dict[str, str] = {
             "Authorization": "Bearer " + token.token,
@@ -806,6 +825,7 @@ class AsyncBetaRealtimeConnectionManager:  # pylint: disable=too-many-instance-a
                 f"Failed to open the realtime WebSocket connection to voice agent "
                 f"'{self._agent_name}' at '{url}': {exc}"
             ) from exc
+        _LOGGER.debug("WebSocket CONNECTED target=%s", target_url)
         self._connection = AsyncBetaRealtimeConnection(cast("ClientWebSocketResponse", connection), session)
         return self._connection
 
