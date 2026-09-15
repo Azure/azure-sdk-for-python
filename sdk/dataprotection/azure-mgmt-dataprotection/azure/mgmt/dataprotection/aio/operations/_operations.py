@@ -121,7 +121,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class DataProtectionOperationsOperations:
+class DataProtectionOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -231,7 +231,7 @@ class DataProtectionOperationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
+class BackupInstancesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2307,6 +2307,19 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "backup_instance_name",
+            ]
+        },
+        api_versions_list=["2026-06-01"],
+    )
     async def _resume_protection_initial(
         self, resource_group_name: str, vault_name: str, backup_instance_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -2372,6 +2385,19 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "backup_instance_name",
+            ]
+        },
+        api_versions_list=["2026-06-01"],
+    )
     async def begin_resume_protection(
         self, resource_group_name: str, vault_name: str, backup_instance_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -3957,7 +3983,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         )
 
 
-class BackupVaultOperationResultsOperations:
+class BackupVaultOperationResultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4060,7 +4086,7 @@ class BackupVaultOperationResultsOperations:
         return deserialized  # type: ignore
 
 
-class DeletedBackupVaultsOperations:
+class DeletedBackupVaultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4081,7 +4107,7 @@ class DeletedBackupVaultsOperations:
     @api_version_validation(
         method_added_on="2025-09-01",
         params_added_on={"2025-09-01": ["api_version", "subscription_id", "location", "deleted_vault_name", "accept"]},
-        api_versions_list=["2025-09-01", "2026-03-01"],
+        api_versions_list=["2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01"],
     )
     async def get(self, location: str, deleted_vault_name: str, **kwargs: Any) -> _models.DeletedBackupVaultResource:
         """Gets a deleted backup vault.
@@ -4156,7 +4182,7 @@ class DeletedBackupVaultsOperations:
     @api_version_validation(
         method_added_on="2025-09-01",
         params_added_on={"2025-09-01": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2025-09-01", "2026-03-01"],
+        api_versions_list=["2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01"],
     )
     def list_by_location(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.DeletedBackupVaultResource"]:
         """Lists deleted backup vaults by location.
@@ -4255,7 +4281,7 @@ class DeletedBackupVaultsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ResourceGuardsOperations:
+class ResourceGuardsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6022,7 +6048,7 @@ class ResourceGuardsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BackupVaultsOperations:
+class BackupVaultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6111,7 +6137,7 @@ class BackupVaultsOperations:
 
     @api_version_validation(
         params_added_on={"2025-09-01": ["x_ms_deleted_vault_id"]},
-        api_versions_list=["2025-07-01", "2025-09-01", "2026-03-01"],
+        api_versions_list=["2025-07-01", "2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01"],
     )
     async def _create_or_update_initial(
         self,
@@ -6304,7 +6330,7 @@ class BackupVaultsOperations:
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2025-09-01": ["x_ms_deleted_vault_id"]},
-        api_versions_list=["2025-07-01", "2025-09-01", "2026-03-01"],
+        api_versions_list=["2025-07-01", "2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01"],
     )
     async def begin_create_or_update(
         self,
@@ -7146,7 +7172,7 @@ class BackupVaultsOperations:
         return deserialized  # type: ignore
 
 
-class OperationStatusBackupVaultContextOperations:  # pylint: disable=name-too-long
+class OperationStatusBackupVaultContextOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7239,7 +7265,7 @@ class OperationStatusBackupVaultContextOperations:  # pylint: disable=name-too-l
         return deserialized  # type: ignore
 
 
-class ExportJobsOperations:
+class ExportJobsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7372,7 +7398,7 @@ class ExportJobsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ExportJobsOperationResultOperations:
+class ExportJobsOperationResultOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7469,7 +7495,7 @@ class ExportJobsOperationResultOperations:
         return deserialized  # type: ignore
 
 
-class BackupPoliciesOperations:
+class BackupPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7914,7 +7940,7 @@ class BackupPoliciesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableTimeRangesOperations:
+class RestorableTimeRangesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8124,7 +8150,7 @@ class RestorableTimeRangesOperations:
         return deserialized  # type: ignore
 
 
-class RecoveryPointsOperations:
+class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8345,7 +8371,7 @@ class RecoveryPointsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class JobsOperations:
+class JobsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8542,7 +8568,7 @@ class JobsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DeletedBackupInstancesOperations:
+class DeletedBackupInstancesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8863,7 +8889,7 @@ class DeletedBackupInstancesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class DppResourceGuardProxyOperations:
+class DppResourceGuardProxyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9509,7 +9535,7 @@ class DppResourceGuardProxyOperations:
         return deserialized  # type: ignore
 
 
-class OperationResultOperations:
+class OperationResultOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9609,7 +9635,7 @@ class OperationResultOperations:
         return deserialized  # type: ignore
 
 
-class OperationStatusOperations:
+class OperationStatusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9698,7 +9724,7 @@ class OperationStatusOperations:
         return deserialized  # type: ignore
 
 
-class OperationStatusResourceGroupContextOperations:  # pylint: disable=name-too-long
+class OperationStatusResourceGroupContextOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9788,7 +9814,7 @@ class OperationStatusResourceGroupContextOperations:  # pylint: disable=name-too
         return deserialized  # type: ignore
 
 
-class DataProtectionOperations:
+class DataProtectionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9967,7 +9993,7 @@ class DataProtectionOperations:
         return deserialized  # type: ignore
 
 
-class FetchSecondaryRecoveryPointsOperations:
+class FetchSecondaryRecoveryPointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10222,7 +10248,7 @@ class FetchSecondaryRecoveryPointsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class FetchCrossRegionRestoreJobOperations:
+class FetchCrossRegionRestoreJobOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10411,7 +10437,7 @@ class FetchCrossRegionRestoreJobOperations:
         return deserialized  # type: ignore
 
 
-class FetchCrossRegionRestoreJobsOperations:
+class FetchCrossRegionRestoreJobsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10647,7 +10673,7 @@ class FetchCrossRegionRestoreJobsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BackupInstancesExtensionRoutingOperations:  # pylint: disable=name-too-long
+class BackupInstancesExtensionRoutingOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -56,6 +56,20 @@ class SkuMixPlacementAllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnum
     """VMs allocated to optimize for lowest eviction rate (Spot only)."""
 
 
+class SkuMixPlacementCapacityLimitReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Reason the capacity limit for a (VM size, zone) is below the requested capacity."""
+
+    NONE = "None"
+    """The full requested capacity is available for this (VM size, zone)."""
+    INSUFFICIENT_CAPACITY = "InsufficientCapacity"
+    """Allocable capacity bounded the limit below the requested capacity."""
+    INSUFFICIENT_QUOTA = "InsufficientQuota"
+    """Quota bounded the limit below the requested capacity. Takes precedence when both capacity and
+    quota are insufficient."""
+    SKU_NOT_AVAILABLE = "SkuNotAvailable"
+    """This VM size is not available in this zone for the subscription."""
+
+
 class SkuMixPlacementCapacityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit type for the capacity value."""
 

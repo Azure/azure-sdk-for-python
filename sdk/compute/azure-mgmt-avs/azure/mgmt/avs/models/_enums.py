@@ -30,69 +30,75 @@ class AddonProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     CANCELLED = "Cancelled"
-    """is cancelled"""
+    """is cancelled."""
     BUILDING = "Building"
-    """is building"""
+    """is building."""
     DELETING = "Deleting"
-    """is deleting"""
+    """is deleting."""
     UPDATING = "Updating"
-    """is updating"""
+    """is updating."""
 
 
 class AddonType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Addon type."""
 
     SRM = "SRM"
+    """SRM."""
     VR = "VR"
+    """VR."""
     HCX = "HCX"
+    """HCX."""
     ARC = "Arc"
+    """ARC."""
 
 
 class AffinityStrength(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Affinity Strength."""
 
     SHOULD = "Should"
-    """is should"""
+    """is should."""
     MUST = "Must"
-    """is must"""
+    """is must."""
 
 
 class AffinityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Affinity type."""
 
     AFFINITY = "Affinity"
-    """is affinity"""
+    """is affinity."""
     ANTI_AFFINITY = "AntiAffinity"
-    """is anti-affinity"""
+    """is anti-affinity."""
 
 
 class AvailabilityStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether the private clouds is available in a single zone or two zones."""
 
     SINGLE_ZONE = "SingleZone"
-    """in single zone"""
+    """in single zone."""
     DUAL_ZONE = "DualZone"
-    """in two zones"""
+    """in two zones."""
 
 
 class AzureHybridBenefitType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Azure Hybrid Benefit type."""
 
     SQL_HOST = "SqlHost"
-    """is SqlHost"""
+    """is SqlHost."""
     NONE = "None"
-    """is None"""
+    """is None."""
 
 
 class BlockedDatesConstraintCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Reason for blocking operation on maintenance."""
 
     HI_PRIORITY_EVENT = "HiPriorityEvent"
-    """Hi-Priority Event"""
+    """Hi-Priority Event."""
     QUOTA_EXHAUSTED = "QuotaExhausted"
-    """Quota Exhausted"""
+    """Quota Exhausted."""
     HOLIDAY = "Holiday"
-    """Holidays"""
+    """Holidays."""
+    OVERLAPPING_MAINTENANCE = "OverlappingMaintenance"
+    """Constraint due to overlapping maintenance."""
 
 
 class CloudLinkProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -110,15 +116,15 @@ class CloudLinkStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cloud Link status."""
 
     ACTIVE = "Active"
-    """is active"""
+    """is active."""
     BUILDING = "Building"
-    """is building"""
+    """is building."""
     DELETING = "Deleting"
-    """is deleting"""
+    """is deleting."""
     FAILED = "Failed"
-    """is failed"""
+    """is failed."""
     DISCONNECTED = "Disconnected"
-    """is disconnected"""
+    """is disconnected."""
 
 
 class ClusterProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -131,11 +137,11 @@ class ClusterProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     CANCELLED = "Cancelled"
-    """is cancelled"""
+    """is cancelled."""
     DELETING = "Deleting"
-    """is deleting"""
+    """is deleting."""
     UPDATING = "Updating"
-    """is updating"""
+    """is updating."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -161,65 +167,67 @@ class DatastoreProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     CANCELLED = "Cancelled"
-    """is cancelled"""
+    """is cancelled."""
     PENDING = "Pending"
-    """is pending"""
+    """is pending."""
     CREATING = "Creating"
-    """is creating"""
+    """is creating."""
     UPDATING = "Updating"
-    """is updating"""
+    """is updating."""
     DELETING = "Deleting"
-    """is deleting"""
+    """is deleting."""
 
 
 class DatastoreStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """datastore status."""
 
     UNKNOWN = "Unknown"
-    """is unknown"""
+    """is unknown."""
     ACCESSIBLE = "Accessible"
-    """is accessible"""
+    """is accessible."""
     INACCESSIBLE = "Inaccessible"
-    """is inaccessible"""
+    """is inaccessible."""
     ATTACHED = "Attached"
-    """is attached"""
+    """is attached."""
     DETACHED = "Detached"
-    """is detached"""
+    """is detached."""
     LOST_COMMUNICATION = "LostCommunication"
-    """is lost communication"""
+    """is lost communication."""
     DEAD_OR_ERROR = "DeadOrError"
-    """is dead or error"""
+    """is dead or error."""
 
 
 class DhcpTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of DHCP: SERVER or RELAY."""
 
     SERVER = "SERVER"
+    """SERVER."""
     RELAY = "RELAY"
+    """RELAY."""
 
 
 class DnsServiceLogLevelEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DNS service log level."""
 
     DEBUG = "DEBUG"
-    """is debug"""
+    """is debug."""
     INFO = "INFO"
-    """is info"""
+    """is info."""
     WARNING = "WARNING"
-    """is warning"""
+    """is warning."""
     ERROR = "ERROR"
-    """is error"""
+    """is error."""
     FATAL = "FATAL"
-    """is fatal"""
+    """is fatal."""
 
 
 class DnsServiceStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DNS service status."""
 
     SUCCESS = "SUCCESS"
-    """is success"""
+    """is success."""
     FAILURE = "FAILURE"
-    """is failure"""
+    """is failure."""
 
 
 class DnsZoneType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -235,30 +243,32 @@ class EncryptionKeyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether the the encryption key is connected or access denied."""
 
     CONNECTED = "Connected"
-    """is connected"""
+    """is connected."""
     ACCESS_DENIED = "AccessDenied"
-    """is access denied"""
+    """is access denied."""
 
 
 class EncryptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether encryption is enabled or disabled."""
 
     ENABLED = "Enabled"
-    """is enabled"""
+    """is enabled."""
     DISABLED = "Disabled"
-    """is disabled"""
+    """is disabled."""
 
 
 class EncryptionVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether the encryption version is fixed or auto-detected."""
 
     FIXED = "Fixed"
-    """is fixed"""
+    """is fixed."""
     AUTO_DETECTED = "AutoDetected"
-    """is auto-detected"""
+    """is auto-detected."""
 
 
-class ExpressRouteAuthorizationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ExpressRouteAuthorizationProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Express Route Circuit Authorization provisioning state."""
 
     SUCCEEDED = "Succeeded"
@@ -268,7 +278,7 @@ class ExpressRouteAuthorizationProvisioningState(str, Enum, metaclass=CaseInsens
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     UPDATING = "Updating"
-    """is updating"""
+    """is updating."""
 
 
 class GlobalReachConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -281,18 +291,18 @@ class GlobalReachConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiv
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     UPDATING = "Updating"
-    """is updating"""
+    """is updating."""
 
 
 class GlobalReachConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Global Reach Connection status."""
 
     CONNECTED = "Connected"
-    """is connected"""
+    """is connected."""
     CONNECTING = "Connecting"
-    """is connecting"""
+    """is connecting."""
     DISCONNECTED = "Disconnected"
-    """is disconnected"""
+    """is disconnected."""
 
 
 class HcxEnterpriseSiteProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -310,20 +320,29 @@ class HcxEnterpriseSiteStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HCX Enterprise Site status."""
 
     AVAILABLE = "Available"
-    """is available"""
+    """is available."""
     CONSUMED = "Consumed"
-    """is consumed"""
+    """is consumed."""
     DEACTIVATED = "Deactivated"
-    """is deactivated"""
+    """is deactivated."""
     DELETED = "Deleted"
-    """is deleted"""
+    """is deleted."""
 
 
 class HostKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of host."""
 
     GENERAL = "General"
+    """GENERAL."""
     SPECIALIZED = "Specialized"
+    """SPECIALIZED."""
+
+
+class HostLicenseKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of host license."""
+
+    WINDOWS_SERVER = "WindowsServer"
+    """The host is to be used with Azure Hybrid Benefit for Windows Server."""
 
 
 class HostMaintenance(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -350,9 +369,9 @@ class InternetEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether internet is enabled or disabled."""
 
     ENABLED = "Enabled"
-    """is enabled"""
+    """is enabled."""
     DISABLED = "Disabled"
-    """is disabled"""
+    """is disabled."""
 
 
 class IscsiPathProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -365,26 +384,27 @@ class IscsiPathProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     PENDING = "Pending"
-    """is pending"""
+    """is pending."""
     BUILDING = "Building"
-    """is building"""
+    """is building."""
     DELETING = "Deleting"
-    """is deleting"""
+    """is deleting."""
     UPDATING = "Updating"
-    """is updating"""
+    """is updating."""
 
 
 class LicenseKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of license."""
 
     VMWARE_FIREWALL = "VmwareFirewall"
+    """VMWARE_FIREWALL."""
 
 
 class LicenseName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The name of the license."""
 
     VMWARE_FIREWALL = "VmwareFirewall"
-    """VMware Firewall license"""
+    """VMware Firewall license."""
 
 
 class LicenseProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -398,24 +418,46 @@ class LicenseProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource creation was canceled."""
 
 
+class MaintenanceActivityKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the type of maintenance activity."""
+
+    UPGRADE = "Upgrade"
+    """Upgrade activity."""
+    DOWNGRADE = "Downgrade"
+    """Downgrade activity."""
+    CERTIFICATE_ROTATION = "CertificateRotation"
+    """Certificate rotation activity."""
+    BACKUP = "Backup"
+    """Backup activity."""
+
+
 class MaintenanceCheckType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the type of maintenance readiness check."""
 
     PRECHECK = "Precheck"
-    """Pre-check maintenance readiness"""
+    """Pre-check maintenance readiness."""
     PREFLIGHT = "Preflight"
-    """Pre-flight maintenance readiness"""
+    """Pre-flight maintenance readiness."""
+
+
+class MaintenanceGroupKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the kind of group."""
+
+    LOGICAL = "Logical"
+    """Logical grouping of maintenance operations."""
+    CONSOLIDATION = "Consolidation"
+    """Consolidation grouping of maintenance operations."""
 
 
 class MaintenanceManagementOperationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the type of operation."""
 
     SCHEDULE = "Schedule"
-    """Represents a scheduling operation"""
+    """Represents a scheduling operation."""
     RESCHEDULE = "Reschedule"
-    """Represents a rescheduling operation"""
+    """Represents a rescheduling operation."""
     MAINTENANCE_READINESS_REFRESH = "MaintenanceReadinessRefresh"
-    """Represents a maintenance readiness refresh operation"""
+    """Represents a maintenance readiness refresh operation."""
 
 
 class MaintenanceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -428,97 +470,99 @@ class MaintenanceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     UPDATING = "Updating"
-    """is updating"""
+    """is updating."""
 
 
-class MaintenanceReadinessRefreshOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class MaintenanceReadinessRefreshOperationStatus(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The status of an MaintenanceReadinessRefresh operation."""
 
     IN_PROGRESS = "InProgress"
-    """Operation is in progress"""
+    """Operation is in progress."""
     NOT_STARTED = "NotStarted"
-    """Operation has not started"""
+    """Operation has not started."""
     FAILED = "Failed"
-    """Operation has failed"""
+    """Operation has failed."""
     NOT_APPLICABLE = "NotApplicable"
-    """Operation is not applicable"""
+    """Operation is not applicable."""
 
 
 class MaintenanceReadinessStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the readiness status of maintenance."""
 
     READY = "Ready"
-    """The system is ready for maintenance"""
+    """The system is ready for maintenance."""
     NOT_READY = "NotReady"
-    """The system is not ready for maintenance"""
+    """The system is not ready for maintenance."""
     DATA_NOT_AVAILABLE = "DataNotAvailable"
-    """Data is not available to determine readiness"""
+    """Data is not available to determine readiness."""
     NOT_APPLICABLE = "NotApplicable"
-    """Readiness check is not applicable"""
+    """Readiness check is not applicable."""
 
 
 class MaintenanceStateName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Customer presentable maintenance state."""
 
     NOT_SCHEDULED = "NotScheduled"
-    """Maintenance Not Scheduled"""
+    """Maintenance Not Scheduled."""
     SCHEDULED = "Scheduled"
-    """Maintenance Scheduled"""
+    """Maintenance Scheduled."""
     IN_PROGRESS = "InProgress"
-    """Maintenance In Progress"""
+    """Maintenance In Progress."""
     SUCCESS = "Success"
-    """Maintenance Succeeded"""
+    """Maintenance Succeeded."""
     FAILED = "Failed"
-    """Maintenance Failed"""
+    """Maintenance Failed."""
     CANCELED = "Canceled"
-    """Maintenance Cancelled"""
+    """Maintenance Cancelled."""
 
 
 class MaintenanceStatusFilter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """status filter for the maintenance."""
 
     ACTIVE = "Active"
-    """is active"""
+    """is active."""
     INACTIVE = "Inactive"
-    """is inactive"""
+    """is inactive."""
 
 
 class MaintenanceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """type of the maintenance."""
 
     VCSA = "VCSA"
-    """maintenance for vCenter Server Appliance"""
+    """maintenance for vCenter Server Appliance."""
     ESXI = "ESXI"
-    """maintenance for ESXi"""
+    """maintenance for ESXi."""
     NSXT = "NSXT"
-    """maintenance for NSX-T"""
+    """maintenance for NSX-T."""
 
 
 class MountOptionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """mount option."""
 
     MOUNT = "MOUNT"
-    """is mount"""
+    """is mount."""
     ATTACH = "ATTACH"
-    """is attach"""
+    """is attach."""
 
 
 class NsxPublicIpQuotaRaisedEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """NSX public IP quota raised."""
 
     ENABLED = "Enabled"
-    """is enabled"""
+    """is enabled."""
     DISABLED = "Disabled"
-    """is disabled"""
+    """is disabled."""
 
 
 class OptionalParamEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Optional Param."""
 
     OPTIONAL = "Optional"
-    """is optional"""
+    """is optional."""
     REQUIRED = "Required"
-    """is required"""
+    """is required."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -544,47 +588,49 @@ class PlacementPolicyProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumM
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     BUILDING = "Building"
-    """is building"""
+    """is building."""
     DELETING = "Deleting"
-    """is deleting"""
+    """is deleting."""
     UPDATING = "Updating"
-    """is updating"""
+    """is updating."""
 
 
 class PlacementPolicyState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Placement Policy state."""
 
     ENABLED = "Enabled"
-    """is enabled"""
+    """is enabled."""
     DISABLED = "Disabled"
-    """is disabled"""
+    """is disabled."""
 
 
 class PlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Placement Policy type."""
 
     VM_VM = "VmVm"
+    """VM_VM."""
     VM_HOST = "VmHost"
+    """VM_HOST."""
 
 
 class PortMirroringDirectionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Port Mirroring Direction."""
 
     INGRESS = "INGRESS"
-    """is ingress"""
+    """is ingress."""
     EGRESS = "EGRESS"
-    """is egress"""
+    """is egress."""
     BIDIRECTIONAL = "BIDIRECTIONAL"
-    """is bidirectional"""
+    """is bidirectional."""
 
 
 class PortMirroringStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Port Mirroring status."""
 
     SUCCESS = "SUCCESS"
-    """is success"""
+    """is success."""
     FAILURE = "FAILURE"
-    """is failure"""
+    """is failure."""
 
 
 class PrivateCloudProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -597,15 +643,15 @@ class PrivateCloudProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     CANCELLED = "Cancelled"
-    """is cancelled"""
+    """is cancelled."""
     PENDING = "Pending"
-    """is pending"""
+    """is pending."""
     BUILDING = "Building"
-    """is building"""
+    """is building."""
     DELETING = "Deleting"
-    """is deleting"""
+    """is deleting."""
     UPDATING = "Updating"
-    """is updating"""
+    """is updating."""
 
 
 class ProvisionedNetworkProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -623,19 +669,19 @@ class ProvisionedNetworkTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of network provisioned."""
 
     ESX_MANAGEMENT = "esxManagement"
-    """network for ESX management"""
+    """network for ESX management."""
     ESX_REPLICATION = "esxReplication"
-    """network for ESX replication"""
+    """network for ESX replication."""
     HCX_MANAGEMENT = "hcxManagement"
-    """network for HCX management"""
+    """network for HCX management."""
     HCX_UPLINK = "hcxUplink"
-    """network for HCX uplink"""
+    """network for HCX uplink."""
     VCENTER_MANAGEMENT = "vcenterManagement"
-    """network for vCenter management"""
+    """network for vCenter management."""
     VMOTION = "vmotion"
-    """network for vmotion"""
+    """network for vmotion."""
     VSAN = "vsan"
-    """network for vsan"""
+    """network for vsan."""
 
 
 class PureStoragePolicyProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -648,27 +694,31 @@ class PureStoragePolicyProvisioningState(str, Enum, metaclass=CaseInsensitiveEnu
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     DELETING = "Deleting"
-    """is deleting"""
+    """is deleting."""
     UPDATING = "Updating"
-    """is updating"""
+    """is updating."""
 
 
 class QuotaEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """quota enabled."""
 
     ENABLED = "Enabled"
-    """is enabled"""
+    """is enabled."""
     DISABLED = "Disabled"
-    """is disabled"""
+    """is disabled."""
 
 
 class RescheduleOperationConstraintKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Constraints for rescheduling of maintenance."""
 
     AVAILABLE_WINDOW_FOR_MAINTENANCE_WHILE_RESCHEDULE_OPERATION = "AvailableWindowForMaintenance"
-    """Time window in which maintenance can be rescheduled"""
+    """Time window in which maintenance can be rescheduled."""
     BLOCKED_WHILE_RESCHEDULE_OPERATION = "Blocked"
-    """Blocked time range constraint"""
+    """Blocked time range constraint."""
+    RESCHEDULING_WINDOW = "ReschedulingWindow"
+    """Defines allowed window for rescheduling."""
+    WEEKEND_RESCHEDULING = "WeekendRescheduling"
+    """Defines weekend rescheduling restriction."""
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -711,11 +761,13 @@ class ScheduleOperationConstraintKind(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Constraints for scheduling of maintenance."""
 
     SCHEDULING_WINDOW = "SchedulingWindow"
-    """Time window in which Customer has option to schedule maintenance"""
+    """Time window in which Customer has option to schedule maintenance."""
     AVAILABLE_WINDOW_FOR_MAINTENANCE_WHILE_SCHEDULE_OPERATION = "AvailableWindowForMaintenance"
-    """Time window in which maintenance can be scheduled"""
+    """Time window in which maintenance can be scheduled."""
     BLOCKED_WHILE_SCHEDULE_OPERATION = "Blocked"
-    """Blocked time range constraint"""
+    """Blocked time range constraint."""
+    WEEKEND_SCHEDULING = "WeekendScheduling"
+    """Defines weekend scheduling restriction."""
 
 
 class ScriptCmdletAudience(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -724,9 +776,9 @@ class ScriptCmdletAudience(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     AUTOMATION = "Automation"
-    """is automation"""
+    """is automation."""
     ANY = "Any"
-    """is any"""
+    """is any."""
 
 
 class ScriptCmdletProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -744,8 +796,11 @@ class ScriptExecutionParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """script execution parameter type."""
 
     VALUE = "Value"
+    """VALUE."""
     SECURE_VALUE = "SecureValue"
+    """SECURE_VALUE."""
     CREDENTIAL = "Credential"
+    """CREDENTIAL."""
 
 
 class ScriptExecutionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -758,28 +813,28 @@ class ScriptExecutionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumM
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     PENDING = "Pending"
-    """is pending"""
+    """is pending."""
     RUNNING = "Running"
-    """is running"""
+    """is running."""
     CANCELLING = "Cancelling"
-    """is cancelling"""
+    """is cancelling."""
     CANCELLED = "Cancelled"
-    """is cancelled"""
+    """is cancelled."""
     DELETING = "Deleting"
-    """is deleting"""
+    """is deleting."""
 
 
 class ScriptOutputStreamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Script Output Stream type."""
 
     INFORMATION = "Information"
-    """is information"""
+    """is information."""
     WARNING = "Warning"
-    """is warning"""
+    """is warning."""
     OUTPUT = "Output"
-    """is output"""
+    """is output."""
     ERROR = "Error"
-    """is error"""
+    """is error."""
 
 
 class ScriptPackageProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -797,26 +852,26 @@ class ScriptParameterTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Script Parameter types."""
 
     STRING = "String"
-    """is string"""
+    """is string."""
     SECURE_STRING = "SecureString"
-    """is secure string"""
+    """is secure string."""
     CREDENTIAL = "Credential"
-    """is credential"""
+    """is credential."""
     INT = "Int"
-    """is int"""
+    """is int."""
     BOOL = "Bool"
-    """is bool"""
+    """is bool."""
     FLOAT = "Float"
-    """is float"""
+    """is float."""
 
 
 class SegmentStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Segment status."""
 
     SUCCESS = "SUCCESS"
-    """is success"""
+    """is success."""
     FAILURE = "FAILURE"
-    """is failure"""
+    """is failure."""
 
 
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -838,27 +893,27 @@ class SslEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether SSL is enabled or disabled."""
 
     ENABLED = "Enabled"
-    """is enabled"""
+    """is enabled."""
     DISABLED = "Disabled"
-    """is disabled"""
+    """is disabled."""
 
 
 class TrialStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """trial status."""
 
     TRIAL_AVAILABLE = "TrialAvailable"
-    """is available"""
+    """is available."""
     TRIAL_USED = "TrialUsed"
-    """is used"""
+    """is used."""
     TRIAL_DISABLED = "TrialDisabled"
-    """is disabled"""
+    """is disabled."""
 
 
 class VcfLicenseKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of license."""
 
     VCF5 = "vcf5"
-    """A VMware Cloud Foundation (VCF) 5.0 license"""
+    """A VMware Cloud Foundation (VCF) 5.0 license."""
 
 
 class VirtualMachineProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -876,38 +931,38 @@ class VirtualMachineRestrictMovementState(str, Enum, metaclass=CaseInsensitiveEn
     """Virtual Machine Restrict Movement state."""
 
     ENABLED = "Enabled"
-    """is enabled"""
+    """is enabled."""
     DISABLED = "Disabled"
-    """is disabled"""
+    """is disabled."""
 
 
 class VisibilityParameterEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Visibility Parameter."""
 
     VISIBLE = "Visible"
-    """is visible"""
+    """is visible."""
     HIDDEN = "Hidden"
-    """is hidden"""
+    """is hidden."""
 
 
 class VMGroupStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """VM group status."""
 
     SUCCESS = "SUCCESS"
-    """is success"""
+    """is success."""
     FAILURE = "FAILURE"
-    """is failure"""
+    """is failure."""
 
 
 class VMTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """VM type."""
 
     REGULAR = "REGULAR"
-    """is regular"""
+    """is regular."""
     EDGE = "EDGE"
-    """is edge"""
+    """is edge."""
     SERVICE = "SERVICE"
-    """is service"""
+    """is service."""
 
 
 class WorkloadNetworkDhcpProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -920,14 +975,16 @@ class WorkloadNetworkDhcpProvisioningState(str, Enum, metaclass=CaseInsensitiveE
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     BUILDING = "Building"
-    """is building"""
+    """is building."""
     DELETING = "Deleting"
-    """is deleting"""
+    """is deleting."""
     UPDATING = "Updating"
-    """is updating"""
+    """is updating."""
 
 
-class WorkloadNetworkDnsServiceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class WorkloadNetworkDnsServiceProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Workload Network DNS Service provisioning state."""
 
     SUCCEEDED = "Succeeded"
@@ -937,11 +994,11 @@ class WorkloadNetworkDnsServiceProvisioningState(str, Enum, metaclass=CaseInsens
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     BUILDING = "Building"
-    """is building"""
+    """is building."""
     DELETING = "Deleting"
-    """is deleting"""
+    """is deleting."""
     UPDATING = "Updating"
-    """is updating"""
+    """is updating."""
 
 
 class WorkloadNetworkDnsZoneProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -954,14 +1011,16 @@ class WorkloadNetworkDnsZoneProvisioningState(str, Enum, metaclass=CaseInsensiti
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     BUILDING = "Building"
-    """is building"""
+    """is building."""
     DELETING = "Deleting"
-    """is deleting"""
+    """is deleting."""
     UPDATING = "Updating"
-    """is updating"""
+    """is updating."""
 
 
-class WorkloadNetworkPortMirroringProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class WorkloadNetworkPortMirroringProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Workload Network Port Mirroring provisioning state."""
 
     SUCCEEDED = "Succeeded"
@@ -971,11 +1030,11 @@ class WorkloadNetworkPortMirroringProvisioningState(str, Enum, metaclass=CaseIns
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     BUILDING = "Building"
-    """is building"""
+    """is building."""
     DELETING = "Deleting"
-    """is deleting"""
+    """is deleting."""
     UPDATING = "Updating"
-    """is updating"""
+    """is updating."""
 
 
 class WorkloadNetworkProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -988,11 +1047,11 @@ class WorkloadNetworkProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumM
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     BUILDING = "Building"
-    """is building"""
+    """is building."""
     DELETING = "Deleting"
-    """is deleting"""
+    """is deleting."""
     UPDATING = "Updating"
-    """is updating"""
+    """is updating."""
 
 
 class WorkloadNetworkPublicIPProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1005,11 +1064,11 @@ class WorkloadNetworkPublicIPProvisioningState(str, Enum, metaclass=CaseInsensit
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     BUILDING = "Building"
-    """is building"""
+    """is building."""
     DELETING = "Deleting"
-    """is deleting"""
+    """is deleting."""
     UPDATING = "Updating"
-    """is updating"""
+    """is updating."""
 
 
 class WorkloadNetworkSegmentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1022,11 +1081,11 @@ class WorkloadNetworkSegmentProvisioningState(str, Enum, metaclass=CaseInsensiti
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     BUILDING = "Building"
-    """is building"""
+    """is building."""
     DELETING = "Deleting"
-    """is deleting"""
+    """is deleting."""
     UPDATING = "Updating"
-    """is updating"""
+    """is updating."""
 
 
 class WorkloadNetworkVMGroupProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1039,8 +1098,8 @@ class WorkloadNetworkVMGroupProvisioningState(str, Enum, metaclass=CaseInsensiti
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     BUILDING = "Building"
-    """is building"""
+    """is building."""
     DELETING = "Deleting"
-    """is deleting"""
+    """is deleting."""
     UPDATING = "Updating"
-    """is updating"""
+    """is updating."""

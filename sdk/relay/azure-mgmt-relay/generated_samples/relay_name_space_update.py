@@ -33,11 +33,14 @@ def main():
     response = client.namespaces.update(
         resource_group_name="RG-eg",
         namespace_name="example-RelayRelayNamespace-01",
-        parameters={"tags": {"tag3": "value3", "tag4": "value4", "tag5": "value5", "tag6": "value6"}},
+        parameters={
+            "properties": {"minimumTlsVersion": "1.3"},
+            "tags": {"tag3": "value3", "tag4": "value4", "tag5": "value5", "tag6": "value6"},
+        },
     )
     print(response)
 
 
-# x-ms-original-file: 2024-01-01/NameSpaces/RelayNameSpaceUpdate.json
+# x-ms-original-file: 2026-07-01-preview/NameSpaces/RelayNameSpaceUpdate.json
 if __name__ == "__main__":
     main()

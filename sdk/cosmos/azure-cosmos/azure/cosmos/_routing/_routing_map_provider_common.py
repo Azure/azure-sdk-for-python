@@ -440,7 +440,6 @@ def process_fetched_ranges(
     # Incremental update -- merge deltas into the existing map.
     # Resolve parent chains transitively within this single delta so cascading
     # splits (A->B+C and B->D+E in one payload) can be merged incrementally.
-    range_tuples: List[Tuple[Any, Any]] = []
     known_range_info_by_id = {
         pkr_id: pkr_tuple[1]
         for pkr_id, pkr_tuple in previous_routing_map._rangeById.items()  # pylint: disable=protected-access
@@ -463,7 +462,6 @@ def process_fetched_ranges(
                 next_unresolved.append(r)
                 continue
 
-            range_tuples.append((PKRange.from_dict(r), range_info))
             known_range_info_by_id[r[PartitionKeyRange.Id]] = range_info
             progress_made = True
 
@@ -482,6 +480,12 @@ def process_fetched_ranges(
             raise _IncrementalMergeFailed()
 
         unresolved = next_unresolved
+
+    # Apply revisions in feed order, not resolution order, so deferred older records cannot overwrite newer ones.
+    range_tuples = [
+        (PKRange.from_dict(r), known_range_info_by_id[r[PartitionKeyRange.Id]])
+        for r in ranges
+    ]
 
     try:
         result = previous_routing_map.try_combine(range_tuples, effective_etag)

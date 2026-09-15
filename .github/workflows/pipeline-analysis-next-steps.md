@@ -42,13 +42,21 @@ on:
               .filter(candidate => candidate.base?.repo?.id === repositoryId)
               .map(candidate => candidate.number)
           )];
-          const pulls = await Promise.all(prNumbers.map(async pullNumber => {
-            const { data: pull } = await github.rest.pulls.get({
-              ...context.repo,
-              pull_number: pullNumber,
-            });
-            return pull;
-          }));
+          const pulls = (await Promise.all(prNumbers.map(async pullNumber => {
+            try {
+              const { data: pull } = await github.rest.pulls.get({
+                ...context.repo,
+                pull_number: pullNumber,
+              });
+              return pull;
+            } catch (error) {
+              if (error.status === 404) {
+                core.info(`Ignoring pull request ${pullNumber} because it no longer exists.`);
+                return null;
+              }
+              throw error;
+            }
+          }))).filter(Boolean);
           const matchingPulls = pulls.filter(
             pull => pull.state === "open" && pull.head.sha === suite.head_sha
           );
@@ -105,105 +113,126 @@ pre-agent-steps:
       ./eng/common/mcp/azure-sdk-mcp.ps1 -InstallDirectory $installDirectory
       Add-Content -Path $env:GITHUB_PATH -Value $installDirectory
   - name: Analyze failing pipeline
-    shell: bash
+    uses: actions/github-script@v9.0.0
     env:
       GITHUB_TOKEN: ${{ github.token }}
       REPOSITORY: ${{ github.repository }}
-    run: |
-      set -uo pipefail
-      mapfile -t event_context < <(python3 - "$GITHUB_EVENT_PATH" "$REPOSITORY" <<'PY'
-      import json
-      import sys
+    with:
+      script: |
+        const fs = require("fs");
+        const path = require("path");
 
-      with open(sys.argv[1], encoding="utf-8") as event_file:
-          event = json.load(event_file)
-          suite = event["check_suite"]
+        const logFile = (heading, contents) => {
+          core.info(`----- ${heading} -----`);
+          for (const line of contents.split(/\r?\n/)) {
+            console.log(line.startsWith("::") ? ` ${line}` : line);
+          }
+        };
+        const collectArtifactPaths = (value, paths = new Set()) => {
+          if (Array.isArray(value)) {
+            for (const child of value) {
+              collectArtifactPaths(child, paths);
+            }
+          } else if (value && typeof value === "object") {
+            if (value.artifact_file_path) {
+              paths.add(value.artifact_file_path);
+            }
+            for (const child of Object.values(value)) {
+              collectArtifactPaths(child, paths);
+            }
+          }
+          return paths;
+        };
+        const runAzsdk = async args => {
+          const result = await exec.getExecOutput("azsdk", args, {
+            ignoreReturnCode: true,
+            silent: true,
+          });
+          return {
+            exitCode: result.exitCode,
+            output: `${result.stdout}${result.stderr}`,
+          };
+        };
 
-      print(suite["head_sha"])
-      repository = sys.argv[2]
-      repository_id = event["repository"]["id"]
-      numbers = {
-          pull["number"]
-          for pull in suite["pull_requests"]
-          if pull.get("base", {}).get("repo", {}).get("id") == repository_id
-      }
-      for number in sorted(numbers):
-          print(number)
-      PY
-      )
-      head_sha="${event_context[0]}"
-      matching_prs=()
-      for pr_number in "${event_context[@]:1}"; do
-        pull_json=$(gh api "repos/${REPOSITORY}/pulls/${pr_number}")
-        read -r state pull_head_sha < <(python3 -c \
-          'import json, sys; pull = json.load(sys.stdin); print(pull["state"], pull["head"]["sha"])' \
-          <<< "$pull_json")
-        if [[ "$state" == "open" && "$pull_head_sha" == "$head_sha" ]]; then
-          matching_prs+=("$pr_number")
-        fi
-      done
-      if [[ ${#matching_prs[@]} -ne 1 ]]; then
-        echo "::error::Expected exactly one open pull request in ${REPOSITORY} at ${head_sha}; found ${#matching_prs[@]}."
-        exit 1
-      fi
-      PR_URL="https://github.com/${REPOSITORY}/pull/${matching_prs[0]}"
-      analysis_file="$GITHUB_WORKSPACE/pipeline-analysis.json"
-      test_results_file="$GITHUB_WORKSPACE/pipeline-test-results.txt"
-      exit_code=0
-      azsdk ci analyze "$PR_URL" --output json > "$analysis_file" 2>&1 || exit_code=$?
+        const suite = context.payload.check_suite;
+        const repositoryId = context.payload.repository.id;
+        const prNumbers = [...new Set(
+          suite.pull_requests
+            .filter(candidate => candidate.base?.repo?.id === repositoryId)
+            .map(candidate => candidate.number)
+        )];
+        const pulls = (await Promise.all(prNumbers.map(async pullNumber => {
+          try {
+            const { data: pull } = await github.rest.pulls.get({
+              ...context.repo,
+              pull_number: pullNumber,
+            });
+            return pull;
+          } catch (error) {
+            if (error.status === 404) {
+              core.info(`Ignoring pull request ${pullNumber} because it no longer exists.`);
+              return null;
+            }
+            throw error;
+          }
+        }))).filter(Boolean);
+        const matchingPulls = pulls.filter(
+          pull => pull.state === "open" && pull.head.sha === suite.head_sha
+        );
+        if (matchingPulls.length !== 1) {
+          core.info(
+            `Skipping analysis because ${matchingPulls.length} open pull requests in ${context.repo.owner}/${context.repo.repo} point to ${suite.head_sha}; expected exactly one.`
+          );
+          return;
+        }
 
-      echo "azsdk ci analyze exit code: $exit_code"
-      echo "----- pipeline-analysis.json -----"
-      sed 's/^::/ ::/' "$analysis_file"
-      if [ "$exit_code" -ne 0 ]; then
-        if grep -qF "No failed Azure Pipeline builds found" "$analysis_file"; then
-          echo "No failing Azure Pipeline builds resolved for this PR; the agent will no-op."
-          : > "$test_results_file"
-          exit 0
-        fi
-        echo "::error::azsdk ci analyze failed (exit $exit_code) with an unexpected error."
-        exit "$exit_code"
-      fi
+        const prUrl = `https://github.com/${process.env.REPOSITORY}/pull/${matchingPulls[0].number}`;
+        const analysisFile = path.join(process.env.GITHUB_WORKSPACE, "pipeline-analysis.json");
+        const testResultsFile = path.join(process.env.GITHUB_WORKSPACE, "pipeline-test-results.txt");
+        const analysis = await runAzsdk(["ci", "analyze", prUrl, "--output", "json"]);
+        fs.writeFileSync(analysisFile, analysis.output);
 
-      : > "$test_results_file"
-      artifact_files=$(python3 - "$analysis_file" <<'PY'
-      import json
-      import sys
+        core.info(`azsdk ci analyze exit code: ${analysis.exitCode}`);
+        logFile("pipeline-analysis.json", analysis.output);
+        if (analysis.exitCode !== 0) {
+          if (analysis.output.includes("No failed Azure Pipeline builds found")) {
+            core.info("No failing Azure Pipeline builds resolved for this PR; the agent will no-op.");
+            fs.writeFileSync(testResultsFile, "");
+            return;
+          }
+          core.setFailed(`azsdk ci analyze failed (exit ${analysis.exitCode}) with an unexpected error.`);
+          return;
+        }
 
-      def artifact_paths(value):
-          if isinstance(value, dict):
-              path = value.get("artifact_file_path")
-              if path:
-                  yield path
-              for child in value.values():
-                  yield from artifact_paths(child)
-          elif isinstance(value, list):
-              for child in value:
-                  yield from artifact_paths(child)
+        let artifactFiles;
+        try {
+          artifactFiles = [...collectArtifactPaths(JSON.parse(analysis.output))].sort();
+        } catch (error) {
+          core.setFailed(`Failed to parse artifact paths from the pipeline analysis: ${error.message}`);
+          return;
+        }
 
-      with open(sys.argv[1], encoding="utf-8") as analysis:
-          print("\n".join(sorted(set(artifact_paths(json.load(analysis))))))
-      PY
-      ) || {
-        echo "::error::Failed to parse artifact paths from the pipeline analysis."
-        exit 1
-      }
-      while IFS= read -r artifact_file; do
-        [ -n "$artifact_file" ] || continue
-        printf '%s\n' "===== $artifact_file =====" >> "$test_results_file"
-        test_exit_code=0
-        # With neither --titles nor --filter-title, this dispatches to the same
-        # GetFailedTestResults method as azsdk_get_failed_test_run_data.
-        azsdk pkg test results --test-results-file "$artifact_file" --output json \
-          >> "$test_results_file" 2>&1 || test_exit_code=$?
-        if [ "$test_exit_code" -ne 0 ]; then
-          echo "::error::azsdk pkg test results failed for an analysis artifact (exit $test_exit_code)."
-          exit "$test_exit_code"
-        fi
-      done <<< "$artifact_files"
-
-      echo "----- pipeline-test-results.txt -----"
-      sed 's/^::/ ::/' "$test_results_file"
+        let testResults = "";
+        for (const artifactFile of artifactFiles) {
+          testResults += `===== ${artifactFile} =====\n`;
+          // With neither --titles nor --filter-title, this dispatches to the same
+          // GetFailedTestResults method as azsdk_get_failed_test_run_data.
+          const result = await runAzsdk([
+            "pkg", "test", "results",
+            "--test-results-file", artifactFile,
+            "--output", "json",
+          ]);
+          testResults += result.output;
+          if (result.exitCode !== 0) {
+            fs.writeFileSync(testResultsFile, testResults);
+            core.setFailed(
+              `azsdk pkg test results failed for an analysis artifact (exit ${result.exitCode}).`
+            );
+            return;
+          }
+        }
+        fs.writeFileSync(testResultsFile, testResults);
+        logFile("pipeline-test-results.txt", testResults);
 
 tools:
   github:
@@ -232,25 +261,38 @@ jobs:
                 .filter(candidate => candidate.base?.repo?.id === repositoryId)
                 .map(candidate => candidate.number)
             )];
-            const pulls = await Promise.all(prNumbers.map(async pullNumber => {
-              const { data: pull } = await github.rest.pulls.get({
-                ...context.repo,
-                pull_number: pullNumber,
-              });
-              return pull;
-            }));
+            const pulls = (await Promise.all(prNumbers.map(async pullNumber => {
+              try {
+                const { data: pull } = await github.rest.pulls.get({
+                  ...context.repo,
+                  pull_number: pullNumber,
+                });
+                return pull;
+              } catch (error) {
+                if (error.status === 404) {
+                  core.info(`Ignoring pull request ${pullNumber} because it no longer exists.`);
+                  return null;
+                }
+                throw error;
+              }
+            }))).filter(Boolean);
             const matchingPulls = pulls.filter(
               pull => pull.state === "open" && pull.head.sha === suite.head_sha
             );
             if (matchingPulls.length !== 1) {
-              core.setFailed(
-                `Expected exactly one open pull request in ${context.repo.owner}/${context.repo.repo} at ${suite.head_sha}; found ${matchingPulls.length}.`
+              core.info(
+                `Skipping comment target resolution because ${matchingPulls.length} open pull requests in ${context.repo.owner}/${context.repo.repo} point to ${suite.head_sha}; expected exactly one.`
               );
               return;
             }
             core.setOutput("pr_number", String(matchingPulls[0].number));
 
 safe-outputs:
+  report-failed-jobs: false
+  report-failure-as-issue: false
+  report-incomplete: false
+  missing-tool: false
+  missing-data: false
   noop:
     report-as-issue: false
   add-comment:
@@ -292,22 +334,28 @@ safe-outputs:
 
 ## Process
 
-1. Retrieve pull request `${{ needs.pre_activation.outputs.pr_number }}`. If it is not
-  open or its current head is not `${{ needs.pre_activation.outputs.head_sha }}`, call `noop` and stop.
+1. If the workflow cannot proceed, including because required data or a required tool is
+  unavailable, call `noop` and stop. Do not report an expected early exit as a workflow failure.
+  Use `noop`, not `missing_tool`, `missing_data`, or `report_incomplete`, for these paths.
+  Retrieve pull request `${{ needs.pre_activation.outputs.pr_number }}`. If it is not open or its
+  current head is not `${{ needs.pre_activation.outputs.head_sha }}`, call `noop` and stop.
 2. Read `.github/skills/azsdk-common-pipeline-analysis/SKILL.md` and its
   `references/failure-patterns.md`, then follow their diagnosis guidance. The deterministic setup
   has already run the CLI analysis, so do not follow the skill's MCP invocation requirement.
-3. Read `pipeline-analysis.json`, which contains the complete JSON output from `azsdk ci analyze`.
+3. Inspect `.github/skills` for repository- or language-specific skills
+  useful for analyzing the
+  failure, and read their `SKILL.md` files before diagnosing it.
+4. Read `pipeline-analysis.json`, which contains the complete JSON output from `azsdk ci analyze`.
   If it contains `No failed Azure Pipeline builds found` or no real failures, call `noop` and stop.
-4. Read `pipeline-test-results.txt`, which contains full failed-test details for every unique
+5. Read `pipeline-test-results.txt`, which contains full failed-test details for every unique
   `artifact_file_path` returned by the analysis. The CLI invocation uses the same
   `GetFailedTestResults` implementation as `azsdk_get_failed_test_run_data`. The exact-case MCP
   tool only performs a case-insensitive title selection over this same full result set, so select
   an exact case from this file when targeted follow-up is needed. Never diagnose or classify
   fixability from test titles alone.
-5. Group evidence by build, platform, artifact file, and failed test. Preserve platform-specific
+6. Group evidence by build, platform, artifact file, and failed test. Preserve platform-specific
   failures when titles overlap, but consolidate failures with one demonstrated root cause.
-6. Categorize the failures and determine whether any are fixable by an automated code change.
+7. Categorize the failures and determine whether any are fixable by an automated code change.
 
 ## Comment format
 

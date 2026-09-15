@@ -1,5 +1,31 @@
 # Release History
 
+## 2.1.0b1 (2026-08-05)
+
+### Features Added
+
+  - Client `RelayAPIMgmtClient` added operation group `clusters`
+  - Model `RelayNamespaceProperties` added property `minimum_tls_version`
+  - Added model `AvailableRelayClusterRegion`
+  - Added model `AvailableRelayClustersList`
+  - Added model `RelayCluster`
+  - Added model `RelayClusterProperties`
+  - Added enum `RelayClusterProvisioningState`
+  - Added model `RelayClusterSku`
+  - Added model `RelayClusterSkuCapacity`
+  - Added model `RelayClusterSkuDetails`
+  - Added model `RelayClusterSkuInfo`
+  - Added model `RelayClusterSkuListResult`
+  - Added enum `RelayClusterSkuName`
+  - Added enum `RelayClusterSkuScaleType`
+  - Added enum `RelayClusterSkuTier`
+  - Added model `RelayClusterSkuUpdate`
+  - Added model `RelayClusterUpdate`
+  - Added model `RelayNamespaceIdListResult`
+  - Added model `RelayNamespaceReference`
+  - Added enum `TlsVersion`
+  - Added operation group `ClustersOperations`
+
 ## 2.0.0 (2026-07-29)
 
 ### Features Added

@@ -242,9 +242,8 @@ class TestIndividualEnrollmentDelete(object):
     def service_client(self, mocked_response):
         mocked_response.delete(
             url=enrollment_url,
-            body="{}",
+            body="",
             status=204,
-            content_type="application/json",
             match_querystring=False,
         )
         yield mocked_response

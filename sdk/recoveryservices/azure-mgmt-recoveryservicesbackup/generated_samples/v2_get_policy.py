@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-01/AzureIaasVm/V2Policy/v2-Get-Policy.json
+# x-ms-original-file: 2026-08-01/AzureIaasVm/V2Policy/v2-Get-Policy.json
 if __name__ == "__main__":
     main()

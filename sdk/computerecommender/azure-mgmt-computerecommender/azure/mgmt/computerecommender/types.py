@@ -42,8 +42,7 @@ class SkuMixPlacementCapacityProfile(TypedDict, total=False):
     :ivar priority: The priority of the VMs to allocate. Required. Known values are: "Regular" and
      "Spot".
     :vartype priority: Union[str, "SkuMixPlacementPriority"]
-    :ivar spotPriorityProfile: Required when priority is Spot. Contains spot-specific
-     configuration.
+    :ivar spotPriorityProfile: Contains spot-specific configuration.
     :vartype spotPriorityProfile: "SkuMixPlacementSpotPriorityProfile"
     :ivar allocationStrategy: The allocation strategy for determining the optimal SKU split. Known
      values are: "LowestPrice", "Prioritized", and "EvictionOptimized".
@@ -62,7 +61,7 @@ class SkuMixPlacementCapacityProfile(TypedDict, total=False):
     priority: Required[Union[str, "SkuMixPlacementPriority"]]
     """The priority of the VMs to allocate. Required. Known values are: \"Regular\" and \"Spot\"."""
     spotPriorityProfile: "SkuMixPlacementSpotPriorityProfile"
-    """Required when priority is Spot. Contains spot-specific configuration."""
+    """Contains spot-specific configuration."""
     allocationStrategy: Union[str, "SkuMixPlacementAllocationStrategy"]
     """The allocation strategy for determining the optimal SKU split. Known values are:
      \"LowestPrice\", \"Prioritized\", and \"EvictionOptimized\"."""
@@ -107,7 +106,7 @@ class SkuMixPlacementRequest(TypedDict, total=False):
 
 
 class SkuMixPlacementSpotPriorityProfile(TypedDict, total=False):
-    """Spot priority configuration. Required when priority is Spot.
+    """Spot priority configuration.
 
     :ivar maxPricePerVm: Maximum price per VM the customer is willing to pay. Default: -1 (no price
      restriction).

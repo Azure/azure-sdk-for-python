@@ -141,6 +141,7 @@ class FileSharedAccessSignature(SharedAccessSignature):
             resource_path += "/" + str(directory_name)
         if file_name is not None:
             resource_path += "/" + str(file_name)
+        resource_path = resource_path.replace("\\", "/")
 
         sas = _FileSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)

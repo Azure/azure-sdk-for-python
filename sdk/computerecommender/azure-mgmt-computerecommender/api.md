@@ -80,7 +80,7 @@ namespace azure.mgmt.computerecommender.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-05-preview', params_added_on={'2026-05-05-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-05-05-preview'])
+        @api_version_validation(method_added_on='2026-05-05-preview', params_added_on={'2026-05-05-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-05-05-preview', '2026-09-05-preview'])
         async def get(
                 self, 
                 location: str, 
@@ -341,6 +341,35 @@ namespace azure.mgmt.computerecommender.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.computerecommender.models.SkuMixPlacementCapacityLimit(_Model):
+        limit: int
+        name: str
+        priority: Union[str, SkuMixPlacementPriority]
+        reason: Union[str, SkuMixPlacementCapacityLimitReason]
+        zone: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                limit: int, 
+                name: str, 
+                priority: Union[str, SkuMixPlacementPriority], 
+                reason: Union[str, SkuMixPlacementCapacityLimitReason], 
+                zone: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.computerecommender.models.SkuMixPlacementCapacityLimitReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        INSUFFICIENT_CAPACITY = "InsufficientCapacity"
+        INSUFFICIENT_QUOTA = "InsufficientQuota"
+        NONE = "None"
+        SKU_NOT_AVAILABLE = "SkuNotAvailable"
+
+
     class azure.mgmt.computerecommender.models.SkuMixPlacementCapacityProfile(_Model):
         allocation_strategy: Optional[Union[str, SkuMixPlacementAllocationStrategy]]
         capacity: int
@@ -373,7 +402,6 @@ namespace azure.mgmt.computerecommender.models
 
 
     class azure.mgmt.computerecommender.models.SkuMixPlacementDeploymentChoice(_Model):
-        id: str
         score: int
         sku_split: list[SkuMixPlacementItem]
 
@@ -381,7 +409,6 @@ namespace azure.mgmt.computerecommender.models
         def __init__(
                 self, 
                 *, 
-                id: str, 
                 score: int, 
                 sku_split: list[SkuMixPlacementItem]
             ) -> None: ...
@@ -406,7 +433,6 @@ namespace azure.mgmt.computerecommender.models
 
     class azure.mgmt.computerecommender.models.SkuMixPlacementItem(_Model):
         capacity: int
-        capacity_max: Optional[int]
         name: str
         priority: Union[str, SkuMixPlacementPriority]
         zone: Optional[str]
@@ -416,7 +442,6 @@ namespace azure.mgmt.computerecommender.models
                 self, 
                 *, 
                 capacity: int, 
-                capacity_max: Optional[int] = ..., 
                 name: str, 
                 priority: Union[str, SkuMixPlacementPriority], 
                 zone: Optional[str] = ...
@@ -475,6 +500,8 @@ namespace azure.mgmt.computerecommender.models
 
 
     class azure.mgmt.computerecommender.models.SkuMixPlacementResponse(_Model):
+        capacity_limits: Optional[list[SkuMixPlacementCapacityLimit]]
+        id: str
         partial_fulfillment_reason: Union[str, SkuMixPlacementPartialFulfillmentReason]
         placement_choices: list[SkuMixPlacementDeploymentChoice]
         valid_until: Optional[datetime]
@@ -483,6 +510,8 @@ namespace azure.mgmt.computerecommender.models
         def __init__(
                 self, 
                 *, 
+                capacity_limits: Optional[list[SkuMixPlacementCapacityLimit]] = ..., 
+                id: str, 
                 partial_fulfillment_reason: Union[str, SkuMixPlacementPartialFulfillmentReason], 
                 placement_choices: list[SkuMixPlacementDeploymentChoice], 
                 valid_until: Optional[datetime] = ...
@@ -651,7 +680,7 @@ namespace azure.mgmt.computerecommender.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-05-preview', params_added_on={'2026-05-05-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-05-05-preview'])
+        @api_version_validation(method_added_on='2026-05-05-preview', params_added_on={'2026-05-05-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-05-05-preview', '2026-09-05-preview'])
         def get(
                 self, 
                 location: str, 

@@ -17,7 +17,7 @@ AZURE_SDK_INDEX_URL = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/az
 PYPI_INDEX_URL = "https://pypi.org/simple/"
 
 
-def get_package_wheel_path(pkg_root: str) -> str:
+def get_package_wheel_path(pkg_root: str, staging_dir: Optional[str] = None) -> str:
     # parse setup.py to get package name and version
     pkg_details = ParsedSetup.from_path(pkg_root)
 
@@ -34,7 +34,11 @@ def get_package_wheel_path(pkg_root: str) -> str:
                 )
             )
         return pkg_path
-    # Otherwise, use wheel created in staging directory, or fall back on source directory
+    if staging_dir:
+        found_whl = find_whl(staging_dir, pkg_details.name, pkg_details.version)
+        if found_whl:
+            return os.path.join(staging_dir, found_whl)
+    # Otherwise, use a wheel in the source directory, or fall back on the source directory
     pkg_path = find_whl(pkg_root, pkg_details.name, pkg_details.version) or pkg_root
     return pkg_path
 
@@ -197,7 +201,7 @@ class apistub(Check):
                         pre_download_disabled=False,
                         python_executable=executable,
                     )
-                pkg_path = get_package_wheel_path(package_dir)
+                pkg_path = get_package_wheel_path(package_dir, staging_directory)
 
             if install_deps:
                 self.pip_freeze(executable)

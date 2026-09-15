@@ -64,7 +64,7 @@ The options that are available for all `Receive` perf tests:
 - `--uamqp-transport` - Use the `uamqp` library as the underlying transport instead of the Python-based AMQP library. Defaults to False.
 - `--transport-type` - Whether to use AMQP (0) or Websocket (1) transport protocol when communicating with the Service Bus service. Defaults to 0 (AMQP).
 - `--peeklock` - Whether to run the test using peeklock mode instead of receive and  mode. If peeklock is used, messages will be completed. Default is False (receive and delete).
-- `--max-wait-time=0` - The max time to wait for the specified number of messages to be received. Defaults to 0 (indefinitely).
+- `--max-wait-time=0` - The max time to wait for the specified number of messages to be received. Defaults to 0, which passes no wait time. The streaming tests then wait indefinitely, while the batch tests are bounded by `receive_messages()`'s 60 second default.
 - `--preload=10000` - The number of messages to preload into the queue before the receiving tests start. Defaults to 10000 messages.
 
 

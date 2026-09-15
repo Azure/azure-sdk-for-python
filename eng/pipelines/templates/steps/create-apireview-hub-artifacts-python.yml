@@ -71,7 +71,11 @@ steps:
             fi
             install -D "$tooling_dir/eng/common/scripts/Export-APIViewMarkdown.ps1" "$source_repo/eng/common/scripts/Export-APIViewMarkdown.ps1"
             install -D "$tooling_dir/eng/scripts/extract_apiview_metadata.py" "$source_repo/eng/scripts/extract_apiview_metadata.py"
-            (cd "$source_repo" && PYTHONPATH="$common_tasks_dir${PYTHONPATH:+:$PYTHONPATH}" python -m azpysdk.main apistub --dest-dir "$package_dir" "$PACKAGE_NAME")
+            python -c "import apistub, sys; print(f'Python: {sys.executable}'); print(f'apistub: {apistub.__file__}')"
+            if ! (cd "$source_repo" && PYTHONPATH="$common_tasks_dir${PYTHONPATH:+:$PYTHONPATH}" python -m azpysdk.main apistub --dest-dir "$package_dir" "$PACKAGE_NAME"); then
+              echo "API review generation failed without package dependencies; retrying with --install-deps."
+              (cd "$source_repo" && PYTHONPATH="$common_tasks_dir${PYTHONPATH:+:$PYTHONPATH}" python -m azpysdk.main apistub --install-deps --dest-dir "$package_dir" "$PACKAGE_NAME")
+            fi
 
             if [ ! -f "$package_dir/api.md" ]; then
               echo "Expected api.md was not generated at $package_dir/api.md" >&2

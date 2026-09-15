@@ -192,6 +192,37 @@ class TestPkRangeDrainSync(unittest.TestCase):
         self.assertEqual(previous.change_feed_etag, '"etag-prev"')
         self.assertIs(cache._collection_routing_map_by_item[link], result)
 
+    def test_deferred_child_revision_preserves_feed_order(self):
+        previous = _make_complete_routing_map(etag='"etag-prev"')
+        b = dict(_full_range("B", "", "55"), parents=["0"])
+        c = dict(_full_range("C", "55", "FF"), parents=["0"])
+        old_d = dict(_full_range("D", "", "33"), parents=["B"], throughputFraction=0.25)
+        new_d = dict(old_d, throughputFraction=0.5)
+        e = dict(_full_range("E", "33", "55"), parents=["B"])
+
+        for records in ([old_d, b, new_d, e, c], [old_d, new_d, e, c, b], [b, old_d, e, new_d, c]):
+            with self.subTest(order=[(r["id"], r.get("throughputFraction")) for r in records]):
+                client, script = _make_scripted_client(
+                    [
+                        ("page", records, '"etag-new"', 200),
+                        ("page", [], '"etag-new"', 304),
+                    ]
+                )
+                cache = PartitionKeyRangeCache(client)
+                self.addCleanup(cache.release)
+                result = cache._fetch_routing_map("dbs/db/colls/default", "coll1", previous, {})
+
+                self.assertEqual(result.get_range_by_partition_key_range_id("D").throughputFraction, 0.5)
+                self.assertEqual(result._rangeById["D"][1], previous._rangeById["0"][1])
+                self.assertEqual(result.change_feed_etag, '"etag-new"')
+                self.assertEqual(set(result._rangeById), {"C", "D", "E"})
+                self.assertEqual(result._goneRangeIds, {"0", "B"})
+                self.assertEqual(script.if_none_match_seen, ['"etag-prev"', '"etag-new"'])
+                self.assertEqual(script.calls, 2)
+                self.assertEqual(set(previous._rangeById), {"0"})
+                self.assertEqual(previous.change_feed_etag, '"etag-prev"')
+                self.assertEqual(old_d["throughputFraction"], 0.25)
+
     def test_drain_propagates_etag_across_pages(self):
         """Three pages with distinct etags drain into one complete map.
 

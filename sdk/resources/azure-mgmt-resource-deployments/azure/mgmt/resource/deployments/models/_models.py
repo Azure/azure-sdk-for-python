@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Alias(_Model):
+class Alias(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The alias type.
 
     :ivar name: The alias name.
@@ -77,7 +77,7 @@ class Alias(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AliasPath(_Model):
+class AliasPath(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type of the paths for alias.
 
     :ivar path: The path of an alias.
@@ -141,7 +141,7 @@ class AliasPathMetadata(_Model):
      \"Modifiable\"."""
 
 
-class AliasPattern(_Model):
+class AliasPattern(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type of the pattern for an alias path.
 
     :ivar phrase: The alias pattern phrase.
@@ -196,7 +196,7 @@ class ApiProfile(_Model):
     """The API version."""
 
 
-class BasicDependency(_Model):
+class BasicDependency(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment dependency information.
 
     :ivar id: The ID of the dependency.
@@ -238,7 +238,7 @@ class BasicDependency(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudError(_Model):
+class CloudError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error response for a resource management request.
 
     :ivar error: Common error response for all Azure Resource Manager APIs to return error details
@@ -268,7 +268,7 @@ class CloudError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DebugSetting(_Model):
+class DebugSetting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The debug setting.
 
     :ivar detail_level: Specifies the type of information to log for debugging. The permitted
@@ -307,7 +307,7 @@ class DebugSetting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Dependency(_Model):
+class Dependency(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment dependency information.
 
     :ivar depends_on: The list of dependencies.
@@ -356,7 +356,7 @@ class Dependency(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Deployment(_Model):
+class Deployment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment operation parameters.
 
     :ivar location: The location to store the deployment data.
@@ -432,7 +432,7 @@ class DeploymentDiagnosticsDefinition(_Model):
     """The error additional info."""
 
 
-class DeploymentExportResult(_Model):
+class DeploymentExportResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The deployment export result.
 
     :ivar template: The template content.
@@ -505,7 +505,7 @@ class ExtensionResource(Resource):
     """
 
 
-class DeploymentExtended(ExtensionResource):
+class DeploymentExtended(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -556,12 +556,9 @@ class DeploymentExtended(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentExtensionConfigItem(_Model):
-    """DeploymentExtensionConfigItem.
+class DeploymentExtensionConfigItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents the value for an extension config property.
 
-    :ivar type: The value type of the extension config property. Known values are: "String", "Int",
-     "Bool", "Array", "Object", "SecureString", and "SecureObject".
-    :vartype type: str or ~azure.mgmt.resource.deployments.models.ExtensionConfigPropertyType
     :ivar value: The value of the extension config property.
     :vartype value: any
     :ivar key_vault_reference: The Azure Key Vault reference used to retrieve the secret value of
@@ -570,9 +567,6 @@ class DeploymentExtensionConfigItem(_Model):
      ~azure.mgmt.resource.deployments.models.KeyVaultParameterReference
     """
 
-    type: Optional[Union[str, "_models.ExtensionConfigPropertyType"]] = rest_field(visibility=["read"])
-    """The value type of the extension config property. Known values are: \"String\", \"Int\",
-     \"Bool\", \"Array\", \"Object\", \"SecureString\", and \"SecureObject\"."""
     value: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The value of the extension config property."""
     key_vault_reference: Optional["_models.KeyVaultParameterReference"] = rest_field(
@@ -609,9 +603,12 @@ class DeploymentExtensionDefinition(_Model):
     :vartype name: str
     :ivar version: The extension version.
     :vartype version: str
-    :ivar config_id: The extension configuration ID. It uniquely identifies a deployment control
-     plane within an extension.
+    :ivar config_id: The extension configuration ID. It uniquely identifies a deployment target
+     within an extension.
     :vartype config_id: str
+    :ivar config_hash: The extension configuration hash. Can be used to distinguish different
+     configurations that have the same config ID.
+    :vartype config_hash: str
     :ivar config: The extension configuration.
     :vartype config: dict[str,
      ~azure.mgmt.resource.deployments.models.DeploymentExtensionConfigItem]
@@ -624,13 +621,15 @@ class DeploymentExtensionDefinition(_Model):
     version: Optional[str] = rest_field(visibility=["read"])
     """The extension version."""
     config_id: Optional[str] = rest_field(name="configId", visibility=["read"])
-    """The extension configuration ID. It uniquely identifies a deployment control plane within an
-     extension."""
+    """The extension configuration ID. It uniquely identifies a deployment target within an extension."""
+    config_hash: Optional[str] = rest_field(name="configHash", visibility=["read"])
+    """The extension configuration hash. Can be used to distinguish different configurations that have
+     the same config ID."""
     config: Optional[dict[str, "_models.DeploymentExtensionConfigItem"]] = rest_field(visibility=["read"])
     """The extension configuration."""
 
 
-class DeploymentExternalInput(_Model):
+class DeploymentExternalInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment external input for parameterization.
 
     :ivar value: External input value. Required.
@@ -658,7 +657,7 @@ class DeploymentExternalInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentExternalInputDefinition(_Model):
+class DeploymentExternalInputDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment external input definition for parameterization.
 
     :ivar kind: The kind of external input. Required.
@@ -691,7 +690,7 @@ class DeploymentExternalInputDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentIdentity(_Model):
+class DeploymentIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Managed Identity configuration for a deployment.
 
     :ivar type: The identity type. Required. Known values are: "None" and "UserAssigned".
@@ -730,7 +729,7 @@ class DeploymentIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentOperation(_Model):
+class DeploymentOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment operation information.
 
     :ivar id: Full deployment operation ID.
@@ -826,7 +825,7 @@ class DeploymentOperationProperties(_Model):
     """The HTTP response message."""
 
 
-class DeploymentParameter(_Model):
+class DeploymentParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment parameter for the template.
 
     :ivar value: Input value to the parameter .
@@ -866,7 +865,7 @@ class DeploymentParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentProperties(_Model):
+class DeploymentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment properties.
 
     :ivar template: The template content. You use this element when you want to pass the template
@@ -1008,7 +1007,7 @@ class DeploymentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentPropertiesExtended(_Model):
+class DeploymentPropertiesExtended(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment properties with additional details.
 
     :ivar provisioning_state: Denotes the state of provisioning. Known values are: "NotSpecified",
@@ -1132,7 +1131,72 @@ class DeploymentPropertiesExtended(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentValidateResult(_Model):
+class DeploymentResourceWhatIfPrediction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A prediction for a deployment resource by its symbolic name path.
+
+    :ivar symbolic_name_path: The symbolic name path to the resource in the deployment template,
+     including nested deployment(s) and extension if applicable. Required.
+    :vartype symbolic_name_path: list[str]
+    :ivar resource_id: The predicted fully-qualified Azure resource ID.
+    :vartype resource_id: str
+    :ivar extension: The predicted extension usage.
+    :vartype extension: ~azure.mgmt.resource.deployments.models.DeploymentExtensionDefinition
+    :ivar resource_type: The predicted resource type.
+    :vartype resource_type: str
+    :ivar identifiers: The predicted extensible resource identifiers.
+    :vartype identifiers: any
+    :ivar api_version: The predicted API version.
+    :vartype api_version: str
+    """
+
+    symbolic_name_path: list[str] = rest_field(
+        name="symbolicNamePath", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The symbolic name path to the resource in the deployment template, including nested
+     deployment(s) and extension if applicable. Required."""
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The predicted fully-qualified Azure resource ID."""
+    extension: Optional["_models.DeploymentExtensionDefinition"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The predicted extension usage."""
+    resource_type: Optional[str] = rest_field(
+        name="resourceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The predicted resource type."""
+    identifiers: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The predicted extensible resource identifiers."""
+    api_version: Optional[str] = rest_field(
+        name="apiVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The predicted API version."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        symbolic_name_path: list[str],
+        resource_id: Optional[str] = None,
+        extension: Optional["_models.DeploymentExtensionDefinition"] = None,
+        resource_type: Optional[str] = None,
+        identifiers: Optional[Any] = None,
+        api_version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeploymentValidateResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information from validate template deployment response.
 
     :ivar error: The deployment validation error.
@@ -1178,7 +1242,7 @@ class DeploymentValidateResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentWhatIf(_Model):
+class DeploymentWhatIf(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment What-if operation parameters.
 
     :ivar location: The location to store the deployment data.
@@ -1213,7 +1277,7 @@ class DeploymentWhatIf(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentWhatIfProperties(DeploymentProperties):
+class DeploymentWhatIfProperties(DeploymentProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment What-if properties.
 
     :ivar template: The template content. You use this element when you want to pass the template
@@ -1266,12 +1330,20 @@ class DeploymentWhatIfProperties(DeploymentProperties):
     :vartype validation_level: str or ~azure.mgmt.resource.deployments.models.ValidationLevel
     :ivar what_if_settings: Optional What-If operation settings.
     :vartype what_if_settings: ~azure.mgmt.resource.deployments.models.DeploymentWhatIfSettings
+    :ivar resource_predictions: Resource predictions that can be utilized by what-if to produce
+     potential modification changes.
+    :vartype resource_predictions:
+     list[~azure.mgmt.resource.deployments.models.DeploymentResourceWhatIfPrediction]
     """
 
     what_if_settings: Optional["_models.DeploymentWhatIfSettings"] = rest_field(
         name="whatIfSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional What-If operation settings."""
+    resource_predictions: Optional[list["_models.DeploymentResourceWhatIfPrediction"]] = rest_field(
+        name="resourcePredictions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource predictions that can be utilized by what-if to produce potential modification changes."""
 
     @overload
     def __init__(
@@ -1290,6 +1362,7 @@ class DeploymentWhatIfProperties(DeploymentProperties):
         expression_evaluation_options: Optional["_models.ExpressionEvaluationOptions"] = None,
         validation_level: Optional[Union[str, "_models.ValidationLevel"]] = None,
         what_if_settings: Optional["_models.DeploymentWhatIfSettings"] = None,
+        resource_predictions: Optional[list["_models.DeploymentResourceWhatIfPrediction"]] = None,
     ) -> None: ...
 
     @overload
@@ -1303,7 +1376,7 @@ class DeploymentWhatIfProperties(DeploymentProperties):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentWhatIfSettings(_Model):
+class DeploymentWhatIfSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment What-If operation settings.
 
     :ivar result_format: The format of the What-If results. Known values are: "ResourceIdOnly" and
@@ -1380,7 +1453,7 @@ class ErrorResponse(_Model):
     """The error additional info."""
 
 
-class ExpressionEvaluationOptions(_Model):
+class ExpressionEvaluationOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies whether template expressions are evaluated within the scope of the parent template or
     nested template.
 
@@ -1414,7 +1487,7 @@ class ExpressionEvaluationOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HttpMessage(_Model):
+class HttpMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HTTP message.
 
     :ivar content: HTTP message content.
@@ -1442,7 +1515,7 @@ class HttpMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultParameterReference(_Model):
+class KeyVaultParameterReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Key Vault parameter reference.
 
     :ivar key_vault: Azure Key Vault reference. Required.
@@ -1484,7 +1557,7 @@ class KeyVaultParameterReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultReference(_Model):
+class KeyVaultReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Key Vault reference.
 
     :ivar id: Azure Key Vault resource id. Required.
@@ -1512,7 +1585,7 @@ class KeyVaultReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OnErrorDeployment(_Model):
+class OnErrorDeployment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment on error behavior.
 
     :ivar type: The deployment on error behavior type. Possible values are LastSuccessful and
@@ -1551,7 +1624,7 @@ class OnErrorDeployment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OnErrorDeploymentExtended(_Model):
+class OnErrorDeploymentExtended(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment on error behavior with additional details.
 
     :ivar provisioning_state: The state of the provisioning for the on error deployment.
@@ -1594,7 +1667,7 @@ class OnErrorDeploymentExtended(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ParametersLink(_Model):
+class ParametersLink(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Entity representing the reference to the deployment parameters.
 
     :ivar uri: The URI of the parameters file. Required.
@@ -1629,7 +1702,7 @@ class ParametersLink(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Provider(_Model):
+class Provider(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource provider information.
 
     :ivar id: The provider ID.
@@ -1685,7 +1758,7 @@ class Provider(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProviderExtendedLocation(_Model):
+class ProviderExtendedLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The provider extended location.
 
     :ivar location: The azure location.
@@ -1725,7 +1798,7 @@ class ProviderExtendedLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProviderResourceType(_Model):
+class ProviderResourceType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource type managed by the resource provider.
 
     :ivar resource_type: The resource type.
@@ -1804,7 +1877,7 @@ class ProviderResourceType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceReference(_Model):
+class ResourceReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource Id model.
 
     :ivar id: The fully qualified Azure resource ID.
@@ -1817,6 +1890,9 @@ class ResourceReference(_Model):
     :vartype identifiers: any
     :ivar api_version: The API version the resource was deployed with.
     :vartype api_version: str
+    :ivar symbolic_name_path: The symbolic name path to the resource in the deployment template,
+     including nested deployment(s) and extension if applicable.
+    :vartype symbolic_name_path: list[str]
     """
 
     id: Optional[str] = rest_field(visibility=["read"])
@@ -1829,9 +1905,31 @@ class ResourceReference(_Model):
     """The extensible resource identifiers."""
     api_version: Optional[str] = rest_field(name="apiVersion", visibility=["read"])
     """The API version the resource was deployed with."""
+    symbolic_name_path: Optional[list[str]] = rest_field(
+        name="symbolicNamePath", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The symbolic name path to the resource in the deployment template, including nested
+     deployment(s) and extension if applicable."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        symbolic_name_path: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
-class ScopedDeployment(_Model):
+class ScopedDeployment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment operation parameters.
 
     :ivar location: The location to store the deployment data. Required.
@@ -1869,7 +1967,7 @@ class ScopedDeployment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScopedDeploymentWhatIf(_Model):
+class ScopedDeploymentWhatIf(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment What-if operation parameters.
 
     :ivar location: The location to store the deployment data. Required.
@@ -1904,7 +2002,7 @@ class ScopedDeploymentWhatIf(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StatusMessage(_Model):
+class StatusMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation status message object.
 
     :ivar status: Status of the deployment operation.
@@ -1937,7 +2035,7 @@ class StatusMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -2004,7 +2102,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TargetResource(_Model):
+class TargetResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Target resource.
 
     :ivar id: The Azure resource ID of the resource.
@@ -2021,6 +2119,9 @@ class TargetResource(_Model):
     :vartype api_version: str
     :ivar symbolic_name: The symbolic name of the resource as defined in the deployment template.
     :vartype symbolic_name: str
+    :ivar symbolic_name_path: The symbolic name path to the resource in the deployment template,
+     including nested deployment(s) and extension if applicable.
+    :vartype symbolic_name_path: list[str]
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2047,6 +2148,11 @@ class TargetResource(_Model):
         name="symbolicName", visibility=["read", "create", "update", "delete", "query"]
     )
     """The symbolic name of the resource as defined in the deployment template."""
+    symbolic_name_path: Optional[list[str]] = rest_field(
+        name="symbolicNamePath", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The symbolic name path to the resource in the deployment template, including nested
+     deployment(s) and extension if applicable."""
 
     @overload
     def __init__(
@@ -2059,6 +2165,7 @@ class TargetResource(_Model):
         identifiers: Optional[Any] = None,
         api_version: Optional[str] = None,
         symbolic_name: Optional[str] = None,
+        symbolic_name_path: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -2072,7 +2179,7 @@ class TargetResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TemplateHashResult(_Model):
+class TemplateHashResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of the request to calculate template hash. It contains a string of minified template and
     its hash.
 
@@ -2110,7 +2217,7 @@ class TemplateHashResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TemplateLink(_Model):
+class TemplateLink(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Entity representing the reference to the template.
 
     :ivar uri: The URI of the template to deploy. Use either the uri or id property, but not both.
@@ -2186,15 +2293,17 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class WhatIfChange(_Model):
+class WhatIfChange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about a single resource change predicted by What-If operation.
 
-    :ivar resource_id: Resource ID.
+    :ivar resource_id: The fully-qualified ARM resource ID for this change.
     :vartype resource_id: str
     :ivar deployment_id: The resource id of the Deployment responsible for this change.
     :vartype deployment_id: str
     :ivar symbolic_name: The symbolic name of the resource responsible for this change.
     :vartype symbolic_name: str
+    :ivar resource_type: The resource type of the resource.
+    :vartype resource_type: str
     :ivar identifiers: A subset of properties that uniquely identify a Bicep extensible resource
      because it lacks a resource id like an Azure resource has.
     :vartype identifiers: any
@@ -2217,7 +2326,7 @@ class WhatIfChange(_Model):
     resource_id: Optional[str] = rest_field(
         name="resourceId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Resource ID."""
+    """The fully-qualified ARM resource ID for this change."""
     deployment_id: Optional[str] = rest_field(
         name="deploymentId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2226,6 +2335,10 @@ class WhatIfChange(_Model):
         name="symbolicName", visibility=["read", "create", "update", "delete", "query"]
     )
     """The symbolic name of the resource responsible for this change."""
+    resource_type: Optional[str] = rest_field(
+        name="resourceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource type of the resource."""
     identifiers: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A subset of properties that uniquely identify a Bicep extensible resource because it lacks a
      resource id like an Azure resource has."""
@@ -2260,6 +2373,7 @@ class WhatIfChange(_Model):
         resource_id: Optional[str] = None,
         deployment_id: Optional[str] = None,
         symbolic_name: Optional[str] = None,
+        resource_type: Optional[str] = None,
         identifiers: Optional[Any] = None,
         extension: Optional["_models.DeploymentExtensionDefinition"] = None,
         unsupported_reason: Optional[str] = None,
@@ -2279,7 +2393,7 @@ class WhatIfChange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WhatIfOperationProperties(_Model):
+class WhatIfOperationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment operation properties.
 
     :ivar changes: List of resource changes predicted by What-If operation.
@@ -2321,7 +2435,7 @@ class WhatIfOperationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WhatIfOperationResult(_Model):
+class WhatIfOperationResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of the What-If operation. Contains a list of predicted changes and a URL link to get to
     the next set of results.
 
@@ -2382,7 +2496,7 @@ class WhatIfOperationResult(_Model):
             super().__setattr__(key, value)
 
 
-class WhatIfPropertyChange(_Model):
+class WhatIfPropertyChange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The predicted change to the resource property.
 
     :ivar path: The path of the property. Required.
@@ -2437,7 +2551,7 @@ class WhatIfPropertyChange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ZoneMapping(_Model):
+class ZoneMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ZoneMapping.
 
     :ivar location: The location of the zone mapping.

@@ -174,6 +174,36 @@ class TestPkRangeDrainAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(previous.change_feed_etag, '"etag-prev"')
         self.assertIs(cache._collection_routing_map_by_item[link], result)
 
+    async def test_deferred_child_revision_across_pages_preserves_feed_order_async(self):
+        previous = _make_complete_routing_map(etag='"etag-prev"')
+        b = dict(_full_range("B", "", "55"), parents=["0"])
+        c = dict(_full_range("C", "55", "FF"), parents=["0"])
+        old_d = dict(_full_range("D", "", "33"), parents=["B"], throughputFraction=0.25)
+        new_d = dict(old_d, throughputFraction=0.5)
+        e = dict(_full_range("E", "33", "55"), parents=["B"])
+        client, script = _make_scripted_async_client(
+            [
+                ("page", [old_d], '"etag-page-1"', 200),
+                ("page", [b, new_d, e, c], '"etag-page-2"', 200),
+                ("page", [], '"etag-page-2"', 304),
+            ]
+        )
+        cache = PartitionKeyRangeCache(client)
+        self.addCleanup(cache.release)
+
+        result = await cache._fetch_routing_map("dbs/db/colls/default", "coll1", previous, {})
+
+        self.assertEqual(result.get_range_by_partition_key_range_id("D").throughputFraction, 0.5)
+        self.assertEqual(result._rangeById["D"][1], previous._rangeById["0"][1])
+        self.assertEqual(result.change_feed_etag, '"etag-page-2"')
+        self.assertEqual(set(result._rangeById), {"C", "D", "E"})
+        self.assertEqual(result._goneRangeIds, {"0", "B"})
+        self.assertEqual(script.if_none_match_seen, ['"etag-prev"', '"etag-page-1"', '"etag-page-2"'])
+        self.assertEqual(script.calls, 3)
+        self.assertEqual(set(previous._rangeById), {"0"})
+        self.assertEqual(previous.change_feed_etag, '"etag-prev"')
+        self.assertEqual(old_d["throughputFraction"], 0.25)
+
     async def test_drain_propagates_etag_across_pages_async(self):
         """Three pages with distinct etags drain into one complete map."""
         page1 = [_full_range("0", "", "55")]
