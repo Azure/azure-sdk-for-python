@@ -189,7 +189,7 @@ except NameError:
 class UTC(datetime.tzinfo):
     """Time Zone info for handling UTC"""
 
-    def utcoffset(self, dt):
+    def utcoffset(self, dt):  # pylint: disable=unused-argument
         """UTF offset for UTC is 0.
 
         :param datetime.datetime dt: The datetime
@@ -198,7 +198,7 @@ class UTC(datetime.tzinfo):
         """
         return datetime.timedelta(0)
 
-    def tzname(self, dt):
+    def tzname(self, dt):  # pylint: disable=unused-argument
         """Timestamp representation.
 
         :param datetime.datetime dt: The datetime
@@ -207,7 +207,7 @@ class UTC(datetime.tzinfo):
         """
         return "Z"
 
-    def dst(self, dt):
+    def dst(self, dt):  # pylint: disable=unused-argument
         """No daylight saving for UTC.
 
         :param datetime.datetime dt: The datetime
@@ -230,16 +230,16 @@ except ImportError:  # Python 2.7
         def __init__(self, offset) -> None:
             self.__offset = offset
 
-        def utcoffset(self, dt):
+        def utcoffset(self, dt):  # pylint: disable=unused-argument
             return self.__offset
 
-        def tzname(self, dt):
+        def tzname(self, dt):  # pylint: disable=unused-argument
             return str(self.__offset.total_seconds() / 3600)
 
         def __repr__(self):
             return "<FixedOffset {}>".format(self.tzname(None))
 
-        def dst(self, dt):
+        def dst(self, dt):  # pylint: disable=unused-argument
             return datetime.timedelta(0)
 
         def __getinitargs__(self):

@@ -34,11 +34,10 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(
             self,
-            endpoint,  # type: str
-            credential,  # type: Union[TokenCredential, AzureKeyCredential]
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+            endpoint: str,
+            credential: Union[TokenCredential, AzureKeyCredential],
+            **kwargs: Any
+    ) -> None:
         try:
             if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
@@ -57,9 +56,9 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
     @classmethod
     def from_connection_string(
             cls,
-            conn_str,  # type: str
-            **kwargs  # type: Any
-    ):  # type: (...) -> SmsClient
+            conn_str: str,
+            **kwargs: Any
+    ) -> "SmsClient":
         """Create SmsClient from a Connection String.
 
         :param str conn_str:

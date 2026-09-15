@@ -109,7 +109,7 @@ class RouterWorkerSamples(object):
         # [END create_worker]
 
     def create_worker_w_limit_concurrent_offers(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         worker_id = self._worker_id
         # [START create_worker_w_limit_concurrent_offers]
         from azure.communication.jobrouter import (
@@ -167,7 +167,7 @@ class RouterWorkerSamples(object):
         # 4. Add a new label: `Xbox_Support_EN` and set value true
         # 5. Increase capacityCostPerJob for channel `WebChatEscalated` to 50
 
-        updated_router_worker: RouterWorker = router_client.upsert_worker(
+        updated_router_worker: RouterWorker = router_client.upsert_worker(  # type: ignore[call-overload]
             worker_id,
             queues=["worker-q-3"],
             channels=[RouterChannel(channel_id="WebChatEscalated", capacity_cost_per_job=50)],
@@ -198,7 +198,7 @@ class RouterWorkerSamples(object):
 
         router_client = JobRouterClient.from_connection_string(conn_str=connection_string)
 
-        router_worker = router_client.upsert_worker(worker_id, available_for_offers=True)
+        router_worker = router_client.upsert_worker(worker_id, available_for_offers=True)  # type: ignore[call-overload]
 
         print(f"Successfully registered router worker with id: {router_worker.id} with status: {router_worker.state}")
         # [END register_worker]
@@ -211,7 +211,7 @@ class RouterWorkerSamples(object):
 
         router_client = JobRouterClient.from_connection_string(conn_str=connection_string)
 
-        router_worker = router_client.upsert_worker(worker_id, available_for_offers=False)
+        router_worker = router_client.upsert_worker(worker_id, available_for_offers=False)  # type: ignore[call-overload]
 
         print(
             f"Successfully de-registered router worker with id: {router_worker.id} with status: {router_worker.state}"
