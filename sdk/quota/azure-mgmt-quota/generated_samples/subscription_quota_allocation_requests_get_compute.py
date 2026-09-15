@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/SubscriptionQuotaAllocationRequests/SubscriptionQuotaAllocationRequests_Get-Compute.json
+# x-ms-original-file: 2026-09-01-preview/SubscriptionQuotaAllocationRequests/SubscriptionQuotaAllocationRequests_Get-Compute.json
 if __name__ == "__main__":
     main()
