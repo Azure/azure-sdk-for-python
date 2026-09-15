@@ -6,9 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Union
+from typing import Literal, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from . import models as _models
 Filters = Union["_models.ComparisonFilter", "_models.CompoundFilter"]
+VoiceAgentToolChoice = Union[
+    Literal["none"], Literal["auto"], Literal["required"], "_models.ToolChoiceFunction", "_models.ToolChoiceMCP"
+]
+VoiceAgentMaxOutputTokens = Union[int, Literal["inf"]]
 RoutineRunStatus = str
+VoiceAgentSessionUpdate = Union["_models.VoiceAgentSessionUpdateConfig"]
+VoiceAgentSessionResponse = Union["_models.VoiceAgentSessionResponseConfig"]
+GenerateAgentRequest = Union["_models.GenerateVoiceAgentRequest"]

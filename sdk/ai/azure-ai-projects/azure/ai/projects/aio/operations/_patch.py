@@ -27,6 +27,9 @@ from ._operations import (
     BetaRoutinesOperations,
     BetaSchedulesOperations,
     BetaSkillsOperations,
+    BetaVoiceAgentsConversationsOperations,
+    BetaVoiceAgentsOperations,
+    BetaVoiceAgentsTelephonyOperations,
 )
 
 
@@ -64,6 +67,8 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.aio.operations.BetaSkillsOperations` operations"""
     datasets: BetaDatasetsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaDatasetsOperations` operations"""
+    voice_agents: BetaVoiceAgentsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsOperations` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -105,6 +110,9 @@ __all__: List[str] = [
     "BetaRoutinesOperations",
     "BetaSchedulesOperations",
     "BetaSkillsOperations",
+    "BetaVoiceAgentsConversationsOperations",
+    "BetaVoiceAgentsOperations",
+    "BetaVoiceAgentsTelephonyOperations",
     "ConnectionsOperations",
     "DatasetsOperations",
     "EvaluationRulesOperations",

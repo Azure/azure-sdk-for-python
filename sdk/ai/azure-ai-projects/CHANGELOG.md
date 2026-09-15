@@ -1,5 +1,30 @@
 # Release History
 
+## 2.7.0 (Unreleased)
+
+### Features Added
+
+* Added preview Voice Agent support, including voice agent definitions, realtime sessions and events, conversations, audio, and telephony models.
+* Added `.beta.agents.create_from_prompt()` to generate and create a Voice Agent from high-level inputs.
+* Added the `.beta.voice_agents.conversations` sub-client for managing voice conversations and retrieving their responses, conversation items, and audio.
+* Added the `.beta.voice_agents.telephony` sub-client for managing calls, bindings, transfer targets, campaigns, and recipient imports.
+* Added optional `harness` and `skills` properties to `PromptAgentDefinition`, with new GitHub Copilot harness, toolset, and skill-reference models.
+* Added invocation moderation through `RaiConfig.invocations_moderation` and `RaiInvocationModeration`.
+* Added `ToolboxesOperations.invoke_latest_toolbox_mcp()` and toolbox version metadata through `ToolboxObject.updated_at` and `ToolboxObject.versions`.
+* Added `DataGenerationJobOutputOptions.write_mode` for controlling dataset output writes and `TracesDataGenerationJobSource.trace_ids` for selecting explicit traces.
+* Added read-only agent lifecycle properties `AgentDetails.configuration_state` and `AgentSessionResource.stopped_at`.
+
+### Breaking Changes
+
+Breaking changes in beta classes:
+
+* Removed the `max_samples` constructor argument and property from `DataGenerationJobOptions` and `SimulationSeedDataGenerationJobOptions`.
+* The `ToolboxObject` constructor now requires `updated_at` and `versions`.
+
+### Sample updates
+
+* Updated `sample_synthetic_multiturn_evaluation.py` to set the service-required simulation seed `max_samples` field through the model's mapping interface because `SimulationSeedDataGenerationJobOptions` no longer exposes it as a constructor argument.
+
 ## 2.6.1 (2026-09-14)
 
 ### Sample updates
