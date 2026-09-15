@@ -16,7 +16,6 @@
 ### Breaking Changes
 
   - Deleted or renamed client operation group `ComputeBulkActionsMgmtClient.launch_bulk_instances_operation`
-  - Method `BulkCreateCustomOperations.virtual_machines_get_operation_status` changed from `asynchronous` to `synchronous`
   - Deleted or renamed enum value `DeadlineType.UNKNOWN`
   - Model `ExecutionParameters` deleted or renamed its instance variable `optimization_preference`
   - Deleted or renamed enum value `OperationState.PENDING_EXECUTION`
@@ -62,7 +61,6 @@
   - Deleted or renamed method `VirtualMachineBulkOperationsOperations.bulk_vdi_flex_create_operation`
   - Deleted or renamed operation group `LaunchBulkInstancesOperationOperations`
   - Operation group `BulkCreateCustomOperations.virtual_machines_get_operation_status` changed return type from `GetOperationStatusResponse` to `ItemPaged[ResourceOperation]`
-  - Operation group `BulkCreateCustomOperations.virtual_machines_get_operation_status` changed return type from `GetOperationStatusResponse` to `AsyncItemPaged[ResourceOperation]`
 
 ## 1.0.0b3 (2026-08-13)
 
