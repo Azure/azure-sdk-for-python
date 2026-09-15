@@ -20,8 +20,8 @@ from conftest import _make_echo_ws_app, _records_with_ws_extras
 # ---------------------------------------------------------------------------
 
 def _session_ids_from_records(records):
-    """Pull ``azure.ai.agentserver.invocations_ws.session_id`` from each structured close-event record."""
-    return [getattr(r, "azure.ai.agentserver.invocations_ws.session_id") for r in _records_with_ws_extras(records)]
+    """Pull ``azure.ai.agentserver.session_id`` from each structured close-event record."""
+    return [getattr(r, "azure.ai.agentserver.session_id") for r in _records_with_ws_extras(records)]
 
 
 # ---------------------------------------------------------------------------
