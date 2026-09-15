@@ -3,6 +3,8 @@
 """Response event stream builders for lifecycle and output item events."""
 
 from __future__ import annotations
+from .. import models as _public_models
+
 
 from collections.abc import MutableMapping
 from copy import deepcopy
@@ -10,7 +12,7 @@ from datetime import datetime, timezone
 from typing import Any, Iterator, Sequence, cast
 
 from .. import models as response_models
-from ..models import AgentReference
+
 
 from .._id_generator import IdGenerator
 from . import _internals
@@ -95,7 +97,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self,
         *,
         response_id: str | None = None,
-        agent_reference: AgentReference | dict[str, Any] | None = None,
+        agent_reference: _public_models.AgentReference | dict[str, Any] | None = None,
         model: str | None = None,
         request: response_models.CreateResponse | None = None,
         response: response_models.ResponseObject | None = None,
@@ -117,7 +119,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         if request is not None and response is not None:
             raise ValueError("request and response cannot both be provided")
 
-        request_mapping = _internals.coerce_model_mapping(request)
+        # Request seeding reads only selected fields, copying mutable values below.
+        request_mapping = request if isinstance(request, dict) else None
         response_mapping = _internals.coerce_model_mapping(response)
 
         resolved_response_id = response_id
@@ -132,7 +135,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self._response_id = resolved_response_id
 
         if response_mapping is not None:
-            payload = _MutableResponseDict(deepcopy(response_mapping))
+            # Coercion already detached this graph from the caller's recovery seed.
+            payload = _MutableResponseDict(response_mapping)
             payload["id"] = self._response_id
             payload.setdefault("object", "response")
             payload.setdefault("output", [])
@@ -179,7 +183,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
 
         _ResponseInternalMetadataView(self._response)
         self._agent_reference, self._model = _internals.extract_response_fields(
-            cast(response_models.ResponseObject, self._response)
+            cast("response_models.ResponseObject", self._response)
         )
         self._events: list[response_models.ResponseStreamEvent] = []
         self._validator = EventStreamValidator()
@@ -245,7 +249,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :returns: The checkpoint event to yield.
         :rtype: ~azure.ai.agentserver.responses.streaming._checkpoint.ResponseCheckpointEvent
         """
-        return ResponseCheckpointEvent(cast(response_models.ResponseObject, self._response))
+        return ResponseCheckpointEvent(cast("response_models.ResponseObject", self._response))
 
     def emit_queued(self) -> response_models.ResponseQueuedEvent:
         """Emit a ``response.queued`` lifecycle event.
@@ -255,7 +259,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """
         self._response["status"] = "queued"
         return cast(
-            response_models.ResponseQueuedEvent,
+            "response_models.ResponseQueuedEvent",
             self._emit_event(
                 {
                     "type": "response.queued",
@@ -274,7 +278,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """
         self._response["status"] = status
         return cast(
-            response_models.ResponseCreatedEvent,
+            "response_models.ResponseCreatedEvent",
             self._emit_event(
                 {
                     "type": "response.created",
@@ -291,7 +295,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """
         self._response["status"] = "in_progress"
         return cast(
-            response_models.ResponseInProgressEvent,
+            "response_models.ResponseInProgressEvent",
             self._emit_event(
                 {
                     "type": "response.in_progress",
@@ -315,7 +319,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self._response["incomplete_details"] = None
         self._set_terminal_fields(usage=usage)
         return cast(
-            response_models.ResponseCompletedEvent,
+            "response_models.ResponseCompletedEvent",
             self._emit_event(
                 {
                     "type": "response.completed",
@@ -350,7 +354,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         }
         self._set_terminal_fields(usage=usage)
         return cast(
-            response_models.ResponseFailedEvent,
+            "response_models.ResponseFailedEvent",
             self._emit_event(
                 {
                     "type": "response.failed",
@@ -383,7 +387,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             self._response["incomplete_details"] = {"reason": _internals.enum_value(reason)}
         self._set_terminal_fields(usage=usage)
         return cast(
-            response_models.ResponseIncompleteEvent,
+            "response_models.ResponseIncompleteEvent",
             self._emit_event(
                 {
                     "type": "response.incomplete",
@@ -767,7 +771,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         candidate["sequence_number"] = len(self._events)
 
         # Apply response-level defaults to lifecycle events
-        typed_candidate = cast(response_models.ResponseStreamEvent, candidate)
+        typed_candidate = cast("response_models.ResponseStreamEvent", candidate)
         _internals.apply_common_defaults(
             [typed_candidate],
             response_id=self._response_id,
@@ -776,7 +780,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         )
         # Track completed output items on the response envelope
         _internals.track_completed_output_item(
-            cast(response_models.ResponseObject, self._response),
+            cast("response_models.ResponseObject", self._response),
             typed_candidate,
         )
 

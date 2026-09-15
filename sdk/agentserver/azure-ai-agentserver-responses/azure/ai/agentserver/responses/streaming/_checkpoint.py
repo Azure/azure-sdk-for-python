@@ -10,11 +10,13 @@ is purely an internal control signal, never part of the response event taxonomy.
 """
 
 from __future__ import annotations
+from ..models import _generated as _generated_models
+
 
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ..models._generated import ResponseObject
+    pass
 
 
 class ResponseCheckpointEvent:
@@ -27,5 +29,5 @@ class ResponseCheckpointEvent:
 
     __slots__ = ("response",)
 
-    def __init__(self, response: "ResponseObject") -> None:
+    def __init__(self, response: "_generated_models.ResponseObject") -> None:
         self.response = response

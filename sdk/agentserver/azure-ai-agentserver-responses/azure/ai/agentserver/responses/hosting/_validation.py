@@ -3,6 +3,8 @@
 """Validation utilities for request and response models."""
 
 from __future__ import annotations
+from .. import models as _public_models
+
 
 from typing import Any, Mapping, cast
 
@@ -16,14 +18,14 @@ from azure.ai.agentserver.core.platform_headers import (
 )
 from .._id_generator import IdGenerator
 from .._options import ResponsesServerOptions
-from ..models import ApiErrorResponse, CreateResponse
+
 from ..models._errors import RequestValidationError
 from ..models._validators import (
     validate_create_response_payload,
 )
 
 
-def parse_create_response(payload: Mapping[str, Any]) -> CreateResponse:
+def parse_create_response(payload: Mapping[str, Any]) -> _public_models.CreateResponse:
     """Validate incoming JSON payload and return a dict-native ``CreateResponse`` payload.
 
     :param payload: Raw request payload mapping.
@@ -52,14 +54,14 @@ def parse_create_response(payload: Mapping[str, Any]) -> CreateResponse:
         )
 
     if isinstance(payload, dict):
-        return cast(CreateResponse, payload)
-    return cast(CreateResponse, dict(payload))
+        return cast("_public_models.CreateResponse", payload)
+    return cast("_public_models.CreateResponse", dict(payload))
 
 
 def normalize_create_response(
-    request: CreateResponse,
+    request: _public_models.CreateResponse,
     options: ResponsesServerOptions | None,
-) -> CreateResponse:
+) -> _public_models.CreateResponse:
     """Apply server-side defaults to a parsed create request payload.
 
     :param request: The parsed create response model to normalize.
@@ -82,7 +84,7 @@ def normalize_create_response(
     return request
 
 
-def validate_create_response(request: CreateResponse) -> None:
+def validate_create_response(request: _public_models.CreateResponse) -> None:
     """Validate create request semantics not enforced by generated model typing.
 
     :param request: The parsed create response model to validate.
@@ -146,7 +148,7 @@ def parse_and_validate_create_response(
     payload: Mapping[str, Any],
     *,
     options: ResponsesServerOptions | None = None,
-) -> CreateResponse:
+) -> _public_models.CreateResponse:
     """Parse, normalize, and validate a create request wire payload.
 
     :param payload: Raw request payload mapping.
@@ -170,7 +172,7 @@ def build_api_error_response(
     param: str | None = None,
     error_type: str = "invalid_request_error",
     debug_info: dict[str, Any] | None = None,
-) -> ApiErrorResponse:
+) -> _public_models.ApiErrorResponse:
     """Build an API error envelope for client-visible failures.
 
     :param message: Human-readable error message.
@@ -194,7 +196,7 @@ def build_api_error_response(
     }
     if debug_info is not None:
         error["debugInfo"] = debug_info
-    return cast(ApiErrorResponse, {"error": error})
+    return cast("_public_models.ApiErrorResponse", {"error": error})
 
 
 def build_not_found_error_response(
@@ -202,7 +204,7 @@ def build_not_found_error_response(
     *,
     param: str = "response_id",
     resource_name: str = "response",
-) -> ApiErrorResponse:
+) -> _public_models.ApiErrorResponse:
     """Build a canonical not-found error envelope.
 
     :param resource_id: The ID of the resource that was not found.
@@ -226,7 +228,7 @@ def build_invalid_mode_error_response(
     message: str,
     *,
     param: str | None = None,
-) -> ApiErrorResponse:
+) -> _public_models.ApiErrorResponse:
     """Build a canonical invalid-mode error envelope.
 
     :param message: Human-readable error message.
@@ -244,7 +246,7 @@ def build_invalid_mode_error_response(
     )
 
 
-def to_api_error_response(error: Exception) -> ApiErrorResponse:
+def to_api_error_response(error: Exception) -> _public_models.ApiErrorResponse:
     """Map a Python exception to an API error wire envelope.
 
     :param error: The exception to convert.

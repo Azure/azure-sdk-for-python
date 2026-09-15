@@ -3,13 +3,15 @@
 """Canonical non-generated model types for the response server."""
 
 from enum import Enum
-from typing import Literal, Union, get_origin
+from typing import TYPE_CHECKING, Any, Literal, Union, get_origin
 
 from azure.core import CaseInsensitiveEnumMeta
 
-from ._generated import *  # type: ignore # noqa: F401,F403 # pylint: disable=unused-wildcard-import
-from ._generated import _unions as _generated_unions
-from ._generated import types as _generated_types
+from . import _generated as _generated_models
+from ._generated._catalog import MODEL_EXPORTS as _MODEL_EXPORTS
+
+if TYPE_CHECKING:
+    from ._generated import *  # type: ignore # noqa: F401,F403
 from ._helpers import (  # pylint: disable=unused-import
     get_content_expanded,
     get_conversation_expanded,
@@ -43,14 +45,7 @@ def _is_public_generated_export(value: object) -> bool:
     return isinstance(value, type) or get_origin(value) in (Literal, Union)
 
 
-_generated_all: list[str] = [
-    name
-    for module in (_generated_types, _generated_unions)
-    for name in dir(module)
-    if not name.startswith("_")
-    and name not in _TYPE_EXPORT_EXCLUDES
-    and _is_public_generated_export(getattr(module, name))
-]
+_generated_all: list[str] = list(_MODEL_EXPORTS)
 
 
 class ResponseIncompleteReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -72,3 +67,15 @@ __all__ = [  # pyright: ignore[reportUnsupportedDunderAll]
     "get_input_expanded",
     "get_tool_choice_expanded",
 ] + _generated_all
+
+
+def __getattr__(name: str) -> Any:
+    if name not in _generated_models.__all__:
+        raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
+    value = getattr(_generated_models, name)
+    globals()[name] = value
+    return value
+
+
+def __dir__() -> list[str]:
+    return sorted(set(globals()) | set(_generated_models.__all__))

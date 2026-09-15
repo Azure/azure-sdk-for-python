@@ -68,6 +68,8 @@ place.
 """
 
 from __future__ import annotations
+from ..models import _generated as _generated_models
+
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import json
@@ -79,7 +81,7 @@ from pathlib import Path
 from typing import Any, Iterable, cast
 
 from .._response_context import PlatformContext
-from ..models._generated import OutputItem, ResponseObject
+
 from ..models._helpers import get_conversation_id
 from ._base import ResponseAlreadyExistsError, ResponseProviderProtocol, ResponseStoreCorruptionError
 
@@ -145,7 +147,7 @@ def _read_json_or_none(path: Path) -> dict[str, Any] | None:
         return None
 
 
-def _deserialize_item(data: dict[str, Any] | None) -> OutputItem | None:
+def _deserialize_item(data: dict[str, Any] | None) -> _generated_models.OutputItem | None:
     """Deserialize a stored item dict into a typed ``OutputItem`` subtype.
 
     Items persist to disk as JSON dicts; consumers (and the typed
@@ -160,10 +162,10 @@ def _deserialize_item(data: dict[str, Any] | None) -> OutputItem | None:
     """
     if data is None:
         return None
-    return cast(OutputItem, data)
+    return cast("_generated_models.OutputItem", data)
 
 
-def _response_to_dict(response: ResponseObject) -> dict[str, Any]:
+def _response_to_dict(response: _generated_models.ResponseObject) -> dict[str, Any]:
     """Convert a ``ResponseObject`` to a JSON-safe dict for persistence.
 
     :param response: The response object to convert.
@@ -179,7 +181,7 @@ def _response_to_dict(response: ResponseObject) -> dict[str, Any]:
     return json.loads(json.dumps(response, default=str))
 
 
-def _dict_to_response(data: dict[str, Any]) -> ResponseObject:
+def _dict_to_response(data: dict[str, Any]) -> _generated_models.ResponseObject:
     """Convert a persisted JSON dict back to a ``ResponseObject``.
 
     :param data: The persisted dict.
@@ -187,7 +189,7 @@ def _dict_to_response(data: dict[str, Any]) -> ResponseObject:
     :returns: A reconstructed response object.
     :rtype: ResponseObject
     """
-    return cast(ResponseObject, data)
+    return cast("_generated_models.ResponseObject", data)
 
 
 def _item_id(item: Any) -> str | None:
@@ -282,8 +284,8 @@ class FileResponseStore(ResponseProviderProtocol):
 
     async def create_response(
         self,
-        response: ResponseObject,
-        input_items: Iterable[OutputItem] | None,
+        response: _generated_models.ResponseObject,
+        input_items: Iterable[_generated_models.OutputItem] | None,
         history_item_ids: Iterable[str] | None,
         *,
         context: PlatformContext | None = None,
@@ -345,7 +347,9 @@ class FileResponseStore(ResponseProviderProtocol):
             if conversation_id is not None:
                 self._add_response_to_conversation_unlocked(conversation_id, response_id)
 
-    async def get_response(self, response_id: str, *, context: PlatformContext | None = None) -> ResponseObject:
+    async def get_response(
+        self, response_id: str, *, context: PlatformContext | None = None
+    ) -> _generated_models.ResponseObject:
         """Retrieve one response envelope by identifier.
 
         :param response_id: The response identifier.
@@ -366,7 +370,9 @@ class FileResponseStore(ResponseProviderProtocol):
                 raise KeyError(f"response '{response_id}' not found")
             return _dict_to_response(deepcopy(self._rehydrate_output(data)))
 
-    async def update_response(self, response: ResponseObject, *, context: PlatformContext | None = None) -> None:
+    async def update_response(
+        self, response: _generated_models.ResponseObject, *, context: PlatformContext | None = None
+    ) -> None:
         """Update a stored response envelope.
 
         Output items present on the updated response are persisted to the
@@ -435,7 +441,7 @@ class FileResponseStore(ResponseProviderProtocol):
         before: str | None = None,
         *,
         context: PlatformContext | None = None,
-    ) -> list[OutputItem]:
+    ) -> list[_generated_models.OutputItem]:
         """Retrieve input + history items for a response with cursor paging.
 
         Returns the same ordered union of ``history_item_ids`` followed by
@@ -486,7 +492,7 @@ class FileResponseStore(ResponseProviderProtocol):
                 except ValueError:
                     pass
             safe_limit = max(1, min(100, int(limit)))
-            results: list[OutputItem] = []
+            results: list[_generated_models.OutputItem] = []
             for iid in ordered[:safe_limit]:
                 data = _read_json_or_none(self._global_item_path(iid))
                 item = _deserialize_item(data)
@@ -499,7 +505,7 @@ class FileResponseStore(ResponseProviderProtocol):
         item_ids: Iterable[str],
         *,
         context: PlatformContext | None = None,
-    ) -> list[OutputItem | None]:
+    ) -> list[_generated_models.OutputItem | None]:
         """Retrieve items by id, preserving request order.
 
         Missing ids produce ``None`` entries — matches
@@ -515,7 +521,7 @@ class FileResponseStore(ResponseProviderProtocol):
         """
         del context
         async with self._lock:
-            results: list[OutputItem | None] = []
+            results: list[_generated_models.OutputItem | None] = []
             for iid in item_ids:
                 data = _read_json_or_none(self._global_item_path(iid))
                 results.append(_deserialize_item(data))
@@ -606,7 +612,7 @@ class FileResponseStore(ResponseProviderProtocol):
             stored_ids.append(iid)
         return stored_ids
 
-    def _store_output_items_unlocked(self, response: ResponseObject) -> list[str]:
+    def _store_output_items_unlocked(self, response: _generated_models.ResponseObject) -> list[str]:
         """Extract output items from a response and persist them.
 
         Mirrors :meth:`InMemoryResponseProvider._store_output_items_unlocked`.

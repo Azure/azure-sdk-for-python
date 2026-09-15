@@ -3,6 +3,8 @@
 """Runtime domain models for response sessions and stream events."""
 
 from __future__ import annotations
+from . import _generated as _generated_models
+
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
@@ -12,7 +14,6 @@ from typing import TYPE_CHECKING, Any, Literal, Mapping, cast
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
     from azure.ai.agentserver.core.streaming import EventStream  # pylint: disable=import-error,no-name-in-module
-    from ._generated import AgentReference, OutputItem, ResponseObject, ResponseStreamEvent
 
 
 ResponseStatus = Literal["queued", "in_progress", "completed", "failed", "cancelled", "incomplete"]
@@ -66,7 +67,9 @@ class StreamEventRecord:
         }
 
     @classmethod
-    def from_generated(cls, event: ResponseStreamEvent, payload: Mapping[str, Any]) -> "StreamEventRecord":
+    def from_generated(
+        cls, event: _generated_models.ResponseStreamEvent, payload: Mapping[str, Any]
+    ) -> "StreamEventRecord":
         """Create a stream event record from a generated response stream event model.
 
         :param event: The generated response stream event.
@@ -94,18 +97,18 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         updated_at: datetime | None = None,
         completed_at: datetime | None = None,
         status: ResponseStatus = "in_progress",
-        response: ResponseObject | None = None,
+        response: _generated_models.ResponseObject | None = None,
         execution_task: asyncio.Task[Any] | None = None,
         cancel_requested: bool = False,
         client_disconnected: bool = False,
         response_created_seen: bool = False,
         subject: "EventStream | None" = None,
         cancel_signal: asyncio.Event | None = None,
-        input_items: list[OutputItem] | None = None,
+        input_items: list[_generated_models.OutputItem] | None = None,
         previous_response_id: str | None = None,
         response_context: ResponseContext | None = None,
         initial_model: str | None = None,
-        initial_agent_reference: AgentReference | dict[str, Any] | None = None,
+        initial_agent_reference: _generated_models.AgentReference | dict[str, Any] | None = None,
         agent_session_id: str | None = None,
         conversation_id: str | None = None,
         user_id_key: str | None = None,
@@ -123,7 +126,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         self.response_created_seen = response_created_seen
         self.subject = subject
         self.cancel_signal = cancel_signal if cancel_signal is not None else asyncio.Event()
-        self.input_items: list[OutputItem] = input_items if input_items is not None else []
+        self.input_items: list[_generated_models.OutputItem] = input_items if input_items is not None else []
         self.previous_response_id = previous_response_id
         self.response_context = response_context
         self.initial_model = initial_model
@@ -177,7 +180,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         """
         return self.status in {"completed", "failed", "cancelled", "incomplete"}
 
-    def set_response_snapshot(self, response: ResponseObject) -> None:
+    def set_response_snapshot(self, response: _generated_models.ResponseObject) -> None:
         """Replace the current response snapshot from handler-emitted events.
 
         :param response: The latest response snapshot to store.
@@ -223,7 +226,9 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
             return self.status in ("completed", "failed", "cancelled", "incomplete")
         return True
 
-    def apply_event(self, normalized: ResponseStreamEvent, all_events: list[ResponseStreamEvent]) -> None:
+    def apply_event(
+        self, normalized: _generated_models.ResponseStreamEvent, all_events: list[_generated_models.ResponseStreamEvent]
+    ) -> None:
         """Apply a normalised stream event — updates self.response and self.status.
 
         Does nothing if the execution is already ``"cancelled"``.
@@ -279,7 +284,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
                         cast(list[Any], output)[output_index] = deepcopy(item_dict)
 
     @property
-    def agent_reference(self) -> AgentReference | dict[str, Any]:
+    def agent_reference(self) -> _generated_models.AgentReference | dict[str, Any]:
         """Extract agent_reference from the stored response snapshot.
 
         :returns: The agent reference model or dict, or empty dict if no response snapshot is set.
@@ -340,10 +345,10 @@ class _StreamReplayState:
 
 def _build_cancelled_response(
     response_id: str,
-    agent_reference: AgentReference | dict[str, Any],
+    agent_reference: _generated_models.AgentReference | dict[str, Any],
     model: str | None,
     created_at: datetime | None = None,
-) -> ResponseObject:
+) -> _generated_models.ResponseObject:
     """Build a Response object representing a cancelled terminal state.
 
     :param response_id: The response identifier.
@@ -373,12 +378,12 @@ def _build_cancelled_response(
 
 def _build_failed_response(
     response_id: str,
-    agent_reference: AgentReference | dict[str, Any],
+    agent_reference: _generated_models.AgentReference | dict[str, Any],
     model: str | None,
     created_at: datetime | None = None,
     error_message: str = "An internal server error occurred.",
     error_code: str = "server_error",
-) -> ResponseObject:
+) -> _generated_models.ResponseObject:
     """Build a ResponseObject representing a failed terminal state.
 
     :param response_id: The response identifier.
@@ -452,13 +457,13 @@ def _apply_cancelled_terminal(base: Mapping[str, Any]) -> dict[str, Any]:
 def _resolve_failed_response(
     base: Mapping[str, Any] | None,
     response_id: str,
-    agent_reference: AgentReference | dict[str, Any],
+    agent_reference: _generated_models.AgentReference | dict[str, Any],
     model: str | None,
     *,
     created_at: datetime | None = None,
     error_code: str = "server_error",
     error_message: str = _DEFAULT_FAILED_ERROR_MESSAGE,
-) -> ResponseObject:
+) -> _generated_models.ResponseObject:
     """Build a ``failed`` terminal, preserving the handler's response object.
 
     :param base: The handler's response snapshot, or ``None`` if none exists.
@@ -491,11 +496,11 @@ def _resolve_failed_response(
 def _resolve_cancelled_response(
     base: Mapping[str, Any] | None,
     response_id: str,
-    agent_reference: AgentReference | dict[str, Any],
+    agent_reference: _generated_models.AgentReference | dict[str, Any],
     model: str | None,
     *,
     created_at: datetime | None = None,
-) -> ResponseObject:
+) -> _generated_models.ResponseObject:
     """Build a ``cancelled`` terminal, preserving the handler's response object.
 
     :param base: The handler's response snapshot, or ``None`` if none exists.

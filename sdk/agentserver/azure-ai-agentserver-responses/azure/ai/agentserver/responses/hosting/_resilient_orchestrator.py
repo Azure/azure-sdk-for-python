@@ -16,6 +16,8 @@ Architecture (post-spec-024 unification):
 """
 
 from __future__ import annotations
+from ..models import _generated as _generated_models
+
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
@@ -37,7 +39,7 @@ from ._task_id import derive_task_id, derive_task_session_scope
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
-    from ..models._generated import CreateResponse, ResponseObject
+
     from ..models.runtime import ResponseExecution
     from ..store._base import ResponseProviderProtocol
     from ._orchestrator import _ResponseOrchestrator
@@ -163,11 +165,11 @@ def _model_from_params(params: dict[str, Any]) -> str | None:
 
 
 def _overlay_failed_terminal(
-    snapshot: "ResponseObject",
+    snapshot: "_generated_models.ResponseObject",
     *,
     shutdown_reason: str,
     message: str | None = None,
-) -> "ResponseObject":
+) -> "_generated_models.ResponseObject":
     """Overlay a ``failed`` terminal onto a persisted response snapshot.
 
     Per ``docs/responses-resilience-spec.md`` §7.2/§7.3 the crash-failed
@@ -192,13 +194,14 @@ def _overlay_failed_terminal(
     :rtype: ResponseObject
     """
     from ..models.runtime import _apply_failed_terminal  # pylint: disable=import-outside-toplevel
-    from ..models._generated import ResponseObject  # pylint: disable=import-outside-toplevel
+
+    # pylint: disable=import-outside-toplevel
 
     error = {
         "code": "server_error",
         "message": message if message is not None else _server_error_message(shutdown_reason),
     }
-    return cast(ResponseObject, _apply_failed_terminal(snapshot, error=error))
+    return cast("_generated_models.ResponseObject", _apply_failed_terminal(snapshot, error=error))
 
 
 # (Spec 033 §3.1) Process-local cache of typed :class:`RuntimeRefs` (record,
@@ -1055,6 +1058,9 @@ class ResilientResponseOrchestrator:
         assert context is not None, "context is non-None after reconstruction"
         assert record is not None, "record is non-None after reconstruction"
 
+        if is_recovery:
+            context._reset_history_cache()  # pylint: disable=protected-access
+
         if await self._flatten_recovery_context(ctx, context, is_recovery):
             return
 
@@ -1363,9 +1369,7 @@ class ResilientResponseOrchestrator:
             platform context for storage routing).
         :type params: dict[str, Any]
         """
-        from ..models._generated import (
-            ResponseObject,
-        )  # pylint: disable=import-outside-toplevel
+        # pylint: disable=import-outside-toplevel
         from ._resilient_input import (
             platform_context_from_params,
         )  # pylint: disable=import-outside-toplevel
@@ -1397,7 +1401,7 @@ class ResilientResponseOrchestrator:
         # path below — synthesizing carries ``agent_reference``, so an
         # ``update`` would now succeed and overwrite a progressed snapshot with
         # empty output.
-        existing_snapshot: "ResponseObject | None" = None
+        existing_snapshot: "_generated_models.ResponseObject | None" = None
         response_known_absent = False
         for _attempt in range(2):
             try:
@@ -1438,7 +1442,7 @@ class ResilientResponseOrchestrator:
             # the write still satisfies the store's agent-reference requirement.
             # Output is empty (no progress could be preserved).
             failed_response = cast(
-                ResponseObject,
+                "_generated_models.ResponseObject",
                 _build_server_error_payload(
                     response_id,
                     shutdown_reason="crash_recovery",

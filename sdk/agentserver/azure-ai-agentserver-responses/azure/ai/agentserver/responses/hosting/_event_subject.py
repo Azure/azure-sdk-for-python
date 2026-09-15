@@ -3,11 +3,11 @@
 """Seekable replay subject for in-process SSE event broadcasting."""
 
 from __future__ import annotations
+from .. import models as _public_models
+
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import AsyncIterator, cast
-
-from ..models import ResponseStreamEvent
 
 
 class _ResponseEventSubject:
@@ -29,12 +29,12 @@ class _ResponseEventSubject:
 
     def __init__(self) -> None:
         """Initialise the subject with an empty event buffer and no subscribers."""
-        self._events: list[ResponseStreamEvent] = []
-        self._subscribers: list[asyncio.Queue[ResponseStreamEvent | object]] = []
+        self._events: list[_public_models.ResponseStreamEvent] = []
+        self._subscribers: list[asyncio.Queue[_public_models.ResponseStreamEvent | object]] = []
         self._done: bool = False
         self._lock: asyncio.Lock = asyncio.Lock()
 
-    async def publish(self, event: ResponseStreamEvent) -> None:
+    async def publish(self, event: _public_models.ResponseStreamEvent) -> None:
         """Push a new event to all current subscribers and append it to the replay buffer.
 
         :param event: The normalised event wire payload.
@@ -56,7 +56,7 @@ class _ResponseEventSubject:
             for q in self._subscribers:
                 q.put_nowait(self._DONE)
 
-    async def subscribe(self, cursor: int = -1) -> AsyncIterator[ResponseStreamEvent]:
+    async def subscribe(self, cursor: int = -1) -> AsyncIterator[_public_models.ResponseStreamEvent]:
         """Subscribe to events, yielding buffered history then live events.
 
         :param cursor: Sequence-number cursor.  Only events whose
@@ -66,7 +66,7 @@ class _ResponseEventSubject:
         :returns: An async iterator of event instances.
         :rtype: AsyncIterator[ResponseStreamEvent]
         """
-        q: asyncio.Queue[ResponseStreamEvent | object] = asyncio.Queue()
+        q: asyncio.Queue[_public_models.ResponseStreamEvent | object] = asyncio.Queue()
         async with self._lock:
             # Replay all buffered events that are after the cursor
             for event in self._events:
@@ -85,7 +85,7 @@ class _ResponseEventSubject:
                 if item is self._DONE:
                     return
                 assert isinstance(item, dict) and isinstance(item.get("type"), str)
-                yield cast(ResponseStreamEvent, item)
+                yield cast("_public_models.ResponseStreamEvent", item)
         finally:
             # Clean up subscription on client disconnect or normal completion
             async with self._lock:

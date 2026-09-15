@@ -8,15 +8,15 @@ a custom hook via ``@app.response_acceptor`` to customize the queued response sh
 """
 
 from __future__ import annotations
+from ..models import _generated as _generated_models
+
 
 import logging
 from typing import TYPE_CHECKING, Any, Callable, cast
 
-from ..models._generated import ResponseObject
-
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
-    from ..models._generated import CreateResponse
+
 
 logger = logging.getLogger("azure.ai.agentserver.responses.acceptance")
 
@@ -32,7 +32,7 @@ def generate_default_acceptance(
     *,
     response_id: str,
     model: str | None = None,
-) -> ResponseObject:
+) -> _generated_models.ResponseObject:
     """Generate the default queued response envelope.
 
     Used when no custom acceptance hook is registered, or as fallback
@@ -46,7 +46,7 @@ def generate_default_acceptance(
     :rtype: ~azure.ai.agentserver.responses.models.ResponseObject
     """
     return cast(
-        ResponseObject,
+        "_generated_models.ResponseObject",
         {
             "id": response_id,
             "object": "response",
@@ -82,7 +82,7 @@ def _to_queued_dict(response: Any) -> dict[str, Any]:
 def dispatch_acceptance_hook(
     *,
     hook: AcceptanceHookFn | None,
-    request: "CreateResponse",
+    request: "_generated_models.CreateResponse",
     context: "ResponseContext",
     model: str | None = None,
 ) -> dict[str, Any]:

@@ -15,7 +15,11 @@ from ._response_context import (
     ResponseExitForRecovery,
 )
 from .hosting._routing import ResponsesAgentServerHost
-from .models import CreateResponse, ResponseObject
+from typing import TYPE_CHECKING, Any
+from . import models as _public_models
+
+if TYPE_CHECKING:
+    from .models import CreateResponse, ResponseObject
 from .store._base import ResponseProviderProtocol
 from .store._file import FileResponseStore
 from .store._foundry_errors import (
@@ -53,3 +57,15 @@ __all__ = [
     "CreateResponse",
     "ResponseObject",
 ]
+
+
+def __getattr__(name: str) -> Any:
+    if name not in ("CreateResponse", "ResponseObject"):
+        raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
+    value = getattr(_public_models, name)
+    globals()[name] = value
+    return value
+
+
+def __dir__() -> list[str]:
+    return sorted(set(globals()) | set(__all__))

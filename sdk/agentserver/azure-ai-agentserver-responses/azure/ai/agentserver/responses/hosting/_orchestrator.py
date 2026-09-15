@@ -9,12 +9,15 @@ routing module which wraps these results.
 """
 
 from __future__ import annotations
+from ..models import _generated as _generated_models
+
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import json
 import logging
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, cast
+from contextlib import aclosing
+from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, Callable, cast
 
 import anyio
 
@@ -40,7 +43,7 @@ from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-erro
 )
 
 from .._options import ResponsesServerOptions
-from .._response_context import ResponseExitForRecovery
+from .._response_context import ResponseExitForRecovery, _resolve_history_item_ids
 from ..models import _generated as generated_models
 from ..models.runtime import (
     ResponseExecution,
@@ -72,7 +75,6 @@ from ._runtime_state import _RuntimeState
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
-    from ..models._generated import AgentReference, CreateResponse
 
 
 logger = logging.getLogger("azure.ai.agentserver")
@@ -84,9 +86,16 @@ _STORAGE_ERROR_MESSAGE = (
 )
 
 
+async def _close_iterator(iterator: AsyncIterator[Any]) -> None:
+    """Close an owned iterator when it supports asynchronous cleanup."""
+    close = getattr(iterator, "aclose", None)
+    if close is not None:
+        await close()
+
+
 async def _iter_handler_with_request_context(
     create_fn: "Callable[..., AsyncIterator[generated_models.ResponseStreamEvent]]",
-    parsed: "CreateResponse",
+    parsed: "_generated_models.CreateResponse",
     context: "ResponseContext | None",
     cancellation_signal: asyncio.Event,
     agent_session_id: str | None,
@@ -383,7 +392,7 @@ def _bg_normalize_event(
     handler_event: Any,
     *,
     response_id: str,
-    agent_reference: "AgentReference | dict[str, Any]",
+    agent_reference: "_generated_models.AgentReference | dict[str, Any]",
     model: str | None,
     agent_session_id: str | None,
     conversation_id: str | None,
@@ -460,7 +469,7 @@ async def _bg_handle_first_event(
     store: bool,
     provider: "ResponseProviderProtocol | None",
     response_id: str,
-    agent_reference: "AgentReference | dict[str, Any]",
+    agent_reference: "_generated_models.AgentReference | dict[str, Any]",
     model: str | None,
     agent_session_id: str | None,
     conversation_id: str | None,
@@ -535,7 +544,7 @@ async def _bg_handle_first_event(
         agent_session_id=agent_session_id,
         conversation_id=conversation_id,
     )
-    record.set_response_snapshot(cast(generated_models.ResponseObject, _initial_snapshot))
+    record.set_response_snapshot(cast("generated_models.ResponseObject", _initial_snapshot))
     # Honour the handler's initial status (e.g. "queued").
     if _initial_snapshot.get("status") == "queued":
         record.status = "queued"  # type: ignore[assignment]
@@ -567,7 +576,7 @@ def _bg_resolve_terminal_status(
     handler_events: "list[generated_models.ResponseStreamEvent]",
     *,
     response_id: str,
-    agent_reference: "AgentReference | dict[str, Any]",
+    agent_reference: "_generated_models.AgentReference | dict[str, Any]",
     model: str | None,
     agent_session_id: str | None,
     conversation_id: str | None,
@@ -626,7 +635,7 @@ def _bg_resolve_terminal_status(
     if record.status in _TERMINAL_STATES:
         return  # leave the marker's terminal state intact
     if record.status != "cancelled":
-        record.set_response_snapshot(cast(generated_models.ResponseObject, response_payload))
+        record.set_response_snapshot(cast("generated_models.ResponseObject", response_payload))
         target = resolved_status if isinstance(resolved_status, str) else "completed"
         # If still queued, transition through in_progress first so the state
         # machine stays valid (queued can only reach terminal via in_progress).
@@ -672,14 +681,16 @@ async def _bg_persist_at_created(
     if not (store and provider is not None):
         return False
     _context = context.platform_context if context else None
-    _response_obj = cast(generated_models.ResponseObject, initial_snapshot)
+    _response_obj = cast("generated_models.ResponseObject", initial_snapshot)
     try:
         _history_ids = (
-            await provider.get_history_item_ids(
+            await _resolve_history_item_ids(
+                provider,
                 record.previous_response_id,
                 None,
                 history_limit,
                 context=_context,
+                request_context=context,
             )
             if record.previous_response_id
             else None
@@ -718,7 +729,7 @@ def _bg_resolve_cancelled(
     first_event_processed: bool,
     runtime_options: "ResponsesServerOptions | None",
     response_id: str,
-    agent_reference: "AgentReference | dict[str, Any]",
+    agent_reference: "_generated_models.AgentReference | dict[str, Any]",
     model: str | None,
 ) -> bool:
     """Resolve a ``CancelledError`` raised during bg non-stream processing.
@@ -802,7 +813,7 @@ async def _bg_persist_terminal(
     provider_created: bool,
     context: "ResponseContext | None",
     response_id: str,
-    agent_reference: "AgentReference | dict[str, Any]",
+    agent_reference: "_generated_models.AgentReference | dict[str, Any]",
     model: str | None,
     history_limit: int,
 ) -> None:
@@ -867,11 +878,13 @@ async def _bg_persist_terminal(
             # items if previous_response_id is set so the input_items endpoint
             # can return history + current.
             _history_ids = (
-                await provider.get_history_item_ids(
+                await _resolve_history_item_ids(
+                    provider,
                     record.previous_response_id,
                     None,
                     history_limit,
                     context=_context,
+                    request_context=context,
                 )
                 if record.previous_response_id
                 else None
@@ -935,14 +948,14 @@ async def _bg_drain_handler_events(
     st: "_BgRunState",
     record: ResponseExecution,
     create_fn: "Callable[..., AsyncIterator[generated_models.ResponseStreamEvent]]",
-    parsed: CreateResponse,
+    parsed: _generated_models.CreateResponse,
     context: "ResponseContext | None",
     cancellation_signal: asyncio.Event,
     *,
     store: bool,
     provider: "ResponseProviderProtocol | None",
     response_id: str,
-    agent_reference: "AgentReference | dict[str, Any]",
+    agent_reference: "_generated_models.AgentReference | dict[str, Any]",
     model: str | None,
     agent_session_id: str | None,
     conversation_id: str | None,
@@ -1093,12 +1106,12 @@ async def _bg_drain_handler_events(
 async def _run_background_non_stream(
     *,
     create_fn: Callable[..., AsyncIterator[generated_models.ResponseStreamEvent]],
-    parsed: CreateResponse,
+    parsed: _generated_models.CreateResponse,
     context: ResponseContext,
     cancellation_signal: asyncio.Event,
     record: ResponseExecution,
     response_id: str,
-    agent_reference: AgentReference | dict[str, Any],
+    agent_reference: _generated_models.AgentReference | dict[str, Any],
     model: str | None,
     provider: ResponseProviderProtocol | None = None,
     store: bool = True,
@@ -1510,6 +1523,25 @@ class _ResponseOrchestrator:
         :raises ValueError: If the coerced event fails structural validation (B30).
         """
         coerced = _coerce_handler_event(handler_event)
+        return await self._normalize_owned_and_append(ctx, state, coerced)
+
+    async def _normalize_owned_and_append(
+        self,
+        ctx: _ExecutionContext,
+        state: _PipelineState,
+        coerced: generated_models.ResponseStreamEvent,
+    ) -> generated_models.ResponseStreamEvent:
+        """Validate and append a private copy from ``_coerce_handler_event``.
+
+        The caller must not expose the copy before transferring ownership here.
+        Structural and stream validation remain identical for both callers.
+
+        :param ctx: Current execution context.
+        :param state: Mutable pipeline state.
+        :param coerced: Privately owned, coerced handler event.
+        :return: The normalized event.
+        :raises ValueError: If structural or stream validation fails.
+        """
         violation = _validate_handler_event(coerced)
         if violation:
             raise ValueError(violation)
@@ -1781,7 +1813,7 @@ class _ResponseOrchestrator:
 
         if not cancel_race:
             # Update snapshot on record before persistence attempt
-            record.set_response_snapshot(cast(generated_models.ResponseObject, response_payload))
+            record.set_response_snapshot(cast("generated_models.ResponseObject", response_payload))
             record.transition_to(status)
 
             # Attempt persistence
@@ -1800,18 +1832,20 @@ class _ResponseOrchestrator:
                             # non-bg stream or bg stream where initial create was never registered:
                             # full create
                             _history_ids = (
-                                await self._provider.get_history_item_ids(
+                                await _resolve_history_item_ids(
+                                    self._provider,
                                     ctx.previous_response_id,
                                     None,
                                     self._runtime_options.default_fetch_history_count,
                                     context=_context,
+                                    request_context=ctx.context,
                                 )
                                 if ctx.previous_response_id
                                 else None
                             )
                             _resolved_items = await _resolve_input_items_for_persistence(ctx.context, ctx.input_items)
                             await self._provider.create_response(
-                                cast(generated_models.ResponseObject, response_payload),
+                                cast("generated_models.ResponseObject", response_payload),
                                 _resolved_items,
                                 _history_ids,
                                 context=_context,
@@ -1934,7 +1968,7 @@ class _ResponseOrchestrator:
             conversation_id=ctx.conversation_id,
             user_id_key=ctx.user_id,
         )
-        execution.set_response_snapshot(cast(generated_models.ResponseObject, initial_payload))
+        execution.set_response_snapshot(cast("generated_models.ResponseObject", initial_payload))
         # Bind the per-response stream from the registry — the registry
         # guarantees the same instance for the same id, so any other caller
         # that does ``streams.get_or_create(response_id)`` for this id sees
@@ -1945,13 +1979,15 @@ class _ResponseOrchestrator:
         await self._runtime_state.add(execution)
         if ctx.store:
             _context = ctx.context.platform_context if ctx.context else None
-            _initial_response_obj = cast(generated_models.ResponseObject, initial_payload)
+            _initial_response_obj = cast("generated_models.ResponseObject", initial_payload)
             _history_ids = (
-                await self._provider.get_history_item_ids(
+                await _resolve_history_item_ids(
+                    self._provider,
                     ctx.previous_response_id,
                     None,
                     self._runtime_options.default_fetch_history_count,
                     context=_context,
+                    request_context=ctx.context,
                 )
                 if ctx.previous_response_id
                 else None
@@ -2224,7 +2260,7 @@ class _ResponseOrchestrator:
         ctx: _ExecutionContext,
         state: _PipelineState,
         handler_iterator: AsyncIterator[generated_models.ResponseStreamEvent],
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncGenerator[generated_models.ResponseStreamEvent, None]:
         """Shared event pipeline: coerce → normalise → apply_event → subject publish.
 
         This async generator is the single authoritative event pipeline consumed by
@@ -2498,7 +2534,7 @@ class _ResponseOrchestrator:
                         state.pending_terminal = await self._make_failed_event(ctx, state)
                         return
 
-                normalized = await self._normalize_and_append(ctx, state, raw)
+                normalized = await self._normalize_owned_and_append(ctx, state, _pre_coerced)
                 # Buffer terminal events instead of yielding — the caller will
                 # attempt persistence before emitting the terminal SSE.
                 if normalized.get("type") in self._TERMINAL_SSE_TYPES:
@@ -2813,7 +2849,7 @@ class _ResponseOrchestrator:
             conversation_id=ctx.conversation_id,
             user_id_key=ctx.user_id,
         )
-        execution.set_response_snapshot(cast(generated_models.ResponseObject, response_payload))
+        execution.set_response_snapshot(cast("generated_models.ResponseObject", response_payload))
         # Copy persistence_failed from the ephemeral record if one was used
         if state.bg_record is not None:
             execution.persistence_failed = state.bg_record.persistence_failed
@@ -2951,14 +2987,6 @@ class _ResponseOrchestrator:
 
         handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
 
-        # Helper: route to the right finalize method based on the request semantics
-        # (bg+store → bg_stream path; everything else → non_bg_stream path).
-        # NOTE: state.bg_record may be None for bg+stream when the handler yields no
-        # events (fallback path in _process_handler_events); _finalize_bg_stream
-        # handles that case by creating the record itself.
-        async def _finalize() -> None:
-            await self._finalize_stream(ctx, state)
-
         # Stored responses (background / resilient) ALWAYS run via the resilient
         # task + per-response wire stream, regardless of SSE keep-alive. The
         # resilient body runs in its own task, independent of the client
@@ -3045,41 +3073,23 @@ class _ResponseOrchestrator:
             return
 
         # --- Ephemeral (non-stored) responses: no resilient task ---
-        if not self._runtime_options.sse_keep_alive_enabled:
-            # Row 4 stream — no store, no resilient task. Inline pipeline.
-            _stream_completed = False
-            try:
-                async for event in self._process_handler_events(ctx, state, handler_iterator):
-                    yield encode_sse_any_event(event)
-                _stream_completed = True
-                # Persist-then-yield: resolve the buffered terminal event.
-                if state.pending_terminal is not None:
-                    record = state.bg_record or _make_ephemeral_record(ctx, state)
-                    resolved = await self._persist_and_resolve_terminal(ctx, state, record)
-                    yield encode_sse_any_event(resolved)
-            finally:
-                # If the stream did not complete naturally (e.g. client
-                # disconnect -> CancelledError), mark it interrupted.
-                if not _stream_completed:
-                    state.stream_interrupted = True
-                await _finalize()
-            return
-
-        # --- Keep-alive path: merge handler events with periodic keep-alive comments ---
-        async for _chunk in self._live_stream_keep_alive(ctx, state, handler_iterator):
-            yield _chunk
+        # The request owns this producer even without keep-alives. Keeping handler
+        # iteration in one task lets cleanup finish outside the ASGI cancel scope.
+        async with aclosing(self._live_stream_keep_alive(ctx, state, handler_iterator)) as ephemeral_stream:
+            async for chunk in ephemeral_stream:
+                yield chunk
 
     async def _live_stream_keep_alive(
         self,
         ctx: _ExecutionContext,
         state: _PipelineState,
         handler_iterator: AsyncIterator[generated_models.ResponseStreamEvent],
-    ) -> AsyncIterator[str]:
-        """Ephemeral streaming with SSE keep-alive comments (Spec 033 §3.2 extract).
+    ) -> AsyncGenerator[str, None]:
+        """Ephemeral streaming with optional SSE keep-alive comments.
 
         Merges handler events with periodic keep-alive comments via a shared
         queue so comments are sent even while the handler is idle. Used by the
-        non-stored streaming path when keep-alive is enabled.
+        non-stored streaming path. The request owns and awaits the handler task.
 
         :param ctx: Current execution context.
         :type ctx: _ExecutionContext
@@ -3091,42 +3101,60 @@ class _ResponseOrchestrator:
         :rtype: AsyncIterator[str]
         """
         # via a shared asyncio.Queue so comments are sent even while the handler is idle.
-        _SENTINEL = object()
-        merge_queue: asyncio.Queue[str | object] = asyncio.Queue()
+        merge_queue: asyncio.Queue[tuple[str, bool] | None] = asyncio.Queue()
+        handler_event_sent = asyncio.Event()
 
         async def _handler_producer() -> None:
             try:
-                async for event in self._process_handler_events(ctx, state, handler_iterator):
-                    await merge_queue.put(encode_sse_any_event(event))
+                try:
+                    async with aclosing(self._process_handler_events(ctx, state, handler_iterator)) as pipeline:
+                        async for event in pipeline:
+                            await merge_queue.put((encode_sse_any_event(event), True))
+                            # Do not advance the handler past a yielded event
+                            # before the request has finished sending it.
+                            await handler_event_sent.wait()
+                            handler_event_sent.clear()
+                finally:
+                    # Closing the pipeline alone does not recursively close its
+                    # developer handler. Keep that ownership explicit.
+                    with anyio.CancelScope(shield=True):
+                        await _close_iterator(handler_iterator)
                 # Persist-then-yield: resolve the buffered terminal event
                 if state.pending_terminal is not None:
                     record = state.bg_record or _make_ephemeral_record(ctx, state)
                     resolved = await self._persist_and_resolve_terminal(ctx, state, record)
-                    await merge_queue.put(encode_sse_any_event(resolved))
+                    await merge_queue.put((encode_sse_any_event(resolved), False))
             finally:
-                await merge_queue.put(_SENTINEL)
+                await merge_queue.put(None)
 
         async def _keep_alive_producer(interval: int) -> None:
             try:
                 while True:
                     await asyncio.sleep(interval)
-                    await merge_queue.put(encode_keep_alive_comment())
+                    await merge_queue.put((encode_keep_alive_comment(), False))
             except asyncio.CancelledError:
                 return
 
         handler_task = asyncio.create_task(_handler_producer())
-        keep_alive_task = asyncio.create_task(
-            _keep_alive_producer(self._runtime_options.sse_keep_alive_interval_seconds)  # type: ignore[arg-type]
+        keep_alive_task = (
+            asyncio.create_task(
+                _keep_alive_producer(self._runtime_options.sse_keep_alive_interval_seconds)  # type: ignore[arg-type]
+            )
+            if self._runtime_options.sse_keep_alive_enabled
+            else None
         )
 
         _ka_stream_completed = False
         try:
             while True:
                 item = await merge_queue.get()
-                if item is _SENTINEL:
+                if item is None:
                     _ka_stream_completed = True
                     break
-                yield item  # type: ignore[misc]
+                chunk, is_handler_event = item
+                yield chunk
+                if is_handler_event:
+                    handler_event_sent.set()
         except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.error(
                 "Stream consumer failed (response_id=%s)",
@@ -3137,19 +3165,23 @@ class _ResponseOrchestrator:
         finally:
             if not _ka_stream_completed:
                 state.stream_interrupted = True
-            keep_alive_task.cancel()
-            try:
-                await keep_alive_task
-            except asyncio.CancelledError:
-                pass
-            # Ensure the handler task has finished before finalising
-            if not handler_task.done():
-                handler_task.cancel()
+            with anyio.CancelScope(shield=True):
+                if keep_alive_task is not None:
+                    keep_alive_task.cancel()
+                    try:
+                        await keep_alive_task
+                    except asyncio.CancelledError:
+                        pass
+                # Only this ephemeral request owns the producer. Stored/resilient
+                # producers above remain independent of the client connection.
+                if not handler_task.done():
+                    handler_task.cancel()
                 try:
                     await handler_task
                 except asyncio.CancelledError:
                     pass
-            await self._finalize_stream(ctx, state)
+                finally:
+                    await self._finalize_stream(ctx, state)
 
     async def _await_sync_resilient_terminal(self, ctx: _ExecutionContext, record: ResponseExecution) -> None:
         """Block until the sync resilient task / fallback execution reaches terminal.
@@ -3549,7 +3581,7 @@ class _ResponseOrchestrator:
             conversation_id=ctx.conversation_id,
             user_id_key=ctx.user_id,
         )
-        record.set_response_snapshot(cast(generated_models.ResponseObject, response_payload))
+        record.set_response_snapshot(cast("generated_models.ResponseObject", response_payload))
 
         # Always register in runtime state so that cancel/GET can find the record
         # and return the correct status code (e.g., 400 for non-bg cancel).
@@ -3561,13 +3593,15 @@ class _ResponseOrchestrator:
             # §3.1: Persistence failure replaces the response body with storage_error.
             try:
                 _context = ctx.context.platform_context if ctx.context else None
-                _response_obj = cast(generated_models.ResponseObject, response_payload)
+                _response_obj = cast("generated_models.ResponseObject", response_payload)
                 _history_ids = (
-                    await self._provider.get_history_item_ids(
+                    await _resolve_history_item_ids(
+                        self._provider,
                         ctx.previous_response_id,
                         None,
                         self._runtime_options.default_fetch_history_count,
                         context=_context,
+                        request_context=ctx.context,
                     )
                     if ctx.previous_response_id
                     else None
@@ -3742,12 +3776,12 @@ class _ResponseOrchestrator:
     async def _run_resilient_stream_body(
         self,
         *,
-        parsed: "CreateResponse",
+        parsed: "_generated_models.CreateResponse",
         context: "ResponseContext",
         cancellation_signal: asyncio.Event,
         record: ResponseExecution,
         response_id: str,
-        agent_reference: "AgentReference | dict[str, Any]",
+        agent_reference: "_generated_models.AgentReference | dict[str, Any]",
         model: str | None,
         store: bool,
         agent_session_id: str | None,

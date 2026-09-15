@@ -3,30 +3,22 @@
 """Helper functions for CreateResponse and Response model expansion."""
 
 from __future__ import annotations
+from . import _generated as _generated_models
+
 
 from typing import Any, Optional, cast
 
 from ._wire import get_field as _get_field
 from ._wire import is_type as _is_wire_type
-from ._generated import (
-    ConversationParam_2,
-    CreateResponse,
-    Item,
-    ItemMessage,
-    MessageContent,
-    MessageContentInputTextContent,
-    OutputItem,
-    ResponseObject,
-)
 
 
-def _is_type(obj: Any, _model_cls: type, type_value: str) -> bool:
+def _is_type(obj: Any, _model_cls: object, type_value: str) -> bool:
     """Check whether *obj* has a matching wire ``type`` discriminator.
 
     :param obj: The object to check.
     :type obj: Any
-    :param _model_cls: Retained for call-site readability; ignored at runtime.
-    :type _model_cls: type
+    :param _model_cls: Retained as a type or qualified name for readability; ignored at runtime.
+    :type _model_cls: object
     :param type_value: The string type discriminator to match in dicts.
     :type type_value: str
     :returns: True if *obj* matches the wire type value.
@@ -68,7 +60,7 @@ def _ensure_item_type(data: dict[str, Any]) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
-def get_conversation_id(request: CreateResponse | ResponseObject) -> Optional[str]:
+def get_conversation_id(request: _generated_models.CreateResponse | _generated_models.ResponseObject) -> Optional[str]:
     """Extract conversation ID from a request or response's ``conversation`` field.
 
     If conversation is a plain string, returns it directly.
@@ -89,7 +81,7 @@ def get_conversation_id(request: CreateResponse | ResponseObject) -> Optional[st
     return str(cid) if cid else None
 
 
-def get_input_expanded(request: CreateResponse) -> list[Item]:
+def get_input_expanded(request: _generated_models.CreateResponse) -> list[_generated_models.Item]:
     """Normalize ``CreateResponse.input`` into a list of :class:`Item`.
 
     - If input is ``None``, returns ``[]``.
@@ -109,7 +101,7 @@ def get_input_expanded(request: CreateResponse) -> list[Item]:
     if isinstance(inp, str):
         return [
             cast(
-                Item,
+                "_generated_models.Item",
                 {
                     "type": "message",
                     "role": "user",
@@ -119,22 +111,24 @@ def get_input_expanded(request: CreateResponse) -> list[Item]:
         ]
     # Normalize items: per the OpenAI spec, items without an explicit
     # ``type`` default to ``"message"`` (C-MSG-01 compliance).
-    items: list[Item] = []
+    items: list[_generated_models.Item] = []
     for raw in inp:
         if isinstance(raw, dict):
             item_dict = _ensure_item_type(dict(raw))
             # Auto-expand string content on message items so downstream consumers
             # always see list[MessageContent] (matches .NET ExpandContent behaviour).
-            if _is_type(item_dict, ItemMessage, "message") and isinstance(_get_field(item_dict, "content"), str):
-                item_dict["content"] = get_content_expanded(cast(ItemMessage, item_dict))
-            items.append(cast(Item, item_dict))
+            if _is_type(item_dict, "_generated_models.ItemMessage", "message") and isinstance(
+                _get_field(item_dict, "content"), str
+            ):
+                item_dict["content"] = get_content_expanded(cast("_generated_models.ItemMessage", item_dict))
+            items.append(cast("_generated_models.Item", item_dict))
         else:
             items.append(raw)
 
     return items
 
 
-def _get_input_text(request: CreateResponse) -> str:
+def _get_input_text(request: _generated_models.CreateResponse) -> str:
     """Extract all text content from ``CreateResponse.input`` as a single string.
 
     Internal helper — callers should use :meth:`ResponseContext.get_input_text`.
@@ -147,16 +141,16 @@ def _get_input_text(request: CreateResponse) -> str:
     items = get_input_expanded(request)
     texts: list[str] = []
     for item in items:
-        if _is_type(item, ItemMessage, "message"):
+        if _is_type(item, "_generated_models.ItemMessage", "message"):
             for part in _get_field(item, "content") or []:
-                if _is_type(part, MessageContentInputTextContent, "input_text"):
+                if _is_type(part, "_generated_models.MessageContentInputTextContent", "input_text"):
                     text = _get_field(part, "text")
                     if text is not None:
                         texts.append(text)
     return "\n".join(texts)
 
 
-def get_tool_choice_expanded(request: CreateResponse) -> dict[str, Any] | None:
+def get_tool_choice_expanded(request: _generated_models.CreateResponse) -> dict[str, Any] | None:
     """Expand ``CreateResponse.tool_choice`` into a tool choice payload.
 
     String shorthands (``"auto"``, ``"required"``) are expanded to
@@ -186,7 +180,9 @@ def get_tool_choice_expanded(request: CreateResponse) -> dict[str, Any] | None:
     return None
 
 
-def get_conversation_expanded(request: CreateResponse) -> Optional[ConversationParam_2]:
+def get_conversation_expanded(
+    request: _generated_models.CreateResponse,
+) -> Optional[_generated_models.ConversationParam_2]:
     """Expand ``CreateResponse.conversation`` into a typed :class:`ConversationParam_2`.
 
     A plain string is treated as the conversation ID.
@@ -200,9 +196,9 @@ def get_conversation_expanded(request: CreateResponse) -> Optional[ConversationP
     if conv is None:
         return None
     if isinstance(conv, dict) and conv.get("id"):
-        return cast(ConversationParam_2, conv)
+        return cast("_generated_models.ConversationParam_2", conv)
     if isinstance(conv, str):
-        return cast(ConversationParam_2, {"id": conv}) if conv else None
+        return cast("_generated_models.ConversationParam_2", {"id": conv}) if conv else None
     return None
 
 
@@ -211,7 +207,7 @@ def get_conversation_expanded(request: CreateResponse) -> Optional[ConversationP
 # ---------------------------------------------------------------------------
 
 
-def get_instruction_items(response: ResponseObject) -> list[Item]:
+def get_instruction_items(response: _generated_models.ResponseObject) -> list[_generated_models.Item]:
     """Expand ``Response.instructions`` into a list of :class:`Item`.
 
     - If instructions is ``None``, returns ``[]``.
@@ -243,7 +239,7 @@ def get_instruction_items(response: ResponseObject) -> list[Item]:
 # ---------------------------------------------------------------------------
 
 
-def get_output_item_id(item: OutputItem) -> str:
+def get_output_item_id(item: _generated_models.OutputItem) -> str:
     """Extract the ``id`` field from any :class:`OutputItem` subtype.
 
     All concrete output item wire payloads must include an ``id`` field.
@@ -269,7 +265,7 @@ def get_output_item_id(item: OutputItem) -> str:
 # ---------------------------------------------------------------------------
 
 
-def get_content_expanded(message: ItemMessage) -> list[MessageContent]:
+def get_content_expanded(message: _generated_models.ItemMessage) -> list[_generated_models.MessageContent]:
     """Return the typed content list from an :class:`ItemMessage`.
 
     If ``content`` is a plain string (the API allows a string shorthand),
@@ -286,7 +282,9 @@ def get_content_expanded(message: ItemMessage) -> list[MessageContent]:
     if content is None:
         return []
     if isinstance(content, str):
-        return cast(list[MessageContent], [{"type": "input_text", "text": content}]) if content else []
+        return (
+            cast("list[_generated_models.MessageContent]", [{"type": "input_text", "text": content}]) if content else []
+        )
     return list(content)
 
 
@@ -370,7 +368,7 @@ _INPUT_ITEM_TYPES = frozenset(
 )
 
 
-def to_output_item(item: Item, response_id: str | None = None) -> OutputItem | None:
+def to_output_item(item: _generated_models.Item, response_id: str | None = None) -> _generated_models.OutputItem | None:
     """Convert an :class:`Item` to the corresponding :class:`OutputItem`.
 
     Generates a type-specific ID via :meth:`IdGenerator.new_item_id` and
@@ -416,10 +414,10 @@ def to_output_item(item: Item, response_id: str | None = None) -> OutputItem | N
     elif item_type in _PRESERVE_STATUS_ITEM_TYPES:
         data.setdefault("status", "completed")
 
-    return cast(OutputItem, data)
+    return cast("_generated_models.OutputItem", data)
 
 
-def to_item(output_item: OutputItem) -> Item | None:
+def to_item(output_item: _generated_models.OutputItem) -> _generated_models.Item | None:
     """Convert an :class:`OutputItem` back to the corresponding :class:`Item`.
 
     Both hierarchies share the same ``type`` discriminator values, so the
@@ -436,9 +434,9 @@ def to_item(output_item: OutputItem) -> Item | None:
     if not isinstance(output_item, dict):
         return None
     if output_item.get("type") == "output_message":
-        return cast(Item, {**output_item, "type": "message"})
+        return cast("_generated_models.Item", {**output_item, "type": "message"})
     item = _ensure_item_type(dict(output_item))
     item_type = item.get("type")
     if item_type not in _INPUT_ITEM_TYPES:
         return None
-    return cast(Item, item)
+    return cast("_generated_models.Item", item)

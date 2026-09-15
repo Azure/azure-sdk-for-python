@@ -3,6 +3,8 @@
 """Request pre-validation, identity resolution, and input extraction helpers."""
 
 from __future__ import annotations
+from .. import models as _public_models
+
 
 import hashlib
 import os
@@ -10,7 +12,7 @@ from copy import deepcopy
 from typing import Any, Mapping, cast
 
 from ..models._wire import get_field
-from ..models import AgentReference, CreateResponse
+
 
 from .._id_generator import IdGenerator
 from ..models._errors import RequestValidationError
@@ -118,7 +120,7 @@ def _validate_response_id(response_id: str) -> None:
         )
 
 
-def _normalize_agent_reference(value: Any) -> AgentReference | dict[str, Any]:
+def _normalize_agent_reference(value: Any) -> _public_models.AgentReference | dict[str, Any]:
     """Normalize an agent reference value into a validated wire payload or empty dict.
 
     If *value* is ``None``, an empty dict is returned as a sentinel for
@@ -162,7 +164,7 @@ def _normalize_agent_reference(value: Any) -> AgentReference | dict[str, Any]:
         )
 
     candidate["name"] = name.strip()
-    return cast(AgentReference, candidate)
+    return cast("_public_models.AgentReference", candidate)
 
 
 def _prevalidate_identity_payload(payload: dict[str, Any]) -> None:
@@ -218,10 +220,10 @@ def _prevalidate_identity_payload(payload: dict[str, Any]) -> None:
 
 
 def _resolve_identity_fields(
-    parsed: CreateResponse,
+    parsed: _public_models.CreateResponse,
     *,
     request_headers: Mapping[str, str] | None = None,
-) -> tuple[str, AgentReference | dict[str, Any]]:
+) -> tuple[str, _public_models.AgentReference | dict[str, Any]]:
     """Resolve the response ID and agent reference from a parsed create request.
 
     **B38 — Response ID Resolution**: If the incoming request includes an
@@ -266,7 +268,7 @@ def _resolve_identity_fields(
     return response_id, agent_reference
 
 
-def _resolve_conversation_id(parsed: CreateResponse) -> str | None:
+def _resolve_conversation_id(parsed: _public_models.CreateResponse) -> str | None:
     """Extract the conversation ID from a parsed ``CreateResponse`` request.
 
     Handles both a plain string value and a ``ConversationParam_2`` wire payload.
@@ -286,11 +288,11 @@ def _resolve_conversation_id(parsed: CreateResponse) -> str | None:
 
 
 def _resolve_session_id(
-    parsed: CreateResponse,
+    parsed: _public_models.CreateResponse,
     payload: dict[str, Any],
     *,
     env_session_id: str = "",
-    agent_reference: AgentReference | dict[str, Any] | None = None,
+    agent_reference: _public_models.AgentReference | dict[str, Any] | None = None,
 ) -> str:
     """Resolve the session ID for a create-response request.
 
@@ -347,7 +349,7 @@ def derive_session_id(
     *,
     conversation_id: str | None = None,
     previous_response_id: str | None = None,
-    agent_reference: AgentReference | dict[str, Any] | None = None,
+    agent_reference: _public_models.AgentReference | dict[str, Any] | None = None,
 ) -> str:
     """Derive a deterministic session ID from conversational context.
 
@@ -386,7 +388,7 @@ def derive_session_id(
 
 
 def _extract_agent_identity(
-    agent_reference: AgentReference | dict[str, Any] | None,
+    agent_reference: _public_models.AgentReference | dict[str, Any] | None,
 ) -> tuple[str, str]:
     """Extract (agent_name, agent_version) from an agent reference.
 
