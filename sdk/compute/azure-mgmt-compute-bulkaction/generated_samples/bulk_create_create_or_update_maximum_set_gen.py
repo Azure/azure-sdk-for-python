@@ -16,7 +16,7 @@ from azure.mgmt.compute.bulkaction import ComputeBulkActionsMgmtClient
     pip install azure-identity
     pip install azure-mgmt-compute-bulkaction
 # USAGE
-    python bulk_create_custom_create_or_update_maximum_set_gen.py
+    python bulk_create_create_or_update_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,7 +31,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.bulk_create_custom.begin_create_or_update(
+    response = client.bulk_create.begin_create_or_update(
         resource_group_name="rgBulkactions",
         location="eastus",
         name="89f31926-145c-410c-a56a-5bc97359274c",
@@ -100,13 +100,6 @@ def main():
                 },
                 "executionParameters": {"retryPolicy": {"onFailureAction": "Delete", "retryWindowInMinutes": 30}},
                 "minCapacity": 1,
-                "overridesProfile": {
-                    "overrides": [
-                        {"tags": {"env": "prod", "workload": "payments"}, "virtualMachineName": "bulkvm-payments-0"},
-                        {"tags": {"workload": "batch"}},
-                    ],
-                    "virtualMachineNamePrefix": "bulkvm",
-                },
                 "partialFulfillmentPolicy": {"mode": "Enabled"},
                 "priorityProfile": {
                     "allocationStrategy": "LowestPrice",
@@ -114,25 +107,7 @@ def main():
                     "maxPricePerVM": 0.2,
                     "type": "Spot",
                 },
-                "vmSizesProfile": [
-                    {"name": "Standard_D2s_v5", "rank": 1},
-                    {
-                        "name": "Standard_D4s_v5",
-                        "override": {
-                            "virtualMachineProfile": {
-                                "storageProfile": {
-                                    "imageReference": {
-                                        "offer": "0001-com-ubuntu-server-jammy",
-                                        "publisher": "Canonical",
-                                        "sku": "22_04-lts-arm64",
-                                        "version": "latest",
-                                    }
-                                }
-                            }
-                        },
-                        "rank": 2,
-                    },
-                ],
+                "vmSizesProfile": [{"name": "Standard_D2s_v5", "rank": 1}, {"name": "Standard_D4s_v5", "rank": 2}],
                 "zoneAllocationPolicy": {
                     "distributionStrategy": "BestEffortBalanced",
                     "zonePreferences": [{"rank": 1, "zone": "1"}, {"rank": 2, "zone": "2"}],
@@ -145,6 +120,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-09-06-preview/BulkCreateCustom_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-06-preview/BulkCreate_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
