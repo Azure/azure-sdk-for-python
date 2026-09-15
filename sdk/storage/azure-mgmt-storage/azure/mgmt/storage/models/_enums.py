@@ -89,6 +89,13 @@ class AdvancedPlatformMetricsRuleType(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Container level capacity metrics rule type."""
 
 
+class AiProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The AI provider associated with a container."""
+
+    OPEN_AI = "OpenAI"
+    """OpenAI provider."""
+
+
 class AllowedCopyScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Restrict copy to and from Storage Accounts within an AAD tenant or with Private Links to the
     same VNet.
@@ -162,6 +169,36 @@ class Bypass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """METRICS."""
     AZURE_SERVICES = "AzureServices"
     """AZURE_SERVICES."""
+
+
+class ContextCacheAccountKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of context cache account, determining storage topology."""
+
+    REGIONAL = "Regional"
+    """Single-region storage account."""
+    DATA_ZONE = "DataZone"
+    """Multi-region within a data zone."""
+    GLOBAL = "Global"
+    """All regions with global distribution."""
+
+
+class ContextCacheProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the current operation."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+    CREATING = "Creating"
+    """Initial provisioning in progress."""
+    UPDATING = "Updating"
+    """Update in progress."""
+    DELETING = "Deleting"
+    """Deletion in progress."""
+    ACCEPTED = "Accepted"
+    """Change accepted for processing."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -344,6 +381,18 @@ class ImmutabilityPolicyUpdateType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """EXTEND."""
 
 
+class InfrastructureEncryption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """(Optional) Discouraged to include in resource definition. Only needed where it is possible to
+    disable platform (AKA infrastructure) encryption. Azure SQL TDE is an example of this. Values
+    are enabled and disabled.
+    """
+
+    ENABLED = "enabled"
+    """Encryption is enabled."""
+    DISABLED = "disabled"
+    """Encryption is disabled."""
+
+
 class IntervalUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Run interval unit of task execution. This is a required field when
     ExecutionTrigger.properties.type is 'OnSchedule'; this property should not be present when
@@ -368,6 +417,17 @@ class IssueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """UNKNOWN."""
     CONFIGURATION_PROPAGATION_FAILURE = "ConfigurationPropagationFailure"
     """CONFIGURATION_PROPAGATION_FAILURE."""
+
+
+class KeyEncryptionKeyIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity to use."""
+
+    SYSTEM_ASSIGNED_IDENTITY = "systemAssignedIdentity"
+    """System assigned identity."""
+    USER_ASSIGNED_IDENTITY = "userAssignedIdentity"
+    """User assigned identity."""
+    DELEGATED_RESOURCE_IDENTITY = "delegatedResourceIdentity"
+    """Delegated identity."""
 
 
 class KeyPermission(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -662,6 +722,19 @@ class Permissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """U."""
     P = "p"
     """P."""
+
+
+class PolicyViolationAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The action to perform when a user delegation SAS (shared access signature) policy requirement
+    is violated.
+    """
+
+    NONE = "None"
+    """No action is taken when the policy requirement is violated."""
+    LOG = "Log"
+    """The policy violation is logged for audit purposes."""
+    BLOCK = "Block"
+    """The request is blocked and denied when the policy requirement is violated."""
 
 
 class PostFailoverRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1049,6 +1122,15 @@ class StorageTaskAssignmentProvisioningState(str, Enum, metaclass=CaseInsensitiv
     """CANCELED."""
     FAILED = "Failed"
     """FAILED."""
+
+
+class SystemAssignedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (either system assigned, or none)."""
+
+    NONE = "None"
+    """No managed system identity."""
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System assigned managed system identity."""
 
 
 class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
