@@ -10,7 +10,7 @@
 
 ### Other Changes
 
-- Generate fallback invocation and request IDs only when no valid supplied ID is available.
+- Generate fallback invocation and session IDs only when no valid supplied ID is available.
 
 ## 1.2.0b1 (2026-09-03)
 
