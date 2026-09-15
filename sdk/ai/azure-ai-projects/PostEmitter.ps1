@@ -169,38 +169,10 @@ foreach ($f in $files) {
     Set-Content $f $c -NoNewline
 }
 
-# Fix generated If-Match headers for TypeSpec Azure.Core.eTag parameters.
-# The emitter generates prep_if_match(etag, match_condition), but this package's
-# public methods expose only the etag keyword and do not emit the helper/import.
-$f = 'azure\ai\projects\operations\_operations.py'
-$lines = Get-Content $f
-$matchCount = 0
-$alreadyRepairedCount = 0
-for ($i = 0; $i -lt $lines.Length - 2; $i++) {
-    if (
-        $lines[$i].Trim() -eq 'if_match = prep_if_match(etag, match_condition)' -and
-        $lines[$i + 1].Trim() -eq 'if if_match is not None:' -and
-        $lines[$i + 2].Trim() -eq '_headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")'
-    ) {
-        $indent = ([regex]::Match($lines[$i], '^\s*')).Value
-        $lines[$i] = $indent + 'if etag is not None:'
-        $lines[$i + 1] = $indent + '    _headers["If-Match"] = _SERIALIZER.header("if_match", etag, "str")'
-        $lines[$i + 2] = ''
-        $matchCount++
-        $i += 2
-    }
-    elseif (
-        $lines[$i].Trim() -eq 'if etag is not None:' -and
-        $lines[$i + 1].Trim() -eq '_headers["If-Match"] = _SERIALIZER.header("if_match", etag, "str")'
-    ) {
-        $alreadyRepairedCount++
-        $i++
-    }
-}
-if ($matchCount + $alreadyRepairedCount -ne 4) {
-    throw "Expected 4 generated or already repaired If-Match blocks, but found $matchCount generated and $alreadyRepairedCount already repaired."
-}
-Set-Content $f $lines
+# Complete generated MatchConditions support for TypeSpec Azure.Core.eTag parameters.
+# The emitter generates prep_if_match(etag, match_condition), but omits the helper,
+# imports, match_condition parameters, and arguments that the generated call path needs.
+& (Join-Path $PSScriptRoot 'scripts\FixMatchConditions.ps1') -PackageRoot $PSScriptRoot
 
 # Finishing by running 'black' tool to format code.
 black --config ../../../eng/black-pyproject.toml .
