@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/dbNodes_action.json
+# x-ms-original-file: 2025-11-01-preview/dbNodes_action.json
 if __name__ == "__main__":
     main()
