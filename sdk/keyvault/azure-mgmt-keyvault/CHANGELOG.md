@@ -1,5 +1,20 @@
 # Release History
 
+## 15.0.0b1 (2026-07-27)
+
+### Features Added
+
+  - Enum `JsonWebKeyType` added member `OCT_HSM`
+  - Model `VaultPatchProperties` added property `token_binding_parameters`
+  - Model `VaultProperties` added property `token_binding_parameters`
+  - Added enum `TokenBindingMode`
+  - Added model `TokenBindingParameters`
+  - Added enum `TokenBindingStrength`
+
+### Breaking Changes
+
+  - Model `ManagedHsmSku` changed type of property `name` from `ManagedHsmSkuName` to `ManagedHsmSkuNameV2`
+
 ## 14.0.1 (2026-03-27)
 
 ### Bugs Fixed

@@ -90,6 +90,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-01/updateVault.json
+# x-ms-original-file: 2026-03-01-preview/updateVault.json
 if __name__ == "__main__":
     main()
