@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2025-09-02-preview",
+  "apiVersions": {
+    "Microsoft.ContainerService": "2025-09-02-preview"
+  },
+  "commit": "431bfdd102a3a4f63b74380462b055f0c1fc5f2f",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/containerservice/resource-manager/Microsoft.ContainerService/nodecustomization",
+  "emitterVersion": "0.63.7",
+  "httpClientPythonVersion": "^0.37.2"
+}

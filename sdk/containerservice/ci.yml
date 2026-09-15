@@ -39,3 +39,5 @@ extends:
       safeName: azuremgmtcontainerserviceaimanager
     - name: azure-mgmt-containerservicepreparedimgspec
       safeName: azuremgmtcontainerservicepreparedimgspec
+    - name: azure-mgmt-containerservicenodecustomization
+      safeName: azuremgmtcontainerservicenodecustomization
