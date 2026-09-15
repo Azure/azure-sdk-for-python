@@ -47,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01-preview/alertRules/CreateMicrosoftSecurityIncidentCreationAlertRule.json
+# x-ms-original-file: 2025-10-01-preview/alertRules/CreateMicrosoftSecurityIncidentCreationAlertRule.json
 if __name__ == "__main__":
     main()
