@@ -48,6 +48,19 @@ def main():
                     },
                 },
                 "drillAssetProperties": {"region": "zuvwzxnbqyzdkthrewruw", "subscription": "pxlmwjuhcif"},
+                "goalAssignmentProperties": {
+                    "identity": {
+                        "type": "UserAssigned",
+                        "userAssignedIdentity": "/subscriptions/4e88bed3-114f-443d-9975-28f64122ec5e/resourcegroups/resourceGroup1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uami1",
+                    }
+                },
+                "healthModelMonitoringProperties": {
+                    "discoveryRuleId": "/subscriptions/4e88bed3-114f-443d-9975-28f64122ec5e/resourceGroups/contoso-health/providers/Microsoft.CloudHealth/healthmodels/contoso-payments-hm/discoveryrules/payments-frontend-rule",
+                    "identity": {
+                        "type": "UserAssigned",
+                        "userAssignedIdentity": "/subscriptions/4e88bed3-114f-443d-9975-28f64122ec5e/resourcegroups/resourceGroup1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uami1",
+                    },
+                },
                 "monitoringProperties": {
                     "identity": {
                         "type": "UserAssigned",
@@ -61,11 +74,23 @@ def main():
                         "userAssignedIdentity": "/subscriptions/4e88bed3-114f-443d-9975-28f64122ec5e/resourcegroups/resourceGroup1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uami1",
                     }
                 },
+                "sliMonitoringProperties": {
+                    "identity": {
+                        "type": "UserAssigned",
+                        "userAssignedIdentity": "/subscriptions/4e88bed3-114f-443d-9975-28f64122ec5e/resourcegroups/resourceGroup1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uami1",
+                    },
+                    "slis": [
+                        {
+                            "sliId": "/providers/Microsoft.Management/serviceGroups/sampleServiceGroupName/providers/Microsoft.Monitor/slis/checkout-availability",
+                            "type": "Availability",
+                        }
+                    ],
+                },
             },
         },
     ).result()
 
 
-# x-ms-original-file: 2026-04-01-preview/Drills_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-30-preview/Drills_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

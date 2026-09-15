@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -27,7 +28,6 @@ from .operations import (
     EnrollmentsOperations,
     GoalAssignmentsOperations,
     GoalResourcesOperations,
-    GoalTemplatesOperations,
     OperationStatusOperations,
     Operations,
     RecoveryJobResourcesOperations,
@@ -49,7 +49,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ResilienceManagementClient:  # pylint: disable=too-many-instance-attributes
+class ResilienceManagementClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """ResilienceManagementClient.
 
     :ivar operations: Operations operations
@@ -60,8 +60,6 @@ class ResilienceManagementClient:  # pylint: disable=too-many-instance-attribute
     :ivar goal_assignments: GoalAssignmentsOperations operations
     :vartype goal_assignments:
      azure.mgmt.resiliencemanagement.aio.operations.GoalAssignmentsOperations
-    :ivar goal_templates: GoalTemplatesOperations operations
-    :vartype goal_templates: azure.mgmt.resiliencemanagement.aio.operations.GoalTemplatesOperations
     :ivar goal_resources: GoalResourcesOperations operations
     :vartype goal_resources: azure.mgmt.resiliencemanagement.aio.operations.GoalResourcesOperations
     :ivar recovery_plans: RecoveryPlansOperations operations
@@ -104,7 +102,7 @@ class ResilienceManagementClient:  # pylint: disable=too-many-instance-attribute
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-04-01-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-09-30-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -168,7 +166,6 @@ class ResilienceManagementClient:  # pylint: disable=too-many-instance-attribute
         self.goal_assignments = GoalAssignmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.goal_templates = GoalTemplatesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.goal_resources = GoalResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.recovery_plans = RecoveryPlansOperations(self._client, self._config, self._serialize, self._deserialize)
         self.recovery_plan_actions = RecoveryPlanActionsOperations(

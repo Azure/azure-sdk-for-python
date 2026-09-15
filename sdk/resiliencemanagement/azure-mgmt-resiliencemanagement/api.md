@@ -9,7 +9,6 @@ namespace azure.mgmt.resiliencemanagement
         enrollments: EnrollmentsOperations
         goal_assignments: GoalAssignmentsOperations
         goal_resources: GoalResourcesOperations
-        goal_templates: GoalTemplatesOperations
         operation_status: OperationStatusOperations
         operations: Operations
         recovery_job_resources: RecoveryJobResourcesOperations
@@ -53,7 +52,6 @@ namespace azure.mgmt.resiliencemanagement.aio
         enrollments: EnrollmentsOperations
         goal_assignments: GoalAssignmentsOperations
         goal_resources: GoalResourcesOperations
-        goal_templates: GoalTemplatesOperations
         operation_status: OperationStatusOperations
         operations: Operations
         recovery_job_resources: RecoveryJobResourcesOperations
@@ -173,7 +171,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 service_group_name: str, 
                 drill_name: str, 
                 drill_run_name: str, 
-                body: JSON, 
+                body: DrillRunAddNotesRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -199,7 +197,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 service_group_name: str, 
                 drill_name: str, 
                 drill_run_name: str, 
-                body: DrillRunFailoverRequest, 
+                body: Optional[DrillRunFailoverRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -212,7 +210,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 service_group_name: str, 
                 drill_name: str, 
                 drill_run_name: str, 
-                body: JSON, 
+                body: Optional[DrillRunFailoverRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -221,11 +219,75 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
 
         @overload
         async def begin_fail_over(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                body: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['service_group_name', 'api_version', 'operation_id', 'drill_name', 'drill_run_name', 'accept']}, api_versions_list=['2026-08-31-preview', '2026-09-30-preview'])
+        async def begin_generate_report(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                *, 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[DrillReportSummary]: ...
+
+        @overload
+        async def begin_list_report_download_url(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                body: ListReportDownloadUrlRequest, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ListReportDownloadUrlResponse]: ...
+
+        @overload
+        async def begin_list_report_download_url(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                body: ListReportDownloadUrlRequest, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ListReportDownloadUrlResponse]: ...
+
+        @overload
+        async def begin_list_report_download_url(
                 self, 
                 service_group_name: str, 
                 drill_name: str, 
                 drill_run_name: str, 
                 body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ListReportDownloadUrlResponse]: ...
+
+        @overload
+        async def begin_mark_as_complete(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                body: MarkAsCompleteRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -251,19 +313,6 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 service_group_name: str, 
                 drill_name: str, 
                 drill_run_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @overload
-        async def begin_mark_as_complete(
-                self, 
-                service_group_name: str, 
-                drill_name: str, 
-                drill_run_name: str, 
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
@@ -271,13 +320,41 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 **kwargs: Any
             ) -> AsyncLROPoller[None]: ...
 
-        @distributed_trace_async
+        @overload
         async def begin_reprotect(
                 self, 
                 service_group_name: str, 
                 drill_name: str, 
                 drill_run_name: str, 
+                body: Optional[DrillRunReprotectRequest] = None, 
                 *, 
+                content_type: str = "application/json", 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_reprotect(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                body: Optional[DrillRunReprotectRequest] = None, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_reprotect(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                body: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
                 operation_id: str, 
                 **kwargs: Any
             ) -> AsyncLROPoller[None]: ...
@@ -336,7 +413,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 drill_name: str, 
-                body: JSON, 
+                body: AddOrUpdateResourcesRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -371,7 +448,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 drill_name: str, 
-                resource: JSON, 
+                resource: Drill, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -413,7 +490,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 drill_name: str, 
-                body: JSON, 
+                body: DrillEndRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -433,7 +510,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['service_group_name', 'api_version', 'operation_id', 'drill_name']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['service_group_name', 'api_version', 'operation_id', 'drill_name']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-06-01-preview', '2026-08-31-preview', '2026-09-30-preview'])
         async def begin_resync_readiness_check(
                 self, 
                 service_group_name: str, 
@@ -460,7 +537,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 drill_name: str, 
-                body: JSON, 
+                body: DrillStartRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -495,7 +572,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 drill_name: str, 
-                properties: JSON, 
+                properties: DrillUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -529,7 +606,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 drill_name: str, 
-                body: JSON, 
+                body: ValidateForExecutionRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -593,7 +670,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 resource_group_name: str, 
                 usage_plan_name: str, 
                 enrollment_name: str, 
-                resource: JSON, 
+                resource: Enrollment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -612,7 +689,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[Enrollment]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'enrollment_name']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'enrollment_name']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-06-01-preview', '2026-08-31-preview', '2026-09-30-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -622,7 +699,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'enrollment_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'enrollment_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-06-01-preview', '2026-08-31-preview', '2026-09-30-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -632,7 +709,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> Enrollment: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-06-01-preview', '2026-08-31-preview', '2026-09-30-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -665,7 +742,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 goal_assignment_name: str, 
-                resource: JSON, 
+                resource: GoalAssignment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -706,7 +783,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 goal_assignment_name: str, 
-                body: JSON, 
+                body: RecommendCapacityRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -747,7 +824,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 goal_assignment_name: str, 
-                properties: JSON, 
+                properties: GoalAssignment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -780,7 +857,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 goal_assignment_name: str, 
-                body: JSON, 
+                body: UpdateGoalResourceRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -843,107 +920,6 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[GoalResource]: ...
-
-
-    class azure.mgmt.resiliencemanagement.aio.operations.GoalTemplatesOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                service_group_name: str, 
-                goal_template_name: str, 
-                resource: GoalTemplate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[GoalTemplate]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                service_group_name: str, 
-                goal_template_name: str, 
-                resource: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[GoalTemplate]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                service_group_name: str, 
-                goal_template_name: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[GoalTemplate]: ...
-
-        @distributed_trace_async
-        async def begin_delete(
-                self, 
-                service_group_name: str, 
-                goal_template_name: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @overload
-        async def begin_update(
-                self, 
-                service_group_name: str, 
-                goal_template_name: str, 
-                properties: GoalTemplate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @overload
-        async def begin_update(
-                self, 
-                service_group_name: str, 
-                goal_template_name: str, 
-                properties: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @overload
-        async def begin_update(
-                self, 
-                service_group_name: str, 
-                goal_template_name: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @distributed_trace_async
-        async def get(
-                self, 
-                service_group_name: str, 
-                goal_template_name: str, 
-                **kwargs: Any
-            ) -> GoalTemplate: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                service_group_name: str, 
-                *, 
-                skip_token: Optional[str] = ..., 
-                top: Optional[int] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[GoalTemplate]: ...
 
 
     class azure.mgmt.resiliencemanagement.aio.operations.OperationStatusOperations:
@@ -1030,7 +1006,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 service_group_name: str, 
                 recovery_plan_name: str, 
                 recovery_job_name: str, 
-                body: JSON, 
+                body: RecoveryActionRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -1069,7 +1045,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 service_group_name: str, 
                 recovery_plan_name: str, 
                 recovery_job_name: str, 
-                body: JSON, 
+                body: RecoveryActionRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -1153,7 +1129,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                body: JSON, 
+                body: FailoverRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -1209,7 +1185,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[ReprotectRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -1245,7 +1221,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                body: JSON, 
+                body: FailoverRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -1281,7 +1257,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                body: JSON, 
+                body: TestFailoverCleanupRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -1317,7 +1293,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                body: JSON, 
+                body: UpdateRecoveryResourcesRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -1353,7 +1329,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                body: JSON, 
+                body: FailoverRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -1399,7 +1375,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                body: JSON, 
+                body: ValidateForOperationRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -1435,7 +1411,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[ReprotectRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -1471,7 +1447,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                body: JSON, 
+                body: FailoverRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -1525,7 +1501,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                resource: JSON, 
+                resource: RecoveryPlan, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1566,7 +1542,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                properties: JSON, 
+                properties: RecoveryPlan, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1679,7 +1655,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 resource_group_name: str, 
                 usage_plan_name: str, 
-                resource: JSON, 
+                resource: UsagePlan, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1697,7 +1673,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[UsagePlan]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-06-01-preview', '2026-08-31-preview', '2026-09-30-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1721,7 +1697,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
                 self, 
                 resource_group_name: str, 
                 usage_plan_name: str, 
-                properties: JSON, 
+                properties: UsagePlanTagsUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1739,7 +1715,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[UsagePlan]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-06-01-preview', '2026-08-31-preview', '2026-09-30-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1748,7 +1724,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> UsagePlan: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-06-01-preview', '2026-08-31-preview', '2026-09-30-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -1756,7 +1732,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncItemPaged[UsagePlan]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-06-01-preview', '2026-08-31-preview', '2026-09-30-preview'])
         def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[UsagePlan]: ...
 
 
@@ -1842,24 +1818,35 @@ namespace azure.mgmt.resiliencemanagement.models
         chaos_resource: Optional[Union[str, ExtensionObjectState]]
         chaos_resource_creation_failure_reasons: Optional[list[str]]
         chaos_resource_user_msi: Optional[Union[str, ExtensionObjectState]]
+        discovery_rule_exists: Optional[Union[str, ExtensionObjectState]]
         drill_monitoring_errors: Optional[list[ErrorDetails]]
         drill_monitoring_resources: Optional[Union[str, ExtensionObjectState]]
         drill_rbac_on_chaos_resource: Optional[Union[str, RBACState]]
+        drill_rbac_on_goal_assignment: Optional[Union[str, RBACState]]
+        drill_rbac_on_health_model: Optional[Union[str, RBACState]]
         drill_rbac_on_monitoring_resources: Optional[Union[str, RBACState]]
         drill_rbac_on_recovery_plan: Optional[Union[str, RBACState]]
+        drill_rbac_on_sli: Optional[Union[str, RBACState]]
         drill_user_msi: Optional[Union[str, ExtensionObjectState]]
+        goal_assignment: Optional[Union[str, ExtensionObjectState]]
+        health_model_exists: Optional[Union[str, ExtensionObjectState]]
         included_resource_in_drill: Optional[Union[str, ExtensionObjectState]]
         missing_required_resource_providers: Optional[list[str]]
         monitoring_rbac_on_drill_resources: Optional[Union[str, RBACState]]
+        monitoring_source_not_configured: Optional[bool]
         rbac_needed_for_drill_on_chaos_resource: Optional[list[str]]
         rbac_needed_for_drill_on_drill_monitoring_resources: Optional[list[str]]
         rbac_needed_for_drill_on_drill_resources: Optional[list[str]]
+        rbac_needed_for_drill_on_goal_assignment: Optional[list[str]]
+        rbac_needed_for_drill_on_health_model: Optional[list[str]]
         rbac_needed_for_drill_on_recovery_plan: Optional[list[str]]
         rbac_on_target_resources: Optional[Union[str, RBACState]]
+        recovery_plan: Optional[Union[str, ExtensionObjectState]]
         recovery_plan_and_drill_resources_state: Optional[Union[str, RelativeResourceCompositionState]]
         ro_readiness: Optional[Union[str, RecoveryPlanState]]
         runbook_fault_rbac_on_targets: Optional[Union[str, RBACState]]
         service_group_and_drill_resources_state: Optional[Union[str, RelativeResourceCompositionState]]
+        sli_attention_statuses: Optional[list[SliAttentionStatus]]
 
         @overload
         def __init__(
@@ -1868,23 +1855,34 @@ namespace azure.mgmt.resiliencemanagement.models
                 chaos_resource: Optional[Union[str, ExtensionObjectState]] = ..., 
                 chaos_resource_creation_failure_reasons: Optional[list[str]] = ..., 
                 chaos_resource_user_msi: Optional[Union[str, ExtensionObjectState]] = ..., 
+                discovery_rule_exists: Optional[Union[str, ExtensionObjectState]] = ..., 
                 drill_monitoring_errors: Optional[list[ErrorDetails]] = ..., 
                 drill_rbac_on_chaos_resource: Optional[Union[str, RBACState]] = ..., 
+                drill_rbac_on_goal_assignment: Optional[Union[str, RBACState]] = ..., 
+                drill_rbac_on_health_model: Optional[Union[str, RBACState]] = ..., 
                 drill_rbac_on_monitoring_resources: Optional[Union[str, RBACState]] = ..., 
                 drill_rbac_on_recovery_plan: Optional[Union[str, RBACState]] = ..., 
+                drill_rbac_on_sli: Optional[Union[str, RBACState]] = ..., 
                 drill_user_msi: Optional[Union[str, ExtensionObjectState]] = ..., 
+                goal_assignment: Optional[Union[str, ExtensionObjectState]] = ..., 
+                health_model_exists: Optional[Union[str, ExtensionObjectState]] = ..., 
                 included_resource_in_drill: Optional[Union[str, ExtensionObjectState]] = ..., 
                 missing_required_resource_providers: Optional[list[str]] = ..., 
                 monitoring_rbac_on_drill_resources: Optional[Union[str, RBACState]] = ..., 
+                monitoring_source_not_configured: Optional[bool] = ..., 
                 rbac_needed_for_drill_on_chaos_resource: Optional[list[str]] = ..., 
                 rbac_needed_for_drill_on_drill_monitoring_resources: Optional[list[str]] = ..., 
                 rbac_needed_for_drill_on_drill_resources: Optional[list[str]] = ..., 
+                rbac_needed_for_drill_on_goal_assignment: Optional[list[str]] = ..., 
+                rbac_needed_for_drill_on_health_model: Optional[list[str]] = ..., 
                 rbac_needed_for_drill_on_recovery_plan: Optional[list[str]] = ..., 
                 rbac_on_target_resources: Optional[Union[str, RBACState]] = ..., 
+                recovery_plan: Optional[Union[str, ExtensionObjectState]] = ..., 
                 recovery_plan_and_drill_resources_state: Optional[Union[str, RelativeResourceCompositionState]] = ..., 
                 ro_readiness: Optional[Union[str, RecoveryPlanState]] = ..., 
                 runbook_fault_rbac_on_targets: Optional[Union[str, RBACState]] = ..., 
-                service_group_and_drill_resources_state: Optional[Union[str, RelativeResourceCompositionState]] = ...
+                service_group_and_drill_resources_state: Optional[Union[str, RelativeResourceCompositionState]] = ..., 
+                sli_attention_statuses: Optional[list[SliAttentionStatus]] = ...
             ) -> None: ...
 
         @overload
@@ -2023,15 +2021,17 @@ namespace azure.mgmt.resiliencemanagement.models
         error_details: Optional[ErrorDetail]
         execution_readiness_state: Optional[Union[str, ExecutionReadinessState]]
         execution_state: Optional[Union[str, ExecutionState]]
+        goal_assignment_properties: Optional[GoalAssignmentPropertiesOfDrill]
+        health_model_monitoring_properties: Optional[HealthModelMonitoringProperties]
         last_resync_readiness_check_time: Optional[datetime]
         last_run_properties: Optional[LastRunProperties]
         last_sync_time: Optional[datetime]
-        managed_on_behalf_of_configuration: Optional[ManagedOnBehalfOfConfiguration]
         monitoring_properties: Optional[MonitoringPropertiesOfDrill]
         provisioning_state: Optional[Union[str, ProvisioningState]]
         rbac_setup_mode: Optional[Union[str, RBACSetupMode]]
         recovery_plan_properties: Optional[RecoveryPlanPropertiesOfDrill]
         service_group_id: Optional[str]
+        sli_monitoring_properties: Optional[SliMonitoringProperties]
         system_metadata: Optional[SystemMetadata]
 
         @overload
@@ -2041,13 +2041,42 @@ namespace azure.mgmt.resiliencemanagement.models
                 chaos_resource_properties: Optional[ChaosResourcePropertiesOfDrill] = ..., 
                 drill_asset_properties: Optional[AssetPropertiesOfDrill] = ..., 
                 drill_type: str, 
+                goal_assignment_properties: Optional[GoalAssignmentPropertiesOfDrill] = ..., 
+                health_model_monitoring_properties: Optional[HealthModelMonitoringProperties] = ..., 
                 monitoring_properties: Optional[MonitoringPropertiesOfDrill] = ..., 
                 rbac_setup_mode: Optional[Union[str, RBACSetupMode]] = ..., 
-                recovery_plan_properties: Optional[RecoveryPlanPropertiesOfDrill] = ...
+                recovery_plan_properties: Optional[RecoveryPlanPropertiesOfDrill] = ..., 
+                sli_monitoring_properties: Optional[SliMonitoringProperties] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.DrillReportFinalizationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FINALIZED = "Finalized"
+        NOT_FINALIZED = "NotFinalized"
+
+
+    class azure.mgmt.resiliencemanagement.models.DrillReportFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        HTML = "Html"
+
+
+    class azure.mgmt.resiliencemanagement.models.DrillReportGenerationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FAILED = "Failed"
+        IN_PROGRESS = "InProgress"
+        NOT_STARTED = "NotStarted"
+        SUCCEEDED = "Succeeded"
+
+
+    class azure.mgmt.resiliencemanagement.models.DrillReportSummary(_Model):
+        available_formats: Optional[list[Union[str, DrillReportFormat]]]
+        finalization_state: Optional[Union[str, DrillReportFinalizationState]]
+        generation_status: Optional[Union[str, DrillReportGenerationStatus]]
+        last_error: Optional[ErrorDetails]
+        last_generated_timestamp: Optional[datetime]
+        schema_version: Optional[str]
+        stage_statuses: Optional[list[ReportStageStatus]]
 
 
     class azure.mgmt.resiliencemanagement.models.DrillResource(ProxyResource):
@@ -2218,6 +2247,8 @@ namespace azure.mgmt.resiliencemanagement.models
         job_type: Literal[JobType.DRILL_RUN]
         notes: Optional[list[str]]
         operation: str
+        recovery_time_objective: Optional[Union[str, IsoDuration]]
+        report: Optional[DrillReportSummary]
         resource_id: str
         retry_details: list[JobRetryDetails]
         start_time: datetime
@@ -2233,6 +2264,20 @@ namespace azure.mgmt.resiliencemanagement.models
                 error_details: Optional[JobErrorInfo] = ..., 
                 job_extended_info: Optional[JobExtendedInfo] = ..., 
                 retry_details: Optional[list[JobRetryDetails]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.DrillRunReprotectRequest(_Model):
+        reprotect_properties: ReprotectRequest
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                reprotect_properties: ReprotectRequest
             ) -> None: ...
 
         @overload
@@ -2295,6 +2340,13 @@ namespace azure.mgmt.resiliencemanagement.models
         REPROTECT_REVERSE = "ReprotectReverse"
 
 
+    class azure.mgmt.resiliencemanagement.models.DrillRunTasks(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FAILOVER = "Failover"
+        FAILOVER_REVERSE = "FailoverReverse"
+        REPROTECT = "Reprotect"
+        REPROTECT_REVERSE = "ReprotectReverse"
+
+
     class azure.mgmt.resiliencemanagement.models.DrillStartRequest(_Model):
         mode: Union[str, DrillMode]
 
@@ -2333,9 +2385,12 @@ namespace azure.mgmt.resiliencemanagement.models
     class azure.mgmt.resiliencemanagement.models.DrillUpdateProperties(_Model):
         chaos_resource_properties: Optional[ChaosResourcePropertiesOfDrill]
         drill_asset_properties: Optional[AssetPropertiesOfDrill]
+        goal_assignment_properties: Optional[GoalAssignmentPropertiesOfDrill]
+        health_model_monitoring_properties: Optional[HealthModelMonitoringProperties]
         monitoring_properties: Optional[MonitoringPropertiesOfDrill]
         rbac_setup_mode: Optional[Union[str, RBACSetupMode]]
         recovery_plan_properties: Optional[RecoveryPlanPropertiesOfDrill]
+        sli_monitoring_properties: Optional[SliMonitoringProperties]
 
         @overload
         def __init__(
@@ -2343,9 +2398,12 @@ namespace azure.mgmt.resiliencemanagement.models
                 *, 
                 chaos_resource_properties: Optional[ChaosResourcePropertiesOfDrill] = ..., 
                 drill_asset_properties: Optional[AssetPropertiesOfDrill] = ..., 
+                goal_assignment_properties: Optional[GoalAssignmentPropertiesOfDrill] = ..., 
+                health_model_monitoring_properties: Optional[HealthModelMonitoringProperties] = ..., 
                 monitoring_properties: Optional[MonitoringPropertiesOfDrill] = ..., 
                 rbac_setup_mode: Optional[Union[str, RBACSetupMode]] = ..., 
-                recovery_plan_properties: Optional[RecoveryPlanPropertiesOfDrill] = ...
+                recovery_plan_properties: Optional[RecoveryPlanPropertiesOfDrill] = ..., 
+                sli_monitoring_properties: Optional[SliMonitoringProperties] = ...
             ) -> None: ...
 
         @overload
@@ -2578,17 +2636,19 @@ namespace azure.mgmt.resiliencemanagement.models
 
     class azure.mgmt.resiliencemanagement.models.GoalAssignmentProperties(_Model):
         error_details: Optional[ErrorDetail]
-        goal_assignment_type: Union[str, GoalAssignmentType]
-        goal_template_id: str
         provisioning_state: Optional[Union[str, ProvisioningState]]
+        regional_objectives: Optional[RegionalObjectives]
+        require_regional_resiliency: Optional[bool]
+        require_zonal_resiliency: bool
         service_level_resources: Optional[list[ServiceLevelResource]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                goal_assignment_type: Union[str, GoalAssignmentType], 
-                goal_template_id: str, 
+                regional_objectives: Optional[RegionalObjectives] = ..., 
+                require_regional_resiliency: Optional[bool] = ..., 
+                require_zonal_resiliency: bool, 
                 service_level_resources: Optional[list[ServiceLevelResource]] = ...
             ) -> None: ...
 
@@ -2596,8 +2656,19 @@ namespace azure.mgmt.resiliencemanagement.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.resiliencemanagement.models.GoalAssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        RESILIENCY = "Resiliency"
+    class azure.mgmt.resiliencemanagement.models.GoalAssignmentPropertiesOfDrill(_Model):
+        goal_assignment_id: Optional[str]
+        identity: AssociatedIdentity
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: AssociatedIdentity
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.resiliencemanagement.models.GoalResource(ProxyResource):
@@ -2619,77 +2690,22 @@ namespace azure.mgmt.resiliencemanagement.models
 
 
     class azure.mgmt.resiliencemanagement.models.GoalResourceProperties(_Model):
-        disaster_recovery_attestation_status: Optional[Union[str, AttestationState]]
-        disaster_recovery_goal_participation: Optional[Union[str, ExclusionState]]
-        exclusion_reason_for_disaster_recovery_goals: Optional[Union[str, ExclusionReason]]
-        exclusion_reason_for_high_availability_goals: Optional[Union[str, ExclusionReason]]
-        high_availability_attestation_status: Union[str, AttestationState]
-        high_availability_goal_participation: Union[str, ExclusionState]
         provisioning_state: Optional[Union[str, ProvisioningState]]
+        regional_resiliency: Optional[ResiliencyProperties]
         resource_arm_id: str
-        service_group_memberships: Optional[list[ServiceGroupMembership]]
-        user_confirmation_for_high_availability: Optional[list[UserConfirmationForHighAvailabilityItem]]
+        zonal_resiliency: Optional[ResiliencyProperties]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                disaster_recovery_attestation_status: Optional[Union[str, AttestationState]] = ..., 
-                disaster_recovery_goal_participation: Optional[Union[str, ExclusionState]] = ..., 
-                high_availability_attestation_status: Union[str, AttestationState], 
-                high_availability_goal_participation: Union[str, ExclusionState], 
+                regional_resiliency: Optional[ResiliencyProperties] = ..., 
                 resource_arm_id: str, 
-                user_confirmation_for_high_availability: Optional[list[UserConfirmationForHighAvailabilityItem]] = ...
+                zonal_resiliency: Optional[ResiliencyProperties] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.resiliencemanagement.models.GoalTemplate(ProxyResource):
-        id: str
-        name: str
-        properties: Optional[GoalTemplateProperties]
-        system_data: SystemData
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                properties: Optional[GoalTemplateProperties] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.resiliencemanagement.models.GoalTemplateProperties(_Model):
-        error_details: Optional[ErrorDetail]
-        goal_type: Union[str, GoalType]
-        provisioning_state: Optional[Union[str, ProvisioningState]]
-        regional_recovery_point_objective: Optional[str]
-        regional_recovery_time_objective: Optional[str]
-        require_disaster_recovery: Optional[Union[str, RequirementSelected]]
-        require_high_availability: Optional[Union[str, RequirementSelected]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                goal_type: Union[str, GoalType], 
-                regional_recovery_point_objective: Optional[str] = ..., 
-                regional_recovery_time_objective: Optional[str] = ..., 
-                require_disaster_recovery: Optional[Union[str, RequirementSelected]] = ..., 
-                require_high_availability: Optional[Union[str, RequirementSelected]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.resiliencemanagement.models.GoalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        RESILIENCY = "Resiliency"
 
 
     class azure.mgmt.resiliencemanagement.models.GoalsData(_Model):
@@ -2727,6 +2743,22 @@ namespace azure.mgmt.resiliencemanagement.models
     class azure.mgmt.resiliencemanagement.models.HAStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ENABLED = "Enabled"
         NOT_ENABLED = "NotEnabled"
+
+
+    class azure.mgmt.resiliencemanagement.models.HealthModelMonitoringProperties(_Model):
+        discovery_rule_id: str
+        identity: AssociatedIdentity
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                discovery_rule_id: str, 
+                identity: AssociatedIdentity
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.resiliencemanagement.models.IncludeOrUpdateResource(_Model):
@@ -2912,12 +2944,29 @@ namespace azure.mgmt.resiliencemanagement.models
     class azure.mgmt.resiliencemanagement.models.LastRunProperties(_Model):
         last_run_attestation: Optional[Union[str, DrillAttestation]]
         last_run_duration: Optional[timedelta]
+        last_run_recovery_time_actual: Optional[timedelta]
         last_run_state: Optional[Union[str, JobStatus]]
         last_run_time: Optional[datetime]
 
 
-    class azure.mgmt.resiliencemanagement.models.ManagedOnBehalfOfConfiguration(_Model):
-        mobo_broker_resources: Optional[list[MoboBrokerResource]]
+    class azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlRequest(_Model):
+        format: Optional[Union[str, DrillReportFormat]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                format: Optional[Union[str, DrillReportFormat]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.ListReportDownloadUrlResponse(_Model):
+        download_url: Optional[str]
+        expiry_timestamp: Optional[datetime]
+        format: Optional[Union[str, DrillReportFormat]]
 
 
     class azure.mgmt.resiliencemanagement.models.ManagedServiceIdentity(_Model):
@@ -2957,16 +3006,6 @@ namespace azure.mgmt.resiliencemanagement.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.resiliencemanagement.models.MembershipType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DIRECT = "Direct"
-        THROUGH_RESOURCE_GROUP = "ThroughResourceGroup"
-        THROUGH_SUBSCRIPTION = "ThroughSubscription"
-
-
-    class azure.mgmt.resiliencemanagement.models.MoboBrokerResource(_Model):
-        id: Optional[str]
 
 
     class azure.mgmt.resiliencemanagement.models.MonitoringPropertiesOfDrill(_Model):
@@ -3015,13 +3054,15 @@ namespace azure.mgmt.resiliencemanagement.models
     class azure.mgmt.resiliencemanagement.models.OperationQualificationDetails(_Model):
         not_qualified_reasons: Optional[list[str]]
         qualification_state: Union[str, QualificationState]
+        resource_feasibility_reviews: Optional[list[ResourceFeasibilityReview]]
 
         @overload
         def __init__(
                 self, 
                 *, 
                 not_qualified_reasons: Optional[list[str]] = ..., 
-                qualification_state: Union[str, QualificationState]
+                qualification_state: Union[str, QualificationState], 
+                resource_feasibility_reviews: Optional[list[ResourceFeasibilityReview]] = ...
             ) -> None: ...
 
         @overload
@@ -3068,6 +3109,7 @@ namespace azure.mgmt.resiliencemanagement.models
         CANCELED = "Canceled"
         DELETING = "Deleting"
         FAILED = "Failed"
+        NEEDS_ATTENTION = "NeedsAttention"
         PROVISIONING = "Provisioning"
         SUCCEEDED = "Succeeded"
         UPDATING = "Updating"
@@ -3538,6 +3580,7 @@ namespace azure.mgmt.resiliencemanagement.models
         associated_identity: Optional[AssociatedIdentity]
         attention_reasons: Optional[list[str]]
         error_details: Optional[ErrorDetail]
+        inclusion_disabled_reasons: Optional[list[Union[str, ResourceInclusionDisabledReason]]]
         inclusion_state: Optional[Union[str, ResourceInclusionState]]
         needs_attention: Optional[bool]
         protection_status: Optional[Union[str, ResourceProtectionStatus]]
@@ -3591,15 +3634,17 @@ namespace azure.mgmt.resiliencemanagement.models
         error_details: ErrorDetail
         execution_readiness_state: Union[str, ExecutionReadinessState]
         execution_state: Union[str, ExecutionState]
+        goal_assignment_properties: GoalAssignmentPropertiesOfDrill
+        health_model_monitoring_properties: HealthModelMonitoringProperties
         last_resync_readiness_check_time: datetime
         last_run_properties: LastRunProperties
         last_sync_time: datetime
-        managed_on_behalf_of_configuration: ManagedOnBehalfOfConfiguration
         monitoring_properties: MonitoringPropertiesOfDrill
         provisioning_state: Union[str, ProvisioningState]
         rbac_setup_mode: Union[str, RBACSetupMode]
         recovery_plan_properties: RecoveryPlanPropertiesOfDrill
         service_group_id: str
+        sli_monitoring_properties: SliMonitoringProperties
         system_metadata: SystemMetadata
 
         @overload
@@ -3608,9 +3653,28 @@ namespace azure.mgmt.resiliencemanagement.models
                 *, 
                 chaos_resource_properties: Optional[ChaosResourcePropertiesOfDrill] = ..., 
                 drill_asset_properties: Optional[AssetPropertiesOfDrill] = ..., 
+                goal_assignment_properties: Optional[GoalAssignmentPropertiesOfDrill] = ..., 
+                health_model_monitoring_properties: Optional[HealthModelMonitoringProperties] = ..., 
                 monitoring_properties: Optional[MonitoringPropertiesOfDrill] = ..., 
                 rbac_setup_mode: Optional[Union[str, RBACSetupMode]] = ..., 
-                recovery_plan_properties: Optional[RecoveryPlanPropertiesOfDrill] = ...
+                recovery_plan_properties: Optional[RecoveryPlanPropertiesOfDrill] = ..., 
+                sli_monitoring_properties: Optional[SliMonitoringProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.RegionalObjectives(_Model):
+        target_recovery_point_objective: Union[str, IsoDuration]
+        target_recovery_time_objective: Union[str, IsoDuration]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                target_recovery_point_objective: Union[str, IsoDuration], 
+                target_recovery_time_objective: Union[str, IsoDuration]
             ) -> None: ...
 
         @overload
@@ -3620,6 +3684,29 @@ namespace azure.mgmt.resiliencemanagement.models
     class azure.mgmt.resiliencemanagement.models.RelativeResourceCompositionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         IN_SYNC = "InSync"
         OUT_OF_SYNC = "OutOfSync"
+
+
+    class azure.mgmt.resiliencemanagement.models.ReplicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACTIVE_ACTIVE = "ActiveActive"
+        ACTIVE_PASSIVE = "ActivePassive"
+        NONE = "None"
+
+
+    class azure.mgmt.resiliencemanagement.models.ReportStageStatus(_Model):
+        drill_run_stage: Union[str, DrillRunSubtasks]
+        generation_status: Optional[Union[str, DrillReportGenerationStatus]]
+        last_attempt_timestamp: Optional[datetime]
+        last_error: Optional[ErrorDetails]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                drill_run_stage: Union[str, DrillRunSubtasks]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.resiliencemanagement.models.ReprotectRequest(_Model):
@@ -3650,15 +3737,29 @@ namespace azure.mgmt.resiliencemanagement.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.resiliencemanagement.models.RequirementSelected(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        NOT_REQUIRED = "NotRequired"
-        REQUIRED = "Required"
-
-
     class azure.mgmt.resiliencemanagement.models.ResilienceHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         HEALTHY = "Healthy"
         NOT_EVALUATED = "NotEvaluated"
         UNHEALTHY = "Unhealthy"
+
+
+    class azure.mgmt.resiliencemanagement.models.ResiliencyProperties(_Model):
+        attestation_status: Optional[Union[str, AttestationState]]
+        exclusion_reason: Optional[Union[str, ExclusionReason]]
+        goal_participation: Optional[Union[str, ExclusionState]]
+        user_confirmation: Optional[list[UserConfirmationItem]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                attestation_status: Optional[Union[str, AttestationState]] = ..., 
+                goal_participation: Optional[Union[str, ExclusionState]] = ..., 
+                user_confirmation: Optional[list[UserConfirmationItem]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.resiliencemanagement.models.Resource(_Model):
@@ -3666,6 +3767,25 @@ namespace azure.mgmt.resiliencemanagement.models
         name: Optional[str]
         system_data: Optional[SystemData]
         type: Optional[str]
+
+
+    class azure.mgmt.resiliencemanagement.models.ResourceAzureTemplateProtectionSetting(ResourceBaseProtectionSolutionSetting, discriminator='AzureTemplate'):
+        deployment_location: Optional[str]
+        deployment_scope: str
+        protection_solution_type: Literal[ResourceProtectionSolutionType.AZURE_TEMPLATE]
+        template_spec_version_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_location: Optional[str] = ..., 
+                deployment_scope: str, 
+                template_spec_version_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.resiliencemanagement.models.ResourceBaseProtectionSolutionSetting(_Model):
@@ -3676,6 +3796,33 @@ namespace azure.mgmt.resiliencemanagement.models
                 self, 
                 *, 
                 protection_solution_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.ResourceCosmosDBProtectionSetting(ResourceBaseProtectionSolutionSetting, discriminator='AzureCosmosDB'):
+        protection_solution_type: Literal[ResourceProtectionSolutionType.AZURE_COSMOS_DB]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.ResourceCrossZoneVmRecoveryProtectionSetting(ResourceBaseProtectionSolutionSetting, discriminator='CrossZoneVMRecovery'):
+        capacity_reservation_group_id: Optional[str]
+        protection_solution_type: Literal[ResourceProtectionSolutionType.CROSS_ZONE_VM_RECOVERY]
+        target_zone: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                capacity_reservation_group_id: Optional[str] = ..., 
+                target_zone: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -3719,6 +3866,44 @@ namespace azure.mgmt.resiliencemanagement.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.resiliencemanagement.models.ResourceFeasibilityReview(_Model):
+        current_target_sku: Optional[SkuDetails]
+        feasibility_type: Union[str, ResourceFeasibilityReviewType]
+        recommended_target_skus: Optional[list[SkuDetails]]
+        resource_type: str
+        status: Union[str, ResourceFeasibilityReviewStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                current_target_sku: Optional[SkuDetails] = ..., 
+                feasibility_type: Union[str, ResourceFeasibilityReviewType], 
+                recommended_target_skus: Optional[list[SkuDetails]] = ..., 
+                resource_type: str, 
+                status: Union[str, ResourceFeasibilityReviewStatus]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.ResourceFeasibilityReviewStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FLAGGED = "Flagged"
+        NOT_APPLICABLE = "NotApplicable"
+        PASSED = "Passed"
+        UNAVAILABLE = "Unavailable"
+
+
+    class azure.mgmt.resiliencemanagement.models.ResourceFeasibilityReviewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        SKU_CAPACITY = "SkuCapacity"
+
+
+    class azure.mgmt.resiliencemanagement.models.ResourceInclusionDisabledReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        RESOURCE_ACTIVE_ACTIVE_PROTECTION = "ResourceActiveActiveProtection"
+        RESOURCE_HIGHLY_AVAILABLE = "ResourceHighlyAvailable"
+
+
     class azure.mgmt.resiliencemanagement.models.ResourceInclusionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         EXCLUDED = "Excluded"
         INCLUDED = "Included"
@@ -3752,6 +3937,16 @@ namespace azure.mgmt.resiliencemanagement.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.resiliencemanagement.models.ResourceNetAppFilesProtectionSetting(ResourceBaseProtectionSolutionSetting, discriminator='AzureNetAppFiles'):
+        protection_solution_type: Literal[ResourceProtectionSolutionType.AZURE_NET_APP_FILES]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.resiliencemanagement.models.ResourceProtectionSolutionSettings(_Model):
         active_location: Optional[str]
         active_locations: Optional[list[str]]
@@ -3763,14 +3958,30 @@ namespace azure.mgmt.resiliencemanagement.models
         protection_status: Optional[Union[str, ResourceProtectionStatus]]
         recovery_locations: Optional[list[str]]
         replica_resources: Optional[list[str]]
+        replication_mode: Optional[Union[str, ReplicationMode]]
         replication_role: Optional[Union[str, ResourceReplicationRole]]
         resource_id: Optional[str]
         test_failover_state: Optional[Union[str, TestFailoverState]]
 
+        @overload
+        def __init__(
+                self, 
+                *, 
+                replication_mode: Optional[Union[str, ReplicationMode]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
 
     class azure.mgmt.resiliencemanagement.models.ResourceProtectionSolutionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_COSMOS_DB = "AzureCosmosDB"
         AZURE_NATIVE = "AzureNative"
+        AZURE_NET_APP_FILES = "AzureNetAppFiles"
+        AZURE_SERVICE_BUS = "AzureServiceBus"
         AZURE_SITE_RECOVERY = "AzureSiteRecovery"
+        AZURE_STORAGE_ACCOUNT = "AzureStorageAccount"
+        AZURE_TEMPLATE = "AzureTemplate"
         CROSS_ZONE_VM_RECOVERY = "CrossZoneVMRecovery"
         CUSTOM_RUNBOOK = "CustomRunbook"
         NONE = "None"
@@ -3787,6 +3998,16 @@ namespace azure.mgmt.resiliencemanagement.models
         PRIMARY = "Primary"
         REPLICA = "Replica"
         UNKNOWN = "Unknown"
+
+
+    class azure.mgmt.resiliencemanagement.models.ResourceServiceBusProtectionSetting(ResourceBaseProtectionSolutionSetting, discriminator='AzureServiceBus'):
+        protection_solution_type: Literal[ResourceProtectionSolutionType.AZURE_SERVICE_BUS]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.resiliencemanagement.models.ResourceSiteRecoveryProtectionSetting(ResourceBaseProtectionSolutionSetting, discriminator='AzureSiteRecovery'):
@@ -3850,40 +4071,118 @@ namespace azure.mgmt.resiliencemanagement.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.resiliencemanagement.models.ResourceStorageAccountProtectionSetting(ResourceBaseProtectionSolutionSetting, discriminator='AzureStorageAccount'):
+        protection_solution_type: Literal[ResourceProtectionSolutionType.AZURE_STORAGE_ACCOUNT]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.resiliencemanagement.models.ResourceTypeCategories(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AZURE_SITE_RECOVERY_VMS_PRESENT = "AzureSiteRecoveryVMsPresent"
 
 
-    class azure.mgmt.resiliencemanagement.models.ServiceGroupMembership(_Model):
-        membership_type: Union[str, MembershipType]
-        service_group_id: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                membership_type: Union[str, MembershipType], 
-                service_group_id: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.resiliencemanagement.models.ServiceLevelResource(_Model):
         service_level_indicator_resource_id: str
-        service_level_objective_resource_id: str
 
         @overload
         def __init__(
                 self, 
                 *, 
-                service_level_indicator_resource_id: str, 
-                service_level_objective_resource_id: str
+                service_level_indicator_resource_id: str
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.SkuDetails(_Model):
+        currency: Optional[str]
+        monthly_price: Optional[float]
+        offering_id: Optional[str]
+        ram: Optional[int]
+        sku: str
+        v_cpu: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                currency: Optional[str] = ..., 
+                monthly_price: Optional[float] = ..., 
+                offering_id: Optional[str] = ..., 
+                ram: Optional[int] = ..., 
+                sku: str, 
+                v_cpu: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.SliAttentionStatus(_Model):
+        drill_rbac_on_destination_amw: Optional[Union[str, RBACState]]
+        exists: Optional[Union[str, ExtensionObjectState]]
+        rbac_needed_on_destination_amws: Optional[list[str]]
+        sli_id: str
+        type: Union[str, SliType]
+        type_match: Optional[Union[str, SliTypeMatchState]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                sli_id: str, 
+                type: Union[str, SliType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.SliMonitoringProperties(_Model):
+        identity: AssociatedIdentity
+        slis: list[SliSelection]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: AssociatedIdentity, 
+                slis: list[SliSelection]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.SliSelection(_Model):
+        sli_id: str
+        type: Union[str, SliType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                sli_id: str, 
+                type: Union[str, SliType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.SliType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AVAILABILITY = "Availability"
+        LATENCY = "Latency"
+
+
+    class azure.mgmt.resiliencemanagement.models.SliTypeMatchState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MATCHED = "Matched"
+        MISMATCHED = "Mismatched"
 
 
     class azure.mgmt.resiliencemanagement.models.SolutionDisplayName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -4125,7 +4424,6 @@ namespace azure.mgmt.resiliencemanagement.models
 
 
     class azure.mgmt.resiliencemanagement.models.UsagePlanType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        BASIC = "Basic"
         STANDARD = "Standard"
 
 
@@ -4134,7 +4432,7 @@ namespace azure.mgmt.resiliencemanagement.models
         principal_id: Optional[str]
 
 
-    class azure.mgmt.resiliencemanagement.models.UserConfirmationForHighAvailabilityItem(_Model):
+    class azure.mgmt.resiliencemanagement.models.UserConfirmationItem(_Model):
         confirmation_status: Union[str, ConfirmationStatus]
         reason_for_requesting_confirmation: Optional[Union[str, ReasonForRequestingConfirmation]]
         solution_display_name: Union[str, SolutionDisplayName]
@@ -4163,13 +4461,15 @@ namespace azure.mgmt.resiliencemanagement.models
 
 
     class azure.mgmt.resiliencemanagement.models.ValidateForExecutionProperties(_Model):
-        source_locations: list[str]
+        operation_name: Optional[Union[str, DrillRunTasks]]
+        source_locations: Optional[list[str]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                source_locations: list[str]
+                operation_name: Optional[Union[str, DrillRunTasks]] = ..., 
+                source_locations: Optional[list[str]] = ...
             ) -> None: ...
 
         @overload
@@ -4226,15 +4526,17 @@ namespace azure.mgmt.resiliencemanagement.models
         error_details: ErrorDetail
         execution_readiness_state: Union[str, ExecutionReadinessState]
         execution_state: Union[str, ExecutionState]
+        goal_assignment_properties: GoalAssignmentPropertiesOfDrill
+        health_model_monitoring_properties: HealthModelMonitoringProperties
         last_resync_readiness_check_time: datetime
         last_run_properties: LastRunProperties
         last_sync_time: datetime
-        managed_on_behalf_of_configuration: ManagedOnBehalfOfConfiguration
         monitoring_properties: MonitoringPropertiesOfDrill
         provisioning_state: Union[str, ProvisioningState]
         rbac_setup_mode: Union[str, RBACSetupMode]
         recovery_plan_properties: RecoveryPlanPropertiesOfDrill
         service_group_id: str
+        sli_monitoring_properties: SliMonitoringProperties
         system_metadata: SystemMetadata
         vms_present: Optional[Union[str, VMPresent]]
 
@@ -4244,9 +4546,12 @@ namespace azure.mgmt.resiliencemanagement.models
                 *, 
                 chaos_resource_properties: Optional[ChaosResourcePropertiesOfDrill] = ..., 
                 drill_asset_properties: Optional[AssetPropertiesOfDrill] = ..., 
+                goal_assignment_properties: Optional[GoalAssignmentPropertiesOfDrill] = ..., 
+                health_model_monitoring_properties: Optional[HealthModelMonitoringProperties] = ..., 
                 monitoring_properties: Optional[MonitoringPropertiesOfDrill] = ..., 
                 rbac_setup_mode: Optional[Union[str, RBACSetupMode]] = ..., 
-                recovery_plan_properties: Optional[RecoveryPlanPropertiesOfDrill] = ...
+                recovery_plan_properties: Optional[RecoveryPlanPropertiesOfDrill] = ..., 
+                sli_monitoring_properties: Optional[SliMonitoringProperties] = ...
             ) -> None: ...
 
         @overload
@@ -4339,7 +4644,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 service_group_name: str, 
                 drill_name: str, 
                 drill_run_name: str, 
-                body: JSON, 
+                body: DrillRunAddNotesRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -4365,7 +4670,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 service_group_name: str, 
                 drill_name: str, 
                 drill_run_name: str, 
-                body: DrillRunFailoverRequest, 
+                body: Optional[DrillRunFailoverRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -4378,7 +4683,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 service_group_name: str, 
                 drill_name: str, 
                 drill_run_name: str, 
-                body: JSON, 
+                body: Optional[DrillRunFailoverRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -4387,11 +4692,75 @@ namespace azure.mgmt.resiliencemanagement.operations
 
         @overload
         def begin_fail_over(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                body: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-31-preview', params_added_on={'2026-08-31-preview': ['service_group_name', 'api_version', 'operation_id', 'drill_name', 'drill_run_name', 'accept']}, api_versions_list=['2026-08-31-preview', '2026-09-30-preview'])
+        def begin_generate_report(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                *, 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> LROPoller[DrillReportSummary]: ...
+
+        @overload
+        def begin_list_report_download_url(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                body: ListReportDownloadUrlRequest, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> LROPoller[ListReportDownloadUrlResponse]: ...
+
+        @overload
+        def begin_list_report_download_url(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                body: ListReportDownloadUrlRequest, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> LROPoller[ListReportDownloadUrlResponse]: ...
+
+        @overload
+        def begin_list_report_download_url(
                 self, 
                 service_group_name: str, 
                 drill_name: str, 
                 drill_run_name: str, 
                 body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> LROPoller[ListReportDownloadUrlResponse]: ...
+
+        @overload
+        def begin_mark_as_complete(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                body: MarkAsCompleteRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -4417,19 +4786,6 @@ namespace azure.mgmt.resiliencemanagement.operations
                 service_group_name: str, 
                 drill_name: str, 
                 drill_run_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @overload
-        def begin_mark_as_complete(
-                self, 
-                service_group_name: str, 
-                drill_name: str, 
-                drill_run_name: str, 
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
@@ -4437,13 +4793,41 @@ namespace azure.mgmt.resiliencemanagement.operations
                 **kwargs: Any
             ) -> LROPoller[None]: ...
 
-        @distributed_trace
+        @overload
         def begin_reprotect(
                 self, 
                 service_group_name: str, 
                 drill_name: str, 
                 drill_run_name: str, 
+                body: Optional[DrillRunReprotectRequest] = None, 
                 *, 
+                content_type: str = "application/json", 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_reprotect(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                body: Optional[DrillRunReprotectRequest] = None, 
+                *, 
+                content_type: str = "application/json", 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_reprotect(
+                self, 
+                service_group_name: str, 
+                drill_name: str, 
+                drill_run_name: str, 
+                body: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
                 operation_id: str, 
                 **kwargs: Any
             ) -> LROPoller[None]: ...
@@ -4502,7 +4886,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 drill_name: str, 
-                body: JSON, 
+                body: AddOrUpdateResourcesRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -4537,7 +4921,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 drill_name: str, 
-                resource: JSON, 
+                resource: Drill, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4579,7 +4963,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 drill_name: str, 
-                body: JSON, 
+                body: DrillEndRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -4599,7 +4983,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['service_group_name', 'api_version', 'operation_id', 'drill_name']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['service_group_name', 'api_version', 'operation_id', 'drill_name']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-06-01-preview', '2026-08-31-preview', '2026-09-30-preview'])
         def begin_resync_readiness_check(
                 self, 
                 service_group_name: str, 
@@ -4626,7 +5010,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 drill_name: str, 
-                body: JSON, 
+                body: DrillStartRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -4661,7 +5045,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 drill_name: str, 
-                properties: JSON, 
+                properties: DrillUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4695,7 +5079,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 drill_name: str, 
-                body: JSON, 
+                body: ValidateForExecutionRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -4759,7 +5143,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 resource_group_name: str, 
                 usage_plan_name: str, 
                 enrollment_name: str, 
-                resource: JSON, 
+                resource: Enrollment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4778,7 +5162,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[Enrollment]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'enrollment_name']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'enrollment_name']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-06-01-preview', '2026-08-31-preview', '2026-09-30-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -4788,7 +5172,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'enrollment_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'enrollment_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-06-01-preview', '2026-08-31-preview', '2026-09-30-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -4798,7 +5182,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> Enrollment: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-06-01-preview', '2026-08-31-preview', '2026-09-30-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -4831,7 +5215,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 goal_assignment_name: str, 
-                resource: JSON, 
+                resource: GoalAssignment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4872,7 +5256,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 goal_assignment_name: str, 
-                body: JSON, 
+                body: RecommendCapacityRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4913,7 +5297,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 goal_assignment_name: str, 
-                properties: JSON, 
+                properties: GoalAssignment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4946,7 +5330,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 goal_assignment_name: str, 
-                body: JSON, 
+                body: UpdateGoalResourceRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5009,107 +5393,6 @@ namespace azure.mgmt.resiliencemanagement.operations
                 top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[GoalResource]: ...
-
-
-    class azure.mgmt.resiliencemanagement.operations.GoalTemplatesOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                service_group_name: str, 
-                goal_template_name: str, 
-                resource: GoalTemplate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[GoalTemplate]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                service_group_name: str, 
-                goal_template_name: str, 
-                resource: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[GoalTemplate]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                service_group_name: str, 
-                goal_template_name: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[GoalTemplate]: ...
-
-        @distributed_trace
-        def begin_delete(
-                self, 
-                service_group_name: str, 
-                goal_template_name: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @overload
-        def begin_update(
-                self, 
-                service_group_name: str, 
-                goal_template_name: str, 
-                properties: GoalTemplate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @overload
-        def begin_update(
-                self, 
-                service_group_name: str, 
-                goal_template_name: str, 
-                properties: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @overload
-        def begin_update(
-                self, 
-                service_group_name: str, 
-                goal_template_name: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @distributed_trace
-        def get(
-                self, 
-                service_group_name: str, 
-                goal_template_name: str, 
-                **kwargs: Any
-            ) -> GoalTemplate: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                service_group_name: str, 
-                *, 
-                skip_token: Optional[str] = ..., 
-                top: Optional[int] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[GoalTemplate]: ...
 
 
     class azure.mgmt.resiliencemanagement.operations.OperationStatusOperations:
@@ -5196,7 +5479,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 service_group_name: str, 
                 recovery_plan_name: str, 
                 recovery_job_name: str, 
-                body: JSON, 
+                body: RecoveryActionRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -5235,7 +5518,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 service_group_name: str, 
                 recovery_plan_name: str, 
                 recovery_job_name: str, 
-                body: JSON, 
+                body: RecoveryActionRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -5319,7 +5602,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                body: JSON, 
+                body: FailoverRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -5375,7 +5658,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[ReprotectRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -5411,7 +5694,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                body: JSON, 
+                body: FailoverRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -5447,7 +5730,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                body: JSON, 
+                body: TestFailoverCleanupRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -5483,7 +5766,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                body: JSON, 
+                body: UpdateRecoveryResourcesRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -5519,7 +5802,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                body: JSON, 
+                body: FailoverRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -5565,7 +5848,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                body: JSON, 
+                body: ValidateForOperationRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -5601,7 +5884,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[ReprotectRequest] = None, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -5637,7 +5920,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                body: JSON, 
+                body: FailoverRequest, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: str, 
@@ -5691,7 +5974,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                resource: JSON, 
+                resource: RecoveryPlan, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5732,7 +6015,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 service_group_name: str, 
                 recovery_plan_name: str, 
-                properties: JSON, 
+                properties: RecoveryPlan, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5845,7 +6128,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 resource_group_name: str, 
                 usage_plan_name: str, 
-                resource: JSON, 
+                resource: UsagePlan, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5863,7 +6146,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[UsagePlan]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-06-01-preview', '2026-08-31-preview', '2026-09-30-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -5887,7 +6170,7 @@ namespace azure.mgmt.resiliencemanagement.operations
                 self, 
                 resource_group_name: str, 
                 usage_plan_name: str, 
-                properties: JSON, 
+                properties: UsagePlanTagsUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5905,7 +6188,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[UsagePlan]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-06-01-preview', '2026-08-31-preview', '2026-09-30-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -5914,7 +6197,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> UsagePlan: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-06-01-preview', '2026-08-31-preview', '2026-09-30-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -5922,8 +6205,992 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> ItemPaged[UsagePlan]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-03-01-preview', '2026-04-01-preview', '2026-06-01-preview', '2026-08-31-preview', '2026-09-30-preview'])
         def list_by_subscription(self, **kwargs: Any) -> ItemPaged[UsagePlan]: ...
+
+
+namespace azure.mgmt.resiliencemanagement.types
+
+    class azure.mgmt.resiliencemanagement.types.AddOrUpdateResourcesRequest(TypedDict, total=False):
+        key "faultDurationInMin": Required[int]
+        key "forceInclusionAndUpdate": Union[str, ForceInclusionAndUpdate]
+        key "resourceLists": ForwardRef('ResourceLists', module='types')
+        faultDurationInMin: int
+        forceInclusionAndUpdate: Union[str, ForceInclusionAndUpdate]
+        resourceLists: ResourceLists
+
+
+    class azure.mgmt.resiliencemanagement.types.AssetPropertiesOfDrill(TypedDict, total=False):
+        key "region": Required[str]
+        key "resourceGroup": str
+        key "subscription": Required[str]
+        region: str
+        resourceGroup: str
+        subscription: str
+
+
+    class azure.mgmt.resiliencemanagement.types.AssociatedIdentity(TypedDict, total=False):
+        key "type": Required[Union[str, ManagedServiceIdentityType]]
+        key "userAssignedIdentity": str
+        type: Union[str, ManagedServiceIdentityType]
+        userAssignedIdentity: str
+
+
+    class azure.mgmt.resiliencemanagement.types.AttentionReason(TypedDict, total=False):
+        key "chaosResource": Union[str, ExtensionObjectState]
+        key "chaosResourceUserMsi": Union[str, ExtensionObjectState]
+        key "discoveryRuleExists": Union[str, ExtensionObjectState]
+        key "drillMonitoringResources": Union[str, ExtensionObjectState]
+        key "drillRbacOnChaosResource": Union[str, RBACState]
+        key "drillRbacOnGoalAssignment": Union[str, RBACState]
+        key "drillRbacOnHealthModel": Union[str, RBACState]
+        key "drillRbacOnMonitoringResources": Union[str, RBACState]
+        key "drillRbacOnRecoveryPlan": Union[str, RBACState]
+        key "drillRbacOnSli": Union[str, RBACState]
+        key "drillUserMsi": Union[str, ExtensionObjectState]
+        key "goalAssignment": Union[str, ExtensionObjectState]
+        key "healthModelExists": Union[str, ExtensionObjectState]
+        key "includedResourceInDrill": Union[str, ExtensionObjectState]
+        key "monitoringRbacOnDrillResources": Union[str, RBACState]
+        key "monitoringSourceNotConfigured": bool
+        key "rbacOnTargetResources": Union[str, RBACState]
+        key "recoveryPlan": Union[str, ExtensionObjectState]
+        key "recoveryPlanAndDrillResourcesState": Union[str, RelativeResourceCompositionState]
+        key "roReadiness": Union[str, RecoveryPlanState]
+        key "runbookFaultRbacOnTargets": Union[str, RBACState]
+        key "serviceGroupAndDrillResourcesState": Union[str, RelativeResourceCompositionState]
+        chaosResource: Union[str, ExtensionObjectState]
+        chaosResourceCreationFailureReasons: list[str]
+        chaosResourceUserMsi: Union[str, ExtensionObjectState]
+        discoveryRuleExists: Union[str, ExtensionObjectState]
+        drillMonitoringErrors: list[ErrorDetails]
+        drillMonitoringResources: Union[str, ExtensionObjectState]
+        drillRbacOnChaosResource: Union[str, RBACState]
+        drillRbacOnGoalAssignment: Union[str, RBACState]
+        drillRbacOnHealthModel: Union[str, RBACState]
+        drillRbacOnMonitoringResources: Union[str, RBACState]
+        drillRbacOnRecoveryPlan: Union[str, RBACState]
+        drillRbacOnSli: Union[str, RBACState]
+        drillUserMsi: Union[str, ExtensionObjectState]
+        goalAssignment: Union[str, ExtensionObjectState]
+        healthModelExists: Union[str, ExtensionObjectState]
+        includedResourceInDrill: Union[str, ExtensionObjectState]
+        missingRequiredResourceProviders: list[str]
+        monitoringRbacOnDrillResources: Union[str, RBACState]
+        monitoringSourceNotConfigured: bool
+        rbacNeededForDrillOnChaosResource: list[str]
+        rbacNeededForDrillOnDrillMonitoringResources: list[str]
+        rbacNeededForDrillOnDrillResources: list[str]
+        rbacNeededForDrillOnGoalAssignment: list[str]
+        rbacNeededForDrillOnHealthModel: list[str]
+        rbacNeededForDrillOnRecoveryPlan: list[str]
+        rbacOnTargetResources: Union[str, RBACState]
+        recoveryPlan: Union[str, ExtensionObjectState]
+        recoveryPlanAndDrillResourcesState: Union[str, RelativeResourceCompositionState]
+        roReadiness: Union[str, RecoveryPlanState]
+        runbookFaultRbacOnTargets: Union[str, RBACState]
+        serviceGroupAndDrillResourcesState: Union[str, RelativeResourceCompositionState]
+        sliAttentionStatuses: list[SliAttentionStatus]
+
+
+    class azure.mgmt.resiliencemanagement.types.ChaosResourcePropertiesOfDrill(TypedDict, total=False):
+        key "chaosResourceId": str
+        key "chaosResourceIdentityForFaults": Required[AssociatedIdentity]
+        key "faultDurationInMin": int
+        key "identity": Required[AssociatedIdentity]
+        chaosResourceId: str
+        chaosResourceIdentityForFaults: AssociatedIdentity
+        faultDurationInMin: int
+        identity: AssociatedIdentity
+
+
+    class azure.mgmt.resiliencemanagement.types.CustomFaultDetails(TypedDict, total=False):
+        key "faultName": Required[str]
+        key "scriptResourceId": Required[str]
+        faultName: str
+        scriptResourceId: str
+
+
+    class azure.mgmt.resiliencemanagement.types.DiskReprotectInputDetails(TypedDict, total=False):
+        key "diskResourceId": str
+        key "stagingStorageAccountResourceId": str
+        diskResourceId: str
+        stagingStorageAccountResourceId: str
+
+
+    class azure.mgmt.resiliencemanagement.types.Drill(ProxyResource):
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "name": str
+        key "properties": ForwardRef('DrillProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: ManagedServiceIdentity
+        name: str
+        properties: DrillProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.resiliencemanagement.types.DrillEndRequest(TypedDict, total=False):
+        key "attestation": Required[Union[str, DrillAttestation]]
+        key "attestationNotes": Required[str]
+        attestation: Union[str, DrillAttestation]
+        attestationNotes: str
+
+
+    class azure.mgmt.resiliencemanagement.types.DrillRunAddNotesRequest(TypedDict, total=False):
+        key "author": str
+        key "notes": str
+        key "timestamp": str
+        author: str
+        notes: str
+        timestamp: str
+
+
+    class azure.mgmt.resiliencemanagement.types.DrillRunFailoverRequest(TypedDict, total=False):
+        key "autoFailover": Required[Union[str, AutoFailover]]
+        key "failoverProperties": Required[FailoverRequest]
+        autoFailover: Union[str, AutoFailover]
+        failoverProperties: FailoverRequest
+
+
+    class azure.mgmt.resiliencemanagement.types.DrillRunReprotectRequest(TypedDict, total=False):
+        key "reprotectProperties": Required[ReprotectRequest]
+        reprotectProperties: ReprotectRequest
+
+
+    class azure.mgmt.resiliencemanagement.types.DrillStartRequest(TypedDict, total=False):
+        key "mode": Required[Union[str, DrillMode]]
+        mode: Union[str, DrillMode]
+
+
+    class azure.mgmt.resiliencemanagement.types.DrillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        REGIONAL = "Regional"
+        ZONAL = "Zonal"
+
+
+    class azure.mgmt.resiliencemanagement.types.DrillUpdate(TypedDict, total=False):
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "properties": ForwardRef('DrillUpdateProperties', module='types')
+        identity: ManagedServiceIdentity
+        properties: DrillUpdateProperties
+
+
+    class azure.mgmt.resiliencemanagement.types.DrillUpdateProperties(TypedDict, total=False):
+        key "chaosResourceProperties": ForwardRef('ChaosResourcePropertiesOfDrill', module='types')
+        key "drillAssetProperties": ForwardRef('AssetPropertiesOfDrill', module='types')
+        key "goalAssignmentProperties": ForwardRef('GoalAssignmentPropertiesOfDrill', module='types')
+        key "healthModelMonitoringProperties": Optional[HealthModelMonitoringProperties]
+        key "monitoringProperties": ForwardRef('MonitoringPropertiesOfDrill', module='types')
+        key "rbacSetupMode": Union[str, RBACSetupMode]
+        key "recoveryPlanProperties": ForwardRef('RecoveryPlanPropertiesOfDrill', module='types')
+        key "sliMonitoringProperties": Optional[SliMonitoringProperties]
+        chaosResourceProperties: ChaosResourcePropertiesOfDrill
+        drillAssetProperties: AssetPropertiesOfDrill
+        goalAssignmentProperties: GoalAssignmentPropertiesOfDrill
+        healthModelMonitoringProperties: HealthModelMonitoringProperties
+        monitoringProperties: MonitoringPropertiesOfDrill
+        rbacSetupMode: Union[str, RBACSetupMode]
+        recoveryPlanProperties: RecoveryPlanPropertiesOfDrill
+        sliMonitoringProperties: SliMonitoringProperties
+
+
+    class azure.mgmt.resiliencemanagement.types.Enrollment(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('EnrollmentProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: EnrollmentProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.resiliencemanagement.types.EnrollmentProperties(TypedDict, total=False):
+        key "errorDetails": ForwardRef('ErrorDetail', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "serviceGroupId": Required[str]
+        errorDetails: ErrorDetail
+        provisioningState: Union[str, ProvisioningState]
+        serviceGroupId: str
+
+
+    class azure.mgmt.resiliencemanagement.types.ErrorAdditionalInfo(TypedDict, total=False):
+        key "info": Any
+        key "type": str
+        info: Any
+        type: str
+
+
+    class azure.mgmt.resiliencemanagement.types.ErrorDetail(TypedDict, total=False):
+        key "code": str
+        key "message": str
+        key "target": str
+        additionalInfo: list[ErrorAdditionalInfo]
+        code: str
+        details: list[ErrorDetail]
+        message: str
+        target: str
+
+
+    class azure.mgmt.resiliencemanagement.types.ErrorDetails(TypedDict, total=False):
+        key "code": Required[str]
+        key "message": Required[str]
+        code: str
+        message: str
+        recommendations: list[str]
+
+
+    class azure.mgmt.resiliencemanagement.types.ExecutionConfigurations(TypedDict, total=False):
+        key "userConsent": Required[Union[str, UserConsent]]
+        userConsent: Union[str, UserConsent]
+
+
+    class azure.mgmt.resiliencemanagement.types.FailoverRequest(TypedDict, total=False):
+        key "failoverDirection": Required[Union[str, FailoverDirectionTypes]]
+        key "failoverRequestProperties": ForwardRef('FailoverRequestProperties', module='types')
+        failoverDirection: Union[str, FailoverDirectionTypes]
+        failoverRequestProperties: FailoverRequestProperties
+
+
+    class azure.mgmt.resiliencemanagement.types.FailoverRequestProperties(TypedDict, total=False):
+        key "executionConfigurations": ForwardRef('ExecutionConfigurations', module='types')
+        key "sourceLocations": Required[list[str]]
+        executionConfigurations: ExecutionConfigurations
+        selectedResourceIds: list[str]
+        sourceLocations: list[str]
+
+
+    class azure.mgmt.resiliencemanagement.types.FaultDetails(TypedDict, total=False):
+        key "faultName": Required[str]
+        key "faultUrn": Required[str]
+        key "targetResourceId": Required[str]
+        faultName: str
+        faultUrn: str
+        targetResourceId: str
+
+
+    class azure.mgmt.resiliencemanagement.types.FaultProperties(TypedDict, total=False):
+        key "customFault": ForwardRef('CustomFaultDetails', module='types')
+        key "defaultFault": ForwardRef('FaultDetails', module='types')
+        key "overriddenDefaultFault": ForwardRef('FaultDetails', module='types')
+        availableFaults: list[FaultDetails]
+        customFault: CustomFaultDetails
+        defaultFault: FaultDetails
+        overriddenDefaultFault: FaultDetails
+
+
+    class azure.mgmt.resiliencemanagement.types.GoalAssignment(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('GoalAssignmentProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: GoalAssignmentProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.resiliencemanagement.types.GoalAssignmentProperties(TypedDict, total=False):
+        key "errorDetails": ForwardRef('ErrorDetail', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "regionalObjectives": ForwardRef('RegionalObjectives', module='types')
+        key "requireRegionalResiliency": bool
+        key "requireZonalResiliency": Required[bool]
+        errorDetails: ErrorDetail
+        provisioningState: Union[str, ProvisioningState]
+        regionalObjectives: RegionalObjectives
+        requireRegionalResiliency: bool
+        requireZonalResiliency: bool
+        serviceLevelResources: list[ServiceLevelResource]
+
+
+    class azure.mgmt.resiliencemanagement.types.GoalAssignmentPropertiesOfDrill(TypedDict, total=False):
+        key "goalAssignmentId": str
+        key "identity": Required[AssociatedIdentity]
+        goalAssignmentId: str
+        identity: AssociatedIdentity
+
+
+    class azure.mgmt.resiliencemanagement.types.GoalResource(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('GoalResourceProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: GoalResourceProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.resiliencemanagement.types.GoalResourceProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "regionalResiliency": ForwardRef('ResiliencyProperties', module='types')
+        key "resourceArmId": Required[str]
+        key "zonalResiliency": ForwardRef('ResiliencyProperties', module='types')
+        provisioningState: Union[str, ProvisioningState]
+        regionalResiliency: ResiliencyProperties
+        resourceArmId: str
+        zonalResiliency: ResiliencyProperties
+
+
+    class azure.mgmt.resiliencemanagement.types.HealthModelMonitoringProperties(TypedDict, total=False):
+        key "discoveryRuleId": Required[str]
+        key "identity": Required[AssociatedIdentity]
+        discoveryRuleId: str
+        identity: AssociatedIdentity
+
+
+    class azure.mgmt.resiliencemanagement.types.IncludeOrUpdateResource(TypedDict, total=False):
+        key "faultProperties": ForwardRef('FaultProperties', module='types')
+        key "id": Required[str]
+        faultProperties: FaultProperties
+        id: str
+
+
+    class azure.mgmt.resiliencemanagement.types.LastRunProperties(TypedDict, total=False):
+        key "lastRunAttestation": Union[str, DrillAttestation]
+        key "lastRunDuration": str
+        key "lastRunRecoveryTimeActual": str
+        key "lastRunState": Union[str, JobStatus]
+        key "lastRunTime": str
+        lastRunAttestation: Union[str, DrillAttestation]
+        lastRunDuration: str
+        lastRunRecoveryTimeActual: str
+        lastRunState: Union[str, JobStatus]
+        lastRunTime: str
+
+
+    class azure.mgmt.resiliencemanagement.types.ListReportDownloadUrlRequest(TypedDict, total=False):
+        key "format": Union[str, DrillReportFormat]
+        format: Union[str, DrillReportFormat]
+
+
+    class azure.mgmt.resiliencemanagement.types.ManagedServiceIdentity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Required[Union[str, ManagedServiceIdentityType]]
+        principalId: str
+        tenantId: str
+        type: Union[str, ManagedServiceIdentityType]
+        userAssignedIdentities: dict[str, UserAssignedIdentity]
+
+
+    class azure.mgmt.resiliencemanagement.types.MarkAsCompleteRequest(TypedDict, total=False):
+        key "drillRunStage": Required[Union[str, DrillRunSubtasks]]
+        drillRunStage: Union[str, DrillRunSubtasks]
+
+
+    class azure.mgmt.resiliencemanagement.types.MonitoringPropertiesOfDrill(TypedDict, total=False):
+        key "dataCollectionEndpointId": str
+        key "identity": ForwardRef('AssociatedIdentity', module='types')
+        key "logAnalyticsWorkspaceId": str
+        key "rawMetricsDataCollectionRuleId": str
+        key "serviceGroupMetricsDataCollectionRuleId": str
+        dataCollectionEndpointId: str
+        identity: AssociatedIdentity
+        logAnalyticsWorkspaceId: str
+        rawMetricsDataCollectionRuleId: str
+        serviceGroupMetricsDataCollectionRuleId: str
+
+
+    class azure.mgmt.resiliencemanagement.types.ProxyResource(Resource):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.resiliencemanagement.types.RecommendCapacityRequest(TypedDict, total=False):
+        key "resourceIds": Required[list[str]]
+        resourceIds: list[str]
+
+
+    class azure.mgmt.resiliencemanagement.types.RecoveryActionRequest(TypedDict, total=False):
+        key "description": str
+        description: str
+
+
+    class azure.mgmt.resiliencemanagement.types.RecoveryGroup(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RecoveryGroupProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: RecoveryGroupProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.resiliencemanagement.types.RecoveryGroupActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CUSTOM_RUNBOOK = "CustomRunbook"
+        MANUAL_ACTION = "ManualAction"
+
+
+    class azure.mgmt.resiliencemanagement.types.RecoveryGroupCustomRunbookAction(TypedDict, total=False):
+        key "actionResourceId": str
+        key "associatedIdentity": ForwardRef('AssociatedIdentity', module='types')
+        key "description": str
+        key "name": Required[str]
+        key "timeoutInMinutes": Required[int]
+        key "type": Required[Literal[RecoveryGroupActionType.CUSTOM_RUNBOOK]]
+        actionResourceId: str
+        associatedIdentity: AssociatedIdentity
+        description: str
+        name: str
+        parameters: dict[str, str]
+        timeoutInMinutes: int
+        type: Literal[RecoveryGroupActionType.CUSTOM_RUNBOOK]
+
+
+    class azure.mgmt.resiliencemanagement.types.RecoveryGroupManualAction(TypedDict, total=False):
+        key "description": str
+        key "name": Required[str]
+        key "timeoutInMinutes": Required[int]
+        key "type": Required[Literal[RecoveryGroupActionType.MANUAL_ACTION]]
+        description: str
+        name: str
+        timeoutInMinutes: int
+        type: Literal[RecoveryGroupActionType.MANUAL_ACTION]
+
+
+    class azure.mgmt.resiliencemanagement.types.RecoveryGroupProperties(TypedDict, total=False):
+        key "description": Required[str]
+        key "groupUniqueId": Required[str]
+        key "orderId": Required[int]
+        description: str
+        groupUniqueId: str
+        orderId: int
+        postActions: list[RecoveryGroupBaseAction]
+        preActions: list[RecoveryGroupBaseAction]
+
+
+    class azure.mgmt.resiliencemanagement.types.RecoveryGroupsSetting(TypedDict, total=False):
+        key "defaultGroup": Required[RecoveryGroup]
+        additionalGroups: list[RecoveryGroup]
+        defaultGroup: RecoveryGroup
+
+
+    class azure.mgmt.resiliencemanagement.types.RecoveryPlan(ProxyResource):
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "name": str
+        key "properties": ForwardRef('RecoveryPlanProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: ManagedServiceIdentity
+        name: str
+        properties: RecoveryPlanProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.resiliencemanagement.types.RecoveryPlanFailoverOperationStatus(TypedDict, total=False):
+        key "errorDetails": ForwardRef('ErrorDetail', module='types')
+        key "lastExecutedAt": str
+        key "operationStatus": Union[str, RecoveryOperationStatus]
+        key "recoveryTimeActual": str
+        errorDetails: ErrorDetail
+        lastExecutedAt: str
+        operationStatus: Union[str, RecoveryOperationStatus]
+        recoveryTimeActual: str
+
+
+    class azure.mgmt.resiliencemanagement.types.RecoveryPlanOperationStatus(TypedDict, total=False):
+        key "errorDetails": ForwardRef('ErrorDetail', module='types')
+        key "lastExecutedAt": str
+        key "operationStatus": Union[str, RecoveryOperationStatus]
+        errorDetails: ErrorDetail
+        lastExecutedAt: str
+        operationStatus: Union[str, RecoveryOperationStatus]
+
+
+    class azure.mgmt.resiliencemanagement.types.RecoveryPlanProperties(TypedDict, total=False):
+        key "errorDetails": ForwardRef('ErrorDetail', module='types')
+        key "latestFailoverStatus": ForwardRef('RecoveryPlanFailoverOperationStatus', module='types')
+        key "latestValidationStatus": ForwardRef('RecoveryPlanOperationStatus', module='types')
+        key "planDescription": Required[str]
+        key "planState": Union[str, RecoveryPlanState]
+        key "planType": Required[Union[str, RecoveryPlanType]]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "recoveryGroupsSetting": Required[RecoveryGroupsSetting]
+        errorDetails: ErrorDetail
+        latestFailoverStatus: RecoveryPlanFailoverOperationStatus
+        latestValidationStatus: RecoveryPlanOperationStatus
+        planDescription: str
+        planState: Union[str, RecoveryPlanState]
+        planType: Union[str, RecoveryPlanType]
+        provisioningState: Union[str, ProvisioningState]
+        recoveryGroupsSetting: RecoveryGroupsSetting
+
+
+    class azure.mgmt.resiliencemanagement.types.RecoveryPlanPropertiesOfDrill(TypedDict, total=False):
+        key "identity": Required[AssociatedIdentity]
+        key "recoveryPlanId": str
+        key "recoveryPlanResourceExcludedCount": int
+        identity: AssociatedIdentity
+        recoveryPlanId: str
+        recoveryPlanResourceExcludedCount: int
+
+
+    class azure.mgmt.resiliencemanagement.types.RecoveryResource(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RecoveryResourceProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: RecoveryResourceProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.resiliencemanagement.types.RecoveryResourceProperties(TypedDict, total=False):
+        key "associatedIdentity": ForwardRef('AssociatedIdentity', module='types')
+        key "errorDetails": ForwardRef('ErrorDetail', module='types')
+        key "inclusionState": Union[str, ResourceInclusionState]
+        key "needsAttention": bool
+        key "protectionStatus": Union[str, ResourceProtectionStatus]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "recoveryGroupId": str
+        key "recoveryResourceUniqueId": Required[str]
+        key "resourceId": str
+        key "resourceLocation": str
+        key "selectedProtectionSolutionSetting": ForwardRef('ResourceBaseProtectionSolutionSetting', module='types')
+        key "selectedProtectionSolutionType": Union[str, ResourceProtectionSolutionType]
+        associatedIdentity: AssociatedIdentity
+        attentionReasons: list[str]
+        errorDetails: ErrorDetail
+        inclusionDisabledReasons: list[Union[str, ResourceInclusionDisabledReason]]
+        inclusionState: Union[str, ResourceInclusionState]
+        needsAttention: bool
+        protectionStatus: Union[str, ResourceProtectionStatus]
+        provisioningState: Union[str, ProvisioningState]
+        recoveryGroupId: str
+        recoveryResourceUniqueId: str
+        resourceId: str
+        resourceLocation: str
+        resourcePhysicalZones: list[str]
+        resourceProtectionSolutions: list[ResourceProtectionSolutionSettings]
+        selectedProtectionSolutionSetting: ResourceBaseProtectionSolutionSetting
+        selectedProtectionSolutionType: Union[str, ResourceProtectionSolutionType]
+
+
+    class azure.mgmt.resiliencemanagement.types.RegionalDrillProperties(TypedDict, total=False):
+        key "attentionReason": ForwardRef('AttentionReason', module='types')
+        key "chaosResourceProperties": ForwardRef('ChaosResourcePropertiesOfDrill', module='types')
+        key "drillAssetProperties": ForwardRef('AssetPropertiesOfDrill', module='types')
+        key "drillType": Required[Literal[DrillType.REGIONAL]]
+        key "errorDetails": ForwardRef('ErrorDetail', module='types')
+        key "executionReadinessState": Union[str, ExecutionReadinessState]
+        key "executionState": Union[str, ExecutionState]
+        key "goalAssignmentProperties": ForwardRef('GoalAssignmentPropertiesOfDrill', module='types')
+        key "healthModelMonitoringProperties": ForwardRef('HealthModelMonitoringProperties', module='types')
+        key "lastResyncReadinessCheckTime": str
+        key "lastRunProperties": ForwardRef('LastRunProperties', module='types')
+        key "lastSyncTime": str
+        key "monitoringProperties": ForwardRef('MonitoringPropertiesOfDrill', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "rbacSetupMode": Union[str, RBACSetupMode]
+        key "recoveryPlanProperties": ForwardRef('RecoveryPlanPropertiesOfDrill', module='types')
+        key "serviceGroupId": str
+        key "sliMonitoringProperties": ForwardRef('SliMonitoringProperties', module='types')
+        key "systemMetadata": ForwardRef('SystemMetadata', module='types')
+        attentionReason: AttentionReason
+        chaosResourceProperties: ChaosResourcePropertiesOfDrill
+        drillAssetProperties: AssetPropertiesOfDrill
+        drillType: Literal[DrillType.REGIONAL]
+        errorDetails: ErrorDetail
+        executionReadinessState: Union[str, ExecutionReadinessState]
+        executionState: Union[str, ExecutionState]
+        goalAssignmentProperties: GoalAssignmentPropertiesOfDrill
+        healthModelMonitoringProperties: HealthModelMonitoringProperties
+        lastResyncReadinessCheckTime: str
+        lastRunProperties: LastRunProperties
+        lastSyncTime: str
+        monitoringProperties: MonitoringPropertiesOfDrill
+        provisioningState: Union[str, ProvisioningState]
+        rbacSetupMode: Union[str, RBACSetupMode]
+        recoveryPlanProperties: RecoveryPlanPropertiesOfDrill
+        serviceGroupId: str
+        sliMonitoringProperties: SliMonitoringProperties
+        systemMetadata: SystemMetadata
+
+
+    class azure.mgmt.resiliencemanagement.types.RegionalObjectives(TypedDict, total=False):
+        key "targetRecoveryPointObjective": Required[Union[str, IsoDuration]]
+        key "targetRecoveryTimeObjective": Required[Union[str, IsoDuration]]
+        targetRecoveryPointObjective: Union[str, IsoDuration]
+        targetRecoveryTimeObjective: Union[str, IsoDuration]
+
+
+    class azure.mgmt.resiliencemanagement.types.ReprotectRequest(TypedDict, total=False):
+        key "reprotectRequestProperties": ForwardRef('ReprotectRequestProperties', module='types')
+        reprotectRequestProperties: ReprotectRequestProperties
+
+
+    class azure.mgmt.resiliencemanagement.types.ReprotectRequestProperties(TypedDict, total=False):
+        selectedResourceIds: list[str]
+
+
+    class azure.mgmt.resiliencemanagement.types.ResiliencyProperties(TypedDict, total=False):
+        key "attestationStatus": Union[str, AttestationState]
+        key "exclusionReason": Union[str, ExclusionReason]
+        key "goalParticipation": Union[str, ExclusionState]
+        attestationStatus: Union[str, AttestationState]
+        exclusionReason: Union[str, ExclusionReason]
+        goalParticipation: Union[str, ExclusionState]
+        userConfirmation: list[UserConfirmationItem]
+
+
+    class azure.mgmt.resiliencemanagement.types.Resource(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceAzureTemplateProtectionSetting(TypedDict, total=False):
+        key "deploymentLocation": str
+        key "deploymentScope": Required[str]
+        key "protectionSolutionType": Required[Literal[ResourceProtectionSolutionType.AZURE_TEMPLATE]]
+        key "templateSpecVersionId": Required[str]
+        deploymentLocation: str
+        deploymentScope: str
+        protectionSolutionType: Literal[ResourceProtectionSolutionType.AZURE_TEMPLATE]
+        templateSpecVersionId: str
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceCosmosDBProtectionSetting(TypedDict, total=False):
+        key "protectionSolutionType": Required[Literal[ResourceProtectionSolutionType.AZURE_COSMOS_DB]]
+        protectionSolutionType: Literal[ResourceProtectionSolutionType.AZURE_COSMOS_DB]
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceCrossZoneVmRecoveryProtectionSetting(TypedDict, total=False):
+        key "capacityReservationGroupId": str
+        key "protectionSolutionType": Required[Literal[ResourceProtectionSolutionType.CROSS_ZONE_VM_RECOVERY]]
+        key "targetZone": str
+        capacityReservationGroupId: str
+        protectionSolutionType: Literal[ResourceProtectionSolutionType.CROSS_ZONE_VM_RECOVERY]
+        targetZone: str
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceCustomProtectionAction(TypedDict, total=False):
+        key "resourceId": Required[str]
+        resourceId: str
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceCustomProtectionSetting(TypedDict, total=False):
+        key "failoverAction": ForwardRef('ResourceCustomProtectionAction', module='types')
+        key "failoverCommitAction": ForwardRef('ResourceCustomProtectionAction', module='types')
+        key "protectionSolutionType": Required[Literal[ResourceProtectionSolutionType.CUSTOM_RUNBOOK]]
+        key "reprotectAction": ForwardRef('ResourceCustomProtectionAction', module='types')
+        key "testFailoverAction": ForwardRef('ResourceCustomProtectionAction', module='types')
+        key "testFailoverCleanupAction": ForwardRef('ResourceCustomProtectionAction', module='types')
+        failoverAction: ResourceCustomProtectionAction
+        failoverCommitAction: ResourceCustomProtectionAction
+        protectionSolutionType: Literal[ResourceProtectionSolutionType.CUSTOM_RUNBOOK]
+        reprotectAction: ResourceCustomProtectionAction
+        testFailoverAction: ResourceCustomProtectionAction
+        testFailoverCleanupAction: ResourceCustomProtectionAction
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceLists(TypedDict, total=False):
+        excludeResources: list[str]
+        includeResources: list[IncludeOrUpdateResource]
+        updateResources: list[IncludeOrUpdateResource]
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceNativeProtectionSolutionSetting(TypedDict, total=False):
+        key "protectionSolutionType": Required[Literal[ResourceProtectionSolutionType.AZURE_NATIVE]]
+        protectionSolutionType: Literal[ResourceProtectionSolutionType.AZURE_NATIVE]
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceNetAppFilesProtectionSetting(TypedDict, total=False):
+        key "protectionSolutionType": Required[Literal[ResourceProtectionSolutionType.AZURE_NET_APP_FILES]]
+        protectionSolutionType: Literal[ResourceProtectionSolutionType.AZURE_NET_APP_FILES]
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceProtectionSolutionSettings(TypedDict, total=False):
+        key "activeLocation": str
+        key "failoverState": Union[str, FailoverState]
+        key "isAutoFailover": Required[bool]
+        key "primaryResource": str
+        key "protectionSolutionType": Union[str, ResourceProtectionSolutionType]
+        key "protectionStatus": Union[str, ResourceProtectionStatus]
+        key "replicationMode": Union[str, ReplicationMode]
+        key "replicationRole": Union[str, ResourceReplicationRole]
+        key "resourceId": str
+        key "testFailoverState": Union[str, TestFailoverState]
+        activeLocation: str
+        activeLocations: list[str]
+        activePhysicalZones: list[str]
+        failoverState: Union[str, FailoverState]
+        isAutoFailover: bool
+        primaryResource: str
+        protectionSolutionType: Union[str, ResourceProtectionSolutionType]
+        protectionStatus: Union[str, ResourceProtectionStatus]
+        recoveryLocations: list[str]
+        replicaResources: list[str]
+        replicationMode: Union[str, ReplicationMode]
+        replicationRole: Union[str, ResourceReplicationRole]
+        resourceId: str
+        testFailoverState: Union[str, TestFailoverState]
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceProtectionSolutionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_COSMOS_DB = "AzureCosmosDB"
+        AZURE_NATIVE = "AzureNative"
+        AZURE_NET_APP_FILES = "AzureNetAppFiles"
+        AZURE_SERVICE_BUS = "AzureServiceBus"
+        AZURE_SITE_RECOVERY = "AzureSiteRecovery"
+        AZURE_STORAGE_ACCOUNT = "AzureStorageAccount"
+        AZURE_TEMPLATE = "AzureTemplate"
+        CROSS_ZONE_VM_RECOVERY = "CrossZoneVMRecovery"
+        CUSTOM_RUNBOOK = "CustomRunbook"
+        NONE = "None"
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceServiceBusProtectionSetting(TypedDict, total=False):
+        key "protectionSolutionType": Required[Literal[ResourceProtectionSolutionType.AZURE_SERVICE_BUS]]
+        protectionSolutionType: Literal[ResourceProtectionSolutionType.AZURE_SERVICE_BUS]
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceSiteRecoveryProtectionSetting(TypedDict, total=False):
+        key "protectionSolutionType": Required[Literal[ResourceProtectionSolutionType.AZURE_SITE_RECOVERY]]
+        key "reprotectParams": ForwardRef('ResourceSiteRecoveryReprotectParams', module='types')
+        key "testFailoverCleanupParams": ForwardRef('ResourceSiteRecoveryTestFailoverCleanupParams', module='types')
+        key "testFailoverParams": ForwardRef('ResourceSiteRecoveryTestFailoverParams', module='types')
+        protectionSolutionType: Literal[ResourceProtectionSolutionType.AZURE_SITE_RECOVERY]
+        reprotectParams: ResourceSiteRecoveryReprotectParams
+        testFailoverCleanupParams: ResourceSiteRecoveryTestFailoverCleanupParams
+        testFailoverParams: ResourceSiteRecoveryTestFailoverParams
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceSiteRecoveryReprotectParams(TypedDict, total=False):
+        diskReprotectInputDetails: list[DiskReprotectInputDetails]
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceSiteRecoveryTestFailoverCleanupParams(TypedDict, total=False):
+        key "comments": str
+        comments: str
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceSiteRecoveryTestFailoverParams(TypedDict, total=False):
+        key "networkResourceId": str
+        networkResourceId: str
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceStorageAccountProtectionSetting(TypedDict, total=False):
+        key "protectionSolutionType": Required[Literal[ResourceProtectionSolutionType.AZURE_STORAGE_ACCOUNT]]
+        protectionSolutionType: Literal[ResourceProtectionSolutionType.AZURE_STORAGE_ACCOUNT]
+
+
+    class azure.mgmt.resiliencemanagement.types.ServiceLevelResource(TypedDict, total=False):
+        key "serviceLevelIndicatorResourceId": Required[str]
+        serviceLevelIndicatorResourceId: str
+
+
+    class azure.mgmt.resiliencemanagement.types.SliAttentionStatus(TypedDict, total=False):
+        key "drillRbacOnDestinationAmw": Union[str, RBACState]
+        key "exists": Union[str, ExtensionObjectState]
+        key "sliId": Required[str]
+        key "type": Required[Union[str, SliType]]
+        key "typeMatch": Union[str, SliTypeMatchState]
+        drillRbacOnDestinationAmw: Union[str, RBACState]
+        exists: Union[str, ExtensionObjectState]
+        rbacNeededOnDestinationAmws: list[str]
+        sliId: str
+        type: Union[str, SliType]
+        typeMatch: Union[str, SliTypeMatchState]
+
+
+    class azure.mgmt.resiliencemanagement.types.SliMonitoringProperties(TypedDict, total=False):
+        key "identity": Required[AssociatedIdentity]
+        key "slis": Required[list[SliSelection]]
+        identity: AssociatedIdentity
+        slis: list[SliSelection]
+
+
+    class azure.mgmt.resiliencemanagement.types.SliSelection(TypedDict, total=False):
+        key "sliId": Required[str]
+        key "type": Required[Union[str, SliType]]
+        sliId: str
+        type: Union[str, SliType]
+
+
+    class azure.mgmt.resiliencemanagement.types.SystemData(TypedDict, total=False):
+        key "createdAt": str
+        key "createdBy": str
+        key "createdByType": Union[str, CreatedByType]
+        key "lastModifiedAt": str
+        key "lastModifiedBy": str
+        key "lastModifiedByType": Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
+
+
+    class azure.mgmt.resiliencemanagement.types.SystemMetadata(TypedDict, total=False):
+        key "initialConfig": Required[Union[str, InitialConfig]]
+        initialConfig: Union[str, InitialConfig]
+        resourceTypeCategories: list[Union[str, ResourceTypeCategories]]
+
+
+    class azure.mgmt.resiliencemanagement.types.TestFailoverCleanupRequest(TypedDict, total=False):
+        key "comments": str
+        comments: str
+
+
+    class azure.mgmt.resiliencemanagement.types.TrackedResource(Resource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.resiliencemanagement.types.UpdateGoalResourceRequest(TypedDict, total=False):
+        key "resources": Required[list[GoalResource]]
+        resources: list[GoalResource]
+
+
+    class azure.mgmt.resiliencemanagement.types.UpdateRecoveryResourcesRequest(TypedDict, total=False):
+        resourcesToRemove: list[str]
+        resourcesToUpdate: list[RecoveryResource]
+
+
+    class azure.mgmt.resiliencemanagement.types.UsagePlan(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('UsagePlanProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: UsagePlanProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.resiliencemanagement.types.UsagePlanProperties(TypedDict, total=False):
+        key "errorDetails": ForwardRef('ErrorDetail', module='types')
+        key "planType": Union[str, UsagePlanType]
+        key "provisioningState": Union[str, ProvisioningState]
+        errorDetails: ErrorDetail
+        planType: Union[str, UsagePlanType]
+        provisioningState: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.resiliencemanagement.types.UsagePlanTagsUpdate(TypedDict, total=False):
+        tags: dict[str, str]
+
+
+    class azure.mgmt.resiliencemanagement.types.UserAssignedIdentity(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        clientId: str
+        principalId: str
+
+
+    class azure.mgmt.resiliencemanagement.types.UserConfirmationItem(TypedDict, total=False):
+        key "confirmationStatus": Required[Union[str, ConfirmationStatus]]
+        key "reasonForRequestingConfirmation": Union[str, ReasonForRequestingConfirmation]
+        key "solutionDisplayName": Required[Union[str, SolutionDisplayName]]
+        confirmationStatus: Union[str, ConfirmationStatus]
+        reasonForRequestingConfirmation: Union[str, ReasonForRequestingConfirmation]
+        solutionDisplayName: Union[str, SolutionDisplayName]
+
+
+    class azure.mgmt.resiliencemanagement.types.ValidateForExecutionProperties(TypedDict, total=False):
+        key "operationName": Union[str, DrillRunTasks]
+        operationName: Union[str, DrillRunTasks]
+        sourceLocations: list[str]
+
+
+    class azure.mgmt.resiliencemanagement.types.ValidateForExecutionRequest(TypedDict, total=False):
+        key "validateForExecutionProperties": ForwardRef('ValidateForExecutionProperties', module='types')
+        validateForExecutionProperties: ValidateForExecutionProperties
+
+
+    class azure.mgmt.resiliencemanagement.types.ValidateForOperationRequest(TypedDict, total=False):
+        key "operationName": Required[Union[str, RecoveryOperationNames]]
+        operationName: Union[str, RecoveryOperationNames]
+
+
+    class azure.mgmt.resiliencemanagement.types.ZonalDrillProperties(TypedDict, total=False):
+        key "attentionReason": ForwardRef('AttentionReason', module='types')
+        key "chaosResourceProperties": ForwardRef('ChaosResourcePropertiesOfDrill', module='types')
+        key "drillAssetProperties": ForwardRef('AssetPropertiesOfDrill', module='types')
+        key "drillType": Required[Literal[DrillType.ZONAL]]
+        key "errorDetails": ForwardRef('ErrorDetail', module='types')
+        key "executionReadinessState": Union[str, ExecutionReadinessState]
+        key "executionState": Union[str, ExecutionState]
+        key "goalAssignmentProperties": ForwardRef('GoalAssignmentPropertiesOfDrill', module='types')
+        key "healthModelMonitoringProperties": ForwardRef('HealthModelMonitoringProperties', module='types')
+        key "lastResyncReadinessCheckTime": str
+        key "lastRunProperties": ForwardRef('LastRunProperties', module='types')
+        key "lastSyncTime": str
+        key "monitoringProperties": ForwardRef('MonitoringPropertiesOfDrill', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "rbacSetupMode": Union[str, RBACSetupMode]
+        key "recoveryPlanProperties": ForwardRef('RecoveryPlanPropertiesOfDrill', module='types')
+        key "serviceGroupId": str
+        key "sliMonitoringProperties": ForwardRef('SliMonitoringProperties', module='types')
+        key "systemMetadata": ForwardRef('SystemMetadata', module='types')
+        key "vmsPresent": Union[str, VMPresent]
+        attentionReason: AttentionReason
+        chaosResourceProperties: ChaosResourcePropertiesOfDrill
+        drillAssetProperties: AssetPropertiesOfDrill
+        drillType: Literal[DrillType.ZONAL]
+        errorDetails: ErrorDetail
+        executionReadinessState: Union[str, ExecutionReadinessState]
+        executionState: Union[str, ExecutionState]
+        goalAssignmentProperties: GoalAssignmentPropertiesOfDrill
+        healthModelMonitoringProperties: HealthModelMonitoringProperties
+        lastResyncReadinessCheckTime: str
+        lastRunProperties: LastRunProperties
+        lastSyncTime: str
+        monitoringProperties: MonitoringPropertiesOfDrill
+        provisioningState: Union[str, ProvisioningState]
+        rbacSetupMode: Union[str, RBACSetupMode]
+        recoveryPlanProperties: RecoveryPlanPropertiesOfDrill
+        serviceGroupId: str
+        sliMonitoringProperties: SliMonitoringProperties
+        systemMetadata: SystemMetadata
+        vmsPresent: Union[str, VMPresent]
 
 
 ```

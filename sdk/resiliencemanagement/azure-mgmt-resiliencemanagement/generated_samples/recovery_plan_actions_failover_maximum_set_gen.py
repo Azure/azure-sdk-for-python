@@ -44,11 +44,11 @@ def main():
                 "sourceLocations": ["westus"],
             },
         },
-        operation_id="str",
+        operation_id="qmn",
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/RecoveryPlanActions_Failover_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-30-preview/RecoveryPlanActions_Failover_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
