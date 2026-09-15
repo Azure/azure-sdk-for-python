@@ -33,9 +33,7 @@ def _code_report_args(use_apistub: bool = False):
     return ["--code-report"] + (["--use-apistub"] if use_apistub else [])
 
 
-def _download_and_extract_sdist(
-    executable: str, package_name: str, version: str, dest_dir: str
-) -> str:
+def _download_and_extract_sdist(executable: str, package_name: str, version: str, dest_dir: str) -> str:
     """Download the sdist for ``package_name==version`` and extract it.
 
     Returns the path to the extracted source tree (the directory that contains
@@ -100,14 +98,10 @@ def _prepare_fake_repo(tmpdir: str, package_name: str, source_dir: str) -> str:
     return pkg_dir
 
 
-def _assert_code_report_matches_expected(
-    actual_report_path: str, expected_report_file: str
-):
+def _assert_code_report_matches_expected(actual_report_path: str, expected_report_file: str):
     with open(actual_report_path, encoding="utf-8") as f:
         actual_report = json.load(f)
-    assert (
-        isinstance(actual_report, dict) and len(actual_report) > 0
-    ), "Code report should not be empty"
+    assert isinstance(actual_report, dict) and len(actual_report) > 0, "Code report should not be empty"
 
     expected_path = os.path.join(DATA_DIR, expected_report_file)
     if os.environ.get("UPDATE_EXPECTED"):
@@ -153,18 +147,9 @@ def _generate_and_compare_code_report(
     from packaging_tools.venvtools import create_venv_with_package
 
     packages = [f"{package_name}=={package_version}"]
-    with create_venv_with_package(
-        packages
-    ) as venv, tempfile.TemporaryDirectory() as tmpdir:
+    with create_venv_with_package(packages) as venv, tempfile.TemporaryDirectory() as tmpdir:
         subprocess.check_call(
-            [
-                venv.env_exe,
-                "-m",
-                "pip",
-                "install",
-                "-r",
-                os.path.join(CHECKER_DIR, "dev_requirements.txt"),
-            ],
+            [venv.env_exe, "-m", "pip", "install", "-r", os.path.join(CHECKER_DIR, "dev_requirements.txt")],
             cwd=CHECKER_DIR,
         )
         if use_apistub:
@@ -185,9 +170,7 @@ def _generate_and_compare_code_report(
         # under the temp dir. The import-based report only needs the installed
         # package, so the package name works as the target directly.
         if use_apistub:
-            source_dir = _download_and_extract_sdist(
-                venv.env_exe, package_name, package_version, tmpdir
-            )
+            source_dir = _download_and_extract_sdist(venv.env_exe, package_name, package_version, tmpdir)
             target_package = _prepare_fake_repo(tmpdir, package_name, source_dir)
         else:
             target_package = package_name
@@ -208,17 +191,13 @@ def _generate_and_compare_code_report(
             cwd=tmpdir,
         )
         elapsed = time.perf_counter() - start
-        assert (
-            result.returncode == 0
-        ), f"Code report generation for {package_version} failed:\n{result.stderr}"
+        assert result.returncode == 0, f"Code report generation for {package_version} failed:\n{result.stderr}"
         if max_code_report_seconds is not None:
             assert elapsed < max_code_report_seconds, (
                 f"Code report generation for {package_version} took {elapsed:.2f}s, "
                 f"expected less than {max_code_report_seconds}s"
             )
-        _assert_code_report_matches_expected(
-            os.path.join(tmpdir, "code_report.json"), expected_report_file
-        )
+        _assert_code_report_matches_expected(os.path.join(tmpdir, "code_report.json"), expected_report_file)
 
 
 def _compare_code_reports_to_changelog(
@@ -259,9 +238,7 @@ def _compare_code_reports_to_changelog(
         ), f"Changelog output missing end marker:\n{changelog_output}"
 
         # Extract changelog content between markers and compare with expected
-        start = changelog_output.index("===== changelog start =====") + len(
-            "===== changelog start =====\n"
-        )
+        start = changelog_output.index("===== changelog start =====") + len("===== changelog start =====\n")
         end = changelog_output.index("\n===== changelog end =====")
         actual_changelog = changelog_output[start:end].strip()
 
@@ -283,9 +260,9 @@ def _compare_code_reports_to_changelog(
             expected_changelog = f.read().strip()
 
         if order_insensitive:
-            matches = sorted(
-                l.strip() for l in actual_changelog.splitlines() if l.strip()
-            ) == sorted(l.strip() for l in expected_changelog.splitlines() if l.strip())
+            matches = sorted(l.strip() for l in actual_changelog.splitlines() if l.strip()) == sorted(
+                l.strip() for l in expected_changelog.splitlines() if l.strip()
+            )
         else:
             matches = actual_changelog == expected_changelog
 
@@ -301,9 +278,7 @@ def _compare_code_reports_to_changelog(
             )
 
 
-@pytest.mark.slow(
-    reason="external package code report generation creates venvs and may take several minutes"
-)
+@pytest.mark.slow(reason="external package code report generation creates venvs and may take several minutes")
 def test_generate_old_code_report_for_azure_mgmt_peering():
     """Generate azure-mgmt-peering 2.0.0b1 code report."""
     _generate_and_compare_code_report(
@@ -314,9 +289,7 @@ def test_generate_old_code_report_for_azure_mgmt_peering():
     )
 
 
-@pytest.mark.slow(
-    reason="external package code report generation creates venvs and may take several minutes"
-)
+@pytest.mark.slow(reason="external package code report generation creates venvs and may take several minutes")
 def test_generate_new_code_report_for_azure_mgmt_peering():
     """Generate azure-mgmt-peering 2.0.0b2 code report."""
     _generate_and_compare_code_report(
@@ -337,9 +310,7 @@ def test_compare_code_reports_for_azure_mgmt_peering():
     )
 
 
-@pytest.mark.slow(
-    reason="azure-mgmt-apimanagement code report generation may take up to 10 minutes"
-)
+@pytest.mark.slow(reason="azure-mgmt-apimanagement code report generation may take up to 10 minutes")
 def test_generate_old_code_report_for_azure_mgmt_apimanagement():
     """Generate azure-mgmt-apimanagement 5.0.0 code report. May take up to 10 minutes."""
     _generate_and_compare_code_report(
@@ -350,9 +321,7 @@ def test_generate_old_code_report_for_azure_mgmt_apimanagement():
     )
 
 
-@pytest.mark.slow(
-    reason="azure-mgmt-apimanagement code report generation may take up to 10 minutes"
-)
+@pytest.mark.slow(reason="azure-mgmt-apimanagement code report generation may take up to 10 minutes")
 def test_generate_new_code_report_for_azure_mgmt_apimanagement():
     """Generate azure-mgmt-apimanagement 6.0.0b1 code report. May take up to 10 minutes."""
     _generate_and_compare_code_report(
@@ -373,9 +342,7 @@ def test_compare_code_reports_for_azure_mgmt_apimanagement():
     )
 
 
-@pytest.mark.slow(
-    reason="external package apistub code report generation creates venvs and may take several minutes"
-)
+@pytest.mark.slow(reason="external package apistub code report generation creates venvs and may take several minutes")
 def test_generate_old_code_report_for_azure_mgmt_peering_apistub():
     """Generate azure-mgmt-peering 2.0.0b1 code report using --use-apistub."""
     _generate_and_compare_code_report(
@@ -387,9 +354,7 @@ def test_generate_old_code_report_for_azure_mgmt_peering_apistub():
     )
 
 
-@pytest.mark.slow(
-    reason="external package apistub code report generation creates venvs and may take several minutes"
-)
+@pytest.mark.slow(reason="external package apistub code report generation creates venvs and may take several minutes")
 def test_generate_new_code_report_for_azure_mgmt_peering_apistub():
     """Generate azure-mgmt-peering 2.0.0b2 code report using --use-apistub."""
     _generate_and_compare_code_report(
@@ -412,9 +377,7 @@ def test_compare_code_reports_for_azure_mgmt_peering_apistub():
     )
 
 
-@pytest.mark.slow(
-    reason="azure-mgmt-apimanagement apistub code report generation may take several minutes"
-)
+@pytest.mark.slow(reason="azure-mgmt-apimanagement apistub code report generation may take several minutes")
 def test_generate_old_code_report_for_azure_mgmt_apimanagement_apistub():
     """Generate azure-mgmt-apimanagement 5.0.0 code report using --use-apistub."""
     _generate_and_compare_code_report(
@@ -427,9 +390,7 @@ def test_generate_old_code_report_for_azure_mgmt_apimanagement_apistub():
     )
 
 
-@pytest.mark.slow(
-    reason="azure-mgmt-apimanagement apistub code report generation may take several minutes"
-)
+@pytest.mark.slow(reason="azure-mgmt-apimanagement apistub code report generation may take several minutes")
 def test_generate_new_code_report_for_azure_mgmt_apimanagement_apistub():
     """Generate azure-mgmt-apimanagement 6.0.0b1 code report using --use-apistub."""
     _generate_and_compare_code_report(
@@ -457,9 +418,7 @@ def test_uninstall_package_uses_active_python_environment():
     from breaking_changes_checker import detect_breaking_changes
 
     with mock.patch.object(detect_breaking_changes.subprocess, "run") as run:
-        detect_breaking_changes._uninstall_package(
-            "azure-mgmt-network", "/tmp/azure-mgmt-network"
-        )
+        detect_breaking_changes._uninstall_package("azure-mgmt-network", "/tmp/azure-mgmt-network")
 
     run.assert_called_once_with(
         [sys.executable, "-m", "pip", "uninstall", "-y", "azure-mgmt-network"],
@@ -488,9 +447,7 @@ def test_use_apistub_changelog_resolves_stable_from_pypi_and_current_from_local(
     checker.breaking_changes = []
     events = mock.Mock()
 
-    with mock.patch(
-        "pypi_tools.pypi.PyPIClient", return_value=pypi_client
-    ) as pypi_client_cls, mock.patch.object(
+    with mock.patch("pypi_tools.pypi.PyPIClient", return_value=pypi_client) as pypi_client_cls, mock.patch.object(
         detect_breaking_changes, "_uninstall_package"
     ) as uninstall_package, mock.patch.object(
         detect_breaking_changes, "build_report_from_apistub", return_value={}
@@ -513,9 +470,7 @@ def test_use_apistub_changelog_resolves_stable_from_pypi_and_current_from_local(
             use_apistub=True,
         )
 
-    assert (
-        build_report.call_count == 2
-    ), "Expected separate apistub reports for current and stable"
+    assert build_report.call_count == 2, "Expected separate apistub reports for current and stable"
     assert events.mock_calls == [
         mock.call.uninstall("azure-mgmt-network", "/tmp/azure-mgmt-network"),
         mock.call.build_report(
@@ -541,9 +496,7 @@ def test_use_apistub_changelog_resolves_stable_from_pypi_and_current_from_local(
     # Reverting force_pypi=True would restore the original CI failure, so pin it.
     pypi_client_cls.assert_called_once_with(force_pypi=True)
 
-    calls_by_label = {
-        call.kwargs["label"]: call for call in build_report.call_args_list
-    }
+    calls_by_label = {call.kwargs["label"]: call for call in build_report.call_args_list}
     assert set(calls_by_label) == {"current", "stable"}
 
     # "current" comes from the local source.

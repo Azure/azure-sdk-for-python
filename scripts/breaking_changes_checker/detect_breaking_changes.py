@@ -24,10 +24,7 @@ import tempfile
 from enum import Enum
 from typing import Dict, Tuple, Union, Type, Callable, Optional
 from packaging_tools.venvtools import create_venv_with_package
-from breaking_changes_allowlist import (
-    RUN_BREAKING_CHANGES_PACKAGES,
-    IGNORE_BREAKING_CHANGES,
-)
+from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES, IGNORE_BREAKING_CHANGES
 from breaking_changes_tracker import BreakingChangesTracker
 from changelog_tracker import ChangelogTracker
 from apiview_converter import convert_api_md_to_report
@@ -116,9 +113,7 @@ def test_find_modules(pkg_root_path: str) -> Dict:
                 for f in files
                 if f.endswith(".py") and not os.path.basename(f).startswith("_")
             ]
-            modules[module_name].extend(
-                ["{0}.{1}".format(module_name, x) for x in sub_modules]
-            )
+            modules[module_name].extend(["{0}.{1}".format(module_name, x) for x in sub_modules])
 
     return modules
 
@@ -172,9 +167,7 @@ def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
                 # FIXME: This can get the type hint for a limited set attributes. We need to address more complex
                 # type hints in the future.
                 # Build type hint for the attribute
-                if hasattr(assign.annotation, "value") and isinstance(
-                    assign.annotation.value, ast.Name
-                ):
+                if hasattr(assign.annotation, "value") and isinstance(assign.annotation.value, ast.Name):
                     attr_type = assign.annotation.value.id
                     if attr_type == "List" and hasattr(assign.annotation, "slice"):
                         if isinstance(assign.annotation.slice, ast.Constant):
@@ -183,35 +176,23 @@ def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
 
     func_nodes = [node for node in node.body if isinstance(node, ast.FunctionDef)]
     if func_nodes:
-        assigns = [
-            node
-            for node in func_nodes[0].body
-            if isinstance(node, (ast.Assign, ast.AnnAssign))
-        ]
+        assigns = [node for node in func_nodes[0].body if isinstance(node, (ast.Assign, ast.AnnAssign))]
         if assigns:
             for assign in assigns:
                 if hasattr(assign, "target"):
-                    if hasattr(
-                        assign.target, "attr"
-                    ) and not assign.target.attr.startswith("_"):
+                    if hasattr(assign.target, "attr") and not assign.target.attr.startswith("_"):
                         attr = assign.target
-                        attribute_names.update(
-                            {attr.attr: {"attr_type": get_property_type(assign)}}
-                        )
+                        attribute_names.update({attr.attr: {"attr_type": get_property_type(assign)}})
                 if hasattr(assign, "targets"):
                     for target in assign.targets:
                         if hasattr(target, "attr") and not target.attr.startswith("_"):
-                            attribute_names.update(
-                                {target.attr: {"attr_type": get_property_type(assign)}}
-                            )
+                            attribute_names.update({target.attr: {"attr_type": get_property_type(assign)}})
 
 
 def check_base_classes(cls_node: ast.ClassDef) -> bool:
     should_look = False
     init_node = [
-        node
-        for node in cls_node.body
-        if isinstance(node, ast.FunctionDef) and node.name.startswith("__init__")
+        node for node in cls_node.body if isinstance(node, ast.FunctionDef) and node.name.startswith("__init__")
     ]
     if init_node:
         if hasattr(init_node, "body"):
@@ -256,9 +237,7 @@ def get_properties(cls: Type) -> Dict:
                 get_property_names(cls_node, attribute_names)
             else:
                 # Abstract base classes fail here, e.g. "collections.abc.MuttableMapping"
-                _LOGGER.debug(
-                    f"Unable to get class node for {base_class.__name__}. Skipping..."
-                )
+                _LOGGER.debug(f"Unable to get class node for {base_class.__name__}. Skipping...")
     else:
         get_property_names(cls_node, attribute_names)
     return attribute_names
@@ -275,9 +254,7 @@ def _is_overload_decorator(dec: ast.expr) -> bool:
     return False
 
 
-def _find_function_def_in_body(
-    body, target_name: str
-) -> Optional[Union[ast.FunctionDef, ast.AsyncFunctionDef]]:
+def _find_function_def_in_body(body, target_name: str) -> Optional[Union[ast.FunctionDef, ast.AsyncFunctionDef]]:
     """Return the first non-overload (Async)FunctionDef in ``body`` matching ``target_name``.
 
     Only scans direct children of ``body`` -- does NOT recurse -- so a method
@@ -349,11 +326,7 @@ def create_function_report(f: Callable, is_async: bool = False) -> Dict:
             # "<locals>" segment indicates a method bound to a class named
             # by the first qualname component.
             qualname_parts = qualname.split(".")
-            if (
-                len(qualname_parts) >= 2
-                and qualname_parts[-1] == target_name
-                and "<locals>" not in qualname_parts
-            ):
+            if len(qualname_parts) >= 2 and qualname_parts[-1] == target_name and "<locals>" not in qualname_parts:
                 owner_class = qualname_parts[-2]
                 cls_node = _find_class_node(module_ast, owner_class)
                 if cls_node is not None:
@@ -468,21 +441,11 @@ def create_parameters(args: ast.arg) -> Dict:
         for arg in args.kwonlyargs:
             # Initialize the function parameters
             params.update(
-                {
-                    arg.arg: {
-                        "type": get_parameter_type(arg.annotation),
-                        "default": None,
-                        "param_type": "keyword_only",
-                    }
-                }
+                {arg.arg: {"type": get_parameter_type(arg.annotation), "default": None, "param_type": "keyword_only"}}
             )
         # Range through the corresponding default values
-        for i in range(
-            len(args.kwonlyargs) - len(args.kw_defaults), len(args.kwonlyargs)
-        ):
-            params[args.kwonlyargs[i].arg]["default"] = get_parameter_default_ast(
-                args.kw_defaults[i]
-            )
+        for i in range(len(args.kwonlyargs) - len(args.kw_defaults), len(args.kwonlyargs)):
+            params[args.kwonlyargs[i].arg]["default"] = get_parameter_default_ast(args.kw_defaults[i])
     return params
 
 
@@ -507,23 +470,15 @@ def get_overloads(cls: Type, cls_methods: Dict):
                 get_overload_data(cls_node, cls_methods)
             else:
                 # Abstract base classes fail here, e.g. "collections.abc.MuttableMapping"
-                _LOGGER.debug(
-                    f"Unable to get class node for {base_class.__name__}. Skipping..."
-                )
+                _LOGGER.debug(f"Unable to get class node for {base_class.__name__}. Skipping...")
     else:
         get_overload_data(cls_node, cls_methods)
 
 
 def get_overload_data(node: ast.ClassDef, cls_methods: Dict) -> None:
-    func_nodes = [
-        node
-        for node in node.body
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
-    ]
+    func_nodes = [node for node in node.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))]
     public_func_nodes = [
-        func
-        for func in func_nodes
-        if not func.name.startswith("_") or func.name.startswith("__init__")
+        func for func in func_nodes if not func.name.startswith("_") or func.name.startswith("__init__")
     ]
     # Check for method overloads on a class
     for func in public_func_nodes:
@@ -559,18 +514,12 @@ def create_class_report(cls: Type) -> Dict:
     is_enum = Enum in cls.__mro__
     if is_enum:
         cls_info["type"] = "Enum"
-        cls_info["properties"] = {
-            str(value): str(value) for value in dir(cls) if not value.startswith("_")
-        }
+        cls_info["properties"] = {str(value): str(value) for value in dir(cls) if not value.startswith("_")}
         return cls_info
 
     cls_info["properties"] = get_properties(cls)
 
-    methods = [
-        method
-        for method in dir(cls)
-        if not method.startswith("_") or method.startswith("__init__")
-    ]
+    methods = [method for method in dir(cls) if not method.startswith("_") or method.startswith("__init__")]
     for method in methods:
         async_func = False
         try:
@@ -612,22 +561,16 @@ def build_library_report(target_module: str) -> Dict:
             if not importable.startswith("_"):
                 live_obj = getattr(module, importable)
                 if inspect.isfunction(live_obj):
-                    public_api[module_name]["function_nodes"].update(
-                        {importable: create_function_report(live_obj)}
-                    )
+                    public_api[module_name]["function_nodes"].update({importable: create_function_report(live_obj)})
                 elif inspect.isclass(live_obj):
-                    public_api[module_name]["class_nodes"].update(
-                        {importable: create_class_report(live_obj)}
-                    )
+                    public_api[module_name]["class_nodes"].update({importable: create_class_report(live_obj)})
                 # else:  # Constants, version, etc. Nothing of interest at the moment
                 #     public_api[module_name]["others"].update({importable: live_obj})
 
     return public_api
 
 
-def compare_report_dicts(
-    stable: Dict, current: Dict, package_name: str, changelog: bool
-):
+def compare_report_dicts(stable: Dict, current: Dict, package_name: str, changelog: bool):
     """Compare two code report dicts and run the breaking change / changelog checks."""
     if "azure-mgmt-" in package_name:
         stable = report_azure_mgmt_versioned_module(stable)
@@ -649,10 +592,7 @@ def compare_report_dicts(
 
 
 def test_compare_reports(
-    pkg_dir: str,
-    changelog: bool,
-    source_report: str = "stable.json",
-    target_report: str = "current.json",
+    pkg_dir: str, changelog: bool, source_report: str = "stable.json", target_report: str = "current.json"
 ) -> None:
     package_name = os.path.basename(pkg_dir)
 
@@ -759,34 +699,18 @@ def drop_shadow_types_modules(stable: Dict, current: Dict) -> Tuple[Dict, Dict]:
                 return False
         return seen
 
-    shadow_modules = {
-        module for module in set(stable) | set(current) if is_shadow(module)
-    }
+    shadow_modules = {module for module in set(stable) | set(current) if is_shadow(module)}
     if shadow_modules:
-        _LOGGER.info(
-            "Skipping generated shadow `types` module(s): %s",
-            ", ".join(sorted(shadow_modules)),
-        )
+        _LOGGER.info("Skipping generated shadow `types` module(s): %s", ", ".join(sorted(shadow_modules)))
 
     return (
-        {
-            module: nodes
-            for module, nodes in stable.items()
-            if module not in shadow_modules
-        },
-        {
-            module: nodes
-            for module, nodes in current.items()
-            if module not in shadow_modules
-        },
+        {module: nodes for module, nodes in stable.items() if module not in shadow_modules},
+        {module: nodes for module, nodes in current.items() if module not in shadow_modules},
     )
 
 
 def generate_apistub_markdown(
-    package_name: str,
-    out_dir: str,
-    version: Optional[str] = None,
-    from_pypi: bool = True,
+    package_name: str, out_dir: str, version: Optional[str] = None, from_pypi: bool = True
 ) -> str:
     """Generate ``api.md`` for ``package_name`` and return its path.
 
@@ -834,9 +758,7 @@ def build_report_from_apistub(
     ``code_report.json`` are copied into ``out_dir`` (prefixed with ``label``)
     so they can be inspected after the run instead of being left in a temp dir.
     """
-    api_md = generate_apistub_markdown(
-        package_name, out_dir, version, from_pypi=from_pypi
-    )
+    api_md = generate_apistub_markdown(package_name, out_dir, version, from_pypi=from_pypi)
     dest_dir = os.path.dirname(api_md)
     try:
         report = convert_api_md_to_report(api_md)
@@ -919,9 +841,7 @@ def main(
     # If code_report is set, only generate a code report for the package and return
     if code_report:
         if use_apistub:
-            public_api = build_report_from_apistub(
-                package_name, pkg_dir, from_pypi=False
-            )
+            public_api = build_report_from_apistub(package_name, pkg_dir, from_pypi=False)
         else:
             public_api = build_library_report(target_module)
         with open("code_report.json", "w") as fd:
@@ -948,17 +868,10 @@ def main(
         # remains available to downstream SDK generation steps.
         _uninstall_package(package_name, pkg_dir)
         stable = build_report_from_apistub(
-            package_name,
-            pkg_dir,
-            version=version,
-            debug=debug,
-            label="stable",
-            from_pypi=True,
+            package_name, pkg_dir, version=version, debug=debug, label="stable", from_pypi=True
         )
         _uninstall_package(package_name, pkg_dir)
-        current = build_report_from_apistub(
-            package_name, pkg_dir, debug=debug, label="current", from_pypi=False
-        )
+        current = build_report_from_apistub(package_name, pkg_dir, debug=debug, label="current", from_pypi=False)
         checker = compare_report_dicts(stable, current, package_name, changelog)
         print(checker.report_changes())
         if not changelog and checker.breaking_changes:
@@ -969,37 +882,17 @@ def main(
     if not version:
         version = _resolve_pypi_version(package_name, latest_pypi_version)
 
-    in_venv = (
-        True if in_venv == "true" else False
-    )  # subprocess sends back string so convert to bool
+    in_venv = True if in_venv == "true" else False  # subprocess sends back string so convert to bool
 
     if not in_venv:
         packages = [f"{package_name}=={version}", "jsondiff==1.2.0"]
         with create_venv_with_package(packages) as venv:
             subprocess.check_call(
-                [
-                    venv.env_exe,
-                    "-m",
-                    "pip",
-                    "install",
-                    "-r",
-                    os.path.join(pkg_dir, "dev_requirements.txt"),
-                ],
+                [venv.env_exe, "-m", "pip", "install", "-r", os.path.join(pkg_dir, "dev_requirements.txt")],
                 cwd=pkg_dir,
             )
             _LOGGER.info(f"Installed version {version} of {package_name} in a venv")
-            args = [
-                venv.env_exe,
-                __file__,
-                "-t",
-                pkg_dir,
-                "-m",
-                target_module,
-                "--in-venv",
-                "true",
-                "-s",
-                version,
-            ]
+            args = [venv.env_exe, __file__, "-t", pkg_dir, "-m", target_module, "--in-venv", "true", "-s", version]
             try:
                 subprocess.check_call(args)
             except subprocess.CalledProcessError:
@@ -1020,20 +913,14 @@ def main(
 
         test_compare_reports(pkg_dir, changelog)
 
-    except (
-        Exception
-    ) as err:  # catch any issues with capturing the public API and building the report
-        print(
-            "\n*****See aka.ms/azsdk/breaking-changes-tool to resolve any build issues*****\n"
-        )
+    except Exception as err:  # catch any issues with capturing the public API and building the report
+        print("\n*****See aka.ms/azsdk/breaking-changes-tool to resolve any build issues*****\n")
         remove_json_files(pkg_dir)
         raise err
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Run breaking changes checks against target folder."
-    )
+    parser = argparse.ArgumentParser(description="Run breaking changes checks against target folder.")
 
     parser.add_argument(
         "-t",
@@ -1051,11 +938,7 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "-v",
-        "--in-venv",
-        dest="in_venv",
-        help="Check if we are in the newly created venv.",
-        default=False,
+        "-v", "--in-venv", dest="in_venv", help="Check if we are in the newly created venv.", default=False
     )
 
     parser.add_argument(
@@ -1150,15 +1033,11 @@ if __name__ == "__main__":
 
     if args.source_report:
         if not args.target_report:
-            _LOGGER.exception(
-                "If providing the `--source-report` flag, the `--target-report` flag is also required."
-            )
+            _LOGGER.exception("If providing the `--source-report` flag, the `--target-report` flag is also required.")
             exit(1)
     if args.target_report:
         if not args.source_report:
-            _LOGGER.exception(
-                "If providing the `--target-report` flag, the `--source-report` flag is also required."
-            )
+            _LOGGER.exception("If providing the `--target-report` flag, the `--source-report` flag is also required.")
             exit(1)
 
     main(
