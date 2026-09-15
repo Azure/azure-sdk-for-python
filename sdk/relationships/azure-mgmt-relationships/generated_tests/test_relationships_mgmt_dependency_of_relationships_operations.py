@@ -28,11 +28,11 @@ class TestRelationshipsMgmtDependencyOfRelationshipsOperations(AzureMgmtRecorded
                 "id": "str",
                 "name": "str",
                 "properties": {
+                    "targetId": "str",
                     "metadata": {"sourceType": "str", "targetType": "str"},
                     "originInformation": {"relationshipOriginType": "str", "discoveryEngine": "str"},
-                    "sourceId": "str",
-                    "targetId": "str",
                     "provisioningState": "str",
+                    "sourceId": "str",
                     "targetTenant": "str",
                 },
                 "systemData": {
@@ -69,5 +69,15 @@ class TestRelationshipsMgmtDependencyOfRelationshipsOperations(AzureMgmtRecorded
             name="str",
         ).result()  # call '.result()' to poll until service return final result
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_dependency_of_relationships_list_by_parent(self, resource_group):
+        response = self.client.dependency_of_relationships.list_by_parent(
+            resource_uri="str",
+        )
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
