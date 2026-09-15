@@ -150,7 +150,7 @@ async def upload_substream_blocks(
         for block in uploader.get_substream_blocks():
             range_ids.append(await uploader.process_substream_block(block))
     if any(range_ids):
-        return [r[1] for r in sorted(range_ids, key=lambda r: r[0])]
+        return [block_id for _, block_id in sorted(range_ids, key=lambda r: r[0])]
     return
 
 
@@ -402,8 +402,8 @@ class DataLakeFileChunkUploader(_ChunkUploader):
             **self.request_options,
         )
 
-        if not self.parallel and self.request_options.get("modified_access_conditions"):
-            self.request_options["modified_access_conditions"].if_match = self.response_headers["etag"]
+        if not self.parallel and self.request_options.get("etag"):
+            self.request_options["etag"] = self.response_headers["etag"]
 
     async def _upload_substream_block(self, index, block_stream):
         try:

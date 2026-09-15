@@ -30,6 +30,8 @@ from ._common.utils import (
     strip_protocol_from_uri,
     parse_sas_credential,
     get_server_timeout_ms,
+    get_attempt_timeout,
+    get_remaining_timeout,
 )
 from ._common.constants import (
     CONTAINER_PREFIX,
@@ -385,16 +387,21 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         suppress_next_session_timeout_message = kwargs.pop(
             "suppress_next_session_timeout_message", False
         )
+        # Opt-in per call site so long-poll operations stay bounded only by the caller.
+        apply_try_timeout = kwargs.pop("apply_try_timeout", False)
+        try_timeout = self._config.try_timeout if apply_try_timeout else None
         retried_times = 0
         max_retries = self._config.retry_total
 
-        abs_timeout_time = (time.time() + timeout) if (operation_requires_timeout and timeout) else None
+        abs_timeout_time = (time.monotonic() + timeout) if (operation_requires_timeout and timeout) else None
 
         while retried_times <= max_retries:
             try:
-                if operation_requires_timeout and abs_timeout_time:
-                    remaining_timeout = abs_timeout_time - time.time()
-                    kwargs["timeout"] = remaining_timeout
+                if operation_requires_timeout:
+                    remaining_timeout = (abs_timeout_time - time.monotonic()) if abs_timeout_time else None
+                    attempt_timeout = get_attempt_timeout(remaining_timeout, try_timeout)
+                    if attempt_timeout is not None:
+                        kwargs["timeout"] = attempt_timeout
                 return operation(**kwargs)
             except StopIteration:
                 raise
@@ -412,15 +419,18 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                         self._container_id,
                         last_exception,
                     )
-                    if isinstance(last_exception, OperationTimeoutError) and (
-                        getattr(self, "_session_id", None) == NEXT_AVAILABLE_SESSION
-                        and not suppress_next_session_timeout_message
-                    ):
-                        description = (
-                            "If trying to receive from NEXT_AVAILABLE_SESSION, "
-                            "use max_wait_time on the ServiceBusReceiver to control the"
-                            " timeout."
-                        )
+                    if isinstance(last_exception, OperationTimeoutError):
+                        # Keep the original message: it identifies which phase timed out.
+                        # The session hint only applies to NEXT_AVAILABLE_SESSION receivers.
+                        description = str(last_exception)
+                        if (
+                            getattr(self, "_session_id", None) == NEXT_AVAILABLE_SESSION
+                            and not suppress_next_session_timeout_message
+                        ):
+                            description += (
+                                " If trying to receive from NEXT_AVAILABLE_SESSION, use max_wait_time"
+                                " on the ServiceBusReceiver to control the timeout."
+                            )
                         error = OperationTimeoutError(
                             message=description,
                         )
@@ -451,7 +461,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             retried_times,
         )
         if backoff <= self._config.retry_backoff_max and (
-            abs_timeout_time is None or (backoff + time.time()) <= abs_timeout_time
+            abs_timeout_time is None or (backoff + time.monotonic()) <= abs_timeout_time
         ):
             time.sleep(backoff)
             _LOGGER.info(
@@ -465,15 +475,17 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 entity_name,
                 last_exception,
             )
-            if isinstance(last_exception, OperationTimeoutError) and (
-                getattr(self, "_session_id", None) == NEXT_AVAILABLE_SESSION
-                and not suppress_next_session_timeout_message
-            ):
-                description = (
-                    "If trying to receive from NEXT_AVAILABLE_SESSION, "
-                    "use max_wait_time on the ServiceBusReceiver to control the"
-                    " timeout."
-                )
+            if isinstance(last_exception, OperationTimeoutError):
+                # Keep the original message: it identifies which phase timed out.
+                description = str(last_exception)
+                if (
+                    getattr(self, "_session_id", None) == NEXT_AVAILABLE_SESSION
+                    and not suppress_next_session_timeout_message
+                ):
+                    description += (
+                        " If trying to receive from NEXT_AVAILABLE_SESSION, use max_wait_time"
+                        " on the ServiceBusReceiver to control the timeout."
+                    )
                 error = OperationTimeoutError(
                     message=description,
                 )
@@ -507,7 +519,10 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         :return: The message response.
         :rtype: Message
         """
-        self._open()
+        attempt_started = time.monotonic()
+        self._open(timeout)
+        # Open and request share one attempt budget, so the request gets what is left.
+        timeout = get_remaining_timeout(timeout, attempt_started)
         application_properties = {}
 
         # Some mgmt calls do not support an associated link name (such as list_sessions).  Most do, so on by default.
@@ -561,10 +576,11 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             callback=callback,
             timeout=timeout,
             operation_requires_timeout=True,
+            apply_try_timeout=True,
             **kwargs,
         )
 
-    def _open(self):
+    def _open(self, timeout: Optional[float] = None):
         raise ValueError("Subclass should override the method.")
 
     def _open_with_timeout(self, timeout: float):
@@ -587,7 +603,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         return self._do_retryable_operation(
             open_with_timeout,
             timeout=timeout,
-            operation_requires_timeout=timeout is not None,
+            operation_requires_timeout=True,
+            apply_try_timeout=True,
             suppress_next_session_timeout_message=(
                 suppress_next_session_timeout_message
             ),
@@ -619,7 +636,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         return self._do_retryable_operation(
             open_mgmt_link,
             timeout=timeout,
-            operation_requires_timeout=timeout is not None,
+            operation_requires_timeout=True,
+            apply_try_timeout=True,
             suppress_next_session_timeout_message=(
                 suppress_next_session_timeout_message
             ),

@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-09-01/WorkloadNetworks_DeleteDhcp.json
+# x-ms-original-file: 2026-03-01/WorkloadNetworks_DeleteDhcp.json
 if __name__ == "__main__":
     main()

@@ -319,26 +319,26 @@ class TestDeleteMessages:
 
     def test_management_setup_shares_timeout_with_receiver_reopen(self):
         receiver = _receiver(ServiceBusReceiver)
-        receiver._config = MagicMock(retry_total=0, encoding="UTF-8")
+        receiver._config = MagicMock(
+            retry_total=0, encoding="UTF-8", try_timeout=None
+        )
         receiver._container_id = "receiver"
         receiver._mgmt_target = "$management"
-        receiver._open_with_timeout = MagicMock()
+        receiver._open_with_timeout = MagicMock(
+            side_effect=lambda _timeout: threading.Event().wait(0.01)
+        )
         receiver._amqp_transport.mgmt_client_setup = MagicMock()
 
-        with patch(
-            "azure.servicebus._base_handler.time.monotonic",
-            side_effect=[10.0, 10.5],
-        ):
-            ServiceBusReceiver._open_mgmt_link_with_retry(receiver, timeout=2)
+        ServiceBusReceiver._open_mgmt_link_with_retry(receiver, timeout=2)
 
         receiver._open_with_timeout.assert_called_once()
         receiver_timeout = receiver._open_with_timeout.call_args.args[0]
         assert 0 < receiver_timeout <= 2
-        receiver._amqp_transport.mgmt_client_setup.assert_called_once_with(
-            receiver._handler,
-            node=receiver._mgmt_target.encode("UTF-8"),
-            timeout=pytest.approx(receiver_timeout - 0.5),
-        )
+        receiver._amqp_transport.mgmt_client_setup.assert_called_once()
+        setup_args = receiver._amqp_transport.mgmt_client_setup.call_args
+        assert setup_args.args == (receiver._handler,)
+        assert setup_args.kwargs["node"] == receiver._mgmt_target.encode("UTF-8")
+        assert 0 < setup_args.kwargs["timeout"] < receiver_timeout
 
     def test_forwards_session_id(self):
         receiver = _receiver(ServiceBusReceiver, session_id="session-a")
@@ -658,12 +658,33 @@ class TestDeleteMessagesAsync:
         receiver._amqp_transport.drain_and_release_messages_async = AsyncMock()
         receiver._create_handler = MagicMock()
 
+        async def await_operation(awaitable, _deadline, _message):
+            return await awaitable
+
+        async def discard_cleanup(close_coro, _deadline):
+            close_coro.close()
+
         with patch(
             "azure.servicebus.aio._servicebus_receiver_async.create_authentication",
             new=AsyncMock(return_value=None),
         ), patch(
-            "azure.servicebus.aio._servicebus_receiver_async.time.monotonic",
-            side_effect=[10.0, 11.0],
+            "azure.servicebus.aio._servicebus_receiver_async.get_link_ready_deadline",
+            return_value=10.5,
+        ), patch(
+            "azure.servicebus.aio._servicebus_receiver_async.check_link_ready_deadline",
+            side_effect=[None, None, None, OperationTimeoutError()],
+        ), patch(
+            "azure.servicebus.aio._servicebus_receiver_async.close_handler_with_deadline",
+            new=AsyncMock(),
+        ), patch(
+            "azure.servicebus.aio._servicebus_receiver_async.open_handler_with_deadline",
+            new=AsyncMock(),
+        ), patch(
+            "azure.servicebus.aio._servicebus_receiver_async.close_handler_for_cleanup",
+            side_effect=discard_cleanup,
+        ), patch(
+            "azure.servicebus.aio._servicebus_receiver_async.await_with_deadline",
+            side_effect=await_operation,
         ), patch(
             "azure.servicebus.aio._servicebus_receiver_async.asyncio.sleep",
             new=AsyncMock(),
@@ -679,24 +700,26 @@ class TestDeleteMessagesAsync:
         receiver._handler = None
         receiver._create_handler = MagicMock()
 
-        async def wait_for_setup(awaitable, timeout):
-            del timeout
-            return await awaitable
+        async def authentication_timeout(awaitable, _deadline, _message):
+            awaitable.close()
+            raise OperationTimeoutError()
 
         with patch(
             "azure.servicebus.aio._servicebus_receiver_async.create_authentication",
             new=AsyncMock(return_value=None),
         ), patch(
-            "azure.servicebus.aio._servicebus_receiver_async.asyncio.wait_for",
-            side_effect=wait_for_setup,
+            "azure.servicebus.aio._servicebus_receiver_async.get_link_ready_deadline",
+            return_value=10.5,
         ), patch(
-            "azure.servicebus.aio._servicebus_receiver_async.time.monotonic",
-            side_effect=[10.0, 10.1, 11.0],
+            "azure.servicebus.aio._servicebus_receiver_async.check_link_ready_deadline",
+        ), patch(
+            "azure.servicebus.aio._servicebus_receiver_async.await_with_deadline",
+            side_effect=authentication_timeout,
         ):
             with pytest.raises(OperationTimeoutError):
                 await receiver._open(timeout=0.5)
 
-        receiver._create_handler.assert_called_once_with(None)
+        receiver._create_handler.assert_not_called()
 
     @pytest.mark.asyncio
     async def test_open_does_not_create_awaitable_after_timeout(self):
@@ -710,8 +733,11 @@ class TestDeleteMessagesAsync:
             "azure.servicebus.aio._servicebus_receiver_async.create_authentication",
             new=authentication,
         ), patch(
-            "azure.servicebus.aio._servicebus_receiver_async.time.monotonic",
-            side_effect=[10.0, 11.0],
+            "azure.servicebus.aio._servicebus_receiver_async.get_link_ready_deadline",
+            return_value=10.5,
+        ), patch(
+            "azure.servicebus.aio._servicebus_receiver_async.check_link_ready_deadline",
+            side_effect=OperationTimeoutError(),
         ):
             with pytest.raises(OperationTimeoutError):
                 await receiver._open(timeout=0.5)
@@ -767,28 +793,29 @@ class TestDeleteMessagesAsync:
     @pytest.mark.asyncio
     async def test_management_setup_shares_timeout_with_receiver_reopen(self):
         receiver = _receiver(AsyncServiceBusReceiver)
-        receiver._config = MagicMock(retry_total=0, encoding="UTF-8")
+        receiver._config = MagicMock(
+            retry_total=0, encoding="UTF-8", try_timeout=None
+        )
         receiver._container_id = "receiver"
         receiver._mgmt_target = "$management"
-        receiver._open_with_timeout = AsyncMock()
+        async def delayed_open(_timeout):
+            await asyncio.sleep(0.01)
+
+        receiver._open_with_timeout = AsyncMock(side_effect=delayed_open)
         receiver._amqp_transport.mgmt_client_setup_async = AsyncMock()
 
-        with patch(
-            "azure.servicebus.aio._base_handler_async.time.monotonic",
-            side_effect=[10.0, 10.5],
-        ):
-            await AsyncServiceBusReceiver._open_mgmt_link_with_retry(
-                receiver, timeout=2
-            )
+        await AsyncServiceBusReceiver._open_mgmt_link_with_retry(
+            receiver, timeout=2
+        )
 
         receiver._open_with_timeout.assert_awaited_once()
         receiver_timeout = receiver._open_with_timeout.await_args.args[0]
         assert 0 < receiver_timeout <= 2
-        receiver._amqp_transport.mgmt_client_setup_async.assert_awaited_once_with(
-            receiver._handler,
-            node=receiver._mgmt_target.encode("UTF-8"),
-            timeout=pytest.approx(receiver_timeout - 0.5),
-        )
+        receiver._amqp_transport.mgmt_client_setup_async.assert_awaited_once()
+        setup_args = receiver._amqp_transport.mgmt_client_setup_async.await_args
+        assert setup_args.args == (receiver._handler,)
+        assert setup_args.kwargs["node"] == receiver._mgmt_target.encode("UTF-8")
+        assert 0 < setup_args.kwargs["timeout"] < receiver_timeout
 
     @pytest.mark.asyncio
     async def test_keeps_one_cutoff_and_stops_only_on_zero(self):

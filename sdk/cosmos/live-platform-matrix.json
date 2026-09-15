@@ -2,7 +2,11 @@
   "displayNames": {
     "--disablecov": "",
     "false": "",
-    "true": ""
+    "true": "",
+    "single-session": "",
+    "single-session-split": "",
+    "multiregion-tc-session": "",
+    "multimaster-multiregion-session": ""
   },
   "include": [
     {
@@ -13,7 +17,8 @@
           "PythonVersion": "3.14",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosSplit"
+          "TestMarkArgument": "cosmosSplit",
+          "AccountSelector": "single-session-split"
         },
         "Ubuntu2404_313_split": {
           "OSVmImage": "env:LINUXVMIMAGE",
@@ -21,7 +26,8 @@
           "PythonVersion": "3.13",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosSplit"
+          "TestMarkArgument": "cosmosSplit",
+          "AccountSelector": "single-session-split"
         }
       }
     },
@@ -33,7 +39,8 @@
           "PythonVersion": "3.13",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosCircuitBreaker"
+          "TestMarkArgument": "cosmosCircuitBreaker",
+          "AccountSelector": "multimaster-multiregion-session"
         }
       },
       "ArmConfig": {
@@ -50,7 +57,8 @@
           "PythonVersion": "3.10",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosCircuitBreakerMultiRegion"
+          "TestMarkArgument": "cosmosCircuitBreakerMultiRegion",
+          "AccountSelector": "multiregion-tc-session"
         }
       },
       "ArmConfig": {
@@ -67,7 +75,8 @@
           "PythonVersion": "3.13",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosPerPartitionAutomaticFailover"
+          "TestMarkArgument": "cosmosPerPartitionAutomaticFailover",
+          "AccountSelector": "multiregion-tc-session"
         }
       },
       "ArmConfig": {
@@ -84,7 +93,8 @@
           "PythonVersion": "3.11",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosSearchQuery"
+          "TestMarkArgument": "cosmosSearchQuery",
+          "AccountSelector": "single-session"
         }
       }
     },
@@ -96,7 +106,8 @@
           "PythonVersion": "3.10",
           "CoverageArg": "",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosQuery"
+          "TestMarkArgument": "cosmosQuery",
+          "AccountSelector": "single-session"
         }
       }
     },
@@ -211,7 +222,8 @@
           "PythonVersion": "3.10",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosLong"
+          "TestMarkArgument": "cosmosLong",
+          "AccountSelector": "single-session"
         },
         "Windows2022_312_long": {
           "OSVmImage": "env:WINDOWSVMIMAGE",
@@ -219,7 +231,8 @@
           "PythonVersion": "3.12",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosLong"
+          "TestMarkArgument": "cosmosLong",
+          "AccountSelector": "single-session"
         }
       }
     },
@@ -231,7 +244,8 @@
           "PythonVersion": "3.14",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosMultiRegion"
+          "TestMarkArgument": "cosmosMultiRegion",
+          "AccountSelector": "multimaster-multiregion-session"
         },
         "Windows2022_310": {
           "OSVmImage": "env:WINDOWSVMIMAGE",
@@ -239,7 +253,8 @@
           "PythonVersion": "3.10",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosMultiRegion"
+          "TestMarkArgument": "cosmosMultiRegion",
+          "AccountSelector": "multimaster-multiregion-session"
         },
         "Windows2022_312": {
           "OSVmImage": "env:WINDOWSVMIMAGE",
@@ -247,7 +262,8 @@
           "PythonVersion": "3.12",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosMultiRegion"
+          "TestMarkArgument": "cosmosMultiRegion",
+          "AccountSelector": "multimaster-multiregion-session"
         }
       },
       "ArmConfig": {

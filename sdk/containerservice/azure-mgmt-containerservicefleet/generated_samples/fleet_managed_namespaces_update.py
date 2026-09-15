@@ -34,11 +34,25 @@ def main():
         resource_group_name="rgfleets",
         fleet_name="fleet1",
         managed_namespace_name="namespace1",
-        properties={"tags": {"str": "str"}},
+        properties={
+            "properties": {
+                "propagationPolicy": {
+                    "placementProfile": {
+                        "defaultClusterResourcePlacement": {
+                            "rolloutStrategy": {
+                                "clusterUpdateStrategy": {"name": "my-staged-update-strategy"},
+                                "type": "External",
+                            }
+                        }
+                    }
+                }
+            },
+            "tags": {"tag2": "tagValue2"},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-06-01/FleetManagedNamespaces_Update.json
+# x-ms-original-file: 2026-06-02-preview/FleetManagedNamespaces_Update.json
 if __name__ == "__main__":
     main()

@@ -1,6 +1,18 @@
 # Release History
 
-## 2.6.0 (Unreleased)
+## 2.6.1 (2026-09-14)
+
+### Sample updates
+
+* Added `sample_agent_insights_on_demand.py` and `sample_agent_insights_scheduled.py` under `samples/agent_insights/` to demonstrate on-demand analysis, insight lifecycle updates, and scheduled monitor setup with temporary external agents, fictional traces, and owned-resource cleanup.
+* Added `sample_agent_web_iq.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using the `WebIQPreviewTool`.
+
+### Bugs Fixed
+
+* Fixed Agent Insights run pollers to stop and raise an error when the service reports a cancelled run.
+* Fixed Agent Insights run pollers to preserve request headers, including the preview feature header, on polling requests.
+
+## 2.6.0 (2026-09-04)
 
 ### Features Added
 
@@ -15,8 +27,11 @@
 
 ### Sample updates
 
-* Added `sample_toolbox_with_shell.py`, demonstrating a Prompt Agent invoking a `ShellToolboxTool`.
-* Added `sample_synthetic_multiturn_evaluation.py`, demonstrating simulation seed generation from an agent followed by multi-turn conversation simulation and evaluation.
+* Added `sample_toolbox_with_shell.py` under `samples/agents/tools/`, demonstrating a Prompt Agent invoking a `ShellToolboxTool`.
+* Added `sample_toolbox_with_shipping_skill.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using a skill through a Toolbox MCP endpoint.
+* Added `sample_toolbox_with_shell_and_skill.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using a skill with a `ShellToolboxTool` through a Toolbox MCP endpoint.
+* Added `sample_synthetic_multiturn_evaluation.py` under `samples/evaluations/`, demonstrating simulation seed generation from an agent followed by multi-turn conversation simulation and evaluation.
+* Added `sample_responses_model_router.py` under `samples/responses/`, demonstrating a Responses API request to a model router deployment and selection of a model by the router.
 
 ### Bugs Fixed
 

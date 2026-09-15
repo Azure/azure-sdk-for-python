@@ -28,6 +28,7 @@ from .._models import DeleteMessagesResult, PurgeMessagesResult
 from .._common.receiver_mixins import ReceiverMixin
 from .._common.constants import (
     CONSUMER_IDENTIFIER,
+    DEFAULT_RECEIVE_WAIT_TIME_SECS,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
     REQUEST_RESPONSE_PEEK_OPERATION,
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
@@ -53,7 +54,13 @@ from .._common.constants import (
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
 )
 from .._common import mgmt_handlers
-from .._common.utils import datetime_to_timestamp_ms, utc_from_timestamp
+from .._common.utils import (
+    datetime_to_timestamp_ms,
+    utc_from_timestamp,
+    get_attempt_timeout,
+    get_link_ready_deadline,
+    check_link_ready_deadline,
+)
 from .._common.tracing import (
     receive_trace_context_manager,
     settle_trace_context_manager,
@@ -62,7 +69,13 @@ from .._common.tracing import (
     SPAN_NAME_RECEIVE_DEFERRED,
     SPAN_NAME_PEEK,
 )
-from ._async_utils import create_authentication
+from ._async_utils import (
+    await_with_deadline,
+    close_handler_for_cleanup,
+    close_handler_with_deadline,
+    create_authentication,
+    open_handler_with_deadline,
+)
 
 if TYPE_CHECKING:
     try:
@@ -123,8 +136,8 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
      The default mode is PEEK_LOCK.
     :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
     :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
-     messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
-     until the connection is closed. The default value is None, meaning no timeout. On a sessionful
+     messages to arrive. The default value is None: iterating the receiver then waits indefinitely,
+     while `receive_messages()` falls back to a 60 second bound. On a sessionful
      queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting
      to a session. If connection errors are occurring due to write timing out,the connection timeout
      value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
@@ -309,8 +322,8 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
          The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
-         messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
-         until the connection is closed. The default value is None, meaning no timeout. On a sessionful
+         messages to arrive. The default value is None: iterating the receiver then waits indefinitely,
+         while `receive_messages()` falls back to a 60 second bound. On a sessionful
          queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting
          to a session. If connection errors are occurring due to write timing out,the connection timeout
          value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
@@ -403,39 +416,35 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         # pylint: disable=protected-access
         if self._running:
             return
-        deadline = None if timeout is None else time.monotonic() + timeout
+        deadline = get_link_ready_deadline(timeout)
+        if self._handler and not self._handler._shutdown:
+            await close_handler_with_deadline(self._handler, deadline)
 
-        def remaining_timeout() -> Optional[float]:
-            if deadline is None:
-                return None
-            remaining = deadline - time.monotonic()
-            if remaining <= 0:
-                raise OperationTimeoutError()
-            return remaining
-
-        async def wait_for_setup(operation, *args, **kwargs):
-            remaining = remaining_timeout()
-            awaitable = operation(*args, **kwargs)
-            if remaining is None:
-                return await awaitable
-            try:
-                return await asyncio.wait_for(awaitable, timeout=remaining)
-            except asyncio.TimeoutError as exception:
-                raise OperationTimeoutError() from exception
-
+        check_link_ready_deadline(deadline)
+        auth = (
+            None
+            if self._connection
+            else await await_with_deadline(
+                create_authentication(self), deadline, "Timed out acquiring the AMQP credential."
+            )
+        )
+        self._create_handler(auth)
         try:
-            if self._handler and not self._handler._shutdown:
-                await wait_for_setup(self._handler.close_async)
-            auth = None if self._connection else (await wait_for_setup(create_authentication, self))
-            self._create_handler(auth)
-            remaining_timeout()
-            await wait_for_setup(self._handler.open_async, connection=self._connection)
-            while not await wait_for_setup(self._handler.client_ready_async):
-                remaining = remaining_timeout()
-                await asyncio.sleep(0.05 if remaining is None else min(0.05, remaining))
+            # The token fetch can use the budget, so re-check before opening; the open itself
+            # is bounded by open_handler_with_deadline.
+            check_link_ready_deadline(deadline)
+            await open_handler_with_deadline(self._handler, self._connection, deadline)
+            while True:
+                check_link_ready_deadline(deadline)
+                if await await_with_deadline(
+                    self._handler.client_ready_async(), deadline, "Timed out waiting for the AMQP link to open."
+                ):
+                    break
+                await asyncio.sleep(0.05)
+            check_link_ready_deadline(deadline)
             self._running = True
         except:
-            await self._close_handler()
+            await close_handler_for_cleanup(self._close_handler(), deadline)
             raise
 
         if self._auto_lock_renewer and self._session:
@@ -450,22 +459,29 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         # pylint: disable=protected-access
         try:
             self._receive_context.set()
-            await self._open()
+            # Explicit None checks: a zero wait is an expired budget, not an absent one,
+            # so it must not fall through to the default.
+            if timeout is not None:
+                wait_time = timeout
+            elif self._max_wait_time is not None:
+                wait_time = self._max_wait_time
+            else:
+                wait_time = DEFAULT_RECEIVE_WAIT_TIME_SECS
+
+            receive_started = time.monotonic()
+            # Acquisition is capped by try_timeout when enabled, and never exceeds the budget.
+            await self._open(get_attempt_timeout(wait_time, self._config.try_timeout))
 
             amqp_receive_client = self._handler
             received_messages_queue = amqp_receive_client._received_messages
             max_message_count = max_message_count or self._prefetch_count
-            timeout_seconds = (
-                self._amqp_transport.TIMEOUT_FACTOR * (timeout or self._max_wait_time)
-                if (timeout or self._max_wait_time)
-                else 0
-            )
-            abs_timeout = (
-                self._amqp_transport.get_current_time(amqp_receive_client)
-                + timeout_seconds
-                if timeout_seconds
-                else 0
-            )
+            # Poll with what is left of the one budget, not a fresh copy of it.
+            remaining = wait_time - (time.monotonic() - receive_started)
+            if remaining <= 0 and received_messages_queue.empty():
+                return []
+            timeout_seconds = self._amqp_transport.TIMEOUT_FACTOR * remaining
+            abs_timeout = self._amqp_transport.get_current_time(amqp_receive_client) + timeout_seconds
+            receive_deadline = abs_timeout
 
             batch: Union[List["uamqp_Message"], List["pyamqp_Message"]] = []
 
@@ -477,18 +493,16 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             if len(batch) >= max_message_count:
                 return [self._build_received_message(message) for message in batch]
 
-            # Dynamically issue link credit if max_message_count >= 1 when the prefetch_count is the default value 0
-            if (
-                max_message_count
-                and self._prefetch_count == 0
-                and max_message_count >= 1
-            ):
+            # Dynamically issue link credit if max_message_count >= 1 when the prefetch_count is the default value 0.
+            # Skip it once the budget is gone: the broker would lock messages this call can no longer return.
+            expired = remaining <= 0
+            if not expired and max_message_count and self._prefetch_count == 0 and max_message_count >= 1:
                 link_credit_needed = max_message_count - len(batch)
                 await self._amqp_transport.reset_link_credit_async(
                     amqp_receive_client, link_credit_needed
                 )
 
-            first_message_received = expired = False
+            first_message_received = False
             receiving = True
             while receiving and not expired and len(batch) < max_message_count:
                 while receiving and received_messages_queue.qsize() < max_message_count:
@@ -509,9 +523,10 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                     ):
                         # first message(s) received, continue receiving for some time
                         first_message_received = True
-                        abs_timeout = (
+                        abs_timeout = min(
                             self._amqp_transport.get_current_time(amqp_receive_client)
-                            + self._further_pull_receive_timeout
+                            + self._further_pull_receive_timeout,
+                            receive_deadline,
                         )
                 while (
                     not received_messages_queue.empty()
@@ -624,7 +639,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         if dead_letter_details:
             message.update(dead_letter_details)
 
-        return await self._mgmt_request_response_with_retry(
+        return await self._mgmt_request_response(
             REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION, message, mgmt_handlers.default
         )
 
@@ -733,11 +748,13 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
          and returns an empty list without waiting, even when `max_wait_time` is set. The default
          value is 1.
         :param Optional[float] max_wait_time: Maximum time to wait in seconds for the first message to arrive.
-         If messages are requested, no messages arrive, and no timeout is specified, this call will not
-         return until the connection is closed. If specified, and no messages arrive within the
+         If messages are requested, no messages arrive, and no timeout is specified, this call will
+         return an empty list after 60 seconds. If specified, and no messages arrive within the
          timeout period, an empty list will be returned. NOTE: Setting max_wait_time on receive_messages
-         when NEXT_AVAILABLE_SESSION is specified will not impact the timeout for connecting to a session.
-         Please use max_wait_time on the constructor to set the timeout for connecting to a session.
+         when NEXT_AVAILABLE_SESSION is specified will not impact the timeout for connecting to a session
+         on a receiver that is already open. Please use max_wait_time on the constructor to set the timeout
+         for connecting to a session. On a receiver that has not been opened yet, the first call's wait also
+         bounds that initial link acquisition.
         :return: A list of messages received. If no messages are available, this will be an empty list.
         :rtype: list[~azure.servicebus.aio.ServiceBusReceivedMessage]
 
@@ -756,6 +773,8 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             raise ValueError("The max_wait_time must be greater than 0.")
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
+        if max_wait_time is None:
+            max_wait_time = self._max_wait_time if self._max_wait_time is not None else DEFAULT_RECEIVE_WAIT_TIME_SECS
         start_time = time.time_ns()
         messages: List[ServiceBusReceivedMessage] = await self._do_retryable_operation(
             self._receive,
@@ -813,10 +832,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         sequence_numbers = cast(List[int], sequence_numbers)
         if len(sequence_numbers) == 0:
             return []  # no-op on empty list.
-        await self._open()
-        uamqp_receive_mode = self._amqp_transport.ServiceBusToAMQPReceiveModeMap[
-            self._receive_mode
-        ]
+        uamqp_receive_mode = self._amqp_transport.ServiceBusToAMQPReceiveModeMap[self._receive_mode]
         try:
             receive_mode = cast(Enum, uamqp_receive_mode).value
         except AttributeError:
@@ -1027,7 +1043,6 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         if int(max_message_count) < 0:
             raise ValueError("max_message_count must be 1 or greater.")
 
-        await self._open()
 
         message = {
             MGMT_REQUEST_FROM_SEQUENCE_NUMBER: self._amqp_transport.AMQP_LONG_VALUE(
