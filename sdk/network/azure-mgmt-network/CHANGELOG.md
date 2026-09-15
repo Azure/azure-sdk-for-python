@@ -1,5 +1,94 @@
 # Release History
 
+## 33.0.0 (2026-09-15)
+
+### Features Added
+
+  - Client `NetworkManagementClient` added operation group `authentication_policies`
+  - Model `ApplicationGatewayFirewallManifestRuleSet` added property `display_name`
+  - Model `ApplicationGatewayFirewallRule` added property `paranoia_level`
+  - Model `ApplicationGatewayFirewallRuleSetPropertiesFormat` added property `display_name`
+  - Model `ApplicationGatewayPropertiesFormat` added property `advanced_routing_condition_sets`
+  - Model `ApplicationGatewayPropertiesFormat` added property `advanced_routing_maps`
+  - Model `ApplicationGatewayPropertiesFormat` added property `reserved_capacity`
+  - Model `ApplicationGatewayRequestRoutingRulePropertiesFormat` added property `advanced_routing_map`
+  - Model `ApplicationGatewayRequestRoutingRulePropertiesFormat` added property `auth_configs`
+  - Enum `ApplicationGatewayRequestRoutingRuleType` added member `ADVANCED_ROUTING`
+  - Enum `ApplicationGatewaySkuName` added member `BASIC_V2`
+  - Enum `ApplicationGatewaySkuName` added member `BASIC_WAF_V2`
+  - Enum `ApplicationGatewayTier` added member `BASIC_V2`
+  - Enum `ApplicationGatewayTier` added member `BASIC_WAF_V2`
+  - Model `AzureFirewallPropertiesFormat` added property `ai_security_add_on`
+  - Model `BastionHost` added property `identity`
+  - Model `BastionHostPropertiesFormat` added property `session_recording_configuration`
+  - Model `DefaultRuleSetPropertyFormat` added property `display_name`
+  - Model `ExpressRouteCircuitPropertiesFormat` added property `express_route_lag`
+  - Model `ExpressRouteLagPropertiesFormat` added property `circuits`
+  - Model `HubVirtualNetworkConnectionProperties` added property `enable_only_i_pv6_peering`
+  - Model `IpamPoolProperties` added property `max_allocation_size`
+  - Model `IpamPoolProperties` added property `min_allocation_size`
+  - Model `IpamPoolUpdateProperties` added property `max_allocation_size`
+  - Model `IpamPoolUpdateProperties` added property `min_allocation_size`
+  - Model `NetworkRule` added property `destination_geo_locations`
+  - Model `NetworkRule` added property `source_geo_locations`
+  - Model `PrivateLinkServiceConnectionProperties` added property `approval_reference`
+  - Enum `VirtualNetworkGatewayMigrationType` added member `MIGRATE_GATEWAY_FOR_POINT_TO_SITE_PROFILE`
+  - Enum `VirtualNetworkGatewayMigrationType` added member `UPGRADE_GATEWAY_TO_DUAL_STACK`
+  - Model `WebApplicationFirewallPolicyPropertiesFormat` added property `tier`
+  - Added model `ApplicationGatewayAdvancedRoutingCondition`
+  - Added model `ApplicationGatewayAdvancedRoutingConditionSet`
+  - Added model `ApplicationGatewayAdvancedRoutingConditionSetPropertiesFormat`
+  - Added enum `ApplicationGatewayAdvancedRoutingConditionType`
+  - Added model `ApplicationGatewayAdvancedRoutingMap`
+  - Added model `ApplicationGatewayAdvancedRoutingMapPropertiesFormat`
+  - Added model `ApplicationGatewayAdvancedRoutingPropertyValueMatcher`
+  - Added model `ApplicationGatewayAdvancedRoutingRule`
+  - Added model `ApplicationGatewayAdvancedRoutingRulePropertiesFormat`
+  - Added model `ApplicationGatewayAuthConfig`
+  - Added enum `ApplicationGatewayWafRuleParanoiaLevel`
+  - Added model `ApprovalReference`
+  - Added model `AuthenticationPolicy`
+  - Added model `AuthenticationPolicyPropertiesFormat`
+  - Added model `AuthenticationPolicyUpdateParameters`
+  - Added model `AuthenticationProviderProperties`
+  - Added model `BastionHostUpdate`
+  - Added model `BastionSessionRecordingConfiguration`
+  - Added model `ExpressRouteAuthorizationKey`
+  - Added model `Metric`
+  - Added model `MigrateExpressRouteCircuitHealthCheckDetails`
+  - Added model `MigrateExpressRouteCircuitHealthCheckResponse`
+  - Added model `MigrateExpressRouteCircuitRequest`
+  - Added model `MigrateExpressRouteCircuitValidateAndHealthCheckRequest`
+  - Added model `MigrateExpressRouteCircuitValidateResponse`
+  - Added enum `OnUnauthenticatedRequest`
+  - Added model `PeeringHealth`
+  - Added model `PeeringStats`
+  - Added model `PortMapping`
+  - Added model `PortMigrationInfo`
+  - Added model `SessionRecordingIdentity`
+  - Added enum `SessionRecordingIdentityType`
+  - Added model `SourcePortStats`
+  - Added enum `UserTrustProviderType`
+  - Added enum `WebApplicationFirewallPolicyTier`
+  - Model `BastionHostsOperations` added method `begin_update`
+  - Model `ExpressRouteCircuitAuthorizationsOperations` added method `list_keys`
+  - Model `ExpressRouteCrossConnectionsOperations` added method `begin_commit_circuit_migration`
+  - Model `ExpressRouteCrossConnectionsOperations` added method `begin_get_circuit_migration_info`
+  - Model `ExpressRouteCrossConnectionsOperations` added method `begin_migrate_circuit`
+  - Model `ExpressRouteCrossConnectionsOperations` added method `begin_prepare_circuit_migration`
+  - Model `ExpressRouteCrossConnectionsOperations` added method `begin_restore_bgp_for_circuit_migration`
+  - Model `ExpressRouteCrossConnectionsOperations` added method `begin_rollback_circuit_migration`
+  - Model `ExpressRouteCrossConnectionsOperations` added method `begin_shut_down_bgp_for_circuit_migration`
+  - Model `ExpressRouteCrossConnectionsOperations` added method `begin_validate_circuit_migration`
+  - Model `ExpressRoutePortAuthorizationsOperations` added method `list_keys`
+  - Added operation group `AuthenticationPoliciesOperations`
+
+### Breaking Changes
+
+  - Model `HubVirtualNetworkConnectionProperties` deleted or renamed its instance variable `enable_only_ipv6_peering`
+  - Deleted or renamed model `EnableOnlyIpv6PeeringState`
+  - Deleted or renamed method `BastionHostsOperations.begin_update_tags`
+
 ## 32.0.0 (2026-08-14)
 
 ### Features Added
@@ -621,49 +710,4 @@
 
   - Deleted model `ApplicationGatewayAvailableSslPredefinedPolicies`/`ApplicationGatewayWafDynamicManifestResultList`/`AutoApprovedPrivateLinkServicesResult`/`AvailableDelegationsResult`/`AvailablePrivateEndpointTypesResult`/`AvailableServiceAliasesResult`/`ConnectionSharedKeyResultList`/`ExpressRouteCrossConnectionPeeringList`/`GetServiceGatewayAddressLocationsResult`/`GetServiceGatewayServicesResult`/`IpamPoolList`/`ListHubRouteTablesResult`/`ListHubVirtualNetworkConnectionsResult`/`ListP2SVpnGatewaysResult`/`ListRouteMapsResult`/`ListRoutingIntentResult`/`ListVirtualHubBgpConnectionResults`/`ListVirtualHubIpConfigurationResults`/`ListVirtualHubRouteTableV2SResult`/`ListVirtualHubsResult`/`ListVirtualNetworkGatewayNatRulesResult`/`ListVirtualWANsResult`/`ListVpnConnectionsResult`/`ListVpnGatewayNatRulesResult`/`ListVpnGatewaysResult`/`ListVpnServerConfigurationPolicyGroupsResult`/`ListVpnServerConfigurationsResult`/`ListVpnSiteLinkConnectionsResult`/`ListVpnSiteLinksResult`/`ListVpnSitesResult`/`NetworkVirtualApplianceConnectionList`/`PoolAssociationList`/`StaticCidrList`/`VirtualNetworkDdosProtectionStatusResult`/`VirtualNetworkGatewayListConnectionsResult`/`VirtualNetworkListUsageResult` which actually was not used by SDK users
 
-## 30.2.0 (2026-02-11)
-
-### Features Added
-
-  - Client `NetworkManagementClient` added operation group `service_gateways`
-  - Client `NetworkManagementClient` added operation group `virtual_network_appliances`
-  - Enum `ActionType` added member `CAPTCHA`
-  - Enum `FirewallPolicyIntrusionDetectionProfileType` added member `CORE`
-  - Enum `FirewallPolicyIntrusionDetectionProfileType` added member `EMERGING`
-  - Enum `FirewallPolicyIntrusionDetectionProfileType` added member `OFF`
-  - Model `NatGateway` added property `service_gateway`
-  - Model `PolicySettings` added property `captcha_cookie_expiration_in_mins`
-  - Model `Subnet` added property `service_gateway`
-  - Enum `WebApplicationFirewallAction` added member `CAPTCHA`
-  - Added enum `AddressUpdateAction`
-  - Added model `GetServiceGatewayAddressLocationsResult`
-  - Added model `GetServiceGatewayServicesResult`
-  - Added model `RouteTargetAddressPropertiesFormat`
-  - Added model `ServiceGateway`
-  - Added model `ServiceGatewayAddress`
-  - Added model `ServiceGatewayAddressLocation`
-  - Added model `ServiceGatewayAddressLocationResponse`
-  - Added model `ServiceGatewayListResult`
-  - Added model `ServiceGatewayService`
-  - Added model `ServiceGatewayServiceRequest`
-  - Added model `ServiceGatewaySku`
-  - Added enum `ServiceGatewaySkuName`
-  - Added enum `ServiceGatewaySkuTier`
-  - Added model `ServiceGatewayUpdateAddressLocationsRequest`
-  - Added model `ServiceGatewayUpdateServicesRequest`
-  - Added enum `ServiceType`
-  - Added enum `ServiceUpdateAction`
-  - Added enum `UpdateAction`
-  - Added model `VirtualNetworkAppliance`
-  - Added model `VirtualNetworkApplianceIpConfiguration`
-  - Added model `VirtualNetworkApplianceListResult`
-  - Added operation group `ServiceGatewaysOperations`
-  - Added operation group `VirtualNetworkAppliancesOperations`
-
-### Breaking Changes
-
-  - Deleted or renamed enum value `FirewallPolicyIntrusionDetectionProfileType.ADVANCED`
-  - Deleted or renamed enum value `FirewallPolicyIntrusionDetectionProfileType.BASIC`
-  - Deleted or renamed enum value `FirewallPolicyIntrusionDetectionProfileType.STANDARD`
-
-> Changelog entries prior to 30.2.0 were removed to reduce file size. See https://pypi.org/project/azure-mgmt-network/30.2.0/ for the older history.
+> Changelog entries prior to 31.0.0b1 were removed to reduce file size. See https://pypi.org/project/azure-mgmt-network/31.0.0b1/ for the older history.
