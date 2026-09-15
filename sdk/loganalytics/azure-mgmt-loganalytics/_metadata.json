@@ -1,11 +1,11 @@
 {
-  "apiVersion": "2025-07-01",
+  "apiVersion": "2026-03-01",
   "apiVersions": {
-    "Microsoft.OperationalInsights": "2025-07-01"
+    "Microsoft.OperationalInsights": "2026-03-01"
   },
-  "commit": "1523f9e8e89437d84d69a6651f09d74a7ae65ed3",
+  "commit": "9f0ad696cc186c2d16cb522abc0fbd4aa3854ca5",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/OperationalInsights",
-  "emitterVersion": "0.63.2",
-  "httpClientPythonVersion": "^0.33.0"
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.35.1"
 }

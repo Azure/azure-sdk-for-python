@@ -75,9 +75,11 @@
         "azure.mgmt.loganalytics.models.StorageInsightProperties": "Microsoft.OperationalInsights.StorageInsightProperties",
         "azure.mgmt.loganalytics.models.StorageInsightStatus": "Microsoft.OperationalInsights.StorageInsightStatus",
         "azure.mgmt.loganalytics.models.SummaryLogs": "Microsoft.OperationalInsights.SummaryLogs",
+        "azure.mgmt.loganalytics.models.SummaryLogsIdentity": "Microsoft.OperationalInsights.SummaryLogsIdentity",
         "azure.mgmt.loganalytics.models.SummaryLogsProperties": "Microsoft.OperationalInsights.SummaryLogsProperties",
         "azure.mgmt.loganalytics.models.SummaryLogsRetryBin": "Microsoft.OperationalInsights.SummaryLogsRetryBin",
         "azure.mgmt.loganalytics.models.SummaryLogsRetryBinProperties": "Microsoft.OperationalInsights.SummaryLogsRetryBinProperties",
+        "azure.mgmt.loganalytics.models.SummaryLogsUserIdentityProperties": "Microsoft.OperationalInsights.SummaryLogsUserIdentityProperties",
         "azure.mgmt.loganalytics.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
         "azure.mgmt.loganalytics.models.Table": "Microsoft.OperationalInsights.Table",
         "azure.mgmt.loganalytics.models.TableProperties": "Microsoft.OperationalInsights.TableProperties",
@@ -94,6 +96,8 @@
         "azure.mgmt.loganalytics.models.WorkspaceProperties": "Microsoft.OperationalInsights.WorkspaceProperties",
         "azure.mgmt.loganalytics.models.WorkspacePurgeBody": "Microsoft.OperationalInsights.WorkspacePurgeBody",
         "azure.mgmt.loganalytics.models.WorkspacePurgeBodyFilters": "Microsoft.OperationalInsights.WorkspacePurgeBodyFilters",
+        "azure.mgmt.loganalytics.models.WorkspacePurgeLakeDataBody": "Microsoft.OperationalInsights.WorkspacePurgeLakeDataBody",
+        "azure.mgmt.loganalytics.models.WorkspacePurgeLakeDataTimeRange": "Microsoft.OperationalInsights.WorkspacePurgeLakeDataTimeRange",
         "azure.mgmt.loganalytics.models.WorkspacePurgeResponse": "Microsoft.OperationalInsights.WorkspacePurgeResponse",
         "azure.mgmt.loganalytics.models.WorkspacePurgeStatusResponse": "Microsoft.OperationalInsights.WorkspacePurgeStatusResponse",
         "azure.mgmt.loganalytics.models.WorkspaceReplicationProperties": "Microsoft.OperationalInsights.WorkspaceReplicationProperties",
@@ -120,6 +124,7 @@
         "azure.mgmt.loganalytics.models.DataSourceKind": "Microsoft.OperationalInsights.DataSourceKind",
         "azure.mgmt.loganalytics.models.LinkedServiceEntityStatus": "Microsoft.OperationalInsights.LinkedServiceEntityStatus",
         "azure.mgmt.loganalytics.models.TablePlanEnum": "Microsoft.OperationalInsights.TablePlanEnum",
+        "azure.mgmt.loganalytics.models.TableProtectionLevelEnum": "Microsoft.OperationalInsights.TableProtectionLevelEnum",
         "azure.mgmt.loganalytics.models.ColumnTypeEnum": "Microsoft.OperationalInsights.ColumnTypeEnum",
         "azure.mgmt.loganalytics.models.ColumnDataTypeHintEnum": "Microsoft.OperationalInsights.ColumnDataTypeHintEnum",
         "azure.mgmt.loganalytics.models.SourceEnum": "Microsoft.OperationalInsights.SourceEnum",
@@ -135,6 +140,7 @@
         "azure.mgmt.loganalytics.models.StatusCodeEnum": "Microsoft.OperationalInsights.StatusCodeEnum",
         "azure.mgmt.loganalytics.models.SummaryLogsProvisioningState": "Microsoft.OperationalInsights.ProvisioningStateEnum",
         "azure.mgmt.loganalytics.models.TimeSelectorEnum": "Microsoft.OperationalInsights.TimeSelectorEnum",
+        "azure.mgmt.loganalytics.models.SummaryLogsIdentityType": "Microsoft.OperationalInsights.SummaryLogsIdentityType",
         "azure.mgmt.loganalytics.operations.Operations.list": "Azure.ResourceManager.Legacy.Operations.list",
         "azure.mgmt.loganalytics.aio.operations.Operations.list": "Azure.ResourceManager.Legacy.Operations.list",
         "azure.mgmt.loganalytics.operations.ClustersOperations.get": "Microsoft.OperationalInsights.Clusters.get",
@@ -241,6 +247,8 @@
         "azure.mgmt.loganalytics.aio.operations.WorkspacePurgeOperations.purge": "Microsoft.OperationalInsights.Workspaces.purge",
         "azure.mgmt.loganalytics.operations.WorkspacePurgeOperations.get_purge_status": "Microsoft.OperationalInsights.Workspaces.getPurgeStatus",
         "azure.mgmt.loganalytics.aio.operations.WorkspacePurgeOperations.get_purge_status": "Microsoft.OperationalInsights.Workspaces.getPurgeStatus",
+        "azure.mgmt.loganalytics.operations.WorkspacePurgeOperations.begin_purge_lake_data": "Microsoft.OperationalInsights.Workspaces.purgeLakeData",
+        "azure.mgmt.loganalytics.aio.operations.WorkspacePurgeOperations.begin_purge_lake_data": "Microsoft.OperationalInsights.Workspaces.purgeLakeData",
         "azure.mgmt.loganalytics.operations.LinkedStorageAccountsOperations.get": "Microsoft.OperationalInsights.LinkedStorageAccountsResources.get",
         "azure.mgmt.loganalytics.aio.operations.LinkedStorageAccountsOperations.get": "Microsoft.OperationalInsights.LinkedStorageAccountsResources.get",
         "azure.mgmt.loganalytics.operations.LinkedStorageAccountsOperations.create_or_update": "Microsoft.OperationalInsights.LinkedStorageAccountsResources.createOrUpdate",
@@ -304,5 +312,5 @@
         "azure.mgmt.loganalytics.operations.DeletedWorkspacesOperations.list_by_resource_group": "Microsoft.OperationalInsights.DeletedWorkspacesOperationGroup.listByResourceGroup",
         "azure.mgmt.loganalytics.aio.operations.DeletedWorkspacesOperations.list_by_resource_group": "Microsoft.OperationalInsights.DeletedWorkspacesOperationGroup.listByResourceGroup"
     },
-    "CrossLanguageVersion": "c0595d1724d6"
+    "CrossLanguageVersion": "0d5353ebc2ec"
 }
