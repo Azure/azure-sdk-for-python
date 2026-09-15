@@ -57,5 +57,6 @@
         "azure.mgmt.playwright.aio.operations.PlaywrightWorkspaceQuotasOperations.get": "Playwright.Management.PlaywrightWorkspaceQuotas.get",
         "azure.mgmt.playwright.operations.PlaywrightWorkspaceQuotasOperations.list_by_playwright_workspace": "Playwright.Management.PlaywrightWorkspaceQuotas.listByPlaywrightWorkspace",
         "azure.mgmt.playwright.aio.operations.PlaywrightWorkspaceQuotasOperations.list_by_playwright_workspace": "Playwright.Management.PlaywrightWorkspaceQuotas.listByPlaywrightWorkspace"
-    }
+    },
+    "CrossLanguageVersion": "50dc79ba655d"
 }
