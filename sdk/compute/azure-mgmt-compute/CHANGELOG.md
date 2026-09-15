@@ -1,5 +1,9 @@
 # Release History
 
+## 38.4.0 (2026-09-14)
+
+tool can't generate changelog for this release, please update manually.
+
 ## 38.3.0 (2026-08-12)
 
 ### Features Added
