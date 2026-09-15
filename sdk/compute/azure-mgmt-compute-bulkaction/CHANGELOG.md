@@ -60,7 +60,7 @@
   - Deleted or renamed method `VirtualMachineBulkOperationsOperations.bulk_create_operation`
   - Deleted or renamed method `VirtualMachineBulkOperationsOperations.bulk_list_operation_errors`
   - Deleted or renamed method `VirtualMachineBulkOperationsOperations.bulk_vdi_flex_create_operation`
-  - Deleted or renamed model `LaunchBulkInstancesOperationOperations`
+  - Deleted or renamed operation group `LaunchBulkInstancesOperationOperations`
   - Operation group `BulkCreateCustomOperations.virtual_machines_get_operation_status` changed return type from `GetOperationStatusResponse` to `ItemPaged[ResourceOperation]`
   - Operation group `BulkCreateCustomOperations.virtual_machines_get_operation_status` changed return type from `GetOperationStatusResponse` to `AsyncItemPaged[ResourceOperation]`
 
