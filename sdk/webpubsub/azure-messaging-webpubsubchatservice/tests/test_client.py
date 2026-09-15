@@ -10,11 +10,11 @@ import jwt
 import pytest
 from azure.core.credentials import AccessToken, AzureKeyCredential
 
-from azure.messaging.webpubsubservice.chat import (
+from azure.messaging.webpubsubchatservice import (
     BuiltInChatRoles,
     WebPubSubChatServiceClient,
 )
-from azure.messaging.webpubsubservice.chat.models import ChatPermission
+from azure.messaging.webpubsubchatservice.models import ChatPermission
 
 ACCESS_KEY = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGH"
 ENDPOINT = "https://example.webpubsub.azure.com"
@@ -65,9 +65,7 @@ def test_connection_string_validation(conn_str):
 
 
 def test_malformed_connection_string_does_not_expose_input():
-    connection_string = (
-        f"Endpoint={ENDPOINT};AccessKey={ACCESS_KEY};malformed-secret-segment"
-    )
+    connection_string = f"Endpoint={ENDPOINT};AccessKey={ACCESS_KEY};malformed-secret-segment"
 
     with pytest.raises(ValueError) as error:
         WebPubSubChatServiceClient.from_connection_string(connection_string, HUB)
@@ -94,9 +92,7 @@ def test_key_credential_request_uses_full_uri_audience_and_sixty_second_token():
     try:
         request = _capture_list_roles_request(client)
         token = request.headers["Authorization"].removeprefix("Bearer ")
-        claims = jwt.decode(
-            token, ACCESS_KEY, algorithms=["HS256"], audience=request.url
-        )
+        claims = jwt.decode(token, ACCESS_KEY, algorithms=["HS256"], audience=request.url)
 
         assert claims["aud"] == request.url
         assert "api-version=2026-02-01-preview" in request.url
@@ -118,12 +114,8 @@ def test_updating_key_credential_changes_subsequent_request_tokens():
         second_token = second_request.headers["Authorization"].removeprefix("Bearer ")
 
         assert first_token != second_token
-        jwt.decode(
-            first_token, ACCESS_KEY, algorithms=["HS256"], audience=first_request.url
-        )
-        jwt.decode(
-            second_token, updated_key, algorithms=["HS256"], audience=second_request.url
-        )
+        jwt.decode(first_token, ACCESS_KEY, algorithms=["HS256"], audience=first_request.url)
+        jwt.decode(second_token, updated_key, algorithms=["HS256"], audience=second_request.url)
     finally:
         client.close()
 
@@ -140,9 +132,7 @@ def test_reverse_proxy_preserves_path_query_and_original_key_audience():
         request = _capture_list_roles_request(client)
         token = request.headers["Authorization"].removeprefix("Bearer ")
         original_url = request.url.replace(proxy_endpoint, ENDPOINT, 1)
-        claims = jwt.decode(
-            token, ACCESS_KEY, algorithms=["HS256"], audience=original_url
-        )
+        claims = jwt.decode(token, ACCESS_KEY, algorithms=["HS256"], audience=original_url)
 
         assert urlparse(request.url).netloc == "proxy.contoso.com"
         assert urlparse(request.url).path == urlparse(original_url).path
@@ -170,9 +160,7 @@ def test_reverse_proxy_with_entra_credential_keeps_bearer_token():
 def test_token_credential_client_access_token_uses_generated_operation():
     client = WebPubSubChatServiceClient(ENDPOINT, HUB, FakeTokenCredential())
     try:
-        with patch.object(
-            client, "_generate_client_token", return_value=Mock(token="token")
-        ) as generate:
+        with patch.object(client, "_generate_client_token", return_value=Mock(token="token")) as generate:
             result = client.get_client_access_token(user_id="alice")
 
         base_url = f"wss://example.webpubsub.azure.com/client/hubs/{HUB}"
@@ -181,9 +169,7 @@ def test_token_credential_client_access_token_uses_generated_operation():
             "token": "token",
             "url": f"{base_url}?access_token=token",
         }
-        generate.assert_called_once_with(
-            user_id="alice", role=CHAT_ROLES, minutes_to_expire=60
-        )
+        generate.assert_called_once_with(user_id="alice", role=CHAT_ROLES, minutes_to_expire=60)
     finally:
         client.close()
 
@@ -219,6 +205,17 @@ def test_key_client_access_token_rejects_invalid_expiration(minutes_to_expire):
             client.get_client_access_token(minutes_to_expire=minutes_to_expire)
     finally:
         client.close()
+
+
+@pytest.mark.parametrize("endpoint", ["example.com", "ftp://example.com"])
+@pytest.mark.parametrize("use_key", [True, False])
+def test_client_access_token_rejects_unsupported_endpoint(endpoint, use_key):
+    credential = AzureKeyCredential(ACCESS_KEY) if use_key else FakeTokenCredential()
+    with WebPubSubChatServiceClient(endpoint, HUB, credential) as client:
+        with patch.object(client, "_generate_client_token", return_value=Mock(token="token")) as generate:
+            with pytest.raises(ValueError, match="HTTP or HTTPS"):
+                client.get_client_access_token()
+        generate.assert_not_called()
 
 
 def test_builtin_roles_and_generated_permissions():

@@ -10,7 +10,7 @@ import jwt
 import pytest
 from azure.core.credentials import AccessToken, AzureKeyCredential
 
-from azure.messaging.webpubsubservice.chat.aio import WebPubSubChatServiceClient
+from azure.messaging.webpubsubchatservice.aio import WebPubSubChatServiceClient
 
 ACCESS_KEY = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGH"
 ENDPOINT = "https://example.webpubsub.azure.com"
@@ -49,9 +49,7 @@ async def test_async_connection_string_and_key_request_match_sync_behavior():
     try:
         request = await _capture_list_roles_request(client)
         token = request.headers["Authorization"].removeprefix("Bearer ")
-        claims = jwt.decode(
-            token, ACCESS_KEY, algorithms=["HS256"], audience=request.url
-        )
+        claims = jwt.decode(token, ACCESS_KEY, algorithms=["HS256"], audience=request.url)
 
         assert client._config.endpoint == f"{ENDPOINT}:8443"
         assert claims["aud"] == request.url
@@ -73,9 +71,7 @@ async def test_async_reverse_proxy_with_key_uses_original_audience():
         request = await _capture_list_roles_request(client)
         original_url = request.url.replace(proxy_endpoint, ENDPOINT, 1)
         token = request.headers["Authorization"].removeprefix("Bearer ")
-        claims = jwt.decode(
-            token, ACCESS_KEY, algorithms=["HS256"], audience=original_url
-        )
+        claims = jwt.decode(token, ACCESS_KEY, algorithms=["HS256"], audience=original_url)
 
         assert urlparse(request.url).netloc == "proxy.contoso.com"
         assert claims["aud"] == original_url
@@ -103,9 +99,7 @@ async def test_async_reverse_proxy_with_entra_credential_keeps_bearer_token():
 async def test_async_token_credential_client_access_token_uses_generated_operation():
     client = WebPubSubChatServiceClient(ENDPOINT, HUB, FakeAsyncTokenCredential())
     try:
-        with patch.object(
-            client, "_generate_client_token", new_callable=AsyncMock
-        ) as generate:
+        with patch.object(client, "_generate_client_token", new_callable=AsyncMock) as generate:
             generate.return_value = Mock(token="token")
             result = await client.get_client_access_token(user_id="alice")
 
@@ -115,9 +109,7 @@ async def test_async_token_credential_client_access_token_uses_generated_operati
             "token": "token",
             "url": f"{base_url}?access_token=token",
         }
-        generate.assert_awaited_once_with(
-            user_id="alice", role=CHAT_ROLES, minutes_to_expire=60
-        )
+        generate.assert_awaited_once_with(user_id="alice", role=CHAT_ROLES, minutes_to_expire=60)
     finally:
         await client.close()
 
@@ -126,9 +118,7 @@ async def test_async_token_credential_client_access_token_uses_generated_operati
 async def test_async_key_client_access_token_is_generated_locally():
     client = WebPubSubChatServiceClient(ENDPOINT, HUB, AzureKeyCredential(ACCESS_KEY))
     try:
-        with patch.object(
-            client, "_generate_client_token", new_callable=AsyncMock
-        ) as generate:
+        with patch.object(client, "_generate_client_token", new_callable=AsyncMock) as generate:
             result = await client.get_client_access_token(user_id="alice")
 
         generate.assert_not_awaited()
@@ -146,3 +136,16 @@ async def test_async_key_client_access_token_is_generated_locally():
         assert 3595 <= claims["exp"] - claims["iat"] <= 3605
     finally:
         await client.close()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("endpoint", ["example.com", "ftp://example.com"])
+@pytest.mark.parametrize("use_key", [True, False])
+async def test_async_client_access_token_rejects_unsupported_endpoint(endpoint, use_key):
+    credential = AzureKeyCredential(ACCESS_KEY) if use_key else FakeAsyncTokenCredential()
+    async with WebPubSubChatServiceClient(endpoint, HUB, credential) as client:
+        with patch.object(client, "_generate_client_token", new_callable=AsyncMock) as generate:
+            generate.return_value = Mock(token="token")
+            with pytest.raises(ValueError, match="HTTP or HTTPS"):
+                await client.get_client_access_token()
+        generate.assert_not_awaited()

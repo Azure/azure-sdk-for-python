@@ -111,6 +111,8 @@ class WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated):
         :rtype: dict[str, Any]
         """
         endpoint = self._config.endpoint.lower().rstrip("/")
+        if not endpoint.startswith(("http://", "https://")):
+            raise ValueError("Endpoint must use HTTP or HTTPS.")
         path = "/client/hubs/"
         base_url = f"ws{endpoint[4:]}{path}{self._config.hub}"
         if isinstance(self._config.credential, AzureKeyCredential):

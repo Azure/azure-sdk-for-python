@@ -9,7 +9,6 @@ import uuid
 
 from aiohttp import ClientSession, ClientTimeout, WSMsgType
 
-
 _TIMEOUT = 30
 _SUBPROTOCOL = "json.webpubsub.azure.v1"
 

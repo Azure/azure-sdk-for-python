@@ -8,8 +8,8 @@ import functools
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 
-from azure.messaging.webpubsubservice.chat import WebPubSubChatServiceClient
-from azure.messaging.webpubsubservice.chat.aio import (
+from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
+from azure.messaging.webpubsubchatservice.aio import (
     WebPubSubChatServiceClient as AsyncWebPubSubChatServiceClient,
 )
 
@@ -38,15 +38,11 @@ class WebPubSubChatTest(AzureRecordedTestCase):
 
     @staticmethod
     def create_key_client(connection_string):
-        return WebPubSubChatServiceClient.from_connection_string(
-            connection_string, "test_hub"
-        )
+        return WebPubSubChatServiceClient.from_connection_string(connection_string, "test_hub")
 
     @staticmethod
     def create_async_key_client(connection_string):
-        return AsyncWebPubSubChatServiceClient.from_connection_string(
-            connection_string, "test_hub"
-        )
+        return AsyncWebPubSubChatServiceClient.from_connection_string(connection_string, "test_hub")
 
     def assert_client_access(self, access, endpoint):
         expected_base_url = f"wss://{endpoint.removeprefix('https://').rstrip('/')}/client/hubs/test_hub"
@@ -96,8 +92,7 @@ WebPubSubChatPreparer = functools.partial(
 WebPubSubChatAccessPreparer = functools.partial(
     WebPubSubChatPreparer,
     wps_chat_connection_string=(
-        "Endpoint=https://myservice.webpubsub.azure.com;"
-        "AccessKey=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGH;"
+        "Endpoint=https://myservice.webpubsub.azure.com;" "AccessKey=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGH;"
     ),
     wps_chat_disable_local_auth="false",
 )
