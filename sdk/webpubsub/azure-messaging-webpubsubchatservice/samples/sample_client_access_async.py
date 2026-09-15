@@ -12,7 +12,7 @@ async def main():
         print("Set WPS_CHAT_CONNECTION_STRING to run this sample.")
         return
 
-    from azure.messaging.webpubsubservice.chat.aio import WebPubSubChatServiceClient
+    from azure.messaging.webpubsubchatservice.aio import WebPubSubChatServiceClient
 
     client = WebPubSubChatServiceClient.from_connection_string(
         connection_string,

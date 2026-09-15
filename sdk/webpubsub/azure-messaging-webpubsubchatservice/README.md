@@ -51,7 +51,7 @@ Get the connection string from the Azure portal or Azure CLI, and store it secur
 
 ```python
 import os
-from azure.messaging.webpubsubservice.chat import WebPubSubChatServiceClient
+from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
 
 hub = os.environ.get("WPS_CHAT_HUB", "test_hub")
 with WebPubSubChatServiceClient.from_connection_string(
@@ -69,7 +69,7 @@ with WebPubSubChatServiceClient.from_connection_string(
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.messaging.webpubsubservice.chat import WebPubSubChatServiceClient
+from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
 
 endpoint = os.environ["WPS_CHAT_ENDPOINT"]
 hub = os.environ.get("WPS_CHAT_HUB", "test_hub")
@@ -92,7 +92,7 @@ For recommended passwordless authentication, assign an appropriate Web PubSub da
 ```python
 import os
 from azure.identity import DefaultAzureCredential
-from azure.messaging.webpubsubservice.chat import WebPubSubChatServiceClient
+from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
 
 endpoint = os.environ["WPS_CHAT_ENDPOINT"]
 hub = os.environ.get("WPS_CHAT_HUB", "test_hub")
@@ -110,7 +110,7 @@ For more information, see [Authenticate Azure-hosted Python applications][azure_
 
 `WebPubSubChatServiceClient` is the entry point for managing Chat resources in one Web PubSub hub. Create one client for each endpoint and hub combination. The client can be used as a context manager and is safe to reuse for multiple operations.
 
-The asynchronous client is available from the `azure.messaging.webpubsubservice.chat.aio` namespace.
+The asynchronous client is available from the `azure.messaging.webpubsubchatservice.aio` namespace.
 
 ### Hub
 
@@ -154,7 +154,7 @@ Generate credentials that a Chat WebSocket client can use to connect as a specif
 
 ```python
 import os
-from azure.messaging.webpubsubservice.chat import WebPubSubChatServiceClient
+from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
 
 connection_string = os.environ["WPS_CHAT_CONNECTION_STRING"]
 with WebPubSubChatServiceClient.from_connection_string(
@@ -172,7 +172,7 @@ The returned URL contains an access token. Send it only to the intended client, 
 ### Create and list roles
 
 ```python
-from azure.messaging.webpubsubservice.chat.models import ChatPermission, ChatRole
+from azure.messaging.webpubsubchatservice.models import ChatPermission, ChatRole
 
 role_name = "user.moderator"
 try:
@@ -191,7 +191,7 @@ finally:
 ### Create a user, room, and room membership
 
 ```python
-from azure.messaging.webpubsubservice.chat.models import (
+from azure.messaging.webpubsubchatservice.models import (
     ChatPermission,
     ChatRole,
     ChatRoom,
@@ -234,7 +234,7 @@ for message in client.list_messages(room.default_conversation):
 
 ```python
 from azure.identity.aio import DefaultAzureCredential
-from azure.messaging.webpubsubservice.chat.aio import WebPubSubChatServiceClient
+from azure.messaging.webpubsubchatservice.aio import WebPubSubChatServiceClient
 
 credential = DefaultAzureCredential()
 client = WebPubSubChatServiceClient(endpoint, hub, credential)
@@ -270,7 +270,7 @@ import logging
 import sys
 
 from azure.identity import DefaultAzureCredential
-from azure.messaging.webpubsubservice.chat import WebPubSubChatServiceClient
+from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
 
 logger = logging.getLogger("azure")
 logger.setLevel(logging.DEBUG)

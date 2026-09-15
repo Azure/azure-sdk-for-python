@@ -13,7 +13,7 @@ async def main():
         print(f"Set {', '.join(missing)} to run this sample.")
         return
 
-    from azure.messaging.webpubsubservice.chat.aio import WebPubSubChatServiceClient
+    from azure.messaging.webpubsubchatservice.aio import WebPubSubChatServiceClient
 
     client = WebPubSubChatServiceClient.from_connection_string(
         os.environ["WPS_CHAT_CONNECTION_STRING"],

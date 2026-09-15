@@ -8,7 +8,7 @@ import os
 def connection_string_auth():
     # [START connection_string_auth]
     import os
-    from azure.messaging.webpubsubservice.chat import WebPubSubChatServiceClient
+    from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
 
     hub = os.environ.get("WPS_CHAT_HUB", "test_hub")
     with WebPubSubChatServiceClient.from_connection_string(
@@ -22,7 +22,7 @@ def key_auth():
     # [START key_auth]
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.messaging.webpubsubservice.chat import WebPubSubChatServiceClient
+    from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
 
     endpoint = os.environ["WPS_CHAT_ENDPOINT"]
     hub = os.environ.get("WPS_CHAT_HUB", "test_hub")
@@ -39,7 +39,7 @@ def entra_auth():
     # [START entra_auth]
     import os
     from azure.identity import DefaultAzureCredential
-    from azure.messaging.webpubsubservice.chat import WebPubSubChatServiceClient
+    from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
 
     endpoint = os.environ["WPS_CHAT_ENDPOINT"]
     hub = os.environ.get("WPS_CHAT_HUB", "test_hub")

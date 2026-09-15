@@ -1,13 +1,13 @@
 ```py
-namespace azure.messaging.webpubsubservice.chat
+namespace azure.messaging.webpubsubchatservice
 
-    class azure.messaging.webpubsubservice.chat.BuiltInChatRoles:
+    class azure.messaging.webpubsubchatservice.BuiltInChatRoles:
         ROOM_MEMBER = room.member
         ROOM_OPERATOR = room.operator
         USER_NORMAL = user.normal
 
 
-    class azure.messaging.webpubsubservice.chat.WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated): implements ContextManager
+    class azure.messaging.webpubsubchatservice.WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated): implements ContextManager
 
         def __init__(
                 self,
@@ -340,9 +340,9 @@ namespace azure.messaging.webpubsubservice.chat
             ) -> ChatMessage: ...
 
 
-namespace azure.messaging.webpubsubservice.chat.aio
+namespace azure.messaging.webpubsubchatservice.aio
 
-    class azure.messaging.webpubsubservice.chat.aio.WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated): implements AsyncContextManager
+    class azure.messaging.webpubsubchatservice.aio.WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated): implements AsyncContextManager
 
         def __init__(
                 self,
@@ -675,9 +675,9 @@ namespace azure.messaging.webpubsubservice.chat.aio
             ) -> ChatMessage: ...
 
 
-namespace azure.messaging.webpubsubservice.chat.models
+namespace azure.messaging.webpubsubchatservice.models
 
-    class azure.messaging.webpubsubservice.chat.models.ChatConversation(_Model):
+    class azure.messaging.webpubsubchatservice.models.ChatConversation(_Model):
         etag: str
         id: str
         parent_room: str
@@ -693,7 +693,7 @@ namespace azure.messaging.webpubsubservice.chat.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.messaging.webpubsubservice.chat.models.ChatMessage(_Model):
+    class azure.messaging.webpubsubchatservice.models.ChatMessage(_Model):
         content: MessageContent
         created_at: datetime
         created_by: str
@@ -712,7 +712,7 @@ namespace azure.messaging.webpubsubservice.chat.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.messaging.webpubsubservice.chat.models.ChatPermission(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    class azure.messaging.webpubsubchatservice.models.ChatPermission(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ROOM_HISTORY = "room.history"
         ROOM_INVITE = "room.invite"
         ROOM_PUBLISH_MESSAGE = "room.publish_message"
@@ -721,7 +721,7 @@ namespace azure.messaging.webpubsubservice.chat.models
         USER_FETCH_ALL_ROOMS = "user.fetch_all_rooms"
 
 
-    class azure.messaging.webpubsubservice.chat.models.ChatRole(_Model):
+    class azure.messaging.webpubsubchatservice.models.ChatRole(_Model):
         etag: str
         name: str
         permissions: list[Union[str, ChatPermission]]
@@ -737,7 +737,7 @@ namespace azure.messaging.webpubsubservice.chat.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.messaging.webpubsubservice.chat.models.ChatRoom(_Model):
+    class azure.messaging.webpubsubchatservice.models.ChatRoom(_Model):
         default_conversation: str
         etag: str
         id: str
@@ -754,7 +754,7 @@ namespace azure.messaging.webpubsubservice.chat.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.messaging.webpubsubservice.chat.models.ChatRoomMember(_Model):
+    class azure.messaging.webpubsubchatservice.models.ChatRoomMember(_Model):
         etag: str
         role_name: str
         user_id: str
@@ -770,7 +770,7 @@ namespace azure.messaging.webpubsubservice.chat.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.messaging.webpubsubservice.chat.models.ChatUser(_Model):
+    class azure.messaging.webpubsubchatservice.models.ChatUser(_Model):
         etag: str
         id: str
         kind: str
@@ -788,11 +788,11 @@ namespace azure.messaging.webpubsubservice.chat.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.messaging.webpubsubservice.chat.models.ChatUserKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    class azure.messaging.webpubsubchatservice.models.ChatUserKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         HUMAN = "Human"
 
 
-    class azure.messaging.webpubsubservice.chat.models.HumanChatUser(ChatUser, discriminator='Human'):
+    class azure.messaging.webpubsubchatservice.models.HumanChatUser(ChatUser, discriminator='Human'):
         etag: str
         id: str
         kind: Literal[ChatUserKind.HUMAN]
@@ -811,7 +811,7 @@ namespace azure.messaging.webpubsubservice.chat.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.messaging.webpubsubservice.chat.models.MessageContent(_Model):
+    class azure.messaging.webpubsubchatservice.models.MessageContent(_Model):
         binary: Optional[bytes]
         text: Optional[str]
 
@@ -827,9 +827,9 @@ namespace azure.messaging.webpubsubservice.chat.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-namespace azure.messaging.webpubsubservice.chat.types
+namespace azure.messaging.webpubsubchatservice.types
 
-    class azure.messaging.webpubsubservice.chat.types.ChatMessage(TypedDict, total=False):
+    class azure.messaging.webpubsubchatservice.types.ChatMessage(TypedDict, total=False):
         key "content": Required[MessageContent]
         key "createdAt": Required[str]
         key "createdBy": Required[str]
@@ -842,7 +842,7 @@ namespace azure.messaging.webpubsubservice.chat.types
         id: str
 
 
-    class azure.messaging.webpubsubservice.chat.types.ChatRole(TypedDict, total=False):
+    class azure.messaging.webpubsubchatservice.types.ChatRole(TypedDict, total=False):
         key "etag": Required[str]
         key "name": Required[str]
         key "permissions": Required[list[Union[str, ChatPermission]]]
@@ -851,7 +851,7 @@ namespace azure.messaging.webpubsubservice.chat.types
         permissions: list[Union[str, ChatPermission]]
 
 
-    class azure.messaging.webpubsubservice.chat.types.ChatRoom(TypedDict, total=False):
+    class azure.messaging.webpubsubchatservice.types.ChatRoom(TypedDict, total=False):
         key "defaultConversation": Required[str]
         key "etag": Required[str]
         key "id": Required[str]
@@ -862,7 +862,7 @@ namespace azure.messaging.webpubsubservice.chat.types
         title: str
 
 
-    class azure.messaging.webpubsubservice.chat.types.ChatRoomMember(TypedDict, total=False):
+    class azure.messaging.webpubsubchatservice.types.ChatRoomMember(TypedDict, total=False):
         key "etag": Required[str]
         key "roleName": Required[str]
         key "userId": Required[str]
@@ -871,7 +871,7 @@ namespace azure.messaging.webpubsubservice.chat.types
         userId: str
 
 
-    class azure.messaging.webpubsubservice.chat.types.ChatUser(TypedDict, total=False):
+    class azure.messaging.webpubsubchatservice.types.ChatUser(TypedDict, total=False):
         key "etag": Required[str]
         key "id": Required[str]
         key "kind": Required[Literal[ChatUserKind.HUMAN]]
@@ -884,11 +884,11 @@ namespace azure.messaging.webpubsubservice.chat.types
         roleName: str
 
 
-    class azure.messaging.webpubsubservice.chat.types.ChatUserKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    class azure.messaging.webpubsubchatservice.types.ChatUserKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         HUMAN = "Human"
 
 
-    class azure.messaging.webpubsubservice.chat.types.HumanChatUser(TypedDict, total=False):
+    class azure.messaging.webpubsubchatservice.types.HumanChatUser(TypedDict, total=False):
         key "etag": Required[str]
         key "id": Required[str]
         key "kind": Required[Literal[ChatUserKind.HUMAN]]
@@ -901,7 +901,7 @@ namespace azure.messaging.webpubsubservice.chat.types
         roleName: str
 
 
-    class azure.messaging.webpubsubservice.chat.types.MessageContent(TypedDict, total=False):
+    class azure.messaging.webpubsubchatservice.types.MessageContent(TypedDict, total=False):
         key "binary": str
         key "text": str
         binary: str

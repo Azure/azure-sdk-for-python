@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------
 import os
 
-from azure.messaging.webpubsubservice.chat import WebPubSubChatServiceClient
+from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
 
 
 def main():

@@ -8,7 +8,7 @@ import os
 def client_access():
     # [START client_access]
     import os
-    from azure.messaging.webpubsubservice.chat import WebPubSubChatServiceClient
+    from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
 
     connection_string = os.environ["WPS_CHAT_CONNECTION_STRING"]
     with WebPubSubChatServiceClient.from_connection_string(

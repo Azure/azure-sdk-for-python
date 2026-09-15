@@ -6,8 +6,8 @@ import os
 import uuid
 
 from azure.core.exceptions import HttpResponseError
-from azure.messaging.webpubsubservice.chat import WebPubSubChatServiceClient
-from azure.messaging.webpubsubservice.chat.models import (
+from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
+from azure.messaging.webpubsubchatservice.models import (
     ChatPermission,
     ChatRole,
     ChatRoom,
