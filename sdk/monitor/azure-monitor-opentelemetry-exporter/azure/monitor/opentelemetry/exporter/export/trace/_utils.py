@@ -41,16 +41,16 @@ def _get_default_port_db(db_system: str) -> int:
         return 9042
     if db_system in (DbSystemValues.MARIADB.value, DbSystemValues.MYSQL.value):
         return 3306
-    if db_system == DbSystemValues.MSSQL.value or db_system == db_attributes.DbSystemNameValues.MICROSOFT_SQL_SERVER.value:
+    if db_system in (DbSystemValues.MSSQL.value, db_attributes.DbSystemNameValues.MICROSOFT_SQL_SERVER.value):
         return 1433
     # TODO: Add in memcached
     if db_system == "memcached":
         return 11211
-    if db_system == DbSystemValues.DB2.value or db_system == db_attributes_incubating.DbSystemNameValues.IBM_DB2.value:
+    if db_system in (DbSystemValues.DB2.value, db_attributes_incubating.DbSystemNameValues.IBM_DB2.value):
         return 50000
-    if db_system == DbSystemValues.ORACLE.value or db_system == db_attributes_incubating.DbSystemNameValues.ORACLE_DB.value:
+    if db_system in (DbSystemValues.ORACLE.value, db_attributes_incubating.DbSystemNameValues.ORACLE_DB.value):
         return 1521
-    if db_system == DbSystemValues.H2.value or db_system == db_attributes_incubating.DbSystemNameValues.H2DATABASE.value:
+    if db_system in (DbSystemValues.H2.value, db_attributes_incubating.DbSystemNameValues.H2DATABASE.value):
         return 8082
     if db_system == DbSystemValues.DERBY.value:
         return 1527
