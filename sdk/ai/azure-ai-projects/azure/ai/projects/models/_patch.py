@@ -634,6 +634,15 @@ class AgentInsightRunLROPoller(LROPoller[AgentInsightRunResult]):
         self._run_id = DatasetGenerationLROPoller._get_job_id(initial_response)
         super().__init__(client, initial_response, deserialization_callback, polling_method)
 
+    def status(self) -> str:
+        """Return the run status using the Agent Insights spelling ``cancelled``.
+
+        :return: The current run status.
+        :rtype: str
+        """
+        status = super().status()
+        return "cancelled" if status.lower() == "canceled" else status
+
     @property
     def details(self) -> Mapping[str, Any]:
         """Returns metadata associated with the Agent Insights run operation.
@@ -671,6 +680,15 @@ class AsyncAgentInsightRunLROPoller(AsyncLROPoller[AgentInsightRunResult]):
     def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
         super().__init__(client, initial_response, deserialization_callback, polling_method)
         self._run_id = DatasetGenerationLROPoller._get_job_id(initial_response)
+
+    def status(self) -> str:
+        """Return the run status using the Agent Insights spelling ``cancelled``.
+
+        :return: The current run status.
+        :rtype: str
+        """
+        status = super().status()
+        return "cancelled" if status.lower() == "canceled" else status
 
     @property
     def details(self) -> Mapping[str, Any]:
