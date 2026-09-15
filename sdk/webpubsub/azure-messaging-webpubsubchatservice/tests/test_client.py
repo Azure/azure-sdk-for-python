@@ -197,12 +197,15 @@ def test_key_client_access_token_is_generated_locally():
         client.close()
 
 
+@pytest.mark.parametrize("credential", [AzureKeyCredential(ACCESS_KEY), FakeTokenCredential()])
 @pytest.mark.parametrize("minutes_to_expire", [0, -1])
-def test_key_client_access_token_rejects_invalid_expiration(minutes_to_expire):
-    client = WebPubSubChatServiceClient(ENDPOINT, HUB, AzureKeyCredential(ACCESS_KEY))
+def test_client_access_token_rejects_invalid_expiration(credential, minutes_to_expire):
+    client = WebPubSubChatServiceClient(ENDPOINT, HUB, credential)
     try:
-        with pytest.raises(ValueError, match="minutes_to_expire must be at least 1"):
-            client.get_client_access_token(minutes_to_expire=minutes_to_expire)
+        with patch.object(client, "_generate_client_token") as generate:
+            with pytest.raises(ValueError, match="minutes_to_expire must be at least 1"):
+                client.get_client_access_token(minutes_to_expire=minutes_to_expire)
+        generate.assert_not_called()
     finally:
         client.close()
 

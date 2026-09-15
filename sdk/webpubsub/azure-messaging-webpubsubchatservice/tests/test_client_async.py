@@ -139,6 +139,20 @@ async def test_async_key_client_access_token_is_generated_locally():
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("credential", [AzureKeyCredential(ACCESS_KEY), FakeAsyncTokenCredential()])
+@pytest.mark.parametrize("minutes_to_expire", [0, -1])
+async def test_async_client_access_token_rejects_invalid_expiration(credential, minutes_to_expire):
+    client = WebPubSubChatServiceClient(ENDPOINT, HUB, credential)
+    try:
+        with patch.object(client, "_generate_client_token", new_callable=AsyncMock) as generate:
+            with pytest.raises(ValueError, match="minutes_to_expire must be at least 1"):
+                await client.get_client_access_token(minutes_to_expire=minutes_to_expire)
+        generate.assert_not_awaited()
+    finally:
+        await client.close()
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize("endpoint", ["example.com", "ftp://example.com"])
 @pytest.mark.parametrize("use_key", [True, False])
 async def test_async_client_access_token_rejects_unsupported_endpoint(endpoint, use_key):

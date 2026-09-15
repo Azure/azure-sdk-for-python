@@ -116,6 +116,8 @@ class WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated):
         endpoint = self._config.endpoint.lower().rstrip("/")
         if not endpoint.startswith(("http://", "https://")):
             raise ValueError("Endpoint must use HTTP or HTTPS.")
+        if minutes_to_expire < 1:
+            raise ValueError("minutes_to_expire must be at least 1")
         path = "/client/hubs/"
         base_url = f"ws{endpoint[4:]}{path}{self._config.hub}"
         if isinstance(self._config.credential, AzureKeyCredential):
