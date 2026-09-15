@@ -73,6 +73,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-06-01-preview/ContainerGroupProfileCreateOrUpdate_Extensions.json
+# x-ms-original-file: 2026-08-01-preview/ContainerGroupProfileCreateOrUpdate_Extensions.json
 if __name__ == "__main__":
     main()

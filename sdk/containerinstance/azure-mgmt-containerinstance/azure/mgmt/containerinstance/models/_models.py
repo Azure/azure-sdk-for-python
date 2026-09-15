@@ -17,6 +17,281 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class ArmResource(_Model):
+    """Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerinstance.models.SystemData
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the resource."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class TrackedResource(ArmResource):
+    """Tracked Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerinstance.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    location: str = rest_field(visibility=["read", "create"])
+    """The geo-location where the resource lives. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiAgentsGroup(TrackedResource):
+    """An AiAgentsGroup tracked resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerinstance.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.containerinstance.models.AiAgentsGroupProperties
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.containerinstance.models.ManagedServiceIdentity
+    """
+
+    properties: Optional["_models.AiAgentsGroupProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.AiAgentsGroupProperties"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiAgentsGroupAccessToken(_Model):
+    """The result of getting an access token for an AiAgentsGroup.
+
+    :ivar endpoint: The endpoint URL to use with the access token. Required.
+    :vartype endpoint: str
+    :ivar access_token: The access token used to authenticate against the endpoint. Required.
+    :vartype access_token: str
+    :ivar not_after: The UTC date and time at which the access token expires. Required.
+    :vartype not_after: ~datetime.datetime
+    """
+
+    endpoint: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The endpoint URL to use with the access token. Required."""
+    access_token: str = rest_field(name="accessToken", visibility=["read", "create", "update", "delete", "query"])
+    """The access token used to authenticate against the endpoint. Required."""
+    not_after: datetime.datetime = rest_field(
+        name="notAfter", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The UTC date and time at which the access token expires. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        endpoint: str,
+        access_token: str,
+        not_after: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiAgentsGroupNetworkProfile(_Model):
+    """The network profile for an AiAgentsGroup.
+
+    :ivar subnets: The list of subnets associated with the AiAgentsGroup.
+    :vartype subnets: list[~azure.mgmt.containerinstance.models.SubnetReference]
+    """
+
+    subnets: Optional[list["_models.SubnetReference"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of subnets associated with the AiAgentsGroup."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        subnets: Optional[list["_models.SubnetReference"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiAgentsGroupProperties(_Model):
+    """Properties of an AiAgentsGroup.
+
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Updating", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerinstance.models.AiAgentsGroupProvisioningState
+    :ivar network_profile: The network profile of the AiAgentsGroup.
+    :vartype network_profile: ~azure.mgmt.containerinstance.models.AiAgentsGroupNetworkProfile
+    :ivar management_resource_group_id: The ARM resource ID of the management resource group
+     associated with this AiAgentsGroup.
+    :vartype management_resource_group_id: str
+    """
+
+    provisioning_state: Optional[Union[str, "_models.AiAgentsGroupProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Updating\", \"Deleting\", and \"Accepted\"."""
+    network_profile: Optional["_models.AiAgentsGroupNetworkProfile"] = rest_field(
+        name="networkProfile", visibility=["read", "create"]
+    )
+    """The network profile of the AiAgentsGroup."""
+    management_resource_group_id: Optional[str] = rest_field(name="managementResourceGroupId", visibility=["read"])
+    """The ARM resource ID of the management resource group associated with this AiAgentsGroup."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        network_profile: Optional["_models.AiAgentsGroupNetworkProfile"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AiAgentsGroupTagsUpdate(_Model):
+    """The type used for updating an AiAgentsGroup resource.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.containerinstance.models.ManagedServiceIdentity
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ApiEntityReference(_Model):
     """The API entity reference.
 
@@ -111,34 +386,6 @@ class ApplicationGatewayBackendAddressPool(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ArmResource(_Model):
-    """Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.containerinstance.models.SystemData
-    """
-
-    id: Optional[str] = rest_field(visibility=["read"])
-    """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the resource."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
-     \"Microsoft.Storage/storageAccounts\"."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
-    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
-
-
 class AzureFileVolume(_Model):
     """The properties of the Azure File volume. Azure File shares are mounted as volumes.
 
@@ -155,6 +402,9 @@ class AzureFileVolume(_Model):
     :ivar storage_account_key_reference: The reference to the storage account access key used to
      access the Azure File share.
     :vartype storage_account_key_reference: str
+    :ivar user_assigned_identity_client_id: The client id of the user-assigned managed identity
+     that has access to the Azure File share.
+    :vartype user_assigned_identity_client_id: str
     """
 
     share_name: str = rest_field(name="shareName", visibility=["read", "create", "update", "delete", "query"])
@@ -173,6 +423,10 @@ class AzureFileVolume(_Model):
         name="storageAccountKeyReference", visibility=["read", "create", "update", "delete", "query"]
     )
     """The reference to the storage account access key used to access the Azure File share."""
+    user_assigned_identity_client_id: Optional[str] = rest_field(
+        name="userAssignedIdentityClientId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client id of the user-assigned managed identity that has access to the Azure File share."""
 
     @overload
     def __init__(
@@ -183,6 +437,7 @@ class AzureFileVolume(_Model):
         read_only: Optional[bool] = None,
         storage_account_key: Optional[str] = None,
         storage_account_key_reference: Optional[str] = None,
+        user_assigned_identity_client_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3782,253 +4037,6 @@ class ResourceRequirements(_Model):
         *,
         requests: "_models.ResourceRequests",
         limits: Optional["_models.ResourceLimits"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TrackedResource(ArmResource):
-    """Tracked Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.containerinstance.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-    location: str = rest_field(visibility=["read", "create"])
-    """The geo-location where the resource lives. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SandboxGroup(TrackedResource):
-    """A SandboxGroup tracked resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.containerinstance.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.containerinstance.models.SandboxGroupProperties
-    :ivar identity: The managed service identities assigned to this resource.
-    :vartype identity: ~azure.mgmt.containerinstance.models.ManagedServiceIdentity
-    """
-
-    properties: Optional["_models.SandboxGroupProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The managed service identities assigned to this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
-        properties: Optional["_models.SandboxGroupProperties"] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SandboxGroupAccessToken(_Model):
-    """The result of getting an access token for a SandboxGroup.
-
-    :ivar endpoint: The endpoint URL to use with the access token. Required.
-    :vartype endpoint: str
-    :ivar access_token: The access token used to authenticate against the endpoint. Required.
-    :vartype access_token: str
-    :ivar not_after: The UTC date and time at which the access token expires. Required.
-    :vartype not_after: ~datetime.datetime
-    """
-
-    endpoint: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The endpoint URL to use with the access token. Required."""
-    access_token: str = rest_field(name="accessToken", visibility=["read", "create", "update", "delete", "query"])
-    """The access token used to authenticate against the endpoint. Required."""
-    not_after: datetime.datetime = rest_field(
-        name="notAfter", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The UTC date and time at which the access token expires. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        endpoint: str,
-        access_token: str,
-        not_after: datetime.datetime,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SandboxGroupNetworkProfile(_Model):
-    """The network profile for a SandboxGroup.
-
-    :ivar subnets: The list of subnets associated with the SandboxGroup.
-    :vartype subnets: list[~azure.mgmt.containerinstance.models.SubnetReference]
-    """
-
-    subnets: Optional[list["_models.SubnetReference"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The list of subnets associated with the SandboxGroup."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        subnets: Optional[list["_models.SubnetReference"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SandboxGroupProperties(_Model):
-    """Properties of a SandboxGroup.
-
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
-     "Failed", "Canceled", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.containerinstance.models.SandboxGroupProvisioningState
-    :ivar network_profile: The network profile of the SandboxGroup.
-    :vartype network_profile: ~azure.mgmt.containerinstance.models.SandboxGroupNetworkProfile
-    :ivar management_resource_group_id: The ARM resource ID of the management resource group
-     associated with this SandboxGroup.
-    :vartype management_resource_group_id: str
-    """
-
-    provisioning_state: Optional[Union[str, "_models.SandboxGroupProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Updating\", \"Deleting\", and \"Accepted\"."""
-    network_profile: Optional["_models.SandboxGroupNetworkProfile"] = rest_field(
-        name="networkProfile", visibility=["read", "create"]
-    )
-    """The network profile of the SandboxGroup."""
-    management_resource_group_id: Optional[str] = rest_field(name="managementResourceGroupId", visibility=["read"])
-    """The ARM resource ID of the management resource group associated with this SandboxGroup."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        network_profile: Optional["_models.SandboxGroupNetworkProfile"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SandboxGroupTagsUpdate(_Model):
-    """The type used for updating a SandboxGroup resource.
-
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar identity: The managed service identities assigned to this resource.
-    :vartype identity: ~azure.mgmt.containerinstance.models.ManagedServiceIdentity
-    """
-
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The managed service identities assigned to this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
     @overload
