@@ -5,6 +5,7 @@
 ### Features Added
 
 ### Bugs Fixed
+- `load_component` now accepts a `default` value for asset-type inputs (`uri_file`, `uri_folder`, `mltable`, `mlflow_model`, `custom_model`), matching the public CLI v2 YAML schema. Previously this raised `UserErrorException: Non-primitive type Input has no default value.`
 
 ## 1.35.0 (2026-09-08)
 

@@ -12,7 +12,7 @@ from azure.ai.ml._restclient.arm_ml_service.models import JobInput as RestJobInp
 from azure.ai.ml._restclient.arm_ml_service.models import (
     JobOutput as RestJobOutput,
 )
-from azure.ai.ml.constants._component import ComponentJobConstants
+from azure.ai.ml.constants._component import ComponentJobConstants, IOConstants
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
 from azure.ai.ml.entities._util import copy_output_setting
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
@@ -118,6 +118,8 @@ class NodeIOMixin:
 
     # pylint: disable=unused-argument
     def _get_default_input_val(self, val: Any):  # type: ignore
+        if isinstance(val, Input) and val.type in IOConstants.ASSET_INPUT_TYPES and val.default is not None:
+            return val.default
         # use None value as data placeholder for unfilled inputs.
         # server side will fill the default value
         return None
@@ -644,6 +646,8 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
         if isinstance(val, GroupInput):
             # Copy default value dict for group
             return copy.deepcopy(val.default)
+        if isinstance(val, Input) and val.type in IOConstants.ASSET_INPUT_TYPES and val.default is not None:
+            return Input(type=val.type, path=val.default, mode=val.mode)
         return val.default
 
     def _update_output_types(self, rest_data_outputs: Dict) -> None:
