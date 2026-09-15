@@ -13,6 +13,7 @@ from azure.monitor.opentelemetry.exporter._connection_string_parser import Conne
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import _StatsbeatMetrics
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     is_statsbeat_enabled,
+    get_statsbeat_shutdown,
     set_statsbeat_shutdown,  # Add this import
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
@@ -20,6 +21,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
     _get_stats_long_export_interval,
     _get_stats_short_export_interval,
     _get_connection_string_for_region_from_config,
+    _get_region_from_endpoint,
 )
 from azure.monitor.opentelemetry.exporter._utils import Singleton
 
@@ -40,6 +42,7 @@ class StatsbeatConfig:
         credential: Optional[Any] = None,
         distro_version: Optional[str] = None,
         connection_string: Optional[str] = None,
+        routing_config: Optional[Dict[str, str]] = None,
     ) -> None:
         # Customer specific information
         self.endpoint = endpoint
@@ -53,6 +56,7 @@ class StatsbeatConfig:
         self.disable_offline_storage = disable_offline_storage
         self.credential = credential
         self.distro_version = distro_version
+        self.routing_config = dict(routing_config) if routing_config else None
         self.connection_string: str = ""
 
         # Use provided connection_string or generate from endpoint
@@ -134,6 +138,7 @@ class StatsbeatConfig:
             credential=base_config.credential,
             distro_version=base_config.distro_version,
             connection_string=connection_string,
+            routing_config=config_dict,
         )
 
     def __eq__(self, other: object) -> bool:
@@ -149,6 +154,13 @@ class StatsbeatConfig:
         # Hash based on connection string and offline storage setting.
         return hash((str(self.connection_string), self.disable_offline_storage))
 
+    def _update_endpoint(self, endpoint: str, connection_string: str) -> None:
+        self.endpoint = endpoint
+        self.connection_string = connection_string
+        region = _get_region_from_endpoint(endpoint)
+        if region:
+            self.region = region
+
 
 class StatsbeatManager(metaclass=Singleton):
     """Thread-safe singleton manager for Statsbeat metrics collection with dynamic reconfiguration support."""
@@ -159,6 +171,7 @@ class StatsbeatManager(metaclass=Singleton):
         self._initialized: bool = False  # type: ignore
         self._metrics: Optional[_StatsbeatMetrics] = None  # type: ignore
         self._meter_provider: Optional[MeterProvider] = None  # type: ignore
+        self._exporter: Optional[Any] = None
         self._warmup_timer: Optional[threading.Timer] = None
 
         # Set during first initialization, preserved in shutdown for potential re-initialization
@@ -230,6 +243,7 @@ class StatsbeatManager(metaclass=Singleton):
             if self._initialized:
                 # If already initialized with the same config, return True
                 if self._config and self._config == config:
+                    self._config.routing_config = config.routing_config
                     return True
                 # If config is different, reconfigure
                 return self._reconfigure(config)
@@ -252,6 +266,7 @@ class StatsbeatManager(metaclass=Singleton):
                 disable_offline_storage=True,
                 is_sdkstats=True,
             )
+            self._exporter = statsbeat_exporter
 
             # Create metric reader
             reader = PeriodicExportingMetricReader(
@@ -289,6 +304,7 @@ class StatsbeatManager(metaclass=Singleton):
 
             self._config = config
             self._initialized = True
+            set_statsbeat_shutdown(False)
             return True
 
         except Exception as e:  # pylint: disable=broad-except
@@ -330,6 +346,7 @@ class StatsbeatManager(metaclass=Singleton):
         # We leave config intact for potential re-initialization
         self._meter_provider = None
         self._metrics = None
+        self._exporter = None
         self._initialized = False
 
     def shutdown(self) -> bool:
@@ -375,6 +392,7 @@ class StatsbeatManager(metaclass=Singleton):
         # Reset state but keep initialized=True
         self._meter_provider = None
         self._metrics = None
+        self._exporter = None
 
         # Initialize with new config
         success: bool = self._do_initialize(new_config)
@@ -387,6 +405,62 @@ class StatsbeatManager(metaclass=Singleton):
             logger.info("Statsbeat successfully reconfigured with new settings.")
 
         return success
+
+    def update_endpoint(self, endpoint: str) -> bool:  # pylint: disable=too-many-return-statements
+        # Point statsbeat at the customer's effective ingestion route after an accepted redirect.
+
+        if not endpoint:
+            return False
+        if not is_statsbeat_enabled() or get_statsbeat_shutdown():
+            return False
+
+        with self._lock:
+            if not self._initialized or self._config is None:
+                return False
+            if endpoint == self._config.endpoint:
+                return False
+
+            try:
+                region = _get_region_from_endpoint(endpoint)
+                connection_string = None
+                if region and self._config.routing_config:
+                    connection_string = _get_connection_string_for_region_from_config(
+                        region, self._config.routing_config
+                    )
+                if connection_string is None:
+                    connection_string = _get_stats_connection_string(endpoint)
+
+                previous_endpoint = self._config.endpoint
+                previous_connection_string = self._config.connection_string
+                exporter_updated = False
+                # Only swap the statsbeat destination when the data boundary actually changes.
+                if connection_string != previous_connection_string:
+                    if (
+                        self._exporter is None
+                        or not self._exporter._update_connection_string(  # pylint: disable=protected-access
+                            connection_string
+                        )
+                    ):
+                        return False
+                    exporter_updated = True
+
+                if self._metrics is not None:
+                    try:
+                        self._metrics.update_endpoint_host(endpoint)
+                    except Exception:
+                        if exporter_updated and self._exporter is not None:
+                            self._exporter._update_connection_string(  # pylint: disable=protected-access
+                                previous_connection_string
+                            )
+                        self._metrics.update_endpoint_host(previous_endpoint)
+                        raise
+                self._config._update_endpoint(endpoint, connection_string)  # pylint: disable=protected-access
+                return True
+            except Exception as e:  # pylint: disable=broad-except
+                logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                    "Failed to update statsbeat endpoint: %s", e
+                )
+                return False
 
     def get_current_config(self) -> Optional[StatsbeatConfig]:
         """Get a copy of the current statsbeat configuration.
@@ -406,6 +480,7 @@ class StatsbeatManager(metaclass=Singleton):
                 credential=self._config.credential,
                 distro_version=self._config.distro_version,
                 connection_string=self._config.connection_string,
+                routing_config=self._config.routing_config,
             )
 
     def is_initialized(self) -> bool:
