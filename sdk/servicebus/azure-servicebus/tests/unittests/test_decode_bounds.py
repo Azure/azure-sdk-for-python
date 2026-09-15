@@ -2,11 +2,13 @@ import pytest
 
 from azure.servicebus._pyamqp._decode import (
     _decode_array_large,
+    _decode_described,
     _decode_list_large,
     _decode_map_large,
     _decode_map_small,
     decode_frame,
     _MAX_COMPOUND_COUNT,
+    _MAX_DESCRIBED_NESTING_DEPTH,
 )
 
 
@@ -17,6 +19,25 @@ def _header(count: int) -> bytes:
 
 HUGE_COUNT = 0x7FFFFFFF
 JUST_OVER = _MAX_COMPOUND_COUNT + 1
+
+
+def _nested_described_value(depth: int) -> memoryview:
+    return memoryview((b"\x44\x00" * (depth - 1)) + b"\x44\x40")
+
+
+def test_decode_described_accepts_maximum_nesting_depth():
+    remaining, value = _decode_described(_nested_described_value(_MAX_DESCRIBED_NESTING_DEPTH))
+    assert bytes(remaining) == b""
+    assert value is None
+
+
+def test_decode_described_rejects_excessive_nesting_depth():
+    with pytest.raises(ValueError, match="nesting depth .* exceeds maximum"):
+        _decode_described(_nested_described_value(_MAX_DESCRIBED_NESTING_DEPTH + 1))
+
+    remaining, value = _decode_described(_nested_described_value(1))
+    assert bytes(remaining) == b""
+    assert value is None
 
 
 @pytest.mark.parametrize("count", [HUGE_COUNT, JUST_OVER])

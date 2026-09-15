@@ -7,6 +7,7 @@ import struct
 import uuid
 import logging
 import decimal
+from contextvars import ContextVar
 from typing import (
     Callable,
     List,
@@ -49,6 +50,8 @@ _HEADER_PREFIX = memoryview(b"AMQP")
 # value, so the bound functions as a hard ceiling rather than a practical
 # constraint on legitimate workloads.
 _MAX_COMPOUND_COUNT = 65536
+_MAX_DESCRIBED_NESTING_DEPTH = 32
+_DESCRIBED_NESTING_DEPTH = ContextVar("amqp_described_nesting_depth", default=0)
 _COMPOSITES = {
     35: "received",
     36: "accepted",
@@ -348,21 +351,31 @@ def _decode_array_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
 
 
 def _decode_described(buffer: memoryview) -> Tuple[memoryview, object]:
+    depth = _DESCRIBED_NESTING_DEPTH.get() + 1
+    if depth > _MAX_DESCRIBED_NESTING_DEPTH:
+        raise ValueError(
+            f"AMQP described value nesting depth {depth} exceeds maximum "
+            f"{_MAX_DESCRIBED_NESTING_DEPTH}"
+        )
+    token = _DESCRIBED_NESTING_DEPTH.set(depth)
     # TODO: to move the cursor of the buffer to the described value based on size of the
     #  descriptor without decoding descriptor value
-    composite_type = buffer[0]
-    buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[1:])
-    tp = buffer[0]
-    buffer, value = _DECODE_BY_CONSTRUCTOR[tp](buffer[1:])
     try:
-        value = _DESCR_BY_CONSTRUCTOR[tp](value, descriptor=descriptor)
-    except KeyError:
-        pass
-    try:
-        composite_type = cast(int, _COMPOSITES[descriptor])
-        return buffer, {composite_type: value}
-    except KeyError:
-        return buffer, value
+        composite_type = buffer[0]
+        buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[1:])
+        tp = buffer[0]
+        buffer, value = _DECODE_BY_CONSTRUCTOR[tp](buffer[1:])
+        try:
+            value = _DESCR_BY_CONSTRUCTOR[tp](value, descriptor=descriptor)
+        except KeyError:
+            pass
+        try:
+            composite_type = cast(int, _COMPOSITES[descriptor])
+            return buffer, {composite_type: value}
+        except KeyError:
+            return buffer, value
+    finally:
+        _DESCRIBED_NESTING_DEPTH.reset(token)
 
 
 def _decode_described_array(buffer: memoryview, tp: int, descriptor) -> Tuple[memoryview, Any]:
