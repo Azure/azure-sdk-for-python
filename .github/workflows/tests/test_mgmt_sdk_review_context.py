@@ -17,6 +17,16 @@ SPEC.loader.exec_module(MODULE)
 
 
 class WorkflowBootstrapTests(unittest.TestCase):
+    def test_setup_action_matches_compiler_version(self):
+        lines = (SCRIPT.parents[1] / "mgmt-sdk-pr-review.lock.yml").read_text(encoding="utf-8").splitlines()
+        metadata = json.loads(lines[0].removeprefix("# gh-aw-metadata: "))
+        manifest = json.loads(lines[1].removeprefix("# gh-aw-manifest: "))
+        setup = next(action for action in manifest["actions"] if action["repo"] == "github/gh-aw-actions/setup")
+        self.assertEqual(metadata["compiler_version"], setup["version"])
+        uses = [line.strip() for line in lines if "uses: github/gh-aw-actions/setup@" in line]
+        self.assertTrue(uses)
+        self.assertTrue(all(line == f"uses: github/gh-aw-actions/setup@{setup['sha']} # {setup['version']}" for line in uses))
+
     def test_single_trusted_collector_has_valid_python(self):
         workflow = (SCRIPT.parents[1] / "mgmt-sdk-pr-review.md").read_text(encoding="utf-8")
         blocks = workflow.split("python - <<'PY'")[1:]
@@ -142,6 +152,21 @@ class BreakingChangeParserTests(unittest.TestCase):
         )
 
         self.assertEqual("1.2.0b1", MODULE.latest_release_version(parsed))
+
+    def test_latest_release_skips_versioned_unreleased_headings(self):
+        for marker in ("Unreleased", "unreleased", "UNRELEASED"):
+            with self.subTest(marker=marker):
+                parsed = MODULE.parse_breaking_changes(
+                    f"## 1.6.1 ({marker})\n### Bugs Fixed\n- Pending fix\n"
+                    "## 1.6.0 (2025-07-02)\n### Other Changes\n- Released\n"
+                )
+                self.assertEqual("1.6.0", MODULE.latest_release_version(parsed))
+
+    def test_only_unreleased_headings_have_no_release_baseline(self):
+        parsed = MODULE.parse_breaking_changes(
+            "## 0.0.0 (Unreleased)\n## 1.6.1 (Unreleased)\n## 2.0.0b1 (unreleased)\n"
+        )
+        self.assertIsNone(MODULE.latest_release_version(parsed))
 
 
 class ProvenanceTests(unittest.TestCase):

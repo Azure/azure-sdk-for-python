@@ -417,7 +417,7 @@ def api_version_drift(package_path, first_revision, latest_revision, first_prove
 def latest_release_version(parsed_changelog):
     for release in parsed_changelog.get("releases", []):
         version = release["heading"].split()[0]
-        if version != "0.0.0":
+        if version != "0.0.0" and not re.search(r"\(\s*unreleased\s*\)", release["heading"], re.IGNORECASE):
             return version
     return None
 
