@@ -5,25 +5,26 @@
 import json
 import logging
 import re
-
-from openai import AzureOpenAI, OpenAI
-import pandas as pd
-from typing import Any, Callable, Dict, Tuple, TypeVar, Union, Type, Optional, TypedDict, List, cast, Set
 from time import sleep
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, TypeVar, Type, Union, cast
 
-from ._batch_run import CodeClient, ProxyClient
+import pandas as pd
+from openai import APIConnectionError, APIStatusError, APITimeoutError, AzureOpenAI, OpenAI
+from openai._models import FinalRequestOptions
 
 # import aoai_mapping
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
 from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
+from ._batch_run import CodeClient, ProxyClient
 
 TClient = TypeVar("TClient", ProxyClient, CodeClient)
 LOGGER = logging.getLogger(__name__)
 _DEFAULT_AOAI_OUTPUT_ITEMS_PAGE_SIZE = 100
 _MAX_AOAI_OUTPUT_ITEMS_PAGE_SIZE = 100
+_AOAI_OUTPUT_ITEMS_MAX_ATTEMPTS = 3
 
 # Precompiled regex for extracting data paths from mapping expressions of the form
 # ${data.some.dotted.path}. Compiled once at import time to avoid repeated
@@ -293,6 +294,64 @@ def _get_evaluation_run_results(
     return output_df, run_metrics
 
 
+def _list_output_items_page(
+    client: Union[AzureOpenAI, OpenAI],
+    list_kwargs: Dict[str, Any],
+    page_size: int,
+) -> Tuple[Any, int]:
+    """Fetch one output-items page with the OpenAI client's retry policy and a three-attempt budget.
+
+    :param client: A scoped OpenAI client with automatic retries disabled.
+    :type client: Union[AzureOpenAI, OpenAI]
+    :param list_kwargs: Arguments identifying the evaluation run and current cursor.
+    :type list_kwargs: Dict[str, Any]
+    :param page_size: The number of output items to request.
+    :type page_size: int
+    :return: The fetched page and the page size to retain for subsequent pages.
+    :rtype: Tuple[Any, int]
+    """
+    retry_options = FinalRequestOptions(
+        method="get",
+        url="/evals/runs/output_items",
+        max_retries=_AOAI_OUTPUT_ITEMS_MAX_ATTEMPTS - 1,
+    )
+
+    for attempt in range(_AOAI_OUTPUT_ITEMS_MAX_ATTEMPTS):
+        try:
+            return client.evals.runs.output_items.list(**list_kwargs, limit=page_size), page_size
+        except (APIConnectionError, APIStatusError) as error:
+            should_reduce_page_size = isinstance(error, APITimeoutError)
+            should_retry = isinstance(error, APIConnectionError)
+            response_headers = None
+
+            if isinstance(error, APIStatusError):
+                should_retry = client._should_retry(error.response)  # pylint: disable=protected-access
+                should_reduce_page_size = should_retry and error.status_code in (408, 504)
+                response_headers = error.response.headers
+
+            if not should_retry or attempt == _AOAI_OUTPUT_ITEMS_MAX_ATTEMPTS - 1:
+                raise
+
+            if should_reduce_page_size:
+                page_size = max(1, (page_size + 1) // 2)
+
+            remaining_retries = _AOAI_OUTPUT_ITEMS_MAX_ATTEMPTS - attempt - 1
+            delay = client._calculate_retry_timeout(  # pylint: disable=protected-access
+                remaining_retries,
+                retry_options,
+                response_headers,
+            )
+            LOGGER.warning(
+                "AOAI output-items request failed for cursor %s. Retrying with page size %d in %.2f seconds.",
+                list_kwargs.get("after"),
+                page_size,
+                delay,
+            )
+            sleep(delay)
+
+    raise RuntimeError("AOAI output-items retry loop exited unexpectedly.")
+
+
 def _get_single_run_results(
     run_info: OAIEvalRunCreationInfo,
     aoai_output_items_page_size: int = _DEFAULT_AOAI_OUTPUT_ITEMS_PAGE_SIZE,
@@ -359,17 +418,18 @@ def _get_single_run_results(
     LOGGER.info(f"AOAI: Collecting output items for run {run_info['eval_run_id']} with pagination...")
     all_results: List[Any] = []
     next_cursor: Optional[str] = None
+    page_size = aoai_output_items_page_size
+    output_items_client = run_info["client"].with_options(max_retries=0)
 
     while True:
         list_kwargs = {
             "eval_id": run_info["eval_group_id"],
             "run_id": run_info["eval_run_id"],
-            "limit": aoai_output_items_page_size,
         }
         if next_cursor is not None:
             list_kwargs["after"] = next_cursor
 
-        raw_list_results = run_info["client"].evals.runs.output_items.list(**list_kwargs)
+        raw_list_results, page_size = _list_output_items_page(output_items_client, list_kwargs, page_size)
 
         # Add current page results
         all_results.extend(raw_list_results.data)

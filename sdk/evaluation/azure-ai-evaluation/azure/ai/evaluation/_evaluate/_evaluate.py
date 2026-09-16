@@ -885,7 +885,8 @@ def evaluate(
     :paramtype fail_on_evaluator_errors: bool
     :keyword aoai_output_items_page_size: The maximum number of native Azure OpenAI grader output items requested
         per HTTP response page. Defaults to 100. This does not limit response bytes, request latency, or the number
-        of dataset rows evaluated; all output-item result pages are fetched.
+        of dataset rows evaluated; all output-item result pages are fetched. If an output-items request times out or
+        returns HTTP 408 or 504, the same page is retried with a smaller page size.
     :paramtype aoai_output_items_page_size: int
     :keyword tags: A dictionary of tags to be added to the evaluation run for tracking and organization purposes.
         Keys and values must be strings. For more information about tag limits, see:
