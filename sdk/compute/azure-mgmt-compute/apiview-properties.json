@@ -65,6 +65,7 @@
         "azure.mgmt.compute.models.DataDiskImage": "Compute.DataDiskImage",
         "azure.mgmt.compute.models.DiskImageEncryption": "ComputeGallery.DiskImageEncryption",
         "azure.mgmt.compute.models.DataDiskImageEncryption": "ComputeGallery.DataDiskImageEncryption",
+        "azure.mgmt.compute.models.DataDiskImageSecurityProfile": "ComputeGallery.DataDiskImageSecurityProfile",
         "azure.mgmt.compute.models.DataDisksToAttach": "Compute.DataDisksToAttach",
         "azure.mgmt.compute.models.DataDisksToDetach": "Compute.DataDisksToDetach",
         "azure.mgmt.compute.models.DedicatedHost": "Compute.DedicatedHost",
@@ -191,6 +192,7 @@
         "azure.mgmt.compute.models.ImageDataDisk": "Compute.ImageDataDisk",
         "azure.mgmt.compute.models.ImageDeprecationStatus": "Compute.ImageDeprecationStatus",
         "azure.mgmt.compute.models.ImageDiskReference": "ComputeDisk.ImageDiskReference",
+        "azure.mgmt.compute.models.ImageMetadataProfile": "ComputeGallery.ImageMetadataProfile",
         "azure.mgmt.compute.models.ImageOSDisk": "Compute.ImageOSDisk",
         "azure.mgmt.compute.models.ImageProperties": "Compute.ImageProperties",
         "azure.mgmt.compute.models.ImagePurchasePlan": "ComputeGallery.ImagePurchasePlan",
@@ -228,6 +230,7 @@
         "azure.mgmt.compute.models.MaintenanceRedeployStatus": "Compute.MaintenanceRedeployStatus",
         "azure.mgmt.compute.models.ManagedDiskParameters": "Compute.ManagedDiskParameters",
         "azure.mgmt.compute.models.MaxInstancePercentPerZonePolicy": "Compute.MaxInstancePercentPerZonePolicy",
+        "azure.mgmt.compute.models.MetadataKeyValue": "ComputeGallery.MetadataKeyValue",
         "azure.mgmt.compute.models.MigrateToVirtualMachineScaleSetInput": "Compute.MigrateToVirtualMachineScaleSetInput",
         "azure.mgmt.compute.models.MigrateVMAvailabilityZoneInput": "Compute.MigrateVMAvailabilityZoneInput",
         "azure.mgmt.compute.models.MigrateVMToVirtualMachineScaleSetInput": "Compute.MigrateVMToVirtualMachineScaleSetInput",
@@ -324,6 +327,8 @@
         "azure.mgmt.compute.models.ScheduledEventsProfile": "Compute.ScheduledEventsProfile",
         "azure.mgmt.compute.models.ScheduleProfile": "Compute.ScheduleProfile",
         "azure.mgmt.compute.models.ScriptSource": "ComputeGallery.ScriptSource",
+        "azure.mgmt.compute.models.SecretsProvisioningComponent": "ComputeGallery.SecretsProvisioningComponent",
+        "azure.mgmt.compute.models.SecretsProvisioningSettings": "ComputeGallery.SecretsProvisioningSettings",
         "azure.mgmt.compute.models.SecurityPostureReference": "Compute.SecurityPostureReference",
         "azure.mgmt.compute.models.SecurityPostureReferenceUpdate": "Compute.SecurityPostureReferenceUpdate",
         "azure.mgmt.compute.models.SecurityProfile": "Compute.SecurityProfile",
@@ -647,6 +652,7 @@
         "azure.mgmt.compute.models.GalleryExpandParams": "ComputeGallery.GalleryExpandParams",
         "azure.mgmt.compute.models.UefiSignatureTemplateName": "ComputeGallery.UefiSignatureTemplateName",
         "azure.mgmt.compute.models.UefiKeyType": "ComputeGallery.UefiKeyType",
+        "azure.mgmt.compute.models.SecretsProvisioningComponentName": "ComputeGallery.SecretsProvisioningComponentName",
         "azure.mgmt.compute.models.StorageAccountType": "ComputeGallery.StorageAccountType",
         "azure.mgmt.compute.models.ConfidentialVMEncryptionType": "ComputeGallery.ConfidentialVMEncryptionType",
         "azure.mgmt.compute.models.ReplicationMode": "ComputeGallery.ReplicationMode",
@@ -658,6 +664,7 @@
         "azure.mgmt.compute.models.AggregatedReplicationState": "ComputeGallery.AggregatedReplicationState",
         "azure.mgmt.compute.models.ReplicationState": "ComputeGallery.ReplicationState",
         "azure.mgmt.compute.models.ValidationStatus": "ComputeGallery.ValidationStatus",
+        "azure.mgmt.compute.models.MetadataType": "ComputeGallery.MetadataType",
         "azure.mgmt.compute.models.ReplicationStatusTypes": "ComputeGallery.ReplicationStatusTypes",
         "azure.mgmt.compute.models.GalleryApplicationCustomActionParameterType": "ComputeGallery.GalleryApplicationCustomActionParameterType",
         "azure.mgmt.compute.models.GalleryApplicationScriptRebootBehavior": "ComputeGallery.GalleryApplicationScriptRebootBehavior",
@@ -667,6 +674,7 @@
         "azure.mgmt.compute.models.EndpointAccess": "ComputeGallery.EndpointAccess",
         "azure.mgmt.compute.models.SharedToValues": "ComputeGallery.SharedToValues",
         "azure.mgmt.compute.models.SharedGalleryHostCaching": "ComputeGallery.SharedGalleryHostCaching",
+        "azure.mgmt.compute.models.GalleryImageVersionState": "ComputeGallery.GalleryImageVersionState",
         "azure.mgmt.compute.models.ResourceSkuCapacityScaleType": "ComputeSku.ResourceSkuCapacityScaleType",
         "azure.mgmt.compute.models.ExtendedLocationType": "ComputeSku.ExtendedLocationType",
         "azure.mgmt.compute.models.ResourceSkuRestrictionsType": "ComputeSku.ResourceSkuRestrictionsType",
@@ -1303,5 +1311,5 @@
         "azure.mgmt.compute.operations.GallerySharingProfileOperations.begin_update": "ComputeGallery.Galleries.gallerySharingProfileUpdate",
         "azure.mgmt.compute.aio.operations.GallerySharingProfileOperations.begin_update": "ComputeGallery.Galleries.gallerySharingProfileUpdate"
     },
-    "CrossLanguageVersion": "61785c24b70e"
+    "CrossLanguageVersion": "8d018ae98667"
 }
