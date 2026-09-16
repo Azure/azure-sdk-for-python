@@ -4,6 +4,8 @@
 
 ### Bugs Fixed
 
+- Partition `InMemoryResponseProvider` responses, items, history, and legacy replay
+  state by the platform user key, keeping anonymous local state separate.
 - Scoped durable multi-turn task IDs with `FOUNDRY_AGENT_SESSION_GUID` when
   available, preventing recreated same-name sessions from colliding with task
   tombstones. Existing pre-rollout active chains remain resumable through a
