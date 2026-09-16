@@ -230,6 +230,7 @@
     "delenv",
     "dependened",
     "deque",
+    "deser",
     "deserialization",
     "deserializers",
     "disablecov",
