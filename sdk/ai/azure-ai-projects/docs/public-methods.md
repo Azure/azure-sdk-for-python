@@ -6,11 +6,11 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 ## Summary
 
-There are a total of 197 unique public methods:
+There are a total of 187 unique public methods:
 
 - 5 stable methods on the client
 - 59 stable methods on top-level sub-clients
-- 133 beta methods on nested beta sub-clients
+- 123 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 
@@ -42,7 +42,7 @@ There are a total of 197 unique public methods:
 | `beta.schedules` | BetaSchedulesOperations | 6 |
 | `beta.skills` | BetaSkillsOperations | 11 |
 | `beta.voice_agents.conversations` | BetaVoiceAgentsConversationsOperations | 14 |
-| `beta.voice_agents.telephony` | BetaVoiceAgentsTelephonyOperations | 24 |
+| `beta.voice_agents.telephony` | BetaVoiceAgentsTelephonyOperations | 14 |
 
 ## Stable methods on the client
 
@@ -256,28 +256,18 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.voice_agents.conversations.list_response_items
 .beta.voice_agents.conversations.list_responses
 
-.beta.voice_agents.telephony.begin_import_campaign_recipients
-.beta.voice_agents.telephony.begin_publish_campaign
-.beta.voice_agents.telephony.begin_validate_campaign
 .beta.voice_agents.telephony.cancel_call_job
-.beta.voice_agents.telephony.cancel_campaign
 .beta.voice_agents.telephony.create_binding
 .beta.voice_agents.telephony.create_call_job
-.beta.voice_agents.telephony.create_campaign
 .beta.voice_agents.telephony.delete_binding
 .beta.voice_agents.telephony.end_call
 .beta.voice_agents.telephony.get_binding
 .beta.voice_agents.telephony.get_call
 .beta.voice_agents.telephony.get_call_job
-.beta.voice_agents.telephony.get_campaign
-.beta.voice_agents.telephony.get_campaign_recipient_import
-.beta.voice_agents.telephony.get_operation
 .beta.voice_agents.telephony.get_transfer_targets
 .beta.voice_agents.telephony.list_bindings
 .beta.voice_agents.telephony.list_calls
-.beta.voice_agents.telephony.pause_campaign
 .beta.voice_agents.telephony.replace_transfer_targets
-.beta.voice_agents.telephony.resume_campaign
 .beta.voice_agents.telephony.transfer_call
 .beta.voice_agents.telephony.update_binding
 ```
