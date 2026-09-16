@@ -15,7 +15,7 @@ from azure.mgmt.containerserviceaimanager import ContainerServiceAIManagerMgmtCl
     pip install azure-identity
     pip install azure-mgmt-containerserviceaimanager
 # USAGE
-    python operations_list.py
+    python custom_ai_models_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,11 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.operations.list()
-    for item in response:
-        print(item)
+    client.custom_ai_models.begin_delete(
+        resource_group_name="rg1",
+        ai_manager_name="aimanager1",
+        custom_ai_model_name="custom-model1",
+    ).result()
 
 
-# x-ms-original-file: 2026-09-02-preview/Operations_List.json
+# x-ms-original-file: 2026-09-02-preview/CustomAIModels_Delete.json
 if __name__ == "__main__":
     main()
