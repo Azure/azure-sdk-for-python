@@ -710,4 +710,3 @@ class ResponsesAgentServerHost(AgentServerHost):
                 yield event
         finally:
             await _close_iterator(iterator)
-

@@ -1288,4 +1288,3 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         else:
             self._response["completed_at"] = None
         self._response["usage"] = _internals.coerce_usage(usage)
-
