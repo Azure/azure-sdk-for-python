@@ -59,6 +59,8 @@ from ._utils import (
 from ._batch_run.batch_clients import BatchClient, BatchClientRun
 
 from ._evaluate_aoai import (
+    _DEFAULT_AOAI_OUTPUT_ITEMS_PAGE_SIZE,
+    _MAX_AOAI_OUTPUT_ITEMS_PAGE_SIZE,
     _begin_aoai_evaluation,
     _split_evaluators_and_grader_configs,
     _get_evaluation_run_results,
@@ -818,6 +820,25 @@ def _rename_columns_conditionally(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def _validate_aoai_output_items_page_size(aoai_output_items_page_size: int) -> None:
+    if (
+        not isinstance(aoai_output_items_page_size, int)
+        or isinstance(aoai_output_items_page_size, bool)
+        or not 1 <= aoai_output_items_page_size <= _MAX_AOAI_OUTPUT_ITEMS_PAGE_SIZE
+    ):
+        msg = (
+            "'aoai_output_items_page_size' must be an integer between 1 and "
+            f"{_MAX_AOAI_OUTPUT_ITEMS_PAGE_SIZE}, inclusive."
+        )
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+
+
 def evaluate(
     *,
     data: Union[str, os.PathLike],
@@ -828,6 +849,7 @@ def evaluate(
     azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
     fail_on_evaluator_errors: bool = False,
+    aoai_output_items_page_size: int = 100,
     tags: Optional[Dict[str, str]] = None,
     **kwargs,
 ) -> EvaluationResult:
@@ -861,6 +883,10 @@ def evaluate(
         Defaults to false, which means that evaluations will continue regardless of failures.
         If such failures occur, metrics may be missing, and evidence of failures can be found in the evaluation's logs.
     :paramtype fail_on_evaluator_errors: bool
+    :keyword aoai_output_items_page_size: The maximum number of native Azure OpenAI grader output items requested
+        per HTTP response page. Defaults to 100. This does not limit response bytes, request latency, or the number
+        of dataset rows evaluated; all output-item result pages are fetched.
+    :paramtype aoai_output_items_page_size: int
     :keyword tags: A dictionary of tags to be added to the evaluation run for tracking and organization purposes.
         Keys and values must be strings. For more information about tag limits, see:
         https://learn.microsoft.com/en-us/azure/machine-learning/resource-limits-capacity?view=azureml-api-2#runs
@@ -890,6 +916,7 @@ def evaluate(
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
     """
     try:
+        _validate_aoai_output_items_page_size(aoai_output_items_page_size)
         user_agent: Optional[str] = kwargs.get("user_agent")
         with UserAgentSingleton().add_useragent_product(user_agent) if user_agent else contextlib.nullcontext():
             results = _evaluate(
@@ -901,6 +928,7 @@ def evaluate(
                 azure_ai_project=azure_ai_project,
                 output_path=output_path,
                 fail_on_evaluator_errors=fail_on_evaluator_errors,
+                aoai_output_items_page_size=aoai_output_items_page_size,
                 tags=tags,
                 **kwargs,
             )
@@ -971,6 +999,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
     fail_on_evaluator_errors: bool = False,
+    aoai_output_items_page_size: int = _DEFAULT_AOAI_OUTPUT_ITEMS_PAGE_SIZE,
     tags: Optional[Dict[str, str]] = None,
     **kwargs,
 ) -> EvaluationResult:
@@ -1048,7 +1077,9 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     # Retrieve OAI eval run results if needed.
     if need_get_oai_results:
         try:
-            aoai_results, aoai_metrics = _get_evaluation_run_results(eval_run_info_list)  # type: ignore
+            aoai_results, aoai_metrics = _get_evaluation_run_results(
+                eval_run_info_list, aoai_output_items_page_size
+            )  # type: ignore
             # Post build TODO: add equivalent of  _print_summary(per_evaluator_results) here
 
             # Combine results if both evaluators and graders are present

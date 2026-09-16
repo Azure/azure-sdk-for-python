@@ -22,6 +22,8 @@ from azure.ai.evaluation._common._experimental import experimental
 
 TClient = TypeVar("TClient", ProxyClient, CodeClient)
 LOGGER = logging.getLogger(__name__)
+_DEFAULT_AOAI_OUTPUT_ITEMS_PAGE_SIZE = 100
+_MAX_AOAI_OUTPUT_ITEMS_PAGE_SIZE = 100
 
 # Precompiled regex for extracting data paths from mapping expressions of the form
 # ${data.some.dotted.path}. Compiled once at import time to avoid repeated
@@ -258,7 +260,10 @@ def _combine_item_schemas(data_source_config: Dict[str, Any], kwargs: Dict[str, 
                     data_source_config["item_schema"]["required"].append(key)
 
 
-def _get_evaluation_run_results(all_run_info: List[OAIEvalRunCreationInfo]) -> Tuple[pd.DataFrame, Dict[str, Any]]:
+def _get_evaluation_run_results(
+    all_run_info: List[OAIEvalRunCreationInfo],
+    aoai_output_items_page_size: int = _DEFAULT_AOAI_OUTPUT_ITEMS_PAGE_SIZE,
+) -> Tuple[pd.DataFrame, Dict[str, Any]]:
     """
     Get the results of an OAI evaluation run, formatted in a way that is easy for the rest of the evaluation
     pipeline to consume. This method accepts a list of eval run information, and will combine the
@@ -267,6 +272,8 @@ def _get_evaluation_run_results(all_run_info: List[OAIEvalRunCreationInfo]) -> T
     :param all_run_info: A list of evaluation run information that contains the needed values
         to retrieve the results of the evaluation run.
     :type all_run_info: List[OAIEvalRunCreationInfo]
+    :param aoai_output_items_page_size: The maximum number of output items to request per page.
+    :type aoai_output_items_page_size: int
     :return: A tuple containing the results of the evaluation run as a dataframe, and a dictionary of metrics
         calculated from the evaluation run.
     :rtype: Tuple[pd.DataFrame, Dict[str, Any]]
@@ -278,7 +285,7 @@ def _get_evaluation_run_results(all_run_info: List[OAIEvalRunCreationInfo]) -> T
     output_df = pd.DataFrame()
     for idx, run_info in enumerate(all_run_info):
         LOGGER.info(f"AOAI: Fetching results for run {idx + 1}/{len(all_run_info)} (ID: {run_info['eval_run_id']})...")
-        cur_output_df, cur_run_metrics = _get_single_run_results(run_info)
+        cur_output_df, cur_run_metrics = _get_single_run_results(run_info, aoai_output_items_page_size)
         output_df = pd.concat([output_df, cur_output_df], axis=1)
         run_metrics.update(cur_run_metrics)
 
@@ -288,6 +295,7 @@ def _get_evaluation_run_results(all_run_info: List[OAIEvalRunCreationInfo]) -> T
 
 def _get_single_run_results(
     run_info: OAIEvalRunCreationInfo,
+    aoai_output_items_page_size: int = _DEFAULT_AOAI_OUTPUT_ITEMS_PAGE_SIZE,
 ) -> Tuple[pd.DataFrame, Dict[str, Any]]:
     """
     Get the results of an OAI evaluation run, formatted in a way that is easy for the rest of the evaluation
@@ -296,6 +304,8 @@ def _get_single_run_results(
     :param run_info: The evaluation run information that contains the needed values
         to retrieve the results of the evaluation run.
     :type run_info: OAIEvalRunCreationInfo
+    :param aoai_output_items_page_size: The maximum number of output items to request per page.
+    :type aoai_output_items_page_size: int
     :return: A tuple containing the results of the evaluation run as a dataframe, and a dictionary of metrics
         calculated from the evaluation run.
     :rtype: Tuple[pd.DataFrame, Dict[str, Any]]
@@ -349,10 +359,13 @@ def _get_single_run_results(
     LOGGER.info(f"AOAI: Collecting output items for run {run_info['eval_run_id']} with pagination...")
     all_results: List[Any] = []
     next_cursor: Optional[str] = None
-    limit = 100  # Max allowed by API
 
     while True:
-        list_kwargs = {"eval_id": run_info["eval_group_id"], "run_id": run_info["eval_run_id"], "limit": limit}
+        list_kwargs = {
+            "eval_id": run_info["eval_group_id"],
+            "run_id": run_info["eval_run_id"],
+            "limit": aoai_output_items_page_size,
+        }
         if next_cursor is not None:
             list_kwargs["after"] = next_cursor
 
