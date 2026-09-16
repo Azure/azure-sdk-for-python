@@ -27,14 +27,14 @@ would on fresh entry (Spec 033 FR-002b — fixes the prior drop-to-``{}`` bug).
 """
 
 from __future__ import annotations
-from ..models import _generated as _generated_models
-
 
 import json
 from typing import Any, cast
 
 
 from .._response_context import PlatformContext
+from ..models import _generated as _generated_models
+
 
 # Keys emitted by :meth:`ResilientResponseInput.to_task_input` / consumed by
 # :meth:`from_task_input`. Kept as named constants so the single producer and

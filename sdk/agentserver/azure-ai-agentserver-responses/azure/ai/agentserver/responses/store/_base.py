@@ -3,10 +3,10 @@
 """Persistence abstraction for response execution and replay state."""
 
 from __future__ import annotations
-from ..models import _generated as _generated_models
-
 
 from typing import TYPE_CHECKING, Iterable, Protocol, runtime_checkable
+
+from ..models import _generated as _generated_models
 
 if TYPE_CHECKING:
     from .._response_context import PlatformContext

@@ -7,8 +7,6 @@ payloads. They carry no mutable state of their own.
 """
 
 from __future__ import annotations
-from .. import models as _public_models
-
 
 from collections.abc import MutableMapping
 from copy import deepcopy
@@ -17,6 +15,8 @@ from types import GeneratorType
 from typing import Any, cast
 
 from .. import models as response_models
+from .. import models as _public_models
+
 
 # Event types whose ``response`` field is a full Response snapshot.
 # Only these events should carry id/response_id/object/agent_reference/model.

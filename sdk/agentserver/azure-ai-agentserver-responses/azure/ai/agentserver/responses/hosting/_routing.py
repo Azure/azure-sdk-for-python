@@ -7,8 +7,6 @@ as a :class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
 """
 
 from __future__ import annotations
-from ..models import _generated as _generated_models
-
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
@@ -26,6 +24,7 @@ from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseContext
 from .._version import VERSION as _RESPONSES_VERSION
+from ..models import _generated as _generated_models
 
 from ..streaming._checkpoint import ResponseCheckpointEvent
 from ..store._base import ResponseProviderProtocol
@@ -694,7 +693,9 @@ class ResponsesAgentServerHost(AgentServerHost):
             return result.__aiter__()  # type: ignore[union-attr, return-value]
         return result  # type: ignore[return-value]
 
-    async def _await_and_normalize(self, coro: Any) -> AsyncIterator[_generated_models.ResponseStreamEvent]:  # type: ignore[misc]
+    async def _await_and_normalize(  # type: ignore[misc]
+        self, coro: Any
+    ) -> AsyncIterator[_generated_models.ResponseStreamEvent]:
         """Await a coroutine and yield events from its normalised result.
 
         :param coro: A coroutine to await.
@@ -709,3 +710,4 @@ class ResponsesAgentServerHost(AgentServerHost):
                 yield event
         finally:
             await _close_iterator(iterator)
+

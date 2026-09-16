@@ -3,8 +3,6 @@
 """In-memory response store implementation."""
 
 from __future__ import annotations
-from ..models import _generated as _generated_models
-
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import contextlib
@@ -18,6 +16,8 @@ from .._response_context import PlatformContext
 from ..models._helpers import get_conversation_id
 from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord, _StreamReplayState
 from ._base import ResponseAlreadyExistsError, ResponseProviderProtocol
+from ..models import _generated as _generated_models
+
 
 _DEFAULT_REPLAY_EVENT_TTL_SECONDS: int = 600
 """Minimum per-event replay TTL (10 minutes) per spec B35."""

@@ -3,8 +3,6 @@
 """Request pre-validation, identity resolution, and input extraction helpers."""
 
 from __future__ import annotations
-from .. import models as _public_models
-
 
 import hashlib
 import os
@@ -16,6 +14,8 @@ from ..models._wire import get_field
 
 from .._id_generator import IdGenerator
 from ..models._errors import RequestValidationError
+from .. import models as _public_models
+
 
 _X_AGENT_RESPONSE_ID_HEADER = "x-agent-response-id"
 

@@ -150,7 +150,11 @@ class _CreateStreamingResponse(StreamingResponse):
         super().__init__(self._stream, media_type="text/event-stream", headers=headers)
 
     async def stream_response(self, send: Send) -> None:
-        """Flush after stream work, including on send errors and disconnects."""
+        """Flush after stream work, including on send errors and disconnects.
+
+        :param send: The ASGI ``send`` callable for the response.
+        :type send: ~starlette.types.Send
+        """
         finalized = False
 
         async def finalize() -> None:

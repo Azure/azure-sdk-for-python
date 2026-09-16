@@ -3,13 +3,13 @@
 """Helper functions for CreateResponse and Response model expansion."""
 
 from __future__ import annotations
-from . import _generated as _generated_models
-
 
 from typing import Any, Optional, cast
 
 from ._wire import get_field as _get_field
 from ._wire import is_type as _is_wire_type
+from . import _generated as _generated_models
+
 
 
 def _is_type(obj: Any, _model_cls: object, type_value: str) -> bool:

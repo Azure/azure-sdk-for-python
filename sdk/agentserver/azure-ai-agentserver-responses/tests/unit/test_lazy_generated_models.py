@@ -187,7 +187,7 @@ def test_normal_extraction_pipeline_runs_lazy_generation(tmp_path):
     emitted = tmp_path / "emitter" / "models"
     (emitted / "models").mkdir(parents=True)
     for name in ("types.py", "_unions.py"):
-        (emitted / name).write_text(canonical((original / name).read_text()), encoding="utf-8")
+        (emitted / name).write_text(canonical((original / name).read_text(encoding="utf-8")), encoding="utf-8")
     (emitted / "py.typed").write_text("")
     for name in ("__init__.py", "_patch.py"):
         (emitted / "models" / name).write_bytes((original / "models" / name).read_bytes())
@@ -195,3 +195,4 @@ def test_normal_extraction_pipeline_runs_lazy_generation(tmp_path):
     finalize(tmp_path / "emitter", destination)
     for name in ("types.py", "_unions.py", "_catalog.py", "__init__.py"):
         assert (destination / name).read_text(encoding="utf-8") == (original / name).read_text(encoding="utf-8")
+

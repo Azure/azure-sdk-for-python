@@ -10,9 +10,6 @@ surface mirrors the task primitive's composing-cause shape (separate
 """
 
 from __future__ import annotations
-from .models import _generated as _generated_models
-from .models._generated import _unions as _generated_unions
-
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 from datetime import datetime, timezone
@@ -21,6 +18,9 @@ from typing import TYPE_CHECKING, Any, NoReturn, Sequence, cast
 
 from .models._helpers import get_input_expanded, to_item, to_output_item
 from .models.runtime import ResponseModeFlags
+
+from .models import _generated as _generated_models
+from .models._generated import _unions as _generated_unions
 
 if TYPE_CHECKING:
     from azure.ai.agentserver.core.tasks import TaskContext as _CoreTaskContext
@@ -168,7 +168,24 @@ async def _resolve_history_item_ids(
     context: PlatformContext | None,
     request_context: "ResponseContext | None",
 ) -> list[str]:
-    """Resolve IDs with exact provider/query/identity semantics in this request only."""
+    """Resolve history item IDs with request-scoped single-flight semantics.
+
+    :param provider: The response storage provider used to fetch history item IDs.
+    :type provider: ~azure.ai.agentserver.responses.store._base.ResponseProviderProtocol
+    :param previous_response_id: The previous response ID anchoring the history chain.
+    :type previous_response_id: str or None
+    :param conversation_id: The conversation ID scoping the history lookup.
+    :type conversation_id: str or None
+    :param limit: The maximum number of history item IDs to fetch.
+    :type limit: int
+    :keyword context: Platform context forwarded to the provider.
+    :paramtype context: ~azure.ai.agentserver.responses._response_context.PlatformContext or None
+    :keyword request_context: Request context whose resolver coalesces duplicate reads;
+        ``None`` bypasses request-scoped caching.
+    :paramtype request_context: ~azure.ai.agentserver.responses._response_context.ResponseContext or None
+    :return: The resolved history item IDs.
+    :rtype: list[str]
+    """
     # Snapshot identity before waiting on a lookup so key and outbound identity
     # stay equivalent even if the caller later mutates its PlatformContext.
     platform_context = _snapshot_platform_context(context)
@@ -492,7 +509,11 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
             return self._input_items_resolved_cache
 
     async def _resolve_input_items(self) -> Sequence[_generated_models.Item]:
-        """Materialize this request's input; only publish a fully successful result."""
+        """Materialize this request's input; only publish a fully successful result.
+
+        :return: The resolved input items with references materialized.
+        :rtype: ~typing.Sequence[~azure.ai.agentserver.responses.models._generated.Item]
+        """
         expanded = self._expand_input()
         if not expanded:
             return ()

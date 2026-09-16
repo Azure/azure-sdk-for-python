@@ -3,11 +3,11 @@
 """Seekable replay subject for in-process SSE event broadcasting."""
 
 from __future__ import annotations
-from .. import models as _public_models
-
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import AsyncIterator, cast
+from .. import models as _public_models
+
 
 
 class _ResponseEventSubject:

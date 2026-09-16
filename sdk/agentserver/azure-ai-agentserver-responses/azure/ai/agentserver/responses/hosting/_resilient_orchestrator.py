@@ -16,8 +16,6 @@ Architecture (post-spec-024 unification):
 """
 
 from __future__ import annotations
-from ..models import _generated as _generated_models
-
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
@@ -36,6 +34,8 @@ from .._options import ResponsesServerOptions
 from .._response_context import ResponseExitForRecovery
 from ._dispatch import DISPOSITION_MARK_FAILED
 from ._task_id import derive_task_id, derive_task_session_scope
+
+from ..models import _generated as _generated_models
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext

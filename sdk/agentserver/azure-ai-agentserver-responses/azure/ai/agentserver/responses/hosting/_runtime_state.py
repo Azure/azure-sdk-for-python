@@ -3,8 +3,6 @@
 """Runtime state management for the Responses server."""
 
 from __future__ import annotations
-from .. import models as _public_models
-
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
@@ -13,6 +11,8 @@ from typing import Any, cast
 
 from ..models.runtime import ResponseExecution
 from ..streaming._helpers import strip_nulls
+from .. import models as _public_models
+
 
 
 def _json_safe_agent_reference(value: Any) -> dict[str, Any]:

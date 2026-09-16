@@ -3,8 +3,6 @@
 """Response event stream builders for lifecycle and output item events."""
 
 from __future__ import annotations
-from .. import models as _public_models
-
 
 from collections.abc import MutableMapping
 from copy import deepcopy
@@ -97,7 +95,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self,
         *,
         response_id: str | None = None,
-        agent_reference: _public_models.AgentReference | dict[str, Any] | None = None,
+        agent_reference: response_models.AgentReference | dict[str, Any] | None = None,
         model: str | None = None,
         request: response_models.CreateResponse | None = None,
         response: response_models.ResponseObject | None = None,
@@ -1290,3 +1288,4 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         else:
             self._response["completed_at"] = None
         self._response["usage"] = _internals.coerce_usage(usage)
+

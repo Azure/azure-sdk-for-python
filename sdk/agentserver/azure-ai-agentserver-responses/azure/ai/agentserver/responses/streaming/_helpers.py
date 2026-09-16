@@ -3,8 +3,6 @@
 """Event coercion, defaults application, and snapshot extraction helpers."""
 
 from __future__ import annotations
-from .. import models as _public_models
-
 
 from collections.abc import MutableMapping
 from copy import deepcopy
@@ -16,6 +14,8 @@ from . import _internals
 from ._event_stream import ResponseEventStream
 from ._internals import _RESPONSE_SNAPSHOT_EVENT_TYPES
 from ._sse import encode_sse_event
+from .. import models as _public_models
+
 
 
 def strip_nulls(d: dict) -> dict:

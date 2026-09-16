@@ -68,8 +68,6 @@ place.
 """
 
 from __future__ import annotations
-from ..models import _generated as _generated_models
-
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import json
@@ -84,6 +82,8 @@ from .._response_context import PlatformContext
 
 from ..models._helpers import get_conversation_id
 from ._base import ResponseAlreadyExistsError, ResponseProviderProtocol, ResponseStoreCorruptionError
+from ..models import _generated as _generated_models
+
 
 # Sentinel key marking an ``output[]`` entry as a pointer to an item stored
 # under ``items/{id}.json`` (spec 028). A real response output item is a typed

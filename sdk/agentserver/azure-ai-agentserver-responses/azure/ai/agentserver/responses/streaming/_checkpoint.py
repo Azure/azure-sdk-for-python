@@ -10,10 +10,10 @@ is purely an internal control signal, never part of the response event taxonomy.
 """
 
 from __future__ import annotations
-from ..models import _generated as _generated_models
-
 
 from typing import TYPE_CHECKING
+
+from ..models import _generated as _generated_models
 
 if TYPE_CHECKING:
     pass

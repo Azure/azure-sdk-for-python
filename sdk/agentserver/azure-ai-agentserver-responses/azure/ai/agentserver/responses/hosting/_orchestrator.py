@@ -86,7 +86,11 @@ _STORAGE_ERROR_MESSAGE = (
 
 
 async def _close_iterator(iterator: AsyncIterator[Any]) -> None:
-    """Close an owned iterator when it supports asynchronous cleanup."""
+    """Close an owned iterator when it supports asynchronous cleanup.
+
+    :param iterator: The iterator to close when it exposes ``aclose``.
+    :type iterator: ~typing.AsyncIterator[typing.Any]
+    """
     close = getattr(iterator, "aclose", None)
     if close is not None:
         await close()
@@ -1536,9 +1540,13 @@ class _ResponseOrchestrator:
         Structural and stream validation remain identical for both callers.
 
         :param ctx: Current execution context.
+        :type ctx: ~azure.ai.agentserver.responses.hosting._execution_context._ExecutionContext
         :param state: Mutable pipeline state.
+        :type state: _PipelineState
         :param coerced: Privately owned, coerced handler event.
+        :type coerced: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
         :return: The normalized event.
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
         :raises ValueError: If structural or stream validation fails.
         """
         violation = _validate_handler_event(coerced)
@@ -3078,7 +3086,7 @@ class _ResponseOrchestrator:
             async for chunk in ephemeral_stream:
                 yield chunk
 
-    async def _live_stream_keep_alive(
+    async def _live_stream_keep_alive(  # pylint: disable=too-many-statements
         self,
         ctx: _ExecutionContext,
         state: _PipelineState,

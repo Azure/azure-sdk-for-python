@@ -3,8 +3,6 @@
 """Server-sent events helpers for Responses streaming."""
 
 from __future__ import annotations
-from ..models import _generated as _generated_models
-
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import itertools
@@ -17,6 +15,8 @@ from typing import Any, AsyncIterator, Mapping, cast
 from anyio import CancelScope
 
 from .._egress import strip_internal_metadata
+from ..models import _generated as _generated_models
+
 
 _stream_counter_var: ContextVar[itertools.count] = ContextVar("_stream_counter_var")
 
