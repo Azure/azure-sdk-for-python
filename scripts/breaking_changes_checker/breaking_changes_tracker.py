@@ -767,6 +767,12 @@ class BreakingChangesTracker:
 
             should_keep = True
             for suppression in suppressions:
+                if (
+                    bc_type == "AddedClassMethod"
+                    and function_name == "update"
+                    and self.is_operation_group(module_name, class_name)
+                ):
+                    continue
                 if suppression.parameter_or_property_name is not None:
                     # If the ignore rule is for a property or parameter, we should check up to that level on the original change
                     if self.match((bc_type, module_name, class_name, function_name, parameter_name), suppression):
