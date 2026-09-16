@@ -19,9 +19,15 @@ from azure.core.pipeline.transport import (
 )
 from azure.core.utils import case_insensitive_dict
 
-from azure.ai.contentsafety import ContentProvenanceClient, ContentSafetyClient
+from azure.ai.contentsafety import (
+    BlocklistClient,
+    ContentProvenanceClient,
+    ContentSafetyClient,
+)
 from azure.ai.contentsafety.aio import (
+    BlocklistClient as AsyncBlocklistClient,
     ContentProvenanceClient as AsyncContentProvenanceClient,
+    ContentSafetyClient as AsyncContentSafetyClient,
 )
 
 
@@ -246,6 +252,90 @@ def test_prompt_shielding_and_protected_material() -> None:
     assert protected_material_result.protected_material_analysis.detected is True
     _assert_preview_request(transport.requests[0], "text:shieldPrompt")
     _assert_preview_request(transport.requests[1], "text:detectProtectedMaterial")
+
+
+def test_unified_moderate_rejects_legacy_api_version() -> None:
+    with ContentSafetyClient(
+        ENDPOINT, AzureKeyCredential("fake-key"), api_version="2023-10-01"
+    ) as client:
+        with pytest.raises(ValueError, match="not available in API version 2023-10-01"):
+            client.unified_moderate(
+                {"policyId": "policy-1", "source": "input", "content": "test"}
+            )
+
+
+@pytest.mark.asyncio
+async def test_unified_moderate_async_rejects_legacy_api_version() -> None:
+    async with AsyncContentSafetyClient(
+        ENDPOINT, AzureKeyCredential("fake-key"), api_version="2023-10-01"
+    ) as client:
+        with pytest.raises(ValueError, match="not available in API version 2023-10-01"):
+            await client.unified_moderate(
+                {"policyId": "policy-1", "source": "input", "content": "test"}
+            )
+
+
+def test_regex_blocklist_item_uses_preview_api() -> None:
+    options = {"blocklistItems": [{"text": "^blocked.*", "isRegex": True}]}
+    transport = MockTransport(
+        [
+            _response(
+                200,
+                {
+                    "blocklistItems": [
+                        {
+                            "blocklistItemId": "item-1",
+                            "text": "^blocked.*",
+                            "isRegex": True,
+                        }
+                    ]
+                },
+            )
+        ]
+    )
+
+    with BlocklistClient(
+        ENDPOINT, AzureKeyCredential("fake-key"), transport=transport
+    ) as client:
+        result = client.add_or_update_blocklist_items("regex-list", options)
+
+    assert result.blocklist_items[0].is_regex is True
+    assert _request_json(transport.requests[0]) == options
+    _assert_preview_request(
+        transport.requests[0], "text/blocklists/regex-list:addOrUpdateBlocklistItems"
+    )
+
+
+@pytest.mark.asyncio
+async def test_regex_blocklist_item_async_uses_preview_api() -> None:
+    options = {"blocklistItems": [{"text": "^blocked.*", "isRegex": True}]}
+    transport = MockAsyncTransport(
+        [
+            _response(
+                200,
+                {
+                    "blocklistItems": [
+                        {
+                            "blocklistItemId": "item-1",
+                            "text": "^blocked.*",
+                            "isRegex": True,
+                        }
+                    ]
+                },
+            )
+        ]
+    )
+
+    async with AsyncBlocklistClient(
+        ENDPOINT, AzureKeyCredential("fake-key"), transport=transport
+    ) as client:
+        result = await client.add_or_update_blocklist_items("regex-list", options)
+
+    assert result.blocklist_items[0].is_regex is True
+    assert _request_json(transport.requests[0]) == options
+    _assert_preview_request(
+        transport.requests[0], "text/blocklists/regex-list:addOrUpdateBlocklistItems"
+    )
 
 
 def _provenance_responses(status: str = "Succeeded") -> list[ResponseSpec]:

@@ -24,7 +24,7 @@ def main():
 
     response = client.analyze_image(
         options={
-            "image": {"blobUrl": "str", "content": bytes("bytes", encoding="utf-8")},
+            "image": {"blobUrl": "https://example.com/image.png"},
             "categories": ["str"],
             "outputType": "str",
         },

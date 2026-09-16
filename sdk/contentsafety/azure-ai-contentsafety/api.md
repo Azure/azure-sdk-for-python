@@ -1455,7 +1455,7 @@ namespace azure.ai.contentsafety.types
 
 
     class azure.ai.contentsafety.types.TextBlocklistItem(TypedDict, total=False):
-        key "blocklistItemId": Required[str]
+        key "blocklistItemId": str
         key "description": str
         key "isRegex": bool
         key "text": Required[str]
