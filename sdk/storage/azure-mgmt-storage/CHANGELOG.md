@@ -1,6 +1,6 @@
 # Release History
 
-## 25.2.0 (2026-08-31)
+## 25.2.0 (2026-09-16)
 
 ### Features Added
 
@@ -26,10 +26,10 @@
   - Added enum `InfrastructureEncryption`
   - Added model `KeyEncryptionKeyIdentity`
   - Added enum `KeyEncryptionKeyIdentityType`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
   - Added enum `PolicyViolationAction`
   - Added model `StorageAccountEncryption`
-  - Added model `SystemAssignedServiceIdentity`
-  - Added enum `SystemAssignedServiceIdentityType`
   - Added operation group `ContextCacheContainersOperations`
   - Added operation group `ContextCachesOperations`
 

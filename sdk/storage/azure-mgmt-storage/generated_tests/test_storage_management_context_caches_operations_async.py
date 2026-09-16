@@ -57,7 +57,12 @@ class TestStorageManagementContextCachesOperationsAsync(AzureMgmtRecordedTestCas
                         "provisioningState": "str",
                     },
                     "id": "str",
-                    "identity": {"type": "str", "principalId": "str", "tenantId": "str"},
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
                     "name": "str",
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -84,7 +89,12 @@ class TestStorageManagementContextCachesOperationsAsync(AzureMgmtRecordedTestCas
                 resource_group_name=resource_group.name,
                 context_cache_name="str",
                 properties={
-                    "identity": {"type": "str", "principalId": "str", "tenantId": "str"},
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
                     "properties": {
                         "description": "str",
                         "encryption": {

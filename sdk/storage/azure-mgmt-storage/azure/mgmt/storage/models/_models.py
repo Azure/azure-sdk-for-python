@@ -2006,14 +2006,14 @@ class ContextCache(TrackedResource):  # pylint: disable=docstring-keyword-should
     :ivar properties: The resource-specific properties for this resource. Required.
     :vartype properties: ~azure.mgmt.storage.models.ContextCacheProperties
     :ivar identity: The managed service identities assigned to this resource.
-    :vartype identity: ~azure.mgmt.storage.models.SystemAssignedServiceIdentity
+    :vartype identity: ~azure.mgmt.storage.models.ManagedServiceIdentity
     """
 
     properties: "_models.ContextCacheProperties" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource. Required."""
-    identity: Optional["_models.SystemAssignedServiceIdentity"] = rest_field(
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The managed service identities assigned to this resource."""
@@ -2025,7 +2025,7 @@ class ContextCache(TrackedResource):  # pylint: disable=docstring-keyword-should
         location: str,
         properties: "_models.ContextCacheProperties",
         tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.SystemAssignedServiceIdentity"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -2298,14 +2298,14 @@ class ContextCacheUpdate(_Model):  # pylint: disable=docstring-keyword-should-ma
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar identity: The managed service identity.
-    :vartype identity: ~azure.mgmt.storage.models.SystemAssignedServiceIdentity
+    :vartype identity: ~azure.mgmt.storage.models.ManagedServiceIdentity
     :ivar properties: The updatable properties of the Context Cache.
     :vartype properties: ~azure.mgmt.storage.models.ContextCachePropertiesUpdate
     """
 
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
-    identity: Optional["_models.SystemAssignedServiceIdentity"] = rest_field(
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The managed service identity."""
@@ -2319,7 +2319,7 @@ class ContextCacheUpdate(_Model):  # pylint: disable=docstring-keyword-should-ma
         self,
         *,
         tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.SystemAssignedServiceIdentity"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         properties: Optional["_models.ContextCachePropertiesUpdate"] = None,
     ) -> None: ...
 
@@ -6288,6 +6288,57 @@ class ManagedIdentityAuthPropertiesUpdate(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = StorageConnectorAuthType.MANAGED_IDENTITY  # type: ignore
+
+
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
+     "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.storage.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The identities assigned to this resource by the user.
+    :vartype user_assigned_identities: dict[str, ~azure.mgmt.storage.models.UserAssignedIdentity]
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The service principal ID of the system assigned identity. This property will only be provided
+     for a system assigned identity."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID of the system assigned identity. This property will only be provided for a system
+     assigned identity."""
+    type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
+     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+        name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identities assigned to this resource by the user."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ManagementPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -12126,50 +12177,6 @@ class StorageTaskReportProperties(_Model):
     run_result: Optional[Union[str, "_models.RunResult"]] = rest_field(name="runResult", visibility=["read"])
     """Represents the overall result of the execution for the run instance. Known values are:
      \"Succeeded\" and \"Failed\"."""
-
-
-class SystemAssignedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Managed service identity (either system assigned, or none).
-
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
-     provided for a system assigned identity.
-    :vartype tenant_id: str
-    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
-     "None" and "SystemAssigned".
-    :vartype type: str or ~azure.mgmt.storage.models.SystemAssignedServiceIdentityType
-    """
-
-    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
-    """The service principal ID of the system assigned identity. This property will only be provided
-     for a system assigned identity."""
-    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
-    """The tenant ID of the system assigned identity. This property will only be provided for a system
-     assigned identity."""
-    type: Union[str, "_models.SystemAssignedServiceIdentityType"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The type of managed identity assigned to this resource. Required. Known values are: \"None\"
-     and \"SystemAssigned\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Union[str, "_models.SystemAssignedServiceIdentityType"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only

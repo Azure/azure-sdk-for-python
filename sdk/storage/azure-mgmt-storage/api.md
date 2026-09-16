@@ -3442,7 +3442,7 @@ namespace azure.mgmt.storage.models
 
     class azure.mgmt.storage.models.ContextCache(TrackedResource):
         id: str
-        identity: Optional[SystemAssignedServiceIdentity]
+        identity: Optional[ManagedServiceIdentity]
         location: str
         name: str
         properties: ContextCacheProperties
@@ -3454,7 +3454,7 @@ namespace azure.mgmt.storage.models
         def __init__(
                 self, 
                 *, 
-                identity: Optional[SystemAssignedServiceIdentity] = ..., 
+                identity: Optional[ManagedServiceIdentity] = ..., 
                 location: str, 
                 properties: ContextCacheProperties, 
                 tags: Optional[dict[str, str]] = ...
@@ -3585,7 +3585,7 @@ namespace azure.mgmt.storage.models
 
 
     class azure.mgmt.storage.models.ContextCacheUpdate(_Model):
-        identity: Optional[SystemAssignedServiceIdentity]
+        identity: Optional[ManagedServiceIdentity]
         properties: Optional[ContextCachePropertiesUpdate]
         tags: Optional[dict[str, str]]
 
@@ -3593,7 +3593,7 @@ namespace azure.mgmt.storage.models
         def __init__(
                 self, 
                 *, 
-                identity: Optional[SystemAssignedServiceIdentity] = ..., 
+                identity: Optional[ManagedServiceIdentity] = ..., 
                 properties: Optional[ContextCachePropertiesUpdate] = ..., 
                 tags: Optional[dict[str, str]] = ...
             ) -> None: ...
@@ -5142,6 +5142,31 @@ namespace azure.mgmt.storage.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.ManagedServiceIdentity(_Model):
+        principal_id: Optional[str]
+        tenant_id: Optional[str]
+        type: Union[str, ManagedServiceIdentityType]
+        user_assigned_identities: Optional[dict[str, UserAssignedIdentity]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: Union[str, ManagedServiceIdentityType], 
+                user_assigned_identities: Optional[dict[str, UserAssignedIdentity]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storage.models.ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        NONE = "None"
+        SYSTEM_ASSIGNED = "SystemAssigned"
+        SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+        USER_ASSIGNED = "UserAssigned"
 
 
     class azure.mgmt.storage.models.ManagementPolicy(ProxyResource):
@@ -7530,27 +7555,6 @@ namespace azure.mgmt.storage.models
         task_assignment_id: Optional[str]
         task_id: Optional[str]
         task_version: Optional[str]
-
-
-    class azure.mgmt.storage.models.SystemAssignedServiceIdentity(_Model):
-        principal_id: Optional[str]
-        tenant_id: Optional[str]
-        type: Union[str, SystemAssignedServiceIdentityType]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                type: Union[str, SystemAssignedServiceIdentityType]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.storage.models.SystemAssignedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        NONE = "None"
-        SYSTEM_ASSIGNED = "SystemAssigned"
 
 
     class azure.mgmt.storage.models.SystemData(_Model):
@@ -10870,14 +10874,14 @@ namespace azure.mgmt.storage.types
 
     class azure.mgmt.storage.types.ContextCache(TrackedResource):
         key "id": str
-        key "identity": ForwardRef('SystemAssignedServiceIdentity', module='types')
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
         key "location": Required[str]
         key "name": str
         key "properties": Required[ContextCacheProperties]
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
         id: str
-        identity: SystemAssignedServiceIdentity
+        identity: ManagedServiceIdentity
         location: str
         name: str
         properties: ContextCacheProperties
@@ -10943,9 +10947,9 @@ namespace azure.mgmt.storage.types
 
 
     class azure.mgmt.storage.types.ContextCacheUpdate(TypedDict, total=False):
-        key "identity": ForwardRef('SystemAssignedServiceIdentity', module='types')
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
         key "properties": ForwardRef('ContextCachePropertiesUpdate', module='types')
-        identity: SystemAssignedServiceIdentity
+        identity: ManagedServiceIdentity
         properties: ContextCachePropertiesUpdate
         tags: dict[str, str]
 
@@ -11487,6 +11491,16 @@ namespace azure.mgmt.storage.types
         key "type": Required[Literal[StorageConnectorAuthType.MANAGED_IDENTITY]]
         identityResourceId: str
         type: Literal[StorageConnectorAuthType.MANAGED_IDENTITY]
+
+
+    class azure.mgmt.storage.types.ManagedServiceIdentity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Required[Union[str, ManagedServiceIdentityType]]
+        principalId: str
+        tenantId: str
+        type: Union[str, ManagedServiceIdentityType]
+        userAssignedIdentities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.storage.types.ManagementPolicy(ProxyResource):
@@ -12367,15 +12381,6 @@ namespace azure.mgmt.storage.types
         taskAssignmentId: str
         taskId: str
         taskVersion: str
-
-
-    class azure.mgmt.storage.types.SystemAssignedServiceIdentity(TypedDict, total=False):
-        key "principalId": str
-        key "tenantId": str
-        key "type": Required[Union[str, SystemAssignedServiceIdentityType]]
-        principalId: str
-        tenantId: str
-        type: Union[str, SystemAssignedServiceIdentityType]
 
 
     class azure.mgmt.storage.types.SystemData(TypedDict, total=False):

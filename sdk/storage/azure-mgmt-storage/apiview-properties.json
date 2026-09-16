@@ -130,6 +130,7 @@
         "azure.mgmt.storage.models.ManagedIdentityAuthProperties": "Microsoft.Storage.ManagedIdentityAuthProperties",
         "azure.mgmt.storage.models.StorageConnectorAuthPropertiesUpdate": "Microsoft.Storage.StorageConnectorAuthPropertiesUpdate",
         "azure.mgmt.storage.models.ManagedIdentityAuthPropertiesUpdate": "Microsoft.Storage.ManagedIdentityAuthPropertiesUpdate",
+        "azure.mgmt.storage.models.ManagedServiceIdentity": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentity",
         "azure.mgmt.storage.models.ManagementPolicy": "Microsoft.Storage.ManagementPolicy",
         "azure.mgmt.storage.models.ManagementPolicyAction": "Microsoft.Storage.ManagementPolicyAction",
         "azure.mgmt.storage.models.ManagementPolicyBaseBlob": "Microsoft.Storage.ManagementPolicyBaseBlob",
@@ -231,7 +232,6 @@
         "azure.mgmt.storage.models.StorageTaskAssignmentUpdateReport": "Microsoft.Storage.StorageTaskAssignmentUpdateReport",
         "azure.mgmt.storage.models.StorageTaskReportInstance": "Microsoft.Storage.StorageTaskReportInstance",
         "azure.mgmt.storage.models.StorageTaskReportProperties": "Microsoft.Storage.StorageTaskReportProperties",
-        "azure.mgmt.storage.models.SystemAssignedServiceIdentity": "Azure.ResourceManager.CommonTypes.SystemAssignedServiceIdentity",
         "azure.mgmt.storage.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
         "azure.mgmt.storage.models.Table": "Microsoft.Storage.Table",
         "azure.mgmt.storage.models.TableAccessPolicy": "Microsoft.Storage.TableAccessPolicy",
@@ -340,7 +340,7 @@
         "azure.mgmt.storage.models.ContextCacheProvisioningState": "Microsoft.Storage.ContextCacheProvisioningState",
         "azure.mgmt.storage.models.InfrastructureEncryption": "Azure.ResourceManager.CommonTypes.InfrastructureEncryption",
         "azure.mgmt.storage.models.KeyEncryptionKeyIdentityType": "Azure.ResourceManager.CommonTypes.KeyEncryptionKeyIdentityType",
-        "azure.mgmt.storage.models.SystemAssignedServiceIdentityType": "Azure.ResourceManager.CommonTypes.SystemAssignedServiceIdentityType",
+        "azure.mgmt.storage.models.ManagedServiceIdentityType": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentityType",
         "azure.mgmt.storage.models.AiProvider": "Microsoft.Storage.AiProvider",
         "azure.mgmt.storage.models.AdvancedPlatformMetricsRuleType": "Microsoft.Storage.AdvancedPlatformMetricsRuleType",
         "azure.mgmt.storage.models.MetricsEmitted": "Microsoft.Storage.MetricsEmitted",
@@ -611,5 +611,5 @@
         "azure.mgmt.storage.operations.UsagesOperations.list_by_location": "Microsoft.Storage.UsagesOperationGroup.listByLocation",
         "azure.mgmt.storage.aio.operations.UsagesOperations.list_by_location": "Microsoft.Storage.UsagesOperationGroup.listByLocation"
     },
-    "CrossLanguageVersion": "7ab005456a1f"
+    "CrossLanguageVersion": "e3a2338270d8"
 }

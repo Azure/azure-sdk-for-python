@@ -53,6 +53,7 @@ if TYPE_CHECKING:
         LeaseShareAction,
         LeaseState,
         LeaseStatus,
+        ManagedServiceIdentityType,
         MetricsEmitted,
         MigrationState,
         MigrationStatus,
@@ -83,7 +84,6 @@ if TYPE_CHECKING:
         StorageConnectorState,
         StorageDataShareAccessPolicyPermission,
         StorageTaskAssignmentProvisioningState,
-        SystemAssignedServiceIdentityType,
         TriggerType,
         ZonePlacementPolicy,
     )
@@ -1062,12 +1062,12 @@ class ContextCache(TrackedResource):
     :ivar properties: The resource-specific properties for this resource. Required.
     :vartype properties: "ContextCacheProperties"
     :ivar identity: The managed service identities assigned to this resource.
-    :vartype identity: "SystemAssignedServiceIdentity"
+    :vartype identity: "ManagedServiceIdentity"
     """
 
     properties: Required["ContextCacheProperties"]
     """The resource-specific properties for this resource. Required."""
-    identity: "SystemAssignedServiceIdentity"
+    identity: "ManagedServiceIdentity"
     """The managed service identities assigned to this resource."""
 
 
@@ -1203,14 +1203,14 @@ class ContextCacheUpdate(TypedDict, total=False):
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar identity: The managed service identity.
-    :vartype identity: "SystemAssignedServiceIdentity"
+    :vartype identity: "ManagedServiceIdentity"
     :ivar properties: The updatable properties of the Context Cache.
     :vartype properties: "ContextCachePropertiesUpdate"
     """
 
     tags: dict[str, str]
     """Resource tags."""
-    identity: "SystemAssignedServiceIdentity"
+    identity: "ManagedServiceIdentity"
     """The managed service identity."""
     properties: "ContextCachePropertiesUpdate"
     """The updatable properties of the Context Cache."""
@@ -2599,6 +2599,35 @@ class ManagedIdentityAuthPropertiesUpdate(TypedDict, total=False):
     identityResourceId: str
     """ARM ResourceId of the managed identity that should be used to authenticate to the backing data
      source."""
+
+
+class ManagedServiceIdentity(TypedDict, total=False):
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    :ivar principalId: The service principal ID of the system assigned identity. This property will
+     only be provided for a system assigned identity.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenantId: str
+    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
+     "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
+    :vartype type: Union[str, "ManagedServiceIdentityType"]
+    :ivar userAssignedIdentities: The identities assigned to this resource by the user.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
+    """
+
+    principalId: str
+    """The service principal ID of the system assigned identity. This property will only be provided
+     for a system assigned identity."""
+    tenantId: str
+    """The tenant ID of the system assigned identity. This property will only be provided for a system
+     assigned identity."""
+    type: Required[Union[str, "ManagedServiceIdentityType"]]
+    """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
+     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
+    userAssignedIdentities: dict[str, "UserAssignedIdentity"]
+    """The identities assigned to this resource by the user."""
 
 
 class ManagementPolicy(ProxyResource):
@@ -4721,31 +4750,6 @@ class StorageTaskReportProperties(TypedDict, total=False):
     runResult: Union[str, "RunResult"]
     """Represents the overall result of the execution for the run instance. Known values are:
      \"Succeeded\" and \"Failed\"."""
-
-
-class SystemAssignedServiceIdentity(TypedDict, total=False):
-    """Managed service identity (either system assigned, or none).
-
-    :ivar principalId: The service principal ID of the system assigned identity. This property will
-     only be provided for a system assigned identity.
-    :vartype principalId: str
-    :ivar tenantId: The tenant ID of the system assigned identity. This property will only be
-     provided for a system assigned identity.
-    :vartype tenantId: str
-    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
-     "None" and "SystemAssigned".
-    :vartype type: Union[str, "SystemAssignedServiceIdentityType"]
-    """
-
-    principalId: str
-    """The service principal ID of the system assigned identity. This property will only be provided
-     for a system assigned identity."""
-    tenantId: str
-    """The tenant ID of the system assigned identity. This property will only be provided for a system
-     assigned identity."""
-    type: Required[Union[str, "SystemAssignedServiceIdentityType"]]
-    """The type of managed identity assigned to this resource. Required. Known values are: \"None\"
-     and \"SystemAssigned\"."""
 
 
 class SystemData(TypedDict, total=False):

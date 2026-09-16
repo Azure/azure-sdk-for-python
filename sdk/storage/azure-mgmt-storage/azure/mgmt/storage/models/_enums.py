@@ -576,6 +576,21 @@ class ListLocalUserIncludeParam(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """NFSV3."""
 
 
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    """No managed identity."""
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System assigned managed identity."""
+    USER_ASSIGNED = "UserAssigned"
+    """User assigned managed identity."""
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+    """System and user assigned managed identity."""
+
+
 class ManagementPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ManagementPolicyName."""
 
@@ -1122,15 +1137,6 @@ class StorageTaskAssignmentProvisioningState(str, Enum, metaclass=CaseInsensitiv
     """CANCELED."""
     FAILED = "Failed"
     """FAILED."""
-
-
-class SystemAssignedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of managed service identity (either system assigned, or none)."""
-
-    NONE = "None"
-    """No managed system identity."""
-    SYSTEM_ASSIGNED = "SystemAssigned"
-    """System assigned managed system identity."""
 
 
 class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
