@@ -2432,83 +2432,6 @@ namespace azure.ai.projects.aio.operations
                 **kwargs
             ) -> None: ...
 
-        @overload
-        async def begin_import_campaign_recipients(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                body: ImportTelephonyCampaignRecipientsRequest, 
-                *, 
-                content_type: str = "application/json", 
-                idempotency_key: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[TelephonyOperationResource]: ...
-
-        @overload
-        async def begin_import_campaign_recipients(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                idempotency_key: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[TelephonyOperationResource]: ...
-
-        @overload
-        async def begin_import_campaign_recipients(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                idempotency_key: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[TelephonyOperationResource]: ...
-
-        @overload
-        async def begin_publish_campaign(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                body: PublishTelephonyCampaignRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[TelephonyOperationResource]: ...
-
-        @overload
-        async def begin_publish_campaign(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[TelephonyOperationResource]: ...
-
-        @overload
-        async def begin_publish_campaign(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[TelephonyOperationResource]: ...
-
-        @distributed_trace_async
-        async def begin_validate_campaign(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[TelephonyOperationResource]: ...
-
         @distributed_trace_async
         async def cancel_call_job(
                 self, 
@@ -2519,14 +2442,6 @@ namespace azure.ai.projects.aio.operations
                 match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 **kwargs: Any
             ) -> TelephonyCallJob: ...
-
-        @distributed_trace_async
-        async def cancel_campaign(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                **kwargs: Any
-            ) -> TelephonyCampaign: ...
 
         @overload
         async def create_binding(
@@ -2591,36 +2506,6 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> TelephonyCallJob: ...
 
-        @overload
-        async def create_campaign(
-                self, 
-                agent_name: str, 
-                body: CreateTelephonyCampaignRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> TelephonyCampaign: ...
-
-        @overload
-        async def create_campaign(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> TelephonyCampaign: ...
-
-        @overload
-        async def create_campaign(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> TelephonyCampaign: ...
-
         @distributed_trace_async
         async def delete_binding(
                 self, 
@@ -2665,31 +2550,6 @@ namespace azure.ai.projects.aio.operations
             ) -> TelephonyCallJob: ...
 
         @distributed_trace_async
-        async def get_campaign(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                **kwargs: Any
-            ) -> TelephonyCampaign: ...
-
-        @distributed_trace_async
-        async def get_campaign_recipient_import(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                import_id: str, 
-                **kwargs: Any
-            ) -> TelephonyCampaignRecipientImport: ...
-
-        @distributed_trace_async
-        async def get_operation(
-                self, 
-                agent_name: str, 
-                operation_id: str, 
-                **kwargs: Any
-            ) -> TelephonyOperation: ...
-
-        @distributed_trace_async
         async def get_transfer_targets(
                 self, 
                 agent_name: str, 
@@ -2718,19 +2578,11 @@ namespace azure.ai.projects.aio.operations
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
                 provider: Optional[Union[str, TelephonyProvider]] = ..., 
-                started_after: Optional[datetime] = ..., 
-                started_before: Optional[datetime] = ..., 
+                started_after_time: Optional[datetime] = ..., 
+                started_before_time: Optional[datetime] = ..., 
                 status: Optional[Union[str, TelephonyCallStatus]] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[TelephonyCallSummary]: ...
-
-        @distributed_trace_async
-        async def pause_campaign(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                **kwargs: Any
-            ) -> TelephonyCampaign: ...
 
         @overload
         async def replace_transfer_targets(
@@ -2767,14 +2619,6 @@ namespace azure.ai.projects.aio.operations
                 match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
-
-        @distributed_trace_async
-        async def resume_campaign(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                **kwargs: Any
-            ) -> TelephonyCampaign: ...
 
         @overload
         async def transfer_call(
@@ -5878,30 +5722,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.CreateTelephonyCampaignRequest(_Model):
-        connection_name: str
-        display_name: str
-        purpose: Optional[str]
-        retry_policy: Optional[TelephonyOutboundRetryPolicy]
-        schedule: Optional[TelephonyCampaignSchedule]
-        source: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                connection_name: str, 
-                display_name: str, 
-                purpose: Optional[str] = ..., 
-                retry_policy: Optional[TelephonyOutboundRetryPolicy] = ..., 
-                schedule: Optional[TelephonyCampaignSchedule] = ..., 
-                source: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.CreateTranscriptionResponseJsonUsage(_Model):
         type: str
 
@@ -7908,24 +7728,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.ImportTelephonyCampaignRecipientsRequest(_Model):
-        duplicate_handling: Optional[Union[str, TelephonyCampaignDuplicateHandling]]
-        mapping: Optional[TelephonyCampaignRecipientMappingRequest]
-        source: TelephonyCampaignRecipientImportSource
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                duplicate_handling: Optional[Union[str, TelephonyCampaignDuplicateHandling]] = ..., 
-                mapping: Optional[TelephonyCampaignRecipientMappingRequest] = ..., 
-                source: TelephonyCampaignRecipientImportSource
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.Index(_Model):
         description: Optional[str]
         id: Optional[str]
@@ -9621,20 +9423,6 @@ namespace azure.ai.projects.models
         NO_APPROVAL_NEEDED = "no_approval_needed"
         PENDING = "pending"
         REJECTED = "rejected"
-
-
-    class azure.ai.projects.models.PublishTelephonyCampaignRequest(_Model):
-        validation_id: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                validation_id: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.RaiConfig(_Model):
@@ -13220,291 +13008,6 @@ namespace azure.ai.projects.models
         NOT_APPLICABLE = "not_applicable"
         NOT_RECORDED = "not_recorded"
         PENDING = "pending"
-
-
-    class azure.ai.projects.models.TelephonyCampaign(_Model):
-        active_recipient_import_id: Optional[str]
-        active_validation_id: Optional[str]
-        agent_name: str
-        call_job_counts: TelephonyCampaignCallJobCounts
-        configuration_status: Union[str, TelephonyCampaignConfigurationStatus]
-        connection_name: str
-        created_at: datetime
-        display_name: str
-        execution_status: Union[str, TelephonyCampaignExecutionStatus]
-        id: str
-        latest_successful_validation_id: Optional[str]
-        object: Literal["campaign"]
-        published_at: Optional[datetime]
-        purpose: Optional[str]
-        retry_policy: TelephonyOutboundRetryPolicy
-        schedule: Optional[TelephonyCampaignSchedule]
-        source: str
-        updated_at: datetime
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                active_recipient_import_id: Optional[str] = ..., 
-                active_validation_id: Optional[str] = ..., 
-                agent_name: str, 
-                call_job_counts: TelephonyCampaignCallJobCounts, 
-                configuration_status: Union[str, TelephonyCampaignConfigurationStatus], 
-                connection_name: str, 
-                created_at: datetime, 
-                display_name: str, 
-                execution_status: Union[str, TelephonyCampaignExecutionStatus], 
-                id: str, 
-                latest_successful_validation_id: Optional[str] = ..., 
-                published_at: Optional[datetime] = ..., 
-                purpose: Optional[str] = ..., 
-                retry_policy: TelephonyOutboundRetryPolicy, 
-                schedule: Optional[TelephonyCampaignSchedule] = ..., 
-                source: str, 
-                updated_at: datetime
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.TelephonyCampaignCallJobCounts(_Model):
-        blocked: int
-        cancelled: int
-        completed: int
-        expired: int
-        failed: int
-        in_progress: int
-        pending: int
-        total: int
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                blocked: int, 
-                cancelled: int, 
-                completed: int, 
-                expired: int, 
-                failed: int, 
-                in_progress: int, 
-                pending: int, 
-                total: int
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.TelephonyCampaignConfigurationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DRAFT = "draft"
-        IMPORTING = "importing"
-        PUBLISHED = "published"
-        PUBLISHING = "publishing"
-        PUBLISH_FAILED = "publish_failed"
-        VALIDATING = "validating"
-
-
-    class azure.ai.projects.models.TelephonyCampaignDuplicateHandling(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        KEEP_EACH = "keep_each"
-        MERGE = "merge"
-        REJECT = "reject"
-
-
-    class azure.ai.projects.models.TelephonyCampaignExecutionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CANCELLED = "cancelled"
-        COMPLETED = "completed"
-        FAILED = "failed"
-        NONE = "none"
-        PAUSED = "paused"
-        RUNNING = "running"
-        SCHEDULED = "scheduled"
-
-
-    class azure.ai.projects.models.TelephonyCampaignRecipientImport(_Model):
-        campaign_id: str
-        created_at: datetime
-        duplicate_handling: Union[str, TelephonyCampaignDuplicateHandling]
-        eligible_recipient_count: int
-        error_code: Optional[str]
-        error_message: Optional[str]
-        id: str
-        invalid_recipient_count: int
-        mapping: Optional[TelephonyCampaignRecipientMapping]
-        object: Literal["recipient_import"]
-        rows_processed: int
-        source: TelephonyCampaignRecipientImportSource
-        status: Union[str, TelephonyCampaignRecipientImportStatus]
-        updated_at: datetime
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                campaign_id: str, 
-                created_at: datetime, 
-                duplicate_handling: Union[str, TelephonyCampaignDuplicateHandling], 
-                eligible_recipient_count: int, 
-                error_code: Optional[str] = ..., 
-                error_message: Optional[str] = ..., 
-                id: str, 
-                invalid_recipient_count: int, 
-                mapping: Optional[TelephonyCampaignRecipientMapping] = ..., 
-                rows_processed: int, 
-                source: TelephonyCampaignRecipientImportSource, 
-                status: Union[str, TelephonyCampaignRecipientImportStatus], 
-                updated_at: datetime
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.TelephonyCampaignRecipientImportFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CSV = "csv"
-        JSON = "json"
-        JSONL = "jsonl"
-
-
-    class azure.ai.projects.models.TelephonyCampaignRecipientImportSource(_Model):
-        dataset_name: str
-        dataset_version: str
-        file_name: str
-        format: Union[str, TelephonyCampaignRecipientImportFormat]
-        type: Literal["dataset"]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                dataset_name: str, 
-                dataset_version: str, 
-                file_name: str, 
-                format: Union[str, TelephonyCampaignRecipientImportFormat]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.TelephonyCampaignRecipientImportStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        FAILED = "failed"
-        RUNNING = "running"
-        SUCCEEDED = "succeeded"
-
-
-    class azure.ai.projects.models.TelephonyCampaignRecipientMapping(_Model):
-        destination: str
-        expires_at: Optional[str]
-        not_before: Optional[str]
-        recipient_item_key: Optional[str]
-        recipient_key: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                destination: str, 
-                expires_at: Optional[str] = ..., 
-                not_before: Optional[str] = ..., 
-                recipient_item_key: Optional[str] = ..., 
-                recipient_key: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.TelephonyCampaignRecipientMappingRequest(_Model):
-        destination: Optional[str]
-        expires_at: Optional[str]
-        not_before: Optional[str]
-        recipient_item_key: Optional[str]
-        recipient_key: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                destination: Optional[str] = ..., 
-                expires_at: Optional[str] = ..., 
-                not_before: Optional[str] = ..., 
-                recipient_item_key: Optional[str] = ..., 
-                recipient_key: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.TelephonyCampaignSchedule(_Model):
-        start_at: Optional[datetime]
-        type: Union[str, TelephonyCampaignScheduleType]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                start_at: Optional[datetime] = ..., 
-                type: Union[str, TelephonyCampaignScheduleType]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.TelephonyCampaignScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        IMMEDIATE = "immediate"
-        SCHEDULED = "scheduled"
-
-
-    class azure.ai.projects.models.TelephonyOperation(_Model):
-        created_at: Optional[datetime]
-        error: Optional[ApiError]
-        id: str
-        object: Literal["operation"]
-        resource: Optional[TelephonyOperationResource]
-        status: Union[str, TelephonyOperationStatus]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                created_at: Optional[datetime] = ..., 
-                error: Optional[ApiError] = ..., 
-                id: str, 
-                resource: Optional[TelephonyOperationResource] = ..., 
-                status: Union[str, TelephonyOperationStatus]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.TelephonyOperationResource(_Model):
-        id: str
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                id: str, 
-                type: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.TelephonyOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CANCELLED = "cancelled"
-        FAILED = "failed"
-        NOT_STARTED = "not_started"
-        RUNNING = "running"
-        SUCCEEDED = "succeeded"
-        UNKNOWN_STATUS = "unknown"
 
 
     class azure.ai.projects.models.TelephonyOutboundDestination(_Model):
@@ -19191,83 +18694,6 @@ namespace azure.ai.projects.operations
                 **kwargs
             ) -> None: ...
 
-        @overload
-        def begin_import_campaign_recipients(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                body: ImportTelephonyCampaignRecipientsRequest, 
-                *, 
-                content_type: str = "application/json", 
-                idempotency_key: str, 
-                **kwargs: Any
-            ) -> LROPoller[TelephonyOperationResource]: ...
-
-        @overload
-        def begin_import_campaign_recipients(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                idempotency_key: str, 
-                **kwargs: Any
-            ) -> LROPoller[TelephonyOperationResource]: ...
-
-        @overload
-        def begin_import_campaign_recipients(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                idempotency_key: str, 
-                **kwargs: Any
-            ) -> LROPoller[TelephonyOperationResource]: ...
-
-        @overload
-        def begin_publish_campaign(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                body: PublishTelephonyCampaignRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[TelephonyOperationResource]: ...
-
-        @overload
-        def begin_publish_campaign(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[TelephonyOperationResource]: ...
-
-        @overload
-        def begin_publish_campaign(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[TelephonyOperationResource]: ...
-
-        @distributed_trace
-        def begin_validate_campaign(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                **kwargs: Any
-            ) -> LROPoller[TelephonyOperationResource]: ...
-
         @distributed_trace
         def cancel_call_job(
                 self, 
@@ -19278,14 +18704,6 @@ namespace azure.ai.projects.operations
                 match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 **kwargs: Any
             ) -> TelephonyCallJob: ...
-
-        @distributed_trace
-        def cancel_campaign(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                **kwargs: Any
-            ) -> TelephonyCampaign: ...
 
         @overload
         def create_binding(
@@ -19350,36 +18768,6 @@ namespace azure.ai.projects.operations
                 **kwargs: Any
             ) -> TelephonyCallJob: ...
 
-        @overload
-        def create_campaign(
-                self, 
-                agent_name: str, 
-                body: CreateTelephonyCampaignRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> TelephonyCampaign: ...
-
-        @overload
-        def create_campaign(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> TelephonyCampaign: ...
-
-        @overload
-        def create_campaign(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> TelephonyCampaign: ...
-
         @distributed_trace
         def delete_binding(
                 self, 
@@ -19424,31 +18812,6 @@ namespace azure.ai.projects.operations
             ) -> TelephonyCallJob: ...
 
         @distributed_trace
-        def get_campaign(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                **kwargs: Any
-            ) -> TelephonyCampaign: ...
-
-        @distributed_trace
-        def get_campaign_recipient_import(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                import_id: str, 
-                **kwargs: Any
-            ) -> TelephonyCampaignRecipientImport: ...
-
-        @distributed_trace
-        def get_operation(
-                self, 
-                agent_name: str, 
-                operation_id: str, 
-                **kwargs: Any
-            ) -> TelephonyOperation: ...
-
-        @distributed_trace
         def get_transfer_targets(
                 self, 
                 agent_name: str, 
@@ -19477,19 +18840,11 @@ namespace azure.ai.projects.operations
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
                 provider: Optional[Union[str, TelephonyProvider]] = ..., 
-                started_after: Optional[datetime] = ..., 
-                started_before: Optional[datetime] = ..., 
+                started_after_time: Optional[datetime] = ..., 
+                started_before_time: Optional[datetime] = ..., 
                 status: Optional[Union[str, TelephonyCallStatus]] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[TelephonyCallSummary]: ...
-
-        @distributed_trace
-        def pause_campaign(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                **kwargs: Any
-            ) -> TelephonyCampaign: ...
 
         @overload
         def replace_transfer_targets(
@@ -19526,14 +18881,6 @@ namespace azure.ai.projects.operations
                 match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
-
-        @distributed_trace
-        def resume_campaign(
-                self, 
-                agent_name: str, 
-                campaign_id: str, 
-                **kwargs: Any
-            ) -> TelephonyCampaign: ...
 
         @overload
         def transfer_call(
