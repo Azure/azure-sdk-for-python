@@ -2516,6 +2516,7 @@ namespace azure.ai.projects.aio.operations
                 call_job_id: str, 
                 *, 
                 etag: str, 
+                match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 **kwargs: Any
             ) -> TelephonyCallJob: ...
 
@@ -2627,6 +2628,7 @@ namespace azure.ai.projects.aio.operations
                 binding_id: str, 
                 *, 
                 etag: str, 
+                match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 **kwargs: Any
             ) -> None: ...
 
@@ -2737,6 +2739,7 @@ namespace azure.ai.projects.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 etag: str, 
+                match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 transfer_targets: List[TelephonyTransferTarget], 
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
@@ -2749,6 +2752,7 @@ namespace azure.ai.projects.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 etag: str, 
+                match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
 
@@ -2760,6 +2764,7 @@ namespace azure.ai.projects.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 etag: str, 
+                match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
 
@@ -2813,6 +2818,7 @@ namespace azure.ai.projects.aio.operations
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 etag: str, 
+                match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
@@ -2825,6 +2831,7 @@ namespace azure.ai.projects.aio.operations
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 etag: str, 
+                match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
@@ -2837,6 +2844,7 @@ namespace azure.ai.projects.aio.operations
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 etag: str, 
+                match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
@@ -19267,6 +19275,7 @@ namespace azure.ai.projects.operations
                 call_job_id: str, 
                 *, 
                 etag: str, 
+                match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 **kwargs: Any
             ) -> TelephonyCallJob: ...
 
@@ -19378,6 +19387,7 @@ namespace azure.ai.projects.operations
                 binding_id: str, 
                 *, 
                 etag: str, 
+                match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 **kwargs: Any
             ) -> None: ...
 
@@ -19488,6 +19498,7 @@ namespace azure.ai.projects.operations
                 *, 
                 content_type: str = "application/json", 
                 etag: str, 
+                match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 transfer_targets: List[TelephonyTransferTarget], 
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
@@ -19500,6 +19511,7 @@ namespace azure.ai.projects.operations
                 *, 
                 content_type: str = "application/json", 
                 etag: str, 
+                match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
 
@@ -19511,6 +19523,7 @@ namespace azure.ai.projects.operations
                 *, 
                 content_type: str = "application/json", 
                 etag: str, 
+                match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
 
@@ -19564,6 +19577,7 @@ namespace azure.ai.projects.operations
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 etag: str, 
+                match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
@@ -19576,6 +19590,7 @@ namespace azure.ai.projects.operations
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 etag: str, 
+                match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
@@ -19588,6 +19603,7 @@ namespace azure.ai.projects.operations
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 etag: str, 
+                match_condition: MatchConditions = MatchConditions.IfNotModified, 
                 **kwargs: Any
             ) -> TelephonyBinding: ...
 
