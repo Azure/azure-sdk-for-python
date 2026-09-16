@@ -2,7 +2,9 @@
 
 ## 1.1.0b2 (2026-09-16)
 
-tool can't generate changelog for this release, please update manually.
+### Other Changes
+
+  - Regenerated from the latest service API specification.
 
 ## 1.1.0b1 (2026-08-07)
 
