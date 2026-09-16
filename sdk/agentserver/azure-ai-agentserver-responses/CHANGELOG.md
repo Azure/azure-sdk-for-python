@@ -11,6 +11,12 @@
 
 ### Other Changes
 
+- Optimized warm-path streaming last-byte latency: for in-process (non-resilient)
+  `store=true` streaming responses, the terminal `response.completed`/`response.failed`
+  event is now emitted to the client and the wire stream closed **before** the terminal
+  provider write, moving the terminal storage round-trip off the client's last-byte
+  path. A rare terminal-write failure now surfaces on a later GET (record stamped
+  `storage_error`) rather than on the stream. The resilient path is unchanged.
 - Raised the minimum `azure-ai-agentserver-core` dependency to `>=2.2.0b1`,
   which provides the session GUID configuration and legacy task lookup used by
   resilient Responses.
