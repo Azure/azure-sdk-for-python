@@ -6,7 +6,8 @@ param(
 $utilsFile = Join-Path $PackageRoot 'azure\ai\projects\_utils\utils.py'
 $utilsContent = Get-Content $utilsFile -Raw
 if ($utilsContent -notmatch '(?m)^from azure\.core import MatchConditions\r?$') {
-    $utilsContent = $utilsContent -replace '(?m)^(from typing import[^\r\n]+\r?\n)', ('$1' + "`r`nfrom azure.core import MatchConditions`r`n")
+    $matchConditionsImport = @('', 'from azure.core import MatchConditions', '') -join [Environment]::NewLine
+    $utilsContent = $utilsContent -replace '(?m)^(from typing import[^\r\n]+\r?\n)', ('$1' + $matchConditionsImport)
 }
 
 $etagHelperNames = 'quote_etag', 'prep_if_match', 'prep_if_none_match'
