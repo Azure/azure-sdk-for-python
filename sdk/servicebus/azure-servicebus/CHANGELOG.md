@@ -1,10 +1,15 @@
 # Release History
 
-## 7.15.0b3 (Unreleased)
+## 7.15.0 (2026-10-06)
 
 ### Features Added
 
 - Added an opt-in `try_timeout` client keyword that bounds a single attempt rather than the whole operation. Applies to sending, management operations, and AMQP link acquisition, where the wait for the link to become ready was previously unbounded. Each attempt gets a fresh `try_timeout`, still capped by the caller's remaining time; exceeding it raises a retryable `OperationTimeoutError` and retries. Must be greater than 0 if specified, and defaults to `None` (off), preserving existing behavior. It also caps the link acquisition performed by `receive_messages()` and by receiver iteration, but does not bound the `receive_messages()` long poll, the iterator's own wait, or message settlement. Opening, closing and error-path cleanup of the AMQP handler are bounded on the async client, where a slow call is cancelled once the budget is spent and a cleanup failure never replaces the error that triggered it; the sync client cannot interrupt a blocking call and so detects the overrun only once it returns. Mirrors `TryTimeout` in the .NET, Java and Go SDKs.
+
+- Added `ServiceBusReceivedMessage.from_bytes()` classmethod to construct a `ServiceBusReceivedMessage` from raw AMQP payload bytes without requiring the deprecated `uamqp` library. ([#43979](https://github.com/Azure/azure-sdk-for-python/issues/43979))
+- Added `ServiceBusClient.list_queue_sessions()` and `ServiceBusClient.list_subscription_sessions()` (sync and async) to list session IDs for entities with active messages or stored session state, with optional filtering by session-state update timestamp. The methods return an `ItemPaged[str]` (`AsyncItemPaged[str]` on the async client) so callers can iterate every session transparently or page with `by_page()`. Implements the `com.microsoft:get-message-sessions` management operation. ([#46575](https://github.com/Azure/azure-sdk-for-python/pull/46575))
+- Added `sql_filter_count` and `correlation_filter_count` properties to `TopicRuntimeProperties`, exposing the total number of SQL filters and correlation filters across all of a topic's subscriptions.
+- Added API version `2024-05` and made it the default for the management client, which is required for the topic filter counts above.
 
 ### Breaking Changes
 
@@ -13,19 +18,6 @@
 ### Bugs Fixed
 
 - Management, send and receive operations now bound AMQP link acquisition by the caller's timeout, rather than timing only the operation that follows it. Previously a link that never became ready could block indefinitely even when a timeout was supplied. Management and send deduct the time spent from the operation itself, so one attempt shares a single budget.
-
-### Other Changes
-
-## 7.15.0b2 (2026-08-21)
-
-### Features Added
-
-- Added `ServiceBusReceivedMessage.from_bytes()` classmethod to construct a `ServiceBusReceivedMessage` from raw AMQP payload bytes without requiring the deprecated `uamqp` library. ([#43979](https://github.com/Azure/azure-sdk-for-python/issues/43979))
-- Added `ServiceBusClient.list_queue_sessions()` and `ServiceBusClient.list_subscription_sessions()` (sync and async) to list session IDs for entities with active messages or stored session state, with optional filtering by session-state update timestamp. The methods return an `ItemPaged[str]` (`AsyncItemPaged[str]` on the async client) so callers can iterate every session transparently or page with `by_page()`. Implements the `com.microsoft:get-message-sessions` management operation. ([#46575](https://github.com/Azure/azure-sdk-for-python/pull/46575))
-- Added `sql_filter_count` and `correlation_filter_count` properties to `TopicRuntimeProperties`, exposing the total number of SQL filters and correlation filters across all of a topic's subscriptions.
-- Added API version `2024-05` and made it the default for the management client, which is required for the topic filter counts above.
-
-### Bugs Fixed
 
 - Fixed a bug where messages returned by `receive_deferred_messages` had a `lock_token` of `None`, which prevented settling (completing, abandoning, dead-lettering, deferring) or renewing the lock on a deferred message in `PEEK_LOCK` mode. The lock token is now read from the `lock-token` field of the management-link response for deferred messages. ([#42454](https://github.com/Azure/azure-sdk-for-python/issues/42454))
 - Read `com.microsoft:max-message-batch-size` vendor property from the AMQP sender link to correctly limit batch size on Premium large-message entities, where `max-message-size` can be up to 100 MB but the batch limit is 1 MB.
