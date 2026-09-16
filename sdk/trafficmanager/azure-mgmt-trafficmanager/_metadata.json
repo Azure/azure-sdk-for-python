@@ -1,10 +1,11 @@
 {
-  "apiVersion": "2024-04-01-preview",
+  "apiVersion": "2026-09-01",
   "apiVersions": {
-    "Microsoft.Network": "2024-04-01-preview"
+    "Microsoft.Network": "2026-09-01"
   },
-  "commit": "28e08376806422730d28d8dd90479d0ad68397ac",
+  "commit": "dd536c5bba9374d7820ca5043ee2b11e15bedc58",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/trafficmanager/resource-manager/Microsoft.Network/TrafficManager",
-  "emitterVersion": "0.61.3"
+  "emitterVersion": "0.63.7",
+  "httpClientPythonVersion": "^0.37.2"
 }
