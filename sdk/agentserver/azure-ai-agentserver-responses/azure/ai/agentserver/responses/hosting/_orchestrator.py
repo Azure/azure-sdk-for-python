@@ -1561,9 +1561,15 @@ class _ResponseOrchestrator:
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
         )
+        # Run BOTH structural (_validate_handler_event, above) and stream
+        # ordering/lifecycle validation (validate_next) BEFORE mutating pipeline
+        # state. Validating after the append/seq bump would let an out-of-order
+        # or lifecycle-invalid event be appended and consume a sequence number,
+        # so failure synthesis and persistence could observe an event that was
+        # never emitted.
+        state.validator.validate_next(normalized)
         state.handler_events.append(normalized)
         state.next_seq += 1
-        state.validator.validate_next(normalized)
         if state.bg_record is not None:
             state.bg_record.apply_event(normalized, state.handler_events)
             # Defer emit for terminal events — the buffer-then-persist
