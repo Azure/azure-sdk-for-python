@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import errno
 import hashlib
 import json
 import os
@@ -11,8 +12,9 @@ import threading
 import time
 import uuid
 from collections.abc import Mapping
+from contextlib import contextmanager
 from pathlib import Path
-from typing import Any
+from typing import Any, BinaryIO, Iterator
 
 from ._errors import (
     FoundryStorageConflictError,
@@ -33,6 +35,7 @@ from ._state_serializer import (
 
 _LOCKS: dict[Path, threading.RLock] = {}
 _LOCKS_GUARD = threading.Lock()
+_WINDOWS_LOCK_RETRY_SECONDS = 0.05
 
 
 def _now() -> int:
@@ -51,6 +54,55 @@ def _new_etag() -> str:
 def _lock_for(path: Path) -> threading.RLock:
     with _LOCKS_GUARD:
         return _LOCKS.setdefault(path, threading.RLock())
+
+
+def _acquire_file_lock(lock_file: BinaryIO) -> None:
+    if os.name == "nt":  # pragma: no cover - exercised by Windows CI
+        import msvcrt  # pylint: disable=import-error,import-outside-toplevel
+
+        while True:
+            try:
+                lock_file.seek(0)
+                getattr(msvcrt, "locking")(
+                    lock_file.fileno(), getattr(msvcrt, "LK_NBLCK"), 1
+                )
+                return
+            except OSError as exc:
+                if exc.errno not in {errno.EACCES, errno.EAGAIN, errno.EDEADLK}:
+                    raise
+                time.sleep(_WINDOWS_LOCK_RETRY_SECONDS)
+    else:
+        import fcntl  # pylint: disable=import-error,import-outside-toplevel
+
+        fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+
+
+def _release_file_lock(lock_file: BinaryIO) -> None:
+    if os.name == "nt":  # pragma: no cover - exercised by Windows CI
+        import msvcrt  # pylint: disable=import-error,import-outside-toplevel
+
+        lock_file.seek(0)
+        getattr(msvcrt, "locking")(lock_file.fileno(), getattr(msvcrt, "LK_UNLCK"), 1)
+    else:
+        import fcntl  # pylint: disable=import-error,import-outside-toplevel
+
+        fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+
+
+@contextmanager
+def _interprocess_lock(path: Path) -> Iterator[None]:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    descriptor = os.open(path, os.O_RDWR | os.O_CREAT, 0o600)
+    with os.fdopen(descriptor, "r+b") as lock_file:
+        _acquire_file_lock(lock_file)
+        try:
+            if os.fstat(lock_file.fileno()).st_size == 0:
+                lock_file.seek(0)
+                lock_file.write(b"\0")
+                lock_file.flush()
+            yield
+        finally:
+            _release_file_lock(lock_file)
 
 
 class LocalStateStoreBackend:
@@ -73,9 +125,22 @@ class LocalStateStoreBackend:
         self._description = description
         self._tags = dict(tags)
         self._lock = _lock_for(path)
+        self._interprocess_lock_path = path.with_name(f".{path.name}.lock")
+
+    @contextmanager
+    def _transaction(self) -> Iterator[None]:
+        with self._lock:
+            with _interprocess_lock(self._interprocess_lock_path):
+                yield
 
     def ensure_store(self) -> StateStore:
         with self._lock:
+            document = self._read()
+            if document is not None:
+                self._sync_store_config(document["store"])
+                return StateStore(document["store"])
+
+        with self._transaction():
             document = self._read()
             if document is None:
                 now = _now()
@@ -99,6 +164,8 @@ class LocalStateStoreBackend:
             return StateStore(document["store"])
 
     def get_store(self) -> StateStore:
+        # Atomic replacement makes a pure document read coherent, while
+        # _read() maps a concurrent unlink to the public not-found error.
         with self._lock:
             document = self._require_document()
             return StateStore(document["store"])
@@ -110,7 +177,7 @@ class LocalStateStoreBackend:
         tags: Mapping[str, str] | None | object,
         unset: object,
     ) -> StateStore:
-        with self._lock:
+        with self._transaction():
             document = self._require_document()
             store = document["store"]
             if description is not unset:
@@ -122,11 +189,13 @@ class LocalStateStoreBackend:
             return StateStore(store)
 
     def delete_store(self) -> DeletedStateStore:
-        with self._lock:
+        with self._transaction():
             document = self._read()
             store_id = document["store"]["id"] if document is not None else None
-            if self._path.exists():
+            try:
                 self._path.unlink()
+            except FileNotFoundError:
+                pass
             return DeletedStateStore(
                 {
                     "id": store_id,
@@ -142,7 +211,7 @@ class LocalStateStoreBackend:
         value: JSONObject,
         tags: Mapping[str, str] | None,
     ) -> StateStoreItemRef:
-        with self._lock:
+        with self._transaction():
             document = self._require_document()
             self._remove_expired(document)
             items = document["items"]
@@ -163,7 +232,7 @@ class LocalStateStoreBackend:
         tags: Mapping[str, str] | None,
         if_match: str | None,
     ) -> StateStoreItemRef:
-        with self._lock:
+        with self._transaction():
             document = self._require_document()
             self._remove_expired(document)
             current = document["items"].get(key)
@@ -189,16 +258,12 @@ class LocalStateStoreBackend:
             return self._item_ref(item)
 
     def get_item(self, key: str) -> StateStoreItem | None:
-        with self._lock:
-            document = self._require_document()
-            changed = self._remove_expired(document)
-            item = document["items"].get(key)
-            if changed:
-                self._write(document)
-            return StateStoreItem(self._public_item(item)) if item is not None else None
+        document = self._read_without_expired_items()
+        item = document["items"].get(key)
+        return StateStoreItem(self._public_item(item)) if item is not None else None
 
     def delete_item(self, key: str, if_match: str | None) -> DeletedStateStoreItem:
-        with self._lock:
+        with self._transaction():
             document = self._require_document()
             self._remove_expired(document)
             current = document["items"].get(key)
@@ -225,40 +290,48 @@ class LocalStateStoreBackend:
         before: str | None,
         order: Order,
     ) -> StateStoreItemKeyPage:
+        document = self._read_without_expired_items()
+        items = [
+            item
+            for item in document["items"].values()
+            if not tags
+            or all(
+                (item.get("tags") or {}).get(key) == value
+                for key, value in tags.items()
+            )
+        ]
+        items.sort(
+            key=lambda item: (item["created_at"], item["id"]),
+            reverse=order == "desc",
+        )
+        if after is not None:
+            items = self._after_cursor(items, after)
+        elif before is not None:
+            items = self._before_cursor(items, before)
+        page_size = 20 if limit is None else limit
+        page_items = items[:page_size]
+        keys = [
+            StateStoreItemKey(self._public_item_ref(item, include_tags=True))
+            for item in page_items
+        ]
+        return StateStoreItemKeyPage(
+            keys=keys,
+            first_id=keys[0].id if keys else None,
+            last_id=keys[-1].id if keys else None,
+            has_more=len(items) > len(page_items),
+        )
+
+    def _read_without_expired_items(self) -> dict[str, Any]:
         with self._lock:
             document = self._require_document()
-            changed = self._remove_expired(document)
-            items = [
-                item
-                for item in document["items"].values()
-                if not tags
-                or all(
-                    (item.get("tags") or {}).get(key) == value
-                    for key, value in tags.items()
-                )
-            ]
-            items.sort(
-                key=lambda item: (item["created_at"], item["id"]),
-                reverse=order == "desc",
-            )
-            if after is not None:
-                items = self._after_cursor(items, after)
-            elif before is not None:
-                items = self._before_cursor(items, before)
-            page_size = 20 if limit is None else limit
-            page_items = items[:page_size]
-            if changed:
+            if not self._remove_expired(document):
+                return document
+
+        with self._transaction():
+            document = self._require_document()
+            if self._remove_expired(document):
                 self._write(document)
-            keys = [
-                StateStoreItemKey(self._public_item_ref(item, include_tags=True))
-                for item in page_items
-            ]
-            return StateStoreItemKeyPage(
-                keys=keys,
-                first_id=keys[0].id if keys else None,
-                last_id=keys[-1].id if keys else None,
-                has_more=len(items) > len(page_items),
-            )
+            return document
 
     def _require_document(self) -> dict[str, Any]:
         document = self._read()
@@ -277,9 +350,11 @@ class LocalStateStoreBackend:
         self._tags = dict(store.get("tags") or {})
 
     def _read(self) -> dict[str, Any] | None:
-        if not self._path.exists():
+        try:
+            contents = self._path.read_text(encoding="utf-8")
+        except FileNotFoundError:
             return None
-        return json.loads(self._path.read_text(encoding="utf-8"))
+        return json.loads(contents)
 
     def _write(self, document: dict[str, Any]) -> None:
         self._path.parent.mkdir(parents=True, exist_ok=True)
