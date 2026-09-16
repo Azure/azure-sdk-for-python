@@ -515,6 +515,7 @@ class BaseExporter:
                     self._consecutive_redirects = self._consecutive_redirects + 1
                     # pylint: disable=W0212
                     if self._consecutive_redirects < self.client._config.redirect_policy.max_redirects:  # type: ignore
+                        url = urlparse("")
                         if response_error.response and response_error.response.headers:  # type: ignore
                             redirect_has_headers = True
                             location = response_error.response.headers.get("location")  # type: ignore
@@ -523,11 +524,13 @@ class BaseExporter:
                             redirect_has_headers = False
                         if redirect_has_headers and url.scheme and url.netloc:  # pylint: disable=E0606
                             current_url = urlparse(self.client._config.host)  # pylint: disable=W0212
+                            if url.scheme.lower() != "https":
+                                result = ExportResult.FAILED_NOT_RETRYABLE
                             # Refuse cross-origin redirects so an attacker-controlled
                             # `Location` header cannot cause the auth policy to attach
                             # a freshly-signed Authorization header for a foreign host
                             # on the recursive _transmit call.
-                            if not self._is_same_registered_domain(current_url.netloc, url.netloc):
+                            elif not self._is_same_registered_domain(current_url.netloc, url.netloc):
                                 if not self._is_stats_exporter():
                                     if self._should_collect_customer_sdkstats():
                                         track_dropped_items(

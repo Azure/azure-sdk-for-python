@@ -1007,6 +1007,30 @@ class TestBaseExporter(unittest.TestCase):
             self.assertEqual(post.call_count, 1)
             self.assertEqual(self._base.client._config.host, prev_host)
 
+    def test_transmit_http_error_redirect_refuses_non_https(self):
+        response = HttpResponse(None, None)
+        response.status_code = 307
+        response.headers = {"location": "http://westeurope-5.in.applicationinsights.azure.com"}
+        self._base._consecutive_redirects = 0
+        prev_host = self._base.client._config.host
+        error = HttpResponseError(response=response)
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.update_statsbeat_endpoint"
+        ) as update_mock:
+            with mock.patch(
+                "azure.monitor.opentelemetry.exporter.export._base.track_dropped_items"
+            ) as track_dropped_mock:
+                with mock.patch("azure.monitor.opentelemetry.exporter.export._base.logger.error") as logger_error_mock:
+                    with mock.patch.object(AzureMonitorClient, "track") as post:
+                        post.side_effect = error
+                        result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        self.assertEqual(post.call_count, 1)
+        self.assertEqual(self._base.client._config.host, prev_host)
+        update_mock.assert_not_called()
+        track_dropped_mock.assert_not_called()
+        logger_error_mock.assert_not_called()
+
     def test_transmit_redirect_updates_statsbeat_endpoint(self):
         """An accepted redirect repoints internal statsbeat at the customer's effective route."""
         response = HttpResponse(None, None)

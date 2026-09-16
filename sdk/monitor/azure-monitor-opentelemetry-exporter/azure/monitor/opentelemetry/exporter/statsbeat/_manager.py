@@ -82,13 +82,10 @@ class StatsbeatConfig:
         if not hasattr(exporter, "_endpoint") or not exporter._endpoint:
             logger.warning("Exporter is missing a valid endpoint.")
             return None
-        if not hasattr(exporter, "_region") or not exporter._region:
-            logger.warning("Exporter is missing a valid region.")
-            return None
 
         return cls(
             endpoint=exporter._endpoint,
-            region=exporter._region,
+            region=getattr(exporter, "_region", None) or "",
             instrumentation_key=exporter._instrumentation_key,
             # Carry the user's setting only to report the DISK_RETRY feature bit. Statsbeat's own
             # exporter never persists to disk (see _do_initialize), regardless of the user's setting.
@@ -117,14 +114,11 @@ class StatsbeatConfig:
         if not base_config.instrumentation_key:
             logger.warning("Base configuration is missing a valid instrumentation key.")
             return None
-        if not base_config.region:
-            logger.warning("Base configuration is missing a valid region.")
-            return None
         if not base_config.endpoint:
             logger.warning("Base configuration is missing a valid endpoint.")
             return None
 
-        connection_string = _get_connection_string_for_region_from_config(base_config.region, config_dict)
+        connection_string = _get_connection_string_for_region_from_config(base_config.region or "", config_dict)
         if connection_string is None:
             # If something went wrong in fetching connection string, fall back to the original
             connection_string = base_config.connection_string
@@ -223,8 +217,6 @@ class StatsbeatManager(metaclass=Singleton):
         if not config.instrumentation_key:
             return False
         if not config.endpoint:
-            return False
-        if not config.region:
             return False
         if not config.connection_string:
             return False

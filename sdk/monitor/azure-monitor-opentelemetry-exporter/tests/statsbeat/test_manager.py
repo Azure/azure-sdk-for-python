@@ -124,15 +124,23 @@ class TestStatsbeatConfig(unittest.TestCase):
         config = StatsbeatConfig.from_exporter(exporter)
         self.assertIsNone(config)
 
-    def test_from_exporter_missing_region(self):
-        """Test creating config from exporter missing region."""
+    def test_from_exporter_global_endpoint_without_region(self):
+        """The global endpoint initializes statsbeat before a redirect resolves its region."""
         exporter = mock.Mock()
-        exporter._endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        exporter._endpoint = "https://dc.services.visualstudio.com"
         exporter._region = None
         exporter._instrumentation_key = "test-key"
+        exporter._disable_offline_storage = True
+        exporter._credential = None
+        exporter._distro_version = None
 
         config = StatsbeatConfig.from_exporter(exporter)
-        self.assertIsNone(config)
+
+        self.assertIsNotNone(config)
+        if config:
+            self.assertEqual(config.endpoint, exporter._endpoint)
+            self.assertEqual(config.region, "")
+            self.assertEqual(config.connection_string, _DEFAULT_NON_EU_STATS_CONNECTION_STRING)
 
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._get_connection_string_for_region_from_config")
     def test_from_config_valid(self, mock_get_cs_for_region):
@@ -335,12 +343,12 @@ class TestStatsbeatManager(unittest.TestCase):
         config = StatsbeatConfig(endpoint="", region="westus", instrumentation_key="test-key")
         self.assertFalse(StatsbeatManager._validate_config(config))
 
-    def test_validate_config_missing_region(self):
-        """Test _validate_config with missing region."""
+    def test_validate_config_allows_missing_region(self):
+        """Test _validate_config allows an initially unknown region."""
         config = StatsbeatConfig(
             endpoint="https://westus-1.in.applicationinsights.azure.com/", region="", instrumentation_key="test-key"
         )
-        self.assertFalse(StatsbeatManager._validate_config(config))
+        self.assertTrue(StatsbeatManager._validate_config(config))
 
     def test_validate_config_missing_connection_string(self):
         """Test _validate_config with missing connection string."""
