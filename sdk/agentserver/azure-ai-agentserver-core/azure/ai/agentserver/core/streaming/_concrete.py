@@ -15,11 +15,13 @@ this private path.
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
+import errno
 import hashlib
 import json
 import logging
 import os
 import re
+import sys
 import time
 from collections.abc import AsyncIterator, Callable
 from pathlib import Path
@@ -32,8 +34,8 @@ from ._protocol import (
 
 logger = logging.getLogger("azure.ai.agentserver.streaming")
 
-# Try POSIX fcntl; fall back to a lock-file scheme on platforms
-# without it (Windows). Per streaming.md rule 32.
+# Use OS-managed locks so abrupt process death releases ownership.
+# Windows locks a sidecar; POSIX locks the stream itself (rule 32).
 try:
     import fcntl  # type: ignore[import-not-found]
 
@@ -518,7 +520,7 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
     See ``streaming.md`` §5.3 +  + rules 26-32. Persists every
     emit to ``path`` before fan-out (persist-before-publish).
     Rehydrates from disk on construction. Single-writer-per-path
-    enforced via ``fcntl.flock``.
+    enforced via ``fcntl.flock`` on POSIX or ``msvcrt.locking`` on Windows.
     """
 
     def __init__(
@@ -550,7 +552,8 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
 
         # Acquire single-writer lock + open file for append (rule 32).
         self._path.parent.mkdir(parents=True, exist_ok=True)
-        # Open in append+read mode; fcntl.flock on POSIX, lock-file fallback elsewhere.
+        # Open in append+read mode; use a separate lock file on Windows.
+        self._lock_fd: Optional[int] = None
         self._file = open(self._path, "a+b")  # pylint: disable=consider-using-with
         if fcntl is not None:
             try:
@@ -563,18 +566,34 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
                 raise RuntimeError(
                     f"FileBackedReplayEventStream: another process holds the " f"lock on {self._path}"
                 ) from exc
-        else:
-            # Windows fallback: best-effort lock-file approach.
+        elif sys.platform == "win32":
+            import msvcrt  # pylint: disable=import-outside-toplevel,import-error
+
+            # Keep a stable sidecar across stream-file replacement and process
+            # restarts. Its existence is not ownership: the OS releases the byte
+            # lock when the descriptor closes, including on abrupt process death.
             lock_path = self._path.with_suffix(self._path.suffix + ".lock")
             try:
-                self._lock_fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_RDWR)
-                self._lock_path = lock_path
-            except FileExistsError as exc:
+                self._lock_fd = os.open(lock_path, os.O_CREAT | os.O_RDWR)
+            except OSError:
                 self._file.close()
+                raise
+            try:
+                # A new descriptor starts at offset zero. Windows permits a
+                # byte-range lock beyond EOF, so even an empty sidecar works.
+                msvcrt.locking(self._lock_fd, msvcrt.LK_NBLCK, 1)
+            except OSError as exc:
+                self._cleanup_locks()
+                if exc.errno not in (errno.EACCES, errno.EAGAIN, errno.EDEADLK):
+                    raise
                 logger.warning("FileBackedReplayEventStream: lock-file contention on %s", self._path)
                 raise RuntimeError(
                     f"FileBackedReplayEventStream: another process holds the " f"lock-file on {self._path}"
                 ) from exc
+
+        else:
+            self._file.close()
+            raise RuntimeError("FileBackedReplayEventStream: OS-managed file locking is unavailable")
 
         # Rehydrate from disk if file already had content (rule 28).
         self._rehydrate()
@@ -695,9 +714,11 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
         try:
             if fcntl is not None:
                 fcntl.flock(self._file.fileno(), fcntl.LOCK_UN)
-            else:
-                os.close(self._lock_fd)
-                self._lock_path.unlink(missing_ok=True)
+            elif self._lock_fd is not None:
+                lock_fd, self._lock_fd = self._lock_fd, None
+                # Closing releases the Windows byte lock. Do not unlink the
+                # sidecar: another writer may already have opened the same file.
+                os.close(lock_fd)
         except Exception:  # pylint: disable=broad-except
             pass
         try:
