@@ -14,19 +14,33 @@ DESCRIPTION:
     them, and only when the agent was configured with `store=True` (see
     sample_voice_agent_basic.py).
 
+    Runs with no setup beyond the endpoint: if FOUNDRY_VOICE_CONVERSATION_ID is
+    not set, this sample creates a temporary voice agent, holds one short
+    realtime text turn to produce a real conversation, reads it back, then
+    deletes the agent. Set FOUNDRY_VOICE_AGENT_NAME and
+    FOUNDRY_VOICE_CONVERSATION_ID to read back a conversation from your own
+    existing agent instead.
+
 USAGE:
     python sample_voice_agent_read_conversation.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.7.0" python-dotenv
+    pip install "azure-ai-projects[voice]>=2.7.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
-    2) FOUNDRY_VOICE_AGENT_NAME - The name of the voice agent.
-    3) FOUNDRY_VOICE_CONVERSATION_ID - The id of a persisted conversation
-       (captured from the `session.created` event during a live session,
-       see sample_voice_agent_live_audio_conversation_async.py).
+    2) FOUNDRY_VOICE_AGENT_NAME - Optional. The name of an existing voice agent
+       whose conversation to read. Defaults to a temporary agent name, created
+       (and deleted afterward) by this sample, when unset.
+    3) FOUNDRY_VOICE_CONVERSATION_ID - Optional. The id of a persisted
+       conversation owned by FOUNDRY_VOICE_AGENT_NAME. If unset, this sample
+       holds one short realtime text turn to produce one; see
+       voice_sample_util.py in this folder and
+       sample_voice_agent_live_text_conversation.py for a full interactive
+       version.
+    4) FOUNDRY_VOICE_MODEL - Optional. The realtime model deployment name,
+       used only when creating the temporary agent. Defaults to "gpt-realtime".
 """
 
 import os
@@ -34,12 +48,26 @@ from dotenv import load_dotenv
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import (
+    VoiceAgentAudioConfig,
+    VoiceAgentAudioOutputConfig,
+    VoiceAgentDefinition,
+    VoiceModelType,
+    VoiceOutputModality,
+    VoiceType,
+)
+
+from voice_sample_util import hold_sample_conversation
 
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-agent_name = os.environ["FOUNDRY_VOICE_AGENT_NAME"]
-conversation_id = os.environ["FOUNDRY_VOICE_CONVERSATION_ID"]
+agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME")
+conversation_id = os.environ.get("FOUNDRY_VOICE_CONVERSATION_ID")
+model = os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
+# Only clean up the agent afterward when this sample created it itself (no name was given).
+delete_agent_when_done = not agent_name
+agent_name = agent_name or "sample-read-conversation-agent"
 
 with (
     DefaultAzureCredential() as credential,
@@ -47,6 +75,26 @@ with (
 ):
     conversations = project_client.beta.voice_agents.conversations
     try:
+        if not conversation_id:
+            print(f"No FOUNDRY_VOICE_CONVERSATION_ID set; holding a short conversation with '{agent_name}' first...")
+            project_client.agents.create_version(
+                agent_name=agent_name,
+                definition=VoiceAgentDefinition(
+                    model_type=VoiceModelType.MANAGED,
+                    model=model,
+                    instructions="You are a friendly voice assistant. Keep replies short and natural.",
+                    audio=VoiceAgentAudioConfig(
+                        output=VoiceAgentAudioOutputConfig(
+                            voice="en-US-AvaNeural", voice_type=VoiceType.AZURE_STANDARD
+                        ),
+                    ),
+                    output_modalities=[VoiceOutputModality.AUDIO],
+                    store=True,
+                ),
+            )
+            conversation_id = hold_sample_conversation(project_client, agent_name)
+            print(f"Created conversation: {conversation_id}")
+
         # The conversation envelope: status, timestamps, aggregate usage.
         conversation = conversations.get(agent_name, conversation_id)
         print(f"Conversation {conversation.id}: status={conversation.status}, created_at={conversation.created_at}")
@@ -84,3 +132,7 @@ with (
     except HttpResponseError as e:
         # 404 typically means the conversation was not persisted (agent ran with `store=False`).
         print(f"Service responded with an error: {e.status_code} {e.reason}")
+    finally:
+        if delete_agent_when_done:
+            project_client.agents.delete(agent_name=agent_name)
+            print(f"Deleted temporary voice agent: {agent_name}")
