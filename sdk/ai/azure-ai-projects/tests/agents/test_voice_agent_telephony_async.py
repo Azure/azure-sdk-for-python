@@ -141,7 +141,7 @@ class TestVoiceAgentTelephonyAsync(TestBase):
                 agent_name=agent_name,
                 transfer_targets=[new_target],
                 etag=None,
-                match_condition=MatchConditions.Unconditionally,
+                match_condition=MatchConditions.IfPresent,
             )
         )
         assert len(replaced_targets.transfer_targets) == 1
@@ -161,13 +161,13 @@ class TestVoiceAgentTelephonyAsync(TestBase):
                 agent_name=agent_name,
                 transfer_targets=[],
                 etag=None,
-                match_condition=MatchConditions.Unconditionally,
+                match_condition=MatchConditions.IfPresent,
             )
         )
         assert len(cleared_targets.transfer_targets) == 0
 
         # A nonexistent telephony binding returns 404 on get/update/delete.
-        fake_binding_id = "nonexistent-binding-id"
+        fake_binding_id = "twilio:+10000000000"
         with pytest.raises(ResourceNotFoundError):
             await project_client.beta.voice_agents.telephony.get_binding(
                 agent_name=agent_name, binding_id=fake_binding_id
@@ -178,14 +178,14 @@ class TestVoiceAgentTelephonyAsync(TestBase):
                 binding_id=fake_binding_id,
                 body=UpdateTelephonyBindingRequest(status=TelephonyBindingStatus.SUSPENDED),
                 etag=None,
-                match_condition=MatchConditions.Unconditionally,
+                match_condition=MatchConditions.IfPresent,
             )
         with pytest.raises(ResourceNotFoundError):
             await project_client.beta.voice_agents.telephony.delete_binding(
                 agent_name=agent_name,
                 binding_id=fake_binding_id,
                 etag=None,
-                match_condition=MatchConditions.Unconditionally,
+                match_condition=MatchConditions.IfPresent,
             )
 
         # Delete the voice agent.

@@ -3,10 +3,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Mocked protocol-level tests for the `voice_agents.telephony` (batch 2) call-job/campaign
+"""Mocked protocol-level tests for the `voice_agents.telephony` (batch 2) call-job
 operation group, covering request construction (HTTP method + URL path) without depending on the
 live test service's currently-unavailable API-version support for these routes (see
-`tests/agents/test_voice_agent_telephony_campaign.py`, whose recorded tests are all skipped for
+`tests/agents/test_voice_agent_telephony_call_job.py`, whose recorded tests are all skipped for
 that reason).
 
 Uses the same request-capturing-transport technique as
@@ -66,24 +66,6 @@ _TELEPHONY_PROTOCOL_CASES: List[Tuple[str, str, str]] = [
     ("create_call_job", "POST", "/agents/fake-value/telephony/call_jobs"),
     ("get_call_job", "GET", "/agents/fake-value/telephony/call_jobs/fake-value"),
     ("cancel_call_job", "POST", "/agents/fake-value/telephony/call_jobs/fake-value:cancel"),
-    ("create_campaign", "POST", "/agents/fake-value/telephony/campaigns"),
-    ("get_campaign", "GET", "/agents/fake-value/telephony/campaigns/fake-value"),
-    (
-        "begin_import_campaign_recipients",
-        "POST",
-        "/agents/fake-value/telephony/campaigns/fake-value/recipients:import",
-    ),
-    (
-        "get_campaign_recipient_import",
-        "GET",
-        "/agents/fake-value/telephony/campaigns/fake-value/recipient_imports/fake-value",
-    ),
-    ("begin_validate_campaign", "POST", "/agents/fake-value/telephony/campaigns/fake-value:validate"),
-    ("begin_publish_campaign", "POST", "/agents/fake-value/telephony/campaigns/fake-value:publish"),
-    ("pause_campaign", "POST", "/agents/fake-value/telephony/campaigns/fake-value:pause"),
-    ("resume_campaign", "POST", "/agents/fake-value/telephony/campaigns/fake-value:resume"),
-    ("cancel_campaign", "POST", "/agents/fake-value/telephony/campaigns/fake-value:cancel"),
-    ("get_operation", "GET", "/agents/fake-value/telephony/operations/fake-value"),
 ]
 
 
