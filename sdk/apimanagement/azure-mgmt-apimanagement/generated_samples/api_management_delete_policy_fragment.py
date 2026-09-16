@@ -34,11 +34,11 @@ def main():
         resource_group_name="rg1",
         service_name="apimService1",
         id="policyFragment1",
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementDeletePolicyFragment.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementDeletePolicyFragment.json
 if __name__ == "__main__":
     main()

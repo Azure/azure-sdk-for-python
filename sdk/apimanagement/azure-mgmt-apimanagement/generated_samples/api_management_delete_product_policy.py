@@ -35,11 +35,11 @@ def main():
         service_name="apimService1",
         product_id="testproduct",
         policy_id="policy",
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementDeleteProductPolicy.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementDeleteProductPolicy.json
 if __name__ == "__main__":
     main()

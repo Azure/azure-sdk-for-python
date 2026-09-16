@@ -47,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementCreateWorkspaceGroupExternal.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementCreateWorkspaceGroupExternal.json
 if __name__ == "__main__":
     main()

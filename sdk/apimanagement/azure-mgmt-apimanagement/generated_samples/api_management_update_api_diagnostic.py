@@ -50,12 +50,12 @@ def main():
                 "sampling": {"percentage": 50, "samplingType": "fixed"},
             }
         },
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementUpdateApiDiagnostic.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementUpdateApiDiagnostic.json
 if __name__ == "__main__":
     main()

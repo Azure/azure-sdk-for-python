@@ -39,6 +39,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementDeleteWorkspaceTagApiLink.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementDeleteWorkspaceTagApiLink.json
 if __name__ == "__main__":
     main()

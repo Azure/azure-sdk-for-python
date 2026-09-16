@@ -35,12 +35,12 @@ def main():
         service_name="apimService1",
         user_id="5931a75ae4bbd512a88c680b",
         parameters={"properties": {"email": "foobar@outlook.com", "firstName": "foo", "lastName": "bar"}},
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementUpdateUser.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementUpdateUser.json
 if __name__ == "__main__":
     main()

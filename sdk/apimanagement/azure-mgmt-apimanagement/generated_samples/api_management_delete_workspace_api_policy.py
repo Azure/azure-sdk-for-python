@@ -36,11 +36,11 @@ def main():
         workspace_id="wks1",
         api_id="loggerId",
         policy_id="policy",
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementDeleteWorkspaceApiPolicy.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementDeleteWorkspaceApiPolicy.json
 if __name__ == "__main__":
     main()

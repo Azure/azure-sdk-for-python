@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementListPolicyFragmentReferences.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementListPolicyFragmentReferences.json
 if __name__ == "__main__":
     main()

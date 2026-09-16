@@ -35,11 +35,11 @@ def main():
         service_name="apimService1",
         workspace_id="wks1",
         sid="testsub",
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementDeleteWorkspaceSubscription.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementDeleteWorkspaceSubscription.json
 if __name__ == "__main__":
     main()

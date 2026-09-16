@@ -35,11 +35,11 @@ def main():
         service_name="apimService1",
         api_id="59d5b28d1f7fab116c282650",
         tag_description_id="59d5b28e1f7fab116402044e",
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementDeleteApiTagDescription.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementDeleteApiTagDescription.json
 if __name__ == "__main__":
     main()

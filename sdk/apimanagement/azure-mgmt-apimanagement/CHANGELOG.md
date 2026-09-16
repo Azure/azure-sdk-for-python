@@ -1,5 +1,45 @@
 # Release History
 
+## 6.0.0b2 (2026-09-16)
+
+### Features Added
+
+  - Model `ApiContractProperties` added property `mcp_properties`
+  - Model `ApiContractUpdateProperties` added property `mcp_properties`
+  - Model `ApiCreateOrUpdateProperties` added property `mcp_properties`
+  - Model `ApiEntityBaseContract` added property `mcp_properties`
+  - Model `ApiTagResourceContractProperties` added property `mcp_properties`
+  - Enum `ApiType` added member `MCP`
+  - Model `AuthorizationProviderOAuth2GrantTypes` added property `authorization_code_with_federated_identity_credentials`
+  - Model `AuthorizationProviderOAuth2Settings` added property `federated_identity_credentials_properties`
+  - Model `OperationStatusResult` added property `resource_id`
+  - Model `PrivateEndpointConnectionProperties` added property `group_ids`
+  - Enum `SoapApiType` added member `MCP`
+  - Added model `AuthorizationProviderFederatedIdentityCredentialsProperties`
+  - Added model `AuthorizationProviderOAuth2FederatedIdentityCredentialsGrantType`
+  - Added model `McpEndpoint`
+  - Added model `McpProperties`
+  - Added enum `McpTransportType`
+  - Model `ApiGatewayConfigConnectionOperations` added parameter `skip_token` in method `list_by_gateway`
+  - Model `ApiGatewayConfigConnectionOperations` added parameter `top` in method `list_by_gateway`
+  - Model `ApiGatewayOperations` added parameter `skip_token` in method `list`
+  - Model `ApiGatewayOperations` added parameter `top` in method `list`
+  - Model `ApiGatewayOperations` added parameter `skip_token` in method `list_by_resource_group`
+  - Model `ApiGatewayOperations` added parameter `top` in method `list_by_resource_group`
+  - Model `ApiManagementServiceOperations` added parameter `skip_token` in method `list`
+  - Model `ApiManagementServiceOperations` added parameter `top` in method `list`
+  - Model `ApiManagementServiceOperations` added parameter `skip_token` in method `list_by_resource_group`
+  - Model `ApiManagementServiceOperations` added parameter `top` in method `list_by_resource_group`
+  - Model `ApiManagementWorkspaceLinksOperations` added parameter `skip_token` in method `list_by_service`
+  - Model `ApiManagementWorkspaceLinksOperations` added parameter `top` in method `list_by_service`
+
+### Breaking Changes
+
+  - Method `ApiManagementServiceOperations.begin_delete` changed return type from `AsyncLROPoller[ApiManagementServiceResource]` to `AsyncLROPoller[None]`
+  - Method `DeletedServicesOperations.begin_purge` changed return type from `AsyncLROPoller[DeletedServiceContract]` to `AsyncLROPoller[None]`
+  - Method `ApiManagementServiceOperations.begin_delete` changed return type from `LROPoller[ApiManagementServiceResource]` to `LROPoller[None]`
+  - Method `DeletedServicesOperations.begin_purge` changed return type from `LROPoller[DeletedServiceContract]` to `LROPoller[None]`
+
 ## 6.0.0b1 (2026-03-27)
 
 ### Features Added

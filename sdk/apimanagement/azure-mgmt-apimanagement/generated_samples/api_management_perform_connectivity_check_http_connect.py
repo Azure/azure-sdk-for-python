@@ -49,6 +49,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementPerformConnectivityCheckHttpConnect.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementPerformConnectivityCheckHttpConnect.json
 if __name__ == "__main__":
     main()

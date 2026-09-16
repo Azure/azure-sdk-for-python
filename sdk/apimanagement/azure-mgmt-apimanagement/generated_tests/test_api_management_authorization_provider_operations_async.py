@@ -45,7 +45,21 @@ class TestApiManagementAuthorizationProviderOperationsAsync(AzureMgmtRecordedTes
                     "displayName": "str",
                     "identityProvider": "str",
                     "oauth2": {
-                        "grantTypes": {"authorizationCode": {"str": "str"}, "clientCredentials": {"str": "str"}},
+                        "federatedIdentityCredentialsProperties": {
+                            "audience": "str",
+                            "issuer": "str",
+                            "subject": "str",
+                        },
+                        "grantTypes": {
+                            "authorizationCode": {"str": "str"},
+                            "authorizationCodeWithFederatedIdentityCredentials": {
+                                "clientAssertionType": "str",
+                                "clientId": "str",
+                                "resourceUri": "str",
+                                "tenantId": "str",
+                            },
+                            "clientCredentials": {"str": "str"},
+                        },
                         "keyVault": {
                             "lastStatus": {"code": "str", "message": "str", "timeStampUtc": "2020-02-20 00:00:00"},
                             "secretIdentifier": "str",

@@ -50,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementCreateGatewayHostnameConfiguration.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementCreateGatewayHostnameConfiguration.json
 if __name__ == "__main__":
     main()

@@ -35,11 +35,11 @@ def main():
         service_name="apimService1",
         authorization_provider_id="aadwithauthcode",
         authorization_id="authz1",
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementDeleteAuthorization.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementDeleteAuthorization.json
 if __name__ == "__main__":
     main()

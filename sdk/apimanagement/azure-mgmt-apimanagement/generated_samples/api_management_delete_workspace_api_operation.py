@@ -36,11 +36,11 @@ def main():
         workspace_id="wks1",
         api_id="57d2ef278aa04f0888cba3f3",
         operation_id="57d2ef278aa04f0ad01d6cdc",
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementDeleteWorkspaceApiOperation.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementDeleteWorkspaceApiOperation.json
 if __name__ == "__main__":
     main()

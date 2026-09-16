@@ -34,13 +34,12 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import ApiManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import ClientMixinABC, prep_if_match, prep_if_none_match
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 List = list
@@ -55,7 +54,7 @@ def build_workspace_api_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -84,7 +83,7 @@ def build_workspace_api_get_entity_tag_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/apis/{apiId}"
     path_format_arguments = {
@@ -118,7 +117,7 @@ def build_workspace_api_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -145,7 +144,7 @@ def build_workspace_api_create_or_update_request(  # pylint: disable=name-too-lo
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -165,7 +164,7 @@ def build_workspace_api_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -192,7 +191,7 @@ def build_workspace_api_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -212,7 +211,7 @@ def build_workspace_api_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/apis/{apiId}"
     path_format_arguments = {
@@ -236,7 +235,7 @@ def build_workspace_api_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -257,7 +256,7 @@ def build_workspace_api_list_by_service_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -302,7 +301,7 @@ def build_workspace_api_release_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -338,7 +337,7 @@ def build_workspace_api_release_get_entity_tag_request(  # pylint: disable=name-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/apis/{apiId}/releases/{releaseId}"
     path_format_arguments = {
@@ -374,7 +373,7 @@ def build_workspace_api_release_create_or_update_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -402,7 +401,7 @@ def build_workspace_api_release_create_or_update_request(  # pylint: disable=nam
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -423,7 +422,7 @@ def build_workspace_api_release_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -451,7 +450,7 @@ def build_workspace_api_release_update_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -471,7 +470,7 @@ def build_workspace_api_release_delete_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/apis/{apiId}/releases/{releaseId}"
     path_format_arguments = {
@@ -494,7 +493,7 @@ def build_workspace_api_release_delete_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -514,7 +513,7 @@ def build_workspace_api_release_list_by_service_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -556,7 +555,7 @@ def build_workspace_api_operation_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -592,7 +591,7 @@ def build_workspace_api_operation_get_entity_tag_request(  # pylint: disable=nam
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/apis/{apiId}/operations/{operationId}"
     path_format_arguments = {
@@ -628,7 +627,7 @@ def build_workspace_api_operation_create_or_update_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -656,7 +655,7 @@ def build_workspace_api_operation_create_or_update_request(  # pylint: disable=n
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -677,7 +676,7 @@ def build_workspace_api_operation_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -705,7 +704,7 @@ def build_workspace_api_operation_update_request(  # pylint: disable=name-too-lo
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -725,7 +724,7 @@ def build_workspace_api_operation_delete_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/apis/{apiId}/operations/{operationId}"
     path_format_arguments = {
@@ -748,7 +747,7 @@ def build_workspace_api_operation_delete_request(  # pylint: disable=name-too-lo
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -769,7 +768,7 @@ def build_workspace_api_operation_list_by_api_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -815,7 +814,7 @@ def build_graph_ql_api_resolver_policy_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -853,7 +852,7 @@ def build_graph_ql_api_resolver_policy_get_entity_tag_request(  # pylint: disabl
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/resolvers/{resolverId}/policies/{policyId}"
     path_format_arguments = {
@@ -889,7 +888,7 @@ def build_graph_ql_api_resolver_policy_create_or_update_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -917,7 +916,7 @@ def build_graph_ql_api_resolver_policy_create_or_update_request(  # pylint: disa
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -937,7 +936,7 @@ def build_graph_ql_api_resolver_policy_delete_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/resolvers/{resolverId}/policies/{policyId}"
     path_format_arguments = {
@@ -960,7 +959,7 @@ def build_graph_ql_api_resolver_policy_delete_request(  # pylint: disable=name-t
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -971,7 +970,7 @@ def build_graph_ql_api_resolver_policy_list_by_resolver_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1008,7 +1007,7 @@ def build_api_policy_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1044,7 +1043,7 @@ def build_api_policy_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/policies/{policyId}"
     path_format_arguments = {
@@ -1078,7 +1077,7 @@ def build_api_policy_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1105,7 +1104,7 @@ def build_api_policy_create_or_update_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1124,7 +1123,7 @@ def build_api_policy_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/policies/{policyId}"
     path_format_arguments = {
@@ -1146,7 +1145,7 @@ def build_api_policy_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1157,7 +1156,7 @@ def build_api_policy_list_by_api_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1192,7 +1191,7 @@ def build_policy_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1226,7 +1225,7 @@ def build_policy_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/policies/{policyId}"
     path_format_arguments = {
@@ -1258,7 +1257,7 @@ def build_policy_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1284,7 +1283,7 @@ def build_policy_create_or_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1302,7 +1301,7 @@ def build_policy_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/policies/{policyId}"
     path_format_arguments = {
@@ -1323,7 +1322,7 @@ def build_policy_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1334,7 +1333,7 @@ def build_policy_list_by_service_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1369,7 +1368,7 @@ def build_product_policy_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1405,7 +1404,7 @@ def build_product_policy_get_entity_tag_request(  # pylint: disable=name-too-lon
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/policies/{policyId}"
     path_format_arguments = {
@@ -1439,7 +1438,7 @@ def build_product_policy_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1466,7 +1465,7 @@ def build_product_policy_create_or_update_request(  # pylint: disable=name-too-l
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1485,7 +1484,7 @@ def build_product_policy_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/policies/{policyId}"
     path_format_arguments = {
@@ -1507,7 +1506,7 @@ def build_product_policy_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1518,7 +1517,7 @@ def build_product_policy_list_by_product_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1554,7 +1553,7 @@ def build_workspace_policy_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1590,7 +1589,7 @@ def build_workspace_policy_get_entity_tag_request(  # pylint: disable=name-too-l
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/policies/{policyId}"
     path_format_arguments = {
@@ -1624,7 +1623,7 @@ def build_workspace_policy_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1651,7 +1650,7 @@ def build_workspace_policy_create_or_update_request(  # pylint: disable=name-too
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1670,7 +1669,7 @@ def build_workspace_policy_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/policies/{policyId}"
     path_format_arguments = {
@@ -1692,7 +1691,7 @@ def build_workspace_policy_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1703,7 +1702,7 @@ def build_workspace_policy_list_by_api_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1741,7 +1740,7 @@ def build_workspace_api_operation_policy_get_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1781,7 +1780,7 @@ def build_workspace_api_operation_policy_get_entity_tag_request(  # pylint: disa
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/apis/{apiId}/operations/{operationId}/policies/{policyId}"
     path_format_arguments = {
@@ -1819,7 +1818,7 @@ def build_workspace_api_operation_policy_create_or_update_request(  # pylint: di
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1848,7 +1847,7 @@ def build_workspace_api_operation_policy_create_or_update_request(  # pylint: di
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1869,7 +1868,7 @@ def build_workspace_api_operation_policy_delete_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/apis/{apiId}/operations/{operationId}/policies/{policyId}"
     path_format_arguments = {
@@ -1893,7 +1892,7 @@ def build_workspace_api_operation_policy_delete_request(  # pylint: disable=name
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1910,7 +1909,7 @@ def build_workspace_api_operation_policy_list_by_operation_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1949,7 +1948,7 @@ def build_workspace_api_policy_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1987,7 +1986,7 @@ def build_workspace_api_policy_get_entity_tag_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/apis/{apiId}/policies/{policyId}"
     path_format_arguments = {
@@ -2023,7 +2022,7 @@ def build_workspace_api_policy_create_or_update_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2051,7 +2050,7 @@ def build_workspace_api_policy_create_or_update_request(  # pylint: disable=name
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2071,7 +2070,7 @@ def build_workspace_api_policy_delete_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/apis/{apiId}/policies/{policyId}"
     path_format_arguments = {
@@ -2094,7 +2093,7 @@ def build_workspace_api_policy_delete_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2105,7 +2104,7 @@ def build_workspace_api_policy_list_by_api_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2143,7 +2142,7 @@ def build_workspace_product_policy_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2181,7 +2180,7 @@ def build_workspace_product_policy_get_entity_tag_request(  # pylint: disable=na
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/products/{productId}/policies/{policyId}"
     path_format_arguments = {
@@ -2217,7 +2216,7 @@ def build_workspace_product_policy_create_or_update_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2245,7 +2244,7 @@ def build_workspace_product_policy_create_or_update_request(  # pylint: disable=
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2265,7 +2264,7 @@ def build_workspace_product_policy_delete_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/products/{productId}/policies/{policyId}"
     path_format_arguments = {
@@ -2288,7 +2287,7 @@ def build_workspace_product_policy_delete_request(  # pylint: disable=name-too-l
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2299,7 +2298,7 @@ def build_workspace_product_policy_list_by_product_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2329,7 +2328,7 @@ def build_tag_get_by_api_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2358,7 +2357,7 @@ def build_tag_get_entity_state_by_api_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tags/{tagId}"
     path_format_arguments = {
@@ -2383,7 +2382,7 @@ def build_tag_assign_to_api_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2412,7 +2411,7 @@ def build_tag_detach_from_api_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tags/{tagId}"
     path_format_arguments = {
@@ -2445,7 +2444,7 @@ def build_tag_list_by_api_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2486,7 +2485,7 @@ def build_tag_get_by_operation_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2522,7 +2521,7 @@ def build_tag_get_entity_state_by_operation_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/operations/{operationId}/tags/{tagId}"
     path_format_arguments = {
@@ -2554,7 +2553,7 @@ def build_tag_assign_to_operation_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2590,7 +2589,7 @@ def build_tag_detach_from_operation_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/operations/{operationId}/tags/{tagId}"
     path_format_arguments = {
@@ -2625,7 +2624,7 @@ def build_tag_list_by_operation_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2661,7 +2660,7 @@ def build_tag_get_by_product_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2690,7 +2689,7 @@ def build_tag_get_entity_state_by_product_request(  # pylint: disable=name-too-l
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/tags/{tagId}"
     path_format_arguments = {
@@ -2715,7 +2714,7 @@ def build_tag_assign_to_product_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2744,7 +2743,7 @@ def build_tag_detach_from_product_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/tags/{tagId}"
     path_format_arguments = {
@@ -2777,7 +2776,7 @@ def build_tag_list_by_product_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2812,7 +2811,7 @@ def build_tag_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2840,7 +2839,7 @@ def build_tag_get_entity_state_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/tags/{tagId}"
     path_format_arguments = {
@@ -2872,7 +2871,7 @@ def build_tag_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2898,7 +2897,7 @@ def build_tag_create_or_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2917,7 +2916,7 @@ def build_tag_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2943,7 +2942,7 @@ def build_tag_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2961,7 +2960,7 @@ def build_tag_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/tags/{tagId}"
     path_format_arguments = {
@@ -2982,7 +2981,7 @@ def build_tag_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3001,7 +3000,7 @@ def build_tag_list_by_service_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3037,7 +3036,7 @@ def build_workspace_tag_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3066,7 +3065,7 @@ def build_workspace_tag_get_entity_state_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/tags/{tagId}"
     path_format_arguments = {
@@ -3100,7 +3099,7 @@ def build_workspace_tag_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3127,7 +3126,7 @@ def build_workspace_tag_create_or_update_request(  # pylint: disable=name-too-lo
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3147,7 +3146,7 @@ def build_workspace_tag_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3174,7 +3173,7 @@ def build_workspace_tag_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3193,7 +3192,7 @@ def build_workspace_tag_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/tags/{tagId}"
     path_format_arguments = {
@@ -3215,7 +3214,7 @@ def build_workspace_tag_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3235,7 +3234,7 @@ def build_workspace_tag_list_by_service_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3278,7 +3277,7 @@ def build_workspace_api_schema_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3314,7 +3313,7 @@ def build_workspace_api_schema_get_entity_tag_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/apis/{apiId}/schemas/{schemaId}"
     path_format_arguments = {
@@ -3350,7 +3349,7 @@ def build_workspace_api_schema_create_or_update_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3378,7 +3377,7 @@ def build_workspace_api_schema_create_or_update_request(  # pylint: disable=name
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3399,7 +3398,7 @@ def build_workspace_api_schema_delete_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/apis/{apiId}/schemas/{schemaId}"
     path_format_arguments = {
@@ -3424,7 +3423,7 @@ def build_workspace_api_schema_delete_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3444,7 +3443,7 @@ def build_workspace_api_schema_list_by_api_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3480,7 +3479,7 @@ def build_diagnostic_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3508,7 +3507,7 @@ def build_diagnostic_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/diagnostics/{diagnosticId}"
     path_format_arguments = {
@@ -3540,7 +3539,7 @@ def build_diagnostic_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3566,7 +3565,7 @@ def build_diagnostic_create_or_update_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3585,7 +3584,7 @@ def build_diagnostic_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3611,7 +3610,7 @@ def build_diagnostic_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3629,7 +3628,7 @@ def build_diagnostic_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/diagnostics/{diagnosticId}"
     path_format_arguments = {
@@ -3650,7 +3649,7 @@ def build_diagnostic_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3668,7 +3667,7 @@ def build_diagnostic_list_by_service_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3707,7 +3706,7 @@ def build_workspace_diagnostic_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3741,7 +3740,7 @@ def build_workspace_diagnostic_get_entity_tag_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/diagnostics/{diagnosticId}"
     path_format_arguments = {
@@ -3775,7 +3774,7 @@ def build_workspace_diagnostic_create_or_update_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3802,7 +3801,7 @@ def build_workspace_diagnostic_create_or_update_request(  # pylint: disable=name
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3822,7 +3821,7 @@ def build_workspace_diagnostic_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3849,7 +3848,7 @@ def build_workspace_diagnostic_update_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3868,7 +3867,7 @@ def build_workspace_diagnostic_delete_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/diagnostics/{diagnosticId}"
     path_format_arguments = {
@@ -3890,7 +3889,7 @@ def build_workspace_diagnostic_delete_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3909,7 +3908,7 @@ def build_workspace_diagnostic_list_by_workspace_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3950,7 +3949,7 @@ def build_workspace_api_diagnostic_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3986,7 +3985,7 @@ def build_workspace_api_diagnostic_get_entity_tag_request(  # pylint: disable=na
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/apis/{apiId}/diagnostics/{diagnosticId}"
     path_format_arguments = {
@@ -4022,7 +4021,7 @@ def build_workspace_api_diagnostic_create_or_update_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4050,7 +4049,7 @@ def build_workspace_api_diagnostic_create_or_update_request(  # pylint: disable=
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -4071,7 +4070,7 @@ def build_workspace_api_diagnostic_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4099,7 +4098,7 @@ def build_workspace_api_diagnostic_update_request(  # pylint: disable=name-too-l
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -4119,7 +4118,7 @@ def build_workspace_api_diagnostic_delete_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/apis/{apiId}/diagnostics/{diagnosticId}"
     path_format_arguments = {
@@ -4142,7 +4141,7 @@ def build_workspace_api_diagnostic_delete_request(  # pylint: disable=name-too-l
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -4162,7 +4161,7 @@ def build_workspace_api_diagnostic_list_by_workspace_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4198,7 +4197,7 @@ def build_issue_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4234,7 +4233,7 @@ def build_issue_list_by_service_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4268,7 +4267,7 @@ def build_product_wiki_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4296,7 +4295,7 @@ def build_product_wiki_get_entity_tag_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/wikis/default"
     path_format_arguments = {
@@ -4328,7 +4327,7 @@ def build_product_wiki_create_or_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4354,7 +4353,7 @@ def build_product_wiki_create_or_update_request(  # pylint: disable=name-too-lon
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -4373,7 +4372,7 @@ def build_product_wiki_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4399,7 +4398,7 @@ def build_product_wiki_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -4417,7 +4416,7 @@ def build_product_wiki_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/wikis/default"
     path_format_arguments = {
@@ -4438,7 +4437,7 @@ def build_product_wiki_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -4454,7 +4453,7 @@ def build_workspace_api_version_set_get_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4488,7 +4487,7 @@ def build_workspace_api_version_set_get_entity_tag_request(  # pylint: disable=n
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/apiVersionSets/{versionSetId}"
     path_format_arguments = {
@@ -4522,7 +4521,7 @@ def build_workspace_api_version_set_create_or_update_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4549,7 +4548,7 @@ def build_workspace_api_version_set_create_or_update_request(  # pylint: disable
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -4569,7 +4568,7 @@ def build_workspace_api_version_set_update_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4596,7 +4595,7 @@ def build_workspace_api_version_set_update_request(  # pylint: disable=name-too-
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -4615,7 +4614,7 @@ def build_workspace_api_version_set_delete_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/apiVersionSets/{versionSetId}"
     path_format_arguments = {
@@ -4637,7 +4636,7 @@ def build_workspace_api_version_set_delete_request(  # pylint: disable=name-too-
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -4656,7 +4655,7 @@ def build_workspace_api_version_set_list_by_service_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4691,7 +4690,7 @@ def build_workspace_backend_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4720,7 +4719,7 @@ def build_workspace_backend_get_entity_tag_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/backends/{backendId}"
     path_format_arguments = {
@@ -4754,7 +4753,7 @@ def build_workspace_backend_create_or_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4781,7 +4780,7 @@ def build_workspace_backend_create_or_update_request(  # pylint: disable=name-to
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -4801,7 +4800,7 @@ def build_workspace_backend_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4828,7 +4827,7 @@ def build_workspace_backend_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -4847,7 +4846,7 @@ def build_workspace_backend_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/backends/{backendId}"
     path_format_arguments = {
@@ -4869,7 +4868,7 @@ def build_workspace_backend_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -4888,7 +4887,7 @@ def build_workspace_backend_list_by_workspace_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4928,7 +4927,7 @@ def build_workspace_certificate_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4962,7 +4961,7 @@ def build_workspace_certificate_get_entity_tag_request(  # pylint: disable=name-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/certificates/{certificateId}"
     path_format_arguments = {
@@ -4996,7 +4995,7 @@ def build_workspace_certificate_create_or_update_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5023,7 +5022,7 @@ def build_workspace_certificate_create_or_update_request(  # pylint: disable=nam
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -5042,7 +5041,7 @@ def build_workspace_certificate_delete_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/certificates/{certificateId}"
     path_format_arguments = {
@@ -5064,7 +5063,7 @@ def build_workspace_certificate_delete_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -5084,7 +5083,7 @@ def build_workspace_certificate_list_by_workspace_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5128,7 +5127,7 @@ def build_workspace_certificate_refresh_secret_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5158,7 +5157,7 @@ def build_workspace_group_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5187,7 +5186,7 @@ def build_workspace_group_get_entity_tag_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/groups/{groupId}"
     path_format_arguments = {
@@ -5221,7 +5220,7 @@ def build_workspace_group_create_or_update_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5248,7 +5247,7 @@ def build_workspace_group_create_or_update_request(  # pylint: disable=name-too-
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -5268,7 +5267,7 @@ def build_workspace_group_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5295,7 +5294,7 @@ def build_workspace_group_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -5314,7 +5313,7 @@ def build_workspace_group_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/groups/{groupId}"
     path_format_arguments = {
@@ -5336,7 +5335,7 @@ def build_workspace_group_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -5355,7 +5354,7 @@ def build_workspace_group_list_by_service_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5390,7 +5389,7 @@ def build_workspace_logger_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5419,7 +5418,7 @@ def build_workspace_logger_get_entity_tag_request(  # pylint: disable=name-too-l
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/loggers/{loggerId}"
     path_format_arguments = {
@@ -5453,7 +5452,7 @@ def build_workspace_logger_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5480,7 +5479,7 @@ def build_workspace_logger_create_or_update_request(  # pylint: disable=name-too
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -5500,7 +5499,7 @@ def build_workspace_logger_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5527,7 +5526,7 @@ def build_workspace_logger_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -5546,7 +5545,7 @@ def build_workspace_logger_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/loggers/{loggerId}"
     path_format_arguments = {
@@ -5568,7 +5567,7 @@ def build_workspace_logger_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -5587,7 +5586,7 @@ def build_workspace_logger_list_by_workspace_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5627,7 +5626,7 @@ def build_workspace_named_value_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5661,7 +5660,7 @@ def build_workspace_named_value_get_entity_tag_request(  # pylint: disable=name-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/namedValues/{namedValueId}"
     path_format_arguments = {
@@ -5695,7 +5694,7 @@ def build_workspace_named_value_create_or_update_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5722,7 +5721,7 @@ def build_workspace_named_value_create_or_update_request(  # pylint: disable=nam
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -5742,7 +5741,7 @@ def build_workspace_named_value_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5769,7 +5768,7 @@ def build_workspace_named_value_update_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -5788,7 +5787,7 @@ def build_workspace_named_value_delete_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/namedValues/{namedValueId}"
     path_format_arguments = {
@@ -5810,7 +5809,7 @@ def build_workspace_named_value_delete_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -5830,7 +5829,7 @@ def build_workspace_named_value_list_by_service_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5874,7 +5873,7 @@ def build_workspace_named_value_list_value_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5909,7 +5908,7 @@ def build_workspace_named_value_refresh_secret_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5944,7 +5943,7 @@ def build_workspace_notification_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5982,7 +5981,7 @@ def build_workspace_notification_create_or_update_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6007,7 +6006,7 @@ def build_workspace_notification_create_or_update_request(  # pylint: disable=na
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -6025,7 +6024,7 @@ def build_workspace_notification_list_by_service_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6065,7 +6064,7 @@ def build_workspace_policy_fragment_get_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6096,7 +6095,7 @@ def build_workspace_policy_fragment_get_entity_tag_request(  # pylint: disable=n
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/policyFragments/{id}"
     path_format_arguments = {
@@ -6130,7 +6129,7 @@ def build_workspace_policy_fragment_create_or_update_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6157,7 +6156,7 @@ def build_workspace_policy_fragment_create_or_update_request(  # pylint: disable
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -6176,7 +6175,7 @@ def build_workspace_policy_fragment_delete_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/policyFragments/{id}"
     path_format_arguments = {
@@ -6198,7 +6197,7 @@ def build_workspace_policy_fragment_delete_request(  # pylint: disable=name-too-
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -6218,7 +6217,7 @@ def build_workspace_policy_fragment_list_by_service_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6263,7 +6262,7 @@ def build_workspace_policy_fragment_list_references_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6297,7 +6296,7 @@ def build_sign_in_settings_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6324,7 +6323,7 @@ def build_sign_in_settings_get_entity_tag_request(  # pylint: disable=name-too-l
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/portalsettings/signin"
     path_format_arguments = {
@@ -6354,7 +6353,7 @@ def build_sign_in_settings_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6379,7 +6378,7 @@ def build_sign_in_settings_create_or_update_request(  # pylint: disable=name-too
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -6397,7 +6396,7 @@ def build_sign_in_settings_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/portalsettings/signin"
     path_format_arguments = {
@@ -6419,7 +6418,7 @@ def build_sign_in_settings_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -6430,7 +6429,7 @@ def build_sign_up_settings_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6457,7 +6456,7 @@ def build_sign_up_settings_get_entity_tag_request(  # pylint: disable=name-too-l
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/portalsettings/signup"
     path_format_arguments = {
@@ -6487,7 +6486,7 @@ def build_sign_up_settings_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6512,7 +6511,7 @@ def build_sign_up_settings_create_or_update_request(  # pylint: disable=name-too
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -6530,7 +6529,7 @@ def build_sign_up_settings_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/portalsettings/signup"
     path_format_arguments = {
@@ -6552,7 +6551,7 @@ def build_sign_up_settings_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -6563,7 +6562,7 @@ def build_delegation_settings_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6590,7 +6589,7 @@ def build_delegation_settings_get_entity_tag_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/portalsettings/delegation"
     path_format_arguments = {
@@ -6620,7 +6619,7 @@ def build_delegation_settings_create_or_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6645,7 +6644,7 @@ def build_delegation_settings_create_or_update_request(  # pylint: disable=name-
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -6663,7 +6662,7 @@ def build_delegation_settings_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/portalsettings/delegation"
     path_format_arguments = {
@@ -6685,7 +6684,7 @@ def build_delegation_settings_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -6696,7 +6695,7 @@ def build_delegation_settings_list_secrets_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6724,7 +6723,7 @@ def build_workspace_product_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6753,7 +6752,7 @@ def build_workspace_product_get_entity_tag_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/products/{productId}"
     path_format_arguments = {
@@ -6787,7 +6786,7 @@ def build_workspace_product_create_or_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6814,7 +6813,7 @@ def build_workspace_product_create_or_update_request(  # pylint: disable=name-to
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -6834,7 +6833,7 @@ def build_workspace_product_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6861,7 +6860,7 @@ def build_workspace_product_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -6881,7 +6880,7 @@ def build_workspace_product_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/products/{productId}"
     path_format_arguments = {
@@ -6905,7 +6904,7 @@ def build_workspace_product_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -6926,7 +6925,7 @@ def build_workspace_product_list_by_service_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6971,7 +6970,7 @@ def build_workspace_product_api_link_get_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7009,7 +7008,7 @@ def build_workspace_product_api_link_create_or_update_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7047,7 +7046,7 @@ def build_workspace_product_api_link_delete_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/products/{productId}/apiLinks/{apiLinkId}"
     path_format_arguments = {
@@ -7082,7 +7081,7 @@ def build_workspace_product_api_link_list_by_product_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7124,7 +7123,7 @@ def build_workspace_product_group_link_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7162,7 +7161,7 @@ def build_workspace_product_group_link_create_or_update_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7200,7 +7199,7 @@ def build_workspace_product_group_link_delete_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/products/{productId}/groupLinks/{groupLinkId}"
     path_format_arguments = {
@@ -7235,7 +7234,7 @@ def build_workspace_product_group_link_list_by_product_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7271,7 +7270,7 @@ def build_workspace_global_schema_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7300,7 +7299,7 @@ def build_workspace_global_schema_get_entity_tag_request(  # pylint: disable=nam
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/schemas/{schemaId}"
     path_format_arguments = {
@@ -7334,7 +7333,7 @@ def build_workspace_global_schema_create_or_update_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7361,7 +7360,7 @@ def build_workspace_global_schema_create_or_update_request(  # pylint: disable=n
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -7380,7 +7379,7 @@ def build_workspace_global_schema_delete_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/schemas/{schemaId}"
     path_format_arguments = {
@@ -7402,7 +7401,7 @@ def build_workspace_global_schema_delete_request(  # pylint: disable=name-too-lo
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -7421,7 +7420,7 @@ def build_workspace_global_schema_list_by_service_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7456,7 +7455,7 @@ def build_user_subscription_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7494,7 +7493,7 @@ def build_user_subscription_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7529,7 +7528,7 @@ def build_workspace_subscription_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7558,7 +7557,7 @@ def build_workspace_subscription_get_entity_tag_request(  # pylint: disable=name
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/subscriptions/{sid}"
     path_format_arguments = {
@@ -7594,7 +7593,7 @@ def build_workspace_subscription_create_or_update_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7625,7 +7624,7 @@ def build_workspace_subscription_create_or_update_request(  # pylint: disable=na
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -7647,7 +7646,7 @@ def build_workspace_subscription_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7678,7 +7677,7 @@ def build_workspace_subscription_update_request(  # pylint: disable=name-too-lon
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -7697,7 +7696,7 @@ def build_workspace_subscription_delete_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/subscriptions/{sid}"
     path_format_arguments = {
@@ -7719,7 +7718,7 @@ def build_workspace_subscription_delete_request(  # pylint: disable=name-too-lon
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -7738,7 +7737,7 @@ def build_workspace_subscription_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7772,7 +7771,7 @@ def build_workspace_subscription_regenerate_primary_key_request(  # pylint: disa
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/subscriptions/{sid}/regeneratePrimaryKey"
     path_format_arguments = {
@@ -7796,7 +7795,7 @@ def build_workspace_subscription_regenerate_secondary_key_request(  # pylint: di
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/subscriptions/{sid}/regenerateSecondaryKey"
     path_format_arguments = {
@@ -7821,7 +7820,7 @@ def build_workspace_subscription_list_secrets_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7857,7 +7856,7 @@ def build_workspace_tag_api_link_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7895,7 +7894,7 @@ def build_workspace_tag_api_link_create_or_update_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7933,7 +7932,7 @@ def build_workspace_tag_api_link_delete_request(  # pylint: disable=name-too-lon
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/tags/{tagId}/apiLinks/{apiLinkId}"
     path_format_arguments = {
@@ -7968,7 +7967,7 @@ def build_workspace_tag_api_link_list_by_product_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8010,7 +8009,7 @@ def build_workspace_tag_operation_link_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8048,7 +8047,7 @@ def build_workspace_tag_operation_link_create_or_update_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8086,7 +8085,7 @@ def build_workspace_tag_operation_link_delete_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/tags/{tagId}/operationLinks/{operationLinkId}"
     path_format_arguments = {
@@ -8121,7 +8120,7 @@ def build_workspace_tag_operation_link_list_by_product_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8163,7 +8162,7 @@ def build_workspace_tag_product_link_get_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8201,7 +8200,7 @@ def build_workspace_tag_product_link_create_or_update_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8239,7 +8238,7 @@ def build_workspace_tag_product_link_delete_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/tags/{tagId}/productLinks/{productLinkId}"
     path_format_arguments = {
@@ -8274,7 +8273,7 @@ def build_workspace_tag_product_link_list_by_product_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8308,7 +8307,7 @@ def build_api_management_operations_list_request(**kwargs: Any) -> HttpRequest: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8329,7 +8328,7 @@ def build_api_gateway_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8358,7 +8357,7 @@ def build_api_gateway_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8389,7 +8388,7 @@ def build_api_gateway_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8419,7 +8418,7 @@ def build_api_gateway_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8442,12 +8441,17 @@ def build_api_gateway_delete_request(
 
 
 def build_api_gateway_list_by_resource_group_request(  # pylint: disable=name-too-long
-    resource_group_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8463,6 +8467,10 @@ def build_api_gateway_list_by_resource_group_request(  # pylint: disable=name-to
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -8470,11 +8478,13 @@ def build_api_gateway_list_by_resource_group_request(  # pylint: disable=name-to
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_api_gateway_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_api_gateway_list_request(
+    subscription_id: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8487,6 +8497,10 @@ def build_api_gateway_list_request(subscription_id: str, **kwargs: Any) -> HttpR
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -8500,7 +8514,7 @@ def build_api_management_gateway_skus_list_available_skus_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8528,7 +8542,7 @@ def build_api_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8556,7 +8570,7 @@ def build_api_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}"
     path_format_arguments = {
@@ -8588,7 +8602,7 @@ def build_api_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8614,7 +8628,7 @@ def build_api_create_or_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -8633,7 +8647,7 @@ def build_api_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8659,7 +8673,7 @@ def build_api_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -8678,7 +8692,7 @@ def build_api_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}"
     path_format_arguments = {
@@ -8701,7 +8715,7 @@ def build_api_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -8721,7 +8735,7 @@ def build_api_list_by_service_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8767,7 +8781,7 @@ def build_api_list_by_tags_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8811,7 +8825,7 @@ def build_api_revision_list_by_service_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8854,7 +8868,7 @@ def build_api_product_list_by_apis_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8898,7 +8912,7 @@ def build_operation_list_by_tags_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8946,7 +8960,7 @@ def build_workspace_api_revision_list_by_service_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -8982,7 +8996,7 @@ def build_api_management_service_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9011,7 +9025,7 @@ def build_api_management_service_create_or_update_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9042,7 +9056,7 @@ def build_api_management_service_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9072,7 +9086,7 @@ def build_api_management_service_delete_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9095,12 +9109,17 @@ def build_api_management_service_delete_request(  # pylint: disable=name-too-lon
 
 
 def build_api_management_service_list_by_resource_group_request(  # pylint: disable=name-too-long
-    resource_group_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9116,6 +9135,10 @@ def build_api_management_service_list_by_resource_group_request(  # pylint: disa
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -9124,12 +9147,12 @@ def build_api_management_service_list_by_resource_group_request(  # pylint: disa
 
 
 def build_api_management_service_list_request(  # pylint: disable=name-too-long
-    subscription_id: str, **kwargs: Any
+    subscription_id: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9142,6 +9165,10 @@ def build_api_management_service_list_request(  # pylint: disable=name-too-long
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -9156,7 +9183,7 @@ def build_api_management_service_restore_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9187,7 +9214,7 @@ def build_api_management_service_backup_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9218,7 +9245,7 @@ def build_api_management_service_migrate_to_stv2_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9248,7 +9275,7 @@ def build_api_management_service_get_sso_token_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9277,7 +9304,7 @@ def build_api_management_service_apply_network_configuration_updates_request(  #
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9307,7 +9334,7 @@ def build_api_management_service_refresh_hostnames_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9336,7 +9363,7 @@ def build_api_management_service_check_name_availability_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9364,7 +9391,7 @@ def build_api_management_service_get_domain_ownership_identifier_request(  # pyl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9390,7 +9417,7 @@ def build_all_policies_list_by_service_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9418,7 +9445,7 @@ def build_api_management_service_skus_list_available_service_skus_request(  # py
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9446,7 +9473,7 @@ def build_network_status_list_by_service_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9474,7 +9501,7 @@ def build_network_status_list_by_location_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9503,7 +9530,7 @@ def build_outbound_network_dependencies_endpoints_list_by_service_request(  # py
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9536,7 +9563,7 @@ def build_policy_description_list_by_service_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9566,7 +9593,7 @@ def build_policy_restriction_validations_by_service_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9594,7 +9621,7 @@ def build_portal_settings_list_by_service_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9630,7 +9657,7 @@ def build_product_list_by_tags_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9668,7 +9695,7 @@ def build_product_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9696,7 +9723,7 @@ def build_product_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}"
     path_format_arguments = {
@@ -9728,7 +9755,7 @@ def build_product_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9754,7 +9781,7 @@ def build_product_create_or_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -9773,7 +9800,7 @@ def build_product_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9799,7 +9826,7 @@ def build_product_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -9818,7 +9845,7 @@ def build_product_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}"
     path_format_arguments = {
@@ -9841,7 +9868,7 @@ def build_product_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -9861,7 +9888,7 @@ def build_product_list_by_service_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9899,7 +9926,7 @@ def build_quota_by_counter_keys_list_by_service_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9929,7 +9956,7 @@ def build_quota_by_counter_keys_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9965,7 +9992,7 @@ def build_quota_by_period_keys_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10001,7 +10028,7 @@ def build_quota_by_period_keys_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10033,7 +10060,7 @@ def build_region_list_by_service_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10069,7 +10096,7 @@ def build_reports_list_by_api_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10112,7 +10139,7 @@ def build_reports_list_by_user_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10155,7 +10182,7 @@ def build_reports_list_by_operation_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10198,7 +10225,7 @@ def build_reports_list_by_product_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10240,7 +10267,7 @@ def build_reports_list_by_geo_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10281,7 +10308,7 @@ def build_reports_list_by_subscription_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10325,7 +10352,7 @@ def build_reports_list_by_time_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10368,7 +10395,7 @@ def build_reports_list_by_request_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10408,7 +10435,7 @@ def build_tag_resource_list_by_service_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10442,7 +10469,7 @@ def build_api_release_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10471,7 +10498,7 @@ def build_api_release_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/releases/{releaseId}"
     path_format_arguments = {
@@ -10505,7 +10532,7 @@ def build_api_release_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10532,7 +10559,7 @@ def build_api_release_create_or_update_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -10552,7 +10579,7 @@ def build_api_release_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10579,7 +10606,7 @@ def build_api_release_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -10598,7 +10625,7 @@ def build_api_release_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/releases/{releaseId}"
     path_format_arguments = {
@@ -10620,7 +10647,7 @@ def build_api_release_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -10639,7 +10666,7 @@ def build_api_release_list_by_service_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10674,7 +10701,7 @@ def build_api_operation_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10703,7 +10730,7 @@ def build_api_operation_get_entity_tag_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/operations/{operationId}"
     path_format_arguments = {
@@ -10737,7 +10764,7 @@ def build_api_operation_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10764,7 +10791,7 @@ def build_api_operation_create_or_update_request(  # pylint: disable=name-too-lo
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -10784,7 +10811,7 @@ def build_api_operation_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10811,7 +10838,7 @@ def build_api_operation_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -10830,7 +10857,7 @@ def build_api_operation_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/operations/{operationId}"
     path_format_arguments = {
@@ -10852,7 +10879,7 @@ def build_api_operation_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -10872,7 +10899,7 @@ def build_api_operation_list_by_api_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10917,7 +10944,7 @@ def build_api_operation_policy_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -10955,7 +10982,7 @@ def build_api_operation_policy_get_entity_tag_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/operations/{operationId}/policies/{policyId}"
     path_format_arguments = {
@@ -10991,7 +11018,7 @@ def build_api_operation_policy_create_or_update_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -11019,7 +11046,7 @@ def build_api_operation_policy_create_or_update_request(  # pylint: disable=name
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -11039,7 +11066,7 @@ def build_api_operation_policy_delete_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/operations/{operationId}/policies/{policyId}"
     path_format_arguments = {
@@ -11062,7 +11089,7 @@ def build_api_operation_policy_delete_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -11073,7 +11100,7 @@ def build_api_operation_policy_list_by_operation_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -11103,7 +11130,7 @@ def build_graph_ql_api_resolver_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -11132,7 +11159,7 @@ def build_graph_ql_api_resolver_get_entity_tag_request(  # pylint: disable=name-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/resolvers/{resolverId}"
     path_format_arguments = {
@@ -11166,7 +11193,7 @@ def build_graph_ql_api_resolver_create_or_update_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -11193,7 +11220,7 @@ def build_graph_ql_api_resolver_create_or_update_request(  # pylint: disable=nam
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -11213,7 +11240,7 @@ def build_graph_ql_api_resolver_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -11240,7 +11267,7 @@ def build_graph_ql_api_resolver_update_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -11259,7 +11286,7 @@ def build_graph_ql_api_resolver_delete_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/resolvers/{resolverId}"
     path_format_arguments = {
@@ -11281,7 +11308,7 @@ def build_graph_ql_api_resolver_delete_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -11300,7 +11327,7 @@ def build_graph_ql_api_resolver_list_by_api_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -11335,7 +11362,7 @@ def build_api_schema_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -11364,7 +11391,7 @@ def build_api_schema_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/schemas/{schemaId}"
     path_format_arguments = {
@@ -11398,7 +11425,7 @@ def build_api_schema_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -11425,7 +11452,7 @@ def build_api_schema_create_or_update_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -11445,7 +11472,7 @@ def build_api_schema_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/schemas/{schemaId}"
     path_format_arguments = {
@@ -11469,7 +11496,7 @@ def build_api_schema_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -11488,7 +11515,7 @@ def build_api_schema_list_by_api_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -11523,7 +11550,7 @@ def build_api_diagnostic_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -11552,7 +11579,7 @@ def build_api_diagnostic_get_entity_tag_request(  # pylint: disable=name-too-lon
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/diagnostics/{diagnosticId}"
     path_format_arguments = {
@@ -11586,7 +11613,7 @@ def build_api_diagnostic_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -11613,7 +11640,7 @@ def build_api_diagnostic_create_or_update_request(  # pylint: disable=name-too-l
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -11633,7 +11660,7 @@ def build_api_diagnostic_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -11660,7 +11687,7 @@ def build_api_diagnostic_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -11679,7 +11706,7 @@ def build_api_diagnostic_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/diagnostics/{diagnosticId}"
     path_format_arguments = {
@@ -11701,7 +11728,7 @@ def build_api_diagnostic_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -11720,7 +11747,7 @@ def build_api_diagnostic_list_by_service_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -11762,7 +11789,7 @@ def build_api_issue_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -11795,7 +11822,7 @@ def build_api_issue_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}"
     path_format_arguments = {
@@ -11829,7 +11856,7 @@ def build_api_issue_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -11856,7 +11883,7 @@ def build_api_issue_create_or_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -11876,7 +11903,7 @@ def build_api_issue_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -11903,7 +11930,7 @@ def build_api_issue_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -11922,7 +11949,7 @@ def build_api_issue_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}"
     path_format_arguments = {
@@ -11944,7 +11971,7 @@ def build_api_issue_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -11964,7 +11991,7 @@ def build_api_issue_list_by_service_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -12009,7 +12036,7 @@ def build_api_issue_comment_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -12045,7 +12072,7 @@ def build_api_issue_comment_get_entity_tag_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}/comments/{commentId}"
     path_format_arguments = {
@@ -12081,7 +12108,7 @@ def build_api_issue_comment_create_or_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -12109,7 +12136,7 @@ def build_api_issue_comment_create_or_update_request(  # pylint: disable=name-to
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -12129,7 +12156,7 @@ def build_api_issue_comment_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}/comments/{commentId}"
     path_format_arguments = {
@@ -12152,7 +12179,7 @@ def build_api_issue_comment_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -12172,7 +12199,7 @@ def build_api_issue_comment_list_by_service_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -12214,7 +12241,7 @@ def build_api_issue_attachment_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -12250,7 +12277,7 @@ def build_api_issue_attachment_get_entity_tag_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}/attachments/{attachmentId}"
     path_format_arguments = {
@@ -12286,7 +12313,7 @@ def build_api_issue_attachment_create_or_update_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -12314,7 +12341,7 @@ def build_api_issue_attachment_create_or_update_request(  # pylint: disable=name
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -12334,7 +12361,7 @@ def build_api_issue_attachment_delete_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}/attachments/{attachmentId}"
     path_format_arguments = {
@@ -12357,7 +12384,7 @@ def build_api_issue_attachment_delete_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -12377,7 +12404,7 @@ def build_api_issue_attachment_list_by_service_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -12418,7 +12445,7 @@ def build_api_tag_description_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -12452,7 +12479,7 @@ def build_api_tag_description_get_entity_tag_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tagDescriptions/{tagDescriptionId}"
     path_format_arguments = {
@@ -12486,7 +12513,7 @@ def build_api_tag_description_create_or_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -12513,7 +12540,7 @@ def build_api_tag_description_create_or_update_request(  # pylint: disable=name-
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -12532,7 +12559,7 @@ def build_api_tag_description_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tagDescriptions/{tagDescriptionId}"
     path_format_arguments = {
@@ -12554,7 +12581,7 @@ def build_api_tag_description_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -12573,7 +12600,7 @@ def build_api_tag_description_list_by_service_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -12608,7 +12635,7 @@ def build_api_wiki_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -12636,7 +12663,7 @@ def build_api_wiki_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/wikis/default"
     path_format_arguments = {
@@ -12668,7 +12695,7 @@ def build_api_wiki_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -12694,7 +12721,7 @@ def build_api_wiki_create_or_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -12713,7 +12740,7 @@ def build_api_wiki_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -12739,7 +12766,7 @@ def build_api_wiki_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -12757,7 +12784,7 @@ def build_api_wiki_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/wikis/default"
     path_format_arguments = {
@@ -12778,7 +12805,7 @@ def build_api_wiki_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -12797,7 +12824,7 @@ def build_api_wikis_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -12840,7 +12867,7 @@ def build_product_wikis_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -12875,7 +12902,7 @@ def build_api_tool_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -12904,7 +12931,7 @@ def build_api_tool_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tools/{toolId}"
     path_format_arguments = {
@@ -12930,7 +12957,7 @@ def build_api_tool_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -12963,7 +12990,7 @@ def build_api_tool_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -12994,7 +13021,7 @@ def build_api_tool_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tools/{toolId}"
     path_format_arguments = {
@@ -13027,7 +13054,7 @@ def build_api_tool_list_by_api_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -13062,7 +13089,7 @@ def build_api_version_set_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -13090,7 +13117,7 @@ def build_api_version_set_get_entity_tag_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apiVersionSets/{versionSetId}"
     path_format_arguments = {
@@ -13122,7 +13149,7 @@ def build_api_version_set_create_or_update_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -13148,7 +13175,7 @@ def build_api_version_set_create_or_update_request(  # pylint: disable=name-too-
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -13167,7 +13194,7 @@ def build_api_version_set_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -13193,7 +13220,7 @@ def build_api_version_set_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -13211,7 +13238,7 @@ def build_api_version_set_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apiVersionSets/{versionSetId}"
     path_format_arguments = {
@@ -13232,7 +13259,7 @@ def build_api_version_set_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -13250,7 +13277,7 @@ def build_api_version_set_list_by_service_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -13284,7 +13311,7 @@ def build_authorization_provider_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -13321,7 +13348,7 @@ def build_authorization_provider_create_or_update_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -13347,7 +13374,7 @@ def build_authorization_provider_create_or_update_request(  # pylint: disable=na
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -13365,7 +13392,7 @@ def build_authorization_provider_delete_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/authorizationProviders/{authorizationProviderId}"
     path_format_arguments = {
@@ -13386,7 +13413,7 @@ def build_authorization_provider_delete_request(  # pylint: disable=name-too-lon
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -13404,7 +13431,7 @@ def build_authorization_provider_list_by_service_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -13438,7 +13465,7 @@ def build_authorization_provider_refresh_secret_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -13472,7 +13499,7 @@ def build_authorization_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -13511,7 +13538,7 @@ def build_authorization_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -13538,7 +13565,7 @@ def build_authorization_create_or_update_request(  # pylint: disable=name-too-lo
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -13557,7 +13584,7 @@ def build_authorization_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/authorizationProviders/{authorizationProviderId}/authorizations/{authorizationId}"
     path_format_arguments = {
@@ -13579,7 +13606,7 @@ def build_authorization_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -13598,7 +13625,7 @@ def build_authorization_list_by_authorization_provider_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -13639,7 +13666,7 @@ def build_authorization_confirm_consent_code_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/authorizationProviders/{authorizationProviderId}/authorizations/{authorizationId}/confirmConsentCode"
     path_format_arguments = {
@@ -13674,7 +13701,7 @@ def build_authorization_login_links_post_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -13712,7 +13739,7 @@ def build_authorization_access_policy_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -13755,7 +13782,7 @@ def build_authorization_access_policy_create_or_update_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -13785,7 +13812,7 @@ def build_authorization_access_policy_create_or_update_request(  # pylint: disab
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -13805,7 +13832,7 @@ def build_authorization_access_policy_delete_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/authorizationProviders/{authorizationProviderId}/authorizations/{authorizationId}/accessPolicies/{authorizationAccessPolicyId}"
     path_format_arguments = {
@@ -13830,7 +13857,7 @@ def build_authorization_access_policy_delete_request(  # pylint: disable=name-to
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -13850,7 +13877,7 @@ def build_authorization_access_policy_list_by_authorization_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -13886,7 +13913,7 @@ def build_authorization_server_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -13914,7 +13941,7 @@ def build_authorization_server_get_entity_tag_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/authorizationServers/{authsid}"
     path_format_arguments = {
@@ -13946,7 +13973,7 @@ def build_authorization_server_create_or_update_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -13972,7 +13999,7 @@ def build_authorization_server_create_or_update_request(  # pylint: disable=name
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -13991,7 +14018,7 @@ def build_authorization_server_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -14017,7 +14044,7 @@ def build_authorization_server_update_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -14035,7 +14062,7 @@ def build_authorization_server_delete_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/authorizationServers/{authsid}"
     path_format_arguments = {
@@ -14056,7 +14083,7 @@ def build_authorization_server_delete_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -14074,7 +14101,7 @@ def build_authorization_server_list_by_service_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -14108,7 +14135,7 @@ def build_authorization_server_list_secrets_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -14137,7 +14164,7 @@ def build_backend_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -14165,7 +14192,7 @@ def build_backend_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/backends/{backendId}"
     path_format_arguments = {
@@ -14197,7 +14224,7 @@ def build_backend_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -14223,7 +14250,7 @@ def build_backend_create_or_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -14242,7 +14269,7 @@ def build_backend_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -14268,7 +14295,7 @@ def build_backend_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -14286,7 +14313,7 @@ def build_backend_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/backends/{backendId}"
     path_format_arguments = {
@@ -14307,7 +14334,7 @@ def build_backend_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -14325,7 +14352,7 @@ def build_backend_list_by_service_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -14360,7 +14387,7 @@ def build_backend_reconnect_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/backends/{backendId}/reconnect"
     path_format_arguments = {
@@ -14388,7 +14415,7 @@ def build_cache_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -14416,7 +14443,7 @@ def build_cache_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/caches/{cacheId}"
     path_format_arguments = {
@@ -14448,7 +14475,7 @@ def build_cache_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -14474,7 +14501,7 @@ def build_cache_create_or_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -14493,7 +14520,7 @@ def build_cache_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -14519,7 +14546,7 @@ def build_cache_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -14537,7 +14564,7 @@ def build_cache_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/caches/{cacheId}"
     path_format_arguments = {
@@ -14558,7 +14585,7 @@ def build_cache_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -14575,7 +14602,7 @@ def build_cache_list_by_service_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -14607,7 +14634,7 @@ def build_certificate_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -14635,7 +14662,7 @@ def build_certificate_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/certificates/{certificateId}"
     path_format_arguments = {
@@ -14667,7 +14694,7 @@ def build_certificate_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -14693,7 +14720,7 @@ def build_certificate_create_or_update_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -14711,7 +14738,7 @@ def build_certificate_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/certificates/{certificateId}"
     path_format_arguments = {
@@ -14732,7 +14759,7 @@ def build_certificate_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -14751,7 +14778,7 @@ def build_certificate_list_by_service_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -14789,7 +14816,7 @@ def build_certificate_refresh_secret_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -14818,7 +14845,7 @@ def build_content_type_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -14855,7 +14882,7 @@ def build_content_type_create_or_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -14881,7 +14908,7 @@ def build_content_type_create_or_update_request(  # pylint: disable=name-too-lon
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -14899,7 +14926,7 @@ def build_content_type_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/contentTypes/{contentTypeId}"
     path_format_arguments = {
@@ -14920,7 +14947,7 @@ def build_content_type_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -14931,7 +14958,7 @@ def build_content_type_list_by_service_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -14964,7 +14991,7 @@ def build_content_item_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -14998,7 +15025,7 @@ def build_content_item_get_entity_tag_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/contentTypes/{contentTypeId}/contentItems/{contentItemId}"
     path_format_arguments = {
@@ -15032,7 +15059,7 @@ def build_content_item_create_or_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15059,7 +15086,7 @@ def build_content_item_create_or_update_request(  # pylint: disable=name-too-lon
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -15078,7 +15105,7 @@ def build_content_item_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/contentTypes/{contentTypeId}/contentItems/{contentItemId}"
     path_format_arguments = {
@@ -15100,7 +15127,7 @@ def build_content_item_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -15111,7 +15138,7 @@ def build_content_item_list_by_service_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15140,7 +15167,7 @@ def build_deleted_services_get_by_name_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15168,7 +15195,7 @@ def build_deleted_services_purge_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15196,7 +15223,7 @@ def build_deleted_services_list_by_subscription_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15222,7 +15249,7 @@ def build_documentation_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15250,7 +15277,7 @@ def build_documentation_get_entity_tag_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/documentations/{documentationId}"
     path_format_arguments = {
@@ -15282,7 +15309,7 @@ def build_documentation_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15308,7 +15335,7 @@ def build_documentation_create_or_update_request(  # pylint: disable=name-too-lo
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -15327,7 +15354,7 @@ def build_documentation_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15353,7 +15380,7 @@ def build_documentation_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -15371,7 +15398,7 @@ def build_documentation_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/documentations/{documentationId}"
     path_format_arguments = {
@@ -15392,7 +15419,7 @@ def build_documentation_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -15410,7 +15437,7 @@ def build_documentation_list_by_service_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15448,7 +15475,7 @@ def build_email_template_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15480,7 +15507,7 @@ def build_email_template_get_entity_tag_request(  # pylint: disable=name-too-lon
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/templates/{templateName}"
     path_format_arguments = {
@@ -15512,7 +15539,7 @@ def build_email_template_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15538,7 +15565,7 @@ def build_email_template_create_or_update_request(  # pylint: disable=name-too-l
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -15557,7 +15584,7 @@ def build_email_template_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15583,7 +15610,7 @@ def build_email_template_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -15601,7 +15628,7 @@ def build_email_template_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/templates/{templateName}"
     path_format_arguments = {
@@ -15622,7 +15649,7 @@ def build_email_template_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -15640,7 +15667,7 @@ def build_email_template_list_by_service_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15674,7 +15701,7 @@ def build_api_gateway_config_connection_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15704,7 +15731,7 @@ def build_api_gateway_config_connection_create_or_update_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15742,7 +15769,7 @@ def build_api_gateway_config_connection_delete_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/gateways/{gatewayName}/configConnections/{configConnectionName}"
     path_format_arguments = {
@@ -15763,18 +15790,24 @@ def build_api_gateway_config_connection_delete_request(  # pylint: disable=name-
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_api_gateway_config_connection_list_by_gateway_request(  # pylint: disable=name-too-long
-    resource_group_name: str, gateway_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    gateway_name: str,
+    subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15789,6 +15822,10 @@ def build_api_gateway_config_connection_list_by_gateway_request(  # pylint: disa
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -15802,7 +15839,7 @@ def build_api_gateway_hostname_binding_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15839,7 +15876,7 @@ def build_api_gateway_hostname_binding_create_or_update_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15865,7 +15902,7 @@ def build_api_gateway_hostname_binding_create_or_update_request(  # pylint: disa
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -15883,7 +15920,7 @@ def build_api_gateway_hostname_binding_delete_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/gateways/{gatewayName}/hostnameBindings/{hostnameBindingName}"
     path_format_arguments = {
@@ -15904,7 +15941,7 @@ def build_api_gateway_hostname_binding_delete_request(  # pylint: disable=name-t
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -15915,7 +15952,7 @@ def build_api_gateway_hostname_binding_list_by_gateway_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15942,7 +15979,7 @@ def build_api_gateway_hostname_binding_refresh_secret_request(  # pylint: disabl
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/gateways/{gatewayName}/hostnameBindings/{hostnameBindingName}/refreshSecret"
     path_format_arguments = {
@@ -15966,7 +16003,7 @@ def build_gateway_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -15994,7 +16031,7 @@ def build_gateway_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/gateways/{gatewayId}"
     path_format_arguments = {
@@ -16026,7 +16063,7 @@ def build_gateway_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -16052,7 +16089,7 @@ def build_gateway_create_or_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -16071,7 +16108,7 @@ def build_gateway_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -16097,7 +16134,7 @@ def build_gateway_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -16115,7 +16152,7 @@ def build_gateway_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/gateways/{gatewayId}"
     path_format_arguments = {
@@ -16136,7 +16173,7 @@ def build_gateway_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -16154,7 +16191,7 @@ def build_gateway_list_by_service_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -16188,7 +16225,7 @@ def build_gateway_list_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -16218,7 +16255,7 @@ def build_gateway_regenerate_key_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/gateways/{gatewayId}/regenerateKey"
     path_format_arguments = {
@@ -16247,7 +16284,7 @@ def build_gateway_generate_token_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -16277,7 +16314,7 @@ def build_gateway_invalidate_debug_credentials_request(  # pylint: disable=name-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/gateways/{gatewayId}/invalidateDebugCredentials"
     path_format_arguments = {
@@ -16302,7 +16339,7 @@ def build_gateway_list_debug_credentials_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -16334,7 +16371,7 @@ def build_gateway_list_trace_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -16373,7 +16410,7 @@ def build_gateway_api_list_by_service_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -16407,7 +16444,7 @@ def build_gateway_api_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/gateways/{gatewayId}/apis/{apiId}"
     path_format_arguments = {
@@ -16433,7 +16470,7 @@ def build_gateway_api_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -16464,7 +16501,7 @@ def build_gateway_api_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/gateways/{gatewayId}/apis/{apiId}"
     path_format_arguments = {
@@ -16489,7 +16526,7 @@ def build_gateway_hostname_configuration_get_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -16518,7 +16555,7 @@ def build_gateway_hostname_configuration_get_entity_tag_request(  # pylint: disa
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/gateways/{gatewayId}/hostnameConfigurations/{hcId}"
     path_format_arguments = {
@@ -16552,7 +16589,7 @@ def build_gateway_hostname_configuration_create_or_update_request(  # pylint: di
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -16579,7 +16616,7 @@ def build_gateway_hostname_configuration_create_or_update_request(  # pylint: di
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -16598,7 +16635,7 @@ def build_gateway_hostname_configuration_delete_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/gateways/{gatewayId}/hostnameConfigurations/{hcId}"
     path_format_arguments = {
@@ -16620,7 +16657,7 @@ def build_gateway_hostname_configuration_delete_request(  # pylint: disable=name
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -16639,7 +16676,7 @@ def build_gateway_hostname_configuration_list_by_service_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -16679,7 +16716,7 @@ def build_gateway_certificate_authority_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -16713,7 +16750,7 @@ def build_gateway_certificate_authority_get_entity_tag_request(  # pylint: disab
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/gateways/{gatewayId}/certificateAuthorities/{certificateId}"
     path_format_arguments = {
@@ -16747,7 +16784,7 @@ def build_gateway_certificate_authority_create_or_update_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -16774,7 +16811,7 @@ def build_gateway_certificate_authority_create_or_update_request(  # pylint: dis
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -16793,7 +16830,7 @@ def build_gateway_certificate_authority_delete_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/gateways/{gatewayId}/certificateAuthorities/{certificateId}"
     path_format_arguments = {
@@ -16815,7 +16852,7 @@ def build_gateway_certificate_authority_delete_request(  # pylint: disable=name-
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -16834,7 +16871,7 @@ def build_gateway_certificate_authority_list_by_service_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -16869,7 +16906,7 @@ def build_group_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -16897,7 +16934,7 @@ def build_group_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/groups/{groupId}"
     path_format_arguments = {
@@ -16929,7 +16966,7 @@ def build_group_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -16955,7 +16992,7 @@ def build_group_create_or_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -16974,7 +17011,7 @@ def build_group_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -17000,7 +17037,7 @@ def build_group_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -17018,7 +17055,7 @@ def build_group_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/groups/{groupId}"
     path_format_arguments = {
@@ -17039,7 +17076,7 @@ def build_group_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -17057,7 +17094,7 @@ def build_group_list_by_service_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -17099,7 +17136,7 @@ def build_group_user_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -17133,7 +17170,7 @@ def build_group_user_check_entity_exists_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/groups/{groupId}/users/{userId}"
     path_format_arguments = {
@@ -17158,7 +17195,7 @@ def build_group_user_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -17187,7 +17224,7 @@ def build_group_user_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/groups/{groupId}/users/{userId}"
     path_format_arguments = {
@@ -17221,7 +17258,7 @@ def build_workspace_group_user_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -17262,7 +17299,7 @@ def build_workspace_group_user_check_entity_exists_request(  # pylint: disable=n
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/groups/{groupId}/users/{userId}"
     path_format_arguments = {
@@ -17294,7 +17331,7 @@ def build_workspace_group_user_create_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -17330,7 +17367,7 @@ def build_workspace_group_user_delete_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/groups/{groupId}/users/{userId}"
     path_format_arguments = {
@@ -17360,7 +17397,7 @@ def build_identity_provider_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -17392,7 +17429,7 @@ def build_identity_provider_get_entity_tag_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/identityProviders/{identityProviderName}"
     path_format_arguments = {
@@ -17424,7 +17461,7 @@ def build_identity_provider_create_or_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -17450,7 +17487,7 @@ def build_identity_provider_create_or_update_request(  # pylint: disable=name-to
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -17469,7 +17506,7 @@ def build_identity_provider_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -17495,7 +17532,7 @@ def build_identity_provider_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -17513,7 +17550,7 @@ def build_identity_provider_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/identityProviders/{identityProviderName}"
     path_format_arguments = {
@@ -17534,7 +17571,7 @@ def build_identity_provider_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -17545,7 +17582,7 @@ def build_identity_provider_list_by_service_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -17577,7 +17614,7 @@ def build_identity_provider_list_secrets_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -17606,7 +17643,7 @@ def build_logger_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -17634,7 +17671,7 @@ def build_logger_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/loggers/{loggerId}"
     path_format_arguments = {
@@ -17666,7 +17703,7 @@ def build_logger_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -17692,7 +17729,7 @@ def build_logger_create_or_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -17711,7 +17748,7 @@ def build_logger_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -17737,7 +17774,7 @@ def build_logger_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -17755,7 +17792,7 @@ def build_logger_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/loggers/{loggerId}"
     path_format_arguments = {
@@ -17776,7 +17813,7 @@ def build_logger_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -17794,7 +17831,7 @@ def build_logger_list_by_service_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -17828,7 +17865,7 @@ def build_named_value_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -17856,7 +17893,7 @@ def build_named_value_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/namedValues/{namedValueId}"
     path_format_arguments = {
@@ -17888,7 +17925,7 @@ def build_named_value_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -17914,7 +17951,7 @@ def build_named_value_create_or_update_request(  # pylint: disable=name-too-long
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -17933,7 +17970,7 @@ def build_named_value_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -17959,7 +17996,7 @@ def build_named_value_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -17977,7 +18014,7 @@ def build_named_value_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/namedValues/{namedValueId}"
     path_format_arguments = {
@@ -17998,7 +18035,7 @@ def build_named_value_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -18017,7 +18054,7 @@ def build_named_value_list_by_service_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -18055,7 +18092,7 @@ def build_named_value_list_value_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -18084,7 +18121,7 @@ def build_named_value_refresh_secret_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -18117,7 +18154,7 @@ def build_notification_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -18153,7 +18190,7 @@ def build_notification_create_or_update_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -18177,7 +18214,7 @@ def build_notification_create_or_update_request(  # pylint: disable=name-too-lon
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -18194,7 +18231,7 @@ def build_notification_list_by_service_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -18230,7 +18267,7 @@ def build_notification_recipient_user_list_by_notification_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -18263,7 +18300,7 @@ def build_notification_recipient_user_check_entity_exists_request(  # pylint: di
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/notifications/{notificationName}/recipientUsers/{userId}"
     path_format_arguments = {
@@ -18293,7 +18330,7 @@ def build_notification_recipient_user_create_or_update_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -18327,7 +18364,7 @@ def build_notification_recipient_user_delete_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/notifications/{notificationName}/recipientUsers/{userId}"
     path_format_arguments = {
@@ -18356,7 +18393,7 @@ def build_notification_recipient_email_list_by_notification_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -18389,7 +18426,7 @@ def build_notification_recipient_email_check_entity_exists_request(  # pylint: d
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/notifications/{notificationName}/recipientEmails/{email}"
     path_format_arguments = {
@@ -18419,7 +18456,7 @@ def build_notification_recipient_email_create_or_update_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -18453,7 +18490,7 @@ def build_notification_recipient_email_delete_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/notifications/{notificationName}/recipientEmails/{email}"
     path_format_arguments = {
@@ -18483,7 +18520,7 @@ def build_workspace_notification_recipient_user_list_by_notification_request(  #
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -18518,7 +18555,7 @@ def build_workspace_notification_recipient_user_check_entity_exists_request(  # 
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/notifications/{notificationName}/recipientUsers/{userId}"
     path_format_arguments = {
@@ -18550,7 +18587,7 @@ def build_workspace_notification_recipient_user_create_or_update_request(  # pyl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -18586,7 +18623,7 @@ def build_workspace_notification_recipient_user_delete_request(  # pylint: disab
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/notifications/{notificationName}/recipientUsers/{userId}"
     path_format_arguments = {
@@ -18617,7 +18654,7 @@ def build_workspace_notification_recipient_email_list_by_notification_request(  
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -18652,7 +18689,7 @@ def build_workspace_notification_recipient_email_check_entity_exists_request(  #
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/notifications/{notificationName}/recipientEmails/{email}"
     path_format_arguments = {
@@ -18684,7 +18721,7 @@ def build_workspace_notification_recipient_email_create_or_update_request(  # py
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -18720,7 +18757,7 @@ def build_workspace_notification_recipient_email_delete_request(  # pylint: disa
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}/notifications/{notificationName}/recipientEmails/{email}"
     path_format_arguments = {
@@ -18746,7 +18783,7 @@ def build_open_id_connect_provider_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -18774,7 +18811,7 @@ def build_open_id_connect_provider_get_entity_tag_request(  # pylint: disable=na
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/openidConnectProviders/{opid}"
     path_format_arguments = {
@@ -18806,7 +18843,7 @@ def build_open_id_connect_provider_create_or_update_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -18832,7 +18869,7 @@ def build_open_id_connect_provider_create_or_update_request(  # pylint: disable=
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -18851,7 +18888,7 @@ def build_open_id_connect_provider_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -18877,7 +18914,7 @@ def build_open_id_connect_provider_update_request(  # pylint: disable=name-too-l
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -18895,7 +18932,7 @@ def build_open_id_connect_provider_delete_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/openidConnectProviders/{opid}"
     path_format_arguments = {
@@ -18916,7 +18953,7 @@ def build_open_id_connect_provider_delete_request(  # pylint: disable=name-too-l
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -18934,7 +18971,7 @@ def build_open_id_connect_provider_list_by_service_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -18968,7 +19005,7 @@ def build_open_id_connect_provider_list_secrets_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19003,7 +19040,7 @@ def build_policy_fragment_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19033,7 +19070,7 @@ def build_policy_fragment_get_entity_tag_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/policyFragments/{id}"
     path_format_arguments = {
@@ -19065,7 +19102,7 @@ def build_policy_fragment_create_or_update_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19091,7 +19128,7 @@ def build_policy_fragment_create_or_update_request(  # pylint: disable=name-too-
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -19109,7 +19146,7 @@ def build_policy_fragment_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/policyFragments/{id}"
     path_format_arguments = {
@@ -19130,7 +19167,7 @@ def build_policy_fragment_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -19149,7 +19186,7 @@ def build_policy_fragment_list_by_service_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19192,7 +19229,7 @@ def build_policy_fragment_list_references_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19225,7 +19262,7 @@ def build_policy_restriction_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19253,7 +19290,7 @@ def build_policy_restriction_get_entity_tag_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/policyRestrictions/{policyRestrictionId}"
     path_format_arguments = {
@@ -19285,7 +19322,7 @@ def build_policy_restriction_create_or_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19311,7 +19348,7 @@ def build_policy_restriction_create_or_update_request(  # pylint: disable=name-t
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -19330,7 +19367,7 @@ def build_policy_restriction_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19356,7 +19393,7 @@ def build_policy_restriction_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -19374,7 +19411,7 @@ def build_policy_restriction_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/policyRestrictions/{policyRestrictionId}"
     path_format_arguments = {
@@ -19395,7 +19432,7 @@ def build_policy_restriction_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -19406,7 +19443,7 @@ def build_policy_restriction_list_by_service_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19434,7 +19471,7 @@ def build_portal_config_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19462,7 +19499,7 @@ def build_portal_config_get_entity_tag_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/portalconfigs/{portalConfigId}"
     path_format_arguments = {
@@ -19494,7 +19531,7 @@ def build_portal_config_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19520,7 +19557,7 @@ def build_portal_config_create_or_update_request(  # pylint: disable=name-too-lo
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -19539,7 +19576,7 @@ def build_portal_config_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19565,7 +19602,7 @@ def build_portal_config_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -19576,7 +19613,7 @@ def build_portal_config_list_by_service_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19604,7 +19641,7 @@ def build_client_application_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19632,7 +19669,7 @@ def build_client_application_get_entity_tag_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/clientApplications/{clientApplicationId}"
     path_format_arguments = {
@@ -19657,7 +19694,7 @@ def build_client_application_create_or_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19687,7 +19724,7 @@ def build_client_application_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/clientApplications/{clientApplicationId}"
     path_format_arguments = {
@@ -19718,7 +19755,7 @@ def build_client_application_list_by_service_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19752,7 +19789,7 @@ def build_client_application_list_secrets_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19786,7 +19823,7 @@ def build_client_application_product_link_get_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19824,7 +19861,7 @@ def build_client_application_product_link_create_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19862,7 +19899,7 @@ def build_client_application_product_link_delete_request(  # pylint: disable=nam
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/clientApplications/{clientApplicationId}/productLinks/{clientApplicationProductLinkId}"
     path_format_arguments = {
@@ -19896,7 +19933,7 @@ def build_client_application_product_link_list_by_client_applications_request(  
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19929,7 +19966,7 @@ def build_portal_revision_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -19957,7 +19994,7 @@ def build_portal_revision_get_entity_tag_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/portalRevisions/{portalRevisionId}"
     path_format_arguments = {
@@ -19982,7 +20019,7 @@ def build_portal_revision_create_or_update_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20021,7 +20058,7 @@ def build_portal_revision_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20047,7 +20084,7 @@ def build_portal_revision_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -20065,7 +20102,7 @@ def build_portal_revision_list_by_service_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20103,7 +20140,7 @@ def build_private_endpoint_connection_get_by_name_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20139,7 +20176,7 @@ def build_private_endpoint_connection_create_or_update_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20175,7 +20212,7 @@ def build_private_endpoint_connection_delete_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
@@ -20201,7 +20238,7 @@ def build_private_endpoint_connection_list_by_service_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20233,7 +20270,7 @@ def build_private_endpoint_connection_get_private_link_resource_request(  # pyli
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20264,7 +20301,7 @@ def build_private_endpoint_connection_list_private_link_resources_request(  # py
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20300,7 +20337,7 @@ def build_product_api_list_by_product_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20334,7 +20371,7 @@ def build_product_api_check_entity_exists_request(  # pylint: disable=name-too-l
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/apis/{apiId}"
     path_format_arguments = {
@@ -20359,7 +20396,7 @@ def build_product_api_create_or_update_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20388,7 +20425,7 @@ def build_product_api_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/apis/{apiId}"
     path_format_arguments = {
@@ -20421,7 +20458,7 @@ def build_product_group_list_by_product_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20455,7 +20492,7 @@ def build_product_group_check_entity_exists_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/groups/{groupId}"
     path_format_arguments = {
@@ -20480,7 +20517,7 @@ def build_product_group_create_or_update_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20509,7 +20546,7 @@ def build_product_group_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/groups/{groupId}"
     path_format_arguments = {
@@ -20542,7 +20579,7 @@ def build_product_subscriptions_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20577,7 +20614,7 @@ def build_product_api_link_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20608,7 +20645,7 @@ def build_product_api_link_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20639,7 +20676,7 @@ def build_product_api_link_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/apiLinks/{apiLinkId}"
     path_format_arguments = {
@@ -20672,7 +20709,7 @@ def build_product_api_link_list_by_product_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20712,7 +20749,7 @@ def build_product_group_link_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20748,7 +20785,7 @@ def build_product_group_link_create_or_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20784,7 +20821,7 @@ def build_product_group_link_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/groupLinks/{groupLinkId}"
     path_format_arguments = {
@@ -20817,7 +20854,7 @@ def build_product_group_link_list_by_product_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20852,7 +20889,7 @@ def build_global_schema_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20880,7 +20917,7 @@ def build_global_schema_get_entity_tag_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/schemas/{schemaId}"
     path_format_arguments = {
@@ -20912,7 +20949,7 @@ def build_global_schema_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -20938,7 +20975,7 @@ def build_global_schema_create_or_update_request(  # pylint: disable=name-too-lo
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -20956,7 +20993,7 @@ def build_global_schema_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/schemas/{schemaId}"
     path_format_arguments = {
@@ -20977,7 +21014,7 @@ def build_global_schema_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -20995,7 +21032,7 @@ def build_global_schema_list_by_service_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21033,7 +21070,7 @@ def build_tenant_settings_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21062,7 +21099,7 @@ def build_tenant_settings_list_by_service_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21092,7 +21129,7 @@ def build_subscription_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21120,7 +21157,7 @@ def build_subscription_get_entity_tag_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/subscriptions/{sid}"
     path_format_arguments = {
@@ -21154,7 +21191,7 @@ def build_subscription_create_or_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21184,7 +21221,7 @@ def build_subscription_create_or_update_request(  # pylint: disable=name-too-lon
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -21205,7 +21242,7 @@ def build_subscription_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21235,7 +21272,7 @@ def build_subscription_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -21253,7 +21290,7 @@ def build_subscription_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/subscriptions/{sid}"
     path_format_arguments = {
@@ -21274,7 +21311,7 @@ def build_subscription_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -21292,7 +21329,7 @@ def build_subscription_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21325,7 +21362,7 @@ def build_subscription_regenerate_primary_key_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/subscriptions/{sid}/regeneratePrimaryKey"
     path_format_arguments = {
@@ -21348,7 +21385,7 @@ def build_subscription_regenerate_secondary_key_request(  # pylint: disable=name
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/subscriptions/{sid}/regenerateSecondaryKey"
     path_format_arguments = {
@@ -21372,7 +21409,7 @@ def build_subscription_list_secrets_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21401,7 +21438,7 @@ def build_tag_api_link_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21432,7 +21469,7 @@ def build_tag_api_link_create_or_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21463,7 +21500,7 @@ def build_tag_api_link_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/tags/{tagId}/apiLinks/{apiLinkId}"
     path_format_arguments = {
@@ -21496,7 +21533,7 @@ def build_tag_api_link_list_by_product_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21536,7 +21573,7 @@ def build_tag_operation_link_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21572,7 +21609,7 @@ def build_tag_operation_link_create_or_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21608,7 +21645,7 @@ def build_tag_operation_link_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/tags/{tagId}/operationLinks/{operationLinkId}"
     path_format_arguments = {
@@ -21641,7 +21678,7 @@ def build_tag_operation_link_list_by_product_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21676,7 +21713,7 @@ def build_tag_product_link_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21707,7 +21744,7 @@ def build_tag_product_link_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21738,7 +21775,7 @@ def build_tag_product_link_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/tags/{tagId}/productLinks/{productLinkId}"
     path_format_arguments = {
@@ -21771,7 +21808,7 @@ def build_tag_product_link_list_by_product_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21810,7 +21847,7 @@ def build_tenant_access_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21842,7 +21879,7 @@ def build_tenant_access_get_entity_tag_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/tenant/{accessName}"
     path_format_arguments = {
@@ -21874,7 +21911,7 @@ def build_tenant_access_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21900,7 +21937,7 @@ def build_tenant_access_create_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -21919,7 +21956,7 @@ def build_tenant_access_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21945,7 +21982,7 @@ def build_tenant_access_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -21956,7 +21993,7 @@ def build_tenant_access_list_by_service_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -21989,7 +22026,7 @@ def build_tenant_access_regenerate_primary_key_request(  # pylint: disable=name-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/tenant/{accessName}/regeneratePrimaryKey"
     path_format_arguments = {
@@ -22016,7 +22053,7 @@ def build_tenant_access_regenerate_secondary_key_request(  # pylint: disable=nam
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/tenant/{accessName}/regenerateSecondaryKey"
     path_format_arguments = {
@@ -22044,7 +22081,7 @@ def build_tenant_access_list_secrets_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22076,7 +22113,7 @@ def build_tenant_access_git_regenerate_primary_key_request(  # pylint: disable=n
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/tenant/{accessName}/git/regeneratePrimaryKey"
     path_format_arguments = {
@@ -22103,7 +22140,7 @@ def build_tenant_access_git_regenerate_secondary_key_request(  # pylint: disable
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/tenant/{accessName}/git/regenerateSecondaryKey"
     path_format_arguments = {
@@ -22132,7 +22169,7 @@ def build_tenant_configuration_deploy_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22168,7 +22205,7 @@ def build_tenant_configuration_save_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22204,7 +22241,7 @@ def build_tenant_configuration_validate_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22239,7 +22276,7 @@ def build_tenant_configuration_get_sync_state_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22268,7 +22305,7 @@ def build_user_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22296,7 +22333,7 @@ def build_user_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{userId}"
     path_format_arguments = {
@@ -22329,7 +22366,7 @@ def build_user_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22357,7 +22394,7 @@ def build_user_create_or_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -22376,7 +22413,7 @@ def build_user_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22402,7 +22439,7 @@ def build_user_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -22423,7 +22460,7 @@ def build_user_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{userId}"
     path_format_arguments = {
@@ -22450,7 +22487,7 @@ def build_user_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -22469,7 +22506,7 @@ def build_user_list_by_service_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22505,7 +22542,7 @@ def build_user_generate_sso_url_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22535,7 +22572,7 @@ def build_user_get_shared_access_token_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22574,7 +22611,7 @@ def build_user_group_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22609,7 +22646,7 @@ def build_user_identities_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22643,7 +22680,7 @@ def build_user_confirmation_password_send_request(  # pylint: disable=name-too-l
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{userId}/confirmations/password/send"
     path_format_arguments = {
@@ -22669,7 +22706,7 @@ def build_api_management_workspace_link_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22693,12 +22730,18 @@ def build_api_management_workspace_link_get_request(  # pylint: disable=name-too
 
 
 def build_api_management_workspace_links_list_by_service_request(  # pylint: disable=name-too-long
-    resource_group_name: str, service_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    service_name: str,
+    subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22713,6 +22756,10 @@ def build_api_management_workspace_links_list_by_service_request(  # pylint: dis
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -22726,7 +22773,7 @@ def build_workspace_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22754,7 +22801,7 @@ def build_workspace_get_entity_tag_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}"
     path_format_arguments = {
@@ -22786,7 +22833,7 @@ def build_workspace_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22812,7 +22859,7 @@ def build_workspace_create_or_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -22831,7 +22878,7 @@ def build_workspace_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22857,7 +22904,7 @@ def build_workspace_update_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -22875,7 +22922,7 @@ def build_workspace_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/workspaces/{workspaceId}"
     path_format_arguments = {
@@ -22896,7 +22943,7 @@ def build_workspace_delete_request(
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if_none_match = prep_if_none_match(etag, match_condition)
     if if_none_match is not None:
-        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -22914,7 +22961,7 @@ def build_workspace_list_by_service_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22955,7 +23002,7 @@ def build_api_export_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -22984,7 +23031,7 @@ def build_api_management_skus_list_request(subscription_id: str, **kwargs: Any) 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -23018,7 +23065,7 @@ def build_workspace_api_export_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -23050,7 +23097,7 @@ def build_operation_status_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -23077,7 +23124,7 @@ def build_operations_results_get_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ApiManagement/locations/{location}/operationResults/{operationId}"
     path_format_arguments = {
@@ -23101,7 +23148,7 @@ def build_api_management_perform_connectivity_check_async_request(  # pylint: di
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -23125,7 +23172,7 @@ def build_api_management_perform_connectivity_check_async_request(  # pylint: di
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class WorkspaceApiOperations:
+class WorkspaceApiOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -23302,7 +23349,7 @@ class WorkspaceApiOperations:
         service_name: str,
         workspace_id: str,
         api_id: str,
-        parameters: Union[_models.ApiCreateOrUpdateParameter, JSON, IO[bytes]],
+        parameters: Union[_models.ApiCreateOrUpdateParameter, _types.ApiCreateOrUpdateParameter, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -23439,7 +23486,7 @@ class WorkspaceApiOperations:
         service_name: str,
         workspace_id: str,
         api_id: str,
-        parameters: JSON,
+        parameters: _types.ApiCreateOrUpdateParameter,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -23461,7 +23508,7 @@ class WorkspaceApiOperations:
          instance. Non-current revision has ;rev=n as a suffix where n is the revision number. Required.
         :type api_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ApiCreateOrUpdateParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23527,7 +23574,7 @@ class WorkspaceApiOperations:
         service_name: str,
         workspace_id: str,
         api_id: str,
-        parameters: Union[_models.ApiCreateOrUpdateParameter, JSON, IO[bytes]],
+        parameters: Union[_models.ApiCreateOrUpdateParameter, _types.ApiCreateOrUpdateParameter, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -23547,10 +23594,10 @@ class WorkspaceApiOperations:
         :param api_id: API revision identifier. Must be unique in the current API Management service
          instance. Non-current revision has ;rev=n as a suffix where n is the revision number. Required.
         :type api_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         ApiCreateOrUpdateParameter, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ApiCreateOrUpdateParameter or JSON or
-         IO[bytes]
+        :param parameters: Create or update parameters. Is either a ApiCreateOrUpdateParameter type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ApiCreateOrUpdateParameter or
+         ~azure.mgmt.apimanagement.types.ApiCreateOrUpdateParameter or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -23672,7 +23719,7 @@ class WorkspaceApiOperations:
         service_name: str,
         workspace_id: str,
         api_id: str,
-        parameters: JSON,
+        parameters: _types.ApiUpdateContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -23693,7 +23740,7 @@ class WorkspaceApiOperations:
          instance. Non-current revision has ;rev=n as a suffix where n is the revision number. Required.
         :type api_id: str
         :param parameters: API Update Contract parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ApiUpdateContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -23754,7 +23801,7 @@ class WorkspaceApiOperations:
         service_name: str,
         workspace_id: str,
         api_id: str,
-        parameters: Union[_models.ApiUpdateContract, JSON, IO[bytes]],
+        parameters: Union[_models.ApiUpdateContract, _types.ApiUpdateContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -23773,9 +23820,10 @@ class WorkspaceApiOperations:
         :param api_id: API revision identifier. Must be unique in the current API Management service
          instance. Non-current revision has ;rev=n as a suffix where n is the revision number. Required.
         :type api_id: str
-        :param parameters: API Update Contract parameters. Is one of the following types:
-         ApiUpdateContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ApiUpdateContract or JSON or IO[bytes]
+        :param parameters: API Update Contract parameters. Is either a ApiUpdateContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ApiUpdateContract or
+         ~azure.mgmt.apimanagement.types.ApiUpdateContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -24049,7 +24097,10 @@ class WorkspaceApiOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -24092,7 +24143,7 @@ class WorkspaceApiOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceApiReleaseOperations:
+class WorkspaceApiReleaseOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -24337,7 +24388,7 @@ class WorkspaceApiReleaseOperations:
         workspace_id: str,
         api_id: str,
         release_id: str,
-        parameters: JSON,
+        parameters: _types.ApiReleaseContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -24361,7 +24412,7 @@ class WorkspaceApiReleaseOperations:
          Management service instance. Required.
         :type release_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ApiReleaseContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24429,7 +24480,7 @@ class WorkspaceApiReleaseOperations:
         workspace_id: str,
         api_id: str,
         release_id: str,
-        parameters: Union[_models.ApiReleaseContract, JSON, IO[bytes]],
+        parameters: Union[_models.ApiReleaseContract, _types.ApiReleaseContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -24451,9 +24502,10 @@ class WorkspaceApiReleaseOperations:
         :param release_id: Release identifier within an API. Must be unique in the current API
          Management service instance. Required.
         :type release_id: str
-        :param parameters: Create parameters. Is one of the following types: ApiReleaseContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ApiReleaseContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a ApiReleaseContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ApiReleaseContract or
+         ~azure.mgmt.apimanagement.types.ApiReleaseContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -24602,7 +24654,7 @@ class WorkspaceApiReleaseOperations:
         workspace_id: str,
         api_id: str,
         release_id: str,
-        parameters: JSON,
+        parameters: _types.ApiReleaseContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -24626,7 +24678,7 @@ class WorkspaceApiReleaseOperations:
          Management service instance. Required.
         :type release_id: str
         :param parameters: API Release Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ApiReleaseContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -24692,7 +24744,7 @@ class WorkspaceApiReleaseOperations:
         workspace_id: str,
         api_id: str,
         release_id: str,
-        parameters: Union[_models.ApiReleaseContract, JSON, IO[bytes]],
+        parameters: Union[_models.ApiReleaseContract, _types.ApiReleaseContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -24714,9 +24766,10 @@ class WorkspaceApiReleaseOperations:
         :param release_id: Release identifier within an API. Must be unique in the current API
          Management service instance. Required.
         :type release_id: str
-        :param parameters: API Release Update parameters. Is one of the following types:
-         ApiReleaseContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ApiReleaseContract or JSON or IO[bytes]
+        :param parameters: API Release Update parameters. Is either a ApiReleaseContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ApiReleaseContract or
+         ~azure.mgmt.apimanagement.types.ApiReleaseContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -24986,7 +25039,10 @@ class WorkspaceApiReleaseOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -25029,7 +25085,7 @@ class WorkspaceApiReleaseOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceApiOperationOperations:
+class WorkspaceApiOperationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25274,7 +25330,7 @@ class WorkspaceApiOperationOperations:
         workspace_id: str,
         api_id: str,
         operation_id: str,
-        parameters: JSON,
+        parameters: _types.OperationContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -25298,7 +25354,7 @@ class WorkspaceApiOperationOperations:
          Management service instance. Required.
         :type operation_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.OperationContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25366,7 +25422,7 @@ class WorkspaceApiOperationOperations:
         workspace_id: str,
         api_id: str,
         operation_id: str,
-        parameters: Union[_models.OperationContract, JSON, IO[bytes]],
+        parameters: Union[_models.OperationContract, _types.OperationContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -25388,9 +25444,10 @@ class WorkspaceApiOperationOperations:
         :param operation_id: Operation identifier within an API. Must be unique in the current API
          Management service instance. Required.
         :type operation_id: str
-        :param parameters: Create parameters. Is one of the following types: OperationContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.OperationContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a OperationContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.OperationContract or
+         ~azure.mgmt.apimanagement.types.OperationContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -25539,7 +25596,7 @@ class WorkspaceApiOperationOperations:
         workspace_id: str,
         api_id: str,
         operation_id: str,
-        parameters: JSON,
+        parameters: _types.OperationUpdateContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -25563,7 +25620,7 @@ class WorkspaceApiOperationOperations:
          Management service instance. Required.
         :type operation_id: str
         :param parameters: API Operation Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.OperationUpdateContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -25629,7 +25686,7 @@ class WorkspaceApiOperationOperations:
         workspace_id: str,
         api_id: str,
         operation_id: str,
-        parameters: Union[_models.OperationUpdateContract, JSON, IO[bytes]],
+        parameters: Union[_models.OperationUpdateContract, _types.OperationUpdateContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -25651,9 +25708,10 @@ class WorkspaceApiOperationOperations:
         :param operation_id: Operation identifier within an API. Must be unique in the current API
          Management service instance. Required.
         :type operation_id: str
-        :param parameters: API Operation Update parameters. Is one of the following types:
-         OperationUpdateContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.OperationUpdateContract or JSON or IO[bytes]
+        :param parameters: API Operation Update parameters. Is either a OperationUpdateContract type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.OperationUpdateContract or
+         ~azure.mgmt.apimanagement.types.OperationUpdateContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -25929,7 +25987,10 @@ class WorkspaceApiOperationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -25972,7 +26033,7 @@ class WorkspaceApiOperationOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class GraphQLApiResolverPolicyOperations:
+class GraphQLApiResolverPolicyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26221,7 +26282,7 @@ class GraphQLApiResolverPolicyOperations:
         api_id: str,
         resolver_id: str,
         policy_id: Union[str, _models.PolicyIdName],
-        parameters: JSON,
+        parameters: _types.PolicyContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -26244,7 +26305,7 @@ class GraphQLApiResolverPolicyOperations:
         :param policy_id: The identifier of the Policy. "policy" Required.
         :type policy_id: str or ~azure.mgmt.apimanagement.models.PolicyIdName
         :param parameters: The policy contents to apply. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PolicyContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26311,7 +26372,7 @@ class GraphQLApiResolverPolicyOperations:
         api_id: str,
         resolver_id: str,
         policy_id: Union[str, _models.PolicyIdName],
-        parameters: Union[_models.PolicyContract, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyContract, _types.PolicyContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -26332,9 +26393,10 @@ class GraphQLApiResolverPolicyOperations:
         :type resolver_id: str
         :param policy_id: The identifier of the Policy. "policy" Required.
         :type policy_id: str or ~azure.mgmt.apimanagement.models.PolicyIdName
-        :param parameters: The policy contents to apply. Is one of the following types: PolicyContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PolicyContract or JSON or IO[bytes]
+        :param parameters: The policy contents to apply. Is either a PolicyContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PolicyContract or
+         ~azure.mgmt.apimanagement.types.PolicyContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -26581,7 +26643,10 @@ class GraphQLApiResolverPolicyOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -26624,7 +26689,7 @@ class GraphQLApiResolverPolicyOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiPolicyOperations:
+class ApiPolicyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26857,7 +26922,7 @@ class ApiPolicyOperations:
         service_name: str,
         api_id: str,
         policy_id: Union[str, _models.PolicyIdName],
-        parameters: JSON,
+        parameters: _types.PolicyContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -26877,7 +26942,7 @@ class ApiPolicyOperations:
         :param policy_id: The identifier of the Policy. "policy" Required.
         :type policy_id: str or ~azure.mgmt.apimanagement.models.PolicyIdName
         :param parameters: The policy contents to apply. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PolicyContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26939,7 +27004,7 @@ class ApiPolicyOperations:
         service_name: str,
         api_id: str,
         policy_id: Union[str, _models.PolicyIdName],
-        parameters: Union[_models.PolicyContract, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyContract, _types.PolicyContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -26957,9 +27022,10 @@ class ApiPolicyOperations:
         :type api_id: str
         :param policy_id: The identifier of the Policy. "policy" Required.
         :type policy_id: str or ~azure.mgmt.apimanagement.models.PolicyIdName
-        :param parameters: The policy contents to apply. Is one of the following types: PolicyContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PolicyContract or JSON or IO[bytes]
+        :param parameters: The policy contents to apply. Is either a PolicyContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PolicyContract or
+         ~azure.mgmt.apimanagement.types.PolicyContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -27212,7 +27278,7 @@ class ApiPolicyOperations:
         return deserialized  # type: ignore
 
 
-class PolicyOperations:
+class PolicyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -27427,7 +27493,7 @@ class PolicyOperations:
         resource_group_name: str,
         service_name: str,
         policy_id: Union[str, _models.PolicyIdName],
-        parameters: JSON,
+        parameters: _types.PolicyContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -27444,7 +27510,7 @@ class PolicyOperations:
         :param policy_id: The identifier of the Policy. "policy" Required.
         :type policy_id: str or ~azure.mgmt.apimanagement.models.PolicyIdName
         :param parameters: The policy contents to apply. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PolicyContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27501,7 +27567,7 @@ class PolicyOperations:
         resource_group_name: str,
         service_name: str,
         policy_id: Union[str, _models.PolicyIdName],
-        parameters: Union[_models.PolicyContract, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyContract, _types.PolicyContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -27516,9 +27582,10 @@ class PolicyOperations:
         :type service_name: str
         :param policy_id: The identifier of the Policy. "policy" Required.
         :type policy_id: str or ~azure.mgmt.apimanagement.models.PolicyIdName
-        :param parameters: The policy contents to apply. Is one of the following types: PolicyContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PolicyContract or JSON or IO[bytes]
+        :param parameters: The policy contents to apply. Is either a PolicyContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PolicyContract or
+         ~azure.mgmt.apimanagement.types.PolicyContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -27745,7 +27812,10 @@ class PolicyOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -27788,7 +27858,7 @@ class PolicyOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ProductPolicyOperations:
+class ProductPolicyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -28021,7 +28091,7 @@ class ProductPolicyOperations:
         service_name: str,
         product_id: str,
         policy_id: Union[str, _models.PolicyIdName],
-        parameters: JSON,
+        parameters: _types.PolicyContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -28041,7 +28111,7 @@ class ProductPolicyOperations:
         :param policy_id: The identifier of the Policy. "policy" Required.
         :type policy_id: str or ~azure.mgmt.apimanagement.models.PolicyIdName
         :param parameters: The policy contents to apply. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PolicyContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28103,7 +28173,7 @@ class ProductPolicyOperations:
         service_name: str,
         product_id: str,
         policy_id: Union[str, _models.PolicyIdName],
-        parameters: Union[_models.PolicyContract, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyContract, _types.PolicyContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -28121,9 +28191,10 @@ class ProductPolicyOperations:
         :type product_id: str
         :param policy_id: The identifier of the Policy. "policy" Required.
         :type policy_id: str or ~azure.mgmt.apimanagement.models.PolicyIdName
-        :param parameters: The policy contents to apply. Is one of the following types: PolicyContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PolicyContract or JSON or IO[bytes]
+        :param parameters: The policy contents to apply. Is either a PolicyContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PolicyContract or
+         ~azure.mgmt.apimanagement.types.PolicyContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -28360,7 +28431,10 @@ class ProductPolicyOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -28403,7 +28477,7 @@ class ProductPolicyOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspacePolicyOperations:
+class WorkspacePolicyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -28636,7 +28710,7 @@ class WorkspacePolicyOperations:
         service_name: str,
         workspace_id: str,
         policy_id: Union[str, _models.PolicyIdName],
-        parameters: JSON,
+        parameters: _types.PolicyContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -28656,7 +28730,7 @@ class WorkspacePolicyOperations:
         :param policy_id: The identifier of the Policy. "policy" Required.
         :type policy_id: str or ~azure.mgmt.apimanagement.models.PolicyIdName
         :param parameters: The policy contents to apply. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PolicyContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28718,7 +28792,7 @@ class WorkspacePolicyOperations:
         service_name: str,
         workspace_id: str,
         policy_id: Union[str, _models.PolicyIdName],
-        parameters: Union[_models.PolicyContract, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyContract, _types.PolicyContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -28736,9 +28810,10 @@ class WorkspacePolicyOperations:
         :type workspace_id: str
         :param policy_id: The identifier of the Policy. "policy" Required.
         :type policy_id: str or ~azure.mgmt.apimanagement.models.PolicyIdName
-        :param parameters: The policy contents to apply. Is one of the following types: PolicyContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PolicyContract or JSON or IO[bytes]
+        :param parameters: The policy contents to apply. Is either a PolicyContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PolicyContract or
+         ~azure.mgmt.apimanagement.types.PolicyContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -28975,7 +29050,10 @@ class WorkspacePolicyOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -29018,7 +29096,7 @@ class WorkspacePolicyOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceApiOperationPolicyOperations:
+class WorkspaceApiOperationPolicyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -29281,7 +29359,7 @@ class WorkspaceApiOperationPolicyOperations:
         api_id: str,
         operation_id: str,
         policy_id: Union[str, _models.PolicyIdName],
-        parameters: JSON,
+        parameters: _types.PolicyContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -29307,7 +29385,7 @@ class WorkspaceApiOperationPolicyOperations:
         :param policy_id: The identifier of the Policy. "policy" Required.
         :type policy_id: str or ~azure.mgmt.apimanagement.models.PolicyIdName
         :param parameters: The policy contents to apply. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PolicyContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29379,7 +29457,7 @@ class WorkspaceApiOperationPolicyOperations:
         api_id: str,
         operation_id: str,
         policy_id: Union[str, _models.PolicyIdName],
-        parameters: Union[_models.PolicyContract, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyContract, _types.PolicyContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -29403,9 +29481,10 @@ class WorkspaceApiOperationPolicyOperations:
         :type operation_id: str
         :param policy_id: The identifier of the Policy. "policy" Required.
         :type policy_id: str or ~azure.mgmt.apimanagement.models.PolicyIdName
-        :param parameters: The policy contents to apply. Is one of the following types: PolicyContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PolicyContract or JSON or IO[bytes]
+        :param parameters: The policy contents to apply. Is either a PolicyContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PolicyContract or
+         ~azure.mgmt.apimanagement.types.PolicyContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -29673,7 +29752,10 @@ class WorkspaceApiOperationPolicyOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -29716,7 +29798,7 @@ class WorkspaceApiOperationPolicyOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceApiPolicyOperations:
+class WorkspaceApiPolicyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -29964,7 +30046,7 @@ class WorkspaceApiPolicyOperations:
         workspace_id: str,
         api_id: str,
         policy_id: Union[str, _models.PolicyIdName],
-        parameters: JSON,
+        parameters: _types.PolicyContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -29987,7 +30069,7 @@ class WorkspaceApiPolicyOperations:
         :param policy_id: The identifier of the Policy. "policy" Required.
         :type policy_id: str or ~azure.mgmt.apimanagement.models.PolicyIdName
         :param parameters: The policy contents to apply. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PolicyContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30054,7 +30136,7 @@ class WorkspaceApiPolicyOperations:
         workspace_id: str,
         api_id: str,
         policy_id: Union[str, _models.PolicyIdName],
-        parameters: Union[_models.PolicyContract, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyContract, _types.PolicyContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -30075,9 +30157,10 @@ class WorkspaceApiPolicyOperations:
         :type api_id: str
         :param policy_id: The identifier of the Policy. "policy" Required.
         :type policy_id: str or ~azure.mgmt.apimanagement.models.PolicyIdName
-        :param parameters: The policy contents to apply. Is one of the following types: PolicyContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PolicyContract or JSON or IO[bytes]
+        :param parameters: The policy contents to apply. Is either a PolicyContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PolicyContract or
+         ~azure.mgmt.apimanagement.types.PolicyContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -30329,7 +30412,10 @@ class WorkspaceApiPolicyOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -30372,7 +30458,7 @@ class WorkspaceApiPolicyOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceProductPolicyOperations:
+class WorkspaceProductPolicyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30620,7 +30706,7 @@ class WorkspaceProductPolicyOperations:
         workspace_id: str,
         product_id: str,
         policy_id: Union[str, _models.PolicyIdName],
-        parameters: JSON,
+        parameters: _types.PolicyContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -30643,7 +30729,7 @@ class WorkspaceProductPolicyOperations:
         :param policy_id: The identifier of the Policy. "policy" Required.
         :type policy_id: str or ~azure.mgmt.apimanagement.models.PolicyIdName
         :param parameters: The policy contents to apply. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PolicyContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30710,7 +30796,7 @@ class WorkspaceProductPolicyOperations:
         workspace_id: str,
         product_id: str,
         policy_id: Union[str, _models.PolicyIdName],
-        parameters: Union[_models.PolicyContract, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyContract, _types.PolicyContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -30731,9 +30817,10 @@ class WorkspaceProductPolicyOperations:
         :type product_id: str
         :param policy_id: The identifier of the Policy. "policy" Required.
         :type policy_id: str or ~azure.mgmt.apimanagement.models.PolicyIdName
-        :param parameters: The policy contents to apply. Is one of the following types: PolicyContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PolicyContract or JSON or IO[bytes]
+        :param parameters: The policy contents to apply. Is either a PolicyContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PolicyContract or
+         ~azure.mgmt.apimanagement.types.PolicyContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -31001,7 +31088,7 @@ class WorkspaceProductPolicyOperations:
         return deserialized  # type: ignore
 
 
-class TagOperations:  # pylint: disable=too-many-public-methods
+class TagOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -31404,7 +31491,10 @@ class TagOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -31850,7 +31940,10 @@ class TagOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -32275,7 +32368,10 @@ class TagOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -32503,7 +32599,7 @@ class TagOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         service_name: str,
         tag_id: str,
-        parameters: JSON,
+        parameters: _types.TagCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -32521,7 +32617,7 @@ class TagOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type tag_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.TagCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32579,7 +32675,7 @@ class TagOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         service_name: str,
         tag_id: str,
-        parameters: Union[_models.TagCreateUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.TagCreateUpdateParameters, _types.TagCreateUpdateParameters, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -32595,10 +32691,10 @@ class TagOperations:  # pylint: disable=too-many-public-methods
         :param tag_id: Tag identifier. Must be unique in the current API Management service instance.
          Required.
         :type tag_id: str
-        :param parameters: Create parameters. Is one of the following types: TagCreateUpdateParameters,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.TagCreateUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Create parameters. Is either a TagCreateUpdateParameters type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.TagCreateUpdateParameters or
+         ~azure.mgmt.apimanagement.types.TagCreateUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -32730,7 +32826,7 @@ class TagOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         service_name: str,
         tag_id: str,
-        parameters: JSON,
+        parameters: _types.TagCreateUpdateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -32748,7 +32844,7 @@ class TagOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type tag_id: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.TagCreateUpdateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -32804,7 +32900,7 @@ class TagOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         service_name: str,
         tag_id: str,
-        parameters: Union[_models.TagCreateUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.TagCreateUpdateParameters, _types.TagCreateUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -32820,10 +32916,10 @@ class TagOperations:  # pylint: disable=too-many-public-methods
         :param tag_id: Tag identifier. Must be unique in the current API Management service instance.
          Required.
         :type tag_id: str
-        :param parameters: Update parameters. Is one of the following types: TagCreateUpdateParameters,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.TagCreateUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Update parameters. Is either a TagCreateUpdateParameters type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.TagCreateUpdateParameters or
+         ~azure.mgmt.apimanagement.types.TagCreateUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -33074,7 +33170,10 @@ class TagOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33117,7 +33216,7 @@ class TagOperations:  # pylint: disable=too-many-public-methods
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceTagOperations:
+class WorkspaceTagOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33337,7 +33436,7 @@ class WorkspaceTagOperations:
         service_name: str,
         workspace_id: str,
         tag_id: str,
-        parameters: JSON,
+        parameters: _types.TagCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -33358,7 +33457,7 @@ class WorkspaceTagOperations:
          Required.
         :type tag_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.TagCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -33421,7 +33520,7 @@ class WorkspaceTagOperations:
         service_name: str,
         workspace_id: str,
         tag_id: str,
-        parameters: Union[_models.TagCreateUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.TagCreateUpdateParameters, _types.TagCreateUpdateParameters, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -33440,10 +33539,10 @@ class WorkspaceTagOperations:
         :param tag_id: Tag identifier. Must be unique in the current API Management service instance.
          Required.
         :type tag_id: str
-        :param parameters: Create parameters. Is one of the following types: TagCreateUpdateParameters,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.TagCreateUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Create parameters. Is either a TagCreateUpdateParameters type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.TagCreateUpdateParameters or
+         ~azure.mgmt.apimanagement.types.TagCreateUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -33581,7 +33680,7 @@ class WorkspaceTagOperations:
         service_name: str,
         workspace_id: str,
         tag_id: str,
-        parameters: JSON,
+        parameters: _types.TagCreateUpdateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -33602,7 +33701,7 @@ class WorkspaceTagOperations:
          Required.
         :type tag_id: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.TagCreateUpdateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -33663,7 +33762,7 @@ class WorkspaceTagOperations:
         service_name: str,
         workspace_id: str,
         tag_id: str,
-        parameters: Union[_models.TagCreateUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.TagCreateUpdateParameters, _types.TagCreateUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -33682,10 +33781,10 @@ class WorkspaceTagOperations:
         :param tag_id: Tag identifier. Must be unique in the current API Management service instance.
          Required.
         :type tag_id: str
-        :param parameters: Update parameters. Is one of the following types: TagCreateUpdateParameters,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.TagCreateUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Update parameters. Is either a TagCreateUpdateParameters type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.TagCreateUpdateParameters or
+         ~azure.mgmt.apimanagement.types.TagCreateUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -33947,7 +34046,10 @@ class WorkspaceTagOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33990,7 +34092,7 @@ class WorkspaceTagOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceApiSchemaOperations:
+class WorkspaceApiSchemaOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -34176,7 +34278,7 @@ class WorkspaceApiSchemaOperations:
         workspace_id: str,
         api_id: str,
         schema_id: str,
-        parameters: Union[_models.SchemaContract, JSON, IO[bytes]],
+        parameters: Union[_models.SchemaContract, _types.SchemaContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -34327,7 +34429,7 @@ class WorkspaceApiSchemaOperations:
         workspace_id: str,
         api_id: str,
         schema_id: str,
-        parameters: JSON,
+        parameters: _types.SchemaContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -34351,7 +34453,7 @@ class WorkspaceApiSchemaOperations:
          instance. Required.
         :type schema_id: str
         :param parameters: The schema contents to apply. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.SchemaContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34421,7 +34523,7 @@ class WorkspaceApiSchemaOperations:
         workspace_id: str,
         api_id: str,
         schema_id: str,
-        parameters: Union[_models.SchemaContract, JSON, IO[bytes]],
+        parameters: Union[_models.SchemaContract, _types.SchemaContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -34443,9 +34545,10 @@ class WorkspaceApiSchemaOperations:
         :param schema_id: Schema id identifier. Must be unique in the current API Management service
          instance. Required.
         :type schema_id: str
-        :param parameters: The schema contents to apply. Is one of the following types: SchemaContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.SchemaContract or JSON or IO[bytes]
+        :param parameters: The schema contents to apply. Is either a SchemaContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.SchemaContract or
+         ~azure.mgmt.apimanagement.types.SchemaContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -34703,7 +34806,10 @@ class WorkspaceApiSchemaOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -34746,7 +34852,7 @@ class WorkspaceApiSchemaOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DiagnosticOperations:
+class DiagnosticOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -34951,7 +35057,7 @@ class DiagnosticOperations:
         resource_group_name: str,
         service_name: str,
         diagnostic_id: str,
-        parameters: JSON,
+        parameters: _types.DiagnosticContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -34969,7 +35075,7 @@ class DiagnosticOperations:
          service instance. Required.
         :type diagnostic_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.DiagnosticContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35027,7 +35133,7 @@ class DiagnosticOperations:
         resource_group_name: str,
         service_name: str,
         diagnostic_id: str,
-        parameters: Union[_models.DiagnosticContract, JSON, IO[bytes]],
+        parameters: Union[_models.DiagnosticContract, _types.DiagnosticContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -35043,9 +35149,10 @@ class DiagnosticOperations:
         :param diagnostic_id: Diagnostic identifier. Must be unique in the current API Management
          service instance. Required.
         :type diagnostic_id: str
-        :param parameters: Create parameters. Is one of the following types: DiagnosticContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a DiagnosticContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticContract or
+         ~azure.mgmt.apimanagement.types.DiagnosticContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -35182,7 +35289,7 @@ class DiagnosticOperations:
         resource_group_name: str,
         service_name: str,
         diagnostic_id: str,
-        parameters: JSON,
+        parameters: _types.DiagnosticContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -35200,7 +35307,7 @@ class DiagnosticOperations:
          service instance. Required.
         :type diagnostic_id: str
         :param parameters: Diagnostic Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.DiagnosticContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -35256,7 +35363,7 @@ class DiagnosticOperations:
         resource_group_name: str,
         service_name: str,
         diagnostic_id: str,
-        parameters: Union[_models.DiagnosticContract, JSON, IO[bytes]],
+        parameters: Union[_models.DiagnosticContract, _types.DiagnosticContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -35272,9 +35379,10 @@ class DiagnosticOperations:
         :param diagnostic_id: Diagnostic identifier. Must be unique in the current API Management
          service instance. Required.
         :type diagnostic_id: str
-        :param parameters: Diagnostic Update parameters. Is one of the following types:
-         DiagnosticContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticContract or JSON or IO[bytes]
+        :param parameters: Diagnostic Update parameters. Is either a DiagnosticContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticContract or
+         ~azure.mgmt.apimanagement.types.DiagnosticContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -35520,7 +35628,10 @@ class DiagnosticOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -35563,7 +35674,7 @@ class DiagnosticOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceDiagnosticOperations:
+class WorkspaceDiagnosticOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -35783,7 +35894,7 @@ class WorkspaceDiagnosticOperations:
         service_name: str,
         workspace_id: str,
         diagnostic_id: str,
-        parameters: JSON,
+        parameters: _types.DiagnosticContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -35804,7 +35915,7 @@ class WorkspaceDiagnosticOperations:
          service instance. Required.
         :type diagnostic_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.DiagnosticContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35867,7 +35978,7 @@ class WorkspaceDiagnosticOperations:
         service_name: str,
         workspace_id: str,
         diagnostic_id: str,
-        parameters: Union[_models.DiagnosticContract, JSON, IO[bytes]],
+        parameters: Union[_models.DiagnosticContract, _types.DiagnosticContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -35886,9 +35997,10 @@ class WorkspaceDiagnosticOperations:
         :param diagnostic_id: Diagnostic identifier. Must be unique in the current API Management
          service instance. Required.
         :type diagnostic_id: str
-        :param parameters: Create parameters. Is one of the following types: DiagnosticContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a DiagnosticContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticContract or
+         ~azure.mgmt.apimanagement.types.DiagnosticContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -36031,7 +36143,7 @@ class WorkspaceDiagnosticOperations:
         service_name: str,
         workspace_id: str,
         diagnostic_id: str,
-        parameters: JSON,
+        parameters: _types.DiagnosticUpdateContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -36052,7 +36164,7 @@ class WorkspaceDiagnosticOperations:
          service instance. Required.
         :type diagnostic_id: str
         :param parameters: Diagnostic Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.DiagnosticUpdateContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -36113,7 +36225,7 @@ class WorkspaceDiagnosticOperations:
         service_name: str,
         workspace_id: str,
         diagnostic_id: str,
-        parameters: Union[_models.DiagnosticUpdateContract, JSON, IO[bytes]],
+        parameters: Union[_models.DiagnosticUpdateContract, _types.DiagnosticUpdateContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -36132,10 +36244,10 @@ class WorkspaceDiagnosticOperations:
         :param diagnostic_id: Diagnostic identifier. Must be unique in the current API Management
          service instance. Required.
         :type diagnostic_id: str
-        :param parameters: Diagnostic Update parameters. Is one of the following types:
-         DiagnosticUpdateContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticUpdateContract or JSON or
-         IO[bytes]
+        :param parameters: Diagnostic Update parameters. Is either a DiagnosticUpdateContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticUpdateContract or
+         ~azure.mgmt.apimanagement.types.DiagnosticUpdateContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -36392,7 +36504,10 @@ class WorkspaceDiagnosticOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -36435,7 +36550,7 @@ class WorkspaceDiagnosticOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceApiDiagnosticOperations:
+class WorkspaceApiDiagnosticOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -36680,7 +36795,7 @@ class WorkspaceApiDiagnosticOperations:
         workspace_id: str,
         api_id: str,
         diagnostic_id: str,
-        parameters: JSON,
+        parameters: _types.DiagnosticContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -36704,7 +36819,7 @@ class WorkspaceApiDiagnosticOperations:
          service instance. Required.
         :type diagnostic_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.DiagnosticContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -36772,7 +36887,7 @@ class WorkspaceApiDiagnosticOperations:
         workspace_id: str,
         api_id: str,
         diagnostic_id: str,
-        parameters: Union[_models.DiagnosticContract, JSON, IO[bytes]],
+        parameters: Union[_models.DiagnosticContract, _types.DiagnosticContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -36794,9 +36909,10 @@ class WorkspaceApiDiagnosticOperations:
         :param diagnostic_id: Diagnostic identifier. Must be unique in the current API Management
          service instance. Required.
         :type diagnostic_id: str
-        :param parameters: Create parameters. Is one of the following types: DiagnosticContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a DiagnosticContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticContract or
+         ~azure.mgmt.apimanagement.types.DiagnosticContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -36945,7 +37061,7 @@ class WorkspaceApiDiagnosticOperations:
         workspace_id: str,
         api_id: str,
         diagnostic_id: str,
-        parameters: JSON,
+        parameters: _types.DiagnosticUpdateContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -36969,7 +37085,7 @@ class WorkspaceApiDiagnosticOperations:
          service instance. Required.
         :type diagnostic_id: str
         :param parameters: Diagnostic Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.DiagnosticUpdateContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -37035,7 +37151,7 @@ class WorkspaceApiDiagnosticOperations:
         workspace_id: str,
         api_id: str,
         diagnostic_id: str,
-        parameters: Union[_models.DiagnosticUpdateContract, JSON, IO[bytes]],
+        parameters: Union[_models.DiagnosticUpdateContract, _types.DiagnosticUpdateContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -37057,10 +37173,10 @@ class WorkspaceApiDiagnosticOperations:
         :param diagnostic_id: Diagnostic identifier. Must be unique in the current API Management
          service instance. Required.
         :type diagnostic_id: str
-        :param parameters: Diagnostic Update parameters. Is one of the following types:
-         DiagnosticUpdateContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticUpdateContract or JSON or
-         IO[bytes]
+        :param parameters: Diagnostic Update parameters. Is either a DiagnosticUpdateContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticUpdateContract or
+         ~azure.mgmt.apimanagement.types.DiagnosticUpdateContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -37328,7 +37444,10 @@ class WorkspaceApiDiagnosticOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -37371,7 +37490,7 @@ class WorkspaceApiDiagnosticOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class IssueOperations:
+class IssueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -37545,7 +37664,10 @@ class IssueOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -37588,7 +37710,7 @@ class IssueOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ProductWikiOperations:
+class ProductWikiOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -37791,7 +37913,7 @@ class ProductWikiOperations:
         resource_group_name: str,
         service_name: str,
         product_id: str,
-        parameters: JSON,
+        parameters: _types.WikiContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -37809,7 +37931,7 @@ class ProductWikiOperations:
          instance. Required.
         :type product_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.WikiContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37867,7 +37989,7 @@ class ProductWikiOperations:
         resource_group_name: str,
         service_name: str,
         product_id: str,
-        parameters: Union[_models.WikiContract, JSON, IO[bytes]],
+        parameters: Union[_models.WikiContract, _types.WikiContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -37883,9 +38005,10 @@ class ProductWikiOperations:
         :param product_id: Product identifier. Must be unique in the current API Management service
          instance. Required.
         :type product_id: str
-        :param parameters: Create parameters. Is one of the following types: WikiContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.WikiContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a WikiContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.WikiContract or
+         ~azure.mgmt.apimanagement.types.WikiContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -38022,7 +38145,7 @@ class ProductWikiOperations:
         resource_group_name: str,
         service_name: str,
         product_id: str,
-        parameters: JSON,
+        parameters: _types.WikiUpdateContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -38040,7 +38163,7 @@ class ProductWikiOperations:
          instance. Required.
         :type product_id: str
         :param parameters: Wiki Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.WikiUpdateContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -38096,7 +38219,7 @@ class ProductWikiOperations:
         resource_group_name: str,
         service_name: str,
         product_id: str,
-        parameters: Union[_models.WikiUpdateContract, JSON, IO[bytes]],
+        parameters: Union[_models.WikiUpdateContract, _types.WikiUpdateContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -38112,9 +38235,10 @@ class ProductWikiOperations:
         :param product_id: Product identifier. Must be unique in the current API Management service
          instance. Required.
         :type product_id: str
-        :param parameters: Wiki Update parameters. Is one of the following types: WikiUpdateContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.WikiUpdateContract or JSON or IO[bytes]
+        :param parameters: Wiki Update parameters. Is either a WikiUpdateContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.WikiUpdateContract or
+         ~azure.mgmt.apimanagement.types.WikiUpdateContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -38285,7 +38409,7 @@ class ProductWikiOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class WorkspaceApiVersionSetOperations:
+class WorkspaceApiVersionSetOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -38505,7 +38629,7 @@ class WorkspaceApiVersionSetOperations:
         service_name: str,
         workspace_id: str,
         version_set_id: str,
-        parameters: JSON,
+        parameters: _types.ApiVersionSetContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -38526,7 +38650,7 @@ class WorkspaceApiVersionSetOperations:
          service instance. Required.
         :type version_set_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ApiVersionSetContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -38589,7 +38713,7 @@ class WorkspaceApiVersionSetOperations:
         service_name: str,
         workspace_id: str,
         version_set_id: str,
-        parameters: Union[_models.ApiVersionSetContract, JSON, IO[bytes]],
+        parameters: Union[_models.ApiVersionSetContract, _types.ApiVersionSetContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -38608,9 +38732,10 @@ class WorkspaceApiVersionSetOperations:
         :param version_set_id: Api Version Set identifier. Must be unique in the current API Management
          service instance. Required.
         :type version_set_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         ApiVersionSetContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ApiVersionSetContract or JSON or IO[bytes]
+        :param parameters: Create or update parameters. Is either a ApiVersionSetContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ApiVersionSetContract or
+         ~azure.mgmt.apimanagement.types.ApiVersionSetContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -38748,7 +38873,7 @@ class WorkspaceApiVersionSetOperations:
         service_name: str,
         workspace_id: str,
         version_set_id: str,
-        parameters: JSON,
+        parameters: _types.ApiVersionSetUpdateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -38769,7 +38894,7 @@ class WorkspaceApiVersionSetOperations:
          service instance. Required.
         :type version_set_id: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ApiVersionSetUpdateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -38830,7 +38955,7 @@ class WorkspaceApiVersionSetOperations:
         service_name: str,
         workspace_id: str,
         version_set_id: str,
-        parameters: Union[_models.ApiVersionSetUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ApiVersionSetUpdateParameters, _types.ApiVersionSetUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -38849,10 +38974,10 @@ class WorkspaceApiVersionSetOperations:
         :param version_set_id: Api Version Set identifier. Must be unique in the current API Management
          service instance. Required.
         :type version_set_id: str
-        :param parameters: Update parameters. Is one of the following types:
-         ApiVersionSetUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ApiVersionSetUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Update parameters. Is either a ApiVersionSetUpdateParameters type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ApiVersionSetUpdateParameters or
+         ~azure.mgmt.apimanagement.types.ApiVersionSetUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -39108,7 +39233,10 @@ class WorkspaceApiVersionSetOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -39151,7 +39279,7 @@ class WorkspaceApiVersionSetOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceBackendOperations:
+class WorkspaceBackendOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -39371,7 +39499,7 @@ class WorkspaceBackendOperations:
         service_name: str,
         workspace_id: str,
         backend_id: str,
-        parameters: JSON,
+        parameters: _types.BackendContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -39392,7 +39520,7 @@ class WorkspaceBackendOperations:
          Management service instance. Required.
         :type backend_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.BackendContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39455,7 +39583,7 @@ class WorkspaceBackendOperations:
         service_name: str,
         workspace_id: str,
         backend_id: str,
-        parameters: Union[_models.BackendContract, JSON, IO[bytes]],
+        parameters: Union[_models.BackendContract, _types.BackendContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -39474,9 +39602,10 @@ class WorkspaceBackendOperations:
         :param backend_id: Identifier of the Backend entity. Must be unique in the current API
          Management service instance. Required.
         :type backend_id: str
-        :param parameters: Create parameters. Is one of the following types: BackendContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.BackendContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a BackendContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.BackendContract or
+         ~azure.mgmt.apimanagement.types.BackendContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -39619,7 +39748,7 @@ class WorkspaceBackendOperations:
         service_name: str,
         workspace_id: str,
         backend_id: str,
-        parameters: JSON,
+        parameters: _types.BackendUpdateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -39640,7 +39769,7 @@ class WorkspaceBackendOperations:
          Management service instance. Required.
         :type backend_id: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.BackendUpdateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -39701,7 +39830,7 @@ class WorkspaceBackendOperations:
         service_name: str,
         workspace_id: str,
         backend_id: str,
-        parameters: Union[_models.BackendUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.BackendUpdateParameters, _types.BackendUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -39720,9 +39849,10 @@ class WorkspaceBackendOperations:
         :param backend_id: Identifier of the Backend entity. Must be unique in the current API
          Management service instance. Required.
         :type backend_id: str
-        :param parameters: Update parameters. Is one of the following types: BackendUpdateParameters,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.BackendUpdateParameters or JSON or IO[bytes]
+        :param parameters: Update parameters. Is either a BackendUpdateParameters type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.BackendUpdateParameters or
+         ~azure.mgmt.apimanagement.types.BackendUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -39981,7 +40111,10 @@ class WorkspaceBackendOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -40024,7 +40157,7 @@ class WorkspaceBackendOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceCertificateOperations:
+class WorkspaceCertificateOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -40244,7 +40377,7 @@ class WorkspaceCertificateOperations:
         service_name: str,
         workspace_id: str,
         certificate_id: str,
-        parameters: JSON,
+        parameters: _types.CertificateCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -40265,7 +40398,7 @@ class WorkspaceCertificateOperations:
          Management service instance. Required.
         :type certificate_id: str
         :param parameters: Create or Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.CertificateCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40328,7 +40461,9 @@ class WorkspaceCertificateOperations:
         service_name: str,
         workspace_id: str,
         certificate_id: str,
-        parameters: Union[_models.CertificateCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.CertificateCreateOrUpdateParameters, _types.CertificateCreateOrUpdateParameters, IO[bytes]
+        ],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -40347,10 +40482,10 @@ class WorkspaceCertificateOperations:
         :param certificate_id: Identifier of the certificate entity. Must be unique in the current API
          Management service instance. Required.
         :type certificate_id: str
-        :param parameters: Create or Update parameters. Is one of the following types:
-         CertificateCreateOrUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.CertificateCreateOrUpdateParameters or JSON
-         or IO[bytes]
+        :param parameters: Create or Update parameters. Is either a CertificateCreateOrUpdateParameters
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.CertificateCreateOrUpdateParameters or
+         ~azure.mgmt.apimanagement.types.CertificateCreateOrUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -40615,7 +40750,10 @@ class WorkspaceCertificateOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -40741,7 +40879,7 @@ class WorkspaceCertificateOperations:
         return deserialized  # type: ignore
 
 
-class WorkspaceGroupOperations:
+class WorkspaceGroupOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -40961,7 +41099,7 @@ class WorkspaceGroupOperations:
         service_name: str,
         workspace_id: str,
         group_id: str,
-        parameters: JSON,
+        parameters: _types.GroupCreateParameters,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -40982,7 +41120,7 @@ class WorkspaceGroupOperations:
          instance. Required.
         :type group_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.GroupCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41045,7 +41183,7 @@ class WorkspaceGroupOperations:
         service_name: str,
         workspace_id: str,
         group_id: str,
-        parameters: Union[_models.GroupCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.GroupCreateParameters, _types.GroupCreateParameters, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -41064,9 +41202,10 @@ class WorkspaceGroupOperations:
         :param group_id: Group identifier. Must be unique in the current API Management service
          instance. Required.
         :type group_id: str
-        :param parameters: Create parameters. Is one of the following types: GroupCreateParameters,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.GroupCreateParameters or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a GroupCreateParameters type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.GroupCreateParameters or
+         ~azure.mgmt.apimanagement.types.GroupCreateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -41204,7 +41343,7 @@ class WorkspaceGroupOperations:
         service_name: str,
         workspace_id: str,
         group_id: str,
-        parameters: JSON,
+        parameters: _types.GroupUpdateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -41225,7 +41364,7 @@ class WorkspaceGroupOperations:
          instance. Required.
         :type group_id: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.GroupUpdateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -41286,7 +41425,7 @@ class WorkspaceGroupOperations:
         service_name: str,
         workspace_id: str,
         group_id: str,
-        parameters: Union[_models.GroupUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.GroupUpdateParameters, _types.GroupUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -41305,9 +41444,10 @@ class WorkspaceGroupOperations:
         :param group_id: Group identifier. Must be unique in the current API Management service
          instance. Required.
         :type group_id: str
-        :param parameters: Update parameters. Is one of the following types: GroupUpdateParameters,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.GroupUpdateParameters or JSON or IO[bytes]
+        :param parameters: Update parameters. Is either a GroupUpdateParameters type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.GroupUpdateParameters or
+         ~azure.mgmt.apimanagement.types.GroupUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -41566,7 +41706,10 @@ class WorkspaceGroupOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -41609,7 +41752,7 @@ class WorkspaceGroupOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceLoggerOperations:
+class WorkspaceLoggerOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -41829,7 +41972,7 @@ class WorkspaceLoggerOperations:
         service_name: str,
         workspace_id: str,
         logger_id: str,
-        parameters: JSON,
+        parameters: _types.LoggerContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -41850,7 +41993,7 @@ class WorkspaceLoggerOperations:
          Required.
         :type logger_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.LoggerContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41913,7 +42056,7 @@ class WorkspaceLoggerOperations:
         service_name: str,
         workspace_id: str,
         logger_id: str,
-        parameters: Union[_models.LoggerContract, JSON, IO[bytes]],
+        parameters: Union[_models.LoggerContract, _types.LoggerContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -41932,9 +42075,10 @@ class WorkspaceLoggerOperations:
         :param logger_id: Logger identifier. Must be unique in the API Management service instance.
          Required.
         :type logger_id: str
-        :param parameters: Create parameters. Is one of the following types: LoggerContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.LoggerContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a LoggerContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.LoggerContract or
+         ~azure.mgmt.apimanagement.types.LoggerContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -42072,7 +42216,7 @@ class WorkspaceLoggerOperations:
         service_name: str,
         workspace_id: str,
         logger_id: str,
-        parameters: JSON,
+        parameters: _types.LoggerUpdateContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -42093,7 +42237,7 @@ class WorkspaceLoggerOperations:
          Required.
         :type logger_id: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.LoggerUpdateContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -42154,7 +42298,7 @@ class WorkspaceLoggerOperations:
         service_name: str,
         workspace_id: str,
         logger_id: str,
-        parameters: Union[_models.LoggerUpdateContract, JSON, IO[bytes]],
+        parameters: Union[_models.LoggerUpdateContract, _types.LoggerUpdateContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -42173,9 +42317,10 @@ class WorkspaceLoggerOperations:
         :param logger_id: Logger identifier. Must be unique in the API Management service instance.
          Required.
         :type logger_id: str
-        :param parameters: Update parameters. Is one of the following types: LoggerUpdateContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.LoggerUpdateContract or JSON or IO[bytes]
+        :param parameters: Update parameters. Is either a LoggerUpdateContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.LoggerUpdateContract or
+         ~azure.mgmt.apimanagement.types.LoggerUpdateContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -42434,7 +42579,10 @@ class WorkspaceLoggerOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -42477,7 +42625,7 @@ class WorkspaceLoggerOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceNamedValueOperations:
+class WorkspaceNamedValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -42652,7 +42800,7 @@ class WorkspaceNamedValueOperations:
         service_name: str,
         workspace_id: str,
         named_value_id: str,
-        parameters: Union[_models.NamedValueCreateContract, JSON, IO[bytes]],
+        parameters: Union[_models.NamedValueCreateContract, _types.NamedValueCreateContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -42796,7 +42944,7 @@ class WorkspaceNamedValueOperations:
         service_name: str,
         workspace_id: str,
         named_value_id: str,
-        parameters: JSON,
+        parameters: _types.NamedValueCreateContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -42816,7 +42964,7 @@ class WorkspaceNamedValueOperations:
         :param named_value_id: Identifier of the NamedValue. Required.
         :type named_value_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.NamedValueCreateContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42880,7 +43028,7 @@ class WorkspaceNamedValueOperations:
         service_name: str,
         workspace_id: str,
         named_value_id: str,
-        parameters: Union[_models.NamedValueCreateContract, JSON, IO[bytes]],
+        parameters: Union[_models.NamedValueCreateContract, _types.NamedValueCreateContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -42898,10 +43046,10 @@ class WorkspaceNamedValueOperations:
         :type workspace_id: str
         :param named_value_id: Identifier of the NamedValue. Required.
         :type named_value_id: str
-        :param parameters: Create parameters. Is one of the following types: NamedValueCreateContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.NamedValueCreateContract or JSON or
-         IO[bytes]
+        :param parameters: Create parameters. Is either a NamedValueCreateContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.NamedValueCreateContract or
+         ~azure.mgmt.apimanagement.types.NamedValueCreateContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -42981,7 +43129,7 @@ class WorkspaceNamedValueOperations:
         service_name: str,
         workspace_id: str,
         named_value_id: str,
-        parameters: Union[_models.NamedValueUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NamedValueUpdateParameters, _types.NamedValueUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -43118,7 +43266,7 @@ class WorkspaceNamedValueOperations:
         service_name: str,
         workspace_id: str,
         named_value_id: str,
-        parameters: JSON,
+        parameters: _types.NamedValueUpdateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -43138,7 +43286,7 @@ class WorkspaceNamedValueOperations:
         :param named_value_id: Identifier of the NamedValue. Required.
         :type named_value_id: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.NamedValueUpdateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -43200,7 +43348,7 @@ class WorkspaceNamedValueOperations:
         service_name: str,
         workspace_id: str,
         named_value_id: str,
-        parameters: Union[_models.NamedValueUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NamedValueUpdateParameters, _types.NamedValueUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -43218,10 +43366,10 @@ class WorkspaceNamedValueOperations:
         :type workspace_id: str
         :param named_value_id: Identifier of the NamedValue. Required.
         :type named_value_id: str
-        :param parameters: Update parameters. Is one of the following types:
-         NamedValueUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.NamedValueUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Update parameters. Is either a NamedValueUpdateParameters type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.NamedValueUpdateParameters or
+         ~azure.mgmt.apimanagement.types.NamedValueUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -43464,7 +43612,10 @@ class WorkspaceNamedValueOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -43733,7 +43884,7 @@ class WorkspaceNamedValueOperations:
         )
 
 
-class WorkspaceNotificationOperations:
+class WorkspaceNotificationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -44014,7 +44165,10 @@ class WorkspaceNotificationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -44057,7 +44211,7 @@ class WorkspaceNotificationOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspacePolicyFragmentOperations:
+class WorkspacePolicyFragmentOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -44243,7 +44397,7 @@ class WorkspacePolicyFragmentOperations:
         service_name: str,
         workspace_id: str,
         id: str,
-        parameters: Union[_models.PolicyFragmentContract, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyFragmentContract, _types.PolicyFragmentContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -44378,7 +44532,7 @@ class WorkspacePolicyFragmentOperations:
         service_name: str,
         workspace_id: str,
         id: str,
-        parameters: JSON,
+        parameters: _types.PolicyFragmentContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -44398,7 +44552,7 @@ class WorkspacePolicyFragmentOperations:
         :param id: A resource identifier. Required.
         :type id: str
         :param parameters: The policy fragment contents to apply. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PolicyFragmentContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -44462,7 +44616,7 @@ class WorkspacePolicyFragmentOperations:
         service_name: str,
         workspace_id: str,
         id: str,
-        parameters: Union[_models.PolicyFragmentContract, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyFragmentContract, _types.PolicyFragmentContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -44480,9 +44634,10 @@ class WorkspacePolicyFragmentOperations:
         :type workspace_id: str
         :param id: A resource identifier. Required.
         :type id: str
-        :param parameters: The policy fragment contents to apply. Is one of the following types:
-         PolicyFragmentContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PolicyFragmentContract or JSON or IO[bytes]
+        :param parameters: The policy fragment contents to apply. Is either a PolicyFragmentContract
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PolicyFragmentContract or
+         ~azure.mgmt.apimanagement.types.PolicyFragmentContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -44729,7 +44884,10 @@ class WorkspacePolicyFragmentOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -44865,7 +45023,7 @@ class WorkspacePolicyFragmentOperations:
         return deserialized  # type: ignore
 
 
-class SignInSettingsOperations:
+class SignInSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -45055,7 +45213,7 @@ class SignInSettingsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: JSON,
+        parameters: _types.PortalSigninSettings,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -45070,7 +45228,7 @@ class SignInSettingsOperations:
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PortalSigninSettings
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45123,7 +45281,7 @@ class SignInSettingsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Union[_models.PortalSigninSettings, JSON, IO[bytes]],
+        parameters: Union[_models.PortalSigninSettings, _types.PortalSigninSettings, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -45136,9 +45294,10 @@ class SignInSettingsOperations:
         :type resource_group_name: str
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         PortalSigninSettings, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PortalSigninSettings or JSON or IO[bytes]
+        :param parameters: Create or update parameters. Is either a PortalSigninSettings type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PortalSigninSettings or
+         ~azure.mgmt.apimanagement.types.PortalSigninSettings or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -45261,7 +45420,7 @@ class SignInSettingsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: JSON,
+        parameters: _types.PortalSigninSettings,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -45276,7 +45435,7 @@ class SignInSettingsOperations:
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
         :param parameters: Update Sign-In settings. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PortalSigninSettings
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -45327,7 +45486,7 @@ class SignInSettingsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Union[_models.PortalSigninSettings, JSON, IO[bytes]],
+        parameters: Union[_models.PortalSigninSettings, _types.PortalSigninSettings, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -45340,9 +45499,10 @@ class SignInSettingsOperations:
         :type resource_group_name: str
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
-        :param parameters: Update Sign-In settings. Is one of the following types:
-         PortalSigninSettings, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PortalSigninSettings or JSON or IO[bytes]
+        :param parameters: Update Sign-In settings. Is either a PortalSigninSettings type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PortalSigninSettings or
+         ~azure.mgmt.apimanagement.types.PortalSigninSettings or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -45414,7 +45574,7 @@ class SignInSettingsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SignUpSettingsOperations:
+class SignUpSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -45604,7 +45764,7 @@ class SignUpSettingsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: JSON,
+        parameters: _types.PortalSignupSettings,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -45619,7 +45779,7 @@ class SignUpSettingsOperations:
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PortalSignupSettings
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45672,7 +45832,7 @@ class SignUpSettingsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Union[_models.PortalSignupSettings, JSON, IO[bytes]],
+        parameters: Union[_models.PortalSignupSettings, _types.PortalSignupSettings, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -45685,9 +45845,10 @@ class SignUpSettingsOperations:
         :type resource_group_name: str
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         PortalSignupSettings, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PortalSignupSettings or JSON or IO[bytes]
+        :param parameters: Create or update parameters. Is either a PortalSignupSettings type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PortalSignupSettings or
+         ~azure.mgmt.apimanagement.types.PortalSignupSettings or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -45810,7 +45971,7 @@ class SignUpSettingsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: JSON,
+        parameters: _types.PortalSignupSettings,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -45825,7 +45986,7 @@ class SignUpSettingsOperations:
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
         :param parameters: Update Sign-Up settings. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PortalSignupSettings
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -45876,7 +46037,7 @@ class SignUpSettingsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Union[_models.PortalSignupSettings, JSON, IO[bytes]],
+        parameters: Union[_models.PortalSignupSettings, _types.PortalSignupSettings, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -45889,9 +46050,10 @@ class SignUpSettingsOperations:
         :type resource_group_name: str
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
-        :param parameters: Update Sign-Up settings. Is one of the following types:
-         PortalSignupSettings, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PortalSignupSettings or JSON or IO[bytes]
+        :param parameters: Update Sign-Up settings. Is either a PortalSignupSettings type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PortalSignupSettings or
+         ~azure.mgmt.apimanagement.types.PortalSignupSettings or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -45963,7 +46125,7 @@ class SignUpSettingsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class DelegationSettingsOperations:
+class DelegationSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -46155,7 +46317,7 @@ class DelegationSettingsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: JSON,
+        parameters: _types.PortalDelegationSettings,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -46170,7 +46332,7 @@ class DelegationSettingsOperations:
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PortalDelegationSettings
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -46225,7 +46387,7 @@ class DelegationSettingsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Union[_models.PortalDelegationSettings, JSON, IO[bytes]],
+        parameters: Union[_models.PortalDelegationSettings, _types.PortalDelegationSettings, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -46238,10 +46400,10 @@ class DelegationSettingsOperations:
         :type resource_group_name: str
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         PortalDelegationSettings, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PortalDelegationSettings or JSON or
-         IO[bytes]
+        :param parameters: Create or update parameters. Is either a PortalDelegationSettings type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PortalDelegationSettings or
+         ~azure.mgmt.apimanagement.types.PortalDelegationSettings or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -46365,7 +46527,7 @@ class DelegationSettingsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: JSON,
+        parameters: _types.PortalDelegationSettings,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -46380,7 +46542,7 @@ class DelegationSettingsOperations:
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
         :param parameters: Update Delegation settings. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PortalDelegationSettings
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -46431,7 +46593,7 @@ class DelegationSettingsOperations:
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Union[_models.PortalDelegationSettings, JSON, IO[bytes]],
+        parameters: Union[_models.PortalDelegationSettings, _types.PortalDelegationSettings, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -46444,10 +46606,10 @@ class DelegationSettingsOperations:
         :type resource_group_name: str
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
-        :param parameters: Update Delegation settings. Is one of the following types:
-         PortalDelegationSettings, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PortalDelegationSettings or JSON or
-         IO[bytes]
+        :param parameters: Update Delegation settings. Is either a PortalDelegationSettings type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PortalDelegationSettings or
+         ~azure.mgmt.apimanagement.types.PortalDelegationSettings or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -46592,7 +46754,7 @@ class DelegationSettingsOperations:
         return deserialized  # type: ignore
 
 
-class WorkspaceProductOperations:
+class WorkspaceProductOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -46812,7 +46974,7 @@ class WorkspaceProductOperations:
         service_name: str,
         workspace_id: str,
         product_id: str,
-        parameters: JSON,
+        parameters: _types.ProductContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -46833,7 +46995,7 @@ class WorkspaceProductOperations:
          instance. Required.
         :type product_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ProductContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -46896,7 +47058,7 @@ class WorkspaceProductOperations:
         service_name: str,
         workspace_id: str,
         product_id: str,
-        parameters: Union[_models.ProductContract, JSON, IO[bytes]],
+        parameters: Union[_models.ProductContract, _types.ProductContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -46915,9 +47077,10 @@ class WorkspaceProductOperations:
         :param product_id: Product identifier. Must be unique in the current API Management service
          instance. Required.
         :type product_id: str
-        :param parameters: Create or update parameters. Is one of the following types: ProductContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ProductContract or JSON or IO[bytes]
+        :param parameters: Create or update parameters. Is either a ProductContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ProductContract or
+         ~azure.mgmt.apimanagement.types.ProductContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -47055,7 +47218,7 @@ class WorkspaceProductOperations:
         service_name: str,
         workspace_id: str,
         product_id: str,
-        parameters: JSON,
+        parameters: _types.ProductUpdateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -47076,7 +47239,7 @@ class WorkspaceProductOperations:
          instance. Required.
         :type product_id: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ProductUpdateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -47137,7 +47300,7 @@ class WorkspaceProductOperations:
         service_name: str,
         workspace_id: str,
         product_id: str,
-        parameters: Union[_models.ProductUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ProductUpdateParameters, _types.ProductUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -47156,9 +47319,10 @@ class WorkspaceProductOperations:
         :param product_id: Product identifier. Must be unique in the current API Management service
          instance. Required.
         :type product_id: str
-        :param parameters: Update parameters. Is one of the following types: ProductUpdateParameters,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ProductUpdateParameters or JSON or IO[bytes]
+        :param parameters: Update parameters. Is either a ProductUpdateParameters type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ProductUpdateParameters or
+         ~azure.mgmt.apimanagement.types.ProductUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -47433,7 +47597,10 @@ class WorkspaceProductOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -47476,7 +47643,7 @@ class WorkspaceProductOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceProductApiLinkOperations:
+class WorkspaceProductApiLinkOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -47633,7 +47800,7 @@ class WorkspaceProductApiLinkOperations:
         workspace_id: str,
         product_id: str,
         api_link_id: str,
-        parameters: JSON,
+        parameters: _types.ProductApiLinkContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -47655,7 +47822,7 @@ class WorkspaceProductApiLinkOperations:
          service instance. Required.
         :type api_link_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ProductApiLinkContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -47711,7 +47878,7 @@ class WorkspaceProductApiLinkOperations:
         workspace_id: str,
         product_id: str,
         api_link_id: str,
-        parameters: Union[_models.ProductApiLinkContract, JSON, IO[bytes]],
+        parameters: Union[_models.ProductApiLinkContract, _types.ProductApiLinkContract, IO[bytes]],
         **kwargs: Any
     ) -> _models.ProductApiLinkContract:
         """Adds an API to the specified product via link.
@@ -47730,9 +47897,10 @@ class WorkspaceProductApiLinkOperations:
         :param api_link_id: Product-API link identifier. Must be unique in the current API Management
          service instance. Required.
         :type api_link_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         ProductApiLinkContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ProductApiLinkContract or JSON or IO[bytes]
+        :param parameters: Create or update parameters. Is either a ProductApiLinkContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ProductApiLinkContract or
+         ~azure.mgmt.apimanagement.types.ProductApiLinkContract or IO[bytes]
         :return: ProductApiLinkContract. The ProductApiLinkContract is compatible with MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.ProductApiLinkContract
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -47970,7 +48138,10 @@ class WorkspaceProductApiLinkOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -48013,7 +48184,7 @@ class WorkspaceProductApiLinkOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceProductGroupLinkOperations:
+class WorkspaceProductGroupLinkOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -48172,7 +48343,7 @@ class WorkspaceProductGroupLinkOperations:
         workspace_id: str,
         product_id: str,
         group_link_id: str,
-        parameters: JSON,
+        parameters: _types.ProductGroupLinkContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -48194,7 +48365,7 @@ class WorkspaceProductGroupLinkOperations:
          Management service instance. Required.
         :type group_link_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ProductGroupLinkContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -48252,7 +48423,7 @@ class WorkspaceProductGroupLinkOperations:
         workspace_id: str,
         product_id: str,
         group_link_id: str,
-        parameters: Union[_models.ProductGroupLinkContract, JSON, IO[bytes]],
+        parameters: Union[_models.ProductGroupLinkContract, _types.ProductGroupLinkContract, IO[bytes]],
         **kwargs: Any
     ) -> _models.ProductGroupLinkContract:
         """Adds a group to the specified product via link.
@@ -48271,10 +48442,10 @@ class WorkspaceProductGroupLinkOperations:
         :param group_link_id: Product-Group link identifier. Must be unique in the current API
          Management service instance. Required.
         :type group_link_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         ProductGroupLinkContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ProductGroupLinkContract or JSON or
-         IO[bytes]
+        :param parameters: Create or update parameters. Is either a ProductGroupLinkContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ProductGroupLinkContract or
+         ~azure.mgmt.apimanagement.types.ProductGroupLinkContract or IO[bytes]
         :return: ProductGroupLinkContract. The ProductGroupLinkContract is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.ProductGroupLinkContract
@@ -48513,7 +48684,10 @@ class WorkspaceProductGroupLinkOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -48556,7 +48730,7 @@ class WorkspaceProductGroupLinkOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceGlobalSchemaOperations:
+class WorkspaceGlobalSchemaOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -48733,7 +48907,7 @@ class WorkspaceGlobalSchemaOperations:
         service_name: str,
         workspace_id: str,
         schema_id: str,
-        parameters: Union[_models.GlobalSchemaContract, JSON, IO[bytes]],
+        parameters: Union[_models.GlobalSchemaContract, _types.GlobalSchemaContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -48870,7 +49044,7 @@ class WorkspaceGlobalSchemaOperations:
         service_name: str,
         workspace_id: str,
         schema_id: str,
-        parameters: JSON,
+        parameters: _types.GlobalSchemaContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -48892,7 +49066,7 @@ class WorkspaceGlobalSchemaOperations:
          instance. Required.
         :type schema_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.GlobalSchemaContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -48958,7 +49132,7 @@ class WorkspaceGlobalSchemaOperations:
         service_name: str,
         workspace_id: str,
         schema_id: str,
-        parameters: Union[_models.GlobalSchemaContract, JSON, IO[bytes]],
+        parameters: Union[_models.GlobalSchemaContract, _types.GlobalSchemaContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -48978,9 +49152,10 @@ class WorkspaceGlobalSchemaOperations:
         :param schema_id: Schema id identifier. Must be unique in the current API Management service
          instance. Required.
         :type schema_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         GlobalSchemaContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.GlobalSchemaContract or JSON or IO[bytes]
+        :param parameters: Create or update parameters. Is either a GlobalSchemaContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.GlobalSchemaContract or
+         ~azure.mgmt.apimanagement.types.GlobalSchemaContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -49222,7 +49397,10 @@ class WorkspaceGlobalSchemaOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -49265,7 +49443,7 @@ class WorkspaceGlobalSchemaOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class UserSubscriptionOperations:
+class UserSubscriptionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -49452,7 +49630,10 @@ class UserSubscriptionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -49495,7 +49676,7 @@ class UserSubscriptionOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceSubscriptionOperations:
+class WorkspaceSubscriptionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -49727,7 +49908,7 @@ class WorkspaceSubscriptionOperations:
         service_name: str,
         workspace_id: str,
         sid: str,
-        parameters: JSON,
+        parameters: _types.SubscriptionCreateParameters,
         *,
         notify: Optional[bool] = None,
         app_type: Optional[Union[str, _models.AppType]] = None,
@@ -49750,7 +49931,7 @@ class WorkspaceSubscriptionOperations:
          user and a product in API Management. Required.
         :type sid: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.SubscriptionCreateParameters
         :keyword notify: Notify change in Subscription State.
 
          * If false, do not send any email notification for change of state of subscription
@@ -49833,7 +50014,7 @@ class WorkspaceSubscriptionOperations:
         service_name: str,
         workspace_id: str,
         sid: str,
-        parameters: Union[_models.SubscriptionCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.SubscriptionCreateParameters, _types.SubscriptionCreateParameters, IO[bytes]],
         *,
         notify: Optional[bool] = None,
         app_type: Optional[Union[str, _models.AppType]] = None,
@@ -49854,10 +50035,10 @@ class WorkspaceSubscriptionOperations:
         :param sid: Subscription entity Identifier. The entity represents the association between a
          user and a product in API Management. Required.
         :type sid: str
-        :param parameters: Create parameters. Is one of the following types:
-         SubscriptionCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.SubscriptionCreateParameters or JSON or
-         IO[bytes]
+        :param parameters: Create parameters. Is either a SubscriptionCreateParameters type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.SubscriptionCreateParameters or
+         ~azure.mgmt.apimanagement.types.SubscriptionCreateParameters or IO[bytes]
         :keyword notify: Notify change in Subscription State.
 
          * If false, do not send any email notification for change of state of subscription
@@ -50017,7 +50198,7 @@ class WorkspaceSubscriptionOperations:
         service_name: str,
         workspace_id: str,
         sid: str,
-        parameters: JSON,
+        parameters: _types.SubscriptionUpdateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -50040,7 +50221,7 @@ class WorkspaceSubscriptionOperations:
          user and a product in API Management. Required.
         :type sid: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.SubscriptionUpdateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -50121,7 +50302,7 @@ class WorkspaceSubscriptionOperations:
         service_name: str,
         workspace_id: str,
         sid: str,
-        parameters: Union[_models.SubscriptionUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.SubscriptionUpdateParameters, _types.SubscriptionUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -50142,10 +50323,10 @@ class WorkspaceSubscriptionOperations:
         :param sid: Subscription entity Identifier. The entity represents the association between a
          user and a product in API Management. Required.
         :type sid: str
-        :param parameters: Update parameters. Is one of the following types:
-         SubscriptionUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.SubscriptionUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Update parameters. Is either a SubscriptionUpdateParameters type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.SubscriptionUpdateParameters or
+         ~azure.mgmt.apimanagement.types.SubscriptionUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -50420,7 +50601,10 @@ class WorkspaceSubscriptionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -50683,7 +50867,7 @@ class WorkspaceSubscriptionOperations:
         return deserialized  # type: ignore
 
 
-class WorkspaceTagApiLinkOperations:
+class WorkspaceTagApiLinkOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -50840,7 +51024,7 @@ class WorkspaceTagApiLinkOperations:
         workspace_id: str,
         tag_id: str,
         api_link_id: str,
-        parameters: JSON,
+        parameters: _types.TagApiLinkContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -50862,7 +51046,7 @@ class WorkspaceTagApiLinkOperations:
          service instance. Required.
         :type api_link_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.TagApiLinkContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -50918,7 +51102,7 @@ class WorkspaceTagApiLinkOperations:
         workspace_id: str,
         tag_id: str,
         api_link_id: str,
-        parameters: Union[_models.TagApiLinkContract, JSON, IO[bytes]],
+        parameters: Union[_models.TagApiLinkContract, _types.TagApiLinkContract, IO[bytes]],
         **kwargs: Any
     ) -> _models.TagApiLinkContract:
         """Adds an API to the specified tag via link.
@@ -50937,9 +51121,10 @@ class WorkspaceTagApiLinkOperations:
         :param api_link_id: Tag-API link identifier. Must be unique in the current API Management
          service instance. Required.
         :type api_link_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         TagApiLinkContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.TagApiLinkContract or JSON or IO[bytes]
+        :param parameters: Create or update parameters. Is either a TagApiLinkContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.TagApiLinkContract or
+         ~azure.mgmt.apimanagement.types.TagApiLinkContract or IO[bytes]
         :return: TagApiLinkContract. The TagApiLinkContract is compatible with MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.TagApiLinkContract
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -51177,7 +51362,10 @@ class WorkspaceTagApiLinkOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -51220,7 +51408,7 @@ class WorkspaceTagApiLinkOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceTagOperationLinkOperations:
+class WorkspaceTagOperationLinkOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -51379,7 +51567,7 @@ class WorkspaceTagOperationLinkOperations:
         workspace_id: str,
         tag_id: str,
         operation_link_id: str,
-        parameters: JSON,
+        parameters: _types.TagOperationLinkContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -51401,7 +51589,7 @@ class WorkspaceTagOperationLinkOperations:
          Management service instance. Required.
         :type operation_link_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.TagOperationLinkContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -51459,7 +51647,7 @@ class WorkspaceTagOperationLinkOperations:
         workspace_id: str,
         tag_id: str,
         operation_link_id: str,
-        parameters: Union[_models.TagOperationLinkContract, JSON, IO[bytes]],
+        parameters: Union[_models.TagOperationLinkContract, _types.TagOperationLinkContract, IO[bytes]],
         **kwargs: Any
     ) -> _models.TagOperationLinkContract:
         """Adds an operation to the specified tag via link.
@@ -51478,10 +51666,10 @@ class WorkspaceTagOperationLinkOperations:
         :param operation_link_id: Tag-operation link identifier. Must be unique in the current API
          Management service instance. Required.
         :type operation_link_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         TagOperationLinkContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.TagOperationLinkContract or JSON or
-         IO[bytes]
+        :param parameters: Create or update parameters. Is either a TagOperationLinkContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.TagOperationLinkContract or
+         ~azure.mgmt.apimanagement.types.TagOperationLinkContract or IO[bytes]
         :return: TagOperationLinkContract. The TagOperationLinkContract is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.TagOperationLinkContract
@@ -51720,7 +51908,10 @@ class WorkspaceTagOperationLinkOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -51763,7 +51954,7 @@ class WorkspaceTagOperationLinkOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceTagProductLinkOperations:
+class WorkspaceTagProductLinkOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -51920,7 +52111,7 @@ class WorkspaceTagProductLinkOperations:
         workspace_id: str,
         tag_id: str,
         product_link_id: str,
-        parameters: JSON,
+        parameters: _types.TagProductLinkContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -51942,7 +52133,7 @@ class WorkspaceTagProductLinkOperations:
          Management service instance. Required.
         :type product_link_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.TagProductLinkContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -51998,7 +52189,7 @@ class WorkspaceTagProductLinkOperations:
         workspace_id: str,
         tag_id: str,
         product_link_id: str,
-        parameters: Union[_models.TagProductLinkContract, JSON, IO[bytes]],
+        parameters: Union[_models.TagProductLinkContract, _types.TagProductLinkContract, IO[bytes]],
         **kwargs: Any
     ) -> _models.TagProductLinkContract:
         """Adds a product to the specified tag via link.
@@ -52017,9 +52208,10 @@ class WorkspaceTagProductLinkOperations:
         :param product_link_id: Tag-product link identifier. Must be unique in the current API
          Management service instance. Required.
         :type product_link_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         TagProductLinkContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.TagProductLinkContract or JSON or IO[bytes]
+        :param parameters: Create or update parameters. Is either a TagProductLinkContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.TagProductLinkContract or
+         ~azure.mgmt.apimanagement.types.TagProductLinkContract or IO[bytes]
         :return: TagProductLinkContract. The TagProductLinkContract is compatible with MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.TagProductLinkContract
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -52257,7 +52449,10 @@ class WorkspaceTagProductLinkOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -52300,7 +52495,7 @@ class WorkspaceTagProductLinkOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiManagementOperationsOperations:
+class ApiManagementOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -52364,7 +52559,10 @@ class ApiManagementOperationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -52407,7 +52605,7 @@ class ApiManagementOperationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiGatewayOperations:
+class ApiGatewayOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -52499,7 +52697,7 @@ class ApiGatewayOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: Union[_models.ApiManagementGatewayResource, JSON, IO[bytes]],
+        parameters: Union[_models.ApiManagementGatewayResource, _types.ApiManagementGatewayResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -52606,7 +52804,7 @@ class ApiGatewayOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: JSON,
+        parameters: _types.ApiManagementGatewayResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -52621,7 +52819,7 @@ class ApiGatewayOperations:
         :type gateway_name: str
         :param parameters: Parameters supplied to the CreateOrUpdate API Management gateway operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ApiManagementGatewayResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -52668,7 +52866,7 @@ class ApiGatewayOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: Union[_models.ApiManagementGatewayResource, JSON, IO[bytes]],
+        parameters: Union[_models.ApiManagementGatewayResource, _types.ApiManagementGatewayResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ApiManagementGatewayResource]:
         """Creates or updates an API Management gateway. This is long running operation and could take
@@ -52680,9 +52878,9 @@ class ApiGatewayOperations:
         :param gateway_name: The name of the API Management gateway. Required.
         :type gateway_name: str
         :param parameters: Parameters supplied to the CreateOrUpdate API Management gateway operation.
-         Is one of the following types: ApiManagementGatewayResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ApiManagementGatewayResource or JSON or
-         IO[bytes]
+         Is either a ApiManagementGatewayResource type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ApiManagementGatewayResource or
+         ~azure.mgmt.apimanagement.types.ApiManagementGatewayResource or IO[bytes]
         :return: An instance of LROPoller that returns ApiManagementGatewayResource. The
          ApiManagementGatewayResource is compatible with MutableMapping
         :rtype:
@@ -52745,7 +52943,9 @@ class ApiGatewayOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: Union[_models.ApiManagementGatewayUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ApiManagementGatewayUpdateParameters, _types.ApiManagementGatewayUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -52851,7 +53051,7 @@ class ApiGatewayOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: JSON,
+        parameters: _types.ApiManagementGatewayUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -52865,7 +53065,7 @@ class ApiGatewayOperations:
         :type gateway_name: str
         :param parameters: Parameters supplied to the CreateOrUpdate API Management gateway operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ApiManagementGatewayUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -52911,7 +53111,9 @@ class ApiGatewayOperations:
         self,
         resource_group_name: str,
         gateway_name: str,
-        parameters: Union[_models.ApiManagementGatewayUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ApiManagementGatewayUpdateParameters, _types.ApiManagementGatewayUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.ApiManagementGatewayResource]:
         """Updates an existing API Management gateway.
@@ -52922,9 +53124,9 @@ class ApiGatewayOperations:
         :param gateway_name: The name of the API Management gateway. Required.
         :type gateway_name: str
         :param parameters: Parameters supplied to the CreateOrUpdate API Management gateway operation.
-         Is one of the following types: ApiManagementGatewayUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ApiManagementGatewayUpdateParameters or JSON
-         or IO[bytes]
+         Is either a ApiManagementGatewayUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ApiManagementGatewayUpdateParameters or
+         ~azure.mgmt.apimanagement.types.ApiManagementGatewayUpdateParameters or IO[bytes]
         :return: An instance of LROPoller that returns ApiManagementGatewayResource. The
          ApiManagementGatewayResource is compatible with MutableMapping
         :rtype:
@@ -53112,13 +53314,17 @@ class ApiGatewayOperations:
 
     @distributed_trace
     def list_by_resource_group(
-        self, resource_group_name: str, **kwargs: Any
+        self, resource_group_name: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
     ) -> ItemPaged["_models.ApiManagementGatewayResource"]:
         """List all API Management gateways within a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
+        :keyword top: Number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: Skip token for retrieving the next page of results. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of ApiManagementGatewayResource
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ApiManagementGatewayResource]
@@ -53143,6 +53349,8 @@ class ApiGatewayOperations:
                 _request = build_api_gateway_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -53165,7 +53373,10 @@ class ApiGatewayOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -53208,9 +53419,15 @@ class ApiGatewayOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> ItemPaged["_models.ApiManagementGatewayResource"]:
+    def list(
+        self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.ApiManagementGatewayResource"]:
         """List all API Management gateways within a subscription.
 
+        :keyword top: Number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: Skip token for retrieving the next page of results. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of ApiManagementGatewayResource
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ApiManagementGatewayResource]
@@ -53234,6 +53451,8 @@ class ApiGatewayOperations:
 
                 _request = build_api_gateway_list_request(
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -53256,7 +53475,10 @@ class ApiGatewayOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -53299,7 +53521,7 @@ class ApiGatewayOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiManagementGatewaySkusOperations:
+class ApiManagementGatewaySkusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -53375,7 +53597,10 @@ class ApiManagementGatewaySkusOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -53418,7 +53643,7 @@ class ApiManagementGatewaySkusOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiOperations:
+class ApiOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -53582,7 +53807,7 @@ class ApiOperations:
         resource_group_name: str,
         service_name: str,
         api_id: str,
-        parameters: Union[_models.ApiCreateOrUpdateParameter, JSON, IO[bytes]],
+        parameters: Union[_models.ApiCreateOrUpdateParameter, _types.ApiCreateOrUpdateParameter, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -53712,7 +53937,7 @@ class ApiOperations:
         resource_group_name: str,
         service_name: str,
         api_id: str,
-        parameters: JSON,
+        parameters: _types.ApiCreateOrUpdateParameter,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -53730,7 +53955,7 @@ class ApiOperations:
          instance. Non-current revision has ;rev=n as a suffix where n is the revision number. Required.
         :type api_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ApiCreateOrUpdateParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -53790,7 +54015,7 @@ class ApiOperations:
         resource_group_name: str,
         service_name: str,
         api_id: str,
-        parameters: Union[_models.ApiCreateOrUpdateParameter, JSON, IO[bytes]],
+        parameters: Union[_models.ApiCreateOrUpdateParameter, _types.ApiCreateOrUpdateParameter, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -53806,10 +54031,10 @@ class ApiOperations:
         :param api_id: API revision identifier. Must be unique in the current API Management service
          instance. Non-current revision has ;rev=n as a suffix where n is the revision number. Required.
         :type api_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         ApiCreateOrUpdateParameter, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ApiCreateOrUpdateParameter or JSON or
-         IO[bytes]
+        :param parameters: Create or update parameters. Is either a ApiCreateOrUpdateParameter type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ApiCreateOrUpdateParameter or
+         ~azure.mgmt.apimanagement.types.ApiCreateOrUpdateParameter or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -53925,7 +54150,7 @@ class ApiOperations:
         resource_group_name: str,
         service_name: str,
         api_id: str,
-        parameters: JSON,
+        parameters: _types.ApiUpdateContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -53943,7 +54168,7 @@ class ApiOperations:
          instance. Non-current revision has ;rev=n as a suffix where n is the revision number. Required.
         :type api_id: str
         :param parameters: API Update Contract parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ApiUpdateContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -53999,7 +54224,7 @@ class ApiOperations:
         resource_group_name: str,
         service_name: str,
         api_id: str,
-        parameters: Union[_models.ApiUpdateContract, JSON, IO[bytes]],
+        parameters: Union[_models.ApiUpdateContract, _types.ApiUpdateContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -54015,9 +54240,10 @@ class ApiOperations:
         :param api_id: API revision identifier. Must be unique in the current API Management service
          instance. Non-current revision has ;rev=n as a suffix where n is the revision number. Required.
         :type api_id: str
-        :param parameters: API Update Contract parameters. Is one of the following types:
-         ApiUpdateContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ApiUpdateContract or JSON or IO[bytes]
+        :param parameters: API Update Contract parameters. Is either a ApiUpdateContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ApiUpdateContract or
+         ~azure.mgmt.apimanagement.types.ApiUpdateContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -54355,7 +54581,10 @@ class ApiOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -54483,7 +54712,10 @@ class ApiOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -54526,7 +54758,7 @@ class ApiOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiRevisionOperations:
+class ApiRevisionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -54624,7 +54856,10 @@ class ApiRevisionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -54667,7 +54902,7 @@ class ApiRevisionOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiProductOperations:
+class ApiProductOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -54765,7 +55000,10 @@ class ApiProductOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -54808,7 +55046,7 @@ class ApiProductOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class OperationOperations:
+class OperationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -54915,7 +55153,10 @@ class OperationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -54958,7 +55199,7 @@ class OperationOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceApiRevisionOperations:
+class WorkspaceApiRevisionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -55061,7 +55302,10 @@ class WorkspaceApiRevisionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -55104,7 +55348,7 @@ class WorkspaceApiRevisionOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
+class ApiManagementServiceOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -55196,7 +55440,7 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Union[_models.ApiManagementServiceResource, JSON, IO[bytes]],
+        parameters: Union[_models.ApiManagementServiceResource, _types.ApiManagementServiceResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -55303,7 +55547,7 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: JSON,
+        parameters: _types.ApiManagementServiceResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -55318,7 +55562,7 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         :type service_name: str
         :param parameters: Parameters supplied to the CreateOrUpdate API Management service operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ApiManagementServiceResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -55365,7 +55609,7 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Union[_models.ApiManagementServiceResource, JSON, IO[bytes]],
+        parameters: Union[_models.ApiManagementServiceResource, _types.ApiManagementServiceResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ApiManagementServiceResource]:
         """Creates or updates an API Management service. This is long running operation and could take
@@ -55377,9 +55621,9 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
         :param parameters: Parameters supplied to the CreateOrUpdate API Management service operation.
-         Is one of the following types: ApiManagementServiceResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ApiManagementServiceResource or JSON or
-         IO[bytes]
+         Is either a ApiManagementServiceResource type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ApiManagementServiceResource or
+         ~azure.mgmt.apimanagement.types.ApiManagementServiceResource or IO[bytes]
         :return: An instance of LROPoller that returns ApiManagementServiceResource. The
          ApiManagementServiceResource is compatible with MutableMapping
         :rtype:
@@ -55442,7 +55686,9 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Union[_models.ApiManagementServiceUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ApiManagementServiceUpdateParameters, _types.ApiManagementServiceUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -55548,7 +55794,7 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: JSON,
+        parameters: _types.ApiManagementServiceUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -55562,7 +55808,7 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         :type service_name: str
         :param parameters: Parameters supplied to the CreateOrUpdate API Management service operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ApiManagementServiceUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -55608,7 +55854,9 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Union[_models.ApiManagementServiceUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ApiManagementServiceUpdateParameters, _types.ApiManagementServiceUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.ApiManagementServiceResource]:
         """Updates an existing API Management service.
@@ -55619,9 +55867,9 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
         :param parameters: Parameters supplied to the CreateOrUpdate API Management service operation.
-         Is one of the following types: ApiManagementServiceUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ApiManagementServiceUpdateParameters or JSON
-         or IO[bytes]
+         Is either a ApiManagementServiceUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ApiManagementServiceUpdateParameters or
+         ~azure.mgmt.apimanagement.types.ApiManagementServiceUpdateParameters or IO[bytes]
         :return: An instance of LROPoller that returns ApiManagementServiceResource. The
          ApiManagementServiceResource is compatible with MutableMapping
         :rtype:
@@ -55740,9 +55988,7 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_delete(
-        self, resource_group_name: str, service_name: str, **kwargs: Any
-    ) -> LROPoller[_models.ApiManagementServiceResource]:
+    def begin_delete(self, resource_group_name: str, service_name: str, **kwargs: Any) -> LROPoller[None]:
         """Deletes an existing API Management service.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -55750,16 +55996,14 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
-        :return: An instance of LROPoller that returns ApiManagementServiceResource. The
-         ApiManagementServiceResource is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.apimanagement.models.ApiManagementServiceResource]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ApiManagementServiceResource] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -55775,12 +56019,9 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.ApiManagementServiceResource, response.json())
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -55795,25 +56036,27 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.ApiManagementServiceResource].from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.ApiManagementServiceResource](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list_by_resource_group(
-        self, resource_group_name: str, **kwargs: Any
+        self, resource_group_name: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
     ) -> ItemPaged["_models.ApiManagementServiceResource"]:
         """List all API Management services within a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
+        :keyword top: Number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: Skip token for retrieving the next page of results. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of ApiManagementServiceResource
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ApiManagementServiceResource]
@@ -55838,6 +56081,8 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
                 _request = build_api_management_service_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -55860,7 +56105,10 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -55903,9 +56151,15 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> ItemPaged["_models.ApiManagementServiceResource"]:
+    def list(
+        self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.ApiManagementServiceResource"]:
         """Lists all API Management services within an Azure subscription.
 
+        :keyword top: Number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: Skip token for retrieving the next page of results. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of ApiManagementServiceResource
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ApiManagementServiceResource]
@@ -55929,6 +56183,8 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
 
                 _request = build_api_management_service_list_request(
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -55951,7 +56207,10 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -55997,7 +56256,11 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Union[_models.ApiManagementServiceBackupRestoreParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ApiManagementServiceBackupRestoreParameters,
+            _types.ApiManagementServiceBackupRestoreParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -56105,7 +56368,7 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: JSON,
+        parameters: _types.ApiManagementServiceBackupRestoreParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -56121,7 +56384,7 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         :type service_name: str
         :param parameters: Parameters supplied to the Restore API Management service from backup
          operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ApiManagementServiceBackupRestoreParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -56169,7 +56432,11 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Union[_models.ApiManagementServiceBackupRestoreParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ApiManagementServiceBackupRestoreParameters,
+            _types.ApiManagementServiceBackupRestoreParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.ApiManagementServiceResource]:
         """Restores a backup of an API Management service created using the ApiManagementService_Backup
@@ -56182,10 +56449,10 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
         :param parameters: Parameters supplied to the Restore API Management service from backup
-         operation. Is one of the following types: ApiManagementServiceBackupRestoreParameters, JSON,
-         IO[bytes] Required.
+         operation. Is either a ApiManagementServiceBackupRestoreParameters type or a IO[bytes] type.
+         Required.
         :type parameters: ~azure.mgmt.apimanagement.models.ApiManagementServiceBackupRestoreParameters
-         or JSON or IO[bytes]
+         or ~azure.mgmt.apimanagement.types.ApiManagementServiceBackupRestoreParameters or IO[bytes]
         :return: An instance of LROPoller that returns ApiManagementServiceResource. The
          ApiManagementServiceResource is compatible with MutableMapping
         :rtype:
@@ -56215,14 +56482,10 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ApiManagementServiceResource, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -56252,7 +56515,11 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Union[_models.ApiManagementServiceBackupRestoreParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ApiManagementServiceBackupRestoreParameters,
+            _types.ApiManagementServiceBackupRestoreParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -56358,7 +56625,7 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: JSON,
+        parameters: _types.ApiManagementServiceBackupRestoreParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -56372,7 +56639,7 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
         :param parameters: Parameters supplied to the ApiManagementService_Backup operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ApiManagementServiceBackupRestoreParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -56418,7 +56685,11 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Union[_models.ApiManagementServiceBackupRestoreParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ApiManagementServiceBackupRestoreParameters,
+            _types.ApiManagementServiceBackupRestoreParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.ApiManagementServiceResource]:
         """Creates a backup of the API Management service to the given Azure Storage Account. This is long
@@ -56429,10 +56700,10 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
-        :param parameters: Parameters supplied to the ApiManagementService_Backup operation. Is one of
-         the following types: ApiManagementServiceBackupRestoreParameters, JSON, IO[bytes] Required.
+        :param parameters: Parameters supplied to the ApiManagementService_Backup operation. Is either
+         a ApiManagementServiceBackupRestoreParameters type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.apimanagement.models.ApiManagementServiceBackupRestoreParameters
-         or JSON or IO[bytes]
+         or ~azure.mgmt.apimanagement.types.ApiManagementServiceBackupRestoreParameters or IO[bytes]
         :return: An instance of LROPoller that returns ApiManagementServiceResource. The
          ApiManagementServiceResource is compatible with MutableMapping
         :rtype:
@@ -56462,14 +56733,10 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ApiManagementServiceResource, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -56499,7 +56766,7 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Optional[Union[_models.MigrateToStv2Contract, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.MigrateToStv2Contract, _types.MigrateToStv2Contract, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -56610,7 +56877,7 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.MigrateToStv2Contract] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -56625,7 +56892,7 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
         :param parameters: Optional parameters supplied to migrate service. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.MigrateToStv2Contract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -56672,7 +56939,7 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Optional[Union[_models.MigrateToStv2Contract, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.MigrateToStv2Contract, _types.MigrateToStv2Contract, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[_models.ApiManagementServiceResource]:
         """Upgrades an API Management service to the Stv2 platform. For details refer to
@@ -56684,9 +56951,10 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
-        :param parameters: Optional parameters supplied to migrate service. Is one of the following
-         types: MigrateToStv2Contract, JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.apimanagement.models.MigrateToStv2Contract or JSON or IO[bytes]
+        :param parameters: Optional parameters supplied to migrate service. Is either a
+         MigrateToStv2Contract type or a IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.apimanagement.models.MigrateToStv2Contract or
+         ~azure.mgmt.apimanagement.types.MigrateToStv2Contract or IO[bytes]
         :return: An instance of LROPoller that returns ApiManagementServiceResource. The
          ApiManagementServiceResource is compatible with MutableMapping
         :rtype:
@@ -56717,14 +56985,10 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ApiManagementServiceResource, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -56828,7 +57092,11 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         service_name: str,
         parameters: Optional[
-            Union[_models.ApiManagementServiceApplyNetworkConfigurationParameters, JSON, IO[bytes]]
+            Union[
+                _models.ApiManagementServiceApplyNetworkConfigurationParameters,
+                _types.ApiManagementServiceApplyNetworkConfigurationParameters,
+                IO[bytes],
+            ]
         ] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
@@ -56942,7 +57210,7 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         service_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.ApiManagementServiceApplyNetworkConfigurationParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -56958,7 +57226,8 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         :param parameters: Parameters supplied to the Apply Network Configuration operation. If the
          parameters are empty, all the regions in which the Api Management service is deployed will be
          updated sequentially without incurring downtime in the region. Default value is None.
-        :type parameters: JSON
+        :type parameters:
+         ~azure.mgmt.apimanagement.types.ApiManagementServiceApplyNetworkConfigurationParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -57007,7 +57276,11 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         service_name: str,
         parameters: Optional[
-            Union[_models.ApiManagementServiceApplyNetworkConfigurationParameters, JSON, IO[bytes]]
+            Union[
+                _models.ApiManagementServiceApplyNetworkConfigurationParameters,
+                _types.ApiManagementServiceApplyNetworkConfigurationParameters,
+                IO[bytes],
+            ]
         ] = None,
         **kwargs: Any
     ) -> LROPoller[_models.ApiManagementServiceResource]:
@@ -57021,11 +57294,13 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         :type service_name: str
         :param parameters: Parameters supplied to the Apply Network Configuration operation. If the
          parameters are empty, all the regions in which the Api Management service is deployed will be
-         updated sequentially without incurring downtime in the region. Is one of the following types:
-         ApiManagementServiceApplyNetworkConfigurationParameters, JSON, IO[bytes] Default value is None.
+         updated sequentially without incurring downtime in the region. Is either a
+         ApiManagementServiceApplyNetworkConfigurationParameters type or a IO[bytes] type. Default value
+         is None.
         :type parameters:
          ~azure.mgmt.apimanagement.models.ApiManagementServiceApplyNetworkConfigurationParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.apimanagement.types.ApiManagementServiceApplyNetworkConfigurationParameters or
+         IO[bytes]
         :return: An instance of LROPoller that returns ApiManagementServiceResource. The
          ApiManagementServiceResource is compatible with MutableMapping
         :rtype:
@@ -57056,14 +57331,10 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ApiManagementServiceResource, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -57186,14 +57457,10 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ApiManagementServiceResource, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -57243,12 +57510,17 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def check_name_availability(
-        self, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        parameters: _types.ApiManagementServiceCheckNameAvailabilityParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.ApiManagementServiceNameAvailabilityResult:
         """Checks availability and correctness of a name for an API Management service.
 
         :param parameters: The request body. Required.
-        :type parameters: JSON
+        :type parameters:
+         ~azure.mgmt.apimanagement.types.ApiManagementServiceCheckNameAvailabilityParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -57278,15 +57550,20 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def check_name_availability(
         self,
-        parameters: Union[_models.ApiManagementServiceCheckNameAvailabilityParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ApiManagementServiceCheckNameAvailabilityParameters,
+            _types.ApiManagementServiceCheckNameAvailabilityParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> _models.ApiManagementServiceNameAvailabilityResult:
         """Checks availability and correctness of a name for an API Management service.
 
-        :param parameters: The request body. Is one of the following types:
-         ApiManagementServiceCheckNameAvailabilityParameters, JSON, IO[bytes] Required.
+        :param parameters: The request body. Is either a
+         ApiManagementServiceCheckNameAvailabilityParameters type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.apimanagement.models.ApiManagementServiceCheckNameAvailabilityParameters or JSON or
+         ~azure.mgmt.apimanagement.models.ApiManagementServiceCheckNameAvailabilityParameters or
+         ~azure.mgmt.apimanagement.types.ApiManagementServiceCheckNameAvailabilityParameters or
          IO[bytes]
         :return: ApiManagementServiceNameAvailabilityResult. The
          ApiManagementServiceNameAvailabilityResult is compatible with MutableMapping
@@ -57425,7 +57702,7 @@ class ApiManagementServiceOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class AllPoliciesOperations:
+class AllPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -57499,7 +57776,10 @@ class AllPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -57542,7 +57822,7 @@ class AllPoliciesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiManagementServiceSkusOperations:
+class ApiManagementServiceSkusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -57616,7 +57896,10 @@ class ApiManagementServiceSkusOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -57659,7 +57942,7 @@ class ApiManagementServiceSkusOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class NetworkStatusOperations:
+class NetworkStatusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -57829,7 +58112,7 @@ class NetworkStatusOperations:
         return deserialized  # type: ignore
 
 
-class OutboundNetworkDependenciesEndpointsOperations:  # pylint: disable=name-too-long
+class OutboundNetworkDependenciesEndpointsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -57920,7 +58203,7 @@ class OutboundNetworkDependenciesEndpointsOperations:  # pylint: disable=name-to
         return deserialized  # type: ignore
 
 
-class PolicyDescriptionOperations:
+class PolicyDescriptionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -58020,7 +58303,7 @@ class PolicyDescriptionOperations:
         return deserialized  # type: ignore
 
 
-class PolicyRestrictionValidationsOperations:
+class PolicyRestrictionValidationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -58132,14 +58415,10 @@ class PolicyRestrictionValidationsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.OperationResultContract, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -58166,7 +58445,7 @@ class PolicyRestrictionValidationsOperations:
         )
 
 
-class PortalSettingsOperations:
+class PortalSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -58257,7 +58536,7 @@ class PortalSettingsOperations:
         return deserialized  # type: ignore
 
 
-class ProductOperations:
+class ProductOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -58358,7 +58637,10 @@ class ProductOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -58588,7 +58870,7 @@ class ProductOperations:
         resource_group_name: str,
         service_name: str,
         product_id: str,
-        parameters: JSON,
+        parameters: _types.ProductContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -58606,7 +58888,7 @@ class ProductOperations:
          instance. Required.
         :type product_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ProductContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -58664,7 +58946,7 @@ class ProductOperations:
         resource_group_name: str,
         service_name: str,
         product_id: str,
-        parameters: Union[_models.ProductContract, JSON, IO[bytes]],
+        parameters: Union[_models.ProductContract, _types.ProductContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -58680,9 +58962,10 @@ class ProductOperations:
         :param product_id: Product identifier. Must be unique in the current API Management service
          instance. Required.
         :type product_id: str
-        :param parameters: Create or update parameters. Is one of the following types: ProductContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ProductContract or JSON or IO[bytes]
+        :param parameters: Create or update parameters. Is either a ProductContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ProductContract or
+         ~azure.mgmt.apimanagement.types.ProductContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -58814,7 +59097,7 @@ class ProductOperations:
         resource_group_name: str,
         service_name: str,
         product_id: str,
-        parameters: JSON,
+        parameters: _types.ProductUpdateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -58832,7 +59115,7 @@ class ProductOperations:
          instance. Required.
         :type product_id: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ProductUpdateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -58888,7 +59171,7 @@ class ProductOperations:
         resource_group_name: str,
         service_name: str,
         product_id: str,
-        parameters: Union[_models.ProductUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ProductUpdateParameters, _types.ProductUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -58904,9 +59187,10 @@ class ProductOperations:
         :param product_id: Product identifier. Must be unique in the current API Management service
          instance. Required.
         :type product_id: str
-        :param parameters: Update parameters. Is one of the following types: ProductUpdateParameters,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ProductUpdateParameters or JSON or IO[bytes]
+        :param parameters: Update parameters. Is either a ProductUpdateParameters type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ProductUpdateParameters or
+         ~azure.mgmt.apimanagement.types.ProductUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -59170,7 +59454,10 @@ class ProductOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -59213,7 +59500,7 @@ class ProductOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class QuotaByCounterKeysOperations:
+class QuotaByCounterKeysOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -59350,7 +59637,7 @@ class QuotaByCounterKeysOperations:
         resource_group_name: str,
         service_name: str,
         quota_counter_key: str,
-        parameters: JSON,
+        parameters: _types.QuotaCounterValueUpdateContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -59370,7 +59657,7 @@ class QuotaByCounterKeysOperations:
         :type quota_counter_key: str
         :param parameters: The value of the quota counter to be applied to all quota counter periods.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.QuotaCounterValueUpdateContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -59420,7 +59707,7 @@ class QuotaByCounterKeysOperations:
         resource_group_name: str,
         service_name: str,
         quota_counter_key: str,
-        parameters: Union[_models.QuotaCounterValueUpdateContract, JSON, IO[bytes]],
+        parameters: Union[_models.QuotaCounterValueUpdateContract, _types.QuotaCounterValueUpdateContract, IO[bytes]],
         **kwargs: Any
     ) -> _models.QuotaCounterCollection:
         """Updates all the quota counter values specified with the existing quota counter key to a value
@@ -59437,9 +59724,9 @@ class QuotaByCounterKeysOperations:
          defined as ``counter-key="@("b"+"a")"`` then it will be accessible by ``"ba"`` key. Required.
         :type quota_counter_key: str
         :param parameters: The value of the quota counter to be applied to all quota counter periods.
-         Is one of the following types: QuotaCounterValueUpdateContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.QuotaCounterValueUpdateContract or JSON or
-         IO[bytes]
+         Is either a QuotaCounterValueUpdateContract type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.QuotaCounterValueUpdateContract or
+         ~azure.mgmt.apimanagement.types.QuotaCounterValueUpdateContract or IO[bytes]
         :return: QuotaCounterCollection. The QuotaCounterCollection is compatible with MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.QuotaCounterCollection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -59513,7 +59800,7 @@ class QuotaByCounterKeysOperations:
         return deserialized  # type: ignore
 
 
-class QuotaByPeriodKeysOperations:
+class QuotaByPeriodKeysOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -59656,7 +59943,7 @@ class QuotaByPeriodKeysOperations:
         service_name: str,
         quota_counter_key: str,
         quota_period_key: str,
-        parameters: JSON,
+        parameters: _types.QuotaCounterValueUpdateContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -59677,7 +59964,7 @@ class QuotaByPeriodKeysOperations:
         :type quota_period_key: str
         :param parameters: The value of the Quota counter to be applied on the specified period.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.QuotaCounterValueUpdateContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -59730,7 +60017,7 @@ class QuotaByPeriodKeysOperations:
         service_name: str,
         quota_counter_key: str,
         quota_period_key: str,
-        parameters: Union[_models.QuotaCounterValueUpdateContract, JSON, IO[bytes]],
+        parameters: Union[_models.QuotaCounterValueUpdateContract, _types.QuotaCounterValueUpdateContract, IO[bytes]],
         **kwargs: Any
     ) -> _models.QuotaCounterContract:
         """Updates an existing quota counter value in the specified service instance.
@@ -59747,10 +60034,10 @@ class QuotaByPeriodKeysOperations:
         :type quota_counter_key: str
         :param quota_period_key: Quota period key identifier. Required.
         :type quota_period_key: str
-        :param parameters: The value of the Quota counter to be applied on the specified period. Is one
-         of the following types: QuotaCounterValueUpdateContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.QuotaCounterValueUpdateContract or JSON or
-         IO[bytes]
+        :param parameters: The value of the Quota counter to be applied on the specified period. Is
+         either a QuotaCounterValueUpdateContract type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.QuotaCounterValueUpdateContract or
+         ~azure.mgmt.apimanagement.types.QuotaCounterValueUpdateContract or IO[bytes]
         :return: QuotaCounterContract. The QuotaCounterContract is compatible with MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.QuotaCounterContract
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -59825,7 +60112,7 @@ class QuotaByPeriodKeysOperations:
         return deserialized  # type: ignore
 
 
-class RegionOperations:
+class RegionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -59899,7 +60186,10 @@ class RegionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -59942,7 +60232,7 @@ class RegionOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReportsOperations:
+class ReportsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -60036,7 +60326,10 @@ class ReportsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -60168,7 +60461,10 @@ class ReportsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -60300,7 +60596,10 @@ class ReportsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -60431,7 +60730,10 @@ class ReportsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -60558,7 +60860,10 @@ class ReportsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -60689,7 +60994,10 @@ class ReportsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -60828,7 +61136,10 @@ class ReportsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -60948,7 +61259,10 @@ class ReportsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -60991,7 +61305,7 @@ class ReportsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class TagResourceOperations:
+class TagResourceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -61095,7 +61409,10 @@ class TagResourceOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -61138,7 +61455,7 @@ class TagResourceOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiReleaseOperations:
+class ApiReleaseOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -61358,7 +61675,7 @@ class ApiReleaseOperations:
         service_name: str,
         api_id: str,
         release_id: str,
-        parameters: JSON,
+        parameters: _types.ApiReleaseContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -61379,7 +61696,7 @@ class ApiReleaseOperations:
          Management service instance. Required.
         :type release_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ApiReleaseContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -61442,7 +61759,7 @@ class ApiReleaseOperations:
         service_name: str,
         api_id: str,
         release_id: str,
-        parameters: Union[_models.ApiReleaseContract, JSON, IO[bytes]],
+        parameters: Union[_models.ApiReleaseContract, _types.ApiReleaseContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -61461,9 +61778,10 @@ class ApiReleaseOperations:
         :param release_id: Release identifier within an API. Must be unique in the current API
          Management service instance. Required.
         :type release_id: str
-        :param parameters: Create parameters. Is one of the following types: ApiReleaseContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ApiReleaseContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a ApiReleaseContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ApiReleaseContract or
+         ~azure.mgmt.apimanagement.types.ApiReleaseContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -61601,7 +61919,7 @@ class ApiReleaseOperations:
         service_name: str,
         api_id: str,
         release_id: str,
-        parameters: JSON,
+        parameters: _types.ApiReleaseContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -61622,7 +61940,7 @@ class ApiReleaseOperations:
          Management service instance. Required.
         :type release_id: str
         :param parameters: API Release Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ApiReleaseContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -61683,7 +62001,7 @@ class ApiReleaseOperations:
         service_name: str,
         api_id: str,
         release_id: str,
-        parameters: Union[_models.ApiReleaseContract, JSON, IO[bytes]],
+        parameters: Union[_models.ApiReleaseContract, _types.ApiReleaseContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -61702,9 +62020,10 @@ class ApiReleaseOperations:
         :param release_id: Release identifier within an API. Must be unique in the current API
          Management service instance. Required.
         :type release_id: str
-        :param parameters: API Release Update parameters. Is one of the following types:
-         ApiReleaseContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ApiReleaseContract or JSON or IO[bytes]
+        :param parameters: API Release Update parameters. Is either a ApiReleaseContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ApiReleaseContract or
+         ~azure.mgmt.apimanagement.types.ApiReleaseContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -61963,7 +62282,10 @@ class ApiReleaseOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -62006,7 +62328,7 @@ class ApiReleaseOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiOperationOperations:
+class ApiOperationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -62226,7 +62548,7 @@ class ApiOperationOperations:
         service_name: str,
         api_id: str,
         operation_id: str,
-        parameters: JSON,
+        parameters: _types.OperationContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -62247,7 +62569,7 @@ class ApiOperationOperations:
          Management service instance. Required.
         :type operation_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.OperationContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -62310,7 +62632,7 @@ class ApiOperationOperations:
         service_name: str,
         api_id: str,
         operation_id: str,
-        parameters: Union[_models.OperationContract, JSON, IO[bytes]],
+        parameters: Union[_models.OperationContract, _types.OperationContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -62329,9 +62651,10 @@ class ApiOperationOperations:
         :param operation_id: Operation identifier within an API. Must be unique in the current API
          Management service instance. Required.
         :type operation_id: str
-        :param parameters: Create parameters. Is one of the following types: OperationContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.OperationContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a OperationContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.OperationContract or
+         ~azure.mgmt.apimanagement.types.OperationContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -62469,7 +62792,7 @@ class ApiOperationOperations:
         service_name: str,
         api_id: str,
         operation_id: str,
-        parameters: JSON,
+        parameters: _types.OperationUpdateContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -62490,7 +62813,7 @@ class ApiOperationOperations:
          Management service instance. Required.
         :type operation_id: str
         :param parameters: API Operation Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.OperationUpdateContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -62551,7 +62874,7 @@ class ApiOperationOperations:
         service_name: str,
         api_id: str,
         operation_id: str,
-        parameters: Union[_models.OperationUpdateContract, JSON, IO[bytes]],
+        parameters: Union[_models.OperationUpdateContract, _types.OperationUpdateContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -62570,9 +62893,10 @@ class ApiOperationOperations:
         :param operation_id: Operation identifier within an API. Must be unique in the current API
          Management service instance. Required.
         :type operation_id: str
-        :param parameters: API Operation Update parameters. Is one of the following types:
-         OperationUpdateContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.OperationUpdateContract or JSON or IO[bytes]
+        :param parameters: API Operation Update parameters. Is either a OperationUpdateContract type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.OperationUpdateContract or
+         ~azure.mgmt.apimanagement.types.OperationUpdateContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -62837,7 +63161,10 @@ class ApiOperationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -62880,7 +63207,7 @@ class ApiOperationOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiOperationPolicyOperations:
+class ApiOperationPolicyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -63128,7 +63455,7 @@ class ApiOperationPolicyOperations:
         api_id: str,
         operation_id: str,
         policy_id: Union[str, _models.PolicyIdName],
-        parameters: JSON,
+        parameters: _types.PolicyContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -63151,7 +63478,7 @@ class ApiOperationPolicyOperations:
         :param policy_id: The identifier of the Policy. "policy" Required.
         :type policy_id: str or ~azure.mgmt.apimanagement.models.PolicyIdName
         :param parameters: The policy contents to apply. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PolicyContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -63218,7 +63545,7 @@ class ApiOperationPolicyOperations:
         api_id: str,
         operation_id: str,
         policy_id: Union[str, _models.PolicyIdName],
-        parameters: Union[_models.PolicyContract, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyContract, _types.PolicyContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -63239,9 +63566,10 @@ class ApiOperationPolicyOperations:
         :type operation_id: str
         :param policy_id: The identifier of the Policy. "policy" Required.
         :type policy_id: str or ~azure.mgmt.apimanagement.models.PolicyIdName
-        :param parameters: The policy contents to apply. Is one of the following types: PolicyContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PolicyContract or JSON or IO[bytes]
+        :param parameters: The policy contents to apply. Is either a PolicyContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PolicyContract or
+         ~azure.mgmt.apimanagement.types.PolicyContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -63504,7 +63832,7 @@ class ApiOperationPolicyOperations:
         return deserialized  # type: ignore
 
 
-class GraphQLApiResolverOperations:
+class GraphQLApiResolverOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -63724,7 +64052,7 @@ class GraphQLApiResolverOperations:
         service_name: str,
         api_id: str,
         resolver_id: str,
-        parameters: JSON,
+        parameters: _types.ResolverContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -63745,7 +64073,7 @@ class GraphQLApiResolverOperations:
          Management service instance. Required.
         :type resolver_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ResolverContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -63808,7 +64136,7 @@ class GraphQLApiResolverOperations:
         service_name: str,
         api_id: str,
         resolver_id: str,
-        parameters: Union[_models.ResolverContract, JSON, IO[bytes]],
+        parameters: Union[_models.ResolverContract, _types.ResolverContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -63827,9 +64155,10 @@ class GraphQLApiResolverOperations:
         :param resolver_id: Resolver identifier within a GraphQL API. Must be unique in the current API
          Management service instance. Required.
         :type resolver_id: str
-        :param parameters: Create parameters. Is one of the following types: ResolverContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ResolverContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a ResolverContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ResolverContract or
+         ~azure.mgmt.apimanagement.types.ResolverContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -63967,7 +64296,7 @@ class GraphQLApiResolverOperations:
         service_name: str,
         api_id: str,
         resolver_id: str,
-        parameters: JSON,
+        parameters: _types.ResolverUpdateContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -63988,7 +64317,7 @@ class GraphQLApiResolverOperations:
          Management service instance. Required.
         :type resolver_id: str
         :param parameters: GraphQL API Resolver Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ResolverUpdateContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -64049,7 +64378,7 @@ class GraphQLApiResolverOperations:
         service_name: str,
         api_id: str,
         resolver_id: str,
-        parameters: Union[_models.ResolverUpdateContract, JSON, IO[bytes]],
+        parameters: Union[_models.ResolverUpdateContract, _types.ResolverUpdateContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -64068,9 +64397,10 @@ class GraphQLApiResolverOperations:
         :param resolver_id: Resolver identifier within a GraphQL API. Must be unique in the current API
          Management service instance. Required.
         :type resolver_id: str
-        :param parameters: GraphQL API Resolver Update parameters. Is one of the following types:
-         ResolverUpdateContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ResolverUpdateContract or JSON or IO[bytes]
+        :param parameters: GraphQL API Resolver Update parameters. Is either a ResolverUpdateContract
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ResolverUpdateContract or
+         ~azure.mgmt.apimanagement.types.ResolverUpdateContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -64330,7 +64660,10 @@ class GraphQLApiResolverOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -64373,7 +64706,7 @@ class GraphQLApiResolverOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiSchemaOperations:
+class ApiSchemaOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -64550,7 +64883,7 @@ class ApiSchemaOperations:
         service_name: str,
         api_id: str,
         schema_id: str,
-        parameters: Union[_models.SchemaContract, JSON, IO[bytes]],
+        parameters: Union[_models.SchemaContract, _types.SchemaContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -64695,7 +65028,7 @@ class ApiSchemaOperations:
         service_name: str,
         api_id: str,
         schema_id: str,
-        parameters: JSON,
+        parameters: _types.SchemaContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -64716,7 +65049,7 @@ class ApiSchemaOperations:
          instance. Required.
         :type schema_id: str
         :param parameters: The schema contents to apply. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.SchemaContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -64781,7 +65114,7 @@ class ApiSchemaOperations:
         service_name: str,
         api_id: str,
         schema_id: str,
-        parameters: Union[_models.SchemaContract, JSON, IO[bytes]],
+        parameters: Union[_models.SchemaContract, _types.SchemaContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -64800,9 +65133,10 @@ class ApiSchemaOperations:
         :param schema_id: Schema id identifier. Must be unique in the current API Management service
          instance. Required.
         :type schema_id: str
-        :param parameters: The schema contents to apply. Is one of the following types: SchemaContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.SchemaContract or JSON or IO[bytes]
+        :param parameters: The schema contents to apply. Is either a SchemaContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.SchemaContract or
+         ~azure.mgmt.apimanagement.types.SchemaContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -65049,7 +65383,10 @@ class ApiSchemaOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -65092,7 +65429,7 @@ class ApiSchemaOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiDiagnosticOperations:
+class ApiDiagnosticOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -65312,7 +65649,7 @@ class ApiDiagnosticOperations:
         service_name: str,
         api_id: str,
         diagnostic_id: str,
-        parameters: JSON,
+        parameters: _types.DiagnosticContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -65333,7 +65670,7 @@ class ApiDiagnosticOperations:
          service instance. Required.
         :type diagnostic_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.DiagnosticContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -65396,7 +65733,7 @@ class ApiDiagnosticOperations:
         service_name: str,
         api_id: str,
         diagnostic_id: str,
-        parameters: Union[_models.DiagnosticContract, JSON, IO[bytes]],
+        parameters: Union[_models.DiagnosticContract, _types.DiagnosticContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -65415,9 +65752,10 @@ class ApiDiagnosticOperations:
         :param diagnostic_id: Diagnostic identifier. Must be unique in the current API Management
          service instance. Required.
         :type diagnostic_id: str
-        :param parameters: Create parameters. Is one of the following types: DiagnosticContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a DiagnosticContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticContract or
+         ~azure.mgmt.apimanagement.types.DiagnosticContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -65555,7 +65893,7 @@ class ApiDiagnosticOperations:
         service_name: str,
         api_id: str,
         diagnostic_id: str,
-        parameters: JSON,
+        parameters: _types.DiagnosticContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -65576,7 +65914,7 @@ class ApiDiagnosticOperations:
          service instance. Required.
         :type diagnostic_id: str
         :param parameters: Diagnostic Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.DiagnosticContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -65637,7 +65975,7 @@ class ApiDiagnosticOperations:
         service_name: str,
         api_id: str,
         diagnostic_id: str,
-        parameters: Union[_models.DiagnosticContract, JSON, IO[bytes]],
+        parameters: Union[_models.DiagnosticContract, _types.DiagnosticContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -65656,9 +65994,10 @@ class ApiDiagnosticOperations:
         :param diagnostic_id: Diagnostic identifier. Must be unique in the current API Management
          service instance. Required.
         :type diagnostic_id: str
-        :param parameters: Diagnostic Update parameters. Is one of the following types:
-         DiagnosticContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticContract or JSON or IO[bytes]
+        :param parameters: Diagnostic Update parameters. Is either a DiagnosticContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticContract or
+         ~azure.mgmt.apimanagement.types.DiagnosticContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -65915,7 +66254,10 @@ class ApiDiagnosticOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -65958,7 +66300,7 @@ class ApiDiagnosticOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiIssueOperations:
+class ApiIssueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -66188,7 +66530,7 @@ class ApiIssueOperations:
         service_name: str,
         api_id: str,
         issue_id: str,
-        parameters: JSON,
+        parameters: _types.IssueContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -66209,7 +66551,7 @@ class ApiIssueOperations:
          instance. Required.
         :type issue_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.IssueContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -66272,7 +66614,7 @@ class ApiIssueOperations:
         service_name: str,
         api_id: str,
         issue_id: str,
-        parameters: Union[_models.IssueContract, JSON, IO[bytes]],
+        parameters: Union[_models.IssueContract, _types.IssueContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -66291,9 +66633,10 @@ class ApiIssueOperations:
         :param issue_id: Issue identifier. Must be unique in the current API Management service
          instance. Required.
         :type issue_id: str
-        :param parameters: Create parameters. Is one of the following types: IssueContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.IssueContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a IssueContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.IssueContract or
+         ~azure.mgmt.apimanagement.types.IssueContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -66436,7 +66779,7 @@ class ApiIssueOperations:
         service_name: str,
         api_id: str,
         issue_id: str,
-        parameters: JSON,
+        parameters: _types.IssueUpdateContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -66457,7 +66800,7 @@ class ApiIssueOperations:
          instance. Required.
         :type issue_id: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.IssueUpdateContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -66518,7 +66861,7 @@ class ApiIssueOperations:
         service_name: str,
         api_id: str,
         issue_id: str,
-        parameters: Union[_models.IssueUpdateContract, JSON, IO[bytes]],
+        parameters: Union[_models.IssueUpdateContract, _types.IssueUpdateContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -66537,9 +66880,10 @@ class ApiIssueOperations:
         :param issue_id: Issue identifier. Must be unique in the current API Management service
          instance. Required.
         :type issue_id: str
-        :param parameters: Update parameters. Is one of the following types: IssueUpdateContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.IssueUpdateContract or JSON or IO[bytes]
+        :param parameters: Update parameters. Is either a IssueUpdateContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.IssueUpdateContract or
+         ~azure.mgmt.apimanagement.types.IssueUpdateContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -66801,7 +67145,10 @@ class ApiIssueOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -66844,7 +67191,7 @@ class ApiIssueOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiIssueCommentOperations:
+class ApiIssueCommentOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -67078,7 +67425,7 @@ class ApiIssueCommentOperations:
         api_id: str,
         issue_id: str,
         comment_id: str,
-        parameters: JSON,
+        parameters: _types.IssueCommentContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -67102,7 +67449,7 @@ class ApiIssueCommentOperations:
          Required.
         :type comment_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.IssueCommentContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -67170,7 +67517,7 @@ class ApiIssueCommentOperations:
         api_id: str,
         issue_id: str,
         comment_id: str,
-        parameters: Union[_models.IssueCommentContract, JSON, IO[bytes]],
+        parameters: Union[_models.IssueCommentContract, _types.IssueCommentContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -67192,9 +67539,10 @@ class ApiIssueCommentOperations:
         :param comment_id: Comment identifier within an Issue. Must be unique in the current Issue.
          Required.
         :type comment_id: str
-        :param parameters: Create parameters. Is one of the following types: IssueCommentContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.IssueCommentContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a IssueCommentContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.IssueCommentContract or
+         ~azure.mgmt.apimanagement.types.IssueCommentContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -67469,7 +67817,10 @@ class ApiIssueCommentOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -67512,7 +67863,7 @@ class ApiIssueCommentOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiIssueAttachmentOperations:
+class ApiIssueAttachmentOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -67746,7 +68097,7 @@ class ApiIssueAttachmentOperations:
         api_id: str,
         issue_id: str,
         attachment_id: str,
-        parameters: JSON,
+        parameters: _types.IssueAttachmentContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -67770,7 +68121,7 @@ class ApiIssueAttachmentOperations:
          Issue. Required.
         :type attachment_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.IssueAttachmentContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -67838,7 +68189,7 @@ class ApiIssueAttachmentOperations:
         api_id: str,
         issue_id: str,
         attachment_id: str,
-        parameters: Union[_models.IssueAttachmentContract, JSON, IO[bytes]],
+        parameters: Union[_models.IssueAttachmentContract, _types.IssueAttachmentContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -67860,9 +68211,10 @@ class ApiIssueAttachmentOperations:
         :param attachment_id: Attachment identifier within an Issue. Must be unique in the current
          Issue. Required.
         :type attachment_id: str
-        :param parameters: Create parameters. Is one of the following types: IssueAttachmentContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.IssueAttachmentContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a IssueAttachmentContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.IssueAttachmentContract or
+         ~azure.mgmt.apimanagement.types.IssueAttachmentContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -68137,7 +68489,10 @@ class ApiIssueAttachmentOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -68180,7 +68535,7 @@ class ApiIssueAttachmentOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiTagDescriptionOperations:
+class ApiTagDescriptionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -68400,7 +68755,7 @@ class ApiTagDescriptionOperations:
         service_name: str,
         api_id: str,
         tag_description_id: str,
-        parameters: JSON,
+        parameters: _types.TagDescriptionCreateParameters,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -68421,7 +68776,7 @@ class ApiTagDescriptionOperations:
          API/Tag association. Based on API and Tag names. Required.
         :type tag_description_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.TagDescriptionCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -68484,7 +68839,7 @@ class ApiTagDescriptionOperations:
         service_name: str,
         api_id: str,
         tag_description_id: str,
-        parameters: Union[_models.TagDescriptionCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.TagDescriptionCreateParameters, _types.TagDescriptionCreateParameters, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -68503,10 +68858,10 @@ class ApiTagDescriptionOperations:
         :param tag_description_id: Tag description identifier. Used when creating tagDescription for
          API/Tag association. Based on API and Tag names. Required.
         :type tag_description_id: str
-        :param parameters: Create parameters. Is one of the following types:
-         TagDescriptionCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.TagDescriptionCreateParameters or JSON or
-         IO[bytes]
+        :param parameters: Create parameters. Is either a TagDescriptionCreateParameters type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.TagDescriptionCreateParameters or
+         ~azure.mgmt.apimanagement.types.TagDescriptionCreateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -68771,7 +69126,10 @@ class ApiTagDescriptionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -68814,7 +69172,7 @@ class ApiTagDescriptionOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiWikiOperations:
+class ApiWikiOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -69017,7 +69375,7 @@ class ApiWikiOperations:
         resource_group_name: str,
         service_name: str,
         api_id: str,
-        parameters: JSON,
+        parameters: _types.WikiContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -69035,7 +69393,7 @@ class ApiWikiOperations:
          Required.
         :type api_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.WikiContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -69093,7 +69451,7 @@ class ApiWikiOperations:
         resource_group_name: str,
         service_name: str,
         api_id: str,
-        parameters: Union[_models.WikiContract, JSON, IO[bytes]],
+        parameters: Union[_models.WikiContract, _types.WikiContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -69109,9 +69467,10 @@ class ApiWikiOperations:
         :param api_id: API identifier. Must be unique in the current API Management service instance.
          Required.
         :type api_id: str
-        :param parameters: Create parameters. Is one of the following types: WikiContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.WikiContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a WikiContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.WikiContract or
+         ~azure.mgmt.apimanagement.types.WikiContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -69248,7 +69607,7 @@ class ApiWikiOperations:
         resource_group_name: str,
         service_name: str,
         api_id: str,
-        parameters: JSON,
+        parameters: _types.WikiUpdateContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -69266,7 +69625,7 @@ class ApiWikiOperations:
          Required.
         :type api_id: str
         :param parameters: Wiki Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.WikiUpdateContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -69322,7 +69681,7 @@ class ApiWikiOperations:
         resource_group_name: str,
         service_name: str,
         api_id: str,
-        parameters: Union[_models.WikiUpdateContract, JSON, IO[bytes]],
+        parameters: Union[_models.WikiUpdateContract, _types.WikiUpdateContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -69338,9 +69697,10 @@ class ApiWikiOperations:
         :param api_id: API identifier. Must be unique in the current API Management service instance.
          Required.
         :type api_id: str
-        :param parameters: Wiki Update parameters. Is one of the following types: WikiUpdateContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.WikiUpdateContract or JSON or IO[bytes]
+        :param parameters: Wiki Update parameters. Is either a WikiUpdateContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.WikiUpdateContract or
+         ~azure.mgmt.apimanagement.types.WikiUpdateContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -69511,7 +69871,7 @@ class ApiWikiOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ApiWikisOperations:
+class ApiWikisOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -69608,7 +69968,10 @@ class ApiWikisOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -69651,7 +70014,7 @@ class ApiWikisOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ProductWikisOperations:
+class ProductWikisOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -69748,7 +70111,10 @@ class ProductWikisOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -69791,7 +70157,7 @@ class ProductWikisOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiToolOperations:
+class ApiToolOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -70004,7 +70370,7 @@ class ApiToolOperations:
         service_name: str,
         api_id: str,
         tool_id: str,
-        parameters: JSON,
+        parameters: _types.ToolContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -70023,7 +70389,7 @@ class ApiToolOperations:
          service instance. Required.
         :type tool_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ToolContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -70074,7 +70440,7 @@ class ApiToolOperations:
         service_name: str,
         api_id: str,
         tool_id: str,
-        parameters: Union[_models.ToolContract, JSON, IO[bytes]],
+        parameters: Union[_models.ToolContract, _types.ToolContract, IO[bytes]],
         **kwargs: Any
     ) -> _models.ToolContract:
         """Creates a new tool in the API or updates an existing one.
@@ -70090,9 +70456,10 @@ class ApiToolOperations:
         :param tool_id: Tool identifier within an API. Must be unique in the current API Management
          service instance. Required.
         :type tool_id: str
-        :param parameters: Create parameters. Is one of the following types: ToolContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ToolContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a ToolContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ToolContract or
+         ~azure.mgmt.apimanagement.types.ToolContract or IO[bytes]
         :return: ToolContract. The ToolContract is compatible with MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.ToolContract
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -70216,7 +70583,7 @@ class ApiToolOperations:
         service_name: str,
         api_id: str,
         tool_id: str,
-        parameters: JSON,
+        parameters: _types.ToolContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -70235,7 +70602,7 @@ class ApiToolOperations:
          service instance. Required.
         :type tool_id: str
         :param parameters: API Tool Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ToolContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -70286,7 +70653,7 @@ class ApiToolOperations:
         service_name: str,
         api_id: str,
         tool_id: str,
-        parameters: Union[_models.ToolContract, JSON, IO[bytes]],
+        parameters: Union[_models.ToolContract, _types.ToolContract, IO[bytes]],
         **kwargs: Any
     ) -> _models.ToolContract:
         """Updates the details of the tool in the API specified by its identifier.
@@ -70302,9 +70669,10 @@ class ApiToolOperations:
         :param tool_id: Tool identifier within an API. Must be unique in the current API Management
          service instance. Required.
         :type tool_id: str
-        :param parameters: API Tool Update parameters. Is one of the following types: ToolContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ToolContract or JSON or IO[bytes]
+        :param parameters: API Tool Update parameters. Is either a ToolContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ToolContract or
+         ~azure.mgmt.apimanagement.types.ToolContract or IO[bytes]
         :return: ToolContract. The ToolContract is compatible with MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.ToolContract
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -70530,7 +70898,10 @@ class ApiToolOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -70573,7 +70944,7 @@ class ApiToolOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiVersionSetOperations:
+class ApiVersionSetOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -70778,7 +71149,7 @@ class ApiVersionSetOperations:
         resource_group_name: str,
         service_name: str,
         version_set_id: str,
-        parameters: JSON,
+        parameters: _types.ApiVersionSetContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -70796,7 +71167,7 @@ class ApiVersionSetOperations:
          service instance. Required.
         :type version_set_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ApiVersionSetContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -70854,7 +71225,7 @@ class ApiVersionSetOperations:
         resource_group_name: str,
         service_name: str,
         version_set_id: str,
-        parameters: Union[_models.ApiVersionSetContract, JSON, IO[bytes]],
+        parameters: Union[_models.ApiVersionSetContract, _types.ApiVersionSetContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -70870,9 +71241,10 @@ class ApiVersionSetOperations:
         :param version_set_id: Api Version Set identifier. Must be unique in the current API Management
          service instance. Required.
         :type version_set_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         ApiVersionSetContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ApiVersionSetContract or JSON or IO[bytes]
+        :param parameters: Create or update parameters. Is either a ApiVersionSetContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ApiVersionSetContract or
+         ~azure.mgmt.apimanagement.types.ApiVersionSetContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -71004,7 +71376,7 @@ class ApiVersionSetOperations:
         resource_group_name: str,
         service_name: str,
         version_set_id: str,
-        parameters: JSON,
+        parameters: _types.ApiVersionSetUpdateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -71022,7 +71394,7 @@ class ApiVersionSetOperations:
          service instance. Required.
         :type version_set_id: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ApiVersionSetUpdateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -71078,7 +71450,7 @@ class ApiVersionSetOperations:
         resource_group_name: str,
         service_name: str,
         version_set_id: str,
-        parameters: Union[_models.ApiVersionSetUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ApiVersionSetUpdateParameters, _types.ApiVersionSetUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -71094,10 +71466,10 @@ class ApiVersionSetOperations:
         :param version_set_id: Api Version Set identifier. Must be unique in the current API Management
          service instance. Required.
         :type version_set_id: str
-        :param parameters: Update parameters. Is one of the following types:
-         ApiVersionSetUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ApiVersionSetUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Update parameters. Is either a ApiVersionSetUpdateParameters type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ApiVersionSetUpdateParameters or
+         ~azure.mgmt.apimanagement.types.ApiVersionSetUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -71342,7 +71714,10 @@ class ApiVersionSetOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -71385,7 +71760,7 @@ class ApiVersionSetOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AuthorizationProviderOperations:
+class AuthorizationProviderOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -71525,7 +71900,7 @@ class AuthorizationProviderOperations:
         resource_group_name: str,
         service_name: str,
         authorization_provider_id: str,
-        parameters: JSON,
+        parameters: _types.AuthorizationProviderContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -71542,7 +71917,7 @@ class AuthorizationProviderOperations:
         :param authorization_provider_id: Identifier of the authorization provider. Required.
         :type authorization_provider_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.AuthorizationProviderContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -71601,7 +71976,7 @@ class AuthorizationProviderOperations:
         resource_group_name: str,
         service_name: str,
         authorization_provider_id: str,
-        parameters: Union[_models.AuthorizationProviderContract, JSON, IO[bytes]],
+        parameters: Union[_models.AuthorizationProviderContract, _types.AuthorizationProviderContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -71616,10 +71991,10 @@ class AuthorizationProviderOperations:
         :type service_name: str
         :param authorization_provider_id: Identifier of the authorization provider. Required.
         :type authorization_provider_id: str
-        :param parameters: Create parameters. Is one of the following types:
-         AuthorizationProviderContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.AuthorizationProviderContract or JSON or
-         IO[bytes]
+        :param parameters: Create parameters. Is either a AuthorizationProviderContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.AuthorizationProviderContract or
+         ~azure.mgmt.apimanagement.types.AuthorizationProviderContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -71873,7 +72248,10 @@ class AuthorizationProviderOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -71995,7 +72373,7 @@ class AuthorizationProviderOperations:
         return deserialized  # type: ignore
 
 
-class AuthorizationOperations:
+class AuthorizationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -72145,7 +72523,7 @@ class AuthorizationOperations:
         service_name: str,
         authorization_provider_id: str,
         authorization_id: str,
-        parameters: JSON,
+        parameters: _types.AuthorizationContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -72164,7 +72542,7 @@ class AuthorizationOperations:
         :param authorization_id: Identifier of the authorization. Required.
         :type authorization_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.AuthorizationContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -72225,7 +72603,7 @@ class AuthorizationOperations:
         service_name: str,
         authorization_provider_id: str,
         authorization_id: str,
-        parameters: Union[_models.AuthorizationContract, JSON, IO[bytes]],
+        parameters: Union[_models.AuthorizationContract, _types.AuthorizationContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -72242,9 +72620,10 @@ class AuthorizationOperations:
         :type authorization_provider_id: str
         :param authorization_id: Identifier of the authorization. Required.
         :type authorization_id: str
-        :param parameters: Create parameters. Is one of the following types: AuthorizationContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.AuthorizationContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a AuthorizationContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.AuthorizationContract or
+         ~azure.mgmt.apimanagement.types.AuthorizationContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -72500,7 +72879,10 @@ class AuthorizationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -72583,7 +72965,7 @@ class AuthorizationOperations:
         service_name: str,
         authorization_provider_id: str,
         authorization_id: str,
-        parameters: JSON,
+        parameters: _types.AuthorizationConfirmConsentCodeRequestContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -72600,7 +72982,8 @@ class AuthorizationOperations:
         :param authorization_id: Identifier of the authorization. Required.
         :type authorization_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters:
+         ~azure.mgmt.apimanagement.types.AuthorizationConfirmConsentCodeRequestContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -72649,7 +73032,11 @@ class AuthorizationOperations:
         service_name: str,
         authorization_provider_id: str,
         authorization_id: str,
-        parameters: Union[_models.AuthorizationConfirmConsentCodeRequestContract, JSON, IO[bytes]],
+        parameters: Union[
+            _models.AuthorizationConfirmConsentCodeRequestContract,
+            _types.AuthorizationConfirmConsentCodeRequestContract,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> None:
         """Confirm valid consent code to suppress Authorizations anti-phishing page.
@@ -72663,11 +73050,11 @@ class AuthorizationOperations:
         :type authorization_provider_id: str
         :param authorization_id: Identifier of the authorization. Required.
         :type authorization_id: str
-        :param parameters: Create parameters. Is one of the following types:
-         AuthorizationConfirmConsentCodeRequestContract, JSON, IO[bytes] Required.
+        :param parameters: Create parameters. Is either a
+         AuthorizationConfirmConsentCodeRequestContract type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.apimanagement.models.AuthorizationConfirmConsentCodeRequestContract or JSON or
-         IO[bytes]
+         ~azure.mgmt.apimanagement.models.AuthorizationConfirmConsentCodeRequestContract or
+         ~azure.mgmt.apimanagement.types.AuthorizationConfirmConsentCodeRequestContract or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -72732,7 +73119,7 @@ class AuthorizationOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
 
-class AuthorizationLoginLinksOperations:
+class AuthorizationLoginLinksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -72790,7 +73177,7 @@ class AuthorizationLoginLinksOperations:
         service_name: str,
         authorization_provider_id: str,
         authorization_id: str,
-        parameters: JSON,
+        parameters: _types.AuthorizationLoginRequestContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -72807,7 +73194,7 @@ class AuthorizationLoginLinksOperations:
         :param authorization_id: Identifier of the authorization. Required.
         :type authorization_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.AuthorizationLoginRequestContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -72858,7 +73245,9 @@ class AuthorizationLoginLinksOperations:
         service_name: str,
         authorization_provider_id: str,
         authorization_id: str,
-        parameters: Union[_models.AuthorizationLoginRequestContract, JSON, IO[bytes]],
+        parameters: Union[
+            _models.AuthorizationLoginRequestContract, _types.AuthorizationLoginRequestContract, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.AuthorizationLoginResponseContract:
         """Gets authorization login links.
@@ -72872,10 +73261,10 @@ class AuthorizationLoginLinksOperations:
         :type authorization_provider_id: str
         :param authorization_id: Identifier of the authorization. Required.
         :type authorization_id: str
-        :param parameters: Create parameters. Is one of the following types:
-         AuthorizationLoginRequestContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.AuthorizationLoginRequestContract or JSON or
-         IO[bytes]
+        :param parameters: Create parameters. Is either a AuthorizationLoginRequestContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.AuthorizationLoginRequestContract or
+         ~azure.mgmt.apimanagement.types.AuthorizationLoginRequestContract or IO[bytes]
         :return: AuthorizationLoginResponseContract. The AuthorizationLoginResponseContract is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.AuthorizationLoginResponseContract
@@ -72954,7 +73343,7 @@ class AuthorizationLoginLinksOperations:
         return deserialized  # type: ignore
 
 
-class AuthorizationAccessPolicyOperations:
+class AuthorizationAccessPolicyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -73114,7 +73503,7 @@ class AuthorizationAccessPolicyOperations:
         authorization_provider_id: str,
         authorization_id: str,
         authorization_access_policy_id: str,
-        parameters: JSON,
+        parameters: _types.AuthorizationAccessPolicyContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -73135,7 +73524,7 @@ class AuthorizationAccessPolicyOperations:
         :param authorization_access_policy_id: Identifier of the authorization access policy. Required.
         :type authorization_access_policy_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.AuthorizationAccessPolicyContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -73202,7 +73591,9 @@ class AuthorizationAccessPolicyOperations:
         authorization_provider_id: str,
         authorization_id: str,
         authorization_access_policy_id: str,
-        parameters: Union[_models.AuthorizationAccessPolicyContract, JSON, IO[bytes]],
+        parameters: Union[
+            _models.AuthorizationAccessPolicyContract, _types.AuthorizationAccessPolicyContract, IO[bytes]
+        ],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -73221,10 +73612,10 @@ class AuthorizationAccessPolicyOperations:
         :type authorization_id: str
         :param authorization_access_policy_id: Identifier of the authorization access policy. Required.
         :type authorization_access_policy_id: str
-        :param parameters: Create parameters. Is one of the following types:
-         AuthorizationAccessPolicyContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.AuthorizationAccessPolicyContract or JSON or
-         IO[bytes]
+        :param parameters: Create parameters. Is either a AuthorizationAccessPolicyContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.AuthorizationAccessPolicyContract or
+         ~azure.mgmt.apimanagement.types.AuthorizationAccessPolicyContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -73491,7 +73882,10 @@ class AuthorizationAccessPolicyOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -73534,7 +73928,7 @@ class AuthorizationAccessPolicyOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AuthorizationServerOperations:
+class AuthorizationServerOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -73738,7 +74132,7 @@ class AuthorizationServerOperations:
         resource_group_name: str,
         service_name: str,
         authsid: str,
-        parameters: JSON,
+        parameters: _types.AuthorizationServerContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -73755,7 +74149,7 @@ class AuthorizationServerOperations:
         :param authsid: Identifier of the authorization server. Required.
         :type authsid: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.AuthorizationServerContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -73814,7 +74208,7 @@ class AuthorizationServerOperations:
         resource_group_name: str,
         service_name: str,
         authsid: str,
-        parameters: Union[_models.AuthorizationServerContract, JSON, IO[bytes]],
+        parameters: Union[_models.AuthorizationServerContract, _types.AuthorizationServerContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -73829,10 +74223,10 @@ class AuthorizationServerOperations:
         :type service_name: str
         :param authsid: Identifier of the authorization server. Required.
         :type authsid: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         AuthorizationServerContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.AuthorizationServerContract or JSON or
-         IO[bytes]
+        :param parameters: Create or update parameters. Is either a AuthorizationServerContract type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.AuthorizationServerContract or
+         ~azure.mgmt.apimanagement.types.AuthorizationServerContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -73970,7 +74364,7 @@ class AuthorizationServerOperations:
         resource_group_name: str,
         service_name: str,
         authsid: str,
-        parameters: JSON,
+        parameters: _types.AuthorizationServerUpdateContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -73987,7 +74381,7 @@ class AuthorizationServerOperations:
         :param authsid: Identifier of the authorization server. Required.
         :type authsid: str
         :param parameters: OAuth2 Server settings Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.AuthorizationServerUpdateContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -74044,7 +74438,9 @@ class AuthorizationServerOperations:
         resource_group_name: str,
         service_name: str,
         authsid: str,
-        parameters: Union[_models.AuthorizationServerUpdateContract, JSON, IO[bytes]],
+        parameters: Union[
+            _models.AuthorizationServerUpdateContract, _types.AuthorizationServerUpdateContract, IO[bytes]
+        ],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -74059,10 +74455,10 @@ class AuthorizationServerOperations:
         :type service_name: str
         :param authsid: Identifier of the authorization server. Required.
         :type authsid: str
-        :param parameters: OAuth2 Server settings Update parameters. Is one of the following types:
-         AuthorizationServerUpdateContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.AuthorizationServerUpdateContract or JSON or
-         IO[bytes]
+        :param parameters: OAuth2 Server settings Update parameters. Is either a
+         AuthorizationServerUpdateContract type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.AuthorizationServerUpdateContract or
+         ~azure.mgmt.apimanagement.types.AuthorizationServerUpdateContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -74310,7 +74706,10 @@ class AuthorizationServerOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -74432,7 +74831,7 @@ class AuthorizationServerOperations:
         return deserialized  # type: ignore
 
 
-class BackendOperations:
+class BackendOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -74637,7 +75036,7 @@ class BackendOperations:
         resource_group_name: str,
         service_name: str,
         backend_id: str,
-        parameters: JSON,
+        parameters: _types.BackendContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -74655,7 +75054,7 @@ class BackendOperations:
          Management service instance. Required.
         :type backend_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.BackendContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -74713,7 +75112,7 @@ class BackendOperations:
         resource_group_name: str,
         service_name: str,
         backend_id: str,
-        parameters: Union[_models.BackendContract, JSON, IO[bytes]],
+        parameters: Union[_models.BackendContract, _types.BackendContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -74729,9 +75128,10 @@ class BackendOperations:
         :param backend_id: Identifier of the Backend entity. Must be unique in the current API
          Management service instance. Required.
         :type backend_id: str
-        :param parameters: Create parameters. Is one of the following types: BackendContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.BackendContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a BackendContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.BackendContract or
+         ~azure.mgmt.apimanagement.types.BackendContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -74868,7 +75268,7 @@ class BackendOperations:
         resource_group_name: str,
         service_name: str,
         backend_id: str,
-        parameters: JSON,
+        parameters: _types.BackendUpdateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -74886,7 +75286,7 @@ class BackendOperations:
          Management service instance. Required.
         :type backend_id: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.BackendUpdateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -74942,7 +75342,7 @@ class BackendOperations:
         resource_group_name: str,
         service_name: str,
         backend_id: str,
-        parameters: Union[_models.BackendUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.BackendUpdateParameters, _types.BackendUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -74958,9 +75358,10 @@ class BackendOperations:
         :param backend_id: Identifier of the Backend entity. Must be unique in the current API
          Management service instance. Required.
         :type backend_id: str
-        :param parameters: Update parameters. Is one of the following types: BackendUpdateParameters,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.BackendUpdateParameters or JSON or IO[bytes]
+        :param parameters: Update parameters. Is either a BackendUpdateParameters type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.BackendUpdateParameters or
+         ~azure.mgmt.apimanagement.types.BackendUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -75208,7 +75609,10 @@ class BackendOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -75288,7 +75692,7 @@ class BackendOperations:
         resource_group_name: str,
         service_name: str,
         backend_id: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.BackendReconnectContract] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -75305,7 +75709,7 @@ class BackendOperations:
          Management service instance. Required.
         :type backend_id: str
         :param parameters: Reconnect request parameters. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.BackendReconnectContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -75352,7 +75756,9 @@ class BackendOperations:
         resource_group_name: str,
         service_name: str,
         backend_id: str,
-        parameters: Optional[Union[_models.BackendReconnectContract, JSON, IO[bytes]]] = None,
+        parameters: Optional[
+            Union[_models.BackendReconnectContract, _types.BackendReconnectContract, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """Notifies the API Management gateway to create a new connection to the backend after the
@@ -75366,10 +75772,10 @@ class BackendOperations:
         :param backend_id: Identifier of the Backend entity. Must be unique in the current API
          Management service instance. Required.
         :type backend_id: str
-        :param parameters: Reconnect request parameters. Is one of the following types:
-         BackendReconnectContract, JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.apimanagement.models.BackendReconnectContract or JSON or
-         IO[bytes]
+        :param parameters: Reconnect request parameters. Is either a BackendReconnectContract type or a
+         IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.apimanagement.models.BackendReconnectContract or
+         ~azure.mgmt.apimanagement.types.BackendReconnectContract or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -75434,7 +75840,7 @@ class BackendOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class CacheOperations:
+class CacheOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -75637,7 +76043,7 @@ class CacheOperations:
         resource_group_name: str,
         service_name: str,
         cache_id: str,
-        parameters: JSON,
+        parameters: _types.CacheContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -75655,7 +76061,7 @@ class CacheOperations:
          or valid Azure region identifier). Required.
         :type cache_id: str
         :param parameters: Create or Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.CacheContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -75713,7 +76119,7 @@ class CacheOperations:
         resource_group_name: str,
         service_name: str,
         cache_id: str,
-        parameters: Union[_models.CacheContract, JSON, IO[bytes]],
+        parameters: Union[_models.CacheContract, _types.CacheContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -75729,9 +76135,10 @@ class CacheOperations:
         :param cache_id: Identifier of the Cache entity. Cache identifier (should be either 'default'
          or valid Azure region identifier). Required.
         :type cache_id: str
-        :param parameters: Create or Update parameters. Is one of the following types: CacheContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.CacheContract or JSON or IO[bytes]
+        :param parameters: Create or Update parameters. Is either a CacheContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.CacheContract or
+         ~azure.mgmt.apimanagement.types.CacheContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -75863,7 +76270,7 @@ class CacheOperations:
         resource_group_name: str,
         service_name: str,
         cache_id: str,
-        parameters: JSON,
+        parameters: _types.CacheUpdateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -75881,7 +76288,7 @@ class CacheOperations:
          or valid Azure region identifier). Required.
         :type cache_id: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.CacheUpdateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -75937,7 +76344,7 @@ class CacheOperations:
         resource_group_name: str,
         service_name: str,
         cache_id: str,
-        parameters: Union[_models.CacheUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.CacheUpdateParameters, _types.CacheUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -75953,9 +76360,10 @@ class CacheOperations:
         :param cache_id: Identifier of the Cache entity. Cache identifier (should be either 'default'
          or valid Azure region identifier). Required.
         :type cache_id: str
-        :param parameters: Update parameters. Is one of the following types: CacheUpdateParameters,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.CacheUpdateParameters or JSON or IO[bytes]
+        :param parameters: Update parameters. Is either a CacheUpdateParameters type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.CacheUpdateParameters or
+         ~azure.mgmt.apimanagement.types.CacheUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -76194,7 +76602,10 @@ class CacheOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -76237,7 +76648,7 @@ class CacheOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class CertificateOperations:
+class CertificateOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -76442,7 +76853,7 @@ class CertificateOperations:
         resource_group_name: str,
         service_name: str,
         certificate_id: str,
-        parameters: JSON,
+        parameters: _types.CertificateCreateOrUpdateParameters,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -76460,7 +76871,7 @@ class CertificateOperations:
          Management service instance. Required.
         :type certificate_id: str
         :param parameters: Create or Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.CertificateCreateOrUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -76518,7 +76929,9 @@ class CertificateOperations:
         resource_group_name: str,
         service_name: str,
         certificate_id: str,
-        parameters: Union[_models.CertificateCreateOrUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.CertificateCreateOrUpdateParameters, _types.CertificateCreateOrUpdateParameters, IO[bytes]
+        ],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -76534,10 +76947,10 @@ class CertificateOperations:
         :param certificate_id: Identifier of the certificate entity. Must be unique in the current API
          Management service instance. Required.
         :type certificate_id: str
-        :param parameters: Create or Update parameters. Is one of the following types:
-         CertificateCreateOrUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.CertificateCreateOrUpdateParameters or JSON
-         or IO[bytes]
+        :param parameters: Create or Update parameters. Is either a CertificateCreateOrUpdateParameters
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.CertificateCreateOrUpdateParameters or
+         ~azure.mgmt.apimanagement.types.CertificateCreateOrUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -76791,7 +77204,10 @@ class CertificateOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -76913,7 +77329,7 @@ class CertificateOperations:
         return deserialized  # type: ignore
 
 
-class ContentTypeOperations:
+class ContentTypeOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -77054,7 +77470,7 @@ class ContentTypeOperations:
         resource_group_name: str,
         service_name: str,
         content_type_id: str,
-        parameters: JSON,
+        parameters: _types.ContentTypeContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -77073,7 +77489,7 @@ class ContentTypeOperations:
         :param content_type_id: Content type identifier. Required.
         :type content_type_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ContentTypeContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -77132,7 +77548,7 @@ class ContentTypeOperations:
         resource_group_name: str,
         service_name: str,
         content_type_id: str,
-        parameters: Union[_models.ContentTypeContract, JSON, IO[bytes]],
+        parameters: Union[_models.ContentTypeContract, _types.ContentTypeContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -77149,9 +77565,10 @@ class ContentTypeOperations:
         :type service_name: str
         :param content_type_id: Content type identifier. Required.
         :type content_type_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         ContentTypeContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ContentTypeContract or JSON or IO[bytes]
+        :param parameters: Create or update parameters. Is either a ContentTypeContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ContentTypeContract or
+         ~azure.mgmt.apimanagement.types.ContentTypeContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -77381,7 +77798,10 @@ class ContentTypeOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -77424,7 +77844,7 @@ class ContentTypeOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ContentItemOperations:
+class ContentItemOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -77639,7 +78059,7 @@ class ContentItemOperations:
         service_name: str,
         content_type_id: str,
         content_item_id: str,
-        parameters: JSON,
+        parameters: _types.ContentItemContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -77658,7 +78078,7 @@ class ContentItemOperations:
         :param content_item_id: Content item identifier. Required.
         :type content_item_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ContentItemContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -77719,7 +78139,7 @@ class ContentItemOperations:
         service_name: str,
         content_type_id: str,
         content_item_id: str,
-        parameters: Union[_models.ContentItemContract, JSON, IO[bytes]],
+        parameters: Union[_models.ContentItemContract, _types.ContentItemContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -77736,9 +78156,10 @@ class ContentItemOperations:
         :type content_type_id: str
         :param content_item_id: Content item identifier. Required.
         :type content_item_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         ContentItemContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ContentItemContract or JSON or IO[bytes]
+        :param parameters: Create or update parameters. Is either a ContentItemContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ContentItemContract or
+         ~azure.mgmt.apimanagement.types.ContentItemContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -77973,7 +78394,10 @@ class ContentItemOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -78016,7 +78440,7 @@ class ContentItemOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DeletedServicesOperations:
+class DeletedServicesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -78161,22 +78585,21 @@ class DeletedServicesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_purge(self, service_name: str, location: str, **kwargs: Any) -> LROPoller[_models.DeletedServiceContract]:
+    def begin_purge(self, service_name: str, location: str, **kwargs: Any) -> LROPoller[None]:
         """Purges Api Management Service (deletes it with no option to undelete).
 
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
         :param location: The name of the Azure region. Required.
         :type location: str
-        :return: An instance of LROPoller that returns DeletedServiceContract. The
-         DeletedServiceContract is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.apimanagement.models.DeletedServiceContract]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeletedServiceContract] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -78192,12 +78615,9 @@ class DeletedServicesOperations:
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.DeletedServiceContract, response.json())
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -78212,15 +78632,13 @@ class DeletedServicesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.DeletedServiceContract].from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.DeletedServiceContract](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.DeletedServiceContract"]:
@@ -78270,7 +78688,10 @@ class DeletedServicesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -78313,7 +78734,7 @@ class DeletedServicesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DocumentationOperations:
+class DocumentationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -78518,7 +78939,7 @@ class DocumentationOperations:
         resource_group_name: str,
         service_name: str,
         documentation_id: str,
-        parameters: JSON,
+        parameters: _types.DocumentationContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -78536,7 +78957,7 @@ class DocumentationOperations:
          service instance. Required.
         :type documentation_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.DocumentationContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -78594,7 +79015,7 @@ class DocumentationOperations:
         resource_group_name: str,
         service_name: str,
         documentation_id: str,
-        parameters: Union[_models.DocumentationContract, JSON, IO[bytes]],
+        parameters: Union[_models.DocumentationContract, _types.DocumentationContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -78610,9 +79031,10 @@ class DocumentationOperations:
         :param documentation_id: Documentation identifier. Must be unique in the current API Management
          service instance. Required.
         :type documentation_id: str
-        :param parameters: Create parameters. Is one of the following types: DocumentationContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.DocumentationContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a DocumentationContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.DocumentationContract or
+         ~azure.mgmt.apimanagement.types.DocumentationContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -78744,7 +79166,7 @@ class DocumentationOperations:
         resource_group_name: str,
         service_name: str,
         documentation_id: str,
-        parameters: JSON,
+        parameters: _types.DocumentationUpdateContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -78762,7 +79184,7 @@ class DocumentationOperations:
          service instance. Required.
         :type documentation_id: str
         :param parameters: Documentation Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.DocumentationUpdateContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -78818,7 +79240,7 @@ class DocumentationOperations:
         resource_group_name: str,
         service_name: str,
         documentation_id: str,
-        parameters: Union[_models.DocumentationUpdateContract, JSON, IO[bytes]],
+        parameters: Union[_models.DocumentationUpdateContract, _types.DocumentationUpdateContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -78834,10 +79256,10 @@ class DocumentationOperations:
         :param documentation_id: Documentation identifier. Must be unique in the current API Management
          service instance. Required.
         :type documentation_id: str
-        :param parameters: Documentation Update parameters. Is one of the following types:
-         DocumentationUpdateContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.DocumentationUpdateContract or JSON or
-         IO[bytes]
+        :param parameters: Documentation Update parameters. Is either a DocumentationUpdateContract
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.DocumentationUpdateContract or
+         ~azure.mgmt.apimanagement.types.DocumentationUpdateContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -79082,7 +79504,10 @@ class DocumentationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -79125,7 +79550,7 @@ class DocumentationOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class EmailTemplateOperations:
+class EmailTemplateOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -79359,7 +79784,7 @@ class EmailTemplateOperations:
         resource_group_name: str,
         service_name: str,
         template_name: Union[str, _models.TemplateName],
-        parameters: JSON,
+        parameters: _types.EmailTemplateUpdateParameters,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -79384,7 +79809,7 @@ class EmailTemplateOperations:
          "requestDeveloperNotificationMessage". Required.
         :type template_name: str or ~azure.mgmt.apimanagement.models.TemplateName
         :param parameters: Email Template update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.EmailTemplateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -79449,7 +79874,7 @@ class EmailTemplateOperations:
         resource_group_name: str,
         service_name: str,
         template_name: Union[str, _models.TemplateName],
-        parameters: Union[_models.EmailTemplateUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.EmailTemplateUpdateParameters, _types.EmailTemplateUpdateParameters, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -79472,10 +79897,10 @@ class EmailTemplateOperations:
          "passwordResetByAdminNotificationMessage", "rejectDeveloperNotificationMessage", and
          "requestDeveloperNotificationMessage". Required.
         :type template_name: str or ~azure.mgmt.apimanagement.models.TemplateName
-        :param parameters: Email Template update parameters. Is one of the following types:
-         EmailTemplateUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.EmailTemplateUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Email Template update parameters. Is either a EmailTemplateUpdateParameters
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.EmailTemplateUpdateParameters or
+         ~azure.mgmt.apimanagement.types.EmailTemplateUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -79610,7 +80035,7 @@ class EmailTemplateOperations:
         resource_group_name: str,
         service_name: str,
         template_name: Union[str, _models.TemplateName],
-        parameters: JSON,
+        parameters: _types.EmailTemplateUpdateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -79634,7 +80059,7 @@ class EmailTemplateOperations:
          "requestDeveloperNotificationMessage". Required.
         :type template_name: str or ~azure.mgmt.apimanagement.models.TemplateName
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.EmailTemplateUpdateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -79696,7 +80121,7 @@ class EmailTemplateOperations:
         resource_group_name: str,
         service_name: str,
         template_name: Union[str, _models.TemplateName],
-        parameters: Union[_models.EmailTemplateUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.EmailTemplateUpdateParameters, _types.EmailTemplateUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -79718,10 +80143,10 @@ class EmailTemplateOperations:
          "passwordResetByAdminNotificationMessage", "rejectDeveloperNotificationMessage", and
          "requestDeveloperNotificationMessage". Required.
         :type template_name: str or ~azure.mgmt.apimanagement.models.TemplateName
-        :param parameters: Update parameters. Is one of the following types:
-         EmailTemplateUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.EmailTemplateUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Update parameters. Is either a EmailTemplateUpdateParameters type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.EmailTemplateUpdateParameters or
+         ~azure.mgmt.apimanagement.types.EmailTemplateUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -79973,7 +80398,10 @@ class EmailTemplateOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -80016,7 +80444,7 @@ class EmailTemplateOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiGatewayConfigConnectionOperations:
+class ApiGatewayConfigConnectionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -80115,7 +80543,11 @@ class ApiGatewayConfigConnectionOperations:
         resource_group_name: str,
         gateway_name: str,
         config_connection_name: str,
-        parameters: Union[_models.ApiManagementGatewayConfigConnectionResource, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ApiManagementGatewayConfigConnectionResource,
+            _types.ApiManagementGatewayConfigConnectionResource,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -80230,7 +80662,7 @@ class ApiGatewayConfigConnectionOperations:
         resource_group_name: str,
         gateway_name: str,
         config_connection_name: str,
-        parameters: JSON,
+        parameters: _types.ApiManagementGatewayConfigConnectionResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -80248,7 +80680,7 @@ class ApiGatewayConfigConnectionOperations:
         :type config_connection_name: str
         :param parameters: Parameters supplied to the CreateOrUpdate API Management gateway config
          connection operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ApiManagementGatewayConfigConnectionResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -80300,7 +80732,11 @@ class ApiGatewayConfigConnectionOperations:
         resource_group_name: str,
         gateway_name: str,
         config_connection_name: str,
-        parameters: Union[_models.ApiManagementGatewayConfigConnectionResource, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ApiManagementGatewayConfigConnectionResource,
+            _types.ApiManagementGatewayConfigConnectionResource,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.ApiManagementGatewayConfigConnectionResource]:
         """Creates or updates an API Management gateway config connection. This is long running operation
@@ -80315,10 +80751,10 @@ class ApiGatewayConfigConnectionOperations:
          Required.
         :type config_connection_name: str
         :param parameters: Parameters supplied to the CreateOrUpdate API Management gateway config
-         connection operation. Is one of the following types:
-         ApiManagementGatewayConfigConnectionResource, JSON, IO[bytes] Required.
+         connection operation. Is either a ApiManagementGatewayConfigConnectionResource type or a
+         IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.apimanagement.models.ApiManagementGatewayConfigConnectionResource
-         or JSON or IO[bytes]
+         or ~azure.mgmt.apimanagement.types.ApiManagementGatewayConfigConnectionResource or IO[bytes]
         :return: An instance of LROPoller that returns ApiManagementGatewayConfigConnectionResource.
          The ApiManagementGatewayConfigConnectionResource is compatible with MutableMapping
         :rtype:
@@ -80533,7 +80969,13 @@ class ApiGatewayConfigConnectionOperations:
 
     @distributed_trace
     def list_by_gateway(
-        self, resource_group_name: str, gateway_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        gateway_name: str,
+        *,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
     ) -> ItemPaged["_models.ApiManagementGatewayConfigConnectionResource"]:
         """List all API Management gateway config connections within a gateway.
 
@@ -80542,6 +80984,10 @@ class ApiGatewayConfigConnectionOperations:
         :type resource_group_name: str
         :param gateway_name: The name of the API Management gateway. Required.
         :type gateway_name: str
+        :keyword top: Number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: Skip token for retrieving the next page of results. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of ApiManagementGatewayConfigConnectionResource
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ApiManagementGatewayConfigConnectionResource]
@@ -80567,6 +81013,8 @@ class ApiGatewayConfigConnectionOperations:
                     resource_group_name=resource_group_name,
                     gateway_name=gateway_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -80589,7 +81037,10 @@ class ApiGatewayConfigConnectionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -80632,7 +81083,7 @@ class ApiGatewayConfigConnectionOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiGatewayHostnameBindingOperations:
+class ApiGatewayHostnameBindingOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -80731,7 +81182,7 @@ class ApiGatewayHostnameBindingOperations:
         resource_group_name: str,
         gateway_name: str,
         hostname_binding_name: str,
-        parameters: Union[_models.GatewayHostnameBindingResource, JSON, IO[bytes]],
+        parameters: Union[_models.GatewayHostnameBindingResource, _types.GatewayHostnameBindingResource, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -80863,7 +81314,7 @@ class ApiGatewayHostnameBindingOperations:
         resource_group_name: str,
         gateway_name: str,
         hostname_binding_name: str,
-        parameters: JSON,
+        parameters: _types.GatewayHostnameBindingResource,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -80883,7 +81334,7 @@ class ApiGatewayHostnameBindingOperations:
         :type hostname_binding_name: str
         :param parameters: Parameters supplied to the CreateOrUpdate API Management gateway hostname
          binding operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.GatewayHostnameBindingResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -80947,7 +81398,7 @@ class ApiGatewayHostnameBindingOperations:
         resource_group_name: str,
         gateway_name: str,
         hostname_binding_name: str,
-        parameters: Union[_models.GatewayHostnameBindingResource, JSON, IO[bytes]],
+        parameters: Union[_models.GatewayHostnameBindingResource, _types.GatewayHostnameBindingResource, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -80965,10 +81416,10 @@ class ApiGatewayHostnameBindingOperations:
          of parent Gateway entity. Required.
         :type hostname_binding_name: str
         :param parameters: Parameters supplied to the CreateOrUpdate API Management gateway hostname
-         binding operation. Is one of the following types: GatewayHostnameBindingResource, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.GatewayHostnameBindingResource or JSON or
-         IO[bytes]
+         binding operation. Is either a GatewayHostnameBindingResource type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.GatewayHostnameBindingResource or
+         ~azure.mgmt.apimanagement.types.GatewayHostnameBindingResource or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -81255,7 +81706,10 @@ class ApiGatewayHostnameBindingOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -81425,7 +81879,7 @@ class ApiGatewayHostnameBindingOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class GatewayOperations:
+class GatewayOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -81630,7 +82084,7 @@ class GatewayOperations:
         resource_group_name: str,
         service_name: str,
         gateway_id: str,
-        parameters: JSON,
+        parameters: _types.GatewayContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -81648,7 +82102,7 @@ class GatewayOperations:
          service instance. Must not have value 'managed'. Required.
         :type gateway_id: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.GatewayContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -81706,7 +82160,7 @@ class GatewayOperations:
         resource_group_name: str,
         service_name: str,
         gateway_id: str,
-        parameters: Union[_models.GatewayContract, JSON, IO[bytes]],
+        parameters: Union[_models.GatewayContract, _types.GatewayContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -81722,8 +82176,9 @@ class GatewayOperations:
         :param gateway_id: Gateway entity identifier. Must be unique in the current API Management
          service instance. Must not have value 'managed'. Required.
         :type gateway_id: str
-        :param parameters: Is one of the following types: GatewayContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.GatewayContract or JSON or IO[bytes]
+        :param parameters: Is either a GatewayContract type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.GatewayContract or
+         ~azure.mgmt.apimanagement.types.GatewayContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -81855,7 +82310,7 @@ class GatewayOperations:
         resource_group_name: str,
         service_name: str,
         gateway_id: str,
-        parameters: JSON,
+        parameters: _types.GatewayContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -81873,7 +82328,7 @@ class GatewayOperations:
          service instance. Must not have value 'managed'. Required.
         :type gateway_id: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.GatewayContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -81929,7 +82384,7 @@ class GatewayOperations:
         resource_group_name: str,
         service_name: str,
         gateway_id: str,
-        parameters: Union[_models.GatewayContract, JSON, IO[bytes]],
+        parameters: Union[_models.GatewayContract, _types.GatewayContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -81945,8 +82400,9 @@ class GatewayOperations:
         :param gateway_id: Gateway entity identifier. Must be unique in the current API Management
          service instance. Must not have value 'managed'. Required.
         :type gateway_id: str
-        :param parameters: Is one of the following types: GatewayContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.GatewayContract or JSON or IO[bytes]
+        :param parameters: Is either a GatewayContract type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.GatewayContract or
+         ~azure.mgmt.apimanagement.types.GatewayContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -82194,7 +82650,10 @@ class GatewayOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -82352,7 +82811,7 @@ class GatewayOperations:
         resource_group_name: str,
         service_name: str,
         gateway_id: str,
-        parameters: JSON,
+        parameters: _types.GatewayKeyRegenerationRequestContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -82368,7 +82827,7 @@ class GatewayOperations:
          service instance. Must not have value 'managed'. Required.
         :type gateway_id: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.GatewayKeyRegenerationRequestContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -82414,7 +82873,9 @@ class GatewayOperations:
         resource_group_name: str,
         service_name: str,
         gateway_id: str,
-        parameters: Union[_models.GatewayKeyRegenerationRequestContract, JSON, IO[bytes]],
+        parameters: Union[
+            _models.GatewayKeyRegenerationRequestContract, _types.GatewayKeyRegenerationRequestContract, IO[bytes]
+        ],
         **kwargs: Any
     ) -> None:
         """Regenerates specified gateway key invalidating any tokens created with it.
@@ -82427,10 +82888,10 @@ class GatewayOperations:
         :param gateway_id: Gateway entity identifier. Must be unique in the current API Management
          service instance. Must not have value 'managed'. Required.
         :type gateway_id: str
-        :param parameters: Is one of the following types: GatewayKeyRegenerationRequestContract, JSON,
-         IO[bytes] Required.
+        :param parameters: Is either a GatewayKeyRegenerationRequestContract type or a IO[bytes] type.
+         Required.
         :type parameters: ~azure.mgmt.apimanagement.models.GatewayKeyRegenerationRequestContract or
-         JSON or IO[bytes]
+         ~azure.mgmt.apimanagement.types.GatewayKeyRegenerationRequestContract or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -82527,7 +82988,7 @@ class GatewayOperations:
         resource_group_name: str,
         service_name: str,
         gateway_id: str,
-        parameters: JSON,
+        parameters: _types.GatewayTokenRequestContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -82543,7 +83004,7 @@ class GatewayOperations:
          service instance. Must not have value 'managed'. Required.
         :type gateway_id: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.GatewayTokenRequestContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -82589,7 +83050,7 @@ class GatewayOperations:
         resource_group_name: str,
         service_name: str,
         gateway_id: str,
-        parameters: Union[_models.GatewayTokenRequestContract, JSON, IO[bytes]],
+        parameters: Union[_models.GatewayTokenRequestContract, _types.GatewayTokenRequestContract, IO[bytes]],
         **kwargs: Any
     ) -> _models.GatewayTokenContract:
         """Gets the Shared Access Authorization Token for the gateway.
@@ -82602,10 +83063,9 @@ class GatewayOperations:
         :param gateway_id: Gateway entity identifier. Must be unique in the current API Management
          service instance. Must not have value 'managed'. Required.
         :type gateway_id: str
-        :param parameters: Is one of the following types: GatewayTokenRequestContract, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.GatewayTokenRequestContract or JSON or
-         IO[bytes]
+        :param parameters: Is either a GatewayTokenRequestContract type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.GatewayTokenRequestContract or
+         ~azure.mgmt.apimanagement.types.GatewayTokenRequestContract or IO[bytes]
         :return: GatewayTokenContract. The GatewayTokenContract is compatible with MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.GatewayTokenContract
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -82779,7 +83239,7 @@ class GatewayOperations:
         resource_group_name: str,
         service_name: str,
         gateway_id: str,
-        parameters: JSON,
+        parameters: _types.GatewayListDebugCredentialsContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -82795,7 +83255,7 @@ class GatewayOperations:
          service instance. Must not have value 'managed'. Required.
         :type gateway_id: str
         :param parameters: List debug credentials properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.GatewayListDebugCredentialsContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -82843,7 +83303,9 @@ class GatewayOperations:
         resource_group_name: str,
         service_name: str,
         gateway_id: str,
-        parameters: Union[_models.GatewayListDebugCredentialsContract, JSON, IO[bytes]],
+        parameters: Union[
+            _models.GatewayListDebugCredentialsContract, _types.GatewayListDebugCredentialsContract, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.GatewayDebugCredentialsContract:
         """Create new debug credentials for gateway.
@@ -82856,10 +83318,10 @@ class GatewayOperations:
         :param gateway_id: Gateway entity identifier. Must be unique in the current API Management
          service instance. Must not have value 'managed'. Required.
         :type gateway_id: str
-        :param parameters: List debug credentials properties. Is one of the following types:
-         GatewayListDebugCredentialsContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.GatewayListDebugCredentialsContract or JSON
-         or IO[bytes]
+        :param parameters: List debug credentials properties. Is either a
+         GatewayListDebugCredentialsContract type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.GatewayListDebugCredentialsContract or
+         ~azure.mgmt.apimanagement.types.GatewayListDebugCredentialsContract or IO[bytes]
         :return: GatewayDebugCredentialsContract. The GatewayDebugCredentialsContract is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.GatewayDebugCredentialsContract
@@ -82970,7 +83432,7 @@ class GatewayOperations:
         resource_group_name: str,
         service_name: str,
         gateway_id: str,
-        parameters: JSON,
+        parameters: _types.GatewayListTraceContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -82986,7 +83448,7 @@ class GatewayOperations:
          service instance. Must not have value 'managed'. Required.
         :type gateway_id: str
         :param parameters: List trace properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.GatewayListTraceContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -83032,7 +83494,7 @@ class GatewayOperations:
         resource_group_name: str,
         service_name: str,
         gateway_id: str,
-        parameters: Union[_models.GatewayListTraceContract, JSON, IO[bytes]],
+        parameters: Union[_models.GatewayListTraceContract, _types.GatewayListTraceContract, IO[bytes]],
         **kwargs: Any
     ) -> dict[str, Any]:
         """Fetches trace collected by gateway.
@@ -83045,10 +83507,10 @@ class GatewayOperations:
         :param gateway_id: Gateway entity identifier. Must be unique in the current API Management
          service instance. Must not have value 'managed'. Required.
         :type gateway_id: str
-        :param parameters: List trace properties. Is one of the following types:
-         GatewayListTraceContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.GatewayListTraceContract or JSON or
-         IO[bytes]
+        :param parameters: List trace properties. Is either a GatewayListTraceContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.GatewayListTraceContract or
+         ~azure.mgmt.apimanagement.types.GatewayListTraceContract or IO[bytes]
         :return: dict mapping str to any
         :rtype: dict[str, any]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -83122,7 +83584,7 @@ class GatewayOperations:
         return deserialized  # type: ignore
 
 
-class GatewayApiOperations:
+class GatewayApiOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -83220,7 +83682,10 @@ class GatewayApiOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -83375,7 +83840,7 @@ class GatewayApiOperations:
         service_name: str,
         gateway_id: str,
         api_id: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.AssociationContract] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -83394,7 +83859,7 @@ class GatewayApiOperations:
          Required.
         :type api_id: str
         :param parameters: Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.AssociationContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -83445,7 +83910,7 @@ class GatewayApiOperations:
         service_name: str,
         gateway_id: str,
         api_id: str,
-        parameters: Optional[Union[_models.AssociationContract, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.AssociationContract, _types.AssociationContract, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.ApiContract:
         """Adds an API to the specified Gateway.
@@ -83461,9 +83926,10 @@ class GatewayApiOperations:
         :param api_id: API identifier. Must be unique in the current API Management service instance.
          Required.
         :type api_id: str
-        :param parameters: Is one of the following types: AssociationContract, JSON, IO[bytes] Default
-         value is None.
-        :type parameters: ~azure.mgmt.apimanagement.models.AssociationContract or JSON or IO[bytes]
+        :param parameters: Is either a AssociationContract type or a IO[bytes] type. Default value is
+         None.
+        :type parameters: ~azure.mgmt.apimanagement.models.AssociationContract or
+         ~azure.mgmt.apimanagement.types.AssociationContract or IO[bytes]
         :return: ApiContract. The ApiContract is compatible with MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.ApiContract
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -83609,7 +84075,7 @@ class GatewayApiOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class GatewayHostnameConfigurationOperations:
+class GatewayHostnameConfigurationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -83832,7 +84298,7 @@ class GatewayHostnameConfigurationOperations:
         service_name: str,
         gateway_id: str,
         hc_id: str,
-        parameters: JSON,
+        parameters: _types.GatewayHostnameConfigurationContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -83853,7 +84319,7 @@ class GatewayHostnameConfigurationOperations:
          Gateway entity. Required.
         :type hc_id: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.GatewayHostnameConfigurationContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -83918,7 +84384,9 @@ class GatewayHostnameConfigurationOperations:
         service_name: str,
         gateway_id: str,
         hc_id: str,
-        parameters: Union[_models.GatewayHostnameConfigurationContract, JSON, IO[bytes]],
+        parameters: Union[
+            _models.GatewayHostnameConfigurationContract, _types.GatewayHostnameConfigurationContract, IO[bytes]
+        ],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -83937,10 +84405,10 @@ class GatewayHostnameConfigurationOperations:
         :param hc_id: Gateway hostname configuration identifier. Must be unique in the scope of parent
          Gateway entity. Required.
         :type hc_id: str
-        :param parameters: Is one of the following types: GatewayHostnameConfigurationContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.GatewayHostnameConfigurationContract or JSON
-         or IO[bytes]
+        :param parameters: Is either a GatewayHostnameConfigurationContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.GatewayHostnameConfigurationContract or
+         ~azure.mgmt.apimanagement.types.GatewayHostnameConfigurationContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -84206,7 +84674,10 @@ class GatewayHostnameConfigurationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -84249,7 +84720,7 @@ class GatewayHostnameConfigurationOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class GatewayCertificateAuthorityOperations:
+class GatewayCertificateAuthorityOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -84471,7 +84942,7 @@ class GatewayCertificateAuthorityOperations:
         service_name: str,
         gateway_id: str,
         certificate_id: str,
-        parameters: JSON,
+        parameters: _types.GatewayCertificateAuthorityContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -84492,7 +84963,7 @@ class GatewayCertificateAuthorityOperations:
          Management service instance. Required.
         :type certificate_id: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.GatewayCertificateAuthorityContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -84557,7 +85028,9 @@ class GatewayCertificateAuthorityOperations:
         service_name: str,
         gateway_id: str,
         certificate_id: str,
-        parameters: Union[_models.GatewayCertificateAuthorityContract, JSON, IO[bytes]],
+        parameters: Union[
+            _models.GatewayCertificateAuthorityContract, _types.GatewayCertificateAuthorityContract, IO[bytes]
+        ],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -84576,10 +85049,10 @@ class GatewayCertificateAuthorityOperations:
         :param certificate_id: Identifier of the certificate entity. Must be unique in the current API
          Management service instance. Required.
         :type certificate_id: str
-        :param parameters: Is one of the following types: GatewayCertificateAuthorityContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.GatewayCertificateAuthorityContract or JSON
-         or IO[bytes]
+        :param parameters: Is either a GatewayCertificateAuthorityContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.GatewayCertificateAuthorityContract or
+         ~azure.mgmt.apimanagement.types.GatewayCertificateAuthorityContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -84838,7 +85311,10 @@ class GatewayCertificateAuthorityOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -84881,7 +85357,7 @@ class GatewayCertificateAuthorityOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class GroupOperations:
+class GroupOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -85084,7 +85560,7 @@ class GroupOperations:
         resource_group_name: str,
         service_name: str,
         group_id: str,
-        parameters: JSON,
+        parameters: _types.GroupCreateParameters,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -85102,7 +85578,7 @@ class GroupOperations:
          instance. Required.
         :type group_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.GroupCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -85160,7 +85636,7 @@ class GroupOperations:
         resource_group_name: str,
         service_name: str,
         group_id: str,
-        parameters: Union[_models.GroupCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.GroupCreateParameters, _types.GroupCreateParameters, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -85176,9 +85652,10 @@ class GroupOperations:
         :param group_id: Group identifier. Must be unique in the current API Management service
          instance. Required.
         :type group_id: str
-        :param parameters: Create parameters. Is one of the following types: GroupCreateParameters,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.GroupCreateParameters or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a GroupCreateParameters type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.GroupCreateParameters or
+         ~azure.mgmt.apimanagement.types.GroupCreateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -85315,7 +85792,7 @@ class GroupOperations:
         resource_group_name: str,
         service_name: str,
         group_id: str,
-        parameters: JSON,
+        parameters: _types.GroupUpdateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -85333,7 +85810,7 @@ class GroupOperations:
          instance. Required.
         :type group_id: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.GroupUpdateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -85389,7 +85866,7 @@ class GroupOperations:
         resource_group_name: str,
         service_name: str,
         group_id: str,
-        parameters: Union[_models.GroupUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.GroupUpdateParameters, _types.GroupUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -85405,9 +85882,10 @@ class GroupOperations:
         :param group_id: Group identifier. Must be unique in the current API Management service
          instance. Required.
         :type group_id: str
-        :param parameters: Update parameters. Is one of the following types: GroupUpdateParameters,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.GroupUpdateParameters or JSON or IO[bytes]
+        :param parameters: Update parameters. Is either a GroupUpdateParameters type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.GroupUpdateParameters or
+         ~azure.mgmt.apimanagement.types.GroupUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -85655,7 +86133,10 @@ class GroupOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -85698,7 +86179,7 @@ class GroupOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class GroupUserOperations:
+class GroupUserOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -85800,7 +86281,10 @@ class GroupUserOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -86058,7 +86542,7 @@ class GroupUserOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class WorkspaceGroupUserOperations:
+class WorkspaceGroupUserOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -86165,7 +86649,10 @@ class WorkspaceGroupUserOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -86435,7 +86922,7 @@ class WorkspaceGroupUserOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class IdentityProviderOperations:
+class IdentityProviderOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -86653,7 +87140,7 @@ class IdentityProviderOperations:
         resource_group_name: str,
         service_name: str,
         identity_provider_name: Union[str, _models.IdentityProviderType],
-        parameters: JSON,
+        parameters: _types.IdentityProviderCreateContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -86671,7 +87158,7 @@ class IdentityProviderOperations:
          "google", "microsoft", "twitter", "aad", and "aadB2C". Required.
         :type identity_provider_name: str or ~azure.mgmt.apimanagement.models.IdentityProviderType
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.IdentityProviderCreateContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -86731,7 +87218,7 @@ class IdentityProviderOperations:
         resource_group_name: str,
         service_name: str,
         identity_provider_name: Union[str, _models.IdentityProviderType],
-        parameters: Union[_models.IdentityProviderCreateContract, JSON, IO[bytes]],
+        parameters: Union[_models.IdentityProviderCreateContract, _types.IdentityProviderCreateContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -86747,10 +87234,10 @@ class IdentityProviderOperations:
         :param identity_provider_name: Identity Provider Type identifier. Known values are: "facebook",
          "google", "microsoft", "twitter", "aad", and "aadB2C". Required.
         :type identity_provider_name: str or ~azure.mgmt.apimanagement.models.IdentityProviderType
-        :param parameters: Create parameters. Is one of the following types:
-         IdentityProviderCreateContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.IdentityProviderCreateContract or JSON or
-         IO[bytes]
+        :param parameters: Create parameters. Is either a IdentityProviderCreateContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.IdentityProviderCreateContract or
+         ~azure.mgmt.apimanagement.types.IdentityProviderCreateContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -86884,7 +87371,7 @@ class IdentityProviderOperations:
         resource_group_name: str,
         service_name: str,
         identity_provider_name: Union[str, _models.IdentityProviderType],
-        parameters: JSON,
+        parameters: _types.IdentityProviderUpdateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -86902,7 +87389,7 @@ class IdentityProviderOperations:
          "google", "microsoft", "twitter", "aad", and "aadB2C". Required.
         :type identity_provider_name: str or ~azure.mgmt.apimanagement.models.IdentityProviderType
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.IdentityProviderUpdateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -86960,7 +87447,7 @@ class IdentityProviderOperations:
         resource_group_name: str,
         service_name: str,
         identity_provider_name: Union[str, _models.IdentityProviderType],
-        parameters: Union[_models.IdentityProviderUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.IdentityProviderUpdateParameters, _types.IdentityProviderUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -86976,10 +87463,10 @@ class IdentityProviderOperations:
         :param identity_provider_name: Identity Provider Type identifier. Known values are: "facebook",
          "google", "microsoft", "twitter", "aad", and "aadB2C". Required.
         :type identity_provider_name: str or ~azure.mgmt.apimanagement.models.IdentityProviderType
-        :param parameters: Update parameters. Is one of the following types:
-         IdentityProviderUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.IdentityProviderUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Update parameters. Is either a IdentityProviderUpdateParameters type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.IdentityProviderUpdateParameters or
+         ~azure.mgmt.apimanagement.types.IdentityProviderUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -87207,7 +87694,10 @@ class IdentityProviderOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -87333,7 +87823,7 @@ class IdentityProviderOperations:
         return deserialized  # type: ignore
 
 
-class LoggerOperations:
+class LoggerOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -87536,7 +88026,7 @@ class LoggerOperations:
         resource_group_name: str,
         service_name: str,
         logger_id: str,
-        parameters: JSON,
+        parameters: _types.LoggerContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -87554,7 +88044,7 @@ class LoggerOperations:
          Required.
         :type logger_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.LoggerContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -87612,7 +88102,7 @@ class LoggerOperations:
         resource_group_name: str,
         service_name: str,
         logger_id: str,
-        parameters: Union[_models.LoggerContract, JSON, IO[bytes]],
+        parameters: Union[_models.LoggerContract, _types.LoggerContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -87628,9 +88118,10 @@ class LoggerOperations:
         :param logger_id: Logger identifier. Must be unique in the API Management service instance.
          Required.
         :type logger_id: str
-        :param parameters: Create parameters. Is one of the following types: LoggerContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.LoggerContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a LoggerContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.LoggerContract or
+         ~azure.mgmt.apimanagement.types.LoggerContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -87762,7 +88253,7 @@ class LoggerOperations:
         resource_group_name: str,
         service_name: str,
         logger_id: str,
-        parameters: JSON,
+        parameters: _types.LoggerUpdateContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -87780,7 +88271,7 @@ class LoggerOperations:
          Required.
         :type logger_id: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.LoggerUpdateContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -87836,7 +88327,7 @@ class LoggerOperations:
         resource_group_name: str,
         service_name: str,
         logger_id: str,
-        parameters: Union[_models.LoggerUpdateContract, JSON, IO[bytes]],
+        parameters: Union[_models.LoggerUpdateContract, _types.LoggerUpdateContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -87852,9 +88343,10 @@ class LoggerOperations:
         :param logger_id: Logger identifier. Must be unique in the API Management service instance.
          Required.
         :type logger_id: str
-        :param parameters: Update parameters. Is one of the following types: LoggerUpdateContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.LoggerUpdateContract or JSON or IO[bytes]
+        :param parameters: Update parameters. Is either a LoggerUpdateContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.LoggerUpdateContract or
+         ~azure.mgmt.apimanagement.types.LoggerUpdateContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -88102,7 +88594,10 @@ class LoggerOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -88145,7 +88640,7 @@ class LoggerOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class NamedValueOperations:
+class NamedValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -88309,7 +88804,7 @@ class NamedValueOperations:
         resource_group_name: str,
         service_name: str,
         named_value_id: str,
-        parameters: Union[_models.NamedValueCreateContract, JSON, IO[bytes]],
+        parameters: Union[_models.NamedValueCreateContract, _types.NamedValueCreateContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -88438,7 +88933,7 @@ class NamedValueOperations:
         resource_group_name: str,
         service_name: str,
         named_value_id: str,
-        parameters: JSON,
+        parameters: _types.NamedValueCreateContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -88455,7 +88950,7 @@ class NamedValueOperations:
         :param named_value_id: Identifier of the NamedValue. Required.
         :type named_value_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.NamedValueCreateContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -88514,7 +89009,7 @@ class NamedValueOperations:
         resource_group_name: str,
         service_name: str,
         named_value_id: str,
-        parameters: Union[_models.NamedValueCreateContract, JSON, IO[bytes]],
+        parameters: Union[_models.NamedValueCreateContract, _types.NamedValueCreateContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -88529,10 +89024,10 @@ class NamedValueOperations:
         :type service_name: str
         :param named_value_id: Identifier of the NamedValue. Required.
         :type named_value_id: str
-        :param parameters: Create parameters. Is one of the following types: NamedValueCreateContract,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.NamedValueCreateContract or JSON or
-         IO[bytes]
+        :param parameters: Create parameters. Is either a NamedValueCreateContract type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.NamedValueCreateContract or
+         ~azure.mgmt.apimanagement.types.NamedValueCreateContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -88610,7 +89105,7 @@ class NamedValueOperations:
         resource_group_name: str,
         service_name: str,
         named_value_id: str,
-        parameters: Union[_models.NamedValueUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NamedValueUpdateParameters, _types.NamedValueUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -88741,7 +89236,7 @@ class NamedValueOperations:
         resource_group_name: str,
         service_name: str,
         named_value_id: str,
-        parameters: JSON,
+        parameters: _types.NamedValueUpdateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -88758,7 +89253,7 @@ class NamedValueOperations:
         :param named_value_id: Identifier of the NamedValue. Required.
         :type named_value_id: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.NamedValueUpdateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -88815,7 +89310,7 @@ class NamedValueOperations:
         resource_group_name: str,
         service_name: str,
         named_value_id: str,
-        parameters: Union[_models.NamedValueUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.NamedValueUpdateParameters, _types.NamedValueUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -88830,10 +89325,10 @@ class NamedValueOperations:
         :type service_name: str
         :param named_value_id: Identifier of the NamedValue. Required.
         :type named_value_id: str
-        :param parameters: Update parameters. Is one of the following types:
-         NamedValueUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.NamedValueUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Update parameters. Is either a NamedValueUpdateParameters type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.NamedValueUpdateParameters or
+         ~azure.mgmt.apimanagement.types.NamedValueUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -89064,7 +89559,10 @@ class NamedValueOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -89324,7 +89822,7 @@ class NamedValueOperations:
         )
 
 
-class NotificationOperations:
+class NotificationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -89590,7 +90088,10 @@ class NotificationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -89633,7 +90134,7 @@ class NotificationOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class NotificationRecipientUserOperations:
+class NotificationRecipientUserOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -89969,7 +90470,7 @@ class NotificationRecipientUserOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class NotificationRecipientEmailOperations:
+class NotificationRecipientEmailOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -90303,7 +90804,7 @@ class NotificationRecipientEmailOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class WorkspaceNotificationRecipientUserOperations:  # pylint: disable=name-too-long
+class WorkspaceNotificationRecipientUserOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -90661,7 +91162,7 @@ class WorkspaceNotificationRecipientUserOperations:  # pylint: disable=name-too-
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class WorkspaceNotificationRecipientEmailOperations:  # pylint: disable=name-too-long
+class WorkspaceNotificationRecipientEmailOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -91017,7 +91518,7 @@ class WorkspaceNotificationRecipientEmailOperations:  # pylint: disable=name-too
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class OpenIdConnectProviderOperations:
+class OpenIdConnectProviderOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -91221,7 +91722,7 @@ class OpenIdConnectProviderOperations:
         resource_group_name: str,
         service_name: str,
         opid: str,
-        parameters: JSON,
+        parameters: _types.OpenidConnectProviderContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -91238,7 +91739,7 @@ class OpenIdConnectProviderOperations:
         :param opid: Identifier of the OpenID Connect Provider. Required.
         :type opid: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.OpenidConnectProviderContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -91297,7 +91798,7 @@ class OpenIdConnectProviderOperations:
         resource_group_name: str,
         service_name: str,
         opid: str,
-        parameters: Union[_models.OpenidConnectProviderContract, JSON, IO[bytes]],
+        parameters: Union[_models.OpenidConnectProviderContract, _types.OpenidConnectProviderContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -91312,10 +91813,10 @@ class OpenIdConnectProviderOperations:
         :type service_name: str
         :param opid: Identifier of the OpenID Connect Provider. Required.
         :type opid: str
-        :param parameters: Create parameters. Is one of the following types:
-         OpenidConnectProviderContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.OpenidConnectProviderContract or JSON or
-         IO[bytes]
+        :param parameters: Create parameters. Is either a OpenidConnectProviderContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.OpenidConnectProviderContract or
+         ~azure.mgmt.apimanagement.types.OpenidConnectProviderContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -91448,7 +91949,7 @@ class OpenIdConnectProviderOperations:
         resource_group_name: str,
         service_name: str,
         opid: str,
-        parameters: JSON,
+        parameters: _types.OpenidConnectProviderUpdateContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -91465,7 +91966,7 @@ class OpenIdConnectProviderOperations:
         :param opid: Identifier of the OpenID Connect Provider. Required.
         :type opid: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.OpenidConnectProviderUpdateContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -91522,7 +92023,9 @@ class OpenIdConnectProviderOperations:
         resource_group_name: str,
         service_name: str,
         opid: str,
-        parameters: Union[_models.OpenidConnectProviderUpdateContract, JSON, IO[bytes]],
+        parameters: Union[
+            _models.OpenidConnectProviderUpdateContract, _types.OpenidConnectProviderUpdateContract, IO[bytes]
+        ],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -91537,10 +92040,10 @@ class OpenIdConnectProviderOperations:
         :type service_name: str
         :param opid: Identifier of the OpenID Connect Provider. Required.
         :type opid: str
-        :param parameters: Update parameters. Is one of the following types:
-         OpenidConnectProviderUpdateContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.OpenidConnectProviderUpdateContract or JSON
-         or IO[bytes]
+        :param parameters: Update parameters. Is either a OpenidConnectProviderUpdateContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.OpenidConnectProviderUpdateContract or
+         ~azure.mgmt.apimanagement.types.OpenidConnectProviderUpdateContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -91788,7 +92291,10 @@ class OpenIdConnectProviderOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -91909,7 +92415,7 @@ class OpenIdConnectProviderOperations:
         return deserialized  # type: ignore
 
 
-class PolicyFragmentOperations:
+class PolicyFragmentOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -92083,7 +92589,7 @@ class PolicyFragmentOperations:
         resource_group_name: str,
         service_name: str,
         id: str,
-        parameters: Union[_models.PolicyFragmentContract, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyFragmentContract, _types.PolicyFragmentContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -92212,7 +92718,7 @@ class PolicyFragmentOperations:
         resource_group_name: str,
         service_name: str,
         id: str,
-        parameters: JSON,
+        parameters: _types.PolicyFragmentContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -92229,7 +92735,7 @@ class PolicyFragmentOperations:
         :param id: A resource identifier. Required.
         :type id: str
         :param parameters: The policy fragment contents to apply. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PolicyFragmentContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -92288,7 +92794,7 @@ class PolicyFragmentOperations:
         resource_group_name: str,
         service_name: str,
         id: str,
-        parameters: Union[_models.PolicyFragmentContract, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyFragmentContract, _types.PolicyFragmentContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -92303,9 +92809,10 @@ class PolicyFragmentOperations:
         :type service_name: str
         :param id: A resource identifier. Required.
         :type id: str
-        :param parameters: The policy fragment contents to apply. Is one of the following types:
-         PolicyFragmentContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PolicyFragmentContract or JSON or IO[bytes]
+        :param parameters: The policy fragment contents to apply. Is either a PolicyFragmentContract
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PolicyFragmentContract or
+         ~azure.mgmt.apimanagement.types.PolicyFragmentContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -92541,7 +93048,10 @@ class PolicyFragmentOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -92672,7 +93182,7 @@ class PolicyFragmentOperations:
         return deserialized  # type: ignore
 
 
-class PolicyRestrictionOperations:
+class PolicyRestrictionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -92878,7 +93388,7 @@ class PolicyRestrictionOperations:
         resource_group_name: str,
         service_name: str,
         policy_restriction_id: str,
-        parameters: JSON,
+        parameters: _types.PolicyRestrictionContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -92895,7 +93405,7 @@ class PolicyRestrictionOperations:
         :param policy_restriction_id: Policy restrictions after an entity level. Required.
         :type policy_restriction_id: str
         :param parameters: The policy restriction to apply. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PolicyRestrictionContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -92954,7 +93464,7 @@ class PolicyRestrictionOperations:
         resource_group_name: str,
         service_name: str,
         policy_restriction_id: str,
-        parameters: Union[_models.PolicyRestrictionContract, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyRestrictionContract, _types.PolicyRestrictionContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -92969,10 +93479,10 @@ class PolicyRestrictionOperations:
         :type service_name: str
         :param policy_restriction_id: Policy restrictions after an entity level. Required.
         :type policy_restriction_id: str
-        :param parameters: The policy restriction to apply. Is one of the following types:
-         PolicyRestrictionContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PolicyRestrictionContract or JSON or
-         IO[bytes]
+        :param parameters: The policy restriction to apply. Is either a PolicyRestrictionContract type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PolicyRestrictionContract or
+         ~azure.mgmt.apimanagement.types.PolicyRestrictionContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -93105,7 +93615,7 @@ class PolicyRestrictionOperations:
         resource_group_name: str,
         service_name: str,
         policy_restriction_id: str,
-        parameters: JSON,
+        parameters: _types.PolicyRestrictionUpdateContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -93122,7 +93632,7 @@ class PolicyRestrictionOperations:
         :param policy_restriction_id: Policy restrictions after an entity level. Required.
         :type policy_restriction_id: str
         :param parameters: The policy restriction to apply. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PolicyRestrictionUpdateContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -93179,7 +93689,7 @@ class PolicyRestrictionOperations:
         resource_group_name: str,
         service_name: str,
         policy_restriction_id: str,
-        parameters: Union[_models.PolicyRestrictionUpdateContract, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyRestrictionUpdateContract, _types.PolicyRestrictionUpdateContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -93194,10 +93704,10 @@ class PolicyRestrictionOperations:
         :type service_name: str
         :param policy_restriction_id: Policy restrictions after an entity level. Required.
         :type policy_restriction_id: str
-        :param parameters: The policy restriction to apply. Is one of the following types:
-         PolicyRestrictionUpdateContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PolicyRestrictionUpdateContract or JSON or
-         IO[bytes]
+        :param parameters: The policy restriction to apply. Is either a PolicyRestrictionUpdateContract
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PolicyRestrictionUpdateContract or
+         ~azure.mgmt.apimanagement.types.PolicyRestrictionUpdateContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -93426,7 +93936,10 @@ class PolicyRestrictionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -93469,7 +93982,7 @@ class PolicyRestrictionOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PortalConfigOperations:
+class PortalConfigOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -93670,7 +94183,7 @@ class PortalConfigOperations:
         resource_group_name: str,
         service_name: str,
         portal_config_id: str,
-        parameters: JSON,
+        parameters: _types.PortalConfigContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -93687,7 +94200,7 @@ class PortalConfigOperations:
         :param portal_config_id: Portal configuration identifier. Required.
         :type portal_config_id: str
         :param parameters: Update the developer portal configuration. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PortalConfigContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -93742,7 +94255,7 @@ class PortalConfigOperations:
         resource_group_name: str,
         service_name: str,
         portal_config_id: str,
-        parameters: Union[_models.PortalConfigContract, JSON, IO[bytes]],
+        parameters: Union[_models.PortalConfigContract, _types.PortalConfigContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -93757,9 +94270,10 @@ class PortalConfigOperations:
         :type service_name: str
         :param portal_config_id: Portal configuration identifier. Required.
         :type portal_config_id: str
-        :param parameters: Update the developer portal configuration. Is one of the following types:
-         PortalConfigContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PortalConfigContract or JSON or IO[bytes]
+        :param parameters: Update the developer portal configuration. Is either a PortalConfigContract
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PortalConfigContract or
+         ~azure.mgmt.apimanagement.types.PortalConfigContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -93886,7 +94400,7 @@ class PortalConfigOperations:
         resource_group_name: str,
         service_name: str,
         portal_config_id: str,
-        parameters: JSON,
+        parameters: _types.PortalConfigContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -93903,7 +94417,7 @@ class PortalConfigOperations:
         :param portal_config_id: Portal configuration identifier. Required.
         :type portal_config_id: str
         :param parameters: Update the developer portal configuration. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PortalConfigContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -93958,7 +94472,7 @@ class PortalConfigOperations:
         resource_group_name: str,
         service_name: str,
         portal_config_id: str,
-        parameters: Union[_models.PortalConfigContract, JSON, IO[bytes]],
+        parameters: Union[_models.PortalConfigContract, _types.PortalConfigContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -93973,9 +94487,10 @@ class PortalConfigOperations:
         :type service_name: str
         :param portal_config_id: Portal configuration identifier. Required.
         :type portal_config_id: str
-        :param parameters: Update the developer portal configuration. Is one of the following types:
-         PortalConfigContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PortalConfigContract or JSON or IO[bytes]
+        :param parameters: Update the developer portal configuration. Is either a PortalConfigContract
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PortalConfigContract or
+         ~azure.mgmt.apimanagement.types.PortalConfigContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -94117,7 +94632,10 @@ class PortalConfigOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -94160,7 +94678,7 @@ class PortalConfigOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ClientApplicationOperations:
+class ClientApplicationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -94362,7 +94880,7 @@ class ClientApplicationOperations:
         resource_group_name: str,
         service_name: str,
         client_application_id: str,
-        parameters: JSON,
+        parameters: _types.ClientApplicationContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -94378,7 +94896,7 @@ class ClientApplicationOperations:
          Management service instance. Required.
         :type client_application_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ClientApplicationContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -94426,7 +94944,7 @@ class ClientApplicationOperations:
         resource_group_name: str,
         service_name: str,
         client_application_id: str,
-        parameters: Union[_models.ClientApplicationContract, JSON, IO[bytes]],
+        parameters: Union[_models.ClientApplicationContract, _types.ClientApplicationContract, IO[bytes]],
         **kwargs: Any
     ) -> _models.ClientApplicationContract:
         """Creates or Updates a client application.
@@ -94439,10 +94957,10 @@ class ClientApplicationOperations:
         :param client_application_id: Client Application identifier. Must be unique in the current API
          Management service instance. Required.
         :type client_application_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         ClientApplicationContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ClientApplicationContract or JSON or
-         IO[bytes]
+        :param parameters: Create or update parameters. Is either a ClientApplicationContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ClientApplicationContract or
+         ~azure.mgmt.apimanagement.types.ClientApplicationContract or IO[bytes]
         :return: ClientApplicationContract. The ClientApplicationContract is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.ClientApplicationContract
@@ -94661,7 +95179,10 @@ class ClientApplicationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -94781,7 +95302,7 @@ class ClientApplicationOperations:
         return deserialized  # type: ignore
 
 
-class ClientApplicationProductLinkOperations:
+class ClientApplicationProductLinkOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -94930,7 +95451,7 @@ class ClientApplicationProductLinkOperations:
         service_name: str,
         client_application_id: str,
         client_application_product_link_id: str,
-        parameters: JSON,
+        parameters: _types.ClientApplicationProductLinkContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -94949,7 +95470,7 @@ class ClientApplicationProductLinkOperations:
          unique in the current API Management service instance. Required.
         :type client_application_product_link_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ClientApplicationProductLinkContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -95002,7 +95523,9 @@ class ClientApplicationProductLinkOperations:
         service_name: str,
         client_application_id: str,
         client_application_product_link_id: str,
-        parameters: Union[_models.ClientApplicationProductLinkContract, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ClientApplicationProductLinkContract, _types.ClientApplicationProductLinkContract, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ClientApplicationProductLinkContract:
         """Adds an Product to the specified Client Application via link.
@@ -95018,10 +95541,10 @@ class ClientApplicationProductLinkOperations:
         :param client_application_product_link_id: Client Application Product Link identifier. Must be
          unique in the current API Management service instance. Required.
         :type client_application_product_link_id: str
-        :param parameters: Create parameters. Is one of the following types:
-         ClientApplicationProductLinkContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ClientApplicationProductLinkContract or JSON
-         or IO[bytes]
+        :param parameters: Create parameters. Is either a ClientApplicationProductLinkContract type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ClientApplicationProductLinkContract or
+         ~azure.mgmt.apimanagement.types.ClientApplicationProductLinkContract or IO[bytes]
         :return: ClientApplicationProductLinkContract. The ClientApplicationProductLinkContract is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.ClientApplicationProductLinkContract
@@ -95243,7 +95766,10 @@ class ClientApplicationProductLinkOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -95286,7 +95812,7 @@ class ClientApplicationProductLinkOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PortalRevisionOperations:
+class PortalRevisionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -95454,7 +95980,7 @@ class PortalRevisionOperations:
         resource_group_name: str,
         service_name: str,
         portal_revision_id: str,
-        parameters: Union[_models.PortalRevisionContract, JSON, IO[bytes]],
+        parameters: Union[_models.PortalRevisionContract, _types.PortalRevisionContract, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -95567,7 +96093,7 @@ class PortalRevisionOperations:
         resource_group_name: str,
         service_name: str,
         portal_revision_id: str,
-        parameters: JSON,
+        parameters: _types.PortalRevisionContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -95584,7 +96110,7 @@ class PortalRevisionOperations:
          Management service instance. Required.
         :type portal_revision_id: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PortalRevisionContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -95633,7 +96159,7 @@ class PortalRevisionOperations:
         resource_group_name: str,
         service_name: str,
         portal_revision_id: str,
-        parameters: Union[_models.PortalRevisionContract, JSON, IO[bytes]],
+        parameters: Union[_models.PortalRevisionContract, _types.PortalRevisionContract, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.PortalRevisionContract]:
         """Creates a new developer portal's revision by running the portal's publishing. The ``isCurrent``
@@ -95647,9 +96173,9 @@ class PortalRevisionOperations:
         :param portal_revision_id: Portal revision identifier. Must be unique in the current API
          Management service instance. Required.
         :type portal_revision_id: str
-        :param parameters: Is one of the following types: PortalRevisionContract, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PortalRevisionContract or JSON or IO[bytes]
+        :param parameters: Is either a PortalRevisionContract type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PortalRevisionContract or
+         ~azure.mgmt.apimanagement.types.PortalRevisionContract or IO[bytes]
         :return: An instance of LROPoller that returns PortalRevisionContract. The
          PortalRevisionContract is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.apimanagement.models.PortalRevisionContract]
@@ -95720,7 +96246,7 @@ class PortalRevisionOperations:
         resource_group_name: str,
         service_name: str,
         portal_revision_id: str,
-        parameters: Union[_models.PortalRevisionContract, JSON, IO[bytes]],
+        parameters: Union[_models.PortalRevisionContract, _types.PortalRevisionContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -95852,7 +96378,7 @@ class PortalRevisionOperations:
         resource_group_name: str,
         service_name: str,
         portal_revision_id: str,
-        parameters: JSON,
+        parameters: _types.PortalRevisionContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -95870,7 +96396,7 @@ class PortalRevisionOperations:
          Management service instance. Required.
         :type portal_revision_id: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.PortalRevisionContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -95928,7 +96454,7 @@ class PortalRevisionOperations:
         resource_group_name: str,
         service_name: str,
         portal_revision_id: str,
-        parameters: Union[_models.PortalRevisionContract, JSON, IO[bytes]],
+        parameters: Union[_models.PortalRevisionContract, _types.PortalRevisionContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -95944,9 +96470,9 @@ class PortalRevisionOperations:
         :param portal_revision_id: Portal revision identifier. Must be unique in the current API
          Management service instance. Required.
         :type portal_revision_id: str
-        :param parameters: Is one of the following types: PortalRevisionContract, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.PortalRevisionContract or JSON or IO[bytes]
+        :param parameters: Is either a PortalRevisionContract type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.PortalRevisionContract or
+         ~azure.mgmt.apimanagement.types.PortalRevisionContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -96092,7 +96618,10 @@ class PortalRevisionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -96135,7 +96664,7 @@ class PortalRevisionOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionOperations:
+class PrivateEndpointConnectionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -96234,7 +96763,9 @@ class PrivateEndpointConnectionOperations:
         resource_group_name: str,
         service_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection_request: Union[_models.PrivateEndpointConnectionRequest, JSON, IO[bytes]],
+        private_endpoint_connection_request: Union[
+            _models.PrivateEndpointConnectionRequest, _types.PrivateEndpointConnectionRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -96347,7 +96878,7 @@ class PrivateEndpointConnectionOperations:
         resource_group_name: str,
         service_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection_request: JSON,
+        private_endpoint_connection_request: _types.PrivateEndpointConnectionRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -96364,7 +96895,8 @@ class PrivateEndpointConnectionOperations:
          revision number. Required.
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection_request: Required.
-        :type private_endpoint_connection_request: JSON
+        :type private_endpoint_connection_request:
+         ~azure.mgmt.apimanagement.types.PrivateEndpointConnectionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -96415,7 +96947,9 @@ class PrivateEndpointConnectionOperations:
         resource_group_name: str,
         service_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection_request: Union[_models.PrivateEndpointConnectionRequest, JSON, IO[bytes]],
+        private_endpoint_connection_request: Union[
+            _models.PrivateEndpointConnectionRequest, _types.PrivateEndpointConnectionRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.PrivateEndpointConnection]:
         """Creates a new Private Endpoint Connection or updates an existing one.
@@ -96429,10 +96963,11 @@ class PrivateEndpointConnectionOperations:
          API Management service instance. Non-current revision has ;rev=n as a suffix where n is the
          revision number. Required.
         :type private_endpoint_connection_name: str
-        :param private_endpoint_connection_request: Is one of the following types:
-         PrivateEndpointConnectionRequest, JSON, IO[bytes] Required.
+        :param private_endpoint_connection_request: Is either a PrivateEndpointConnectionRequest type
+         or a IO[bytes] type. Required.
         :type private_endpoint_connection_request:
-         ~azure.mgmt.apimanagement.models.PrivateEndpointConnectionRequest or JSON or IO[bytes]
+         ~azure.mgmt.apimanagement.models.PrivateEndpointConnectionRequest or
+         ~azure.mgmt.apimanagement.types.PrivateEndpointConnectionRequest or IO[bytes]
         :return: An instance of LROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype:
@@ -96675,7 +97210,10 @@ class PrivateEndpointConnectionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -96867,7 +97405,7 @@ class PrivateEndpointConnectionOperations:
         return deserialized  # type: ignore
 
 
-class ProductApiOperations:
+class ProductApiOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -96969,7 +97507,10 @@ class ProductApiOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -97227,7 +97768,7 @@ class ProductApiOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ProductGroupOperations:
+class ProductGroupOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -97325,7 +97866,10 @@ class ProductGroupOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -97583,7 +98127,7 @@ class ProductGroupOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ProductSubscriptionsOperations:
+class ProductSubscriptionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -97688,7 +98232,10 @@ class ProductSubscriptionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -97731,7 +98278,7 @@ class ProductSubscriptionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ProductApiLinkOperations:
+class ProductApiLinkOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -97873,7 +98420,7 @@ class ProductApiLinkOperations:
         service_name: str,
         product_id: str,
         api_link_id: str,
-        parameters: JSON,
+        parameters: _types.ProductApiLinkContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -97892,7 +98439,7 @@ class ProductApiLinkOperations:
          service instance. Required.
         :type api_link_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ProductApiLinkContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -97943,7 +98490,7 @@ class ProductApiLinkOperations:
         service_name: str,
         product_id: str,
         api_link_id: str,
-        parameters: Union[_models.ProductApiLinkContract, JSON, IO[bytes]],
+        parameters: Union[_models.ProductApiLinkContract, _types.ProductApiLinkContract, IO[bytes]],
         **kwargs: Any
     ) -> _models.ProductApiLinkContract:
         """Adds an API to the specified product via link.
@@ -97959,9 +98506,10 @@ class ProductApiLinkOperations:
         :param api_link_id: Product-API link identifier. Must be unique in the current API Management
          service instance. Required.
         :type api_link_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         ProductApiLinkContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ProductApiLinkContract or JSON or IO[bytes]
+        :param parameters: Create or update parameters. Is either a ProductApiLinkContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ProductApiLinkContract or
+         ~azure.mgmt.apimanagement.types.ProductApiLinkContract or IO[bytes]
         :return: ProductApiLinkContract. The ProductApiLinkContract is compatible with MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.ProductApiLinkContract
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -98183,7 +98731,10 @@ class ProductApiLinkOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -98226,7 +98777,7 @@ class ProductApiLinkOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ProductGroupLinkOperations:
+class ProductGroupLinkOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -98370,7 +98921,7 @@ class ProductGroupLinkOperations:
         service_name: str,
         product_id: str,
         group_link_id: str,
-        parameters: JSON,
+        parameters: _types.ProductGroupLinkContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -98389,7 +98940,7 @@ class ProductGroupLinkOperations:
          Management service instance. Required.
         :type group_link_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.ProductGroupLinkContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -98442,7 +98993,7 @@ class ProductGroupLinkOperations:
         service_name: str,
         product_id: str,
         group_link_id: str,
-        parameters: Union[_models.ProductGroupLinkContract, JSON, IO[bytes]],
+        parameters: Union[_models.ProductGroupLinkContract, _types.ProductGroupLinkContract, IO[bytes]],
         **kwargs: Any
     ) -> _models.ProductGroupLinkContract:
         """Adds a group to the specified product via link.
@@ -98458,10 +99009,10 @@ class ProductGroupLinkOperations:
         :param group_link_id: Product-Group link identifier. Must be unique in the current API
          Management service instance. Required.
         :type group_link_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         ProductGroupLinkContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.ProductGroupLinkContract or JSON or
-         IO[bytes]
+        :param parameters: Create or update parameters. Is either a ProductGroupLinkContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.ProductGroupLinkContract or
+         ~azure.mgmt.apimanagement.types.ProductGroupLinkContract or IO[bytes]
         :return: ProductGroupLinkContract. The ProductGroupLinkContract is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.ProductGroupLinkContract
@@ -98684,7 +99235,10 @@ class ProductGroupLinkOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -98727,7 +99281,7 @@ class ProductGroupLinkOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class GlobalSchemaOperations:
+class GlobalSchemaOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -98893,7 +99447,7 @@ class GlobalSchemaOperations:
         resource_group_name: str,
         service_name: str,
         schema_id: str,
-        parameters: Union[_models.GlobalSchemaContract, JSON, IO[bytes]],
+        parameters: Union[_models.GlobalSchemaContract, _types.GlobalSchemaContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -99023,7 +99577,7 @@ class GlobalSchemaOperations:
         resource_group_name: str,
         service_name: str,
         schema_id: str,
-        parameters: JSON,
+        parameters: _types.GlobalSchemaContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -99041,7 +99595,7 @@ class GlobalSchemaOperations:
          instance. Required.
         :type schema_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.GlobalSchemaContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -99101,7 +99655,7 @@ class GlobalSchemaOperations:
         resource_group_name: str,
         service_name: str,
         schema_id: str,
-        parameters: Union[_models.GlobalSchemaContract, JSON, IO[bytes]],
+        parameters: Union[_models.GlobalSchemaContract, _types.GlobalSchemaContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -99117,9 +99671,10 @@ class GlobalSchemaOperations:
         :param schema_id: Schema id identifier. Must be unique in the current API Management service
          instance. Required.
         :type schema_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         GlobalSchemaContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.GlobalSchemaContract or JSON or IO[bytes]
+        :param parameters: Create or update parameters. Is either a GlobalSchemaContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.GlobalSchemaContract or
+         ~azure.mgmt.apimanagement.types.GlobalSchemaContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -99350,7 +99905,10 @@ class GlobalSchemaOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -99393,7 +99951,7 @@ class GlobalSchemaOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class TenantSettingsOperations:
+class TenantSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -99552,7 +100110,10 @@ class TenantSettingsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -99595,7 +100156,7 @@ class TenantSettingsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SubscriptionOperations:
+class SubscriptionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -99810,7 +100371,7 @@ class SubscriptionOperations:
         resource_group_name: str,
         service_name: str,
         sid: str,
-        parameters: JSON,
+        parameters: _types.SubscriptionCreateParameters,
         *,
         notify: Optional[bool] = None,
         app_type: Optional[Union[str, _models.AppType]] = None,
@@ -99830,7 +100391,7 @@ class SubscriptionOperations:
          user and a product in API Management. Required.
         :type sid: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.SubscriptionCreateParameters
         :keyword notify: Notify change in Subscription State.
 
          * If false, do not send any email notification for change of state of subscription
@@ -99908,7 +100469,7 @@ class SubscriptionOperations:
         resource_group_name: str,
         service_name: str,
         sid: str,
-        parameters: Union[_models.SubscriptionCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.SubscriptionCreateParameters, _types.SubscriptionCreateParameters, IO[bytes]],
         *,
         notify: Optional[bool] = None,
         app_type: Optional[Union[str, _models.AppType]] = None,
@@ -99926,10 +100487,10 @@ class SubscriptionOperations:
         :param sid: Subscription entity Identifier. The entity represents the association between a
          user and a product in API Management. Required.
         :type sid: str
-        :param parameters: Create parameters. Is one of the following types:
-         SubscriptionCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.SubscriptionCreateParameters or JSON or
-         IO[bytes]
+        :param parameters: Create parameters. Is either a SubscriptionCreateParameters type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.SubscriptionCreateParameters or
+         ~azure.mgmt.apimanagement.types.SubscriptionCreateParameters or IO[bytes]
         :keyword notify: Notify change in Subscription State.
 
          * If false, do not send any email notification for change of state of subscription
@@ -100083,7 +100644,7 @@ class SubscriptionOperations:
         resource_group_name: str,
         service_name: str,
         sid: str,
-        parameters: JSON,
+        parameters: _types.SubscriptionUpdateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -100103,7 +100664,7 @@ class SubscriptionOperations:
          user and a product in API Management. Required.
         :type sid: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.SubscriptionUpdateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -100179,7 +100740,7 @@ class SubscriptionOperations:
         resource_group_name: str,
         service_name: str,
         sid: str,
-        parameters: Union[_models.SubscriptionUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.SubscriptionUpdateParameters, _types.SubscriptionUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -100197,10 +100758,10 @@ class SubscriptionOperations:
         :param sid: Subscription entity Identifier. The entity represents the association between a
          user and a product in API Management. Required.
         :type sid: str
-        :param parameters: Update parameters. Is one of the following types:
-         SubscriptionUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.SubscriptionUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Update parameters. Is either a SubscriptionUpdateParameters type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.SubscriptionUpdateParameters or
+         ~azure.mgmt.apimanagement.types.SubscriptionUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -100464,7 +101025,10 @@ class SubscriptionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -100713,7 +101277,7 @@ class SubscriptionOperations:
         return deserialized  # type: ignore
 
 
-class TagApiLinkOperations:
+class TagApiLinkOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -100855,7 +101419,7 @@ class TagApiLinkOperations:
         service_name: str,
         tag_id: str,
         api_link_id: str,
-        parameters: JSON,
+        parameters: _types.TagApiLinkContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -100874,7 +101438,7 @@ class TagApiLinkOperations:
          service instance. Required.
         :type api_link_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.TagApiLinkContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -100925,7 +101489,7 @@ class TagApiLinkOperations:
         service_name: str,
         tag_id: str,
         api_link_id: str,
-        parameters: Union[_models.TagApiLinkContract, JSON, IO[bytes]],
+        parameters: Union[_models.TagApiLinkContract, _types.TagApiLinkContract, IO[bytes]],
         **kwargs: Any
     ) -> _models.TagApiLinkContract:
         """Adds an API to the specified tag via link.
@@ -100941,9 +101505,10 @@ class TagApiLinkOperations:
         :param api_link_id: Tag-API link identifier. Must be unique in the current API Management
          service instance. Required.
         :type api_link_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         TagApiLinkContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.TagApiLinkContract or JSON or IO[bytes]
+        :param parameters: Create or update parameters. Is either a TagApiLinkContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.TagApiLinkContract or
+         ~azure.mgmt.apimanagement.types.TagApiLinkContract or IO[bytes]
         :return: TagApiLinkContract. The TagApiLinkContract is compatible with MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.TagApiLinkContract
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -101165,7 +101730,10 @@ class TagApiLinkOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -101208,7 +101776,7 @@ class TagApiLinkOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class TagOperationLinkOperations:
+class TagOperationLinkOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -101352,7 +101920,7 @@ class TagOperationLinkOperations:
         service_name: str,
         tag_id: str,
         operation_link_id: str,
-        parameters: JSON,
+        parameters: _types.TagOperationLinkContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -101371,7 +101939,7 @@ class TagOperationLinkOperations:
          Management service instance. Required.
         :type operation_link_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.TagOperationLinkContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -101424,7 +101992,7 @@ class TagOperationLinkOperations:
         service_name: str,
         tag_id: str,
         operation_link_id: str,
-        parameters: Union[_models.TagOperationLinkContract, JSON, IO[bytes]],
+        parameters: Union[_models.TagOperationLinkContract, _types.TagOperationLinkContract, IO[bytes]],
         **kwargs: Any
     ) -> _models.TagOperationLinkContract:
         """Adds an operation to the specified tag via link.
@@ -101440,10 +102008,10 @@ class TagOperationLinkOperations:
         :param operation_link_id: Tag-operation link identifier. Must be unique in the current API
          Management service instance. Required.
         :type operation_link_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         TagOperationLinkContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.TagOperationLinkContract or JSON or
-         IO[bytes]
+        :param parameters: Create or update parameters. Is either a TagOperationLinkContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.TagOperationLinkContract or
+         ~azure.mgmt.apimanagement.types.TagOperationLinkContract or IO[bytes]
         :return: TagOperationLinkContract. The TagOperationLinkContract is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.TagOperationLinkContract
@@ -101666,7 +102234,10 @@ class TagOperationLinkOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -101709,7 +102280,7 @@ class TagOperationLinkOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class TagProductLinkOperations:
+class TagProductLinkOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -101851,7 +102422,7 @@ class TagProductLinkOperations:
         service_name: str,
         tag_id: str,
         product_link_id: str,
-        parameters: JSON,
+        parameters: _types.TagProductLinkContract,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -101870,7 +102441,7 @@ class TagProductLinkOperations:
          Management service instance. Required.
         :type product_link_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.TagProductLinkContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -101921,7 +102492,7 @@ class TagProductLinkOperations:
         service_name: str,
         tag_id: str,
         product_link_id: str,
-        parameters: Union[_models.TagProductLinkContract, JSON, IO[bytes]],
+        parameters: Union[_models.TagProductLinkContract, _types.TagProductLinkContract, IO[bytes]],
         **kwargs: Any
     ) -> _models.TagProductLinkContract:
         """Adds a product to the specified tag via link.
@@ -101937,9 +102508,10 @@ class TagProductLinkOperations:
         :param product_link_id: Tag-product link identifier. Must be unique in the current API
          Management service instance. Required.
         :type product_link_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         TagProductLinkContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.TagProductLinkContract or JSON or IO[bytes]
+        :param parameters: Create or update parameters. Is either a TagProductLinkContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.TagProductLinkContract or
+         ~azure.mgmt.apimanagement.types.TagProductLinkContract or IO[bytes]
         :return: TagProductLinkContract. The TagProductLinkContract is compatible with MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.TagProductLinkContract
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -102161,7 +102733,10 @@ class TagProductLinkOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -102204,7 +102779,7 @@ class TagProductLinkOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class TenantAccessOperations:
+class TenantAccessOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -102412,7 +102987,7 @@ class TenantAccessOperations:
         resource_group_name: str,
         service_name: str,
         access_name: Union[str, _models.AccessIdName],
-        parameters: JSON,
+        parameters: _types.AccessInformationCreateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -102430,7 +103005,7 @@ class TenantAccessOperations:
          "gitAccess". Required.
         :type access_name: str or ~azure.mgmt.apimanagement.models.AccessIdName
         :param parameters: Parameters supplied to retrieve the Tenant Access Information. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.AccessInformationCreateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -102488,7 +103063,9 @@ class TenantAccessOperations:
         resource_group_name: str,
         service_name: str,
         access_name: Union[str, _models.AccessIdName],
-        parameters: Union[_models.AccessInformationCreateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.AccessInformationCreateParameters, _types.AccessInformationCreateParameters, IO[bytes]
+        ],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -102504,10 +103081,10 @@ class TenantAccessOperations:
         :param access_name: The identifier of the Access configuration. Known values are: "access" and
          "gitAccess". Required.
         :type access_name: str or ~azure.mgmt.apimanagement.models.AccessIdName
-        :param parameters: Parameters supplied to retrieve the Tenant Access Information. Is one of the
-         following types: AccessInformationCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.AccessInformationCreateParameters or JSON or
-         IO[bytes]
+        :param parameters: Parameters supplied to retrieve the Tenant Access Information. Is either a
+         AccessInformationCreateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.AccessInformationCreateParameters or
+         ~azure.mgmt.apimanagement.types.AccessInformationCreateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -102640,7 +103217,7 @@ class TenantAccessOperations:
         resource_group_name: str,
         service_name: str,
         access_name: Union[str, _models.AccessIdName],
-        parameters: JSON,
+        parameters: _types.AccessInformationUpdateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -102658,7 +103235,7 @@ class TenantAccessOperations:
          "gitAccess". Required.
         :type access_name: str or ~azure.mgmt.apimanagement.models.AccessIdName
         :param parameters: Parameters supplied to retrieve the Tenant Access Information. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.AccessInformationUpdateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -102716,7 +103293,9 @@ class TenantAccessOperations:
         resource_group_name: str,
         service_name: str,
         access_name: Union[str, _models.AccessIdName],
-        parameters: Union[_models.AccessInformationUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.AccessInformationUpdateParameters, _types.AccessInformationUpdateParameters, IO[bytes]
+        ],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -102732,10 +103311,10 @@ class TenantAccessOperations:
         :param access_name: The identifier of the Access configuration. Known values are: "access" and
          "gitAccess". Required.
         :type access_name: str or ~azure.mgmt.apimanagement.models.AccessIdName
-        :param parameters: Parameters supplied to retrieve the Tenant Access Information. Is one of the
-         following types: AccessInformationUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.AccessInformationUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: Parameters supplied to retrieve the Tenant Access Information. Is either a
+         AccessInformationUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.AccessInformationUpdateParameters or
+         ~azure.mgmt.apimanagement.types.AccessInformationUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -102885,7 +103464,10 @@ class TenantAccessOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -103134,7 +103716,7 @@ class TenantAccessOperations:
         return deserialized  # type: ignore
 
 
-class TenantAccessGitOperations:
+class TenantAccessGitOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -103278,7 +103860,7 @@ class TenantAccessGitOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class TenantConfigurationOperations:
+class TenantConfigurationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -103300,7 +103882,7 @@ class TenantConfigurationOperations:
         resource_group_name: str,
         service_name: str,
         configuration_name: Union[str, _models.ConfigurationIdName],
-        parameters: Union[_models.DeployConfigurationParameters, JSON, IO[bytes]],
+        parameters: Union[_models.DeployConfigurationParameters, _types.DeployConfigurationParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -103412,7 +103994,7 @@ class TenantConfigurationOperations:
         resource_group_name: str,
         service_name: str,
         configuration_name: Union[str, _models.ConfigurationIdName],
-        parameters: JSON,
+        parameters: _types.DeployConfigurationParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -103430,7 +104012,7 @@ class TenantConfigurationOperations:
          revision number. "configuration" Required.
         :type configuration_name: str or ~azure.mgmt.apimanagement.models.ConfigurationIdName
         :param parameters: Deploy Configuration parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.DeployConfigurationParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -103480,7 +104062,7 @@ class TenantConfigurationOperations:
         resource_group_name: str,
         service_name: str,
         configuration_name: Union[str, _models.ConfigurationIdName],
-        parameters: Union[_models.DeployConfigurationParameters, JSON, IO[bytes]],
+        parameters: Union[_models.DeployConfigurationParameters, _types.DeployConfigurationParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OperationResultContract]:
         """This operation applies changes from the specified Git branch to the configuration database.
@@ -103495,10 +104077,10 @@ class TenantConfigurationOperations:
          Management service instance. Non-current revision has ;rev=n as a suffix where n is the
          revision number. "configuration" Required.
         :type configuration_name: str or ~azure.mgmt.apimanagement.models.ConfigurationIdName
-        :param parameters: Deploy Configuration parameters. Is one of the following types:
-         DeployConfigurationParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.DeployConfigurationParameters or JSON or
-         IO[bytes]
+        :param parameters: Deploy Configuration parameters. Is either a DeployConfigurationParameters
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.DeployConfigurationParameters or
+         ~azure.mgmt.apimanagement.types.DeployConfigurationParameters or IO[bytes]
         :return: An instance of LROPoller that returns OperationResultContract. The
          OperationResultContract is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.apimanagement.models.OperationResultContract]
@@ -103562,7 +104144,7 @@ class TenantConfigurationOperations:
         resource_group_name: str,
         service_name: str,
         configuration_name: Union[str, _models.ConfigurationIdName],
-        parameters: Union[_models.SaveConfigurationParameter, JSON, IO[bytes]],
+        parameters: Union[_models.SaveConfigurationParameter, _types.SaveConfigurationParameter, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -103673,7 +104255,7 @@ class TenantConfigurationOperations:
         resource_group_name: str,
         service_name: str,
         configuration_name: Union[str, _models.ConfigurationIdName],
-        parameters: JSON,
+        parameters: _types.SaveConfigurationParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -103691,7 +104273,7 @@ class TenantConfigurationOperations:
          revision number. "configuration" Required.
         :type configuration_name: str or ~azure.mgmt.apimanagement.models.ConfigurationIdName
         :param parameters: Save Configuration parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.SaveConfigurationParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -103741,7 +104323,7 @@ class TenantConfigurationOperations:
         resource_group_name: str,
         service_name: str,
         configuration_name: Union[str, _models.ConfigurationIdName],
-        parameters: Union[_models.SaveConfigurationParameter, JSON, IO[bytes]],
+        parameters: Union[_models.SaveConfigurationParameter, _types.SaveConfigurationParameter, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OperationResultContract]:
         """This operation creates a commit with the current configuration snapshot to the specified branch
@@ -103756,10 +104338,10 @@ class TenantConfigurationOperations:
          Management service instance. Non-current revision has ;rev=n as a suffix where n is the
          revision number. "configuration" Required.
         :type configuration_name: str or ~azure.mgmt.apimanagement.models.ConfigurationIdName
-        :param parameters: Save Configuration parameters. Is one of the following types:
-         SaveConfigurationParameter, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.SaveConfigurationParameter or JSON or
-         IO[bytes]
+        :param parameters: Save Configuration parameters. Is either a SaveConfigurationParameter type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.SaveConfigurationParameter or
+         ~azure.mgmt.apimanagement.types.SaveConfigurationParameter or IO[bytes]
         :return: An instance of LROPoller that returns OperationResultContract. The
          OperationResultContract is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.apimanagement.models.OperationResultContract]
@@ -103823,7 +104405,7 @@ class TenantConfigurationOperations:
         resource_group_name: str,
         service_name: str,
         configuration_name: Union[str, _models.ConfigurationIdName],
-        parameters: Union[_models.DeployConfigurationParameters, JSON, IO[bytes]],
+        parameters: Union[_models.DeployConfigurationParameters, _types.DeployConfigurationParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -103934,7 +104516,7 @@ class TenantConfigurationOperations:
         resource_group_name: str,
         service_name: str,
         configuration_name: Union[str, _models.ConfigurationIdName],
-        parameters: JSON,
+        parameters: _types.DeployConfigurationParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -103952,7 +104534,7 @@ class TenantConfigurationOperations:
          revision number. "configuration" Required.
         :type configuration_name: str or ~azure.mgmt.apimanagement.models.ConfigurationIdName
         :param parameters: Validate Configuration parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.DeployConfigurationParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -104002,7 +104584,7 @@ class TenantConfigurationOperations:
         resource_group_name: str,
         service_name: str,
         configuration_name: Union[str, _models.ConfigurationIdName],
-        parameters: Union[_models.DeployConfigurationParameters, JSON, IO[bytes]],
+        parameters: Union[_models.DeployConfigurationParameters, _types.DeployConfigurationParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OperationResultContract]:
         """This operation validates the changes in the specified Git branch. This is a long running
@@ -104017,10 +104599,10 @@ class TenantConfigurationOperations:
          Management service instance. Non-current revision has ;rev=n as a suffix where n is the
          revision number. "configuration" Required.
         :type configuration_name: str or ~azure.mgmt.apimanagement.models.ConfigurationIdName
-        :param parameters: Validate Configuration parameters. Is one of the following types:
-         DeployConfigurationParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.DeployConfigurationParameters or JSON or
-         IO[bytes]
+        :param parameters: Validate Configuration parameters. Is either a DeployConfigurationParameters
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.DeployConfigurationParameters or
+         ~azure.mgmt.apimanagement.types.DeployConfigurationParameters or IO[bytes]
         :return: An instance of LROPoller that returns OperationResultContract. The
          OperationResultContract is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.apimanagement.models.OperationResultContract]
@@ -104163,7 +104745,7 @@ class TenantConfigurationOperations:
         return deserialized  # type: ignore
 
 
-class UserOperations:
+class UserOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -104369,7 +104951,7 @@ class UserOperations:
         resource_group_name: str,
         service_name: str,
         user_id: str,
-        parameters: JSON,
+        parameters: _types.UserCreateParameters,
         *,
         notify: Optional[bool] = None,
         content_type: str = "application/json",
@@ -104388,7 +104970,7 @@ class UserOperations:
          Required.
         :type user_id: str
         :param parameters: Create or update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.UserCreateParameters
         :keyword notify: Send an Email notification to the User. Default value is None.
         :paramtype notify: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -104451,7 +105033,7 @@ class UserOperations:
         resource_group_name: str,
         service_name: str,
         user_id: str,
-        parameters: Union[_models.UserCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.UserCreateParameters, _types.UserCreateParameters, IO[bytes]],
         *,
         notify: Optional[bool] = None,
         etag: Optional[str] = None,
@@ -104468,9 +105050,10 @@ class UserOperations:
         :param user_id: User identifier. Must be unique in the current API Management service instance.
          Required.
         :type user_id: str
-        :param parameters: Create or update parameters. Is one of the following types:
-         UserCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.UserCreateParameters or JSON or IO[bytes]
+        :param parameters: Create or update parameters. Is either a UserCreateParameters type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.UserCreateParameters or
+         ~azure.mgmt.apimanagement.types.UserCreateParameters or IO[bytes]
         :keyword notify: Send an Email notification to the User. Default value is None.
         :paramtype notify: bool
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
@@ -104610,7 +105193,7 @@ class UserOperations:
         resource_group_name: str,
         service_name: str,
         user_id: str,
-        parameters: JSON,
+        parameters: _types.UserUpdateParameters,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -104628,7 +105211,7 @@ class UserOperations:
          Required.
         :type user_id: str
         :param parameters: Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.UserUpdateParameters
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -104684,7 +105267,7 @@ class UserOperations:
         resource_group_name: str,
         service_name: str,
         user_id: str,
-        parameters: Union[_models.UserUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.UserUpdateParameters, _types.UserUpdateParameters, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -104700,9 +105283,10 @@ class UserOperations:
         :param user_id: User identifier. Must be unique in the current API Management service instance.
          Required.
         :type user_id: str
-        :param parameters: Update parameters. Is one of the following types: UserUpdateParameters,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.UserUpdateParameters or JSON or IO[bytes]
+        :param parameters: Update parameters. Is either a UserUpdateParameters type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.UserUpdateParameters or
+         ~azure.mgmt.apimanagement.types.UserUpdateParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -105051,7 +105635,10 @@ class UserOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -105207,7 +105794,7 @@ class UserOperations:
         resource_group_name: str,
         service_name: str,
         user_id: str,
-        parameters: JSON,
+        parameters: _types.UserTokenParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -105223,7 +105810,7 @@ class UserOperations:
          Required.
         :type user_id: str
         :param parameters: Create Authorization Token parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.UserTokenParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -105269,7 +105856,7 @@ class UserOperations:
         resource_group_name: str,
         service_name: str,
         user_id: str,
-        parameters: Union[_models.UserTokenParameters, JSON, IO[bytes]],
+        parameters: Union[_models.UserTokenParameters, _types.UserTokenParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.UserTokenResult:
         """Gets the Shared Access Authorization Token for the User.
@@ -105282,9 +105869,10 @@ class UserOperations:
         :param user_id: User identifier. Must be unique in the current API Management service instance.
          Required.
         :type user_id: str
-        :param parameters: Create Authorization Token parameters. Is one of the following types:
-         UserTokenParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.UserTokenParameters or JSON or IO[bytes]
+        :param parameters: Create Authorization Token parameters. Is either a UserTokenParameters type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.UserTokenParameters or
+         ~azure.mgmt.apimanagement.types.UserTokenParameters or IO[bytes]
         :return: UserTokenResult. The UserTokenResult is compatible with MutableMapping
         :rtype: ~azure.mgmt.apimanagement.models.UserTokenResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -105358,7 +105946,7 @@ class UserOperations:
         return deserialized  # type: ignore
 
 
-class UserGroupOperations:
+class UserGroupOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -105459,7 +106047,10 @@ class UserGroupOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -105502,7 +106093,7 @@ class UserGroupOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class UserIdentitiesOperations:
+class UserIdentitiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -105580,7 +106171,10 @@ class UserIdentitiesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -105623,7 +106217,7 @@ class UserIdentitiesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class UserConfirmationPasswordOperations:
+class UserConfirmationPasswordOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -105715,7 +106309,7 @@ class UserConfirmationPasswordOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ApiManagementWorkspaceLinkOperations:
+class ApiManagementWorkspaceLinkOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -105810,7 +106404,7 @@ class ApiManagementWorkspaceLinkOperations:
         return deserialized  # type: ignore
 
 
-class ApiManagementWorkspaceLinksOperations:
+class ApiManagementWorkspaceLinksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -105829,7 +106423,13 @@ class ApiManagementWorkspaceLinksOperations:
 
     @distributed_trace
     def list_by_service(
-        self, resource_group_name: str, service_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        service_name: str,
+        *,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
     ) -> ItemPaged["_models.ApiManagementWorkspaceLinksResource"]:
         """List all API Management workspaceLinks for a service.
 
@@ -105838,6 +106438,10 @@ class ApiManagementWorkspaceLinksOperations:
         :type resource_group_name: str
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
+        :keyword top: Number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: Skip token for retrieving the next page of results. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of ApiManagementWorkspaceLinksResource
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.apimanagement.models.ApiManagementWorkspaceLinksResource]
@@ -105863,6 +106467,8 @@ class ApiManagementWorkspaceLinksOperations:
                     resource_group_name=resource_group_name,
                     service_name=service_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -105885,7 +106491,10 @@ class ApiManagementWorkspaceLinksOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -105928,7 +106537,7 @@ class ApiManagementWorkspaceLinksOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceOperations:
+class WorkspaceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -106133,7 +106742,7 @@ class WorkspaceOperations:
         resource_group_name: str,
         service_name: str,
         workspace_id: str,
-        parameters: JSON,
+        parameters: _types.WorkspaceContract,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -106151,7 +106760,7 @@ class WorkspaceOperations:
          instance. Required.
         :type workspace_id: str
         :param parameters: Create parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.WorkspaceContract
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -106209,7 +106818,7 @@ class WorkspaceOperations:
         resource_group_name: str,
         service_name: str,
         workspace_id: str,
-        parameters: Union[_models.WorkspaceContract, JSON, IO[bytes]],
+        parameters: Union[_models.WorkspaceContract, _types.WorkspaceContract, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -106225,9 +106834,10 @@ class WorkspaceOperations:
         :param workspace_id: Workspace identifier. Must be unique in the current API Management service
          instance. Required.
         :type workspace_id: str
-        :param parameters: Create parameters. Is one of the following types: WorkspaceContract, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.WorkspaceContract or JSON or IO[bytes]
+        :param parameters: Create parameters. Is either a WorkspaceContract type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.WorkspaceContract or
+         ~azure.mgmt.apimanagement.types.WorkspaceContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -106359,7 +106969,7 @@ class WorkspaceOperations:
         resource_group_name: str,
         service_name: str,
         workspace_id: str,
-        parameters: JSON,
+        parameters: _types.WorkspaceContract,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -106377,7 +106987,7 @@ class WorkspaceOperations:
          instance. Required.
         :type workspace_id: str
         :param parameters: Workspace Update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.apimanagement.types.WorkspaceContract
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -106433,7 +107043,7 @@ class WorkspaceOperations:
         resource_group_name: str,
         service_name: str,
         workspace_id: str,
-        parameters: Union[_models.WorkspaceContract, JSON, IO[bytes]],
+        parameters: Union[_models.WorkspaceContract, _types.WorkspaceContract, IO[bytes]],
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -106449,9 +107059,10 @@ class WorkspaceOperations:
         :param workspace_id: Workspace identifier. Must be unique in the current API Management service
          instance. Required.
         :type workspace_id: str
-        :param parameters: Workspace Update parameters. Is one of the following types:
-         WorkspaceContract, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.apimanagement.models.WorkspaceContract or JSON or IO[bytes]
+        :param parameters: Workspace Update parameters. Is either a WorkspaceContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.WorkspaceContract or
+         ~azure.mgmt.apimanagement.types.WorkspaceContract or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -106698,7 +107309,10 @@ class WorkspaceOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -106741,7 +107355,7 @@ class WorkspaceOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApiExportOperations:
+class ApiExportOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -106851,7 +107465,7 @@ class ApiExportOperations:
         return deserialized  # type: ignore
 
 
-class ApiManagementSkusOperations:
+class ApiManagementSkusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -106916,7 +107530,10 @@ class ApiManagementSkusOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -106959,7 +107576,7 @@ class ApiManagementSkusOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceApiExportOperations:
+class WorkspaceApiExportOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -107074,7 +107691,7 @@ class WorkspaceApiExportOperations:
         return deserialized  # type: ignore
 
 
-class OperationStatusOperations:
+class OperationStatusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -107161,7 +107778,7 @@ class OperationStatusOperations:
         return deserialized  # type: ignore
 
 
-class OperationsResultsOperations:
+class OperationsResultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -107251,7 +107868,9 @@ class _ApiManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         service_name: str,
-        connectivity_check_request_params: Union[_models.ConnectivityCheckRequest, JSON, IO[bytes]],
+        connectivity_check_request_params: Union[
+            _models.ConnectivityCheckRequest, _types.ConnectivityCheckRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -107358,7 +107977,7 @@ class _ApiManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         service_name: str,
-        connectivity_check_request_params: JSON,
+        connectivity_check_request_params: _types.ConnectivityCheckRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -107372,7 +107991,8 @@ class _ApiManagementClientOperationsMixin(
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
         :param connectivity_check_request_params: Connectivity Check request parameters. Required.
-        :type connectivity_check_request_params: JSON
+        :type connectivity_check_request_params:
+         ~azure.mgmt.apimanagement.types.ConnectivityCheckRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -107418,7 +108038,9 @@ class _ApiManagementClientOperationsMixin(
         self,
         resource_group_name: str,
         service_name: str,
-        connectivity_check_request_params: Union[_models.ConnectivityCheckRequest, JSON, IO[bytes]],
+        connectivity_check_request_params: Union[
+            _models.ConnectivityCheckRequest, _types.ConnectivityCheckRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.ConnectivityCheckResponse]:
         """Performs a connectivity check between the API Management service and a given destination, and
@@ -107429,10 +108051,11 @@ class _ApiManagementClientOperationsMixin(
         :type resource_group_name: str
         :param service_name: The name of the API Management service. Required.
         :type service_name: str
-        :param connectivity_check_request_params: Connectivity Check request parameters. Is one of the
-         following types: ConnectivityCheckRequest, JSON, IO[bytes] Required.
+        :param connectivity_check_request_params: Connectivity Check request parameters. Is either a
+         ConnectivityCheckRequest type or a IO[bytes] type. Required.
         :type connectivity_check_request_params:
-         ~azure.mgmt.apimanagement.models.ConnectivityCheckRequest or JSON or IO[bytes]
+         ~azure.mgmt.apimanagement.models.ConnectivityCheckRequest or
+         ~azure.mgmt.apimanagement.types.ConnectivityCheckRequest or IO[bytes]
         :return: An instance of LROPoller that returns ConnectivityCheckResponse. The
          ConnectivityCheckResponse is compatible with MutableMapping
         :rtype:
@@ -107462,14 +108085,10 @@ class _ApiManagementClientOperationsMixin(
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ConnectivityCheckResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {

@@ -35,12 +35,12 @@ def main():
         service_name="apimService1",
         portal_revision_id="20201112101010",
         parameters={"properties": {"description": "portal revision update", "isCurrent": True}},
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementUpdatePortalRevision.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementUpdatePortalRevision.json
 if __name__ == "__main__":
     main()

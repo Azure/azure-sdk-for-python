@@ -36,12 +36,12 @@ def main():
         api_id="57d1f7558aa04f15146d9d8a",
         issue_id="57d2ef278aa04f0ad01d6cdc",
         parameters={"properties": {"state": "closed"}},
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementUpdateApiIssue.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementUpdateApiIssue.json
 if __name__ == "__main__":
     main()

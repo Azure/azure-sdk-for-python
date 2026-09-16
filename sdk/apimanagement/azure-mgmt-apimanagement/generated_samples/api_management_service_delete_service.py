@@ -30,13 +30,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.api_management_service.begin_delete(
+    client.api_management_service.begin_delete(
         resource_group_name="rg1",
         service_name="apimService1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementServiceDeleteService.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementServiceDeleteService.json
 if __name__ == "__main__":
     main()

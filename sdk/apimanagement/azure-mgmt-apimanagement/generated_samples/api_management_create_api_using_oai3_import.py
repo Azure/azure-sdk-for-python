@@ -46,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementCreateApiUsingOai3Import.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementCreateApiUsingOai3Import.json
 if __name__ == "__main__":
     main()

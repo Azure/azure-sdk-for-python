@@ -36,11 +36,11 @@ def main():
         api_id="57d1f7558aa04f15146d9d8a",
         issue_id="57d2ef278aa04f0ad01d6cdc",
         comment_id="599e29ab193c3c0bd0b3e2fb",
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementDeleteApiIssueComment.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementDeleteApiIssueComment.json
 if __name__ == "__main__":
     main()

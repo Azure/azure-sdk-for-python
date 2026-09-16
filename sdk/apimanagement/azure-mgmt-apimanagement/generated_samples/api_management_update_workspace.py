@@ -35,12 +35,12 @@ def main():
         service_name="apimService1",
         workspace_id="wks1",
         parameters={"properties": {"description": "workspace 1", "displayName": "my workspace"}},
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementUpdateWorkspace.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementUpdateWorkspace.json
 if __name__ == "__main__":
     main()

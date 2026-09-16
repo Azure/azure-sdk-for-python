@@ -36,12 +36,12 @@ def main():
         workspace_id="wks1",
         product_id="testproduct",
         parameters={"properties": {"displayName": "Test Template ProductName 4"}},
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementUpdateWorkspaceProduct.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementUpdateWorkspaceProduct.json
 if __name__ == "__main__":
     main()

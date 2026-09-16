@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementListApiReleases.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementListApiReleases.json
 if __name__ == "__main__":
     main()

@@ -37,11 +37,11 @@ def main():
         api_id="testapi",
         operation_id="testoperation",
         policy_id="policy",
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementDeleteWorkspaceApiOperationPolicy.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementDeleteWorkspaceApiOperationPolicy.json
 if __name__ == "__main__":
     main()

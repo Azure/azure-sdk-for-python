@@ -35,11 +35,11 @@ def main():
         service_name="apimService1",
         content_type_id="page",
         content_item_id="4e3cf6a5-574a-ba08-1f23-2e7a38faa6d8",
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementDeleteContentTypeContentItem.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementDeleteContentTypeContentItem.json
 if __name__ == "__main__":
     main()

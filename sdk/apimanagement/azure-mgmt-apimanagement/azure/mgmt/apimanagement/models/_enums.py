@@ -109,6 +109,8 @@ class ApiType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ODATA."""
     GRPC = "grpc"
     """GRPC."""
+    MCP = "mcp"
+    """Model Context Protocol API."""
 
 
 class AppType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -660,6 +662,15 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """System and user assigned managed identity."""
 
 
+class McpTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Transport type for Model Context Protocol API."""
+
+    SSE = "sse"
+    """This API uses HTTP+SSE transport type."""
+    STREAMABLE = "streamable"
+    """This API uses the Streamable HTTP transport type."""
+
+
 class Method(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The HTTP method to be used."""
 
@@ -1050,6 +1061,8 @@ class SoapApiType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Imports the API having a OData front end."""
     G_RPC = "grpc"
     """Imports the API having a gRPC front end."""
+    MCP = "mcp"
+    """Imports the API having a Model Context Protocol (MCP) front end."""
 
 
 class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):

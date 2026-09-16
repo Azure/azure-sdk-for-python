@@ -35,11 +35,11 @@ def main():
         service_name="apimService1",
         gateway_id="gw1",
         certificate_id="default",
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementDeleteGatewayCertificateAuthority.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementDeleteGatewayCertificateAuthority.json
 if __name__ == "__main__":
     main()

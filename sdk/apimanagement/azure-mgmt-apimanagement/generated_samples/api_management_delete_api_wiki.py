@@ -34,11 +34,11 @@ def main():
         resource_group_name="rg1",
         service_name="apimService1",
         api_id="57d1f7558aa04f15146d9d8a",
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementDeleteApiWiki.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementDeleteApiWiki.json
 if __name__ == "__main__":
     main()

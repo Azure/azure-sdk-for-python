@@ -50,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementCreateContentTypeContentItem.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementCreateContentTypeContentItem.json
 if __name__ == "__main__":
     main()

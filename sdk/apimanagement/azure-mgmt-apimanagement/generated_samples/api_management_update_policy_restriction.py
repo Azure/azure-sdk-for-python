@@ -35,12 +35,12 @@ def main():
         service_name="apimService1",
         policy_restriction_id="policyRestriction1",
         parameters={"properties": {"scope": "Sample Path 2 to the policy document."}},
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementUpdatePolicyRestriction.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementUpdatePolicyRestriction.json
 if __name__ == "__main__":
     main()

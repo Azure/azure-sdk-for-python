@@ -36,11 +36,11 @@ def main():
         authorization_provider_id="aadwithauthcode",
         authorization_id="authz1",
         authorization_access_policy_id="fe0bed83-631f-4149-bd0b-0464b1bc7cab",
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementDeleteAuthorizationAccessPolicy.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementDeleteAuthorizationAccessPolicy.json
 if __name__ == "__main__":
     main()

@@ -35,12 +35,12 @@ def main():
         service_name="apimService1",
         tag_id="temptag",
         parameters={"properties": {"displayName": "temp tag"}},
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementUpdateTag.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementUpdateTag.json
 if __name__ == "__main__":
     main()

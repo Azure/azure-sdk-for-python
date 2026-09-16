@@ -84,8 +84,10 @@
         "azure.mgmt.apimanagement.models.AuthorizationLoginResponseContract": "Microsoft.ApiManagement.AuthorizationLoginResponseContract",
         "azure.mgmt.apimanagement.models.AuthorizationProviderContract": "Microsoft.ApiManagement.AuthorizationProviderContract",
         "azure.mgmt.apimanagement.models.AuthorizationProviderContractProperties": "Microsoft.ApiManagement.AuthorizationProviderContractProperties",
+        "azure.mgmt.apimanagement.models.AuthorizationProviderFederatedIdentityCredentialsProperties": "Microsoft.ApiManagement.AuthorizationProviderFederatedIdentityCredentialsProperties",
         "azure.mgmt.apimanagement.models.AuthorizationProviderKeyVaultCreateProperties": "Microsoft.ApiManagement.AuthorizationProviderKeyVaultCreateProperties",
         "azure.mgmt.apimanagement.models.AuthorizationProviderKeyVaultContract": "Microsoft.ApiManagement.AuthorizationProviderKeyVaultContract",
+        "azure.mgmt.apimanagement.models.AuthorizationProviderOAuth2FederatedIdentityCredentialsGrantType": "Microsoft.ApiManagement.AuthorizationProviderOAuth2FederatedIdentityCredentialsGrantType",
         "azure.mgmt.apimanagement.models.AuthorizationProviderOAuth2GrantTypes": "Microsoft.ApiManagement.AuthorizationProviderOAuth2GrantTypes",
         "azure.mgmt.apimanagement.models.AuthorizationProviderOAuth2Settings": "Microsoft.ApiManagement.AuthorizationProviderOAuth2Settings",
         "azure.mgmt.apimanagement.models.AuthorizationServerContract": "Microsoft.ApiManagement.AuthorizationServerContract",
@@ -237,6 +239,8 @@
         "azure.mgmt.apimanagement.models.LoggerUpdateContract": "Microsoft.ApiManagement.LoggerUpdateContract",
         "azure.mgmt.apimanagement.models.LoggerUpdateParameters": "Microsoft.ApiManagement.LoggerUpdateParameters",
         "azure.mgmt.apimanagement.models.ManagedServiceIdentity": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentity",
+        "azure.mgmt.apimanagement.models.McpEndpoint": "Microsoft.ApiManagement.McpEndpoint",
+        "azure.mgmt.apimanagement.models.McpProperties": "Microsoft.ApiManagement.McpProperties",
         "azure.mgmt.apimanagement.models.MigrateToStv2Contract": "Microsoft.ApiManagement.MigrateToStv2Contract",
         "azure.mgmt.apimanagement.models.NamedValueContract": "Microsoft.ApiManagement.NamedValueContract",
         "azure.mgmt.apimanagement.models.NamedValueEntityBaseParameters": "Microsoft.ApiManagement.NamedValueEntityBaseParameters",
@@ -420,6 +424,7 @@
         "azure.mgmt.apimanagement.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
         "azure.mgmt.apimanagement.models.BearerTokenSendingMethods": "Microsoft.ApiManagement.BearerTokenSendingMethods",
         "azure.mgmt.apimanagement.models.ApiType": "Microsoft.ApiManagement.ApiType",
+        "azure.mgmt.apimanagement.models.McpTransportType": "Microsoft.ApiManagement.McpTransportType",
         "azure.mgmt.apimanagement.models.Protocol": "Microsoft.ApiManagement.Protocol",
         "azure.mgmt.apimanagement.models.VersioningScheme": "Microsoft.ApiManagement.VersioningScheme",
         "azure.mgmt.apimanagement.models.ContentFormat": "Microsoft.ApiManagement.ContentFormat",
@@ -1783,5 +1788,6 @@
         "azure.mgmt.apimanagement.aio.operations.OperationsResultsOperations.get": "Microsoft.ApiManagement.OperationsResultsOperationGroup.get",
         "azure.mgmt.apimanagement.ApiManagementClient.begin_perform_connectivity_check_async": "Microsoft.ApiManagement.ApiManagementServiceResources.performConnectivityCheckAsync",
         "azure.mgmt.apimanagement.aio.ApiManagementClient.begin_perform_connectivity_check_async": "Microsoft.ApiManagement.ApiManagementServiceResources.performConnectivityCheckAsync"
-    }
+    },
+    "CrossLanguageVersion": "7558f8641930"
 }

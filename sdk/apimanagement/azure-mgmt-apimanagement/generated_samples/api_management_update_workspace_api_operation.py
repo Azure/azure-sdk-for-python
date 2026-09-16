@@ -60,12 +60,12 @@ def main():
                 "urlTemplate": "/resource",
             }
         },
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementUpdateWorkspaceApiOperation.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementUpdateWorkspaceApiOperation.json
 if __name__ == "__main__":
     main()

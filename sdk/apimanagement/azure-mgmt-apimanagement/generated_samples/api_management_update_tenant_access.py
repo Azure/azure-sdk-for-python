@@ -35,12 +35,12 @@ def main():
         service_name="apimService1",
         access_name="access",
         parameters={"properties": {"enabled": True}},
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementUpdateTenantAccess.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementUpdateTenantAccess.json
 if __name__ == "__main__":
     main()

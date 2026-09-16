@@ -35,11 +35,11 @@ def main():
         service_name="apimService1",
         api_id="57d1f7558aa04f15146d9d8a",
         diagnostic_id="applicationinsights",
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementDeleteApiDiagnostic.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementDeleteApiDiagnostic.json
 if __name__ == "__main__":
     main()

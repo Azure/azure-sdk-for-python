@@ -1,10 +1,11 @@
 {
-  "apiVersion": "2025-03-01-preview",
+  "apiVersion": "2025-09-01-preview",
   "apiVersions": {
-    "Microsoft.ApiManagement": "2025-03-01-preview"
+    "Microsoft.ApiManagement": "2025-09-01-preview"
   },
-  "commit": "5038b362fae5e6f54bb6fe7e0a0d18370a946acf",
+  "commit": "4ab86f6985d73c4fa4812a79cbdd334f47ef9837",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/ApiManagement",
-  "emitterVersion": "0.61.2"
+  "emitterVersion": "0.63.7",
+  "httpClientPythonVersion": "^0.37.2"
 }

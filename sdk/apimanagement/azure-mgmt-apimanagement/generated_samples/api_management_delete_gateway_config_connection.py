@@ -34,11 +34,11 @@ def main():
         resource_group_name="rg1",
         gateway_name="standard-gw-01",
         config_connection_name="gcc-01",
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     ).result()
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementDeleteGatewayConfigConnection.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementDeleteGatewayConfigConnection.json
 if __name__ == "__main__":
     main()

@@ -37,6 +37,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementTenantAccessRegenerateSecondaryKey.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementTenantAccessRegenerateSecondaryKey.json
 if __name__ == "__main__":
     main()

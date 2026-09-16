@@ -62,7 +62,7 @@ class ProxyResource(Resource):
     """
 
 
-class AccessInformationContract(ProxyResource):
+class AccessInformationContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tenant Settings.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -123,7 +123,7 @@ class AccessInformationContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AccessInformationContractProperties(_Model):
+class AccessInformationContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tenant access information contract of the API Management service.
 
     :ivar id: Access Information type ('access' or 'gitAccess').
@@ -163,7 +163,9 @@ class AccessInformationContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessInformationCreateParameterProperties(_Model):  # pylint: disable=name-too-long
+class AccessInformationCreateParameterProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Tenant access information update parameters of the API Management service.
 
     :ivar principal_id: Principal (User) Identifier.
@@ -216,7 +218,7 @@ class AccessInformationCreateParameterProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class AccessInformationCreateParameters(_Model):
+class AccessInformationCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tenant access information update parameters.
 
     :ivar properties: Tenant access information update parameter properties.
@@ -267,7 +269,7 @@ class AccessInformationCreateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class AccessInformationSecretsContract(_Model):
+class AccessInformationSecretsContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tenant access information contract of the API Management service.
 
     :ivar id: Access Information type ('access' or 'gitAccess').
@@ -325,7 +327,9 @@ class AccessInformationSecretsContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessInformationUpdateParameterProperties(_Model):  # pylint: disable=name-too-long
+class AccessInformationUpdateParameterProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Tenant access information update parameters of the API Management service.
 
     :ivar enabled: Determines whether direct access is enabled.
@@ -353,7 +357,7 @@ class AccessInformationUpdateParameterProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class AccessInformationUpdateParameters(_Model):
+class AccessInformationUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tenant access information update parameters.
 
     :ivar properties: Tenant access information update parameter properties.
@@ -404,7 +408,7 @@ class AccessInformationUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class AdditionalLocation(_Model):
+class AdditionalLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of an additional API Management resource location.
 
     :ivar location: The location name of the additional region among Azure Data center regions.
@@ -516,7 +520,7 @@ class AdditionalLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AllPoliciesContract(ProxyResource):
+class AllPoliciesContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AllPolicies Contract details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -577,7 +581,7 @@ class AllPoliciesContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AllPoliciesContractProperties(_Model):
+class AllPoliciesContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AllPolicies Properties.
 
     :ivar reference_policy_id: Policy Identifier.
@@ -616,7 +620,7 @@ class AllPoliciesContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiContactInformation(_Model):
+class ApiContactInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API contact information.
 
     :ivar name: The identifying name of the contact person/organization.
@@ -656,7 +660,7 @@ class ApiContactInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiContract(ProxyResource):
+class ApiContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -695,6 +699,7 @@ class ApiContract(ProxyResource):
         "terms_of_service_url",
         "contact",
         "license",
+        "mcp_properties",
         "source_api_id",
         "display_name",
         "service_url",
@@ -740,7 +745,7 @@ class ApiContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ApiEntityBaseContract(_Model):
+class ApiEntityBaseContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API base contract details.
 
     :ivar description: Description of the API. May include HTML formatting tags.
@@ -752,7 +757,7 @@ class ApiEntityBaseContract(_Model):
     :vartype subscription_key_parameter_names:
      ~azure.mgmt.apimanagement.models.SubscriptionKeyParameterNamesContract
     :ivar api_type: Type of API. Known values are: "http", "soap", "websocket", "graphql", "odata",
-     and "grpc".
+     "grpc", and "mcp".
     :vartype api_type: str or ~azure.mgmt.apimanagement.models.ApiType
     :ivar api_revision: Describes the revision of the API. If no value is provided, default
      revision 1 is created.
@@ -779,6 +784,8 @@ class ApiEntityBaseContract(_Model):
     :vartype contact: ~azure.mgmt.apimanagement.models.ApiContactInformation
     :ivar license: License information for the API.
     :vartype license: ~azure.mgmt.apimanagement.models.ApiLicenseInformation
+    :ivar mcp_properties: Properties specific to MCP API type.
+    :vartype mcp_properties: ~azure.mgmt.apimanagement.models.McpProperties
     """
 
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -794,8 +801,8 @@ class ApiEntityBaseContract(_Model):
     api_type: Optional[Union[str, "_models.ApiType"]] = rest_field(
         name="type", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Type of API. Known values are: \"http\", \"soap\", \"websocket\", \"graphql\", \"odata\", and
-     \"grpc\"."""
+    """Type of API. Known values are: \"http\", \"soap\", \"websocket\", \"graphql\", \"odata\",
+     \"grpc\", and \"mcp\"."""
     api_revision: Optional[str] = rest_field(
         name="apiRevision", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -838,6 +845,10 @@ class ApiEntityBaseContract(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """License information for the API."""
+    mcp_properties: Optional["_models.McpProperties"] = rest_field(
+        name="mcpProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties specific to MCP API type."""
 
     @overload
     def __init__(
@@ -857,6 +868,7 @@ class ApiEntityBaseContract(_Model):
         terms_of_service_url: Optional[str] = None,
         contact: Optional["_models.ApiContactInformation"] = None,
         license: Optional["_models.ApiLicenseInformation"] = None,
+        mcp_properties: Optional["_models.McpProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -870,7 +882,7 @@ class ApiEntityBaseContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiContractProperties(ApiEntityBaseContract):
+class ApiContractProperties(ApiEntityBaseContract):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API Entity Properties.
 
     :ivar description: Description of the API. May include HTML formatting tags.
@@ -882,7 +894,7 @@ class ApiContractProperties(ApiEntityBaseContract):
     :vartype subscription_key_parameter_names:
      ~azure.mgmt.apimanagement.models.SubscriptionKeyParameterNamesContract
     :ivar api_type: Type of API. Known values are: "http", "soap", "websocket", "graphql", "odata",
-     and "grpc".
+     "grpc", and "mcp".
     :vartype api_type: str or ~azure.mgmt.apimanagement.models.ApiType
     :ivar api_revision: Describes the revision of the API. If no value is provided, default
      revision 1 is created.
@@ -909,6 +921,8 @@ class ApiContractProperties(ApiEntityBaseContract):
     :vartype contact: ~azure.mgmt.apimanagement.models.ApiContactInformation
     :ivar license: License information for the API.
     :vartype license: ~azure.mgmt.apimanagement.models.ApiLicenseInformation
+    :ivar mcp_properties: Properties specific to MCP API type.
+    :vartype mcp_properties: ~azure.mgmt.apimanagement.models.McpProperties
     :ivar source_api_id: API identifier of the source API.
     :vartype source_api_id: str
     :ivar display_name: API name. Must be 1 to 300 characters long.
@@ -975,6 +989,7 @@ class ApiContractProperties(ApiEntityBaseContract):
         terms_of_service_url: Optional[str] = None,
         contact: Optional["_models.ApiContactInformation"] = None,
         license: Optional["_models.ApiLicenseInformation"] = None,
+        mcp_properties: Optional["_models.McpProperties"] = None,
         source_api_id: Optional[str] = None,
         display_name: Optional[str] = None,
         service_url: Optional[str] = None,
@@ -993,7 +1008,7 @@ class ApiContractProperties(ApiEntityBaseContract):
         super().__init__(*args, **kwargs)
 
 
-class ApiContractUpdateProperties(ApiEntityBaseContract):
+class ApiContractUpdateProperties(ApiEntityBaseContract):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API update contract properties.
 
     :ivar description: Description of the API. May include HTML formatting tags.
@@ -1005,7 +1020,7 @@ class ApiContractUpdateProperties(ApiEntityBaseContract):
     :vartype subscription_key_parameter_names:
      ~azure.mgmt.apimanagement.models.SubscriptionKeyParameterNamesContract
     :ivar api_type: Type of API. Known values are: "http", "soap", "websocket", "graphql", "odata",
-     and "grpc".
+     "grpc", and "mcp".
     :vartype api_type: str or ~azure.mgmt.apimanagement.models.ApiType
     :ivar api_revision: Describes the revision of the API. If no value is provided, default
      revision 1 is created.
@@ -1032,6 +1047,8 @@ class ApiContractUpdateProperties(ApiEntityBaseContract):
     :vartype contact: ~azure.mgmt.apimanagement.models.ApiContactInformation
     :ivar license: License information for the API.
     :vartype license: ~azure.mgmt.apimanagement.models.ApiLicenseInformation
+    :ivar mcp_properties: Properties specific to MCP API type.
+    :vartype mcp_properties: ~azure.mgmt.apimanagement.models.McpProperties
     :ivar display_name: API name.
     :vartype display_name: str
     :ivar service_url: Absolute URL of the backend service implementing this API.
@@ -1079,6 +1096,7 @@ class ApiContractUpdateProperties(ApiEntityBaseContract):
         terms_of_service_url: Optional[str] = None,
         contact: Optional["_models.ApiContactInformation"] = None,
         license: Optional["_models.ApiLicenseInformation"] = None,
+        mcp_properties: Optional["_models.McpProperties"] = None,
         display_name: Optional[str] = None,
         service_url: Optional[str] = None,
         path: Optional[str] = None,
@@ -1096,7 +1114,7 @@ class ApiContractUpdateProperties(ApiEntityBaseContract):
         super().__init__(*args, **kwargs)
 
 
-class ApiCreateOrUpdateParameter(_Model):
+class ApiCreateOrUpdateParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API Create or Update Parameters.
 
     :ivar properties: API entity create of update properties.
@@ -1124,6 +1142,7 @@ class ApiCreateOrUpdateParameter(_Model):
         "terms_of_service_url",
         "contact",
         "license",
+        "mcp_properties",
         "source_api_id",
         "display_name",
         "service_url",
@@ -1174,7 +1193,7 @@ class ApiCreateOrUpdateParameter(_Model):
             super().__setattr__(key, value)
 
 
-class ApiCreateOrUpdateProperties(ApiContractProperties):
+class ApiCreateOrUpdateProperties(ApiContractProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API Create or Update Properties.
 
     :ivar description: Description of the API. May include HTML formatting tags.
@@ -1186,7 +1205,7 @@ class ApiCreateOrUpdateProperties(ApiContractProperties):
     :vartype subscription_key_parameter_names:
      ~azure.mgmt.apimanagement.models.SubscriptionKeyParameterNamesContract
     :ivar api_type: Type of API. Known values are: "http", "soap", "websocket", "graphql", "odata",
-     and "grpc".
+     "grpc", and "mcp".
     :vartype api_type: str or ~azure.mgmt.apimanagement.models.ApiType
     :ivar api_revision: Describes the revision of the API. If no value is provided, default
      revision 1 is created.
@@ -1213,6 +1232,8 @@ class ApiCreateOrUpdateProperties(ApiContractProperties):
     :vartype contact: ~azure.mgmt.apimanagement.models.ApiContactInformation
     :ivar license: License information for the API.
     :vartype license: ~azure.mgmt.apimanagement.models.ApiLicenseInformation
+    :ivar mcp_properties: Properties specific to MCP API type.
+    :vartype mcp_properties: ~azure.mgmt.apimanagement.models.McpProperties
     :ivar source_api_id: API identifier of the source API.
     :vartype source_api_id: str
     :ivar display_name: API name. Must be 1 to 300 characters long.
@@ -1247,7 +1268,7 @@ class ApiCreateOrUpdateProperties(ApiContractProperties):
      * `websocket` creates websocket API
      * `graphql` creates GraphQL API.
      New types can be added in the future. Known values are: "http", "soap", "websocket",
-     "graphql", "odata", and "grpc".
+     "graphql", "odata", "grpc", and "mcp".
     :vartype soap_api_type: str or ~azure.mgmt.apimanagement.models.SoapApiType
     :ivar translate_required_query_parameters_conduct: Strategy of translating required query
      parameters to template ones. By default has value 'template'. Possible values: 'template',
@@ -1280,7 +1301,7 @@ class ApiCreateOrUpdateProperties(ApiContractProperties):
       * `websocket` creates websocket API
       * `graphql` creates GraphQL API.
       New types can be added in the future. Known values are: \"http\", \"soap\", \"websocket\",
-      \"graphql\", \"odata\", and \"grpc\"."""
+      \"graphql\", \"odata\", \"grpc\", and \"mcp\"."""
     translate_required_query_parameters_conduct: Optional[
         Union[str, "_models.TranslateRequiredQueryParametersConduct"]
     ] = rest_field(name="translateRequiredQueryParameters", visibility=["read", "create", "update", "delete", "query"])
@@ -1306,6 +1327,7 @@ class ApiCreateOrUpdateProperties(ApiContractProperties):
         terms_of_service_url: Optional[str] = None,
         contact: Optional["_models.ApiContactInformation"] = None,
         license: Optional["_models.ApiLicenseInformation"] = None,
+        mcp_properties: Optional["_models.McpProperties"] = None,
         source_api_id: Optional[str] = None,
         display_name: Optional[str] = None,
         service_url: Optional[str] = None,
@@ -1331,7 +1353,7 @@ class ApiCreateOrUpdateProperties(ApiContractProperties):
         super().__init__(*args, **kwargs)
 
 
-class ApiCreateOrUpdatePropertiesWsdlSelector(_Model):
+class ApiCreateOrUpdatePropertiesWsdlSelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Criteria to limit import of WSDL to a subset of the document.
 
     :ivar wsdl_service_name: Name of service to import from WSDL.
@@ -1368,7 +1390,7 @@ class ApiCreateOrUpdatePropertiesWsdlSelector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiExportResult(_Model):
+class ApiExportResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API Export result.
 
     :ivar id: ResourceId of the API which was exported.
@@ -1414,7 +1436,7 @@ class ApiExportResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiExportResultValue(_Model):
+class ApiExportResultValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object defining the schema of the exported API Detail.
 
     :ivar link: Link to the Storage Blob containing the result of the export operation. The Blob
@@ -1444,7 +1466,7 @@ class ApiExportResultValue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiLicenseInformation(_Model):
+class ApiLicenseInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API license information.
 
     :ivar name: The license name used for the API.
@@ -1477,7 +1499,7 @@ class ApiLicenseInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiManagementGatewayBaseProperties(_Model):
+class ApiManagementGatewayBaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base Properties of an API Management gateway resource description.
 
     :ivar provisioning_state: The current provisioning state of the API Management gateway which
@@ -1551,7 +1573,9 @@ class ApiManagementGatewayBaseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiManagementGatewayConfigConnectionResource(ProxyResource):  # pylint: disable=name-too-long
+class ApiManagementGatewayConfigConnectionResource(
+    ProxyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """A single API Management gateway resource in List or Get response.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1616,7 +1640,9 @@ class ApiManagementGatewayConfigConnectionResource(ProxyResource):  # pylint: di
             super().__setattr__(key, value)
 
 
-class ApiManagementGatewayProperties(ApiManagementGatewayBaseProperties):
+class ApiManagementGatewayProperties(
+    ApiManagementGatewayBaseProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an API Management gateway resource description.
 
     :ivar provisioning_state: The current provisioning state of the API Management gateway which
@@ -1662,7 +1688,7 @@ class ApiManagementGatewayProperties(ApiManagementGatewayBaseProperties):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1706,7 +1732,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class ApiManagementGatewayResource(TrackedResource):
+class ApiManagementGatewayResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single API Management gateway resource in List or Get response.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1792,7 +1818,7 @@ class ApiManagementGatewayResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ApiManagementGatewaySkuProperties(_Model):
+class ApiManagementGatewaySkuProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API Management gateway resource SKU properties.
 
     :ivar name: Name of the Sku. Required. Known values are: "Standard",
@@ -1829,7 +1855,9 @@ class ApiManagementGatewaySkuProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiManagementGatewaySkuPropertiesForPatch(_Model):  # pylint: disable=name-too-long
+class ApiManagementGatewaySkuPropertiesForPatch(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """API Management gateway resource SKU properties for PATCH operations given nothing should be
     required.
 
@@ -1867,7 +1895,7 @@ class ApiManagementGatewaySkuPropertiesForPatch(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ApimResource(_Model):
+class ApimResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Resource definition.
 
     :ivar id: Resource ID.
@@ -1907,7 +1935,7 @@ class ApimResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiManagementGatewayUpdateParameters(ApimResource):
+class ApiManagementGatewayUpdateParameters(ApimResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameter supplied to Update API Management gateway.
 
     :ivar id: Resource ID.
@@ -1985,7 +2013,9 @@ class ApiManagementGatewayUpdateParameters(ApimResource):
             super().__setattr__(key, value)
 
 
-class ApiManagementGatewayUpdateProperties(ApiManagementGatewayBaseProperties):
+class ApiManagementGatewayUpdateProperties(
+    ApiManagementGatewayBaseProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an API Management gateway resource description.
 
     :ivar provisioning_state: The current provisioning state of the API Management gateway which
@@ -2031,7 +2061,9 @@ class ApiManagementGatewayUpdateProperties(ApiManagementGatewayBaseProperties):
         super().__init__(*args, **kwargs)
 
 
-class ApiManagementServiceApplyNetworkConfigurationParameters(_Model):  # pylint: disable=name-too-long
+class ApiManagementServiceApplyNetworkConfigurationParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Parameter supplied to the Apply Network configuration operation.
 
     :ivar location: Location of the Api Management service to update for a multi-region service.
@@ -2061,7 +2093,9 @@ class ApiManagementServiceApplyNetworkConfigurationParameters(_Model):  # pylint
         super().__init__(*args, **kwargs)
 
 
-class ApiManagementServiceBackupRestoreParameters(_Model):  # pylint: disable=name-too-long
+class ApiManagementServiceBackupRestoreParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Backup/Restore of an API Management service operation.
 
     :ivar storage_account: The name of the Azure storage account (used to place/retrieve the
@@ -2123,7 +2157,7 @@ class ApiManagementServiceBackupRestoreParameters(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class ApiManagementServiceBaseProperties(_Model):
+class ApiManagementServiceBaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base Properties of an API Management service resource description.
 
     :ivar notification_sender_email: Email address from which the notification will be sent.
@@ -2454,7 +2488,9 @@ class ApiManagementServiceBaseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiManagementServiceCheckNameAvailabilityParameters(_Model):  # pylint: disable=name-too-long
+class ApiManagementServiceCheckNameAvailabilityParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Parameters supplied to the CheckNameAvailability operation.
 
     :ivar name: The name to check for availability. Required.
@@ -2493,7 +2529,7 @@ class ApiManagementServiceGetDomainOwnershipIdentifierResult(_Model):  # pylint:
     """The domain ownership identifier value."""
 
 
-class ApiManagementServiceGetSsoTokenResult(_Model):
+class ApiManagementServiceGetSsoTokenResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response of the GetSsoToken operation.
 
     :ivar redirect_uri: Redirect URL to the Publisher Portal containing the SSO token.
@@ -2523,7 +2559,7 @@ class ApiManagementServiceGetSsoTokenResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiManagementServiceIdentity(_Model):
+class ApiManagementServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity properties of the Api Management service resource.
 
     :ivar type: The type of identity used for the resource. The type 'SystemAssigned, UserAssigned'
@@ -2581,7 +2617,9 @@ class ApiManagementServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiManagementServiceNameAvailabilityResult(_Model):  # pylint: disable=name-too-long
+class ApiManagementServiceNameAvailabilityResult(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Response of the CheckNameAvailability operation.
 
     :ivar name_available: True if the name is available and can be used to create a new API
@@ -2633,7 +2671,9 @@ class ApiManagementServiceNameAvailabilityResult(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class ApiManagementServiceProperties(ApiManagementServiceBaseProperties):
+class ApiManagementServiceProperties(
+    ApiManagementServiceBaseProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an API Management service resource description.
 
     :ivar notification_sender_email: Email address from which the notification will be sent.
@@ -2812,7 +2852,7 @@ class ApiManagementServiceProperties(ApiManagementServiceBaseProperties):
         super().__init__(*args, **kwargs)
 
 
-class ApiManagementServiceResource(TrackedResource):
+class ApiManagementServiceResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single API Management service resource in List or Get response.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2938,7 +2978,7 @@ class ApiManagementServiceResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ApiManagementServiceSkuProperties(_Model):
+class ApiManagementServiceSkuProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API Management service resource SKU properties.
 
     :ivar name: Name of the Sku. Required. Known values are: "Developer", "Standard", "Premium",
@@ -2975,7 +3015,7 @@ class ApiManagementServiceSkuProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiManagementServiceUpdateParameters(ApimResource):
+class ApiManagementServiceUpdateParameters(ApimResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameter supplied to Update Api Management Service.
 
     :ivar id: Resource ID.
@@ -3093,7 +3133,9 @@ class ApiManagementServiceUpdateParameters(ApimResource):
             super().__setattr__(key, value)
 
 
-class ApiManagementServiceUpdateProperties(ApiManagementServiceBaseProperties):
+class ApiManagementServiceUpdateProperties(
+    ApiManagementServiceBaseProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an API Management service resource description.
 
     :ivar notification_sender_email: Email address from which the notification will be sent.
@@ -3486,7 +3528,7 @@ class ApiManagementSkuZoneDetails(_Model):
     """A list of capabilities that are available for the SKU in the specified list of zones."""
 
 
-class WorkspaceLinksBaseProperties(_Model):
+class WorkspaceLinksBaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """WorkspaceLinksBaseProperties.
 
     :ivar workspace_id: The link to the API Management service workspace.
@@ -3523,7 +3565,9 @@ class WorkspaceLinksBaseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiManagementWorkspaceLinksProperties(WorkspaceLinksBaseProperties):
+class ApiManagementWorkspaceLinksProperties(
+    WorkspaceLinksBaseProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an API Management workspaceLinks resource.
 
     :ivar workspace_id: The link to the API Management service workspace.
@@ -3551,7 +3595,7 @@ class ApiManagementWorkspaceLinksProperties(WorkspaceLinksBaseProperties):
         super().__init__(*args, **kwargs)
 
 
-class ApiManagementWorkspaceLinksResource(ProxyResource):
+class ApiManagementWorkspaceLinksResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single API Management WorkspaceLinks in List or Get response.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3616,7 +3660,7 @@ class ApiManagementWorkspaceLinksResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ApiReleaseContract(ProxyResource):
+class ApiReleaseContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ApiRelease details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3677,7 +3721,7 @@ class ApiReleaseContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ApiReleaseContractProperties(_Model):
+class ApiReleaseContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API Release details.
 
     :ivar api_id: Identifier of the API the release belongs to.
@@ -3771,7 +3815,9 @@ class ApiRevisionContract(_Model):
     """Indicates if API revision is accessible via the gateway."""
 
 
-class ApiTagResourceContractProperties(ApiEntityBaseContract):
+class ApiTagResourceContractProperties(
+    ApiEntityBaseContract
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API contract properties for the Tag Resources.
 
     :ivar description: Description of the API. May include HTML formatting tags.
@@ -3783,7 +3829,7 @@ class ApiTagResourceContractProperties(ApiEntityBaseContract):
     :vartype subscription_key_parameter_names:
      ~azure.mgmt.apimanagement.models.SubscriptionKeyParameterNamesContract
     :ivar api_type: Type of API. Known values are: "http", "soap", "websocket", "graphql", "odata",
-     and "grpc".
+     "grpc", and "mcp".
     :vartype api_type: str or ~azure.mgmt.apimanagement.models.ApiType
     :ivar api_revision: Describes the revision of the API. If no value is provided, default
      revision 1 is created.
@@ -3810,6 +3856,8 @@ class ApiTagResourceContractProperties(ApiEntityBaseContract):
     :vartype contact: ~azure.mgmt.apimanagement.models.ApiContactInformation
     :ivar license: License information for the API.
     :vartype license: ~azure.mgmt.apimanagement.models.ApiLicenseInformation
+    :ivar mcp_properties: Properties specific to MCP API type.
+    :vartype mcp_properties: ~azure.mgmt.apimanagement.models.McpProperties
     :ivar id: API identifier in the form /apis/{apiId}.
     :vartype id: str
     :ivar name: API name.
@@ -3859,6 +3907,7 @@ class ApiTagResourceContractProperties(ApiEntityBaseContract):
         terms_of_service_url: Optional[str] = None,
         contact: Optional["_models.ApiContactInformation"] = None,
         license: Optional["_models.ApiLicenseInformation"] = None,
+        mcp_properties: Optional["_models.McpProperties"] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         service_url: Optional[str] = None,
@@ -3877,7 +3926,7 @@ class ApiTagResourceContractProperties(ApiEntityBaseContract):
         super().__init__(*args, **kwargs)
 
 
-class ApiUpdateContract(_Model):
+class ApiUpdateContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API update contract details.
 
     :ivar properties: Properties of the API entity that can be updated.
@@ -3905,6 +3954,7 @@ class ApiUpdateContract(_Model):
         "terms_of_service_url",
         "contact",
         "license",
+        "mcp_properties",
         "display_name",
         "service_url",
         "path",
@@ -3947,7 +3997,7 @@ class ApiUpdateContract(_Model):
             super().__setattr__(key, value)
 
 
-class ApiVersionConstraint(_Model):
+class ApiVersionConstraint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Control Plane Apis version constraint for the API Management service.
 
     :ivar min_api_version: Limit control plane API calls to API Management service with version
@@ -3979,7 +4029,7 @@ class ApiVersionConstraint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiVersionSetContract(ProxyResource):
+class ApiVersionSetContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API Version Set Contract details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4046,7 +4096,7 @@ class ApiVersionSetContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ApiVersionSetContractDetails(_Model):
+class ApiVersionSetContractDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An API Version Set contains the common configuration for a set of API Versions relating.
 
     :ivar id: Identifier for existing API Version Set. Omit this value to create a new Version Set.
@@ -4110,7 +4160,7 @@ class ApiVersionSetContractDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiVersionSetEntityBase(_Model):
+class ApiVersionSetEntityBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API Version set base parameters.
 
     :ivar description: Description of API Version Set.
@@ -4155,7 +4205,9 @@ class ApiVersionSetEntityBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiVersionSetContractProperties(ApiVersionSetEntityBase):
+class ApiVersionSetContractProperties(
+    ApiVersionSetEntityBase
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an API Version Set.
 
     :ivar description: Description of API Version Set.
@@ -4203,7 +4255,7 @@ class ApiVersionSetContractProperties(ApiVersionSetEntityBase):
         super().__init__(*args, **kwargs)
 
 
-class ApiVersionSetUpdateParameters(_Model):
+class ApiVersionSetUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to update or create an API Version Set Contract.
 
     :ivar properties: Parameters to update or create an API Version Set Contract.
@@ -4259,7 +4311,9 @@ class ApiVersionSetUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class ApiVersionSetUpdateParametersProperties(ApiVersionSetEntityBase):
+class ApiVersionSetUpdateParametersProperties(
+    ApiVersionSetEntityBase
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties used to create or update an API Version Set.
 
     :ivar description: Description of API Version Set.
@@ -4319,7 +4373,7 @@ class ArmIdWrapper(_Model):
     id: Optional[str] = rest_field(visibility=["read"])
 
 
-class AssociationContract(ProxyResource):
+class AssociationContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Association entity details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4380,7 +4434,7 @@ class AssociationContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AssociationContractProperties(_Model):
+class AssociationContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Association entity contract properties.
 
     :ivar provisioning_state: Provisioning state. Default value is "created".
@@ -4410,7 +4464,7 @@ class AssociationContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthenticationSettingsContract(_Model):
+class AuthenticationSettingsContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API Authentication Settings.
 
     :ivar o_auth2: OAuth2 Authentication settings.
@@ -4465,7 +4519,7 @@ class AuthenticationSettingsContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthorizationAccessPolicyContract(ProxyResource):
+class AuthorizationAccessPolicyContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authorization access policy contract.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4527,7 +4581,9 @@ class AuthorizationAccessPolicyContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AuthorizationAccessPolicyContractProperties(_Model):  # pylint: disable=name-too-long
+class AuthorizationAccessPolicyContractProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Authorization Access Policy details.
 
     :ivar app_ids: The allowed Azure Active Directory Application IDs.
@@ -4565,7 +4621,9 @@ class AuthorizationAccessPolicyContractProperties(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class AuthorizationConfirmConsentCodeRequestContract(_Model):  # pylint: disable=name-too-long
+class AuthorizationConfirmConsentCodeRequestContract(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Authorization confirm consent code request contract.
 
     :ivar consent_code: The consent code from the authorization server after authorizing and
@@ -4596,7 +4654,7 @@ class AuthorizationConfirmConsentCodeRequestContract(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class AuthorizationContract(ProxyResource):
+class AuthorizationContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authorization contract.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4657,7 +4715,7 @@ class AuthorizationContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AuthorizationContractProperties(_Model):
+class AuthorizationContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authorization details.
 
     :ivar authorization_type: Authorization type options. "OAuth2"
@@ -4712,7 +4770,7 @@ class AuthorizationContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthorizationError(_Model):
+class AuthorizationError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authorization error details.
 
     :ivar code: Error code.
@@ -4745,7 +4803,7 @@ class AuthorizationError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthorizationLoginRequestContract(_Model):
+class AuthorizationLoginRequestContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authorization login request contract.
 
     :ivar post_login_redirect_url: The redirect URL after login has completed.
@@ -4775,7 +4833,7 @@ class AuthorizationLoginRequestContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthorizationLoginResponseContract(_Model):
+class AuthorizationLoginResponseContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authorization login response contract.
 
     :ivar login_link: The login link.
@@ -4803,7 +4861,7 @@ class AuthorizationLoginResponseContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthorizationProviderContract(ProxyResource):
+class AuthorizationProviderContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authorization Provider contract.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4864,7 +4922,7 @@ class AuthorizationProviderContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AuthorizationProviderContractProperties(_Model):
+class AuthorizationProviderContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authorization Provider details.
 
     :ivar display_name: Authorization Provider name. Must be 1 to 300 characters long.
@@ -4908,7 +4966,28 @@ class AuthorizationProviderContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthorizationProviderKeyVaultCreateProperties(_Model):  # pylint: disable=name-too-long
+class AuthorizationProviderFederatedIdentityCredentialsProperties(_Model):  # pylint: disable=name-too-long
+    """Federated identity credentials properties returned by the authorization provider.
+
+    :ivar issuer: The issuer URL of the federated identity credentials.
+    :vartype issuer: str
+    :ivar subject: The subject identifier of the federated identity credentials.
+    :vartype subject: str
+    :ivar audience: The audience of the federated identity credentials.
+    :vartype audience: str
+    """
+
+    issuer: Optional[str] = rest_field(visibility=["read"])
+    """The issuer URL of the federated identity credentials."""
+    subject: Optional[str] = rest_field(visibility=["read"])
+    """The subject identifier of the federated identity credentials."""
+    audience: Optional[str] = rest_field(visibility=["read"])
+    """The audience of the federated identity credentials."""
+
+
+class AuthorizationProviderKeyVaultCreateProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Authorization Provider KeyVault create contract properties.
 
     :ivar secret_identifier: Key vault secret identifier for client secret. When provided, client
@@ -4940,7 +5019,9 @@ class AuthorizationProviderKeyVaultCreateProperties(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class AuthorizationProviderKeyVaultContract(AuthorizationProviderKeyVaultCreateProperties):
+class AuthorizationProviderKeyVaultContract(
+    AuthorizationProviderKeyVaultCreateProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authorization Provider KeyVault contract properties.
 
     :ivar secret_identifier: Key vault secret identifier for client secret. When provided, client
@@ -4978,30 +5059,40 @@ class AuthorizationProviderKeyVaultContract(AuthorizationProviderKeyVaultCreateP
         super().__init__(*args, **kwargs)
 
 
-class AuthorizationProviderOAuth2GrantTypes(_Model):
-    """Authorization Provider oauth2 grant types settings.
+class AuthorizationProviderOAuth2FederatedIdentityCredentialsGrantType(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """OAuth2 authorization code with federated identity credentials grant type parameters.
 
-    :ivar authorization_code: OAuth2 authorization code grant parameters.
-    :vartype authorization_code: dict[str, str]
-    :ivar client_credentials: OAuth2 client credential grant parameters.
-    :vartype client_credentials: dict[str, str]
+    :ivar client_id: Client ID of the application in the identity provider.
+    :vartype client_id: str
+    :ivar client_assertion_type: The type of client assertion used for federated identity
+     credentials.
+    :vartype client_assertion_type: str
+    :ivar resource_uri: The resource URI for the target service.
+    :vartype resource_uri: str
+    :ivar tenant_id: Tenant ID of the identity provider.
+    :vartype tenant_id: str
     """
 
-    authorization_code: Optional[dict[str, str]] = rest_field(
-        name="authorizationCode", visibility=["read", "create", "update", "delete", "query"]
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read", "create", "update", "delete", "query"])
+    """Client ID of the application in the identity provider."""
+    client_assertion_type: Optional[str] = rest_field(name="clientAssertionType", visibility=["read"])
+    """The type of client assertion used for federated identity credentials."""
+    resource_uri: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
     )
-    """OAuth2 authorization code grant parameters."""
-    client_credentials: Optional[dict[str, str]] = rest_field(
-        name="clientCredentials", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """OAuth2 client credential grant parameters."""
+    """The resource URI for the target service."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """Tenant ID of the identity provider."""
 
     @overload
     def __init__(
         self,
         *,
-        authorization_code: Optional[dict[str, str]] = None,
-        client_credentials: Optional[dict[str, str]] = None,
+        client_id: Optional[str] = None,
+        resource_uri: Optional[str] = None,
+        tenant_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -5015,7 +5106,58 @@ class AuthorizationProviderOAuth2GrantTypes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthorizationProviderOAuth2Settings(_Model):
+class AuthorizationProviderOAuth2GrantTypes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Authorization Provider oauth2 grant types settings.
+
+    :ivar authorization_code: OAuth2 authorization code grant parameters.
+    :vartype authorization_code: dict[str, str]
+    :ivar client_credentials: OAuth2 client credential grant parameters.
+    :vartype client_credentials: dict[str, str]
+    :ivar authorization_code_with_federated_identity_credentials: OAuth2 authorization code grant
+     with federated identity credentials parameters.
+    :vartype authorization_code_with_federated_identity_credentials:
+     ~azure.mgmt.apimanagement.models.AuthorizationProviderOAuth2FederatedIdentityCredentialsGrantType
+    """
+
+    authorization_code: Optional[dict[str, str]] = rest_field(
+        name="authorizationCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OAuth2 authorization code grant parameters."""
+    client_credentials: Optional[dict[str, str]] = rest_field(
+        name="clientCredentials", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OAuth2 client credential grant parameters."""
+    authorization_code_with_federated_identity_credentials: Optional[
+        "_models.AuthorizationProviderOAuth2FederatedIdentityCredentialsGrantType"
+    ] = rest_field(
+        name="authorizationCodeWithFederatedIdentityCredentials",
+        visibility=["read", "create", "update", "delete", "query"],
+    )
+    """OAuth2 authorization code grant with federated identity credentials parameters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        authorization_code: Optional[dict[str, str]] = None,
+        client_credentials: Optional[dict[str, str]] = None,
+        authorization_code_with_federated_identity_credentials: Optional[
+            "_models.AuthorizationProviderOAuth2FederatedIdentityCredentialsGrantType"
+        ] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AuthorizationProviderOAuth2Settings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OAuth2 settings details.
 
     :ivar redirect_url: Redirect URL to be set in the OAuth application.
@@ -5024,6 +5166,9 @@ class AuthorizationProviderOAuth2Settings(_Model):
     :vartype grant_types: ~azure.mgmt.apimanagement.models.AuthorizationProviderOAuth2GrantTypes
     :ivar key_vault: Key Vault reference for client secret storage.
     :vartype key_vault: ~azure.mgmt.apimanagement.models.AuthorizationProviderKeyVaultContract
+    :ivar federated_identity_credentials_properties: Federated identity credentials properties.
+    :vartype federated_identity_credentials_properties:
+     ~azure.mgmt.apimanagement.models.AuthorizationProviderFederatedIdentityCredentialsProperties
     """
 
     redirect_url: Optional[str] = rest_field(
@@ -5038,6 +5183,10 @@ class AuthorizationProviderOAuth2Settings(_Model):
         name="keyVault", visibility=["read", "create", "update", "delete", "query"]
     )
     """Key Vault reference for client secret storage."""
+    federated_identity_credentials_properties: Optional[
+        "_models.AuthorizationProviderFederatedIdentityCredentialsProperties"
+    ] = rest_field(name="federatedIdentityCredentialsProperties", visibility=["read"])
+    """Federated identity credentials properties."""
 
     @overload
     def __init__(
@@ -5059,7 +5208,7 @@ class AuthorizationProviderOAuth2Settings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthorizationServerContract(ProxyResource):
+class AuthorizationServerContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """External OAuth authorization server settings.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5139,7 +5288,9 @@ class AuthorizationServerContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AuthorizationServerContractBaseProperties(_Model):  # pylint: disable=name-too-long
+class AuthorizationServerContractBaseProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """External OAuth authorization server Update settings contract.
 
     :ivar description: Description of the authorization server. Can contain HTML formatting tags.
@@ -5256,7 +5407,9 @@ class AuthorizationServerContractBaseProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class AuthorizationServerContractProperties(AuthorizationServerContractBaseProperties):
+class AuthorizationServerContractProperties(
+    AuthorizationServerContractBaseProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """External OAuth authorization server settings Properties.
 
     :ivar description: Description of the authorization server. Can contain HTML formatting tags.
@@ -5392,7 +5545,7 @@ class AuthorizationServerContractProperties(AuthorizationServerContractBasePrope
         super().__init__(*args, **kwargs)
 
 
-class AuthorizationServerSecretsContract(_Model):
+class AuthorizationServerSecretsContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OAuth Server Secrets Contract.
 
     :ivar client_secret: oAuth Authorization Server Secrets.
@@ -5440,7 +5593,7 @@ class AuthorizationServerSecretsContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthorizationServerUpdateContract(ProxyResource):
+class AuthorizationServerUpdateContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """External OAuth authorization server settings.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5523,7 +5676,7 @@ class AuthorizationServerUpdateContract(ProxyResource):
 
 class AuthorizationServerUpdateContractProperties(
     AuthorizationServerContractBaseProperties
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """External OAuth authorization server Update settings contract.
 
     :ivar description: Description of the authorization server. Can contain HTML formatting tags.
@@ -5661,7 +5814,7 @@ class AuthorizationServerUpdateContractProperties(
         super().__init__(*args, **kwargs)
 
 
-class BackendAuthorizationHeaderCredentials(_Model):
+class BackendAuthorizationHeaderCredentials(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authorization header information.
 
     :ivar scheme: Authentication Scheme name. Required.
@@ -5694,7 +5847,7 @@ class BackendAuthorizationHeaderCredentials(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackendBaseParameters(_Model):
+class BackendBaseParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backend entity base Parameter set.
 
     :ivar title: Backend Title.
@@ -5796,7 +5949,7 @@ class BackendBaseParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackendPool(_Model):
+class BackendPool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backend pool information.
 
     :ivar services: The list of backend entities belonging to a pool.
@@ -5841,7 +5994,7 @@ class BackendPool(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackendBaseParametersPool(BackendPool):
+class BackendBaseParametersPool(BackendPool):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BackendBaseParametersPool.
 
     :ivar services: The list of backend entities belonging to a pool.
@@ -5873,7 +6026,7 @@ class BackendBaseParametersPool(BackendPool):
         super().__init__(*args, **kwargs)
 
 
-class BackendCircuitBreaker(_Model):
+class BackendCircuitBreaker(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration of the backend circuit breaker.
 
     :ivar rules: The rules for tripping the backend.
@@ -5903,7 +6056,7 @@ class BackendCircuitBreaker(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackendConfiguration(_Model):
+class BackendConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information regarding how the gateway should integrate with backend systems.
 
     :ivar subnet: The default hostname of the data-plane gateway to which requests can be sent.
@@ -5933,7 +6086,7 @@ class BackendConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackendContract(ProxyResource):
+class BackendContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backend details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6008,7 +6161,7 @@ class BackendContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class BackendContractProperties(BackendBaseParameters):
+class BackendContractProperties(BackendBaseParameters):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Create Backend operation.
 
     :ivar title: Backend Title.
@@ -6081,7 +6234,7 @@ class BackendContractProperties(BackendBaseParameters):
         super().__init__(*args, **kwargs)
 
 
-class BackendCredentialsContract(_Model):
+class BackendCredentialsContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the Credentials used to connect to Backend.
 
     :ivar certificate_ids: List of Client Certificate Ids.
@@ -6134,7 +6287,7 @@ class BackendCredentialsContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackendFailureResponse(_Model):
+class BackendFailureResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response to be returned when a backend fails to respond.
 
     :ivar status_code: The status code of the response.
@@ -6164,7 +6317,7 @@ class BackendFailureResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackendPoolItem(_Model):
+class BackendPoolItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backend pool service information.
 
     :ivar id: The unique ARM id of the backend entity. The ARM id should refer to an already
@@ -6225,7 +6378,7 @@ class BackendPoolItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackendProperties(_Model):
+class BackendProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties specific to the Backend Type.
 
     :ivar service_fabric_cluster: Backend Service Fabric Cluster Properties.
@@ -6256,7 +6409,7 @@ class BackendProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackendProxyContract(_Model):
+class BackendProxyContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the Backend WebProxy Server to use in the Request to Backend.
 
     :ivar url: WebProxy Server AbsoluteUri property which includes the entire URI stored in the Uri
@@ -6296,7 +6449,7 @@ class BackendProxyContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackendReconnectContract(ProxyResource):
+class BackendReconnectContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reconnect request parameters.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6357,7 +6510,7 @@ class BackendReconnectContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class BackendReconnectProperties(_Model):
+class BackendReconnectProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to control reconnect requests.
 
     :ivar after: Duration in ISO8601 format after which reconnect will be initiated. Minimum
@@ -6387,7 +6540,7 @@ class BackendReconnectProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackendServiceFabricClusterProperties(_Model):
+class BackendServiceFabricClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Service Fabric Type Backend.
 
     :ivar client_certificate_id: The client certificate id for the management endpoint.
@@ -6456,7 +6609,7 @@ class BackendServiceFabricClusterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackendSessionAffinity(_Model):
+class BackendSessionAffinity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The session stickiness properties of the backend pool.
 
     :ivar session_id: The id that identifies the requests belonging to the same session.
@@ -6486,7 +6639,7 @@ class BackendSessionAffinity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackendSessionId(_Model):
+class BackendSessionId(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the id that identifies the requests belonging to the same session.
 
     :ivar source: Source from where the session id is extracted. "cookie"
@@ -6521,7 +6674,7 @@ class BackendSessionId(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackendSubnetConfiguration(_Model):
+class BackendSubnetConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information regarding how the subnet to which the gateway should be injected.
 
     :ivar id: The ARM ID of the subnet in which the backend systems are hosted.
@@ -6549,7 +6702,7 @@ class BackendSubnetConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackendTlsProperties(_Model):
+class BackendTlsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties controlling TLS Certificate Validation.
 
     :ivar validate_certificate_chain: Flag indicating whether SSL certificate chain validation
@@ -6605,7 +6758,9 @@ class BackendTlsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackendUpdateParameterProperties(BackendBaseParameters):
+class BackendUpdateParameterProperties(
+    BackendBaseParameters
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Update Backend operation.
 
     :ivar title: Backend Title.
@@ -6676,7 +6831,7 @@ class BackendUpdateParameterProperties(BackendBaseParameters):
         super().__init__(*args, **kwargs)
 
 
-class BackendUpdateParameters(_Model):
+class BackendUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backend update parameters.
 
     :ivar properties: Backend entity update contract properties.
@@ -6740,7 +6895,7 @@ class BackendUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class BodyDiagnosticSettings(_Model):
+class BodyDiagnosticSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Body logging settings.
 
     :ivar bytes: Number of request body bytes to log.
@@ -6768,7 +6923,7 @@ class BodyDiagnosticSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CacheContract(ProxyResource):
+class CacheContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cache details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6829,7 +6984,7 @@ class CacheContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CacheContractProperties(_Model):
+class CacheContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Cache contract.
 
     :ivar description: Cache description.
@@ -6880,7 +7035,7 @@ class CacheContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CacheUpdateParameters(_Model):
+class CacheUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cache update details.
 
     :ivar properties: Cache update properties details.
@@ -6930,7 +7085,7 @@ class CacheUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class CacheUpdateProperties(_Model):
+class CacheUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Update Cache operation.
 
     :ivar description: Cache description.
@@ -6981,7 +7136,7 @@ class CacheUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertificateConfiguration(_Model):
+class CertificateConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Certificate configuration which consist of non-trusted intermediates and root certificates.
 
     :ivar encoded_certificate: Base64 Encoded certificate.
@@ -7036,7 +7191,7 @@ class CertificateConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertificateContract(ProxyResource):
+class CertificateContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Certificate details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7097,7 +7252,7 @@ class CertificateContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CertificateContractProperties(_Model):
+class CertificateContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Certificate contract.
 
     :ivar subject: Subject attribute of the certificate. Required.
@@ -7146,7 +7301,7 @@ class CertificateContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertificateCreateOrUpdateParameters(_Model):
+class CertificateCreateOrUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Certificate create or update details.
 
     :ivar properties: Certificate create or update properties details.
@@ -7196,7 +7351,7 @@ class CertificateCreateOrUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class CertificateCreateOrUpdateProperties(_Model):
+class CertificateCreateOrUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the CreateOrUpdate certificate operation.
 
     :ivar data: Base 64 encoded certificate using the application/x-pkcs12 representation.
@@ -7236,7 +7391,7 @@ class CertificateCreateOrUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertificateInformation(_Model):
+class CertificateInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SSL certificate information.
 
     :ivar expiry: Expiration date of the certificate. The date conforms to the following format:
@@ -7276,7 +7431,7 @@ class CertificateInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CircuitBreakerFailureCondition(_Model):
+class CircuitBreakerFailureCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The trip conditions of the circuit breaker.
 
     :ivar count: The threshold for opening the circuit.
@@ -7328,7 +7483,7 @@ class CircuitBreakerFailureCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CircuitBreakerRule(_Model):
+class CircuitBreakerRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rule configuration to trip the backend.
 
     :ivar name: The rule name.
@@ -7384,7 +7539,7 @@ class CircuitBreakerRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientApplicationContract(ProxyResource):
+class ClientApplicationContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Client application details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7445,7 +7600,7 @@ class ClientApplicationContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ClientApplicationContractProperties(_Model):
+class ClientApplicationContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Client Application Entity Properties.
 
     :ivar display_name: Client application name. Required.
@@ -7506,7 +7661,9 @@ class ClientApplicationContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientApplicationProductLinkContract(ProxyResource):
+class ClientApplicationProductLinkContract(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies Client Application - Product link assignment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7568,7 +7725,9 @@ class ClientApplicationProductLinkContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ClientApplicationProductLinkContractProperties(_Model):  # pylint: disable=name-too-long
+class ClientApplicationProductLinkContractProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """ClientApplicationProductLinkContractProperties.
 
     :ivar product_id: The unique resource identifier of the Product. Required.
@@ -7596,7 +7755,7 @@ class ClientApplicationProductLinkContractProperties(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class ClientApplicationSecretsContract(_Model):
+class ClientApplicationSecretsContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies client application secrets needed to authorize applications API calls.
 
     :ivar entra: Microsoft EntraID client application secrets.
@@ -7626,7 +7785,7 @@ class ClientApplicationSecretsContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientApplicationSecretsContractEntra(_Model):
+class ClientApplicationSecretsContractEntra(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft EntraID client application secrets.
 
     :ivar client_secret: EntraID client application secret.
@@ -7660,7 +7819,7 @@ class ClientApplicationSecretsContractEntra(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientSecretContract(_Model):
+class ClientSecretContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Client or app secret used in IdentityProviders, Aad, OpenID or OAuth.
 
     :ivar client_secret: Client or app secret used in IdentityProviders, Aad, OpenID or OAuth.
@@ -7690,7 +7849,7 @@ class ClientSecretContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfigurationApi(_Model):
+class ConfigurationApi(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information regarding the Configuration API of the API Management service.
 
     :ivar legacy_api: Indication whether or not the legacy Configuration API (v1) should be exposed
@@ -7726,7 +7885,7 @@ class ConfigurationApi(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectivityCheckRequest(_Model):
+class ConnectivityCheckRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A request to perform the connectivity check operation on a API Management service.
 
     :ivar source: Definitions about the connectivity check origin. Required.
@@ -7789,7 +7948,7 @@ class ConnectivityCheckRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectivityCheckRequestDestination(_Model):
+class ConnectivityCheckRequestDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The connectivity check operation destination.
 
     :ivar address: Destination address. Can either be an IP address or a FQDN. Required.
@@ -7822,7 +7981,9 @@ class ConnectivityCheckRequestDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectivityCheckRequestProtocolConfiguration(_Model):  # pylint: disable=name-too-long
+class ConnectivityCheckRequestProtocolConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Protocol-specific configuration.
 
     :ivar http_configuration: Configuration for HTTP or HTTPS requests.
@@ -7853,7 +8014,9 @@ class ConnectivityCheckRequestProtocolConfiguration(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class ConnectivityCheckRequestProtocolConfigurationHTTPConfiguration(_Model):  # pylint: disable=name-too-long
+class ConnectivityCheckRequestProtocolConfigurationHTTPConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Configuration for HTTP or HTTPS requests.
 
     :ivar method: The HTTP method to be used. Known values are: "GET" and "POST".
@@ -7897,7 +8060,7 @@ class ConnectivityCheckRequestProtocolConfigurationHTTPConfiguration(_Model):  #
         super().__init__(*args, **kwargs)
 
 
-class ConnectivityCheckRequestSource(_Model):
+class ConnectivityCheckRequestSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definitions about the connectivity check origin.
 
     :ivar region: The API Management service region from where to start the connectivity check
@@ -8029,7 +8192,7 @@ class ConnectivityIssue(_Model):
     """Provides additional context on the issue."""
 
 
-class ConnectivityStatusContract(_Model):
+class ConnectivityStatusContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about connectivity to a resource.
 
     :ivar name: The hostname of the resource which the service depends on. This can be the
@@ -8108,7 +8271,7 @@ class ConnectivityStatusContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContentItemContract(ProxyResource):
+class ContentItemContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Content type contract details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8167,7 +8330,7 @@ class ContentItemContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ContentTypeContract(ProxyResource):
+class ContentTypeContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Content type contract details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8228,7 +8391,7 @@ class ContentTypeContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ContentTypeContractProperties(_Model):
+class ContentTypeContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ContentTypeContractProperties.
 
     :ivar id: Content type identifier.
@@ -8276,7 +8439,7 @@ class ContentTypeContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataMasking(_Model):
+class DataMasking(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataMasking.
 
     :ivar query_params: Masking settings for Url query parameters.
@@ -8313,7 +8476,7 @@ class DataMasking(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataMaskingEntity(_Model):
+class DataMaskingEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataMaskingEntity.
 
     :ivar value: The name of an entity to mask (e.g. a name of a header or a query parameter).
@@ -8348,7 +8511,7 @@ class DataMaskingEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeletedServiceContract(ProxyResource):
+class DeletedServiceContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deleted API Management Service information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8413,7 +8576,7 @@ class DeletedServiceContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DeletedServiceContractProperties(_Model):
+class DeletedServiceContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DeletedServiceContractProperties.
 
     :ivar service_id: Fully-qualified API Management Service Resource ID.
@@ -8460,7 +8623,7 @@ class DeletedServiceContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeployConfigurationParameterProperties(_Model):
+class DeployConfigurationParameterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Deploy Configuration operation.
 
     :ivar branch: The name of the Git branch from which the configuration is to be deployed to the
@@ -8496,7 +8659,7 @@ class DeployConfigurationParameterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeployConfigurationParameters(_Model):
+class DeployConfigurationParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deploy Tenant Configuration Contract.
 
     :ivar properties: Deploy Configuration Parameter contract properties.
@@ -8546,7 +8709,7 @@ class DeployConfigurationParameters(_Model):
             super().__setattr__(key, value)
 
 
-class DiagnosticContract(ProxyResource):
+class DiagnosticContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Diagnostic details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8619,7 +8782,7 @@ class DiagnosticContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DiagnosticContractProperties(_Model):
+class DiagnosticContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Diagnostic Entity Properties.
 
     :ivar always_log: Specifies for what type of messages sampling settings should not apply.
@@ -8725,7 +8888,7 @@ class DiagnosticContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticContractUpdateProperties(_Model):
+class DiagnosticContractUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Diagnostic Entity Properties.
 
     :ivar always_log: Specifies for what type of messages sampling settings should not apply.
@@ -8824,7 +8987,7 @@ class DiagnosticContractUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticUpdateContract(ProxyResource):
+class DiagnosticUpdateContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Diagnostic details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8896,7 +9059,7 @@ class DiagnosticUpdateContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DocumentationContract(ProxyResource):
+class DocumentationContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Markdown documentation details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8957,7 +9120,7 @@ class DocumentationContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DocumentationContractProperties(_Model):
+class DocumentationContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Markdown documentation details.
 
     :ivar title: documentation title.
@@ -8990,7 +9153,7 @@ class DocumentationContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentationUpdateContract(_Model):
+class DocumentationUpdateContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Documentation update contract details.
 
     :ivar properties: Markdown Documentation details.
@@ -9040,7 +9203,7 @@ class DocumentationUpdateContract(_Model):
             super().__setattr__(key, value)
 
 
-class EmailTemplateContract(ProxyResource):
+class EmailTemplateContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Email Template details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9101,7 +9264,7 @@ class EmailTemplateContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class EmailTemplateContractProperties(_Model):
+class EmailTemplateContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Email Template Contract properties.
 
     :ivar subject: Subject of the Template. Required.
@@ -9157,7 +9320,9 @@ class EmailTemplateContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EmailTemplateParametersContractProperties(_Model):  # pylint: disable=name-too-long
+class EmailTemplateParametersContractProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Email Template Parameter contract.
 
     :ivar name: Template parameter name.
@@ -9195,7 +9360,7 @@ class EmailTemplateParametersContractProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class EmailTemplateUpdateParameterProperties(_Model):
+class EmailTemplateUpdateParameterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Email Template Update Contract properties.
 
     :ivar subject: Subject of the Template.
@@ -9246,7 +9411,7 @@ class EmailTemplateUpdateParameterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EmailTemplateUpdateParameters(_Model):
+class EmailTemplateUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Email Template update Parameters.
 
     :ivar properties: Email Template Update contract properties.
@@ -9296,7 +9461,7 @@ class EmailTemplateUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class EndpointDependency(_Model):
+class EndpointDependency(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A domain name that a service is reached at.
 
     :ivar domain_name: The domain name of the dependency.
@@ -9333,7 +9498,7 @@ class EndpointDependency(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointDetail(_Model):
+class EndpointDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Current TCP connectivity information from the Api Management Service to a single endpoint.
 
     :ivar port: The port an endpoint is connected to.
@@ -9410,7 +9575,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorFieldContract(_Model):
+class ErrorFieldContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error Field contract.
 
     :ivar code: Property level error code.
@@ -9448,7 +9613,7 @@ class ErrorFieldContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -9476,7 +9641,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorResponseBody(_Model):
+class ErrorResponseBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error Body contract.
 
     :ivar code: Service-defined error code. This code serves as a sub-status for the HTTP error
@@ -9518,7 +9683,7 @@ class ErrorResponseBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FailureStatusCodeRange(_Model):
+class FailureStatusCodeRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The failure http status code range.
 
     :ivar min: The minimum http status code.
@@ -9564,7 +9729,7 @@ class FrontendConfiguration(_Model):
      applicable for API gateway with Standard SKU."""
 
 
-class GatewayCertificateAuthorityContract(ProxyResource):
+class GatewayCertificateAuthorityContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Gateway certificate authority details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9626,7 +9791,9 @@ class GatewayCertificateAuthorityContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class GatewayCertificateAuthorityContractProperties(_Model):  # pylint: disable=name-too-long
+class GatewayCertificateAuthorityContractProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Gateway certificate authority details.
 
     :ivar is_trusted: Determines whether certificate authority is trusted.
@@ -9656,7 +9823,7 @@ class GatewayCertificateAuthorityContractProperties(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class GatewayConfigConnectionBaseProperties(_Model):
+class GatewayConfigConnectionBaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GatewayConfigConnectionBaseProperties.
 
     :ivar provisioning_state: The current provisioning state of the API Management gateway config
@@ -9710,7 +9877,7 @@ class GatewayConfigurationApi(_Model):
     """Hostname to which the agent connects to propagate configuration to the cloud."""
 
 
-class GatewayContract(ProxyResource):
+class GatewayContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Gateway details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9778,7 +9945,7 @@ class GatewayContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class GatewayContractProperties(_Model):
+class GatewayContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Gateway contract.
 
     :ivar location_data: Gateway location.
@@ -9813,7 +9980,7 @@ class GatewayContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GatewayDebugCredentialsContract(_Model):
+class GatewayDebugCredentialsContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Gateway debug credentials.
 
     :ivar token: Gateway debug token.
@@ -9841,7 +10008,7 @@ class GatewayDebugCredentialsContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GatewayHostnameBindingBaseProperties(_Model):
+class GatewayHostnameBindingBaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GatewayHostnameBindingBaseProperties.
 
     :ivar provisioning_state: The current provisioning state of the API Management gateway hostname
@@ -9904,7 +10071,7 @@ class GatewayHostnameBindingCertificate(_Model):
     """The expiration date of the certificate."""
 
 
-class GatewayHostnameBindingKeyVault(_Model):
+class GatewayHostnameBindingKeyVault(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GatewayHostnameBindingKeyVault.
 
     :ivar secret_id: The current provisioning state of the API Management gateway hostname binding.
@@ -9978,7 +10145,7 @@ class GatewayHostnameBindingKeyVaultLastStatus(_Model):
      following format: ``yyyy-MM-ddTHH:mm:ssZ`` as specified by the ISO 8601 standard."""
 
 
-class GatewayHostnameBindingResource(ProxyResource):
+class GatewayHostnameBindingResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single API Management gateway hostname binding resource in List or Get response.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10049,7 +10216,9 @@ class GatewayHostnameBindingResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class GatewayHostnameConfigurationContract(ProxyResource):
+class GatewayHostnameConfigurationContract(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Gateway hostname configuration details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10118,7 +10287,9 @@ class GatewayHostnameConfigurationContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class GatewayHostnameConfigurationContractProperties(_Model):  # pylint: disable=name-too-long
+class GatewayHostnameConfigurationContractProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Gateway hostname configuration details.
 
     :ivar hostname: Hostname value. Supports valid domain name, partial or full wildcard.
@@ -10182,7 +10353,7 @@ class GatewayHostnameConfigurationContractProperties(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class GatewayKeyRegenerationRequestContract(_Model):
+class GatewayKeyRegenerationRequestContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Gateway key regeneration request contract properties.
 
     :ivar key_type: The Key being regenerated. Required. Known values are: "primary" and
@@ -10213,7 +10384,7 @@ class GatewayKeyRegenerationRequestContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GatewayKeysContract(_Model):
+class GatewayKeysContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Gateway authentication keys.
 
     :ivar primary: Primary gateway key.
@@ -10246,7 +10417,7 @@ class GatewayKeysContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GatewayListDebugCredentialsContract(_Model):
+class GatewayListDebugCredentialsContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List debug credentials properties.
 
     :ivar credentials_expire_after: Credentials expiration in ISO8601 format. Maximum duration of
@@ -10291,7 +10462,7 @@ class GatewayListDebugCredentialsContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GatewayListTraceContract(_Model):
+class GatewayListTraceContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List trace properties.
 
     :ivar trace_id: Trace id.
@@ -10338,7 +10509,7 @@ class GatewayResourceSkuResult(_Model):
     """Specifies the number of API Management gateway units."""
 
 
-class GatewaySku(_Model):
+class GatewaySku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an available API Management SKU for gateways.
 
     :ivar name: Name of the Sku. Known values are: "Standard", "WorkspaceGatewayStandard", and
@@ -10397,7 +10568,7 @@ class GatewaySkuCapacity(_Model):
      \"None\"."""
 
 
-class GatewayTokenContract(_Model):
+class GatewayTokenContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Gateway access token.
 
     :ivar value: Shared Access Authentication token value for the Gateway.
@@ -10425,7 +10596,7 @@ class GatewayTokenContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GatewayTokenRequestContract(_Model):
+class GatewayTokenRequestContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Gateway token request contract properties.
 
     :ivar key_type: The Key to be used to generate gateway token. Required. Known values are:
@@ -10465,7 +10636,7 @@ class GatewayTokenRequestContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GenerateSsoUrlResult(_Model):
+class GenerateSsoUrlResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Generate SSO Url operations response details.
 
     :ivar value: Redirect Url containing the SSO URL value.
@@ -10493,7 +10664,7 @@ class GenerateSsoUrlResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GlobalSchemaContract(ProxyResource):
+class GlobalSchemaContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Global Schema Contract details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10534,7 +10705,7 @@ class GlobalSchemaContract(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class GlobalSchemaContractProperties(_Model):
+class GlobalSchemaContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schema create or update contract Properties.
 
     :ivar schema_type: Schema Type. Immutable. Required. Known values are: "xml" and "json".
@@ -10603,7 +10774,7 @@ class GlobalSchemaContractProperties(_Model):
             super().__setattr__(key, value)
 
 
-class GroupContract(ProxyResource):
+class GroupContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contract details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10664,7 +10835,7 @@ class GroupContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class GroupContractProperties(_Model):
+class GroupContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Group contract Properties.
 
     :ivar display_name: Group name. Required.
@@ -10721,7 +10892,7 @@ class GroupContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GroupCreateParameters(_Model):
+class GroupCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Create Group operation.
 
     :ivar properties: Properties supplied to Create Group operation.
@@ -10771,7 +10942,7 @@ class GroupCreateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class GroupCreateParametersProperties(_Model):
+class GroupCreateParametersProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Create Group operation.
 
     :ivar display_name: Group name. Required.
@@ -10822,7 +10993,7 @@ class GroupCreateParametersProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GroupUpdateParameters(_Model):
+class GroupUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Update Group operation.
 
     :ivar properties: Group entity update contract properties.
@@ -10872,7 +11043,7 @@ class GroupUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class GroupUpdateParametersProperties(_Model):
+class GroupUpdateParametersProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Update Group operation.
 
     :ivar display_name: Group name.
@@ -10925,7 +11096,7 @@ class GroupUpdateParametersProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HostnameConfiguration(_Model):
+class HostnameConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom hostname configuration.
 
     :ivar type: Hostname type. Required. Known values are: "Proxy", "Portal", "Management", "Scm",
@@ -11041,7 +11212,7 @@ class HostnameConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HTTPHeader(_Model):
+class HTTPHeader(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HTTP header and it's value.
 
     :ivar name: Header name. Required.
@@ -11074,7 +11245,7 @@ class HTTPHeader(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HttpMessageDiagnostic(_Model):
+class HttpMessageDiagnostic(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Http message diagnostic settings.
 
     :ivar headers: Array of HTTP Headers to log.
@@ -11116,7 +11287,7 @@ class HttpMessageDiagnostic(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IdentityProviderBaseParameters(_Model):
+class IdentityProviderBaseParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity Provider Base Parameter Properties.
 
     :ivar type: Identity Provider Type identifier. Known values are: "facebook", "google",
@@ -11206,7 +11377,7 @@ class IdentityProviderBaseParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IdentityProviderContract(ProxyResource):
+class IdentityProviderContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity Provider details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11280,7 +11451,9 @@ class IdentityProviderContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class IdentityProviderContractProperties(IdentityProviderBaseParameters):
+class IdentityProviderContractProperties(
+    IdentityProviderBaseParameters
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The external Identity Providers like Facebook, Google, Microsoft, Twitter or Azure Active
     Directory which can be used to enable access to the API Management service developer portal for
     all users.
@@ -11363,7 +11536,7 @@ class IdentityProviderContractProperties(IdentityProviderBaseParameters):
         super().__init__(*args, **kwargs)
 
 
-class IdentityProviderCreateContract(ProxyResource):
+class IdentityProviderCreateContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity Provider details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11437,7 +11610,9 @@ class IdentityProviderCreateContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class IdentityProviderCreateContractProperties(IdentityProviderBaseParameters):
+class IdentityProviderCreateContractProperties(
+    IdentityProviderBaseParameters
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The external Identity Providers like Facebook, Google, Microsoft, Twitter or Azure Active
     Directory which can be used to enable access to the API Management service developer portal for
     all users.
@@ -11518,7 +11693,7 @@ class IdentityProviderCreateContractProperties(IdentityProviderBaseParameters):
         super().__init__(*args, **kwargs)
 
 
-class IdentityProviderUpdateParameters(_Model):
+class IdentityProviderUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to update Identity Provider.
 
     :ivar properties: Identity Provider update properties.
@@ -11581,7 +11756,9 @@ class IdentityProviderUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class IdentityProviderUpdateProperties(IdentityProviderBaseParameters):
+class IdentityProviderUpdateProperties(
+    IdentityProviderBaseParameters
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Update Identity Provider operation.
 
     :ivar type: Identity Provider Type identifier. Known values are: "facebook", "google",
@@ -11660,7 +11837,7 @@ class IdentityProviderUpdateProperties(IdentityProviderBaseParameters):
         super().__init__(*args, **kwargs)
 
 
-class IssueAttachmentContract(ProxyResource):
+class IssueAttachmentContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Issue Attachment Contract details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11721,7 +11898,7 @@ class IssueAttachmentContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class IssueAttachmentContractProperties(_Model):
+class IssueAttachmentContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Issue Attachment contract Properties.
 
     :ivar title: Filename by which the binary data will be saved. Required.
@@ -11761,7 +11938,7 @@ class IssueAttachmentContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IssueCommentContract(ProxyResource):
+class IssueCommentContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Issue Comment Contract details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11822,7 +11999,7 @@ class IssueCommentContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class IssueCommentContractProperties(_Model):
+class IssueCommentContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Issue Comment contract Properties.
 
     :ivar text: Comment text. Required.
@@ -11862,7 +12039,7 @@ class IssueCommentContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IssueContract(ProxyResource):
+class IssueContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Issue Contract details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11923,7 +12100,7 @@ class IssueContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class IssueContractBaseProperties(_Model):
+class IssueContractBaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Issue contract Base Properties.
 
     :ivar created_date: Date and time when the issue was created.
@@ -11967,7 +12144,9 @@ class IssueContractBaseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IssueContractProperties(IssueContractBaseProperties):
+class IssueContractProperties(
+    IssueContractBaseProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Issue contract Properties.
 
     :ivar created_date: Date and time when the issue was created.
@@ -12015,7 +12194,7 @@ class IssueContractProperties(IssueContractBaseProperties):
         super().__init__(*args, **kwargs)
 
 
-class IssueUpdateContract(_Model):
+class IssueUpdateContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Issue update Parameters.
 
     :ivar properties: Issue entity Update contract properties.
@@ -12065,7 +12244,9 @@ class IssueUpdateContract(_Model):
             super().__setattr__(key, value)
 
 
-class IssueUpdateContractProperties(IssueContractBaseProperties):
+class IssueUpdateContractProperties(
+    IssueContractBaseProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Issue contract Update Properties.
 
     :ivar created_date: Date and time when the issue was created.
@@ -12113,7 +12294,7 @@ class IssueUpdateContractProperties(IssueContractBaseProperties):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultContractCreateProperties(_Model):
+class KeyVaultContractCreateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Create keyVault contract details.
 
     :ivar secret_identifier: Key vault secret identifier for fetching secret. Providing a versioned
@@ -12155,7 +12336,9 @@ class KeyVaultContractCreateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultContractProperties(KeyVaultContractCreateProperties):
+class KeyVaultContractProperties(
+    KeyVaultContractCreateProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KeyVault contract details.
 
     :ivar secret_identifier: Key vault secret identifier for fetching secret. Providing a versioned
@@ -12195,7 +12378,9 @@ class KeyVaultContractProperties(KeyVaultContractCreateProperties):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultLastAccessStatusContractProperties(_Model):  # pylint: disable=name-too-long
+class KeyVaultLastAccessStatusContractProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Issue contract Update Properties.
 
     :ivar code: Last status code for sync and refresh of secret from key vault.
@@ -12237,7 +12422,7 @@ class KeyVaultLastAccessStatusContractProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class LLMDiagnosticSettings(_Model):
+class LLMDiagnosticSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Diagnostic settings for Large Language Models.
 
     :ivar logs: Specifies whether default diagnostic should be enabled for Large Language Models or
@@ -12283,7 +12468,7 @@ class LLMDiagnosticSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LLMMessageDiagnosticSettings(_Model):
+class LLMMessageDiagnosticSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Diagnostic settings for Large Language Models Messages.
 
     :ivar messages: Specifies which message should be logged. Currently there is only 'all' option.
@@ -12321,7 +12506,7 @@ class LLMMessageDiagnosticSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LoggerContract(ProxyResource):
+class LoggerContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Logger details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12382,7 +12567,7 @@ class LoggerContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class LoggerContractProperties(_Model):
+class LoggerContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Logger entity in API Management represents an event sink that you can use to log API
     Management events. Currently the Logger entity supports logging API Management events to Azure
     Event Hubs.
@@ -12445,7 +12630,7 @@ class LoggerContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LoggerUpdateContract(_Model):
+class LoggerUpdateContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Logger update contract.
 
     :ivar properties: Logger entity update contract properties.
@@ -12495,7 +12680,7 @@ class LoggerUpdateContract(_Model):
             super().__setattr__(key, value)
 
 
-class LoggerUpdateParameters(_Model):
+class LoggerUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Update Logger operation.
 
     :ivar logger_type: Logger type. Known values are: "azureEventHub", "applicationInsights", and
@@ -12545,7 +12730,7 @@ class LoggerUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -12597,7 +12782,80 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MigrateToStv2Contract(_Model):
+class McpEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Endpoint definition for MCP API type.
+
+    :ivar name: MCP endpoint name, e.g. 'sse' or 'messages'. Required.
+    :vartype name: str
+    :ivar uri_template: Relative URL path that must start with '/'.
+    :vartype uri_template: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """MCP endpoint name, e.g. 'sse' or 'messages'. Required."""
+    uri_template: Optional[str] = rest_field(
+        name="uriTemplate", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Relative URL path that must start with '/'."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        uri_template: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class McpProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties specific to MCP API type.
+
+    :ivar transport_type: Transport type for Model Context Protocol API. Known values are: "sse"
+     and "streamable".
+    :vartype transport_type: str or ~azure.mgmt.apimanagement.models.McpTransportType
+    :ivar endpoints: Collection of MCP endpoint definitions with relative URLs.
+    :vartype endpoints: list[~azure.mgmt.apimanagement.models.McpEndpoint]
+    """
+
+    transport_type: Optional[Union[str, "_models.McpTransportType"]] = rest_field(
+        name="transportType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Transport type for Model Context Protocol API. Known values are: \"sse\" and \"streamable\"."""
+    endpoints: Optional[list["_models.McpEndpoint"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Collection of MCP endpoint definitions with relative URLs."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        transport_type: Optional[Union[str, "_models.McpTransportType"]] = None,
+        endpoints: Optional[list["_models.McpEndpoint"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MigrateToStv2Contract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an available API Management SKU.
 
     :ivar mode: Mode of Migration to stv2. Default is PreserveIp. Known values are: "PreserveIp"
@@ -12629,7 +12887,7 @@ class MigrateToStv2Contract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NamedValueContract(ProxyResource):
+class NamedValueContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NamedValue details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12690,7 +12948,7 @@ class NamedValueContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class NamedValueEntityBaseParameters(_Model):
+class NamedValueEntityBaseParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NamedValue Entity Base Parameters set.
 
     :ivar tags: Optional tags that when provided can be used to filter the NamedValue list.
@@ -12725,7 +12983,9 @@ class NamedValueEntityBaseParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NamedValueContractProperties(NamedValueEntityBaseParameters):
+class NamedValueContractProperties(
+    NamedValueEntityBaseParameters
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NamedValue Contract properties.
 
     :ivar tags: Optional tags that when provided can be used to filter the NamedValue list.
@@ -12782,7 +13042,7 @@ class NamedValueContractProperties(NamedValueEntityBaseParameters):
         super().__init__(*args, **kwargs)
 
 
-class NamedValueCreateContract(ProxyResource):
+class NamedValueCreateContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NamedValue details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12843,7 +13103,9 @@ class NamedValueCreateContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class NamedValueCreateContractProperties(NamedValueEntityBaseParameters):
+class NamedValueCreateContractProperties(
+    NamedValueEntityBaseParameters
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NamedValue Contract properties.
 
     :ivar tags: Optional tags that when provided can be used to filter the NamedValue list.
@@ -12896,7 +13158,7 @@ class NamedValueCreateContractProperties(NamedValueEntityBaseParameters):
         super().__init__(*args, **kwargs)
 
 
-class NamedValueSecretContract(_Model):
+class NamedValueSecretContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Client or app secret used in IdentityProviders, Aad, OpenID or OAuth.
 
     :ivar value: This is secret value of the NamedValue entity.
@@ -12924,7 +13186,9 @@ class NamedValueSecretContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NamedValueUpdateParameterProperties(NamedValueEntityBaseParameters):
+class NamedValueUpdateParameterProperties(
+    NamedValueEntityBaseParameters
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NamedValue Contract properties.
 
     :ivar tags: Optional tags that when provided can be used to filter the NamedValue list.
@@ -12977,7 +13241,7 @@ class NamedValueUpdateParameterProperties(NamedValueEntityBaseParameters):
         super().__init__(*args, **kwargs)
 
 
-class NamedValueUpdateParameters(_Model):
+class NamedValueUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NamedValue update Parameters.
 
     :ivar properties: NamedValue entity Update contract properties.
@@ -13027,7 +13291,7 @@ class NamedValueUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class NetworkStatusContract(_Model):
+class NetworkStatusContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Status details.
 
     :ivar dns_servers: Gets the list of DNS servers IPV4 addresses. Required.
@@ -13064,7 +13328,7 @@ class NetworkStatusContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkStatusContractByLocation(_Model):
+class NetworkStatusContractByLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Status in the Location.
 
     :ivar location: Location of service.
@@ -13099,7 +13363,7 @@ class NetworkStatusContractByLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NotificationContract(ProxyResource):
+class NotificationContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Notification details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13160,7 +13424,7 @@ class NotificationContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class NotificationContractProperties(_Model):
+class NotificationContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Notification Contract properties.
 
     :ivar title: Title of the Notification. Required.
@@ -13200,7 +13464,7 @@ class NotificationContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OAuth2AuthenticationSettingsContract(_Model):
+class OAuth2AuthenticationSettingsContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API OAuth2 Authentication settings details.
 
     :ivar authorization_server_id: OAuth authorization server identifier.
@@ -13235,7 +13499,7 @@ class OAuth2AuthenticationSettingsContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenIdAuthenticationSettingsContract(_Model):
+class OpenIdAuthenticationSettingsContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API OAuth2 Authentication settings details.
 
     :ivar openid_provider_id: OAuth authorization server identifier.
@@ -13273,7 +13537,7 @@ class OpenIdAuthenticationSettingsContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenidConnectProviderContract(ProxyResource):
+class OpenidConnectProviderContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OpenId Connect Provider details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13342,7 +13606,7 @@ class OpenidConnectProviderContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class OpenidConnectProviderContractProperties(_Model):
+class OpenidConnectProviderContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OpenID Connect Providers Contract.
 
     :ivar display_name: User-friendly OpenID Connect Provider name. Required.
@@ -13412,7 +13676,7 @@ class OpenidConnectProviderContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OpenidConnectProviderUpdateContract(_Model):
+class OpenidConnectProviderUpdateContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Update OpenID Connect Provider operation.
 
     :ivar properties: OpenId Connect Provider Update contract properties.
@@ -13471,7 +13735,9 @@ class OpenidConnectProviderUpdateContract(_Model):
             super().__setattr__(key, value)
 
 
-class OpenidConnectProviderUpdateContractProperties(_Model):  # pylint: disable=name-too-long
+class OpenidConnectProviderUpdateContractProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Update OpenID Connect Provider operation.
 
     :ivar display_name: User-friendly OpenID Connect Provider name.
@@ -13543,7 +13809,7 @@ class OpenidConnectProviderUpdateContractProperties(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API operation.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -13608,7 +13874,7 @@ class Operation(_Model):
             super().__setattr__(key, value)
 
 
-class OperationContract(ProxyResource):
+class OperationContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API Operation details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13678,7 +13944,7 @@ class OperationContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class OperationEntityBaseContract(_Model):
+class OperationEntityBaseContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API Operation Entity Base Contract details.
 
     :ivar template_parameters: Collection of URL template parameters.
@@ -13732,7 +13998,9 @@ class OperationEntityBaseContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationContractProperties(OperationEntityBaseContract):
+class OperationContractProperties(
+    OperationEntityBaseContract
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation Contract Properties.
 
     :ivar template_parameters: Collection of URL template parameters.
@@ -13789,7 +14057,7 @@ class OperationContractProperties(OperationEntityBaseContract):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_Model):
+class OperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object that describes the operation.
 
     :ivar provider: Friendly name of the resource provider.
@@ -13832,7 +14100,7 @@ class OperationDisplay(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationResultContract(ProxyResource):
+class OperationResultContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Long Running Git Operation Results.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13893,7 +14161,7 @@ class OperationResultContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class OperationResultContractProperties(_Model):
+class OperationResultContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation Result.
 
     :ivar id: Operation result identifier.
@@ -13972,7 +14240,7 @@ class OperationResultContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationResultLogItemContract(_Model):
+class OperationResultLogItemContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Log of the entity being created, updated or deleted.
 
     :ivar object_type: The type of entity contract.
@@ -14012,7 +14280,7 @@ class OperationResultLogItemContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationStatusResult(_Model):
+class OperationStatusResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The current status of an async operation.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -14031,6 +14299,9 @@ class OperationStatusResult(_Model):
     :vartype operations: list[~azure.mgmt.apimanagement.models.OperationStatusResult]
     :ivar error: If present, details of the operation error.
     :vartype error: ~azure.mgmt.apimanagement.models.ErrorDetail
+    :ivar resource_id: Fully qualified ID of the resource against which the original async
+     operation was started.
+    :vartype resource_id: str
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -14057,6 +14328,8 @@ class OperationStatusResult(_Model):
     """The operations list."""
     error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """If present, details of the operation error."""
+    resource_id: Optional[str] = rest_field(name="resourceId", visibility=["read"])
+    """Fully qualified ID of the resource against which the original async operation was started."""
 
     @overload
     def __init__(
@@ -14083,7 +14356,7 @@ class OperationStatusResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationTagResourceContractProperties(_Model):
+class OperationTagResourceContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation Entity contract Properties.
 
     :ivar id: Identifier of the operation in form /operations/{operationId}.
@@ -14143,7 +14416,7 @@ class OperationTagResourceContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationUpdateContract(_Model):
+class OperationUpdateContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API Operation Update Contract details.
 
     :ivar properties: Properties of the API Operation entity that can be updated.
@@ -14202,7 +14475,9 @@ class OperationUpdateContract(_Model):
             super().__setattr__(key, value)
 
 
-class OperationUpdateContractProperties(OperationEntityBaseContract):
+class OperationUpdateContractProperties(
+    OperationEntityBaseContract
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation Update Contract Properties.
 
     :ivar template_parameters: Collection of URL template parameters.
@@ -14263,7 +14538,7 @@ class OperationUpdateContractProperties(OperationEntityBaseContract):
         super().__init__(*args, **kwargs)
 
 
-class OutboundEnvironmentEndpoint(_Model):
+class OutboundEnvironmentEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Endpoints accessed for a common purpose that the Api Management Service requires outbound
     network access to.
 
@@ -14301,7 +14576,7 @@ class OutboundEnvironmentEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OutboundEnvironmentEndpointList(_Model):
+class OutboundEnvironmentEndpointList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Collection of Outbound Environment Endpoints.
 
     :ivar value: Collection of resources. Required.
@@ -14335,7 +14610,7 @@ class OutboundEnvironmentEndpointList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ParameterContract(_Model):
+class ParameterContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation parameters details.
 
     :ivar name: Parameter name. Required.
@@ -14409,7 +14684,7 @@ class ParameterContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ParameterExampleContract(_Model):
+class ParameterExampleContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameter example.
 
     :ivar summary: Short description for the example.
@@ -14454,7 +14729,7 @@ class ParameterExampleContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PipelineDiagnosticSettings(_Model):
+class PipelineDiagnosticSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Diagnostic settings for incoming/outgoing HTTP messages to the Gateway.
 
     :ivar request: Diagnostic settings for request.
@@ -14491,7 +14766,7 @@ class PipelineDiagnosticSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyCollection(_Model):
+class PolicyCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response of the list policy operation.
 
     :ivar value: Policy Contract value.
@@ -14531,7 +14806,7 @@ class PolicyCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyContract(ProxyResource):
+class PolicyContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Policy Contract details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14592,7 +14867,7 @@ class PolicyContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PolicyContractProperties(_Model):
+class PolicyContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Policy contract Properties.
 
     :ivar value: Contents of the Policy as defined by the format. Required.
@@ -14629,7 +14904,7 @@ class PolicyContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyDescriptionCollection(_Model):
+class PolicyDescriptionCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Descriptions of API Management policies.
 
     :ivar value: Descriptions of API Management policies.
@@ -14664,7 +14939,7 @@ class PolicyDescriptionCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyDescriptionContract(ProxyResource):
+class PolicyDescriptionContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Policy description details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14740,7 +15015,7 @@ class PolicyDescriptionContractProperties(_Model):
     """Binary OR value of the Snippet scope."""
 
 
-class PolicyFragmentContract(ProxyResource):
+class PolicyFragmentContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Policy fragment contract details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14801,7 +15076,7 @@ class PolicyFragmentContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PolicyFragmentContractProperties(_Model):
+class PolicyFragmentContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Policy fragment contract properties.
 
     :ivar value: Contents of the policy fragment. Required.
@@ -14845,7 +15120,7 @@ class PolicyFragmentContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyRestrictionContract(ProxyResource):
+class PolicyRestrictionContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Policy restriction contract details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14906,7 +15181,7 @@ class PolicyRestrictionContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PolicyRestrictionContractProperties(_Model):
+class PolicyRestrictionContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Policy restrictions contract properties.
 
     :ivar scope: Path to the policy document.
@@ -14943,7 +15218,7 @@ class PolicyRestrictionContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyRestrictionUpdateContract(_Model):
+class PolicyRestrictionUpdateContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Policy restriction contract details.
 
     :ivar properties: Properties of the Policy Restriction.
@@ -14993,7 +15268,7 @@ class PolicyRestrictionUpdateContract(_Model):
             super().__setattr__(key, value)
 
 
-class PortalConfigContract(ProxyResource):
+class PortalConfigContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The developer portal configuration contract.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15054,7 +15329,7 @@ class PortalConfigContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PortalConfigCorsProperties(_Model):
+class PortalConfigCorsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The developer portal Cross-Origin Resource Sharing (CORS) settings.
 
     :ivar allowed_origins: Allowed origins, e.g. ``https://trusted.com``.
@@ -15084,7 +15359,7 @@ class PortalConfigCorsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PortalConfigCspProperties(_Model):
+class PortalConfigCspProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The developer portal Content Security Policy (CSP) settings.
 
     :ivar mode: The mode of the developer portal Content Security Policy (CSP). Known values are:
@@ -15130,7 +15405,7 @@ class PortalConfigCspProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PortalConfigDelegationProperties(_Model):
+class PortalConfigDelegationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PortalConfigDelegationProperties.
 
     :ivar delegate_registration: Enable or disable delegation for user registration.
@@ -15182,7 +15457,7 @@ class PortalConfigDelegationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PortalConfigProperties(_Model):
+class PortalConfigProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The developer portal configuration contract properties.
 
     :ivar enable_basic_auth: Enable or disable Basic authentication method.
@@ -15245,7 +15520,7 @@ class PortalConfigProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PortalConfigPropertiesSignin(_Model):
+class PortalConfigPropertiesSignin(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PortalConfigPropertiesSignin.
 
     :ivar require: Redirect anonymous users to the sign-in page.
@@ -15273,7 +15548,7 @@ class PortalConfigPropertiesSignin(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PortalConfigPropertiesSignup(_Model):
+class PortalConfigPropertiesSignup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PortalConfigPropertiesSignup.
 
     :ivar terms_of_service: Terms of service settings.
@@ -15304,7 +15579,7 @@ class PortalConfigPropertiesSignup(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PortalConfigTermsOfServiceProperties(_Model):
+class PortalConfigTermsOfServiceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Terms of service contract properties.
 
     :ivar text: A terms of service text.
@@ -15339,7 +15614,7 @@ class PortalConfigTermsOfServiceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PortalDelegationSettings(ProxyResource):
+class PortalDelegationSettings(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Delegation settings for a developer portal.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15400,7 +15675,7 @@ class PortalDelegationSettings(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PortalDelegationSettingsProperties(_Model):
+class PortalDelegationSettingsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Delegation settings contract properties.
 
     :ivar url: A delegation Url.
@@ -15453,7 +15728,7 @@ class PortalDelegationSettingsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PortalRevisionContract(ProxyResource):
+class PortalRevisionContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Portal Revision's contract details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15522,7 +15797,7 @@ class PortalRevisionContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PortalRevisionContractProperties(_Model):
+class PortalRevisionContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PortalRevisionContractProperties.
 
     :ivar description: Portal revision description.
@@ -15583,7 +15858,7 @@ class PortalRevisionContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PortalSettingsCollection(_Model):
+class PortalSettingsCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Descriptions of API Management policies.
 
     :ivar value: Descriptions of API Management policies.
@@ -15618,7 +15893,7 @@ class PortalSettingsCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PortalSettingsContract(ProxyResource):
+class PortalSettingsContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Portal Settings for the Developer Portal.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15679,7 +15954,7 @@ class PortalSettingsContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PortalSettingsContractProperties(_Model):
+class PortalSettingsContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sign-in settings contract properties.
 
     :ivar url: A delegation Url.
@@ -15744,7 +16019,7 @@ class PortalSettingsContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PortalSettingValidationKeyContract(_Model):
+class PortalSettingValidationKeyContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Client or app secret used in IdentityProviders, Aad, OpenID or OAuth.
 
     :ivar validation_key: This is secret value of the validation key in portal settings.
@@ -15774,7 +16049,7 @@ class PortalSettingValidationKeyContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PortalSigninSettingProperties(_Model):
+class PortalSigninSettingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sign-in settings contract properties.
 
     :ivar enabled: Redirect Anonymous users to the Sign-In page.
@@ -15802,7 +16077,7 @@ class PortalSigninSettingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PortalSigninSettings(ProxyResource):
+class PortalSigninSettings(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sign-In settings for the Developer Portal.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15863,7 +16138,7 @@ class PortalSigninSettings(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PortalSignupSettings(ProxyResource):
+class PortalSignupSettings(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sign-Up settings for a developer portal.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15924,7 +16199,7 @@ class PortalSignupSettings(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PortalSignupSettingsProperties(_Model):
+class PortalSignupSettingsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sign-up settings contract properties.
 
     :ivar enabled: Allow users to sign up on a developer portal.
@@ -15970,7 +16245,7 @@ class PrivateEndpoint(_Model):
     """The resource identifier of the private endpoint."""
 
 
-class PrivateEndpointConnection(Resource):
+class PrivateEndpointConnection(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private endpoint connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15993,7 +16268,7 @@ class PrivateEndpointConnection(Resource):
     )
     """Resource properties."""
 
-    __flattened_items = ["private_endpoint", "private_link_service_connection_state", "provisioning_state"]
+    __flattened_items = ["group_ids", "private_endpoint", "private_link_service_connection_state", "provisioning_state"]
 
     @overload
     def __init__(
@@ -16031,9 +16306,11 @@ class PrivateEndpointConnection(Resource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the private endpoint connection.
 
+    :ivar group_ids: The group ids for the private endpoint resource.
+    :vartype group_ids: list[str]
     :ivar private_endpoint: The private endpoint resource.
     :vartype private_endpoint: ~azure.mgmt.apimanagement.models.PrivateEndpoint
     :ivar private_link_service_connection_state: A collection of information about the state of the
@@ -16046,6 +16323,8 @@ class PrivateEndpointConnectionProperties(_Model):
      ~azure.mgmt.apimanagement.models.PrivateEndpointConnectionProvisioningState
     """
 
+    group_ids: Optional[list[str]] = rest_field(name="groupIds", visibility=["read"])
+    """The group ids for the private endpoint resource."""
     private_endpoint: Optional["_models.PrivateEndpoint"] = rest_field(
         name="privateEndpoint", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -16080,7 +16359,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionRequest(_Model):
+class PrivateEndpointConnectionRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A request to approve or reject a private endpoint connection.
 
     :ivar id: Private Endpoint Connection Resource Id.
@@ -16116,7 +16395,9 @@ class PrivateEndpointConnectionRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionRequestProperties(_Model):  # pylint: disable=name-too-long
+class PrivateEndpointConnectionRequestProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The connection state of the private endpoint connection.
 
     :ivar private_link_service_connection_state: A collection of information about the state of the
@@ -16149,7 +16430,9 @@ class PrivateEndpointConnectionRequestProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionWrapperProperties(_Model):  # pylint: disable=name-too-long
+class PrivateEndpointConnectionWrapperProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of the PrivateEndpointConnectProperties.
 
     :ivar private_endpoint: The resource of private end point.
@@ -16197,7 +16480,7 @@ class PrivateEndpointConnectionWrapperProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(Resource):
+class PrivateLinkResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16258,7 +16541,7 @@ class PrivateLinkResource(Resource):
             super().__setattr__(key, value)
 
 
-class PrivateLinkResourceListResult(_Model):
+class PrivateLinkResourceListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response of a PrivateLinkResource list operation.
 
     :ivar value: The PrivateLinkResource items on this page. Required.
@@ -16291,7 +16574,7 @@ class PrivateLinkResourceListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link resource.
 
     :ivar group_id: The private link resource group id.
@@ -16329,7 +16612,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A collection of information about the state of the connection between service consumer and
     provider.
 
@@ -16375,7 +16658,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProductApiLinkContract(ProxyResource):
+class ProductApiLinkContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Product-API link details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16436,7 +16719,7 @@ class ProductApiLinkContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ProductApiLinkContractProperties(_Model):
+class ProductApiLinkContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Product-API link entity properties.
 
     :ivar api_id: Full resource Id of an API. Required.
@@ -16464,7 +16747,7 @@ class ProductApiLinkContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProductApplicationContract(_Model):
+class ProductApplicationContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies Microsoft Entra settings needed to authorize product API calls using client
     applications.
 
@@ -16497,7 +16780,7 @@ class ProductApplicationContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProductApplicationContractEntra(_Model):
+class ProductApplicationContractEntra(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies Microsoft Entra settings needed to authorize product API calls using client
     application with Microsoft Entra OAuth token.
 
@@ -16534,7 +16817,7 @@ class ProductApplicationContractEntra(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProductContract(ProxyResource):
+class ProductContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Product details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16605,7 +16888,7 @@ class ProductContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ProductEntityBaseParameters(_Model):
+class ProductEntityBaseParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Product Entity Base Parameters.
 
     :ivar description: Product description. May include HTML formatting tags.
@@ -16713,7 +16996,9 @@ class ProductEntityBaseParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProductContractProperties(ProductEntityBaseParameters):
+class ProductContractProperties(
+    ProductEntityBaseParameters
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Product profile.
 
     :ivar description: Product description. May include HTML formatting tags.
@@ -16783,7 +17068,9 @@ class ProductContractProperties(ProductEntityBaseParameters):
         super().__init__(*args, **kwargs)
 
 
-class ProductEntityBaseParametersApplication(ProductApplicationContract):
+class ProductEntityBaseParametersApplication(
+    ProductApplicationContract
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies identity provider settings needed to authorize applications API calls.
 
     :ivar entra: Specifies Microsoft Entra settings needed to authorize product API calls using
@@ -16809,7 +17096,7 @@ class ProductEntityBaseParametersApplication(ProductApplicationContract):
         super().__init__(*args, **kwargs)
 
 
-class ProductGroupLinkContract(ProxyResource):
+class ProductGroupLinkContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Product-group link details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16870,7 +17157,7 @@ class ProductGroupLinkContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ProductGroupLinkContractProperties(_Model):
+class ProductGroupLinkContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Product-group link entity properties.
 
     :ivar group_id: Full resource Id of a group. Required.
@@ -16898,7 +17185,9 @@ class ProductGroupLinkContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProductTagResourceContractProperties(ProductEntityBaseParameters):
+class ProductTagResourceContractProperties(
+    ProductEntityBaseParameters
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Product profile.
 
     :ivar description: Product description. May include HTML formatting tags.
@@ -16973,7 +17262,7 @@ class ProductTagResourceContractProperties(ProductEntityBaseParameters):
         super().__init__(*args, **kwargs)
 
 
-class ProductUpdateParameters(_Model):
+class ProductUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Product Update parameters.
 
     :ivar properties: Product entity Update contract properties.
@@ -17033,7 +17322,9 @@ class ProductUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class ProductUpdateProperties(ProductEntityBaseParameters):
+class ProductUpdateProperties(
+    ProductEntityBaseParameters
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Update Product operation.
 
     :ivar description: Product description. May include HTML formatting tags.
@@ -17105,7 +17396,7 @@ class ProductUpdateProperties(ProductEntityBaseParameters):
         super().__init__(*args, **kwargs)
 
 
-class QuotaCounterCollection(_Model):
+class QuotaCounterCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Paged Quota Counter list representation.
 
     :ivar value: Quota counter values.
@@ -17145,7 +17436,7 @@ class QuotaCounterCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QuotaCounterContract(_Model):
+class QuotaCounterContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Quota counter details.
 
     :ivar counter_key: The Key value of the Counter. Must not be empty. Required.
@@ -17204,7 +17495,7 @@ class QuotaCounterContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QuotaCounterValueContractProperties(_Model):
+class QuotaCounterValueContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Quota counter value details.
 
     :ivar calls_count: Number of times Counter was called.
@@ -17241,7 +17532,7 @@ class QuotaCounterValueContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QuotaCounterValueUpdateContract(_Model):
+class QuotaCounterValueUpdateContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Quota counter value details.
 
     :ivar properties: Quota counter value details.
@@ -17291,7 +17582,7 @@ class QuotaCounterValueUpdateContract(_Model):
             super().__setattr__(key, value)
 
 
-class RecipientEmailCollection(_Model):
+class RecipientEmailCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Paged Recipient User list representation.
 
     :ivar value: Page values.
@@ -17331,7 +17622,7 @@ class RecipientEmailCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecipientEmailContract(ProxyResource):
+class RecipientEmailContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recipient Email details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17392,7 +17683,7 @@ class RecipientEmailContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RecipientEmailContractProperties(_Model):
+class RecipientEmailContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recipient Email Contract Properties.
 
     :ivar email: User Email subscribed to notification.
@@ -17420,7 +17711,7 @@ class RecipientEmailContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecipientsContractProperties(_Model):
+class RecipientsContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Notification Parameter contract.
 
     :ivar emails: List of Emails subscribed for the notification.
@@ -17453,7 +17744,7 @@ class RecipientsContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecipientUserCollection(_Model):
+class RecipientUserCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Paged Recipient User list representation.
 
     :ivar value: Page values.
@@ -17493,7 +17784,7 @@ class RecipientUserCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecipientUserContract(ProxyResource):
+class RecipientUserContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recipient User details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17554,7 +17845,7 @@ class RecipientUserContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RecipientUsersContractProperties(_Model):
+class RecipientUsersContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recipient User Contract Properties.
 
     :ivar user_id: API Management UserId subscribed to notification.
@@ -17582,7 +17873,7 @@ class RecipientUsersContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegionContract(_Model):
+class RegionContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Region profile.
 
     :ivar name: Region name.
@@ -17623,7 +17914,7 @@ class RegionContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegistrationDelegationSettingsProperties(_Model):
+class RegistrationDelegationSettingsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User registration delegation settings properties.
 
     :ivar enabled: Enable or disable delegation for user registration.
@@ -17651,7 +17942,7 @@ class RegistrationDelegationSettingsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RemotePrivateEndpointConnectionWrapper(_Model):
+class RemotePrivateEndpointConnectionWrapper(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Remote Private Endpoint Connection resource.
 
     :ivar id: Private Endpoint connection resource id.
@@ -17717,7 +18008,7 @@ class RemotePrivateEndpointConnectionWrapper(_Model):
             super().__setattr__(key, value)
 
 
-class ReportRecordContract(_Model):
+class ReportRecordContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Report data.
 
     :ivar name: Name depending on report endpoint specifies product, API, operation or developer
@@ -17917,7 +18208,7 @@ class ReportRecordContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RepresentationContract(_Model):
+class RepresentationContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation request/response representation details.
 
     :ivar content_type: Specifies a registered or custom content type for this representation, e.g.
@@ -17977,7 +18268,7 @@ class RepresentationContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RequestContract(_Model):
+class RequestContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation request details.
 
     :ivar description: Operation request description.
@@ -18026,7 +18317,7 @@ class RequestContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RequestReportRecordContract(_Model):
+class RequestReportRecordContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request Report data.
 
     :ivar api_id: API identifier path. /apis/{apiId}.
@@ -18162,7 +18453,7 @@ class RequestReportRecordContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResolverContract(ProxyResource):
+class ResolverContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GraphQL API Resolver details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18223,7 +18514,7 @@ class ResolverContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ResolverEntityBaseContract(_Model):
+class ResolverEntityBaseContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GraphQL API Resolver Entity Base Contract details.
 
     :ivar display_name: Resolver Name.
@@ -18263,7 +18554,7 @@ class ResolverEntityBaseContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResolverUpdateContract(_Model):
+class ResolverUpdateContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GraphQL API Resolver Update Contract details.
 
     :ivar properties: Properties of the GraphQL API Resolver entity that can be updated.
@@ -18313,7 +18604,7 @@ class ResolverUpdateContract(_Model):
             super().__setattr__(key, value)
 
 
-class ResolverUpdateContractProperties(_Model):
+class ResolverUpdateContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resolver Update Contract Properties.
 
     :ivar display_name: Resolver Name.
@@ -18353,7 +18644,7 @@ class ResolverUpdateContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceCollection(_Model):
+class ResourceCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A collection of resources.
 
     :ivar value: A collection of resources.
@@ -18410,7 +18701,7 @@ class ResourceCollectionValueItem(ProxyResource):
     """
 
 
-class ResourceLocationDataContract(_Model):
+class ResourceLocationDataContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource location data properties.
 
     :ivar name: A canonical name for the geographic or physical location. Required.
@@ -18455,7 +18746,7 @@ class ResourceLocationDataContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceSku(_Model):
+class ResourceSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an available API Management SKU.
 
     :ivar name: Name of the Sku. Known values are: "Developer", "Standard", "Premium", "Basic",
@@ -18533,7 +18824,7 @@ class ResourceSkuResult(_Model):
     """Specifies the number of API Management units."""
 
 
-class ResponseContract(_Model):
+class ResponseContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation response details.
 
     :ivar status_code: Operation response HTTP status code. Required.
@@ -18580,7 +18871,7 @@ class ResponseContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SamplingSettings(_Model):
+class SamplingSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sampling settings for Diagnostic.
 
     :ivar sampling_type: Sampling type. "fixed"
@@ -18615,7 +18906,7 @@ class SamplingSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SaveConfigurationParameter(_Model):
+class SaveConfigurationParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Save Tenant Configuration Contract details.
 
     :ivar properties: Properties of the Save Configuration Parameters.
@@ -18665,7 +18956,7 @@ class SaveConfigurationParameter(_Model):
             super().__setattr__(key, value)
 
 
-class SaveConfigurationParameterProperties(_Model):
+class SaveConfigurationParameterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Save Tenant Configuration operation.
 
     :ivar branch: The name of the Git branch in which to commit the current configuration snapshot.
@@ -18701,7 +18992,7 @@ class SaveConfigurationParameterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SchemaContract(ProxyResource):
+class SchemaContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API Schema Contract details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18742,7 +19033,7 @@ class SchemaContract(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SchemaContractProperties(_Model):
+class SchemaContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API Schema create or update contract Properties.
 
     :ivar content_type: Must be a valid a media type used in a Content-Type header as defined in
@@ -18815,7 +19106,7 @@ class SchemaContractProperties(_Model):
             super().__setattr__(key, value)
 
 
-class SchemaDocumentProperties(_Model):
+class SchemaDocumentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Api Schema Document Properties.
 
     :ivar value: Json escaped string defining the document representing the Schema. Used for
@@ -18856,7 +19147,7 @@ class SchemaDocumentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionContract(ProxyResource):
+class SubscriptionContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Subscription details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18931,7 +19222,7 @@ class SubscriptionContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SubscriptionContractProperties(_Model):
+class SubscriptionContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Subscription details.
 
     :ivar owner_id: The user resource identifier of the subscription owner. The value is a valid
@@ -19082,7 +19373,7 @@ class SubscriptionContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionCreateParameterProperties(_Model):
+class SubscriptionCreateParameterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Create subscription operation.
 
     :ivar owner_id: User (user id path) for whom subscription is being created in form
@@ -19166,7 +19457,7 @@ class SubscriptionCreateParameterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionCreateParameters(_Model):
+class SubscriptionCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Subscription create details.
 
     :ivar properties: Subscription contract properties.
@@ -19216,7 +19507,7 @@ class SubscriptionCreateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class SubscriptionKeyParameterNamesContract(_Model):
+class SubscriptionKeyParameterNamesContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Subscription key parameter names details.
 
     :ivar header: Subscription key header name.
@@ -19249,7 +19540,7 @@ class SubscriptionKeyParameterNamesContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionKeysContract(_Model):
+class SubscriptionKeysContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Subscription keys.
 
     :ivar primary_key: Subscription primary key.
@@ -19286,7 +19577,9 @@ class SubscriptionKeysContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionsDelegationSettingsProperties(_Model):  # pylint: disable=name-too-long
+class SubscriptionsDelegationSettingsProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Subscriptions delegation settings properties.
 
     :ivar enabled: Enable or disable delegation for subscriptions.
@@ -19314,7 +19607,7 @@ class SubscriptionsDelegationSettingsProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionUpdateParameterProperties(_Model):
+class SubscriptionUpdateParameterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Update subscription operation.
 
     :ivar owner_id: User identifier path: /users/{userId}.
@@ -19417,7 +19710,7 @@ class SubscriptionUpdateParameterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionUpdateParameters(_Model):
+class SubscriptionUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Subscription update details.
 
     :ivar properties: Subscription Update contract properties.
@@ -19477,7 +19770,7 @@ class SubscriptionUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -19544,7 +19837,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagApiLinkContract(ProxyResource):
+class TagApiLinkContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tag-API link details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19605,7 +19898,7 @@ class TagApiLinkContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TagApiLinkContractProperties(_Model):
+class TagApiLinkContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tag-API link entity properties.
 
     :ivar api_id: Full resource Id of an API. Required.
@@ -19633,7 +19926,7 @@ class TagApiLinkContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagContract(ProxyResource):
+class TagContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tag Contract details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19694,7 +19987,7 @@ class TagContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TagContractProperties(_Model):
+class TagContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tag contract Properties.
 
     :ivar display_name: Tag name. Required.
@@ -19722,7 +20015,7 @@ class TagContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagCreateUpdateParameters(_Model):
+class TagCreateUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to Create/Update Tag operations.
 
     :ivar properties: Properties supplied to Create Tag operation.
@@ -19772,7 +20065,7 @@ class TagCreateUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class TagDescriptionBaseProperties(_Model):
+class TagDescriptionBaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Create TagDescription operation.
 
     :ivar description: Description of the Tag.
@@ -19814,7 +20107,7 @@ class TagDescriptionBaseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagDescriptionContract(ProxyResource):
+class TagDescriptionContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contract details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19875,7 +20168,9 @@ class TagDescriptionContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TagDescriptionContractProperties(TagDescriptionBaseProperties):
+class TagDescriptionContractProperties(
+    TagDescriptionBaseProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TagDescription contract Properties.
 
     :ivar description: Description of the Tag.
@@ -19919,7 +20214,7 @@ class TagDescriptionContractProperties(TagDescriptionBaseProperties):
         super().__init__(*args, **kwargs)
 
 
-class TagDescriptionCreateParameters(_Model):
+class TagDescriptionCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Create TagDescription operation.
 
     :ivar properties: Properties supplied to Create TagDescription operation.
@@ -19969,7 +20264,7 @@ class TagDescriptionCreateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class TagOperationLinkContract(ProxyResource):
+class TagOperationLinkContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tag-operation link details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20030,7 +20325,7 @@ class TagOperationLinkContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TagOperationLinkContractProperties(_Model):
+class TagOperationLinkContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tag-operation link entity properties.
 
     :ivar operation_id: Full resource Id of an API operation. Required.
@@ -20058,7 +20353,7 @@ class TagOperationLinkContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagProductLinkContract(ProxyResource):
+class TagProductLinkContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tag-product link details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20119,7 +20414,7 @@ class TagProductLinkContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TagProductLinkContractProperties(_Model):
+class TagProductLinkContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tag-product link entity properties.
 
     :ivar product_id: Full resource Id of a product. Required.
@@ -20147,7 +20442,7 @@ class TagProductLinkContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagResourceContract(_Model):
+class TagResourceContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TagResource contract properties.
 
     :ivar tag: Tag associated with the resource. Required.
@@ -20198,7 +20493,7 @@ class TagResourceContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagResourceContractProperties(_Model):
+class TagResourceContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contract defining the Tag property in the Tag Resource Contract.
 
     :ivar id: Tag identifier.
@@ -20231,7 +20526,9 @@ class TagResourceContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TenantConfigurationSyncStateContract(ProxyResource):
+class TenantConfigurationSyncStateContract(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of Tenant Configuration Sync State.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20302,7 +20599,9 @@ class TenantConfigurationSyncStateContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TenantConfigurationSyncStateContractProperties(_Model):  # pylint: disable=name-too-long
+class TenantConfigurationSyncStateContractProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Tenant Configuration Synchronization State.
 
     :ivar branch: The name of Git branch.
@@ -20378,7 +20677,7 @@ class TenantConfigurationSyncStateContractProperties(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class TenantSettingsContract(ProxyResource):
+class TenantSettingsContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tenant Settings.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20439,7 +20738,7 @@ class TenantSettingsContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TenantSettingsContractProperties(_Model):
+class TenantSettingsContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tenant access information contract of the API Management service.
 
     :ivar settings: Tenant settings.
@@ -20467,7 +20766,7 @@ class TenantSettingsContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TermsOfServiceProperties(_Model):
+class TermsOfServiceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Terms of service contract properties.
 
     :ivar text: A terms of service text.
@@ -20507,7 +20806,7 @@ class TermsOfServiceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TokenBodyParameterContract(_Model):
+class TokenBodyParameterContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OAuth acquire token request body parameter (www-url-form-encoded).
 
     :ivar name: body parameter name. Required.
@@ -20540,7 +20839,7 @@ class TokenBodyParameterContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ToolContract(ProxyResource):
+class ToolContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tool details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20601,7 +20900,7 @@ class ToolContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ToolContractProperties(_Model):
+class ToolContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ToolContractProperties.
 
     :ivar display_name: Tool Name. MCP tool name must contain only letters, numbers, underscores,
@@ -20661,7 +20960,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class UserContract(ProxyResource):
+class UserContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20731,7 +21030,7 @@ class UserContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class UserEntityBaseParameters(_Model):
+class UserEntityBaseParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User Entity Base Parameters set.
 
     :ivar state: Account state. Specifies whether the user is active or not. Blocked users are
@@ -20777,7 +21076,7 @@ class UserEntityBaseParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserContractProperties(UserEntityBaseParameters):
+class UserContractProperties(UserEntityBaseParameters):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User profile.
 
     :ivar state: Account state. Specifies whether the user is active or not. Blocked users are
@@ -20839,7 +21138,9 @@ class UserContractProperties(UserEntityBaseParameters):
         super().__init__(*args, **kwargs)
 
 
-class UserCreateParameterProperties(UserEntityBaseParameters):
+class UserCreateParameterProperties(
+    UserEntityBaseParameters
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Create User operation.
 
     :ivar state: Account state. Specifies whether the user is active or not. Blocked users are
@@ -20912,7 +21213,7 @@ class UserCreateParameterProperties(UserEntityBaseParameters):
         super().__init__(*args, **kwargs)
 
 
-class UserCreateParameters(_Model):
+class UserCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User create details.
 
     :ivar properties: User entity create contract properties.
@@ -20972,7 +21273,7 @@ class UserCreateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class UserIdentityContract(_Model):
+class UserIdentityContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User identity details.
 
     :ivar provider: Identity provider name.
@@ -21005,7 +21306,7 @@ class UserIdentityContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserIdentityProperties(_Model):
+class UserIdentityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """UserIdentityProperties.
 
     :ivar principal_id: The principal id of user assigned identity.
@@ -21040,7 +21341,7 @@ class UserIdentityProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserTokenParameterProperties(_Model):
+class UserTokenParameterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Get User Token operation.
 
     :ivar key_type: The Key to be used to generate token for user. Required. Known values are:
@@ -21080,7 +21381,7 @@ class UserTokenParameterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserTokenParameters(_Model):
+class UserTokenParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Get User Token parameters.
 
     :ivar properties: User Token Parameter contract properties.
@@ -21130,7 +21431,7 @@ class UserTokenParameters(_Model):
             super().__setattr__(key, value)
 
 
-class UserTokenResult(_Model):
+class UserTokenResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Get User Token response details.
 
     :ivar value: Shared Access Authorization token for the User.
@@ -21158,7 +21459,7 @@ class UserTokenResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserUpdateParameters(_Model):
+class UserUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User update parameters.
 
     :ivar properties: User entity update contract properties.
@@ -21208,7 +21509,9 @@ class UserUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class UserUpdateParametersProperties(UserEntityBaseParameters):
+class UserUpdateParametersProperties(
+    UserEntityBaseParameters
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Update User operation.
 
     :ivar state: Account state. Specifies whether the user is active or not. Blocked users are
@@ -21262,7 +21565,7 @@ class UserUpdateParametersProperties(UserEntityBaseParameters):
         super().__init__(*args, **kwargs)
 
 
-class VirtualNetworkConfiguration(_Model):
+class VirtualNetworkConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration of a virtual network to which API Management service is deployed.
 
     :ivar vnetid: The virtual network ID. This is typically a GUID. Expect a null GUID by default.
@@ -21301,7 +21604,7 @@ class VirtualNetworkConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WikiContract(ProxyResource):
+class WikiContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Wiki properties.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -21362,7 +21665,7 @@ class WikiContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WikiContractProperties(_Model):
+class WikiContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Wiki contract details.
 
     :ivar documents: Collection wiki documents included into this wiki.
@@ -21392,7 +21695,7 @@ class WikiContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WikiDocumentationContract(_Model):
+class WikiDocumentationContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Wiki documentation details.
 
     :ivar documentation_id: Documentation Identifier.
@@ -21422,7 +21725,7 @@ class WikiDocumentationContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WikiUpdateContract(_Model):
+class WikiUpdateContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Wiki update contract details.
 
     :ivar properties: Wiki details.
@@ -21472,7 +21775,7 @@ class WikiUpdateContract(_Model):
             super().__setattr__(key, value)
 
 
-class WorkspaceContract(ProxyResource):
+class WorkspaceContract(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workspace details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -21533,7 +21836,7 @@ class WorkspaceContract(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkspaceContractProperties(_Model):
+class WorkspaceContractProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workspace entity properties.
 
     :ivar display_name: Name of the workspace. Required.
@@ -21566,7 +21869,7 @@ class WorkspaceContractProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspaceLinksGateway(_Model):
+class WorkspaceLinksGateway(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """WorkspaceLinksGateway.
 
     :ivar id: The link to the API Management gateway.
@@ -21594,7 +21897,7 @@ class WorkspaceLinksGateway(_Model):
         super().__init__(*args, **kwargs)
 
 
-class X509CertificateName(_Model):
+class X509CertificateName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of server X509Names.
 
     :ivar name: Common Name of the Certificate.

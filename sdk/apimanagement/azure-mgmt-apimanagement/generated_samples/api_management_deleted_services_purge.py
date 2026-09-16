@@ -30,13 +30,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.deleted_services.begin_purge(
+    client.deleted_services.begin_purge(
         service_name="apimService3",
         location="westus",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementDeletedServicesPurge.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementDeletedServicesPurge.json
 if __name__ == "__main__":
     main()

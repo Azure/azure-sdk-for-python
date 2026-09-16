@@ -35,12 +35,12 @@ def main():
         service_name="apimService1",
         identity_provider_name="facebook",
         parameters={"properties": {"clientId": "updatedfacebookid", "clientSecret": "updatedfacebooksecret"}},
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementUpdateIdentityProvider.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementUpdateIdentityProvider.json
 if __name__ == "__main__":
     main()

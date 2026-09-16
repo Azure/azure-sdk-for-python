@@ -35,12 +35,12 @@ def main():
         service_name="apimService1",
         cache_id="c1",
         parameters={"properties": {"useFromLocation": "westindia"}},
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementUpdateCache.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementUpdateCache.json
 if __name__ == "__main__":
     main()

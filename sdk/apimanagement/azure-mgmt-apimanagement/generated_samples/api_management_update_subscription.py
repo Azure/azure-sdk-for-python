@@ -35,12 +35,12 @@ def main():
         service_name="apimService1",
         sid="testsub",
         parameters={"properties": {"displayName": "testsub"}},
-        etag="str",
+        etag="*",
         match_condition=~azure.core.MatchConditions,
     )
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/ApiManagementUpdateSubscription.json
+# x-ms-original-file: 2025-09-01-preview/ApiManagementUpdateSubscription.json
 if __name__ == "__main__":
     main()
