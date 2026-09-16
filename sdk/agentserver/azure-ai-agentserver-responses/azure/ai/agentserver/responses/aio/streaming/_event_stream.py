@@ -86,6 +86,7 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
         name: str,
         *,
         item_id: str | None = None,
+        approval_request_id: str | None = None,
     ) -> OutputItemMcpCallBuilder:
         """Add an MCP tool call output item and return its async scoped builder.
 
@@ -95,6 +96,8 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
         :type name: str
         :keyword item_id: Optional caller-supplied output item identifier.
         :keyword type item_id: str | None
+        :keyword approval_request_id: Explicit ID of the approval request for this MCP call.
+        :keyword type approval_request_id: str | None
         :returns: A builder for emitting MCP call argument deltas and lifecycle events.
         :rtype: OutputItemMcpCallBuilder
         """
@@ -114,6 +117,7 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
             item_id=resolved_item_id,
             server_label=server_label,
             name=name,
+            approval_request_id=approval_request_id,
         )
 
     def add_output_item_custom_tool_call(self, call_id: str, name: str) -> OutputItemCustomToolCallBuilder:

@@ -5,11 +5,13 @@
 import pytest
 
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+from azure.ai.agentserver.responses.aio.streaming._event_stream import ResponseEventStream as AsyncResponseEventStream
 
 
 @pytest.mark.parametrize("failed", [False, True])
-def test_mcp_approval_link_survives_output_and_response(failed: bool) -> None:
-    stream = ResponseEventStream(response_id="resp_link")
+@pytest.mark.parametrize("stream_type", [ResponseEventStream, AsyncResponseEventStream])
+def test_mcp_approval_link_survives_output_and_response(failed: bool, stream_type: type[ResponseEventStream]) -> None:
+    stream = stream_type(response_id="resp_link")
     stream.emit_created()
     call = stream.add_output_item_mcp_call("weather", "lookup", approval_request_id="approval_123")
     added = call.emit_added()
@@ -25,8 +27,9 @@ def test_mcp_approval_link_survives_output_and_response(failed: bool) -> None:
     assert done["item"]["status"] == ("failed" if failed else "completed")
 
 
-def test_unapproved_mcp_call_has_no_invented_link() -> None:
-    stream = ResponseEventStream(response_id="resp_unlinked")
+@pytest.mark.parametrize("stream_type", [ResponseEventStream, AsyncResponseEventStream])
+def test_unapproved_mcp_call_has_no_invented_link(stream_type: type[ResponseEventStream]) -> None:
+    stream = stream_type(response_id="resp_unlinked")
     stream.emit_created()
     call = stream.add_output_item_mcp_call("weather", "lookup")
     assert "approval_request_id" not in call.emit_added()["item"]
@@ -34,7 +37,8 @@ def test_unapproved_mcp_call_has_no_invented_link() -> None:
 
 
 @pytest.mark.parametrize("value", ["", "   "])
-def test_mcp_approval_link_rejects_empty_identity(value: str) -> None:
-    stream = ResponseEventStream(response_id="resp_invalid")
+@pytest.mark.parametrize("stream_type", [ResponseEventStream, AsyncResponseEventStream])
+def test_mcp_approval_link_rejects_empty_identity(value: str, stream_type: type[ResponseEventStream]) -> None:
+    stream = stream_type(response_id="resp_invalid")
     with pytest.raises(ValueError):
         stream.add_output_item_mcp_call("weather", "lookup", approval_request_id=value)
