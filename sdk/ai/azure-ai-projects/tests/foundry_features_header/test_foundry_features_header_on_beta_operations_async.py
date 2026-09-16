@@ -44,6 +44,7 @@ from foundry_features_header_test_base import (
     EXPECTED_FOUNDRY_FEATURES,
     FAKE_ENDPOINT,
     FOUNDRY_FEATURES_HEADER,
+    NON_OPERATION_BETA_ATTRIBUTES,
     AsyncFakeCredential,
     FoundryFeaturesHeaderTestBase,
     _RequestCaptured,
@@ -99,6 +100,8 @@ def _discover_async_test_cases() -> list[pytest.param]:
     cases: list[pytest.param] = []
     for sc_name in sorted(dir(temp.beta)):
         if sc_name.startswith("_"):
+            continue
+        if sc_name in NON_OPERATION_BETA_ATTRIBUTES:
             continue
         sc = getattr(temp.beta, sc_name)
         # Sub-clients are non-callable objects (instances of operations classes).
