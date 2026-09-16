@@ -369,6 +369,8 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         item_id: str,
         server_label: str,
         name: str,
+        *,
+        approval_request_id: str | None = None,
     ) -> None:
         """Initialize the MCP call builder.
 
@@ -382,10 +384,16 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         :type server_label: str
         :param name: Name of the MCP tool being called.
         :type name: str
+        :keyword approval_request_id: Explicit ID of the approval request for this MCP call.
+        :keyword type approval_request_id: str | None
         """
         super().__init__(stream=stream, output_index=output_index, item_id=item_id)
         self._server_label = _require_non_empty(server_label, "server_label")
         self._name = _require_non_empty(name, "name")
+        self._approval_request_id = (
+            _require_non_empty(approval_request_id, "approval_request_id")
+            if approval_request_id is not None else None
+        )
         self._final_arguments: str | None = None
         self._terminal_status: str | None = None
 
@@ -421,6 +429,7 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
                 "name": self._name,
                 "arguments": "",
                 "status": "in_progress",
+                **({"approval_request_id": self._approval_request_id} if self._approval_request_id is not None else {}),
             }
         )
 
@@ -522,6 +531,8 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         }
         if output is not None:
             item["output"] = output
+        if self._approval_request_id is not None:
+            item["approval_request_id"] = self._approval_request_id
         if error is not None:
             item["error"] = error
         return self._emit_done(item)

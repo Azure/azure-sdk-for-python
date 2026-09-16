@@ -526,6 +526,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         name: str,
         *,
         item_id: str | None = None,
+        approval_request_id: str | None = None,
     ) -> OutputItemMcpCallBuilder:
         """Add an MCP tool call output item and return its scoped builder.
 
@@ -535,6 +536,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :type name: str
         :keyword item_id: Optional caller-supplied output item identifier.
         :keyword type item_id: str | None
+        :keyword approval_request_id: Explicit ID of the approval request for this MCP call.
+        :keyword type approval_request_id: str | None
         :returns: A builder for emitting MCP call argument deltas and lifecycle events.
         :rtype: OutputItemMcpCallBuilder
         """
@@ -554,6 +557,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             item_id=resolved_item_id,
             server_label=server_label,
             name=name,
+            approval_request_id=approval_request_id,
         )
 
     def add_output_item_mcp_list_tools(self, server_label: str) -> OutputItemMcpListToolsBuilder:
