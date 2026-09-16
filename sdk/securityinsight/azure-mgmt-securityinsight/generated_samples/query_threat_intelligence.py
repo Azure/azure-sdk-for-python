@@ -47,6 +47,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-07-01-preview/threatintelligence/QueryThreatIntelligence.json
+# x-ms-original-file: 2025-10-01-preview/threatintelligence/QueryThreatIntelligence.json
 if __name__ == "__main__":
     main()

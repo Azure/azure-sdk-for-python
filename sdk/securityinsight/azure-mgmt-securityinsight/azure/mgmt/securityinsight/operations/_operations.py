@@ -32,15 +32,15 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import SecurityInsightsMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import ClientMixinABC
+from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -51,7 +51,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +72,7 @@ def build_alert_rules_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -102,7 +102,7 @@ def build_alert_rules_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -132,7 +132,7 @@ def build_alert_rules_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRules/{ruleId}"
     path_format_arguments = {
@@ -156,7 +156,7 @@ def build_alert_rules_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -184,7 +184,7 @@ def build_alert_rule_templates_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -213,7 +213,7 @@ def build_alert_rule_templates_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -241,7 +241,7 @@ def build_automation_rules_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -271,7 +271,7 @@ def build_automation_rules_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -302,7 +302,7 @@ def build_automation_rules_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -331,7 +331,7 @@ def build_automation_rules_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -359,7 +359,7 @@ def build_incidents_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -389,7 +389,7 @@ def build_incidents_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -419,7 +419,7 @@ def build_incidents_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}"
     path_format_arguments = {
@@ -451,7 +451,7 @@ def build_incidents_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -488,7 +488,7 @@ def build_incidents_run_playbook_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -519,7 +519,7 @@ def build_incidents_list_alerts_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -548,7 +548,7 @@ def build_incidents_list_bookmarks_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -577,7 +577,7 @@ def build_incidents_list_entities_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -606,7 +606,7 @@ def build_bookmarks_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -636,7 +636,7 @@ def build_bookmarks_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -666,7 +666,7 @@ def build_bookmarks_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/bookmarks/{bookmarkId}"
     path_format_arguments = {
@@ -690,7 +690,7 @@ def build_bookmarks_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -722,7 +722,7 @@ def build_data_connector_definitions_get_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -758,7 +758,7 @@ def build_data_connector_definitions_create_or_update_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -794,7 +794,7 @@ def build_data_connector_definitions_delete_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/dataConnectorDefinitions/{dataConnectorDefinitionName}"
     path_format_arguments = {
@@ -820,7 +820,7 @@ def build_data_connector_definitions_list_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -848,7 +848,7 @@ def build_data_connectors_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -878,7 +878,7 @@ def build_data_connectors_create_or_update_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -908,7 +908,7 @@ def build_data_connectors_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/dataConnectors/{dataConnectorId}"
     path_format_arguments = {
@@ -932,7 +932,7 @@ def build_data_connectors_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -961,7 +961,7 @@ def build_data_connectors_connect_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/dataConnectors/{dataConnectorId}/connect"
     path_format_arguments = {
@@ -988,7 +988,7 @@ def build_data_connectors_disconnect_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/dataConnectors/{dataConnectorId}/disconnect"
     path_format_arguments = {
@@ -1017,7 +1017,7 @@ def build_incident_comments_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1053,7 +1053,7 @@ def build_incident_comments_create_or_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1089,7 +1089,7 @@ def build_incident_comments_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}/comments/{incidentCommentId}"
     path_format_arguments = {
@@ -1123,7 +1123,7 @@ def build_incident_comments_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1165,7 +1165,7 @@ def build_bookmark_relations_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1201,7 +1201,7 @@ def build_bookmark_relations_create_or_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1237,7 +1237,7 @@ def build_bookmark_relations_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/bookmarks/{bookmarkId}/relations/{relationName}"
     path_format_arguments = {
@@ -1271,7 +1271,7 @@ def build_bookmark_relations_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1313,7 +1313,7 @@ def build_entity_relations_get_relation_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1348,7 +1348,7 @@ def build_incident_tasks_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1384,7 +1384,7 @@ def build_incident_tasks_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1420,7 +1420,7 @@ def build_incident_tasks_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}/tasks/{incidentTaskId}"
     path_format_arguments = {
@@ -1445,7 +1445,7 @@ def build_incident_tasks_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1478,7 +1478,7 @@ def build_sentinel_onboarding_states_get_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1514,7 +1514,7 @@ def build_sentinel_onboarding_states_create_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1550,7 +1550,7 @@ def build_sentinel_onboarding_states_delete_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/onboardingStates/{sentinelOnboardingStateName}"
     path_format_arguments = {
@@ -1576,7 +1576,7 @@ def build_sentinel_onboarding_states_list_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1604,7 +1604,7 @@ def build_security_ml_analytics_settings_get_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1634,7 +1634,7 @@ def build_security_ml_analytics_settings_create_or_update_request(  # pylint: di
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1664,7 +1664,7 @@ def build_security_ml_analytics_settings_delete_request(  # pylint: disable=name
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/securityMLAnalyticsSettings/{settingsResourceName}"
     path_format_arguments = {
@@ -1688,7 +1688,7 @@ def build_security_ml_analytics_settings_list_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1716,7 +1716,7 @@ def build_source_controls_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1746,7 +1746,7 @@ def build_source_controls_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1777,7 +1777,7 @@ def build_source_controls_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1806,7 +1806,7 @@ def build_source_controls_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1837,7 +1837,7 @@ def build_watchlists_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1867,7 +1867,7 @@ def build_watchlists_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1897,7 +1897,7 @@ def build_watchlists_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/watchlists/{watchlistAlias}"
     path_format_arguments = {
@@ -1926,7 +1926,7 @@ def build_watchlists_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1961,7 +1961,7 @@ def build_watchlist_items_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1997,7 +1997,7 @@ def build_watchlist_items_create_or_update_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2033,7 +2033,7 @@ def build_watchlist_items_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/watchlists/{watchlistAlias}/watchlistItems/{watchlistItemId}"
     path_format_arguments = {
@@ -2064,7 +2064,7 @@ def build_watchlist_items_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2095,7 +2095,7 @@ def build_billing_statistics_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2124,7 +2124,7 @@ def build_billing_statistics_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2152,7 +2152,7 @@ def build_entities_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2181,7 +2181,7 @@ def build_entities_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2210,7 +2210,7 @@ def build_entities_run_playbook_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/entities/{entityIdentifier}/runPlaybook"
     path_format_arguments = {
@@ -2239,7 +2239,7 @@ def build_entities_expand_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2276,7 +2276,7 @@ def build_entities_queries_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2307,7 +2307,7 @@ def build_entities_get_insights_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2338,7 +2338,7 @@ def build_entity_queries_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2368,7 +2368,7 @@ def build_entity_queries_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2398,7 +2398,7 @@ def build_entity_queries_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/entityQueries/{entityQueryId}"
     path_format_arguments = {
@@ -2427,7 +2427,7 @@ def build_entity_queries_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2457,7 +2457,7 @@ def build_entity_query_templates_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2491,7 +2491,7 @@ def build_entity_query_templates_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2521,7 +2521,7 @@ def build_file_imports_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2551,7 +2551,7 @@ def build_file_imports_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2582,7 +2582,7 @@ def build_file_imports_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2619,7 +2619,7 @@ def build_file_imports_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2655,7 +2655,7 @@ def build_hunts_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2685,7 +2685,7 @@ def build_hunts_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2715,7 +2715,7 @@ def build_hunts_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/hunts/{huntId}"
     path_format_arguments = {
@@ -2747,7 +2747,7 @@ def build_hunts_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2788,7 +2788,7 @@ def build_hunt_comments_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2824,7 +2824,7 @@ def build_hunt_comments_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2860,7 +2860,7 @@ def build_hunt_comments_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/hunts/{huntId}/comments/{huntCommentId}"
     path_format_arguments = {
@@ -2894,7 +2894,7 @@ def build_hunt_comments_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2936,7 +2936,7 @@ def build_hunt_relations_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2972,7 +2972,7 @@ def build_hunt_relations_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3008,7 +3008,7 @@ def build_hunt_relations_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/hunts/{huntId}/relations/{huntRelationId}"
     path_format_arguments = {
@@ -3042,7 +3042,7 @@ def build_hunt_relations_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3079,7 +3079,7 @@ def build_office_consents_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3107,7 +3107,7 @@ def build_office_consents_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/officeConsents/{consentId}"
     path_format_arguments = {
@@ -3131,7 +3131,7 @@ def build_office_consents_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3159,7 +3159,7 @@ def build_product_settings_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3189,7 +3189,7 @@ def build_product_settings_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3219,7 +3219,7 @@ def build_product_settings_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/settings/{settingsName}"
     path_format_arguments = {
@@ -3243,7 +3243,7 @@ def build_product_settings_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3275,7 +3275,7 @@ def build_workspace_manager_assignments_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3311,7 +3311,7 @@ def build_workspace_manager_assignments_create_or_update_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3347,7 +3347,7 @@ def build_workspace_manager_assignments_delete_request(  # pylint: disable=name-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/workspaceManagerAssignments/{workspaceManagerAssignmentName}"
     path_format_arguments = {
@@ -3380,7 +3380,7 @@ def build_workspace_manager_assignments_list_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3418,7 +3418,7 @@ def build_workspace_manager_configurations_get_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3454,7 +3454,7 @@ def build_workspace_manager_configurations_create_or_update_request(  # pylint: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3490,7 +3490,7 @@ def build_workspace_manager_configurations_delete_request(  # pylint: disable=na
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/workspaceManagerConfigurations/{workspaceManagerConfigurationName}"
     path_format_arguments = {
@@ -3523,7 +3523,7 @@ def build_workspace_manager_configurations_list_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3561,7 +3561,7 @@ def build_workspace_manager_groups_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3597,7 +3597,7 @@ def build_workspace_manager_groups_create_or_update_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3633,7 +3633,7 @@ def build_workspace_manager_groups_delete_request(  # pylint: disable=name-too-l
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/workspaceManagerGroups/{workspaceManagerGroupName}"
     path_format_arguments = {
@@ -3666,7 +3666,7 @@ def build_workspace_manager_groups_list_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3704,7 +3704,7 @@ def build_workspace_manager_members_get_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3740,7 +3740,7 @@ def build_workspace_manager_members_create_or_update_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3776,7 +3776,7 @@ def build_workspace_manager_members_delete_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/workspaceManagerMembers/{workspaceManagerMemberName}"
     path_format_arguments = {
@@ -3809,7 +3809,7 @@ def build_workspace_manager_members_list_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3844,7 +3844,7 @@ def build_alert_rule_trigger_rule_run_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRules/{ruleId}/triggerRuleRun"
     path_format_arguments = {
@@ -3872,7 +3872,7 @@ def build_actions_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3903,7 +3903,7 @@ def build_actions_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3934,7 +3934,7 @@ def build_actions_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRules/{ruleId}/actions/{actionId}"
     path_format_arguments = {
@@ -3959,7 +3959,7 @@ def build_actions_list_by_alert_rule_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3989,7 +3989,7 @@ def build_bookmark_expand_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4020,7 +4020,7 @@ def build_content_packages_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4060,7 +4060,7 @@ def build_content_packages_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4103,7 +4103,7 @@ def build_content_package_install_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4133,7 +4133,7 @@ def build_content_package_uninstall_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/contentPackages/{packageId}"
     path_format_arguments = {
@@ -4157,7 +4157,7 @@ def build_product_package_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4195,7 +4195,7 @@ def build_product_packages_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4233,7 +4233,7 @@ def build_product_template_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4273,7 +4273,7 @@ def build_product_templates_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4315,7 +4315,7 @@ def build_content_template_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4345,7 +4345,7 @@ def build_content_template_install_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4375,7 +4375,7 @@ def build_content_template_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/contentTemplates/{templateId}"
     path_format_arguments = {
@@ -4411,7 +4411,7 @@ def build_content_templates_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4460,7 +4460,7 @@ def build_incident_relations_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4496,7 +4496,7 @@ def build_incident_relations_create_or_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4532,7 +4532,7 @@ def build_incident_relations_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/incidents/{incidentId}/relations/{relationName}"
     path_format_arguments = {
@@ -4566,7 +4566,7 @@ def build_incident_relations_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4612,7 +4612,7 @@ def build_entities_relations_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4649,7 +4649,7 @@ def build_metadata_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4679,7 +4679,7 @@ def build_metadata_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4711,7 +4711,7 @@ def build_metadata_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4741,7 +4741,7 @@ def build_metadata_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/metadata/{metadataName}"
     path_format_arguments = {
@@ -4773,7 +4773,7 @@ def build_metadata_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4809,7 +4809,7 @@ def build_threat_intelligence_indicator_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4839,7 +4839,7 @@ def build_threat_intelligence_indicator_create_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4869,7 +4869,7 @@ def build_threat_intelligence_indicator_delete_request(  # pylint: disable=name-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/threatIntelligence/main/indicators/{name}"
     path_format_arguments = {
@@ -4894,7 +4894,7 @@ def build_threat_intelligence_indicator_append_tags_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/threatIntelligence/main/indicators/{name}/appendTags"
     path_format_arguments = {
@@ -4923,7 +4923,7 @@ def build_threat_intelligence_indicator_replace_tags_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4955,7 +4955,7 @@ def build_threat_intelligence_indicator_create_indicator_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4986,7 +4986,7 @@ def build_threat_intelligence_indicator_query_indicators_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5024,7 +5024,7 @@ def build_threat_intelligence_indicators_list_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5061,7 +5061,7 @@ def build_data_connectors_check_requirements_post_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5092,7 +5092,7 @@ def build_source_control_list_repositories_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5122,7 +5122,7 @@ def build_threat_intelligence_indicator_metrics_list_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5155,7 +5155,7 @@ def build_threat_intelligence_count_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5191,7 +5191,7 @@ def build_threat_intelligence_query_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5223,7 +5223,7 @@ def build_entities_get_timeline_list_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5254,7 +5254,7 @@ def build_get_single_recommendation_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5284,7 +5284,7 @@ def build_update_recommendation_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5315,7 +5315,7 @@ def build_get_recommendations_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5343,7 +5343,7 @@ def build_reevaluate_recommendation_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5372,7 +5372,7 @@ def build_triggered_analytics_rule_run_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5401,7 +5401,7 @@ def build_get_triggered_analytics_rule_runs_list_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5433,7 +5433,7 @@ def build_workspace_manager_assignment_jobs_create_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5469,7 +5469,7 @@ def build_workspace_manager_assignment_jobs_get_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5505,7 +5505,7 @@ def build_workspace_manager_assignment_jobs_delete_request(  # pylint: disable=n
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/workspaceManagerAssignments/{workspaceManagerAssignmentName}/jobs/{jobName}"
     path_format_arguments = {
@@ -5540,7 +5540,7 @@ def build_workspace_manager_assignment_jobs_list_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5582,7 +5582,7 @@ def build_security_insights_mgmt_list_geodata_by_ip_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5618,7 +5618,7 @@ def build_security_insights_mgmt_list_whois_by_domain_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5643,7 +5643,7 @@ def build_security_insights_mgmt_list_whois_by_domain_request(  # pylint: disabl
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5755,7 +5755,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class AlertRulesOperations:
+class AlertRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5883,7 +5883,7 @@ class AlertRulesOperations:
         resource_group_name: str,
         workspace_name: str,
         rule_id: str,
-        alert_rule: JSON,
+        alert_rule: _types.AlertRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5898,7 +5898,7 @@ class AlertRulesOperations:
         :param rule_id: Alert rule ID. Required.
         :type rule_id: str
         :param alert_rule: The alert rule. Required.
-        :type alert_rule: JSON
+        :type alert_rule: ~azure.mgmt.securityinsight.types.AlertRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5943,7 +5943,7 @@ class AlertRulesOperations:
         resource_group_name: str,
         workspace_name: str,
         rule_id: str,
-        alert_rule: Union[_models.AlertRule, JSON, IO[bytes]],
+        alert_rule: Union[_models.AlertRule, _types.AlertRule, IO[bytes]],
         **kwargs: Any
     ) -> _models.AlertRule:
         """Creates or updates the alert rule.
@@ -5955,9 +5955,9 @@ class AlertRulesOperations:
         :type workspace_name: str
         :param rule_id: Alert rule ID. Required.
         :type rule_id: str
-        :param alert_rule: The alert rule. Is one of the following types: AlertRule, JSON, IO[bytes]
-         Required.
-        :type alert_rule: ~azure.mgmt.securityinsight.models.AlertRule or JSON or IO[bytes]
+        :param alert_rule: The alert rule. Is either a AlertRule type or a IO[bytes] type. Required.
+        :type alert_rule: ~azure.mgmt.securityinsight.models.AlertRule or
+         ~azure.mgmt.securityinsight.types.AlertRule or IO[bytes]
         :return: AlertRule. The AlertRule is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.AlertRule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6193,7 +6193,7 @@ class AlertRulesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AlertRuleTemplatesOperations:
+class AlertRuleTemplatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6390,7 +6390,7 @@ class AlertRuleTemplatesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AutomationRulesOperations:
+class AutomationRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6520,7 +6520,7 @@ class AutomationRulesOperations:
         resource_group_name: str,
         workspace_name: str,
         automation_rule_id: str,
-        automation_rule_to_upsert: Optional[JSON] = None,
+        automation_rule_to_upsert: Optional[_types.AutomationRule] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6535,7 +6535,7 @@ class AutomationRulesOperations:
         :param automation_rule_id: The automation rule ID. Required.
         :type automation_rule_id: str
         :param automation_rule_to_upsert: The automation rule. Default value is None.
-        :type automation_rule_to_upsert: JSON
+        :type automation_rule_to_upsert: ~azure.mgmt.securityinsight.types.AutomationRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6580,7 +6580,7 @@ class AutomationRulesOperations:
         resource_group_name: str,
         workspace_name: str,
         automation_rule_id: str,
-        automation_rule_to_upsert: Optional[Union[_models.AutomationRule, JSON, IO[bytes]]] = None,
+        automation_rule_to_upsert: Optional[Union[_models.AutomationRule, _types.AutomationRule, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.AutomationRule:
         """Creates or updates the automation rule.
@@ -6592,10 +6592,10 @@ class AutomationRulesOperations:
         :type workspace_name: str
         :param automation_rule_id: The automation rule ID. Required.
         :type automation_rule_id: str
-        :param automation_rule_to_upsert: The automation rule. Is one of the following types:
-         AutomationRule, JSON, IO[bytes] Default value is None.
-        :type automation_rule_to_upsert: ~azure.mgmt.securityinsight.models.AutomationRule or JSON or
-         IO[bytes]
+        :param automation_rule_to_upsert: The automation rule. Is either a AutomationRule type or a
+         IO[bytes] type. Default value is None.
+        :type automation_rule_to_upsert: ~azure.mgmt.securityinsight.models.AutomationRule or
+         ~azure.mgmt.securityinsight.types.AutomationRule or IO[bytes]
         :return: AutomationRule. The AutomationRule is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.AutomationRule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6846,7 +6846,7 @@ class AutomationRulesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class IncidentsOperations:
+class IncidentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6974,7 +6974,7 @@ class IncidentsOperations:
         resource_group_name: str,
         workspace_name: str,
         incident_id: str,
-        incident: JSON,
+        incident: _types.Incident,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6989,7 +6989,7 @@ class IncidentsOperations:
         :param incident_id: Incident ID. Required.
         :type incident_id: str
         :param incident: The incident. Required.
-        :type incident: JSON
+        :type incident: ~azure.mgmt.securityinsight.types.Incident
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7034,7 +7034,7 @@ class IncidentsOperations:
         resource_group_name: str,
         workspace_name: str,
         incident_id: str,
-        incident: Union[_models.Incident, JSON, IO[bytes]],
+        incident: Union[_models.Incident, _types.Incident, IO[bytes]],
         **kwargs: Any
     ) -> _models.Incident:
         """Creates or updates an incident.
@@ -7046,9 +7046,9 @@ class IncidentsOperations:
         :type workspace_name: str
         :param incident_id: Incident ID. Required.
         :type incident_id: str
-        :param incident: The incident. Is one of the following types: Incident, JSON, IO[bytes]
-         Required.
-        :type incident: ~azure.mgmt.securityinsight.models.Incident or JSON or IO[bytes]
+        :param incident: The incident. Is either a Incident type or a IO[bytes] type. Required.
+        :type incident: ~azure.mgmt.securityinsight.models.Incident or
+         ~azure.mgmt.securityinsight.types.Incident or IO[bytes]
         :return: Incident. The Incident is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.Incident
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7346,7 +7346,7 @@ class IncidentsOperations:
         resource_group_name: str,
         workspace_name: str,
         incident_identifier: str,
-        request_body: Optional[JSON] = None,
+        request_body: Optional[_types.ManualTriggerRequestBody] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7362,7 +7362,7 @@ class IncidentsOperations:
         :type incident_identifier: str
         :param request_body: Describes the request body for triggering a playbook on an incident.
          Default value is None.
-        :type request_body: JSON
+        :type request_body: ~azure.mgmt.securityinsight.types.ManualTriggerRequestBody
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7408,7 +7408,9 @@ class IncidentsOperations:
         resource_group_name: str,
         workspace_name: str,
         incident_identifier: str,
-        request_body: Optional[Union[_models.ManualTriggerRequestBody, JSON, IO[bytes]]] = None,
+        request_body: Optional[
+            Union[_models.ManualTriggerRequestBody, _types.ManualTriggerRequestBody, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> Any:
         """Triggers playbook on a specific incident.
@@ -7421,9 +7423,9 @@ class IncidentsOperations:
         :param incident_identifier: The incident identifier. Required.
         :type incident_identifier: str
         :param request_body: Describes the request body for triggering a playbook on an incident. Is
-         one of the following types: ManualTriggerRequestBody, JSON, IO[bytes] Default value is None.
-        :type request_body: ~azure.mgmt.securityinsight.models.ManualTriggerRequestBody or JSON or
-         IO[bytes]
+         either a ManualTriggerRequestBody type or a IO[bytes] type. Default value is None.
+        :type request_body: ~azure.mgmt.securityinsight.models.ManualTriggerRequestBody or
+         ~azure.mgmt.securityinsight.types.ManualTriggerRequestBody or IO[bytes]
         :return: any
         :rtype: any
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7727,7 +7729,7 @@ class IncidentsOperations:
         return deserialized  # type: ignore
 
 
-class BookmarksOperations:
+class BookmarksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7855,7 +7857,7 @@ class BookmarksOperations:
         resource_group_name: str,
         workspace_name: str,
         bookmark_id: str,
-        bookmark: JSON,
+        bookmark: _types.Bookmark,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7870,7 +7872,7 @@ class BookmarksOperations:
         :param bookmark_id: Bookmark ID. Required.
         :type bookmark_id: str
         :param bookmark: The bookmark. Required.
-        :type bookmark: JSON
+        :type bookmark: ~azure.mgmt.securityinsight.types.Bookmark
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7915,7 +7917,7 @@ class BookmarksOperations:
         resource_group_name: str,
         workspace_name: str,
         bookmark_id: str,
-        bookmark: Union[_models.Bookmark, JSON, IO[bytes]],
+        bookmark: Union[_models.Bookmark, _types.Bookmark, IO[bytes]],
         **kwargs: Any
     ) -> _models.Bookmark:
         """Creates or updates the bookmark.
@@ -7927,9 +7929,9 @@ class BookmarksOperations:
         :type workspace_name: str
         :param bookmark_id: Bookmark ID. Required.
         :type bookmark_id: str
-        :param bookmark: The bookmark. Is one of the following types: Bookmark, JSON, IO[bytes]
-         Required.
-        :type bookmark: ~azure.mgmt.securityinsight.models.Bookmark or JSON or IO[bytes]
+        :param bookmark: The bookmark. Is either a Bookmark type or a IO[bytes] type. Required.
+        :type bookmark: ~azure.mgmt.securityinsight.models.Bookmark or
+         ~azure.mgmt.securityinsight.types.Bookmark or IO[bytes]
         :return: Bookmark. The Bookmark is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.Bookmark
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8165,7 +8167,7 @@ class BookmarksOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DataConnectorDefinitionsOperations:
+class DataConnectorDefinitionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8295,7 +8297,7 @@ class DataConnectorDefinitionsOperations:
         resource_group_name: str,
         workspace_name: str,
         data_connector_definition_name: str,
-        connector_definition_input: JSON,
+        connector_definition_input: _types.DataConnectorDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8310,7 +8312,7 @@ class DataConnectorDefinitionsOperations:
         :param data_connector_definition_name: The data connector definition name. Required.
         :type data_connector_definition_name: str
         :param connector_definition_input: The data connector definition. Required.
-        :type connector_definition_input: JSON
+        :type connector_definition_input: ~azure.mgmt.securityinsight.types.DataConnectorDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8355,7 +8357,7 @@ class DataConnectorDefinitionsOperations:
         resource_group_name: str,
         workspace_name: str,
         data_connector_definition_name: str,
-        connector_definition_input: Union[_models.DataConnectorDefinition, JSON, IO[bytes]],
+        connector_definition_input: Union[_models.DataConnectorDefinition, _types.DataConnectorDefinition, IO[bytes]],
         **kwargs: Any
     ) -> _models.DataConnectorDefinition:
         """Creates or updates the data connector definition.
@@ -8367,10 +8369,10 @@ class DataConnectorDefinitionsOperations:
         :type workspace_name: str
         :param data_connector_definition_name: The data connector definition name. Required.
         :type data_connector_definition_name: str
-        :param connector_definition_input: The data connector definition. Is one of the following
-         types: DataConnectorDefinition, JSON, IO[bytes] Required.
+        :param connector_definition_input: The data connector definition. Is either a
+         DataConnectorDefinition type or a IO[bytes] type. Required.
         :type connector_definition_input: ~azure.mgmt.securityinsight.models.DataConnectorDefinition or
-         JSON or IO[bytes]
+         ~azure.mgmt.securityinsight.types.DataConnectorDefinition or IO[bytes]
         :return: DataConnectorDefinition. The DataConnectorDefinition is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.DataConnectorDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8609,7 +8611,7 @@ class DataConnectorDefinitionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DataConnectorsOperations:
+class DataConnectorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8739,7 +8741,7 @@ class DataConnectorsOperations:
         resource_group_name: str,
         workspace_name: str,
         data_connector_id: str,
-        data_connector: JSON,
+        data_connector: _types.DataConnector,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8754,7 +8756,7 @@ class DataConnectorsOperations:
         :param data_connector_id: Connector ID. Required.
         :type data_connector_id: str
         :param data_connector: The data connector. Required.
-        :type data_connector: JSON
+        :type data_connector: ~azure.mgmt.securityinsight.types.DataConnector
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8799,7 +8801,7 @@ class DataConnectorsOperations:
         resource_group_name: str,
         workspace_name: str,
         data_connector_id: str,
-        data_connector: Union[_models.DataConnector, JSON, IO[bytes]],
+        data_connector: Union[_models.DataConnector, _types.DataConnector, IO[bytes]],
         **kwargs: Any
     ) -> _models.DataConnector:
         """Creates or updates the data connector.
@@ -8811,9 +8813,10 @@ class DataConnectorsOperations:
         :type workspace_name: str
         :param data_connector_id: Connector ID. Required.
         :type data_connector_id: str
-        :param data_connector: The data connector. Is one of the following types: DataConnector, JSON,
-         IO[bytes] Required.
-        :type data_connector: ~azure.mgmt.securityinsight.models.DataConnector or JSON or IO[bytes]
+        :param data_connector: The data connector. Is either a DataConnector type or a IO[bytes] type.
+         Required.
+        :type data_connector: ~azure.mgmt.securityinsight.models.DataConnector or
+         ~azure.mgmt.securityinsight.types.DataConnector or IO[bytes]
         :return: DataConnector. The DataConnector is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.DataConnector
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9084,7 +9087,7 @@ class DataConnectorsOperations:
         resource_group_name: str,
         workspace_name: str,
         data_connector_id: str,
-        connect_body: JSON,
+        connect_body: _types.DataConnectorConnectBody,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9099,7 +9102,7 @@ class DataConnectorsOperations:
         :param data_connector_id: Connector ID. Required.
         :type data_connector_id: str
         :param connect_body: The content of the action request. Required.
-        :type connect_body: JSON
+        :type connect_body: ~azure.mgmt.securityinsight.types.DataConnectorConnectBody
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9139,12 +9142,26 @@ class DataConnectorsOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "data_connector_id",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def connect(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         workspace_name: str,
         data_connector_id: str,
-        connect_body: Union[_models.DataConnectorConnectBody, JSON, IO[bytes]],
+        connect_body: Union[_models.DataConnectorConnectBody, _types.DataConnectorConnectBody, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Connects a data connector.
@@ -9156,10 +9173,10 @@ class DataConnectorsOperations:
         :type workspace_name: str
         :param data_connector_id: Connector ID. Required.
         :type data_connector_id: str
-        :param connect_body: The content of the action request. Is one of the following types:
-         DataConnectorConnectBody, JSON, IO[bytes] Required.
-        :type connect_body: ~azure.mgmt.securityinsight.models.DataConnectorConnectBody or JSON or
-         IO[bytes]
+        :param connect_body: The content of the action request. Is either a DataConnectorConnectBody
+         type or a IO[bytes] type. Required.
+        :type connect_body: ~azure.mgmt.securityinsight.models.DataConnectorConnectBody or
+         ~azure.mgmt.securityinsight.types.DataConnectorConnectBody or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9220,6 +9237,19 @@ class DataConnectorsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "data_connector_id",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def disconnect(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, workspace_name: str, data_connector_id: str, **kwargs: Any
     ) -> None:
@@ -9282,7 +9312,7 @@ class DataConnectorsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class IncidentCommentsOperations:
+class IncidentCommentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9419,7 +9449,7 @@ class IncidentCommentsOperations:
         workspace_name: str,
         incident_id: str,
         incident_comment_id: str,
-        incident_comment: JSON,
+        incident_comment: _types.IncidentComment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9436,7 +9466,7 @@ class IncidentCommentsOperations:
         :param incident_comment_id: Incident comment ID. Required.
         :type incident_comment_id: str
         :param incident_comment: The incident comment. Required.
-        :type incident_comment: JSON
+        :type incident_comment: ~azure.mgmt.securityinsight.types.IncidentComment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9485,7 +9515,7 @@ class IncidentCommentsOperations:
         workspace_name: str,
         incident_id: str,
         incident_comment_id: str,
-        incident_comment: Union[_models.IncidentComment, JSON, IO[bytes]],
+        incident_comment: Union[_models.IncidentComment, _types.IncidentComment, IO[bytes]],
         **kwargs: Any
     ) -> _models.IncidentComment:
         """Creates or updates a comment for a given incident.
@@ -9499,9 +9529,10 @@ class IncidentCommentsOperations:
         :type incident_id: str
         :param incident_comment_id: Incident comment ID. Required.
         :type incident_comment_id: str
-        :param incident_comment: The incident comment. Is one of the following types: IncidentComment,
-         JSON, IO[bytes] Required.
-        :type incident_comment: ~azure.mgmt.securityinsight.models.IncidentComment or JSON or IO[bytes]
+        :param incident_comment: The incident comment. Is either a IncidentComment type or a IO[bytes]
+         type. Required.
+        :type incident_comment: ~azure.mgmt.securityinsight.models.IncidentComment or
+         ~azure.mgmt.securityinsight.types.IncidentComment or IO[bytes]
         :return: IncidentComment. The IncidentComment is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.IncidentComment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9771,7 +9802,7 @@ class IncidentCommentsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BookmarkRelationsOperations:
+class BookmarkRelationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9791,6 +9822,21 @@ class BookmarkRelationsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "bookmark_id",
+                "relation_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def get(
         self, resource_group_name: str, workspace_name: str, bookmark_id: str, relation_name: str, **kwargs: Any
     ) -> _models.Relation:
@@ -9908,7 +9954,7 @@ class BookmarkRelationsOperations:
         workspace_name: str,
         bookmark_id: str,
         relation_name: str,
-        relation: JSON,
+        relation: _types.Relation,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9925,7 +9971,7 @@ class BookmarkRelationsOperations:
         :param relation_name: Relation Name. Required.
         :type relation_name: str
         :param relation: Resource create parameters. Required.
-        :type relation: JSON
+        :type relation: ~azure.mgmt.securityinsight.types.Relation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9968,13 +10014,29 @@ class BookmarkRelationsOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "bookmark_id",
+                "relation_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def create_or_update(
         self,
         resource_group_name: str,
         workspace_name: str,
         bookmark_id: str,
         relation_name: str,
-        relation: Union[_models.Relation, JSON, IO[bytes]],
+        relation: Union[_models.Relation, _types.Relation, IO[bytes]],
         **kwargs: Any
     ) -> _models.Relation:
         """Creates the bookmark relation.
@@ -9988,9 +10050,10 @@ class BookmarkRelationsOperations:
         :type bookmark_id: str
         :param relation_name: Relation Name. Required.
         :type relation_name: str
-        :param relation: Resource create parameters. Is one of the following types: Relation, JSON,
-         IO[bytes] Required.
-        :type relation: ~azure.mgmt.securityinsight.models.Relation or JSON or IO[bytes]
+        :param relation: Resource create parameters. Is either a Relation type or a IO[bytes] type.
+         Required.
+        :type relation: ~azure.mgmt.securityinsight.models.Relation or
+         ~azure.mgmt.securityinsight.types.Relation or IO[bytes]
         :return: Relation. The Relation is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.Relation
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10065,6 +10128,20 @@ class BookmarkRelationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "bookmark_id",
+                "relation_name",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, workspace_name: str, bookmark_id: str, relation_name: str, **kwargs: Any
     ) -> None:
@@ -10130,6 +10207,24 @@ class BookmarkRelationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "bookmark_id",
+                "filter",
+                "orderby",
+                "top",
+                "skip_token",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def list(
         self,
         resource_group_name: str,
@@ -10260,7 +10355,7 @@ class BookmarkRelationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class EntityRelationsOperations:
+class EntityRelationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10280,6 +10375,21 @@ class EntityRelationsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "entity_id",
+                "relation_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def get_relation(
         self, resource_group_name: str, workspace_name: str, entity_id: str, relation_name: str, **kwargs: Any
     ) -> _models.Relation:
@@ -10358,7 +10468,7 @@ class EntityRelationsOperations:
         return deserialized  # type: ignore
 
 
-class IncidentTasksOperations:
+class IncidentTasksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10495,7 +10605,7 @@ class IncidentTasksOperations:
         workspace_name: str,
         incident_id: str,
         incident_task_id: str,
-        incident_task: JSON,
+        incident_task: _types.IncidentTask,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10512,7 +10622,7 @@ class IncidentTasksOperations:
         :param incident_task_id: Incident task ID. Required.
         :type incident_task_id: str
         :param incident_task: The incident task. Required.
-        :type incident_task: JSON
+        :type incident_task: ~azure.mgmt.securityinsight.types.IncidentTask
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10561,7 +10671,7 @@ class IncidentTasksOperations:
         workspace_name: str,
         incident_id: str,
         incident_task_id: str,
-        incident_task: Union[_models.IncidentTask, JSON, IO[bytes]],
+        incident_task: Union[_models.IncidentTask, _types.IncidentTask, IO[bytes]],
         **kwargs: Any
     ) -> _models.IncidentTask:
         """Creates or updates the incident task.
@@ -10575,9 +10685,10 @@ class IncidentTasksOperations:
         :type incident_id: str
         :param incident_task_id: Incident task ID. Required.
         :type incident_task_id: str
-        :param incident_task: The incident task. Is one of the following types: IncidentTask, JSON,
-         IO[bytes] Required.
-        :type incident_task: ~azure.mgmt.securityinsight.models.IncidentTask or JSON or IO[bytes]
+        :param incident_task: The incident task. Is either a IncidentTask type or a IO[bytes] type.
+         Required.
+        :type incident_task: ~azure.mgmt.securityinsight.models.IncidentTask or
+         ~azure.mgmt.securityinsight.types.IncidentTask or IO[bytes]
         :return: IncidentTask. The IncidentTask is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.IncidentTask
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10822,7 +10933,7 @@ class IncidentTasksOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SentinelOnboardingStatesOperations:
+class SentinelOnboardingStatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10956,7 +11067,7 @@ class SentinelOnboardingStatesOperations:
         resource_group_name: str,
         workspace_name: str,
         sentinel_onboarding_state_name: str,
-        sentinel_onboarding_state_parameter: Optional[JSON] = None,
+        sentinel_onboarding_state_parameter: Optional[_types.SentinelOnboardingState] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10973,7 +11084,8 @@ class SentinelOnboardingStatesOperations:
         :type sentinel_onboarding_state_name: str
         :param sentinel_onboarding_state_parameter: The Sentinel onboarding state parameter. Default
          value is None.
-        :type sentinel_onboarding_state_parameter: JSON
+        :type sentinel_onboarding_state_parameter:
+         ~azure.mgmt.securityinsight.types.SentinelOnboardingState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11020,7 +11132,9 @@ class SentinelOnboardingStatesOperations:
         resource_group_name: str,
         workspace_name: str,
         sentinel_onboarding_state_name: str,
-        sentinel_onboarding_state_parameter: Optional[Union[_models.SentinelOnboardingState, JSON, IO[bytes]]] = None,
+        sentinel_onboarding_state_parameter: Optional[
+            Union[_models.SentinelOnboardingState, _types.SentinelOnboardingState, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> _models.SentinelOnboardingState:
         """Create Sentinel onboarding state.
@@ -11033,10 +11147,11 @@ class SentinelOnboardingStatesOperations:
         :param sentinel_onboarding_state_name: The Sentinel onboarding state name. Supports - default.
          Required.
         :type sentinel_onboarding_state_name: str
-        :param sentinel_onboarding_state_parameter: The Sentinel onboarding state parameter. Is one of
-         the following types: SentinelOnboardingState, JSON, IO[bytes] Default value is None.
+        :param sentinel_onboarding_state_parameter: The Sentinel onboarding state parameter. Is either
+         a SentinelOnboardingState type or a IO[bytes] type. Default value is None.
         :type sentinel_onboarding_state_parameter:
-         ~azure.mgmt.securityinsight.models.SentinelOnboardingState or JSON or IO[bytes]
+         ~azure.mgmt.securityinsight.models.SentinelOnboardingState or
+         ~azure.mgmt.securityinsight.types.SentinelOnboardingState or IO[bytes]
         :return: SentinelOnboardingState. The SentinelOnboardingState is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.SentinelOnboardingState
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11250,7 +11365,7 @@ class SentinelOnboardingStatesOperations:
         return deserialized  # type: ignore
 
 
-class SecurityMLAnalyticsSettingsOperations:
+class SecurityMLAnalyticsSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11383,7 +11498,7 @@ class SecurityMLAnalyticsSettingsOperations:
         resource_group_name: str,
         workspace_name: str,
         settings_resource_name: str,
-        security_ml_analytics_setting: JSON,
+        security_ml_analytics_setting: _types.SecurityMLAnalyticsSetting,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11398,7 +11513,8 @@ class SecurityMLAnalyticsSettingsOperations:
         :param settings_resource_name: Security ML Analytics Settings resource name. Required.
         :type settings_resource_name: str
         :param security_ml_analytics_setting: The security ML Analytics setting. Required.
-        :type security_ml_analytics_setting: JSON
+        :type security_ml_analytics_setting:
+         ~azure.mgmt.securityinsight.types.SecurityMLAnalyticsSetting
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11445,7 +11561,9 @@ class SecurityMLAnalyticsSettingsOperations:
         resource_group_name: str,
         workspace_name: str,
         settings_resource_name: str,
-        security_ml_analytics_setting: Union[_models.SecurityMLAnalyticsSetting, JSON, IO[bytes]],
+        security_ml_analytics_setting: Union[
+            _models.SecurityMLAnalyticsSetting, _types.SecurityMLAnalyticsSetting, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.SecurityMLAnalyticsSetting:
         """Creates or updates the Security ML Analytics Settings.
@@ -11457,10 +11575,11 @@ class SecurityMLAnalyticsSettingsOperations:
         :type workspace_name: str
         :param settings_resource_name: Security ML Analytics Settings resource name. Required.
         :type settings_resource_name: str
-        :param security_ml_analytics_setting: The security ML Analytics setting. Is one of the
-         following types: SecurityMLAnalyticsSetting, JSON, IO[bytes] Required.
+        :param security_ml_analytics_setting: The security ML Analytics setting. Is either a
+         SecurityMLAnalyticsSetting type or a IO[bytes] type. Required.
         :type security_ml_analytics_setting:
-         ~azure.mgmt.securityinsight.models.SecurityMLAnalyticsSetting or JSON or IO[bytes]
+         ~azure.mgmt.securityinsight.models.SecurityMLAnalyticsSetting or
+         ~azure.mgmt.securityinsight.types.SecurityMLAnalyticsSetting or IO[bytes]
         :return: SecurityMLAnalyticsSetting. The SecurityMLAnalyticsSetting is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.SecurityMLAnalyticsSetting
@@ -11700,7 +11819,7 @@ class SecurityMLAnalyticsSettingsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SourceControlsOperations:
+class SourceControlsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11830,7 +11949,7 @@ class SourceControlsOperations:
         resource_group_name: str,
         workspace_name: str,
         source_control_id: str,
-        source_control: JSON,
+        source_control: _types.SourceControl,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11845,7 +11964,7 @@ class SourceControlsOperations:
         :param source_control_id: Source control Id. Required.
         :type source_control_id: str
         :param source_control: The SourceControl. Required.
-        :type source_control: JSON
+        :type source_control: ~azure.mgmt.securityinsight.types.SourceControl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11890,7 +12009,7 @@ class SourceControlsOperations:
         resource_group_name: str,
         workspace_name: str,
         source_control_id: str,
-        source_control: Union[_models.SourceControl, JSON, IO[bytes]],
+        source_control: Union[_models.SourceControl, _types.SourceControl, IO[bytes]],
         **kwargs: Any
     ) -> _models.SourceControl:
         """Creates a source control.
@@ -11902,9 +12021,10 @@ class SourceControlsOperations:
         :type workspace_name: str
         :param source_control_id: Source control Id. Required.
         :type source_control_id: str
-        :param source_control: The SourceControl. Is one of the following types: SourceControl, JSON,
-         IO[bytes] Required.
-        :type source_control: ~azure.mgmt.securityinsight.models.SourceControl or JSON or IO[bytes]
+        :param source_control: The SourceControl. Is either a SourceControl type or a IO[bytes] type.
+         Required.
+        :type source_control: ~azure.mgmt.securityinsight.models.SourceControl or
+         ~azure.mgmt.securityinsight.types.SourceControl or IO[bytes]
         :return: SourceControl. The SourceControl is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.SourceControl
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12113,7 +12233,7 @@ class SourceControlsOperations:
         resource_group_name: str,
         workspace_name: str,
         source_control_id: str,
-        repository_access: JSON,
+        repository_access: _types.RepositoryAccessProperties,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12128,7 +12248,7 @@ class SourceControlsOperations:
         :param source_control_id: Source control Id. Required.
         :type source_control_id: str
         :param repository_access: The repository access credentials. Required.
-        :type repository_access: JSON
+        :type repository_access: ~azure.mgmt.securityinsight.types.RepositoryAccessProperties
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12173,7 +12293,7 @@ class SourceControlsOperations:
         resource_group_name: str,
         workspace_name: str,
         source_control_id: str,
-        repository_access: Union[_models.RepositoryAccessProperties, JSON, IO[bytes]],
+        repository_access: Union[_models.RepositoryAccessProperties, _types.RepositoryAccessProperties, IO[bytes]],
         **kwargs: Any
     ) -> _models.Warning:
         """Delete a source control.
@@ -12185,10 +12305,10 @@ class SourceControlsOperations:
         :type workspace_name: str
         :param source_control_id: Source control Id. Required.
         :type source_control_id: str
-        :param repository_access: The repository access credentials. Is one of the following types:
-         RepositoryAccessProperties, JSON, IO[bytes] Required.
-        :type repository_access: ~azure.mgmt.securityinsight.models.RepositoryAccessProperties or JSON
-         or IO[bytes]
+        :param repository_access: The repository access credentials. Is either a
+         RepositoryAccessProperties type or a IO[bytes] type. Required.
+        :type repository_access: ~azure.mgmt.securityinsight.models.RepositoryAccessProperties or
+         ~azure.mgmt.securityinsight.types.RepositoryAccessProperties or IO[bytes]
         :return: Warning. The Warning is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.Warning
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12262,7 +12382,7 @@ class SourceControlsOperations:
         return deserialized  # type: ignore
 
 
-class WatchlistsOperations:
+class WatchlistsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12361,7 +12481,7 @@ class WatchlistsOperations:
         resource_group_name: str,
         workspace_name: str,
         watchlist_alias: str,
-        watchlist: Union[_models.Watchlist, JSON, IO[bytes]],
+        watchlist: Union[_models.Watchlist, _types.Watchlist, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -12426,7 +12546,6 @@ class WatchlistsOperations:
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -12474,7 +12593,7 @@ class WatchlistsOperations:
         resource_group_name: str,
         workspace_name: str,
         watchlist_alias: str,
-        watchlist: JSON,
+        watchlist: _types.Watchlist,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12491,7 +12610,7 @@ class WatchlistsOperations:
         :param watchlist_alias: The watchlist alias. Required.
         :type watchlist_alias: str
         :param watchlist: The watchlist. Required.
-        :type watchlist: JSON
+        :type watchlist: ~azure.mgmt.securityinsight.types.Watchlist
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12540,7 +12659,7 @@ class WatchlistsOperations:
         resource_group_name: str,
         workspace_name: str,
         watchlist_alias: str,
-        watchlist: Union[_models.Watchlist, JSON, IO[bytes]],
+        watchlist: Union[_models.Watchlist, _types.Watchlist, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Watchlist]:
         """Create or update a Watchlist and its Watchlist Items (bulk creation, e.g. through text/csv
@@ -12554,9 +12673,9 @@ class WatchlistsOperations:
         :type workspace_name: str
         :param watchlist_alias: The watchlist alias. Required.
         :type watchlist_alias: str
-        :param watchlist: The watchlist. Is one of the following types: Watchlist, JSON, IO[bytes]
-         Required.
-        :type watchlist: ~azure.mgmt.securityinsight.models.Watchlist or JSON or IO[bytes]
+        :param watchlist: The watchlist. Is either a Watchlist type or a IO[bytes] type. Required.
+        :type watchlist: ~azure.mgmt.securityinsight.models.Watchlist or
+         ~azure.mgmt.securityinsight.types.Watchlist or IO[bytes]
         :return: An instance of LROPoller that returns Watchlist. The Watchlist is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.securityinsight.models.Watchlist]
@@ -12671,7 +12790,6 @@ class WatchlistsOperations:
                 "str", response.headers.get("Azure-AsyncOperation")
             )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -12683,7 +12801,7 @@ class WatchlistsOperations:
     @distributed_trace
     def begin_delete(
         self, resource_group_name: str, workspace_name: str, watchlist_alias: str, **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.Watchlist]:
         """Delete a watchlist.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -12693,14 +12811,15 @@ class WatchlistsOperations:
         :type workspace_name: str
         :param watchlist_alias: The watchlist alias. Required.
         :type watchlist_alias: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns Watchlist. The Watchlist is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.securityinsight.models.Watchlist]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Watchlist] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -12717,9 +12836,18 @@ class WatchlistsOperations:
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = _deserialize(_models.Watchlist, response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -12734,13 +12862,15 @@ class WatchlistsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[None].from_continuation_token(
+            return LROPoller[_models.Watchlist].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.Watchlist](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list(
@@ -12851,7 +12981,7 @@ class WatchlistsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WatchlistItemsOperations:
+class WatchlistItemsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12988,7 +13118,7 @@ class WatchlistItemsOperations:
         workspace_name: str,
         watchlist_alias: str,
         watchlist_item_id: str,
-        watchlist_item: JSON,
+        watchlist_item: _types.WatchlistItem,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13005,7 +13135,7 @@ class WatchlistItemsOperations:
         :param watchlist_item_id: The watchlist item id (GUID). Required.
         :type watchlist_item_id: str
         :param watchlist_item: The watchlist item. Required.
-        :type watchlist_item: JSON
+        :type watchlist_item: ~azure.mgmt.securityinsight.types.WatchlistItem
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13054,7 +13184,7 @@ class WatchlistItemsOperations:
         workspace_name: str,
         watchlist_alias: str,
         watchlist_item_id: str,
-        watchlist_item: Union[_models.WatchlistItem, JSON, IO[bytes]],
+        watchlist_item: Union[_models.WatchlistItem, _types.WatchlistItem, IO[bytes]],
         **kwargs: Any
     ) -> _models.WatchlistItem:
         """Create or update a watchlist item.
@@ -13068,9 +13198,10 @@ class WatchlistItemsOperations:
         :type watchlist_alias: str
         :param watchlist_item_id: The watchlist item id (GUID). Required.
         :type watchlist_item_id: str
-        :param watchlist_item: The watchlist item. Is one of the following types: WatchlistItem, JSON,
-         IO[bytes] Required.
-        :type watchlist_item: ~azure.mgmt.securityinsight.models.WatchlistItem or JSON or IO[bytes]
+        :param watchlist_item: The watchlist item. Is either a WatchlistItem type or a IO[bytes] type.
+         Required.
+        :type watchlist_item: ~azure.mgmt.securityinsight.models.WatchlistItem or
+         ~azure.mgmt.securityinsight.types.WatchlistItem or IO[bytes]
         :return: WatchlistItem. The WatchlistItem is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.WatchlistItem
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13327,7 +13458,7 @@ class WatchlistItemsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BillingStatisticsOperations:
+class BillingStatisticsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13347,6 +13478,20 @@ class BillingStatisticsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "billing_statistic_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def get(
         self, resource_group_name: str, workspace_name: str, billing_statistic_name: str, **kwargs: Any
     ) -> _models.BillingStatistic:
@@ -13422,6 +13567,13 @@ class BillingStatisticsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": ["api_version", "subscription_id", "resource_group_name", "workspace_name", "accept"]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def list(
         self, resource_group_name: str, workspace_name: str, **kwargs: Any
     ) -> ItemPaged["_models.BillingStatistic"]:
@@ -13524,7 +13676,7 @@ class BillingStatisticsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class EntitiesOperations:
+class EntitiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13544,6 +13696,20 @@ class EntitiesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "entity_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def get(self, resource_group_name: str, workspace_name: str, entity_id: str, **kwargs: Any) -> _models.Entity:
         """Gets an entity.
 
@@ -13617,6 +13783,13 @@ class EntitiesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": ["api_version", "subscription_id", "resource_group_name", "workspace_name", "accept"]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def list(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> ItemPaged["_models.Entity"]:
         """Gets all entities.
 
@@ -13753,7 +13926,7 @@ class EntitiesOperations:
         resource_group_name: str,
         workspace_name: str,
         entity_identifier: str,
-        request_body: Optional[JSON] = None,
+        request_body: Optional[_types.EntityManualTriggerRequestBody] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13769,7 +13942,7 @@ class EntitiesOperations:
         :type entity_identifier: str
         :param request_body: Describes the request body for triggering a playbook on an entity. Default
          value is None.
-        :type request_body: JSON
+        :type request_body: ~azure.mgmt.securityinsight.types.EntityManualTriggerRequestBody
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13815,7 +13988,9 @@ class EntitiesOperations:
         resource_group_name: str,
         workspace_name: str,
         entity_identifier: str,
-        request_body: Optional[Union[_models.EntityManualTriggerRequestBody, JSON, IO[bytes]]] = None,
+        request_body: Optional[
+            Union[_models.EntityManualTriggerRequestBody, _types.EntityManualTriggerRequestBody, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """Triggers playbook on a specific entity.
@@ -13827,10 +14002,10 @@ class EntitiesOperations:
         :type workspace_name: str
         :param entity_identifier: entity ID. Required.
         :type entity_identifier: str
-        :param request_body: Describes the request body for triggering a playbook on an entity. Is one
-         of the following types: EntityManualTriggerRequestBody, JSON, IO[bytes] Default value is None.
-        :type request_body: ~azure.mgmt.securityinsight.models.EntityManualTriggerRequestBody or JSON
-         or IO[bytes]
+        :param request_body: Describes the request body for triggering a playbook on an entity. Is
+         either a EntityManualTriggerRequestBody type or a IO[bytes] type. Default value is None.
+        :type request_body: ~azure.mgmt.securityinsight.models.EntityManualTriggerRequestBody or
+         ~azure.mgmt.securityinsight.types.EntityManualTriggerRequestBody or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13931,7 +14106,7 @@ class EntitiesOperations:
         resource_group_name: str,
         workspace_name: str,
         entity_id: str,
-        parameters: JSON,
+        parameters: _types.EntityExpandParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13947,7 +14122,7 @@ class EntitiesOperations:
         :type entity_id: str
         :param parameters: The parameters required to execute an expand operation on the given entity.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.securityinsight.types.EntityExpandParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13988,12 +14163,27 @@ class EntitiesOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "entity_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def expand(
         self,
         resource_group_name: str,
         workspace_name: str,
         entity_id: str,
-        parameters: Union[_models.EntityExpandParameters, JSON, IO[bytes]],
+        parameters: Union[_models.EntityExpandParameters, _types.EntityExpandParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.EntityExpandResponse:
         """Expands an entity.
@@ -14006,9 +14196,9 @@ class EntitiesOperations:
         :param entity_id: entity ID. Required.
         :type entity_id: str
         :param parameters: The parameters required to execute an expand operation on the given entity.
-         Is one of the following types: EntityExpandParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.securityinsight.models.EntityExpandParameters or JSON or
-         IO[bytes]
+         Is either a EntityExpandParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.securityinsight.models.EntityExpandParameters or
+         ~azure.mgmt.securityinsight.types.EntityExpandParameters or IO[bytes]
         :return: EntityExpandResponse. The EntityExpandResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.EntityExpandResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14082,6 +14272,21 @@ class EntitiesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "entity_id",
+                "kind",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def queries(
         self,
         resource_group_name: str,
@@ -14232,7 +14437,7 @@ class EntitiesOperations:
         resource_group_name: str,
         workspace_name: str,
         entity_id: str,
-        parameters: JSON,
+        parameters: _types.EntityGetInsightsParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14247,7 +14452,7 @@ class EntitiesOperations:
         :param entity_id: entity ID. Required.
         :type entity_id: str
         :param parameters: The parameters required to execute insights on the given entity. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.securityinsight.types.EntityGetInsightsParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14289,12 +14494,27 @@ class EntitiesOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "entity_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def get_insights(
         self,
         resource_group_name: str,
         workspace_name: str,
         entity_id: str,
-        parameters: Union[_models.EntityGetInsightsParameters, JSON, IO[bytes]],
+        parameters: Union[_models.EntityGetInsightsParameters, _types.EntityGetInsightsParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.EntityGetInsightsResponse:
         """Execute Insights for an entity.
@@ -14306,10 +14526,10 @@ class EntitiesOperations:
         :type workspace_name: str
         :param entity_id: entity ID. Required.
         :type entity_id: str
-        :param parameters: The parameters required to execute insights on the given entity. Is one of
-         the following types: EntityGetInsightsParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.securityinsight.models.EntityGetInsightsParameters or JSON or
-         IO[bytes]
+        :param parameters: The parameters required to execute insights on the given entity. Is either a
+         EntityGetInsightsParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.securityinsight.models.EntityGetInsightsParameters or
+         ~azure.mgmt.securityinsight.types.EntityGetInsightsParameters or IO[bytes]
         :return: EntityGetInsightsResponse. The EntityGetInsightsResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.EntityGetInsightsResponse
@@ -14384,7 +14604,7 @@ class EntitiesOperations:
         return deserialized  # type: ignore
 
 
-class EntityQueriesOperations:
+class EntityQueriesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14404,6 +14624,20 @@ class EntityQueriesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "entity_query_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def get(
         self, resource_group_name: str, workspace_name: str, entity_query_id: str, **kwargs: Any
     ) -> _models.EntityQuery:
@@ -14514,7 +14748,7 @@ class EntityQueriesOperations:
         resource_group_name: str,
         workspace_name: str,
         entity_query_id: str,
-        entity_query: JSON,
+        entity_query: _types.CustomEntityQuery,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14529,7 +14763,7 @@ class EntityQueriesOperations:
         :param entity_query_id: entity query ID. Required.
         :type entity_query_id: str
         :param entity_query: The entity query we want to create or update. Required.
-        :type entity_query: JSON
+        :type entity_query: ~azure.mgmt.securityinsight.types.CustomEntityQuery
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14569,12 +14803,27 @@ class EntityQueriesOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "entity_query_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def create_or_update(
         self,
         resource_group_name: str,
         workspace_name: str,
         entity_query_id: str,
-        entity_query: Union[_models.CustomEntityQuery, JSON, IO[bytes]],
+        entity_query: Union[_models.CustomEntityQuery, _types.CustomEntityQuery, IO[bytes]],
         **kwargs: Any
     ) -> _models.EntityQuery:
         """Creates or updates the entity query.
@@ -14586,9 +14835,10 @@ class EntityQueriesOperations:
         :type workspace_name: str
         :param entity_query_id: entity query ID. Required.
         :type entity_query_id: str
-        :param entity_query: The entity query we want to create or update. Is one of the following
-         types: CustomEntityQuery, JSON, IO[bytes] Required.
-        :type entity_query: ~azure.mgmt.securityinsight.models.CustomEntityQuery or JSON or IO[bytes]
+        :param entity_query: The entity query we want to create or update. Is either a
+         CustomEntityQuery type or a IO[bytes] type. Required.
+        :type entity_query: ~azure.mgmt.securityinsight.models.CustomEntityQuery or
+         ~azure.mgmt.securityinsight.types.CustomEntityQuery or IO[bytes]
         :return: EntityQuery. The EntityQuery is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.EntityQuery
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14662,6 +14912,19 @@ class EntityQueriesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "entity_query_id",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, workspace_name: str, entity_query_id: str, **kwargs: Any
     ) -> None:
@@ -14724,6 +14987,20 @@ class EntityQueriesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "kind",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def list(
         self,
         resource_group_name: str,
@@ -14836,7 +15113,7 @@ class EntityQueriesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class EntityQueryTemplatesOperations:
+class EntityQueryTemplatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14856,6 +15133,20 @@ class EntityQueryTemplatesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "entity_query_template_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def get(
         self, resource_group_name: str, workspace_name: str, entity_query_template_id: str, **kwargs: Any
     ) -> _models.EntityQueryTemplate:
@@ -14931,6 +15222,20 @@ class EntityQueryTemplatesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "kind",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def list(
         self,
         resource_group_name: str,
@@ -15043,7 +15348,7 @@ class EntityQueryTemplatesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class FileImportsOperations:
+class FileImportsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15063,6 +15368,20 @@ class FileImportsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "file_import_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def get(
         self, resource_group_name: str, workspace_name: str, file_import_id: str, **kwargs: Any
     ) -> _models.FileImport:
@@ -15173,7 +15492,7 @@ class FileImportsOperations:
         resource_group_name: str,
         workspace_name: str,
         file_import_id: str,
-        file_import: JSON,
+        file_import: _types.FileImport,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15188,7 +15507,7 @@ class FileImportsOperations:
         :param file_import_id: File import ID. Required.
         :type file_import_id: str
         :param file_import: The file import. Required.
-        :type file_import: JSON
+        :type file_import: ~azure.mgmt.securityinsight.types.FileImport
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15228,12 +15547,27 @@ class FileImportsOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "file_import_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def create(
         self,
         resource_group_name: str,
         workspace_name: str,
         file_import_id: str,
-        file_import: Union[_models.FileImport, JSON, IO[bytes]],
+        file_import: Union[_models.FileImport, _types.FileImport, IO[bytes]],
         **kwargs: Any
     ) -> _models.FileImport:
         """Creates the file import.
@@ -15245,9 +15579,9 @@ class FileImportsOperations:
         :type workspace_name: str
         :param file_import_id: File import ID. Required.
         :type file_import_id: str
-        :param file_import: The file import. Is one of the following types: FileImport, JSON, IO[bytes]
-         Required.
-        :type file_import: ~azure.mgmt.securityinsight.models.FileImport or JSON or IO[bytes]
+        :param file_import: The file import. Is either a FileImport type or a IO[bytes] type. Required.
+        :type file_import: ~azure.mgmt.securityinsight.models.FileImport or
+         ~azure.mgmt.securityinsight.types.FileImport or IO[bytes]
         :return: FileImport. The FileImport is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.FileImport
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -15320,6 +15654,20 @@ class FileImportsOperations:
 
         return deserialized  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "file_import_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def _delete_initial(
         self, resource_group_name: str, workspace_name: str, file_import_id: str, **kwargs: Any
     ) -> Iterator[bytes]:
@@ -15382,6 +15730,20 @@ class FileImportsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "file_import_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def begin_delete(
         self, resource_group_name: str, workspace_name: str, file_import_id: str, **kwargs: Any
     ) -> LROPoller[_models.FileImport]:
@@ -15453,6 +15815,23 @@ class FileImportsOperations:
         )
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "filter",
+                "orderby",
+                "top",
+                "skip_token",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def list(
         self,
         resource_group_name: str,
@@ -15579,7 +15958,7 @@ class FileImportsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class HuntsOperations:
+class HuntsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15599,6 +15978,20 @@ class HuntsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "hunt_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def get(self, resource_group_name: str, workspace_name: str, hunt_id: str, **kwargs: Any) -> _models.Hunt:
         """Gets a hunt, without relations and comments.
 
@@ -15707,7 +16100,7 @@ class HuntsOperations:
         resource_group_name: str,
         workspace_name: str,
         hunt_id: str,
-        hunt: JSON,
+        hunt: _types.Hunt,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15722,7 +16115,7 @@ class HuntsOperations:
         :param hunt_id: The hunt id (GUID). Required.
         :type hunt_id: str
         :param hunt: The hunt. Required.
-        :type hunt: JSON
+        :type hunt: ~azure.mgmt.securityinsight.types.Hunt
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15762,12 +16155,27 @@ class HuntsOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "hunt_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def create_or_update(
         self,
         resource_group_name: str,
         workspace_name: str,
         hunt_id: str,
-        hunt: Union[_models.Hunt, JSON, IO[bytes]],
+        hunt: Union[_models.Hunt, _types.Hunt, IO[bytes]],
         **kwargs: Any
     ) -> _models.Hunt:
         """Create or update a hunt.
@@ -15779,8 +16187,9 @@ class HuntsOperations:
         :type workspace_name: str
         :param hunt_id: The hunt id (GUID). Required.
         :type hunt_id: str
-        :param hunt: The hunt. Is one of the following types: Hunt, JSON, IO[bytes] Required.
-        :type hunt: ~azure.mgmt.securityinsight.models.Hunt or JSON or IO[bytes]
+        :param hunt: The hunt. Is either a Hunt type or a IO[bytes] type. Required.
+        :type hunt: ~azure.mgmt.securityinsight.models.Hunt or ~azure.mgmt.securityinsight.types.Hunt
+         or IO[bytes]
         :return: Hunt. The Hunt is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.Hunt
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -15854,6 +16263,13 @@ class HuntsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": ["api_version", "subscription_id", "resource_group_name", "workspace_name", "hunt_id"]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, workspace_name: str, hunt_id: str, **kwargs: Any
     ) -> None:
@@ -15916,6 +16332,23 @@ class HuntsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "filter",
+                "orderby",
+                "top",
+                "skip_token",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def list(
         self,
         resource_group_name: str,
@@ -16042,7 +16475,7 @@ class HuntsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class HuntCommentsOperations:
+class HuntCommentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16062,6 +16495,21 @@ class HuntCommentsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "hunt_id",
+                "hunt_comment_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def get(
         self, resource_group_name: str, workspace_name: str, hunt_id: str, hunt_comment_id: str, **kwargs: Any
     ) -> _models.HuntComment:
@@ -16179,7 +16627,7 @@ class HuntCommentsOperations:
         workspace_name: str,
         hunt_id: str,
         hunt_comment_id: str,
-        hunt_comment: JSON,
+        hunt_comment: _types.HuntComment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16196,7 +16644,7 @@ class HuntCommentsOperations:
         :param hunt_comment_id: The hunt comment id (GUID). Required.
         :type hunt_comment_id: str
         :param hunt_comment: The hunt  comment. Required.
-        :type hunt_comment: JSON
+        :type hunt_comment: ~azure.mgmt.securityinsight.types.HuntComment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16239,13 +16687,29 @@ class HuntCommentsOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "hunt_id",
+                "hunt_comment_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def create_or_update(
         self,
         resource_group_name: str,
         workspace_name: str,
         hunt_id: str,
         hunt_comment_id: str,
-        hunt_comment: Union[_models.HuntComment, JSON, IO[bytes]],
+        hunt_comment: Union[_models.HuntComment, _types.HuntComment, IO[bytes]],
         **kwargs: Any
     ) -> _models.HuntComment:
         """Creates or updates a hunt relation.
@@ -16259,9 +16723,10 @@ class HuntCommentsOperations:
         :type hunt_id: str
         :param hunt_comment_id: The hunt comment id (GUID). Required.
         :type hunt_comment_id: str
-        :param hunt_comment: The hunt  comment. Is one of the following types: HuntComment, JSON,
-         IO[bytes] Required.
-        :type hunt_comment: ~azure.mgmt.securityinsight.models.HuntComment or JSON or IO[bytes]
+        :param hunt_comment: The hunt  comment. Is either a HuntComment type or a IO[bytes] type.
+         Required.
+        :type hunt_comment: ~azure.mgmt.securityinsight.models.HuntComment or
+         ~azure.mgmt.securityinsight.types.HuntComment or IO[bytes]
         :return: HuntComment. The HuntComment is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.HuntComment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -16336,6 +16801,20 @@ class HuntCommentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "hunt_id",
+                "hunt_comment_id",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, workspace_name: str, hunt_id: str, hunt_comment_id: str, **kwargs: Any
     ) -> None:
@@ -16401,6 +16880,24 @@ class HuntCommentsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "hunt_id",
+                "filter",
+                "orderby",
+                "top",
+                "skip_token",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def list(
         self,
         resource_group_name: str,
@@ -16531,7 +17028,7 @@ class HuntCommentsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class HuntRelationsOperations:
+class HuntRelationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16551,6 +17048,21 @@ class HuntRelationsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "hunt_id",
+                "hunt_relation_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def get(
         self, resource_group_name: str, workspace_name: str, hunt_id: str, hunt_relation_id: str, **kwargs: Any
     ) -> _models.HuntRelation:
@@ -16668,7 +17180,7 @@ class HuntRelationsOperations:
         workspace_name: str,
         hunt_id: str,
         hunt_relation_id: str,
-        hunt_relation: JSON,
+        hunt_relation: _types.HuntRelation,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16685,7 +17197,7 @@ class HuntRelationsOperations:
         :param hunt_relation_id: The hunt relation id (GUID). Required.
         :type hunt_relation_id: str
         :param hunt_relation: The hunt relation. Required.
-        :type hunt_relation: JSON
+        :type hunt_relation: ~azure.mgmt.securityinsight.types.HuntRelation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16728,13 +17240,29 @@ class HuntRelationsOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "hunt_id",
+                "hunt_relation_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def create_or_update(
         self,
         resource_group_name: str,
         workspace_name: str,
         hunt_id: str,
         hunt_relation_id: str,
-        hunt_relation: Union[_models.HuntRelation, JSON, IO[bytes]],
+        hunt_relation: Union[_models.HuntRelation, _types.HuntRelation, IO[bytes]],
         **kwargs: Any
     ) -> _models.HuntRelation:
         """Creates or updates a hunt relation.
@@ -16748,9 +17276,10 @@ class HuntRelationsOperations:
         :type hunt_id: str
         :param hunt_relation_id: The hunt relation id (GUID). Required.
         :type hunt_relation_id: str
-        :param hunt_relation: The hunt relation. Is one of the following types: HuntRelation, JSON,
-         IO[bytes] Required.
-        :type hunt_relation: ~azure.mgmt.securityinsight.models.HuntRelation or JSON or IO[bytes]
+        :param hunt_relation: The hunt relation. Is either a HuntRelation type or a IO[bytes] type.
+         Required.
+        :type hunt_relation: ~azure.mgmt.securityinsight.models.HuntRelation or
+         ~azure.mgmt.securityinsight.types.HuntRelation or IO[bytes]
         :return: HuntRelation. The HuntRelation is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.HuntRelation
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -16825,6 +17354,20 @@ class HuntRelationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "hunt_id",
+                "hunt_relation_id",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, workspace_name: str, hunt_id: str, hunt_relation_id: str, **kwargs: Any
     ) -> None:
@@ -16890,6 +17433,24 @@ class HuntRelationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "hunt_id",
+                "filter",
+                "orderby",
+                "top",
+                "skip_token",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def list(
         self,
         resource_group_name: str,
@@ -17020,7 +17581,7 @@ class HuntRelationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class OfficeConsentsOperations:
+class OfficeConsentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17040,6 +17601,20 @@ class OfficeConsentsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "consent_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def get(
         self, resource_group_name: str, workspace_name: str, consent_id: str, **kwargs: Any
     ) -> _models.OfficeConsent:
@@ -17115,6 +17690,19 @@ class OfficeConsentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "consent_id",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, workspace_name: str, consent_id: str, **kwargs: Any
     ) -> None:
@@ -17177,6 +17765,13 @@ class OfficeConsentsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": ["api_version", "subscription_id", "resource_group_name", "workspace_name", "accept"]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def list(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> ItemPaged["_models.OfficeConsent"]:
         """Gets all office365 consents.
 
@@ -17277,7 +17872,7 @@ class OfficeConsentsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ProductSettingsOperations:
+class ProductSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17297,6 +17892,20 @@ class ProductSettingsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "settings_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def get(self, resource_group_name: str, workspace_name: str, settings_name: str, **kwargs: Any) -> _models.Settings:
         """Gets a setting.
 
@@ -17407,7 +18016,7 @@ class ProductSettingsOperations:
         resource_group_name: str,
         workspace_name: str,
         settings_name: str,
-        settings: JSON,
+        settings: _types.Settings,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17423,7 +18032,7 @@ class ProductSettingsOperations:
          Required.
         :type settings_name: str
         :param settings: The setting. Required.
-        :type settings: JSON
+        :type settings: ~azure.mgmt.securityinsight.types.Settings
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17464,12 +18073,27 @@ class ProductSettingsOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "settings_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def update(
         self,
         resource_group_name: str,
         workspace_name: str,
         settings_name: str,
-        settings: Union[_models.Settings, JSON, IO[bytes]],
+        settings: Union[_models.Settings, _types.Settings, IO[bytes]],
         **kwargs: Any
     ) -> _models.Settings:
         """Updates setting.
@@ -17482,9 +18106,9 @@ class ProductSettingsOperations:
         :param settings_name: The setting name. Supports - Anomalies, EyesOn, EntityAnalytics, Ueba.
          Required.
         :type settings_name: str
-        :param settings: The setting. Is one of the following types: Settings, JSON, IO[bytes]
-         Required.
-        :type settings: ~azure.mgmt.securityinsight.models.Settings or JSON or IO[bytes]
+        :param settings: The setting. Is either a Settings type or a IO[bytes] type. Required.
+        :type settings: ~azure.mgmt.securityinsight.models.Settings or
+         ~azure.mgmt.securityinsight.types.Settings or IO[bytes]
         :return: Settings. The Settings is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.Settings
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17558,6 +18182,19 @@ class ProductSettingsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "settings_name",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, workspace_name: str, settings_name: str, **kwargs: Any
     ) -> None:
@@ -17621,6 +18258,13 @@ class ProductSettingsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": ["api_version", "subscription_id", "resource_group_name", "workspace_name", "accept"]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def list(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> ItemPaged["_models.Settings"]:
         """List of all the settings.
 
@@ -17721,7 +18365,7 @@ class ProductSettingsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceManagerAssignmentsOperations:
+class WorkspaceManagerAssignmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17741,6 +18385,20 @@ class WorkspaceManagerAssignmentsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "workspace_manager_assignment_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def get(
         self, resource_group_name: str, workspace_name: str, workspace_manager_assignment_name: str, **kwargs: Any
     ) -> _models.WorkspaceManagerAssignment:
@@ -17856,7 +18514,7 @@ class WorkspaceManagerAssignmentsOperations:
         resource_group_name: str,
         workspace_name: str,
         workspace_manager_assignment_name: str,
-        workspace_manager_assignment: JSON,
+        workspace_manager_assignment: _types.WorkspaceManagerAssignment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17872,7 +18530,8 @@ class WorkspaceManagerAssignmentsOperations:
          Required.
         :type workspace_manager_assignment_name: str
         :param workspace_manager_assignment: The workspace manager assignment. Required.
-        :type workspace_manager_assignment: JSON
+        :type workspace_manager_assignment:
+         ~azure.mgmt.securityinsight.types.WorkspaceManagerAssignment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17915,12 +18574,29 @@ class WorkspaceManagerAssignmentsOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "workspace_manager_assignment_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def create_or_update(
         self,
         resource_group_name: str,
         workspace_name: str,
         workspace_manager_assignment_name: str,
-        workspace_manager_assignment: Union[_models.WorkspaceManagerAssignment, JSON, IO[bytes]],
+        workspace_manager_assignment: Union[
+            _models.WorkspaceManagerAssignment, _types.WorkspaceManagerAssignment, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.WorkspaceManagerAssignment:
         """Creates or updates a workspace manager assignment.
@@ -17933,10 +18609,11 @@ class WorkspaceManagerAssignmentsOperations:
         :param workspace_manager_assignment_name: The name of the workspace manager assignment.
          Required.
         :type workspace_manager_assignment_name: str
-        :param workspace_manager_assignment: The workspace manager assignment. Is one of the following
-         types: WorkspaceManagerAssignment, JSON, IO[bytes] Required.
+        :param workspace_manager_assignment: The workspace manager assignment. Is either a
+         WorkspaceManagerAssignment type or a IO[bytes] type. Required.
         :type workspace_manager_assignment:
-         ~azure.mgmt.securityinsight.models.WorkspaceManagerAssignment or JSON or IO[bytes]
+         ~azure.mgmt.securityinsight.models.WorkspaceManagerAssignment or
+         ~azure.mgmt.securityinsight.types.WorkspaceManagerAssignment or IO[bytes]
         :return: WorkspaceManagerAssignment. The WorkspaceManagerAssignment is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.WorkspaceManagerAssignment
@@ -18011,6 +18688,19 @@ class WorkspaceManagerAssignmentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "workspace_manager_assignment_name",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, workspace_name: str, workspace_manager_assignment_name: str, **kwargs: Any
     ) -> None:
@@ -18074,6 +18764,22 @@ class WorkspaceManagerAssignmentsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "orderby",
+                "top",
+                "skip_token",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def list(
         self,
         resource_group_name: str,
@@ -18196,7 +18902,7 @@ class WorkspaceManagerAssignmentsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceManagerConfigurationsOperations:
+class WorkspaceManagerConfigurationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18216,6 +18922,20 @@ class WorkspaceManagerConfigurationsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "workspace_manager_configuration_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def get(
         self, resource_group_name: str, workspace_name: str, workspace_manager_configuration_name: str, **kwargs: Any
     ) -> _models.WorkspaceManagerConfiguration:
@@ -18331,7 +19051,7 @@ class WorkspaceManagerConfigurationsOperations:
         resource_group_name: str,
         workspace_name: str,
         workspace_manager_configuration_name: str,
-        workspace_manager_configuration: JSON,
+        workspace_manager_configuration: _types.WorkspaceManagerConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18347,7 +19067,8 @@ class WorkspaceManagerConfigurationsOperations:
          Required.
         :type workspace_manager_configuration_name: str
         :param workspace_manager_configuration: The workspace manager configuration. Required.
-        :type workspace_manager_configuration: JSON
+        :type workspace_manager_configuration:
+         ~azure.mgmt.securityinsight.types.WorkspaceManagerConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18390,12 +19111,29 @@ class WorkspaceManagerConfigurationsOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "workspace_manager_configuration_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def create_or_update(
         self,
         resource_group_name: str,
         workspace_name: str,
         workspace_manager_configuration_name: str,
-        workspace_manager_configuration: Union[_models.WorkspaceManagerConfiguration, JSON, IO[bytes]],
+        workspace_manager_configuration: Union[
+            _models.WorkspaceManagerConfiguration, _types.WorkspaceManagerConfiguration, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.WorkspaceManagerConfiguration:
         """Creates or updates a workspace manager configuration.
@@ -18408,10 +19146,11 @@ class WorkspaceManagerConfigurationsOperations:
         :param workspace_manager_configuration_name: The name of the workspace manager configuration.
          Required.
         :type workspace_manager_configuration_name: str
-        :param workspace_manager_configuration: The workspace manager configuration. Is one of the
-         following types: WorkspaceManagerConfiguration, JSON, IO[bytes] Required.
+        :param workspace_manager_configuration: The workspace manager configuration. Is either a
+         WorkspaceManagerConfiguration type or a IO[bytes] type. Required.
         :type workspace_manager_configuration:
-         ~azure.mgmt.securityinsight.models.WorkspaceManagerConfiguration or JSON or IO[bytes]
+         ~azure.mgmt.securityinsight.models.WorkspaceManagerConfiguration or
+         ~azure.mgmt.securityinsight.types.WorkspaceManagerConfiguration or IO[bytes]
         :return: WorkspaceManagerConfiguration. The WorkspaceManagerConfiguration is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.WorkspaceManagerConfiguration
@@ -18486,6 +19225,19 @@ class WorkspaceManagerConfigurationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "workspace_manager_configuration_name",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, workspace_name: str, workspace_manager_configuration_name: str, **kwargs: Any
     ) -> None:
@@ -18549,6 +19301,22 @@ class WorkspaceManagerConfigurationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "orderby",
+                "top",
+                "skip_token",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def list(
         self,
         resource_group_name: str,
@@ -18671,7 +19439,7 @@ class WorkspaceManagerConfigurationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceManagerGroupsOperations:
+class WorkspaceManagerGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18691,6 +19459,20 @@ class WorkspaceManagerGroupsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "workspace_manager_group_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def get(
         self, resource_group_name: str, workspace_name: str, workspace_manager_group_name: str, **kwargs: Any
     ) -> _models.WorkspaceManagerGroup:
@@ -18801,7 +19583,7 @@ class WorkspaceManagerGroupsOperations:
         resource_group_name: str,
         workspace_name: str,
         workspace_manager_group_name: str,
-        workspace_manager_group: JSON,
+        workspace_manager_group: _types.WorkspaceManagerGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18816,7 +19598,7 @@ class WorkspaceManagerGroupsOperations:
         :param workspace_manager_group_name: The name of the workspace manager group. Required.
         :type workspace_manager_group_name: str
         :param workspace_manager_group: The workspace manager group object. Required.
-        :type workspace_manager_group: JSON
+        :type workspace_manager_group: ~azure.mgmt.securityinsight.types.WorkspaceManagerGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18856,12 +19638,27 @@ class WorkspaceManagerGroupsOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "workspace_manager_group_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def create_or_update(
         self,
         resource_group_name: str,
         workspace_name: str,
         workspace_manager_group_name: str,
-        workspace_manager_group: Union[_models.WorkspaceManagerGroup, JSON, IO[bytes]],
+        workspace_manager_group: Union[_models.WorkspaceManagerGroup, _types.WorkspaceManagerGroup, IO[bytes]],
         **kwargs: Any
     ) -> _models.WorkspaceManagerGroup:
         """Creates or updates a workspace manager group.
@@ -18873,10 +19670,10 @@ class WorkspaceManagerGroupsOperations:
         :type workspace_name: str
         :param workspace_manager_group_name: The name of the workspace manager group. Required.
         :type workspace_manager_group_name: str
-        :param workspace_manager_group: The workspace manager group object. Is one of the following
-         types: WorkspaceManagerGroup, JSON, IO[bytes] Required.
-        :type workspace_manager_group: ~azure.mgmt.securityinsight.models.WorkspaceManagerGroup or JSON
-         or IO[bytes]
+        :param workspace_manager_group: The workspace manager group object. Is either a
+         WorkspaceManagerGroup type or a IO[bytes] type. Required.
+        :type workspace_manager_group: ~azure.mgmt.securityinsight.models.WorkspaceManagerGroup or
+         ~azure.mgmt.securityinsight.types.WorkspaceManagerGroup or IO[bytes]
         :return: WorkspaceManagerGroup. The WorkspaceManagerGroup is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.WorkspaceManagerGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -18950,6 +19747,19 @@ class WorkspaceManagerGroupsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "workspace_manager_group_name",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, workspace_name: str, workspace_manager_group_name: str, **kwargs: Any
     ) -> None:
@@ -19012,6 +19822,22 @@ class WorkspaceManagerGroupsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "orderby",
+                "top",
+                "skip_token",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def list(
         self,
         resource_group_name: str,
@@ -19133,7 +19959,7 @@ class WorkspaceManagerGroupsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceManagerMembersOperations:
+class WorkspaceManagerMembersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -19153,6 +19979,20 @@ class WorkspaceManagerMembersOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "workspace_manager_member_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def get(
         self, resource_group_name: str, workspace_name: str, workspace_manager_member_name: str, **kwargs: Any
     ) -> _models.WorkspaceManagerMember:
@@ -19263,7 +20103,7 @@ class WorkspaceManagerMembersOperations:
         resource_group_name: str,
         workspace_name: str,
         workspace_manager_member_name: str,
-        workspace_manager_member: JSON,
+        workspace_manager_member: _types.WorkspaceManagerMember,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19278,7 +20118,7 @@ class WorkspaceManagerMembersOperations:
         :param workspace_manager_member_name: The name of the workspace manager member. Required.
         :type workspace_manager_member_name: str
         :param workspace_manager_member: The workspace manager member object. Required.
-        :type workspace_manager_member: JSON
+        :type workspace_manager_member: ~azure.mgmt.securityinsight.types.WorkspaceManagerMember
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19318,12 +20158,27 @@ class WorkspaceManagerMembersOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "workspace_manager_member_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def create_or_update(
         self,
         resource_group_name: str,
         workspace_name: str,
         workspace_manager_member_name: str,
-        workspace_manager_member: Union[_models.WorkspaceManagerMember, JSON, IO[bytes]],
+        workspace_manager_member: Union[_models.WorkspaceManagerMember, _types.WorkspaceManagerMember, IO[bytes]],
         **kwargs: Any
     ) -> _models.WorkspaceManagerMember:
         """Creates or updates a workspace manager member.
@@ -19335,10 +20190,10 @@ class WorkspaceManagerMembersOperations:
         :type workspace_name: str
         :param workspace_manager_member_name: The name of the workspace manager member. Required.
         :type workspace_manager_member_name: str
-        :param workspace_manager_member: The workspace manager member object. Is one of the following
-         types: WorkspaceManagerMember, JSON, IO[bytes] Required.
+        :param workspace_manager_member: The workspace manager member object. Is either a
+         WorkspaceManagerMember type or a IO[bytes] type. Required.
         :type workspace_manager_member: ~azure.mgmt.securityinsight.models.WorkspaceManagerMember or
-         JSON or IO[bytes]
+         ~azure.mgmt.securityinsight.types.WorkspaceManagerMember or IO[bytes]
         :return: WorkspaceManagerMember. The WorkspaceManagerMember is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.WorkspaceManagerMember
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -19412,6 +20267,19 @@ class WorkspaceManagerMembersOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "workspace_manager_member_name",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, workspace_name: str, workspace_manager_member_name: str, **kwargs: Any
     ) -> None:
@@ -19474,6 +20342,22 @@ class WorkspaceManagerMembersOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "orderby",
+                "top",
+                "skip_token",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def list(
         self,
         resource_group_name: str,
@@ -19595,7 +20479,7 @@ class WorkspaceManagerMembersOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AlertRuleOperations:
+class AlertRuleOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -19614,12 +20498,28 @@ class AlertRuleOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "rule_id",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def _trigger_rule_run_initial(
         self,
         resource_group_name: str,
         workspace_name: str,
         rule_id: str,
-        analytics_rule_run_trigger_parameter: Union[_models.AnalyticsRuleRunTrigger, JSON, IO[bytes]],
+        analytics_rule_run_trigger_parameter: Union[
+            _models.AnalyticsRuleRunTrigger, _types.AnalyticsRuleRunTrigger, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -19699,7 +20599,7 @@ class AlertRuleOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.AlertRule]:
+    ) -> LROPoller[None]:
         """triggers analytics rule run.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -19715,9 +20615,8 @@ class AlertRuleOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns AlertRule. The AlertRule is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.securityinsight.models.AlertRule]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -19727,11 +20626,11 @@ class AlertRuleOperations:
         resource_group_name: str,
         workspace_name: str,
         rule_id: str,
-        analytics_rule_run_trigger_parameter: JSON,
+        analytics_rule_run_trigger_parameter: _types.AnalyticsRuleRunTrigger,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.AlertRule]:
+    ) -> LROPoller[None]:
         """triggers analytics rule run.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -19742,13 +20641,13 @@ class AlertRuleOperations:
         :param rule_id: Alert rule ID. Required.
         :type rule_id: str
         :param analytics_rule_run_trigger_parameter: The content of the action request. Required.
-        :type analytics_rule_run_trigger_parameter: JSON
+        :type analytics_rule_run_trigger_parameter:
+         ~azure.mgmt.securityinsight.types.AnalyticsRuleRunTrigger
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns AlertRule. The AlertRule is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.securityinsight.models.AlertRule]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -19762,7 +20661,7 @@ class AlertRuleOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.AlertRule]:
+    ) -> LROPoller[None]:
         """triggers analytics rule run.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -19777,21 +20676,36 @@ class AlertRuleOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns AlertRule. The AlertRule is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.securityinsight.models.AlertRule]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "rule_id",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def begin_trigger_rule_run(
         self,
         resource_group_name: str,
         workspace_name: str,
         rule_id: str,
-        analytics_rule_run_trigger_parameter: Union[_models.AnalyticsRuleRunTrigger, JSON, IO[bytes]],
+        analytics_rule_run_trigger_parameter: Union[
+            _models.AnalyticsRuleRunTrigger, _types.AnalyticsRuleRunTrigger, IO[bytes]
+        ],
         **kwargs: Any
-    ) -> LROPoller[_models.AlertRule]:
+    ) -> LROPoller[None]:
         """triggers analytics rule run.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -19801,20 +20715,20 @@ class AlertRuleOperations:
         :type workspace_name: str
         :param rule_id: Alert rule ID. Required.
         :type rule_id: str
-        :param analytics_rule_run_trigger_parameter: The content of the action request. Is one of the
-         following types: AnalyticsRuleRunTrigger, JSON, IO[bytes] Required.
+        :param analytics_rule_run_trigger_parameter: The content of the action request. Is either a
+         AnalyticsRuleRunTrigger type or a IO[bytes] type. Required.
         :type analytics_rule_run_trigger_parameter:
-         ~azure.mgmt.securityinsight.models.AnalyticsRuleRunTrigger or JSON or IO[bytes]
-        :return: An instance of LROPoller that returns AlertRule. The AlertRule is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.securityinsight.models.AlertRule]
+         ~azure.mgmt.securityinsight.models.AnalyticsRuleRunTrigger or
+         ~azure.mgmt.securityinsight.types.AnalyticsRuleRunTrigger or IO[bytes]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AlertRule] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -19833,15 +20747,9 @@ class AlertRuleOperations:
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-            deserialized = _deserialize(_models.AlertRule, response.json())
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -19856,18 +20764,16 @@ class AlertRuleOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.AlertRule].from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.AlertRule](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ActionsOperations:
+class ActionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -20004,7 +20910,7 @@ class ActionsOperations:
         workspace_name: str,
         rule_id: str,
         action_id: str,
-        action: JSON,
+        action: _types.ActionRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20021,7 +20927,7 @@ class ActionsOperations:
         :param action_id: Action ID. Required.
         :type action_id: str
         :param action: The action. Required.
-        :type action: JSON
+        :type action: ~azure.mgmt.securityinsight.types.ActionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20070,7 +20976,7 @@ class ActionsOperations:
         workspace_name: str,
         rule_id: str,
         action_id: str,
-        action: Union[_models.ActionRequest, JSON, IO[bytes]],
+        action: Union[_models.ActionRequest, _types.ActionRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.ActionResponse:
         """Creates or updates the action of alert rule.
@@ -20084,9 +20990,9 @@ class ActionsOperations:
         :type rule_id: str
         :param action_id: Action ID. Required.
         :type action_id: str
-        :param action: The action. Is one of the following types: ActionRequest, JSON, IO[bytes]
-         Required.
-        :type action: ~azure.mgmt.securityinsight.models.ActionRequest or JSON or IO[bytes]
+        :param action: The action. Is either a ActionRequest type or a IO[bytes] type. Required.
+        :type action: ~azure.mgmt.securityinsight.models.ActionRequest or
+         ~azure.mgmt.securityinsight.types.ActionRequest or IO[bytes]
         :return: ActionResponse. The ActionResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.ActionResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -20331,7 +21237,7 @@ class ActionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BookmarkOperations:
+class BookmarkOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -20386,7 +21292,7 @@ class BookmarkOperations:
         resource_group_name: str,
         workspace_name: str,
         bookmark_id: str,
-        parameters: JSON,
+        parameters: _types.BookmarkExpandParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20401,7 +21307,7 @@ class BookmarkOperations:
         :param bookmark_id: Bookmark ID. Required.
         :type bookmark_id: str
         :param parameters: The content of the action request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.securityinsight.types.BookmarkExpandParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20441,12 +21347,27 @@ class BookmarkOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "bookmark_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def expand(
         self,
         resource_group_name: str,
         workspace_name: str,
         bookmark_id: str,
-        parameters: Union[_models.BookmarkExpandParameters, JSON, IO[bytes]],
+        parameters: Union[_models.BookmarkExpandParameters, _types.BookmarkExpandParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.BookmarkExpandResponse:
         """Expand an bookmark.
@@ -20458,10 +21379,10 @@ class BookmarkOperations:
         :type workspace_name: str
         :param bookmark_id: Bookmark ID. Required.
         :type bookmark_id: str
-        :param parameters: The content of the action request. Is one of the following types:
-         BookmarkExpandParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.securityinsight.models.BookmarkExpandParameters or JSON or
-         IO[bytes]
+        :param parameters: The content of the action request. Is either a BookmarkExpandParameters type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.securityinsight.models.BookmarkExpandParameters or
+         ~azure.mgmt.securityinsight.types.BookmarkExpandParameters or IO[bytes]
         :return: BookmarkExpandResponse. The BookmarkExpandResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.BookmarkExpandResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -20535,7 +21456,7 @@ class BookmarkOperations:
         return deserialized  # type: ignore
 
 
-class ContentPackagesOperations:
+class ContentPackagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -20770,7 +21691,7 @@ class ContentPackagesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ContentPackageOperations:
+class ContentPackageOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -20825,7 +21746,7 @@ class ContentPackageOperations:
         resource_group_name: str,
         workspace_name: str,
         package_id: str,
-        package_installation_properties: JSON,
+        package_installation_properties: _types.PackageModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20840,7 +21761,7 @@ class ContentPackageOperations:
         :param package_id: package Id. Required.
         :type package_id: str
         :param package_installation_properties: Package installation properties. Required.
-        :type package_installation_properties: JSON
+        :type package_installation_properties: ~azure.mgmt.securityinsight.types.PackageModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20885,7 +21806,7 @@ class ContentPackageOperations:
         resource_group_name: str,
         workspace_name: str,
         package_id: str,
-        package_installation_properties: Union[_models.PackageModel, JSON, IO[bytes]],
+        package_installation_properties: Union[_models.PackageModel, _types.PackageModel, IO[bytes]],
         **kwargs: Any
     ) -> _models.PackageModel:
         """Install a package to the workspace.
@@ -20897,10 +21818,10 @@ class ContentPackageOperations:
         :type workspace_name: str
         :param package_id: package Id. Required.
         :type package_id: str
-        :param package_installation_properties: Package installation properties. Is one of the
-         following types: PackageModel, JSON, IO[bytes] Required.
-        :type package_installation_properties: ~azure.mgmt.securityinsight.models.PackageModel or JSON
-         or IO[bytes]
+        :param package_installation_properties: Package installation properties. Is either a
+         PackageModel type or a IO[bytes] type. Required.
+        :type package_installation_properties: ~azure.mgmt.securityinsight.models.PackageModel or
+         ~azure.mgmt.securityinsight.types.PackageModel or IO[bytes]
         :return: PackageModel. The PackageModel is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.PackageModel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -21036,7 +21957,7 @@ class ContentPackageOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ProductPackageOperations:
+class ProductPackageOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -21131,7 +22052,7 @@ class ProductPackageOperations:
         return deserialized  # type: ignore
 
 
-class ProductPackagesOperations:
+class ProductPackagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -21285,7 +22206,7 @@ class ProductPackagesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ProductTemplateOperations:
+class ProductTemplateOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -21380,7 +22301,7 @@ class ProductTemplateOperations:
         return deserialized  # type: ignore
 
 
-class ProductTemplatesOperations:
+class ProductTemplatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -21540,7 +22461,7 @@ class ProductTemplatesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ContentTemplateOperations:
+class ContentTemplateOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -21674,7 +22595,7 @@ class ContentTemplateOperations:
         resource_group_name: str,
         workspace_name: str,
         template_id: str,
-        template_installation_properties: JSON,
+        template_installation_properties: _types.TemplateModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21689,7 +22610,7 @@ class ContentTemplateOperations:
         :param template_id: template Id. Required.
         :type template_id: str
         :param template_installation_properties: Template installation properties. Required.
-        :type template_installation_properties: JSON
+        :type template_installation_properties: ~azure.mgmt.securityinsight.types.TemplateModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21734,7 +22655,7 @@ class ContentTemplateOperations:
         resource_group_name: str,
         workspace_name: str,
         template_id: str,
-        template_installation_properties: Union[_models.TemplateModel, JSON, IO[bytes]],
+        template_installation_properties: Union[_models.TemplateModel, _types.TemplateModel, IO[bytes]],
         **kwargs: Any
     ) -> _models.TemplateModel:
         """Install a template.
@@ -21746,10 +22667,10 @@ class ContentTemplateOperations:
         :type workspace_name: str
         :param template_id: template Id. Required.
         :type template_id: str
-        :param template_installation_properties: Template installation properties. Is one of the
-         following types: TemplateModel, JSON, IO[bytes] Required.
+        :param template_installation_properties: Template installation properties. Is either a
+         TemplateModel type or a IO[bytes] type. Required.
         :type template_installation_properties: ~azure.mgmt.securityinsight.models.TemplateModel or
-         JSON or IO[bytes]
+         ~azure.mgmt.securityinsight.types.TemplateModel or IO[bytes]
         :return: TemplateModel. The TemplateModel is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.TemplateModel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -21885,7 +22806,7 @@ class ContentTemplateOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ContentTemplatesOperations:
+class ContentTemplatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -22054,7 +22975,7 @@ class ContentTemplatesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class IncidentRelationsOperations:
+class IncidentRelationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -22191,7 +23112,7 @@ class IncidentRelationsOperations:
         workspace_name: str,
         incident_id: str,
         relation_name: str,
-        relation: JSON,
+        relation: _types.Relation,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22208,7 +23129,7 @@ class IncidentRelationsOperations:
         :param relation_name: Relation Name. Required.
         :type relation_name: str
         :param relation: The relation model. Required.
-        :type relation: JSON
+        :type relation: ~azure.mgmt.securityinsight.types.Relation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22257,7 +23178,7 @@ class IncidentRelationsOperations:
         workspace_name: str,
         incident_id: str,
         relation_name: str,
-        relation: Union[_models.Relation, JSON, IO[bytes]],
+        relation: Union[_models.Relation, _types.Relation, IO[bytes]],
         **kwargs: Any
     ) -> _models.Relation:
         """Creates or updates the incident relation.
@@ -22271,9 +23192,9 @@ class IncidentRelationsOperations:
         :type incident_id: str
         :param relation_name: Relation Name. Required.
         :type relation_name: str
-        :param relation: The relation model. Is one of the following types: Relation, JSON, IO[bytes]
-         Required.
-        :type relation: ~azure.mgmt.securityinsight.models.Relation or JSON or IO[bytes]
+        :param relation: The relation model. Is either a Relation type or a IO[bytes] type. Required.
+        :type relation: ~azure.mgmt.securityinsight.models.Relation or
+         ~azure.mgmt.securityinsight.types.Relation or IO[bytes]
         :return: Relation. The Relation is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.Relation
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -22543,7 +23464,7 @@ class IncidentRelationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class EntitiesRelationsOperations:
+class EntitiesRelationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -22693,7 +23614,7 @@ class EntitiesRelationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class MetadataOperations:
+class MetadataOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -22823,7 +23744,7 @@ class MetadataOperations:
         resource_group_name: str,
         workspace_name: str,
         metadata_name: str,
-        metadata: JSON,
+        metadata: _types.MetadataModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22838,7 +23759,7 @@ class MetadataOperations:
         :param metadata_name: The Metadata name. Required.
         :type metadata_name: str
         :param metadata: Metadata resource. Required.
-        :type metadata: JSON
+        :type metadata: ~azure.mgmt.securityinsight.types.MetadataModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22883,7 +23804,7 @@ class MetadataOperations:
         resource_group_name: str,
         workspace_name: str,
         metadata_name: str,
-        metadata: Union[_models.MetadataModel, JSON, IO[bytes]],
+        metadata: Union[_models.MetadataModel, _types.MetadataModel, IO[bytes]],
         **kwargs: Any
     ) -> _models.MetadataModel:
         """Create a Metadata.
@@ -22895,9 +23816,10 @@ class MetadataOperations:
         :type workspace_name: str
         :param metadata_name: The Metadata name. Required.
         :type metadata_name: str
-        :param metadata: Metadata resource. Is one of the following types: MetadataModel, JSON,
-         IO[bytes] Required.
-        :type metadata: ~azure.mgmt.securityinsight.models.MetadataModel or JSON or IO[bytes]
+        :param metadata: Metadata resource. Is either a MetadataModel type or a IO[bytes] type.
+         Required.
+        :type metadata: ~azure.mgmt.securityinsight.models.MetadataModel or
+         ~azure.mgmt.securityinsight.types.MetadataModel or IO[bytes]
         :return: MetadataModel. The MetadataModel is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.MetadataModel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23006,7 +23928,7 @@ class MetadataOperations:
         resource_group_name: str,
         workspace_name: str,
         metadata_name: str,
-        metadata_patch: JSON,
+        metadata_patch: _types.MetadataPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23021,7 +23943,7 @@ class MetadataOperations:
         :param metadata_name: The Metadata name. Required.
         :type metadata_name: str
         :param metadata_patch: Partial metadata request. Required.
-        :type metadata_patch: JSON
+        :type metadata_patch: ~azure.mgmt.securityinsight.types.MetadataPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23066,7 +23988,7 @@ class MetadataOperations:
         resource_group_name: str,
         workspace_name: str,
         metadata_name: str,
-        metadata_patch: Union[_models.MetadataPatch, JSON, IO[bytes]],
+        metadata_patch: Union[_models.MetadataPatch, _types.MetadataPatch, IO[bytes]],
         **kwargs: Any
     ) -> _models.MetadataModel:
         """Update an existing Metadata.
@@ -23078,9 +24000,10 @@ class MetadataOperations:
         :type workspace_name: str
         :param metadata_name: The Metadata name. Required.
         :type metadata_name: str
-        :param metadata_patch: Partial metadata request. Is one of the following types: MetadataPatch,
-         JSON, IO[bytes] Required.
-        :type metadata_patch: ~azure.mgmt.securityinsight.models.MetadataPatch or JSON or IO[bytes]
+        :param metadata_patch: Partial metadata request. Is either a MetadataPatch type or a IO[bytes]
+         type. Required.
+        :type metadata_patch: ~azure.mgmt.securityinsight.models.MetadataPatch or
+         ~azure.mgmt.securityinsight.types.MetadataPatch or IO[bytes]
         :return: MetadataModel. The MetadataModel is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.MetadataModel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23340,7 +24263,7 @@ class MetadataOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ThreatIntelligenceIndicatorOperations:
+class ThreatIntelligenceIndicatorOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -23474,7 +24397,7 @@ class ThreatIntelligenceIndicatorOperations:
         resource_group_name: str,
         workspace_name: str,
         name: str,
-        threat_intelligence_properties: JSON,
+        threat_intelligence_properties: _types.ThreatIntelligenceIndicatorModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23490,7 +24413,8 @@ class ThreatIntelligenceIndicatorOperations:
         :type name: str
         :param threat_intelligence_properties: Properties of threat intelligence indicators to create
          and update. Required.
-        :type threat_intelligence_properties: JSON
+        :type threat_intelligence_properties:
+         ~azure.mgmt.securityinsight.types.ThreatIntelligenceIndicatorModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23538,7 +24462,9 @@ class ThreatIntelligenceIndicatorOperations:
         resource_group_name: str,
         workspace_name: str,
         name: str,
-        threat_intelligence_properties: Union[_models.ThreatIntelligenceIndicatorModel, JSON, IO[bytes]],
+        threat_intelligence_properties: Union[
+            _models.ThreatIntelligenceIndicatorModel, _types.ThreatIntelligenceIndicatorModel, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ThreatIntelligenceInformation:
         """Update a threat Intelligence indicator.
@@ -23551,10 +24477,10 @@ class ThreatIntelligenceIndicatorOperations:
         :param name: Threat intelligence indicator name field. Required.
         :type name: str
         :param threat_intelligence_properties: Properties of threat intelligence indicators to create
-         and update. Is one of the following types: ThreatIntelligenceIndicatorModel, JSON, IO[bytes]
-         Required.
+         and update. Is either a ThreatIntelligenceIndicatorModel type or a IO[bytes] type. Required.
         :type threat_intelligence_properties:
-         ~azure.mgmt.securityinsight.models.ThreatIntelligenceIndicatorModel or JSON or IO[bytes]
+         ~azure.mgmt.securityinsight.models.ThreatIntelligenceIndicatorModel or
+         ~azure.mgmt.securityinsight.types.ThreatIntelligenceIndicatorModel or IO[bytes]
         :return: ThreatIntelligenceInformation. The ThreatIntelligenceInformation is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.ThreatIntelligenceInformation
@@ -23728,7 +24654,7 @@ class ThreatIntelligenceIndicatorOperations:
         resource_group_name: str,
         workspace_name: str,
         name: str,
-        threat_intelligence_append_tags: JSON,
+        threat_intelligence_append_tags: _types.ThreatIntelligenceAppendTags,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23744,7 +24670,8 @@ class ThreatIntelligenceIndicatorOperations:
         :type name: str
         :param threat_intelligence_append_tags: The threat intelligence append tags request body.
          Required.
-        :type threat_intelligence_append_tags: JSON
+        :type threat_intelligence_append_tags:
+         ~azure.mgmt.securityinsight.types.ThreatIntelligenceAppendTags
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23790,7 +24717,9 @@ class ThreatIntelligenceIndicatorOperations:
         resource_group_name: str,
         workspace_name: str,
         name: str,
-        threat_intelligence_append_tags: Union[_models.ThreatIntelligenceAppendTags, JSON, IO[bytes]],
+        threat_intelligence_append_tags: Union[
+            _models.ThreatIntelligenceAppendTags, _types.ThreatIntelligenceAppendTags, IO[bytes]
+        ],
         **kwargs: Any
     ) -> None:
         """Append tags to a threat intelligence indicator.
@@ -23803,9 +24732,10 @@ class ThreatIntelligenceIndicatorOperations:
         :param name: Threat intelligence indicator name field. Required.
         :type name: str
         :param threat_intelligence_append_tags: The threat intelligence append tags request body. Is
-         one of the following types: ThreatIntelligenceAppendTags, JSON, IO[bytes] Required.
+         either a ThreatIntelligenceAppendTags type or a IO[bytes] type. Required.
         :type threat_intelligence_append_tags:
-         ~azure.mgmt.securityinsight.models.ThreatIntelligenceAppendTags or JSON or IO[bytes]
+         ~azure.mgmt.securityinsight.models.ThreatIntelligenceAppendTags or
+         ~azure.mgmt.securityinsight.types.ThreatIntelligenceAppendTags or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23904,7 +24834,7 @@ class ThreatIntelligenceIndicatorOperations:
         resource_group_name: str,
         workspace_name: str,
         name: str,
-        threat_intelligence_replace_tags: JSON,
+        threat_intelligence_replace_tags: _types.ThreatIntelligenceIndicatorModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23920,7 +24850,8 @@ class ThreatIntelligenceIndicatorOperations:
         :type name: str
         :param threat_intelligence_replace_tags: Tags in the threat intelligence indicator to be
          replaced. Required.
-        :type threat_intelligence_replace_tags: JSON
+        :type threat_intelligence_replace_tags:
+         ~azure.mgmt.securityinsight.types.ThreatIntelligenceIndicatorModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23968,7 +24899,9 @@ class ThreatIntelligenceIndicatorOperations:
         resource_group_name: str,
         workspace_name: str,
         name: str,
-        threat_intelligence_replace_tags: Union[_models.ThreatIntelligenceIndicatorModel, JSON, IO[bytes]],
+        threat_intelligence_replace_tags: Union[
+            _models.ThreatIntelligenceIndicatorModel, _types.ThreatIntelligenceIndicatorModel, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ThreatIntelligenceInformation:
         """Replace tags added to a threat intelligence indicator.
@@ -23981,10 +24914,10 @@ class ThreatIntelligenceIndicatorOperations:
         :param name: Threat intelligence indicator name field. Required.
         :type name: str
         :param threat_intelligence_replace_tags: Tags in the threat intelligence indicator to be
-         replaced. Is one of the following types: ThreatIntelligenceIndicatorModel, JSON, IO[bytes]
-         Required.
+         replaced. Is either a ThreatIntelligenceIndicatorModel type or a IO[bytes] type. Required.
         :type threat_intelligence_replace_tags:
-         ~azure.mgmt.securityinsight.models.ThreatIntelligenceIndicatorModel or JSON or IO[bytes]
+         ~azure.mgmt.securityinsight.models.ThreatIntelligenceIndicatorModel or
+         ~azure.mgmt.securityinsight.types.ThreatIntelligenceIndicatorModel or IO[bytes]
         :return: ThreatIntelligenceInformation. The ThreatIntelligenceInformation is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.ThreatIntelligenceInformation
@@ -24092,7 +25025,7 @@ class ThreatIntelligenceIndicatorOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        threat_intelligence_properties: JSON,
+        threat_intelligence_properties: _types.ThreatIntelligenceIndicatorModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24105,7 +25038,8 @@ class ThreatIntelligenceIndicatorOperations:
         :param workspace_name: The name of the monitor workspace. Required.
         :type workspace_name: str
         :param threat_intelligence_properties: The content of the action request. Required.
-        :type threat_intelligence_properties: JSON
+        :type threat_intelligence_properties:
+         ~azure.mgmt.securityinsight.types.ThreatIntelligenceIndicatorModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24148,7 +25082,9 @@ class ThreatIntelligenceIndicatorOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        threat_intelligence_properties: Union[_models.ThreatIntelligenceIndicatorModel, JSON, IO[bytes]],
+        threat_intelligence_properties: Union[
+            _models.ThreatIntelligenceIndicatorModel, _types.ThreatIntelligenceIndicatorModel, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ThreatIntelligenceInformation:
         """Create a new threat intelligence indicator.
@@ -24158,10 +25094,11 @@ class ThreatIntelligenceIndicatorOperations:
         :type resource_group_name: str
         :param workspace_name: The name of the monitor workspace. Required.
         :type workspace_name: str
-        :param threat_intelligence_properties: The content of the action request. Is one of the
-         following types: ThreatIntelligenceIndicatorModel, JSON, IO[bytes] Required.
+        :param threat_intelligence_properties: The content of the action request. Is either a
+         ThreatIntelligenceIndicatorModel type or a IO[bytes] type. Required.
         :type threat_intelligence_properties:
-         ~azure.mgmt.securityinsight.models.ThreatIntelligenceIndicatorModel or JSON or IO[bytes]
+         ~azure.mgmt.securityinsight.models.ThreatIntelligenceIndicatorModel or
+         ~azure.mgmt.securityinsight.types.ThreatIntelligenceIndicatorModel or IO[bytes]
         :return: ThreatIntelligenceInformation. The ThreatIntelligenceInformation is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.ThreatIntelligenceInformation
@@ -24268,7 +25205,7 @@ class ThreatIntelligenceIndicatorOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        threat_intelligence_filtering_criteria: JSON,
+        threat_intelligence_filtering_criteria: _types.ThreatIntelligenceFilteringCriteria,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24281,7 +25218,8 @@ class ThreatIntelligenceIndicatorOperations:
         :param workspace_name: The name of the monitor workspace. Required.
         :type workspace_name: str
         :param threat_intelligence_filtering_criteria: The content of the action request. Required.
-        :type threat_intelligence_filtering_criteria: JSON
+        :type threat_intelligence_filtering_criteria:
+         ~azure.mgmt.securityinsight.types.ThreatIntelligenceFilteringCriteria
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24324,7 +25262,9 @@ class ThreatIntelligenceIndicatorOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        threat_intelligence_filtering_criteria: Union[_models.ThreatIntelligenceFilteringCriteria, JSON, IO[bytes]],
+        threat_intelligence_filtering_criteria: Union[
+            _models.ThreatIntelligenceFilteringCriteria, _types.ThreatIntelligenceFilteringCriteria, IO[bytes]
+        ],
         **kwargs: Any
     ) -> ItemPaged["_models.ThreatIntelligenceInformation"]:
         """Query threat intelligence indicators as per filtering criteria.
@@ -24334,10 +25274,11 @@ class ThreatIntelligenceIndicatorOperations:
         :type resource_group_name: str
         :param workspace_name: The name of the monitor workspace. Required.
         :type workspace_name: str
-        :param threat_intelligence_filtering_criteria: The content of the action request. Is one of the
-         following types: ThreatIntelligenceFilteringCriteria, JSON, IO[bytes] Required.
+        :param threat_intelligence_filtering_criteria: The content of the action request. Is either a
+         ThreatIntelligenceFilteringCriteria type or a IO[bytes] type. Required.
         :type threat_intelligence_filtering_criteria:
-         ~azure.mgmt.securityinsight.models.ThreatIntelligenceFilteringCriteria or JSON or IO[bytes]
+         ~azure.mgmt.securityinsight.models.ThreatIntelligenceFilteringCriteria or
+         ~azure.mgmt.securityinsight.types.ThreatIntelligenceFilteringCriteria or IO[bytes]
         :return: An iterator like instance of ThreatIntelligenceInformation
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.securityinsight.models.ThreatIntelligenceInformation]
@@ -24440,7 +25381,7 @@ class ThreatIntelligenceIndicatorOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ThreatIntelligenceIndicatorsOperations:
+class ThreatIntelligenceIndicatorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -24587,7 +25528,7 @@ class ThreatIntelligenceIndicatorsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DataConnectorsCheckRequirementsOperations:  # pylint: disable=name-too-long
+class DataConnectorsCheckRequirementsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -24641,7 +25582,7 @@ class DataConnectorsCheckRequirementsOperations:  # pylint: disable=name-too-lon
         self,
         resource_group_name: str,
         workspace_name: str,
-        data_connectors_check_requirements: JSON,
+        data_connectors_check_requirements: _types.DataConnectorsCheckRequirements,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24655,7 +25596,8 @@ class DataConnectorsCheckRequirementsOperations:  # pylint: disable=name-too-lon
         :type workspace_name: str
         :param data_connectors_check_requirements: The parameters for requirements check message.
          Required.
-        :type data_connectors_check_requirements: JSON
+        :type data_connectors_check_requirements:
+         ~azure.mgmt.securityinsight.types.DataConnectorsCheckRequirements
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24699,7 +25641,9 @@ class DataConnectorsCheckRequirementsOperations:  # pylint: disable=name-too-lon
         self,
         resource_group_name: str,
         workspace_name: str,
-        data_connectors_check_requirements: Union[_models.DataConnectorsCheckRequirements, JSON, IO[bytes]],
+        data_connectors_check_requirements: Union[
+            _models.DataConnectorsCheckRequirements, _types.DataConnectorsCheckRequirements, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.DataConnectorRequirementsState:
         """Get requirements state for a data connector type.
@@ -24710,9 +25654,10 @@ class DataConnectorsCheckRequirementsOperations:  # pylint: disable=name-too-lon
         :param workspace_name: The name of the workspace. Required.
         :type workspace_name: str
         :param data_connectors_check_requirements: The parameters for requirements check message. Is
-         one of the following types: DataConnectorsCheckRequirements, JSON, IO[bytes] Required.
+         either a DataConnectorsCheckRequirements type or a IO[bytes] type. Required.
         :type data_connectors_check_requirements:
-         ~azure.mgmt.securityinsight.models.DataConnectorsCheckRequirements or JSON or IO[bytes]
+         ~azure.mgmt.securityinsight.models.DataConnectorsCheckRequirements or
+         ~azure.mgmt.securityinsight.types.DataConnectorsCheckRequirements or IO[bytes]
         :return: DataConnectorRequirementsState. The DataConnectorRequirementsState is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.DataConnectorRequirementsState
@@ -24786,7 +25731,7 @@ class DataConnectorsCheckRequirementsOperations:  # pylint: disable=name-too-lon
         return deserialized  # type: ignore
 
 
-class SourceControlOperations:
+class SourceControlOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -24837,7 +25782,7 @@ class SourceControlOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        repository_access: JSON,
+        repository_access: _types.RepositoryAccessProperties,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24850,7 +25795,7 @@ class SourceControlOperations:
         :param workspace_name: The name of the workspace. Required.
         :type workspace_name: str
         :param repository_access: The content of the action request. Required.
-        :type repository_access: JSON
+        :type repository_access: ~azure.mgmt.securityinsight.types.RepositoryAccessProperties
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24891,7 +25836,7 @@ class SourceControlOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        repository_access: Union[_models.RepositoryAccessProperties, JSON, IO[bytes]],
+        repository_access: Union[_models.RepositoryAccessProperties, _types.RepositoryAccessProperties, IO[bytes]],
         **kwargs: Any
     ) -> ItemPaged["_models.Repo"]:
         """Gets a list of repositories metadata.
@@ -24901,10 +25846,10 @@ class SourceControlOperations:
         :type resource_group_name: str
         :param workspace_name: The name of the workspace. Required.
         :type workspace_name: str
-        :param repository_access: The content of the action request. Is one of the following types:
-         RepositoryAccessProperties, JSON, IO[bytes] Required.
-        :type repository_access: ~azure.mgmt.securityinsight.models.RepositoryAccessProperties or JSON
-         or IO[bytes]
+        :param repository_access: The content of the action request. Is either a
+         RepositoryAccessProperties type or a IO[bytes] type. Required.
+        :type repository_access: ~azure.mgmt.securityinsight.models.RepositoryAccessProperties or
+         ~azure.mgmt.securityinsight.types.RepositoryAccessProperties or IO[bytes]
         :return: An iterator like instance of Repo
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.securityinsight.models.Repo]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -25006,7 +25951,7 @@ class SourceControlOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ThreatIntelligenceIndicatorMetricsOperations:  # pylint: disable=name-too-long
+class ThreatIntelligenceIndicatorMetricsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25099,7 +26044,7 @@ class ThreatIntelligenceIndicatorMetricsOperations:  # pylint: disable=name-too-
         return deserialized  # type: ignore
 
 
-class ThreatIntelligenceOperations:
+class ThreatIntelligenceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25154,7 +26099,7 @@ class ThreatIntelligenceOperations:
         resource_group_name: str,
         workspace_name: str,
         ti_type: Union[str, _models.TiType],
-        query: Optional[JSON] = None,
+        query: Optional[_types.CountQuery] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25169,7 +26114,7 @@ class ThreatIntelligenceOperations:
         :param ti_type: TI type. "main" Required.
         :type ti_type: str or ~azure.mgmt.securityinsight.models.TiType
         :param query: The query to run on the TI objects in the workspace. Default value is None.
-        :type query: JSON
+        :type query: ~azure.mgmt.securityinsight.types.CountQuery
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25214,7 +26159,7 @@ class ThreatIntelligenceOperations:
         resource_group_name: str,
         workspace_name: str,
         ti_type: Union[str, _models.TiType],
-        query: Optional[Union[_models.CountQuery, JSON, IO[bytes]]] = None,
+        query: Optional[Union[_models.CountQuery, _types.CountQuery, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.ThreatIntelligenceCount:
         """Gets the count of all TI objects for the workspace.
@@ -25226,9 +26171,10 @@ class ThreatIntelligenceOperations:
         :type workspace_name: str
         :param ti_type: TI type. "main" Required.
         :type ti_type: str or ~azure.mgmt.securityinsight.models.TiType
-        :param query: The query to run on the TI objects in the workspace. Is one of the following
-         types: CountQuery, JSON, IO[bytes] Default value is None.
-        :type query: ~azure.mgmt.securityinsight.models.CountQuery or JSON or IO[bytes]
+        :param query: The query to run on the TI objects in the workspace. Is either a CountQuery type
+         or a IO[bytes] type. Default value is None.
+        :type query: ~azure.mgmt.securityinsight.models.CountQuery or
+         ~azure.mgmt.securityinsight.types.CountQuery or IO[bytes]
         :return: ThreatIntelligenceCount. The ThreatIntelligenceCount is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.ThreatIntelligenceCount
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -25341,7 +26287,7 @@ class ThreatIntelligenceOperations:
         resource_group_name: str,
         workspace_name: str,
         ti_type: Union[str, _models.TiType],
-        query: Optional[JSON] = None,
+        query: Optional[_types.Query] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25356,7 +26302,7 @@ class ThreatIntelligenceOperations:
         :param ti_type: TI type. "main" Required.
         :type ti_type: str or ~azure.mgmt.securityinsight.models.TiType
         :param query: The query to run on the TI objects in the workspace. Default value is None.
-        :type query: JSON
+        :type query: ~azure.mgmt.securityinsight.types.Query
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25401,7 +26347,7 @@ class ThreatIntelligenceOperations:
         resource_group_name: str,
         workspace_name: str,
         ti_type: Union[str, _models.TiType],
-        query: Optional[Union[_models.Query, JSON, IO[bytes]]] = None,
+        query: Optional[Union[_models.Query, _types.Query, IO[bytes]]] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.TIObject"]:
         """Gets all TI objects for the workspace.
@@ -25413,9 +26359,10 @@ class ThreatIntelligenceOperations:
         :type workspace_name: str
         :param ti_type: TI type. "main" Required.
         :type ti_type: str or ~azure.mgmt.securityinsight.models.TiType
-        :param query: The query to run on the TI objects in the workspace. Is one of the following
-         types: Query, JSON, IO[bytes] Default value is None.
-        :type query: ~azure.mgmt.securityinsight.models.Query or JSON or IO[bytes]
+        :param query: The query to run on the TI objects in the workspace. Is either a Query type or a
+         IO[bytes] type. Default value is None.
+        :type query: ~azure.mgmt.securityinsight.models.Query or
+         ~azure.mgmt.securityinsight.types.Query or IO[bytes]
         :return: An iterator like instance of TIObject
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.securityinsight.models.TIObject]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -25522,7 +26469,7 @@ class ThreatIntelligenceOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class EntitiesGetTimelineOperations:
+class EntitiesGetTimelineOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25578,7 +26525,7 @@ class EntitiesGetTimelineOperations:
         resource_group_name: str,
         workspace_name: str,
         entity_id: str,
-        parameters: JSON,
+        parameters: _types.EntityTimelineParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25594,7 +26541,7 @@ class EntitiesGetTimelineOperations:
         :type entity_id: str
         :param parameters: The parameters required to execute an timeline operation on the given
          entity. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.securityinsight.types.EntityTimelineParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25635,12 +26582,27 @@ class EntitiesGetTimelineOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "entity_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def list(
         self,
         resource_group_name: str,
         workspace_name: str,
         entity_id: str,
-        parameters: Union[_models.EntityTimelineParameters, JSON, IO[bytes]],
+        parameters: Union[_models.EntityTimelineParameters, _types.EntityTimelineParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.EntityTimelineResponse:
         """Timeline for an entity.
@@ -25653,9 +26615,9 @@ class EntitiesGetTimelineOperations:
         :param entity_id: entity ID. Required.
         :type entity_id: str
         :param parameters: The parameters required to execute an timeline operation on the given
-         entity. Is one of the following types: EntityTimelineParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.securityinsight.models.EntityTimelineParameters or JSON or
-         IO[bytes]
+         entity. Is either a EntityTimelineParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.securityinsight.models.EntityTimelineParameters or
+         ~azure.mgmt.securityinsight.types.EntityTimelineParameters or IO[bytes]
         :return: EntityTimelineResponse. The EntityTimelineResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.EntityTimelineResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -25729,7 +26691,7 @@ class EntitiesGetTimelineOperations:
         return deserialized  # type: ignore
 
 
-class GetOperations:
+class GetOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25824,7 +26786,7 @@ class GetOperations:
         return deserialized  # type: ignore
 
 
-class UpdateOperations:
+class UpdateOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25879,7 +26841,7 @@ class UpdateOperations:
         resource_group_name: str,
         workspace_name: str,
         recommendation_id: str,
-        recommendation_patch: JSON,
+        recommendation_patch: _types.RecommendationPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25894,7 +26856,7 @@ class UpdateOperations:
         :param recommendation_id: Recommendation Id. Required.
         :type recommendation_id: str
         :param recommendation_patch: Recommendation Fields to Update. Required.
-        :type recommendation_patch: JSON
+        :type recommendation_patch: ~azure.mgmt.securityinsight.types.RecommendationPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25939,7 +26901,7 @@ class UpdateOperations:
         resource_group_name: str,
         workspace_name: str,
         recommendation_id: str,
-        recommendation_patch: Union[_models.RecommendationPatch, JSON, IO[bytes]],
+        recommendation_patch: Union[_models.RecommendationPatch, _types.RecommendationPatch, IO[bytes]],
         **kwargs: Any
     ) -> _models.Recommendation:
         """Patch a recommendation.
@@ -25951,10 +26913,10 @@ class UpdateOperations:
         :type workspace_name: str
         :param recommendation_id: Recommendation Id. Required.
         :type recommendation_id: str
-        :param recommendation_patch: Recommendation Fields to Update. Is one of the following types:
-         RecommendationPatch, JSON, IO[bytes] Required.
-        :type recommendation_patch: ~azure.mgmt.securityinsight.models.RecommendationPatch or JSON or
-         IO[bytes]
+        :param recommendation_patch: Recommendation Fields to Update. Is either a RecommendationPatch
+         type or a IO[bytes] type. Required.
+        :type recommendation_patch: ~azure.mgmt.securityinsight.models.RecommendationPatch or
+         ~azure.mgmt.securityinsight.types.RecommendationPatch or IO[bytes]
         :return: Recommendation. The Recommendation is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.Recommendation
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -26028,7 +26990,7 @@ class UpdateOperations:
         return deserialized  # type: ignore
 
 
-class GetRecommendationsOperations:
+class GetRecommendationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26148,7 +27110,7 @@ class GetRecommendationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReevaluateOperations:
+class ReevaluateOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26243,7 +27205,7 @@ class ReevaluateOperations:
         return deserialized  # type: ignore
 
 
-class TriggeredAnalyticsRuleRunOperations:
+class TriggeredAnalyticsRuleRunOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26339,7 +27301,7 @@ class TriggeredAnalyticsRuleRunOperations:
         return deserialized  # type: ignore
 
 
-class GetTriggeredAnalyticsRuleRunsOperations:
+class GetTriggeredAnalyticsRuleRunsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26462,7 +27424,7 @@ class GetTriggeredAnalyticsRuleRunsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceManagerAssignmentJobsOperations:
+class WorkspaceManagerAssignmentJobsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26879,7 +27841,7 @@ class _SecurityInsightsMgmtClientOperationsMixin(
         resource_group_name: str,
         workspace_name: str,
         enrichment_type: Union[str, _models.EnrichmentType],
-        ip_address_body: JSON,
+        ip_address_body: _types.EnrichmentIpAddressBody,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -26894,7 +27856,7 @@ class _SecurityInsightsMgmtClientOperationsMixin(
         :param enrichment_type: Enrichment type. "main" Required.
         :type enrichment_type: str or ~azure.mgmt.securityinsight.models.EnrichmentType
         :param ip_address_body: IP address (v4 or v6) to be enriched. Required.
-        :type ip_address_body: JSON
+        :type ip_address_body: ~azure.mgmt.securityinsight.types.EnrichmentIpAddressBody
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26934,12 +27896,27 @@ class _SecurityInsightsMgmtClientOperationsMixin(
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "enrichment_type",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def list_geodata_by_ip(
         self,
         resource_group_name: str,
         workspace_name: str,
         enrichment_type: Union[str, _models.EnrichmentType],
-        ip_address_body: Union[_models.EnrichmentIpAddressBody, JSON, IO[bytes]],
+        ip_address_body: Union[_models.EnrichmentIpAddressBody, _types.EnrichmentIpAddressBody, IO[bytes]],
         **kwargs: Any
     ) -> _models.EnrichmentIpGeodata:
         """Get geodata for a single IP address.
@@ -26951,10 +27928,10 @@ class _SecurityInsightsMgmtClientOperationsMixin(
         :type workspace_name: str
         :param enrichment_type: Enrichment type. "main" Required.
         :type enrichment_type: str or ~azure.mgmt.securityinsight.models.EnrichmentType
-        :param ip_address_body: IP address (v4 or v6) to be enriched. Is one of the following types:
-         EnrichmentIpAddressBody, JSON, IO[bytes] Required.
-        :type ip_address_body: ~azure.mgmt.securityinsight.models.EnrichmentIpAddressBody or JSON or
-         IO[bytes]
+        :param ip_address_body: IP address (v4 or v6) to be enriched. Is either a
+         EnrichmentIpAddressBody type or a IO[bytes] type. Required.
+        :type ip_address_body: ~azure.mgmt.securityinsight.models.EnrichmentIpAddressBody or
+         ~azure.mgmt.securityinsight.types.EnrichmentIpAddressBody or IO[bytes]
         :return: EnrichmentIpGeodata. The EnrichmentIpGeodata is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.EnrichmentIpGeodata
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -27063,7 +28040,7 @@ class _SecurityInsightsMgmtClientOperationsMixin(
         resource_group_name: str,
         workspace_name: str,
         enrichment_type: Union[str, _models.EnrichmentType],
-        domain_body: JSON,
+        domain_body: _types.EnrichmentDomainBody,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27078,7 +28055,7 @@ class _SecurityInsightsMgmtClientOperationsMixin(
         :param enrichment_type: Enrichment type. "main" Required.
         :type enrichment_type: str or ~azure.mgmt.securityinsight.models.EnrichmentType
         :param domain_body: Domain name to be enriched. Only domain name is accepted. Required.
-        :type domain_body: JSON
+        :type domain_body: ~azure.mgmt.securityinsight.types.EnrichmentDomainBody
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27118,12 +28095,27 @@ class _SecurityInsightsMgmtClientOperationsMixin(
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-10-01-preview",
+        params_added_on={
+            "2025-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "enrichment_type",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-10-01-preview"],
+    )
     def list_whois_by_domain(
         self,
         resource_group_name: str,
         workspace_name: str,
         enrichment_type: Union[str, _models.EnrichmentType],
-        domain_body: Union[_models.EnrichmentDomainBody, JSON, IO[bytes]],
+        domain_body: Union[_models.EnrichmentDomainBody, _types.EnrichmentDomainBody, IO[bytes]],
         **kwargs: Any
     ) -> _models.EnrichmentDomainWhois:
         """Get whois information for a single domain name.
@@ -27135,9 +28127,10 @@ class _SecurityInsightsMgmtClientOperationsMixin(
         :type workspace_name: str
         :param enrichment_type: Enrichment type. "main" Required.
         :type enrichment_type: str or ~azure.mgmt.securityinsight.models.EnrichmentType
-        :param domain_body: Domain name to be enriched. Only domain name is accepted. Is one of the
-         following types: EnrichmentDomainBody, JSON, IO[bytes] Required.
-        :type domain_body: ~azure.mgmt.securityinsight.models.EnrichmentDomainBody or JSON or IO[bytes]
+        :param domain_body: Domain name to be enriched. Only domain name is accepted. Is either a
+         EnrichmentDomainBody type or a IO[bytes] type. Required.
+        :type domain_body: ~azure.mgmt.securityinsight.models.EnrichmentDomainBody or
+         ~azure.mgmt.securityinsight.types.EnrichmentDomainBody or IO[bytes]
         :return: EnrichmentDomainWhois. The EnrichmentDomainWhois is compatible with MutableMapping
         :rtype: ~azure.mgmt.securityinsight.models.EnrichmentDomainWhois
         :raises ~azure.core.exceptions.HttpResponseError:
