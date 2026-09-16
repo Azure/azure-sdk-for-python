@@ -1,3 +1,4 @@
+<!-- cspell:ignore alives -->
 # Request-local work reuse
 
 History ID lookups are reused only within a response request and only for the

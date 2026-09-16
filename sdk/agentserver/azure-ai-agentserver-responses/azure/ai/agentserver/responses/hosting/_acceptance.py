@@ -8,12 +8,12 @@ a custom hook via ``@app.response_acceptor`` to customize the queued response sh
 """
 
 from __future__ import annotations
-from ..models import _generated as _generated_models
-
 
 import logging
 from typing import TYPE_CHECKING, Any, Callable, cast
 
+
+from ..models import _generated as _generated_models
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
 
@@ -25,7 +25,7 @@ logger = logging.getLogger("azure.ai.agentserver.responses.acceptance")
 # surfaced to the HTTP caller. The internal HTTP path works in plain dicts
 # (see ``to_snapshot``), so ``dispatch_acceptance_hook`` is the single place
 # that normalizes the typed result down to a dict.
-AcceptanceHookFn = Callable[["CreateResponse", "ResponseContext"], "ResponseObject"]
+AcceptanceHookFn = Callable[["_generated_models.CreateResponse", "ResponseContext"], "_generated_models.ResponseObject"]
 
 
 def generate_default_acceptance(

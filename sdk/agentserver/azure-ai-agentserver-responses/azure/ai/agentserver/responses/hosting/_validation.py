@@ -3,8 +3,6 @@
 """Validation utilities for request and response models."""
 
 from __future__ import annotations
-from .. import models as _public_models
-
 
 from typing import Any, Mapping, cast
 
@@ -19,6 +17,7 @@ from azure.ai.agentserver.core.platform_headers import (
 from .._id_generator import IdGenerator
 from .._options import ResponsesServerOptions
 
+from .. import models as _public_models
 from ..models._errors import RequestValidationError
 from ..models._validators import (
     validate_create_response_payload,

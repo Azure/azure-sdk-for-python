@@ -3,14 +3,14 @@
 """Runtime domain models for response sessions and stream events."""
 
 from __future__ import annotations
-from . import _generated as _generated_models
-
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Literal, Mapping, cast
 
+
+from . import _generated as _generated_models
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
     from azure.ai.agentserver.core.streaming import EventStream  # pylint: disable=import-error,no-name-in-module
@@ -259,7 +259,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
                 agent_reference=agent_reference,
                 model=model,
             )
-            self.set_response_snapshot(cast("ResponseObject", snapshot))
+            self.set_response_snapshot(cast("_generated_models.ResponseObject", snapshot))
             resolved = snapshot.get("status")
             if isinstance(resolved, str):
                 self.status = cast(ResponseStatus, resolved)
@@ -373,7 +373,7 @@ def _build_cancelled_response(
     }
     if created_at is not None:
         payload["created_at"] = int(created_at.timestamp())
-    return cast("ResponseObject", payload)
+    return cast("_generated_models.ResponseObject", payload)
 
 
 def _build_failed_response(
@@ -413,7 +413,7 @@ def _build_failed_response(
     }
     if created_at is not None:
         payload["created_at"] = int(created_at.timestamp())
-    return cast("ResponseObject", payload)
+    return cast("_generated_models.ResponseObject", payload)
 
 
 _DEFAULT_FAILED_ERROR_MESSAGE = "An internal server error occurred."
@@ -485,7 +485,7 @@ def _resolve_failed_response(
     """
     if base is not None:
         return cast(
-            "ResponseObject",
+            "_generated_models.ResponseObject",
             _apply_failed_terminal(base, error={"code": error_code, "message": error_message}),
         )
     return _build_failed_response(
@@ -517,5 +517,5 @@ def _resolve_cancelled_response(
     :rtype: ResponseObject
     """
     if base is not None:
-        return cast("ResponseObject", _apply_cancelled_terminal(base))
+        return cast("_generated_models.ResponseObject", _apply_cancelled_terminal(base))
     return _build_cancelled_response(response_id, agent_reference, model, created_at=created_at)

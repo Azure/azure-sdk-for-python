@@ -10,8 +10,6 @@ from azure.core import CaseInsensitiveEnumMeta
 from . import _generated as _generated_models
 from ._generated._catalog import MODEL_EXPORTS as _MODEL_EXPORTS
 
-if TYPE_CHECKING:
-    from ._generated import *  # type: ignore # noqa: F401,F403
 from ._helpers import (  # pylint: disable=unused-import
     get_content_expanded,
     get_conversation_expanded,
@@ -23,6 +21,9 @@ from .runtime import (  # pylint: disable=unused-import
     ResponseStatus,
     TerminalResponseStatus,
 )
+
+if TYPE_CHECKING:
+    from ._generated import *  # type: ignore # noqa: F401,F403  # pylint: disable=unused-wildcard-import,wildcard-import
 
 _TYPE_EXPORT_EXCLUDES = {
     "Any",

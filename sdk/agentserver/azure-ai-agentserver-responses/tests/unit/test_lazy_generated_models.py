@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
+# cspell:ignore cazure
 """Real-model lazy construction contracts. Functional tests, not hosted latency evidence."""
 
 from pathlib import Path
@@ -193,4 +194,4 @@ def test_normal_extraction_pipeline_runs_lazy_generation(tmp_path):
     destination = tmp_path / "generated"
     finalize(tmp_path / "emitter", destination)
     for name in ("types.py", "_unions.py", "_catalog.py", "__init__.py"):
-        assert (destination / name).read_bytes() == (original / name).read_bytes()
+        assert (destination / name).read_text(encoding="utf-8") == (original / name).read_text(encoding="utf-8")

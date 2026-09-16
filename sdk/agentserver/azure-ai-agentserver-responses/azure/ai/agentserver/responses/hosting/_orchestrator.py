@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
+# cspell:ignore alives
 """Event-pipeline orchestration for the Responses server.
 
 This module is intentionally free of Starlette imports: it operates purely on
@@ -9,8 +10,6 @@ routing module which wraps these results.
 """
 
 from __future__ import annotations
-from ..models import _generated as _generated_models
-
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import json
@@ -95,7 +94,7 @@ async def _close_iterator(iterator: AsyncIterator[Any]) -> None:
 
 async def _iter_handler_with_request_context(
     create_fn: "Callable[..., AsyncIterator[generated_models.ResponseStreamEvent]]",
-    parsed: "_generated_models.CreateResponse",
+    parsed: "generated_models.CreateResponse",
     context: "ResponseContext | None",
     cancellation_signal: asyncio.Event,
     agent_session_id: str | None,
@@ -392,7 +391,7 @@ def _bg_normalize_event(
     handler_event: Any,
     *,
     response_id: str,
-    agent_reference: "_generated_models.AgentReference | dict[str, Any]",
+    agent_reference: "generated_models.AgentReference | dict[str, Any]",
     model: str | None,
     agent_session_id: str | None,
     conversation_id: str | None,
@@ -469,7 +468,7 @@ async def _bg_handle_first_event(
     store: bool,
     provider: "ResponseProviderProtocol | None",
     response_id: str,
-    agent_reference: "_generated_models.AgentReference | dict[str, Any]",
+    agent_reference: "generated_models.AgentReference | dict[str, Any]",
     model: str | None,
     agent_session_id: str | None,
     conversation_id: str | None,
@@ -576,7 +575,7 @@ def _bg_resolve_terminal_status(
     handler_events: "list[generated_models.ResponseStreamEvent]",
     *,
     response_id: str,
-    agent_reference: "_generated_models.AgentReference | dict[str, Any]",
+    agent_reference: "generated_models.AgentReference | dict[str, Any]",
     model: str | None,
     agent_session_id: str | None,
     conversation_id: str | None,
@@ -729,7 +728,7 @@ def _bg_resolve_cancelled(
     first_event_processed: bool,
     runtime_options: "ResponsesServerOptions | None",
     response_id: str,
-    agent_reference: "_generated_models.AgentReference | dict[str, Any]",
+    agent_reference: "generated_models.AgentReference | dict[str, Any]",
     model: str | None,
 ) -> bool:
     """Resolve a ``CancelledError`` raised during bg non-stream processing.
@@ -813,7 +812,7 @@ async def _bg_persist_terminal(
     provider_created: bool,
     context: "ResponseContext | None",
     response_id: str,
-    agent_reference: "_generated_models.AgentReference | dict[str, Any]",
+    agent_reference: "generated_models.AgentReference | dict[str, Any]",
     model: str | None,
     history_limit: int,
 ) -> None:
@@ -948,14 +947,14 @@ async def _bg_drain_handler_events(
     st: "_BgRunState",
     record: ResponseExecution,
     create_fn: "Callable[..., AsyncIterator[generated_models.ResponseStreamEvent]]",
-    parsed: _generated_models.CreateResponse,
+    parsed: generated_models.CreateResponse,
     context: "ResponseContext | None",
     cancellation_signal: asyncio.Event,
     *,
     store: bool,
     provider: "ResponseProviderProtocol | None",
     response_id: str,
-    agent_reference: "_generated_models.AgentReference | dict[str, Any]",
+    agent_reference: "generated_models.AgentReference | dict[str, Any]",
     model: str | None,
     agent_session_id: str | None,
     conversation_id: str | None,
@@ -1106,12 +1105,12 @@ async def _bg_drain_handler_events(
 async def _run_background_non_stream(
     *,
     create_fn: Callable[..., AsyncIterator[generated_models.ResponseStreamEvent]],
-    parsed: _generated_models.CreateResponse,
+    parsed: generated_models.CreateResponse,
     context: ResponseContext,
     cancellation_signal: asyncio.Event,
     record: ResponseExecution,
     response_id: str,
-    agent_reference: _generated_models.AgentReference | dict[str, Any],
+    agent_reference: generated_models.AgentReference | dict[str, Any],
     model: str | None,
     provider: ResponseProviderProtocol | None = None,
     store: bool = True,
@@ -3776,12 +3775,12 @@ class _ResponseOrchestrator:
     async def _run_resilient_stream_body(
         self,
         *,
-        parsed: "_generated_models.CreateResponse",
+        parsed: "generated_models.CreateResponse",
         context: "ResponseContext",
         cancellation_signal: asyncio.Event,
         record: ResponseExecution,
         response_id: str,
-        agent_reference: "_generated_models.AgentReference | dict[str, Any]",
+        agent_reference: "generated_models.AgentReference | dict[str, Any]",
         model: str | None,
         store: bool,
         agent_session_id: str | None,

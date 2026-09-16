@@ -2,6 +2,8 @@
 # Licensed under the MIT license.
 """Public API surface for the Azure AI Agent Server Responses package."""
 
+from typing import TYPE_CHECKING, Any
+
 from ._version import VERSION
 
 __version__ = VERSION
@@ -15,11 +17,7 @@ from ._response_context import (
     ResponseExitForRecovery,
 )
 from .hosting._routing import ResponsesAgentServerHost
-from typing import TYPE_CHECKING, Any
 from . import models as _public_models
-
-if TYPE_CHECKING:
-    from .models import CreateResponse, ResponseObject
 from .store._base import ResponseProviderProtocol
 from .store._file import FileResponseStore
 from .store._foundry_errors import (
@@ -33,6 +31,9 @@ from .store._foundry_settings import FoundryStorageSettings
 from .store._memory import InMemoryResponseProvider
 from .streaming._event_stream import ResponseEventStream
 from .streaming._text_response import TextResponse
+
+if TYPE_CHECKING:
+    from .models import CreateResponse, ResponseObject
 
 __all__ = [
     "__version__",

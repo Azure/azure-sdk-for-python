@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
+# cspell:ignore asname
 """Deterministic post-emitter stage for real, demand-created TypedDict contracts."""
 
 from __future__ import annotations

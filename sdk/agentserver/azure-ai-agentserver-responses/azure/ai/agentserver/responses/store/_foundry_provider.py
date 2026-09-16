@@ -3,8 +3,6 @@
 """HTTP-backed Foundry storage provider for Azure AI Responses."""
 
 from __future__ import annotations
-from ..models import _generated as _generated_models
-
 
 from typing import TYPE_CHECKING, Any, Callable, Iterable
 from urllib.parse import quote as _url_quote
@@ -18,6 +16,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
 
 from .._version import VERSION
+from ..models import _generated as _generated_models
 
 # type: ignore[attr-defined]
 from ._base import ResponseAlreadyExistsError

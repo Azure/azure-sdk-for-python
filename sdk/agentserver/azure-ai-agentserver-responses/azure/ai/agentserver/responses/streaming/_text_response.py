@@ -14,7 +14,6 @@ Pass any text source to ``text=``:
 """
 
 from __future__ import annotations
-from .. import models as _public_models
 
 
 import inspect
@@ -78,10 +77,10 @@ class TextResponse:
     def __init__(
         self,
         context: "ResponseContext",
-        request: "_public_models.CreateResponse",
+        request: "response_models.CreateResponse",
         *,
         text: TextSource,
-        configure: Callable[["_public_models.ResponseObject"], None] | None = None,
+        configure: Callable[["response_models.ResponseObject"], None] | None = None,
     ) -> None:
         self._context = context
         self._request = request
@@ -98,7 +97,7 @@ class TextResponse:
         )
 
         if self._configure is not None:
-            self._configure(cast("ResponseObject", stream.response))
+            self._configure(cast("response_models.ResponseObject", stream.response))
 
         yield stream.emit_created()
         yield stream.emit_in_progress()

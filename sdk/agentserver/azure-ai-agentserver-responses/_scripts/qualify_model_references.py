@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
+# cspell:ignore asname
 """One-time, comment-preserving refactor of internal generated type references."""
 
 from __future__ import annotations
