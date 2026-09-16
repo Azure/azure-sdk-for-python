@@ -769,7 +769,6 @@ class BreakingChangesTracker:
             for suppression in suppressions:
                 if (
                     bc_type == "AddedClassMethod"
-                    and function_name == "update"
                     and self.is_operation_group(module_name, class_name)
                 ):
                     continue
