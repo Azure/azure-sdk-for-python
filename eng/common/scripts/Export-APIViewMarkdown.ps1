@@ -42,7 +42,7 @@ function Get-JsonProperty {
         [string]$Name
     )
 
-    # Schema fields vary in casing between parsers; identifier maps must remain case-sensitive.
+    # Schema fields vary in casing between parsers; identifier maps must remain case-insensitive.
     foreach ($key in $Object.Keys) {
         if ($key -ieq $Name) {
             return ,$Object[$key]
