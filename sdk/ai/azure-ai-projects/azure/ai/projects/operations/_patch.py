@@ -12,6 +12,14 @@ from functools import wraps
 import inspect
 from typing import Any, Callable, List
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _BETA_OPERATION_FEATURE_HEADERS, _has_header_case_insensitive
+from .._realtime import (
+    BetaRealtime,
+    BetaRealtimeConnection,
+    BetaRealtimeConnectionManager,
+    ClientEvent,
+    ConversationItem,
+    ServerEvent,
+)
 from ._patch_agents import AgentsOperations, BetaAgentsOperations
 from ._patch_agent_insights import BetaAgentInsightMonitorsOperations
 from ._patch_datasets import BetaDatasetsOperations, DatasetsOperations
@@ -30,7 +38,7 @@ from ._operations import (
     BetaSchedulesOperations,
     BetaSkillsOperations,
     BetaVoiceAgentsConversationsOperations,
-    BetaVoiceAgentsOperations,
+    BetaVoiceAgentsOperations as GeneratedBetaVoiceAgentsOperations,
     BetaVoiceAgentsTelephonyOperations,
 )
 
@@ -113,6 +121,31 @@ class _OperationMethodHeaderProxy:
         setattr(self._operation, name, value)
 
 
+class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.AIProjectClient`'s :attr:`beta` attribute's
+        :attr:`~azure.ai.projects.operations.BetaOperations.voice_agents` attribute.
+    """
+
+    conversations: BetaVoiceAgentsConversationsOperations
+    """:class:`~azure.ai.projects.operations.BetaVoiceAgentsConversationsOperations` operations"""
+    telephony: BetaVoiceAgentsTelephonyOperations
+    """:class:`~azure.ai.projects.operations.BetaVoiceAgentsTelephonyOperations` operations"""
+    realtime: BetaRealtime
+    """:class:`~azure.ai.projects.operations.BetaRealtime` operations"""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        # The generator does not emit realtime operations at all, since azure-core's HTTP
+        # pipeline has no way to keep a WebSocket upgrade's resulting socket alive. Add our
+        # hand-written client, which manages a real, long-lived connection, in its place.
+        self.realtime = BetaRealtime(self)
+
+
 class BetaOperations(GeneratedBetaOperations):
     """
     .. warning::
@@ -166,6 +199,8 @@ class BetaOperations(GeneratedBetaOperations):
         self.agent_insight_monitors = BetaAgentInsightMonitorsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        # Replace with patched class that wires up the hand-written realtime client
+        self.voice_agents = BetaVoiceAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
 
         for property_name, foundry_features_value in _BETA_OPERATION_FEATURE_HEADERS.items():
             setattr(
@@ -193,9 +228,15 @@ __all__: List[str] = [
     "BetaVoiceAgentsConversationsOperations",
     "BetaVoiceAgentsOperations",
     "BetaVoiceAgentsTelephonyOperations",
+    "ClientEvent",
     "ConnectionsOperations",
+    "ConversationItem",
     "DatasetsOperations",
     "EvaluationRulesOperations",
+    "BetaRealtime",
+    "BetaRealtimeConnection",
+    "BetaRealtimeConnectionManager",
+    "ServerEvent",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 

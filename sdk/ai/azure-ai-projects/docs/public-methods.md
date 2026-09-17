@@ -42,6 +42,7 @@ There are a total of 187 unique public methods:
 | `beta.schedules` | BetaSchedulesOperations | 6 |
 | `beta.skills` | BetaSkillsOperations | 11 |
 | `beta.voice_agents.conversations` | BetaVoiceAgentsConversationsOperations | 14 |
+| `beta.voice_agents.realtime` | BetaRealtime | 1 |
 | `beta.voice_agents.telephony` | BetaVoiceAgentsTelephonyOperations | 14 |
 
 ## Stable methods on the client
@@ -255,6 +256,8 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.voice_agents.conversations.list_items
 .beta.voice_agents.conversations.list_response_items
 .beta.voice_agents.conversations.list_responses
+
+.beta.voice_agents.realtime.connect*
 
 .beta.voice_agents.telephony.cancel_call_job
 .beta.voice_agents.telephony.create_binding
