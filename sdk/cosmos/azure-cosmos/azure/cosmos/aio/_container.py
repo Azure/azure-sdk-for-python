@@ -1012,8 +1012,7 @@ class ContainerProxy:
             or 'continuation' token.
             All versions and deletes responses contain ``current`` and ``metadata`` keys. The **provisional**
             ``previous`` key can contain the previous item version when previous images are enabled for the container.
-            Previous images are not returned by default, and there is no SDK option to enable them.
-            To request access, see `previous image opt-in
+            To request access to this provisional feature, see `previous image opt-in
             <https://aka.ms/cosmosdb-change-feed-deletes>`_.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
@@ -1065,8 +1064,7 @@ class ContainerProxy:
             or 'continuation' token.
             All versions and deletes responses contain ``current`` and ``metadata`` keys. The **provisional**
             ``previous`` key can contain the previous item version when previous images are enabled for the container.
-            Previous images are not returned by default, and there is no SDK option to enable them.
-            To request access, see `previous image opt-in
+            To request access to this provisional feature, see `previous image opt-in
             <https://aka.ms/cosmosdb-change-feed-deletes>`_.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
@@ -1154,8 +1152,7 @@ class ContainerProxy:
             or 'continuation' token.
             All versions and deletes responses contain ``current`` and ``metadata`` keys. The **provisional**
             ``previous`` key can contain the previous item version when previous images are enabled for the container.
-            Previous images are not returned by default, and there is no SDK option to enable them.
-            To request access, see `previous image opt-in
+            To request access to this provisional feature, see `previous image opt-in
             <https://aka.ms/cosmosdb-change-feed-deletes>`_.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
@@ -1204,8 +1201,7 @@ class ContainerProxy:
             or 'continuation' token.
             All versions and deletes responses contain ``current`` and ``metadata`` keys. The **provisional**
             ``previous`` key can contain the previous item version when previous images are enabled for the container.
-            Previous images are not returned by default, and there is no SDK option to enable them.
-            To request access, see `previous image opt-in
+            To request access to this provisional feature, see `previous image opt-in
             <https://aka.ms/cosmosdb-change-feed-deletes>`_.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
