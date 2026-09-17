@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from collections.abc import MutableMapping
+from collections.abc import Mapping, MutableMapping
 from copy import deepcopy
 from datetime import datetime, timezone
 from typing import Any, Iterator, Sequence, cast
@@ -73,6 +73,32 @@ def _require_wire_dict(obj: Any, field_name: str) -> dict[str, Any]:
     if not isinstance(obj, dict):
         raise TypeError(f"{field_name} must be a dict-native wire payload")
     return obj
+
+
+def _merge_response_metadata(response: dict[str, Any], metadata: Mapping[str, str]) -> None:
+    """Merge validated public metadata into a response envelope."""
+    current = response.get("metadata")
+    if current is None:
+        merged: dict[str, str] = {}
+    elif isinstance(current, dict):
+        merged = dict(current)
+    else:
+        raise TypeError("response metadata must be a mapping")
+
+    for key, value in metadata.items():
+        if not isinstance(key, str):
+            raise TypeError(f"metadata keys must be str, got {type(key).__name__}")
+        if not isinstance(value, str):
+            raise TypeError(f"metadata values must be str, got {type(value).__name__}")
+        if len(key) > 64:
+            raise ValueError(f"metadata key exceeds the 64-character limit: {key[:64]}...")
+        if len(value) > 512:
+            raise ValueError(f"metadata value for key '{key}' exceeds the 512-character limit")
+        merged[key] = value
+
+    if len(merged) > 16:
+        raise ValueError("response metadata must have at most 16 key-value pairs")
+    response["metadata"] = merged
 
 
 class _MutableResponseDict(dict[str, Any]):
@@ -331,6 +357,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         *,
         code: str = "server_error",
         message: str = "An internal server error occurred.",
+        metadata: Mapping[str, str] | None = None,
         usage: response_models.ResponseUsage | None = None,
     ) -> response_models.ResponseFailedEvent:
         """Emit a ``response.failed`` terminal lifecycle event.
@@ -339,6 +366,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :keyword type code: str | ~azure.ai.agentserver.responses.models.ResponseErrorCode
         :keyword message: Human-readable error message.
         :keyword type message: str
+        :keyword metadata: Optional public response metadata to merge into the terminal response.
+        :keyword type metadata: ~collections.abc.Mapping[str, str] | None
         :keyword usage: Optional usage statistics to attach to the response.
         :keyword type usage: ~azure.ai.agentserver.responses.models.ResponseUsage | None
         :returns: The emitted event model instance.
@@ -350,6 +379,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             "code": _internals.enum_value(code),
             "message": message,
         }
+        if metadata is not None:
+            _merge_response_metadata(self._response, metadata)
         self._set_terminal_fields(usage=usage)
         return cast(
             "response_models.ResponseFailedEvent",

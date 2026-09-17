@@ -170,7 +170,10 @@ def test_event_stream_builder__emit_completed_accepts_usage_and_sets_terminal_fi
 
 
 def test_event_stream_builder__emit_failed_accepts_error_and_usage() -> None:
-    stream = ResponseEventStream(response_id="resp_builder_failed_params")
+    stream = ResponseEventStream(
+        response_id="resp_builder_failed_params",
+        request={"metadata": {"request": "preserved"}},
+    )
     stream.emit_created(status="in_progress")
 
     usage = ResponseUsage(
@@ -181,16 +184,36 @@ def test_event_stream_builder__emit_failed_accepts_error_and_usage() -> None:
         total_tokens=9,
     )
 
-    failed = stream.emit_failed(code="server_error", message="boom", usage=usage)
+    failed = stream.emit_failed(
+        code="server_error",
+        message="boom",
+        metadata={"failure": "details"},
+        usage=usage,
+    )
 
     assert isinstance(failed, dict)
     assert failed["type"] == "response.failed"
     assert failed["response"]["status"] == "failed"
     assert failed["response"]["error"]["code"] == "server_error"
     assert failed["response"]["error"]["message"] == "boom"
+    assert failed["response"]["metadata"] == {
+        "request": "preserved",
+        "failure": "details",
+    }
     assert failed["response"]["usage"]["total_tokens"] == 9
     assert failed["response"]["usage"]["input_tokens_details"]["cache_write_tokens"] == 2
     assert failed["response"].get("completed_at") is None
+
+
+def test_event_stream_builder__emit_failed_validates_metadata() -> None:
+    stream = ResponseEventStream(response_id="resp_builder_failed_metadata")
+    stream.emit_created(status="in_progress")
+
+    with pytest.raises(TypeError, match="metadata values must be str"):
+        stream.emit_failed(metadata={"invalid": 1})  # type: ignore[dict-item]
+
+    with pytest.raises(ValueError, match="at most 16"):
+        stream.emit_failed(metadata={f"k{index}": "value" for index in range(17)})
 
 
 def test_event_stream_builder__emit_incomplete_accepts_reason_and_usage() -> None:
