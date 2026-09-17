@@ -109,42 +109,6 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm()
 
-    # To run this test with a specific sample, use:
-    # pytest tests/samples/test_samples.py::TestSamples::test_agent_voice_samples[sample_voice_agent_basic]
-    @pytest.mark.parametrize(
-        "sample_path",
-        get_sample_paths(
-            "agents/voice",
-            samples_to_skip=[
-                "sample_voice_agent_live_text_conversation.py",  # Live-only: opens a real WebSocket
-                # connection to the realtime service (and blocks on interactive input()), which
-                # cannot be captured/replayed by the test proxy.
-                "sample_voice_agent_live_function_tool.py",  # Live-only: opens a real WebSocket
-                # connection to the realtime service, which cannot be captured/replayed by the
-                # test proxy.
-                "sample_voice_agent_read_conversation.py",  # Live-only when no conversation id is
-                # supplied: opens a real WebSocket connection to produce one, which cannot be
-                # captured/replayed by the test proxy.
-                "sample_voice_agent_read_conversation_audio.py",  # Live-only when no conversation
-                # id is supplied: opens a real WebSocket connection to produce one, which cannot
-                # be captured/replayed by the test proxy.
-            ],
-        ),
-    )
-    @servicePreparer()
-    @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
-    def test_agent_voice_samples(self, sample_path: str, **kwargs) -> None:
-        env_vars = get_sample_env_vars(kwargs)
-        # The samples read FOUNDRY_VOICE_MODEL (no "_NAME" suffix), unlike the servicePreparer's
-        # own foundry_voice_model_name kwarg key.
-        env_vars["FOUNDRY_VOICE_MODEL"] = kwargs["foundry_voice_model_name"]
-        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
-        executor.execute()
-        # These samples are plain create/get/list/update/delete lifecycle calls with
-        # deterministic, easily-asserted-by-execute() output, so the shared LLM-judge step is
-        # skipped here (same escape hatch used above for sample_agent_user_identity_isolation.py).
-
     @pytest.mark.usefixtures("patch_sleep")
     @pytest.mark.parametrize(
         "sample_path",

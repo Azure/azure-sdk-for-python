@@ -163,10 +163,6 @@ IGNORED_SAMPLES = {
     "azure-messaging-webpubsubservice": [
         "integration_sample.py",
     ],
-    "azure-ai-projects": [
-        "sample_voice_agent_live_text_conversation.py",  # Blocking input() loop; interactive-only.
-        "sample_voice_agent_live_text_conversation_async.py",  # Blocking input() loop; interactive-only.
-    ],
 }
 
 
