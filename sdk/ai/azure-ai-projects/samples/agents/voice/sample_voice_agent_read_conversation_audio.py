@@ -23,9 +23,11 @@ DESCRIPTION:
     realtime text turn to produce a real conversation, then reads its audio
     back -- the agent's reply is real synthesized speech either way, so both
     the merged recording and the reply's own audio segment are available even
-    though the turn itself was typed. Set FOUNDRY_VOICE_AGENT_NAME and
-    FOUNDRY_VOICE_CONVERSATION_ID to read back a conversation from your own
-    existing agent instead.
+    though the turn itself was typed. Set FOUNDRY_VOICE_AGENT_NAME to hold that
+    conversation against your own existing agent instead -- it is never
+    created, modified, or deleted by this sample. Additionally set
+    FOUNDRY_VOICE_CONVERSATION_ID to skip holding a new conversation entirely
+    and just read back the audio of one your agent already produced.
 
 USAGE:
     python sample_voice_agent_read_conversation_audio.py
@@ -37,8 +39,9 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
     2) FOUNDRY_VOICE_AGENT_NAME - Optional. The name of an existing voice
-       agent whose conversation audio to read. Defaults to a temporary agent
-       name, created (and deleted afterward) by this sample, when unset.
+       agent (configured with `store=True`) to hold or read a conversation on.
+       Defaults to a temporary agent, created and deleted by this sample, when
+       unset.
     3) FOUNDRY_VOICE_CONVERSATION_ID - Optional. The id of a persisted
        conversation owned by FOUNDRY_VOICE_AGENT_NAME. If unset, this sample
        holds one short realtime text turn to produce one; see
@@ -156,6 +159,10 @@ def main() -> None:
     agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME")
     conversation_id = os.environ.get("FOUNDRY_VOICE_CONVERSATION_ID")
     model = os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
+    # Only create (and later clean up) a temporary agent when the caller didn't name their own --
+    # creating a version on someone's existing agent could unexpectedly mutate it, and deleting
+    # that version afterward could delete the agent entirely if it was its only version.
+    owns_agent = not agent_name
     agent_name = agent_name or "sample-read-conversation-audio-agent"
 
     with (
@@ -170,21 +177,22 @@ def main() -> None:
                     f"No FOUNDRY_VOICE_CONVERSATION_ID set; holding a short conversation with "
                     f"'{agent_name}' first..."
                 )
-                created_version = project_client.agents.create_version(
-                    agent_name=agent_name,
-                    definition=VoiceAgentDefinition(
-                        model_type=VoiceModelType.MANAGED,
-                        model=model,
-                        instructions="You are a friendly voice assistant. Keep replies short and natural.",
-                        audio=VoiceAgentAudioConfig(
-                            output=VoiceAgentAudioOutputConfig(
-                                voice="en-US-AvaNeural", voice_type=VoiceType.AZURE_STANDARD
+                if owns_agent:
+                    created_version = project_client.agents.create_version(
+                        agent_name=agent_name,
+                        definition=VoiceAgentDefinition(
+                            model_type=VoiceModelType.MANAGED,
+                            model=model,
+                            instructions="You are a friendly voice assistant. Keep replies short and natural.",
+                            audio=VoiceAgentAudioConfig(
+                                output=VoiceAgentAudioOutputConfig(
+                                    voice="en-US-AvaNeural", voice_type=VoiceType.AZURE_STANDARD
+                                ),
                             ),
+                            output_modalities=[VoiceOutputModality.AUDIO],
+                            store=True,
                         ),
-                        output_modalities=[VoiceOutputModality.AUDIO],
-                        store=True,
-                    ),
-                )
+                    )
                 conversation_id = hold_sample_conversation(project_client, agent_name)
                 print(f"Created conversation: {conversation_id}")
 

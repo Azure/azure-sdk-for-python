@@ -17,9 +17,11 @@ DESCRIPTION:
     Runs with no setup beyond the endpoint: if FOUNDRY_VOICE_CONVERSATION_ID is
     not set, this sample creates a temporary voice agent, holds one short
     realtime text turn to produce a real conversation, reads it back, then
-    deletes the agent. Set FOUNDRY_VOICE_AGENT_NAME and
-    FOUNDRY_VOICE_CONVERSATION_ID to read back a conversation from your own
-    existing agent instead.
+    deletes the agent version it created. Set FOUNDRY_VOICE_AGENT_NAME to hold
+    that conversation against your own existing agent instead -- it is never
+    created, modified, or deleted by this sample. Additionally set
+    FOUNDRY_VOICE_CONVERSATION_ID to skip holding a new conversation entirely
+    and just read back one your agent already produced.
 
 USAGE:
     python sample_voice_agent_read_conversation.py
@@ -31,8 +33,9 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
     2) FOUNDRY_VOICE_AGENT_NAME - Optional. The name of an existing voice agent
-       whose conversation to read. Defaults to a temporary agent name, created
-       (and deleted afterward) by this sample, when unset.
+       (configured with `store=True`) to hold or read a conversation on.
+       Defaults to a temporary agent, created and deleted by this sample, when
+       unset.
     3) FOUNDRY_VOICE_CONVERSATION_ID - Optional. The id of a persisted
        conversation owned by FOUNDRY_VOICE_AGENT_NAME. If unset, this sample
        holds one short realtime text turn to produce one; see
@@ -65,6 +68,10 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME")
 conversation_id = os.environ.get("FOUNDRY_VOICE_CONVERSATION_ID")
 model = os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
+# Only create (and later clean up) a temporary agent when the caller didn't name their own --
+# creating a version on someone's existing agent could unexpectedly mutate it, and deleting that
+# version afterward could delete the agent entirely if it was the agent's only version.
+owns_agent = not agent_name
 agent_name = agent_name or "sample-read-conversation-agent"
 
 with (
@@ -76,21 +83,22 @@ with (
     try:
         if not conversation_id:
             print(f"No FOUNDRY_VOICE_CONVERSATION_ID set; holding a short conversation with '{agent_name}' first...")
-            created_version = project_client.agents.create_version(
-                agent_name=agent_name,
-                definition=VoiceAgentDefinition(
-                    model_type=VoiceModelType.MANAGED,
-                    model=model,
-                    instructions="You are a friendly voice assistant. Keep replies short and natural.",
-                    audio=VoiceAgentAudioConfig(
-                        output=VoiceAgentAudioOutputConfig(
-                            voice="en-US-AvaNeural", voice_type=VoiceType.AZURE_STANDARD
+            if owns_agent:
+                created_version = project_client.agents.create_version(
+                    agent_name=agent_name,
+                    definition=VoiceAgentDefinition(
+                        model_type=VoiceModelType.MANAGED,
+                        model=model,
+                        instructions="You are a friendly voice assistant. Keep replies short and natural.",
+                        audio=VoiceAgentAudioConfig(
+                            output=VoiceAgentAudioOutputConfig(
+                                voice="en-US-AvaNeural", voice_type=VoiceType.AZURE_STANDARD
+                            ),
                         ),
+                        output_modalities=[VoiceOutputModality.AUDIO],
+                        store=True,
                     ),
-                    output_modalities=[VoiceOutputModality.AUDIO],
-                    store=True,
-                ),
-            )
+                )
             conversation_id = hold_sample_conversation(project_client, agent_name)
             print(f"Created conversation: {conversation_id}")
 
