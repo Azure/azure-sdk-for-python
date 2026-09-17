@@ -1010,6 +1010,9 @@ class ContainerProxy:
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
+            All versions and deletes responses contain ``current`` and ``metadata`` keys. The **provisional**
+            ``previous`` key can contain the previous item version when previous images are enabled for the container.
+            Previous images are not returned by default, and there is no SDK option to enable them.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1058,6 +1061,9 @@ class ContainerProxy:
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
+            All versions and deletes responses contain ``current`` and ``metadata`` keys. The **provisional**
+            ``previous`` key can contain the previous item version when previous images are enabled for the container.
+            Previous images are not returned by default, and there is no SDK option to enable them.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1142,6 +1148,9 @@ class ContainerProxy:
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
+            All versions and deletes responses contain ``current`` and ``metadata`` keys. The **provisional**
+            ``previous`` key can contain the previous item version when previous images are enabled for the container.
+            Previous images are not returned by default, and there is no SDK option to enable them.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1187,6 +1196,9 @@ class ContainerProxy:
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
+            All versions and deletes responses contain ``current`` and ``metadata`` keys. The **provisional**
+            ``previous`` key can contain the previous item version when previous images are enabled for the container.
+            Previous images are not returned by default, and there is no SDK option to enable them.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.

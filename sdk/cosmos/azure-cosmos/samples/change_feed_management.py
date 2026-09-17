@@ -53,6 +53,18 @@ def clean_up(container):
         # Deleting the current item
         container.delete_item(item, partition_key=item['address']['state'])
 
+
+def print_all_versions_and_deletes_change(change):
+    metadata = change.get('metadata', {})
+    print('Operation: {}'.format(metadata.get('operationType')))
+    print('Current item: {}'.format(change.get('current')))
+
+    # `previous` is provisional and is returned only when previous images are enabled for the container.
+    previous = change.get('previous')
+    if previous is not None:
+        print('Previous item: {}'.format(previous))
+
+
 def read_change_feed(container):
     print('\nReading Change Feed from the beginning\n')
 
@@ -126,7 +138,7 @@ def read_change_feed_with_all_versions_and_delete_mode(container):
     # This initial call was made to store a point in time in a 'continuation' token
     response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes")
     for doc in response_iterator:
-        print(doc)
+        print_all_versions_and_deletes_change(doc)
     continuation_token = container.client_connection.last_response_headers['etag']
 
     # Read all change feed with 'AllVersionsAndDeletes' mode after create items from a continuation
@@ -134,13 +146,13 @@ def read_change_feed_with_all_versions_and_delete_mode(container):
     create_items(container, 10, 'OR')
     response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes", continuation=continuation_token)
     for doc in response_iterator:
-        print(doc)
+        print_all_versions_and_deletes_change(doc)
 
     # Read all change feed with 'AllVersionsAndDeletes' mode after delete items from a continuation
     clean_up(container)
     response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes", continuation=continuation_token)
     for doc in response_iterator:
-        print(doc)
+        print_all_versions_and_deletes_change(doc)
 
 def read_change_feed_with_all_versions_and_delete_mode_with_partition_key(container):
     print('\nReading Change Feed with AllVersionsAndDeletes mode from the partition key\n')
@@ -149,7 +161,7 @@ def read_change_feed_with_all_versions_and_delete_mode_with_partition_key(contai
     # This initial call was made to store a point in time and 'partition_key' in a 'continuation' token
     response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes", partition_key="CA")
     for doc in response_iterator:
-        print(doc)
+        print_all_versions_and_deletes_change(doc)
     continuation_token = container.client_connection.last_response_headers['etag']
 
     create_items(container, 10, 'CA')
@@ -158,7 +170,7 @@ def read_change_feed_with_all_versions_and_delete_mode_with_partition_key(contai
     # Should only print the created items with 'CA' partition key value
     response_iterator = container.query_items_change_feed(mode='AllVersionsAndDeletes', continuation=continuation_token)
     for doc in response_iterator:
-        print(doc)
+        print_all_versions_and_deletes_change(doc)
     continuation_token = container.client_connection.last_response_headers['etag']
 
     clean_up(container)
@@ -166,7 +178,7 @@ def read_change_feed_with_all_versions_and_delete_mode_with_partition_key(contai
     # Should only print the deleted items with 'CA' partition key value
     response_iterator = container.query_items_change_feed(mode='AllVersionsAndDeletes', continuation=continuation_token)
     for doc in response_iterator:
-        print(doc)
+        print_all_versions_and_deletes_change(doc)
 
 def run_sample():
     client = cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY})
