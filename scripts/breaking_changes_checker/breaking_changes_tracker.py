@@ -664,11 +664,15 @@ class BreakingChangesTracker:
 
     def check_property_required(self, components: Dict) -> None:
         for key, value in components.get("properties", {}).items():
-            stable_type = self.stable[self._module_name]["class_nodes"][self._class_name]["properties"][key]["attr_type"]
-            current_type = value["attr_type"]
+            if not isinstance(value, dict):
+                continue
+            stable_type = self.stable[self._module_name]["class_nodes"][self._class_name]["properties"].get(key, {}).get("attr_type")
+            current_type = value.get("attr_type")
 
             if (
-                stable_type.startswith("Optional[")
+                isinstance(stable_type, str)
+                and stable_type.startswith("Optional[")
+                and isinstance(current_type, str)
                 and not current_type.startswith("Optional[")
             ):
                 bc = (
