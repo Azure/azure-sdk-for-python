@@ -270,36 +270,39 @@ class TestAllVersionsChangeFeedAsync:
         )
         created_collection = setup["created_db"].get_container_client(cid)
 
-        initial_feed = created_collection.query_items_change_feed(mode='AllVersionsAndDeletes')
-        _ = [item async for item in initial_feed]
-        continuation = created_collection.client_connection.last_response_headers[E_TAG]
-        await created_collection.create_item(
-            body={ID: 'ttl-item', partition_key: 'ttl-pk', 'ttl': TTL_SECONDS}
-        )
-
-        ttl_delete = None
-        deadline = time.monotonic() + TTL_TEST_TIMEOUT_SECONDS
-        while time.monotonic() < deadline:
-            changes = [
-                item async for item in created_collection.query_items_change_feed(continuation=continuation)
-            ]
+        try:
+            initial_feed = created_collection.query_items_change_feed(mode='AllVersionsAndDeletes')
+            _ = [item async for item in initial_feed]
             continuation = created_collection.client_connection.last_response_headers[E_TAG]
-            ttl_delete = next(
-                (
-                    change for change in changes
-                    if change[METADATA][OPERATION_TYPE] == DELETE
-                    and change[METADATA].get("timeToLiveExpired") is True
-                ),
-                None,
+            await created_collection.create_item(
+                body={ID: 'ttl-item', partition_key: 'ttl-pk', 'ttl': TTL_SECONDS}
             )
-            if ttl_delete is not None:
-                break
-            await asyncio.sleep(1)
 
-        assert ttl_delete is not None, "Timed out waiting for the TTL delete change."
-        assert ttl_delete[METADATA][ID] == 'ttl-item'
-        assert ttl_delete[METADATA]["partitionKey"] == {partition_key: 'ttl-pk'}
-        assert ttl_delete.get(PREVIOUS) is None
+            ttl_delete = None
+            deadline = time.monotonic() + TTL_TEST_TIMEOUT_SECONDS
+            while time.monotonic() < deadline:
+                changes = [
+                    item async for item in created_collection.query_items_change_feed(continuation=continuation)
+                ]
+                continuation = created_collection.client_connection.last_response_headers[E_TAG]
+                ttl_delete = next(
+                    (
+                        change for change in changes
+                        if change[METADATA][OPERATION_TYPE] == DELETE
+                        and change[METADATA].get("timeToLiveExpired") is True
+                    ),
+                    None,
+                )
+                if ttl_delete is not None:
+                    break
+                await asyncio.sleep(1)
+
+            assert ttl_delete is not None, "Timed out waiting for the TTL delete change."
+            assert ttl_delete[METADATA][ID] == 'ttl-item'
+            assert ttl_delete[METADATA]["partitionKey"] == {partition_key: 'ttl-pk'}
+            assert ttl_delete.get(PREVIOUS) is None
+        finally:
+            await setup["key_db"].delete_container(cid)
 
     async def test_query_change_feed_all_versions_and_deletes_errors_async(self, setup):
         cid = "change_feed_test_" + str(uuid.uuid4())
