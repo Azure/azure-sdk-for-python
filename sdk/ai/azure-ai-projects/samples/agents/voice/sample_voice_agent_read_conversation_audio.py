@@ -23,12 +23,9 @@ DESCRIPTION:
     realtime text turn to produce a real conversation, then reads its audio
     back -- the agent's reply is real synthesized speech either way, so both
     the merged recording and the reply's own audio segment are available even
-    though the turn itself was typed. Set FOUNDRY_VOICE_AGENT_NAME (with or
-    without FOUNDRY_VOICE_CONVERSATION_ID) to read back a conversation from
-    your own existing agent instead: with a conversation id, that exact
-    conversation is read as-is; without one, a new conversation is held
-    against your agent (which is otherwise left unmodified and is not deleted
-    afterward).
+    though the turn itself was typed. Set FOUNDRY_VOICE_AGENT_NAME and
+    FOUNDRY_VOICE_CONVERSATION_ID to read back a conversation from your own
+    existing agent instead.
 
 USAGE:
     python sample_voice_agent_read_conversation_audio.py
@@ -40,13 +37,12 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
     2) FOUNDRY_VOICE_AGENT_NAME - Optional. The name of an existing voice
-       agent (configured with store=True) to use. Defaults to a temporary
-       agent name, created (and deleted afterward) by this sample, when unset.
+       agent whose conversation audio to read. Defaults to a temporary agent
+       name, created (and deleted afterward) by this sample, when unset.
     3) FOUNDRY_VOICE_CONVERSATION_ID - Optional. The id of a persisted
-       conversation owned by FOUNDRY_VOICE_AGENT_NAME. Requires
-       FOUNDRY_VOICE_AGENT_NAME to also be set. If unset, this sample holds
-       one short realtime text turn against the (temporary or named) agent to
-       produce one; see voice_sample_util.py in this folder and
+       conversation owned by FOUNDRY_VOICE_AGENT_NAME. If unset, this sample
+       holds one short realtime text turn to produce one; see
+       voice_sample_util.py in this folder and
        sample_voice_agent_live_text_conversation.py for a full interactive
        version.
     4) FOUNDRY_VOICE_MODEL - Optional. The realtime model deployment name,
@@ -160,12 +156,11 @@ def main() -> None:
     agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME")
     conversation_id = os.environ.get("FOUNDRY_VOICE_CONVERSATION_ID")
     model = os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
-    if conversation_id and not agent_name:
+    if bool(agent_name) != bool(conversation_id):
         raise ValueError(
-            "FOUNDRY_VOICE_CONVERSATION_ID requires FOUNDRY_VOICE_AGENT_NAME to identify which agent owns it."
+            "Set FOUNDRY_VOICE_AGENT_NAME and FOUNDRY_VOICE_CONVERSATION_ID together, or leave both unset."
         )
-    # Only auto-create (and later clean up) a temporary agent when no name was given; an
-    # explicitly named agent is assumed to already exist and is left unmodified either way.
+    # Only clean up the agent afterward when this sample created it itself (no name was given).
     delete_agent_when_done = not agent_name
     agent_name = agent_name or "sample-read-conversation-audio-agent"
 
@@ -181,26 +176,21 @@ def main() -> None:
                     f"No FOUNDRY_VOICE_CONVERSATION_ID set; holding a short conversation with "
                     f"'{agent_name}' first..."
                 )
-                if delete_agent_when_done:
-                    # Only create/configure the agent when this sample owns it end-to-end. An
-                    # explicitly named agent is assumed to already exist (with store=True) and is
-                    # used as-is -- hold_sample_conversation raises a clear error below if it
-                    # isn't actually configured for persistence.
-                    created_version = project_client.agents.create_version(
-                        agent_name=agent_name,
-                        definition=VoiceAgentDefinition(
-                            model_type=VoiceModelType.MANAGED,
-                            model=model,
-                            instructions="You are a friendly voice assistant. Keep replies short and natural.",
-                            audio=VoiceAgentAudioConfig(
-                                output=VoiceAgentAudioOutputConfig(
-                                    voice="en-US-AvaNeural", voice_type=VoiceType.AZURE_STANDARD
-                                ),
+                created_version = project_client.agents.create_version(
+                    agent_name=agent_name,
+                    definition=VoiceAgentDefinition(
+                        model_type=VoiceModelType.MANAGED,
+                        model=model,
+                        instructions="You are a friendly voice assistant. Keep replies short and natural.",
+                        audio=VoiceAgentAudioConfig(
+                            output=VoiceAgentAudioOutputConfig(
+                                voice="en-US-AvaNeural", voice_type=VoiceType.AZURE_STANDARD
                             ),
-                            output_modalities=[VoiceOutputModality.AUDIO],
-                            store=True,
                         ),
-                    )
+                        output_modalities=[VoiceOutputModality.AUDIO],
+                        store=True,
+                    ),
+                )
                 conversation_id = hold_sample_conversation(project_client, agent_name)
                 print(f"Created conversation: {conversation_id}")
 
