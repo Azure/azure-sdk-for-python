@@ -1,0 +1,57 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-data-ai"
+authors = [
+  { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+description = "Azure Inference Service client library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+requires-python = ">=3.10"
+keywords = ["azure", "azure sdk"]
+
+dependencies = [
+    "azure-core>=1.37.0,<2.0.0",
+]
+dynamic = [
+"version", "readme"
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
+[tool.setuptools.dynamic]
+version = {attr = "azure.data.ai._version.VERSION"}
+readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "samples*",
+    "doc*",
+    "build*",
+    "azure",
+    "azure.data",
+]
+
+[tool.setuptools.package-data]
+"azure.data.ai" = ["py.typed"]
+
+[tool.azure-sdk-build]
+generate = false

@@ -1,0 +1,6 @@
+# REST contract reference only. The Python runtime is handwritten.
+# Do not run tsp-client update in this package.
+directory: specification/inferenceservice/data-plane/InferenceService
+commit: de6631e6066f6eb00afa338ac8544c950e1fdda0
+repo: Azure/azure-rest-api-specs-pr
+additionalDirectories: []
