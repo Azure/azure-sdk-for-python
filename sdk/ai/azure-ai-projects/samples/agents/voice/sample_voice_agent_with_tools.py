@@ -130,6 +130,7 @@ with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
 ):
+    created_version = None
     try:
         created_version = project_client.agents.create_version(agent_name=agent_name, definition=definition)
         print(f"Created voice agent '{agent_name}' (model_type={model_type}, model={model})")
@@ -142,5 +143,6 @@ with (
             # so fall back to a placeholder for kinds that don't define it.
             print(f"  - {tool.type}: {getattr(tool, 'name', '(unnamed)')}")
     finally:
-        project_client.agents.delete(agent_name=agent_name)
-        print(f"Deleted voice agent: {agent_name}")
+        if created_version is not None:
+            project_client.agents.delete_version(agent_name=agent_name, agent_version=created_version.version)
+            print(f"Deleted voice agent version: {created_version.version}")

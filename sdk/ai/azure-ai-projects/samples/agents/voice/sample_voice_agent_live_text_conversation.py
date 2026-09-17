@@ -356,6 +356,7 @@ def text_conversation() -> None:
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     ):
+        created_version = None
         try:
             # 1) Create a voice agent with conversation persistence enabled (`store=True`) so the
             #    session's conversation can be fetched back by id afterward.
@@ -370,7 +371,7 @@ def text_conversation() -> None:
                 greeting=VoiceAgentTemplateGreetingConfig(text="Hi, I'm here to help. What can I do for you?"),
                 store=True,
             )
-            project_client.agents.create_version(
+            created_version = project_client.agents.create_version(
                 agent_name=agent_name,
                 definition=definition,
             )
@@ -403,8 +404,9 @@ def text_conversation() -> None:
             print(f"Service responded with an error: {e.status_code} {e.reason}")
         finally:
             # 4) Clean up the agent created for this sample.
-            project_client.agents.delete(agent_name=agent_name)
-            print(f"Deleted voice agent: {agent_name}")
+            if created_version is not None:
+                project_client.agents.delete_version(agent_name=agent_name, agent_version=created_version.version)
+                print(f"Deleted voice agent version: {created_version.version}")
 
 
 if __name__ == "__main__":

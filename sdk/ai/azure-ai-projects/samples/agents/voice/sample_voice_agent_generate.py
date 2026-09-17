@@ -7,10 +7,9 @@
 """
 DESCRIPTION:
     This sample demonstrates guided authoring: generating and creating a voice
-    agent through `POST /agents:create-from-prompt` (`project_client.beta.agents.create_from_prompt`)
-    with `kind="voice"`. The service creates a voice agent with a
-    service-selected starter definition, which is fully editable afterward
-    through the standard create_version/update flow.
+    agent through `create_from_prompt` with `kind="voice"`.
+    The service creates a voice agent with a service-selected starter definition,
+    which is fully editable afterward through the standard create_version/update flow.
 
 USAGE:
     python sample_voice_agent_generate.py
