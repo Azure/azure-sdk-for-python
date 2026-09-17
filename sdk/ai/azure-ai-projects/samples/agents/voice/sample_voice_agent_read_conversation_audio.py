@@ -169,14 +169,13 @@ def main() -> None:
         AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     ):
         conversations = project_client.beta.voice_agents.conversations
-        created_version = None
         try:
             if not conversation_id:
                 print(
                     f"No FOUNDRY_VOICE_CONVERSATION_ID set; holding a short conversation with "
                     f"'{agent_name}' first..."
                 )
-                created_version = project_client.agents.create_version(
+                project_client.agents.create_version(
                     agent_name=agent_name,
                     definition=VoiceAgentDefinition(
                         model_type=VoiceModelType.MANAGED,
@@ -200,9 +199,9 @@ def main() -> None:
             # 404: not persisted / not ready. 409: session still in progress.
             print(f"Service responded with an error: {e.status_code} {e.reason}")
         finally:
-            if delete_agent_when_done and created_version:
-                project_client.agents.delete_version(agent_name=agent_name, agent_version=created_version.version)
-                print(f"Deleted temporary voice agent version: {agent_name} v{created_version.version}")
+            if delete_agent_when_done:
+                project_client.agents.delete(agent_name=agent_name)
+                print(f"Deleted temporary voice agent: {agent_name}")
 
 
 if __name__ == "__main__":
