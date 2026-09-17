@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     This sample demonstrates the voice-agent management lifecycle using the
-    asynchronous AIProjectClient: creating a voice agent, retrieving it,
+    synchronous AIProjectClient: creating a voice agent, retrieving it,
     listing the voice agents in the project, and deleting it.
 
     Voice agents are exposed through `project_client.agents` with
