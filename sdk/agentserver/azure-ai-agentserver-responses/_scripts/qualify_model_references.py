@@ -1,12 +1,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
 # cspell:ignore asname
-"""One-time, comment-preserving refactor of internal generated type references."""
+"""Comment-preserving refactor of internal generated type references to the lazy
+module-alias form, plus a ``--check`` mode that CI can run to fail the build if any
+eager generated-type import remains.
+
+The rewrite is applied once; ``--check`` enforces the pattern for new changes so a
+future ``from ..models._generated import SomeType`` cannot silently reintroduce the
+import-time TypedDict construction (cold-start cost) this refactor removes.
+"""
 
 from __future__ import annotations
 
 import ast
 import json
+import sys
 from pathlib import Path
 
 from lazy_model_emitter import canonical, definitions
@@ -36,7 +44,7 @@ class Qualify(ast.NodeTransformer):
         return self.generic_visit(node)
 
 
-def refactor(path, generated_names):
+def refactor(path, generated_names, write=True):
     source = path.read_text(encoding="utf-8")
     tree = ast.parse(source)
     lines = source.splitlines(keepends=True)
@@ -185,24 +193,71 @@ def refactor(path, generated_names):
     for start, end, replacement in sorted(edits, reverse=True):
         source = source[:start] + replacement + source[end:]
     ast.parse(source)
-    path.write_text(source, encoding="utf-8")
+    if write:
+        path.write_text(source, encoding="utf-8")
     return True
 
 
-def main():
-    root = Path(__file__).resolve().parents[1] / "azure" / "ai" / "agentserver" / "responses"
-    generated = root / "models" / "_generated"
-    names = set()
-    for name in ("types.py", "_unions.py"):
-        names.update(definitions(ast.parse(canonical((generated / name).read_text()))))
-    changed = []
+def eager_imports(path, generated_names):
+    """Return the generated type names *path* imports eagerly.
+
+    An eager import (``from ..models._generated import ResponseObject``) triggers the
+    models package ``__getattr__`` and constructs that TypedDict at import time,
+    reintroducing the cold-start cost the lazy module-alias form avoids. The allowed
+    form binds only the module (``from ..models import _generated as _generated_models``)
+    and references types as attributes, which constructs nothing at import.
+    """
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    found = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.ImportFrom):
+            continue
+        module = node.module or ""
+        if not (module.endswith("models") or "_generated" in module):
+            continue
+        found.extend(alias.name for alias in node.names if alias.name in generated_names)
+    return sorted(set(found))
+
+
+def _iter_source_files(root):
     for path in sorted(root.rglob("*.py")):
         if "_generated" in path.parts or path in (root / "__init__.py", root / "models" / "__init__.py"):
             continue
         if path.name in ("_lazy_models.py", "_request_validators.py"):
             continue
-        if refactor(path, names):
-            changed.append(path.relative_to(root).as_posix())
+        yield path
+
+
+def _generated_names(root):
+    generated = root / "models" / "_generated"
+    names = set()
+    for name in ("types.py", "_unions.py"):
+        names.update(definitions(ast.parse(canonical((generated / name).read_text()))))
+    return names
+
+
+def main(argv=None):
+    argv = sys.argv[1:] if argv is None else list(argv)
+    check = "--check" in argv
+    root = Path(__file__).resolve().parents[1] / "azure" / "ai" / "agentserver" / "responses"
+    names = _generated_names(root)
+    if check:
+        offenders = {
+            path.relative_to(root).as_posix(): eager
+            for path in _iter_source_files(root)
+            if (eager := eager_imports(path, names))
+        }
+        if offenders:
+            print(
+                "Eager generated-model imports found. Use the lazy module alias instead, e.g. "
+                "`from ..models import _generated as _generated_models`, and reference types as "
+                "`_generated_models.<Name>`:"
+            )
+            print(json.dumps(offenders, indent=2))
+            raise SystemExit(1)
+        print("OK: no eager generated-model imports.")
+        raise SystemExit(0)
+    changed = [path.relative_to(root).as_posix() for path in _iter_source_files(root) if refactor(path, names)]
     print(json.dumps(changed, indent=2))
 
 
