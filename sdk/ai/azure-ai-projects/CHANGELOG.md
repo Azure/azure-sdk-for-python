@@ -20,7 +20,7 @@
 
 Breaking changes in beta classes:
 
-* Removed the `max_samples` constructor argument  and property from `DataGenerationJobOptions` and `SimulationSeedDataGenerationJobOptions`.
+* Removed the `max_samples` constructor argument and property from `DataGenerationJobOptions` and `SimulationSeedDataGenerationJobOptions`.
 * The `ToolboxObject` constructor now requires `updated_at` and `versions`.
 
 ### Dependency update
