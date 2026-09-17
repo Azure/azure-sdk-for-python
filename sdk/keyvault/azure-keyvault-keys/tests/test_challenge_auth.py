@@ -1008,6 +1008,14 @@ DSTS_AUTHORITY = "https://uswest2-passive-dsts.dsts.core.windows.net"
         (f"{DSTS_AUTHORITY}/DSTSv2/{DSTS_TENANT_ID}/", DSTS_TENANT_ID),
         # a DSTSv2 authority without a tenant segment keeps the previous behavior
         (f"{DSTS_AUTHORITY}/dstsv2", "dstsv2"),
+        (f"{DSTS_AUTHORITY}/dstsv2/", "dstsv2"),
+        # an empty segment after "dstsv2" is not used as the tenant ID
+        (f"{DSTS_AUTHORITY}/dstsv2//{DSTS_TENANT_ID}", "dstsv2"),
+        # path segments after the DSTSv2 tenant ID are ignored
+        (f"{DSTS_AUTHORITY}/dstsv2/{DSTS_TENANT_ID}/oauth2/token", DSTS_TENANT_ID),
+        # only an exact "dstsv2" first segment denotes a DSTSv2 authority
+        (f"{DSTS_AUTHORITY}/dstsv2x/{DSTS_TENANT_ID}", "dstsv2x"),
+        (f"https://login.microsoftonline.com/{ENTRA_TENANT_ID}/dstsv2/{DSTS_TENANT_ID}", ENTRA_TENANT_ID),
         ("https://login.microsoftonline.com/", None),
     ],
 )
