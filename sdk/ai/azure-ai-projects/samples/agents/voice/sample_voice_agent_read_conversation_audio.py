@@ -156,6 +156,10 @@ def main() -> None:
     agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME")
     conversation_id = os.environ.get("FOUNDRY_VOICE_CONVERSATION_ID")
     model = os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
+    if bool(agent_name) != bool(conversation_id):
+        raise ValueError(
+            "Set FOUNDRY_VOICE_AGENT_NAME and FOUNDRY_VOICE_CONVERSATION_ID together, or leave both unset."
+        )
     # Only clean up the agent afterward when this sample created it itself (no name was given).
     delete_agent_when_done = not agent_name
     agent_name = agent_name or "sample-read-conversation-audio-agent"

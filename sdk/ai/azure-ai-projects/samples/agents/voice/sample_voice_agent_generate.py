@@ -60,8 +60,9 @@ with (
     agent = project_client.beta.agents.create_from_prompt(
         GenerateVoiceAgentRequest(kind=AgentKind.VOICE, name=agent_name)
     )
-    print(f"Generated voice agent: {agent.name}")
-    _safe_print(f"Instructions:\n{agent.versions.latest.definition.instructions}")  # type: ignore[attr-defined]
-
-    project_client.agents.delete(agent_name=agent.name)
-    print(f"Deleted voice agent: {agent.name}")
+    try:
+        print(f"Generated voice agent: {agent.name}")
+        _safe_print(f"Instructions:\n{agent.versions.latest.definition.instructions}")  # type: ignore[attr-defined]
+    finally:
+        project_client.agents.delete(agent_name=agent.name)
+        print(f"Deleted voice agent: {agent.name}")
