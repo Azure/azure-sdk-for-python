@@ -80,15 +80,15 @@ class DeviceProvisioningClient(
         try:
             if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
-        except AttributeError:
-            raise ValueError("Endpoint URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Endpoint URL must be a string.") from exc
         endpoint = endpoint.rstrip("/")
 
         # Validate api-version
         try:
             api_version = ApiVersion(api_version).value
-        except ValueError:
-            raise ValueError(f"Invalid api-version {api_version} specified")
+        except ValueError as exc:
+            raise ValueError(f"Invalid api-version {api_version} specified") from exc
 
         # Generate protocol client
         super().__init__(
@@ -175,10 +175,10 @@ class DeviceProvisioningClient(
         if not transport:
             try:
                 from azure.core.pipeline.transport import AioHttpTransport
-            except ImportError:
+            except ImportError as exc:
                 raise ImportError(
                     "Unable to create async transport. Please check aiohttp is installed."
-                )
+                ) from exc
             transport = AioHttpTransport(**kwargs)
 
         policies = [

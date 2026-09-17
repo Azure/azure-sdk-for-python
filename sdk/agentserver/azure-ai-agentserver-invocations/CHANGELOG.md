@@ -13,6 +13,7 @@
 ### Other Changes
 
 - Updated the minimum `azure-ai-agentserver-core` dependency to `>=2.2.0b2`.
+- Generate fallback invocation and session IDs only when no valid supplied ID is available.
 
 ## 1.2.0b1 (2026-09-03)
 

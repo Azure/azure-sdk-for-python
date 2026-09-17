@@ -2,6 +2,12 @@
 > [!IMPORTANT]
 > We strongly recommend that customers use at least version 4.16.3 of `azure-cosmos`.
 
+### 4.17.1 (2026-09-16)
+
+#### Bugs Fixed
+* Fixed unnecessary full routing-map refreshes in sync and async clients when incremental partition metadata updates reference ancestors that have already been removed from the cache. See [PR 49026](https://github.com/Azure/azure-sdk-for-python/pull/49026).
+* Fixed older partition metadata revisions overwriting newer revisions when incremental routing-map updates resolve child ranges out of order during cascading splits. See [PR 49026](https://github.com/Azure/azure-sdk-for-python/pull/49026).
+
 ### 4.17.0 (2026-09-09)
 
 #### Features Added
