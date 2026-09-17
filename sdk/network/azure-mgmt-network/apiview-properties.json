@@ -2937,5 +2937,5 @@
         "azure.mgmt.network.NetworkManagementClient.check_dns_name_availability": "Microsoft.Network.CheckDnsNameAvailability.checkDnsNameAvailability",
         "azure.mgmt.network.aio.NetworkManagementClient.check_dns_name_availability": "Microsoft.Network.CheckDnsNameAvailability.checkDnsNameAvailability"
     },
-    "CrossLanguageVersion": "c17730686ca6"
+    "CrossLanguageVersion": "4073bf5aa9a0"
 }

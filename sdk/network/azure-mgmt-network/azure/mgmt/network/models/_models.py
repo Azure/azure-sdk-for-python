@@ -25928,7 +25928,7 @@ class HubVirtualNetworkConnection(SubResource):  # pylint: disable=docstring-key
         "connection_policy",
         "enable_internet_security",
         "routing_configuration",
-        "enable_only_i_pv6_peering",
+        "enable_only_ipv6_peering",
         "provisioning_state",
     ]
 
@@ -25989,8 +25989,8 @@ class HubVirtualNetworkConnectionProperties(_Model):  # pylint: disable=docstrin
     :ivar routing_configuration: The Routing Configuration indicating the associated and propagated
      route tables on this connection.
     :vartype routing_configuration: ~azure.mgmt.network.models.RoutingConfiguration
-    :ivar enable_only_i_pv6_peering: Enable Only IPv6 Peering for this connection.
-    :vartype enable_only_i_pv6_peering: bool
+    :ivar enable_only_ipv6_peering: Enable Only IPv6 Peering for this connection.
+    :vartype enable_only_ipv6_peering: bool
     :ivar provisioning_state: The provisioning state of the hub virtual network connection
      resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
      "Deleting".
@@ -26022,7 +26022,7 @@ class HubVirtualNetworkConnectionProperties(_Model):  # pylint: disable=docstrin
     )
     """The Routing Configuration indicating the associated and propagated route tables on this
      connection."""
-    enable_only_i_pv6_peering: Optional[bool] = rest_field(name="enableOnlyIPv6Peering", visibility=["read", "create"])
+    enable_only_ipv6_peering: Optional[bool] = rest_field(name="enableOnlyIPv6Peering", visibility=["read", "create"])
     """Enable Only IPv6 Peering for this connection."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
@@ -26040,7 +26040,7 @@ class HubVirtualNetworkConnectionProperties(_Model):  # pylint: disable=docstrin
         connection_policy: Optional["_models.SubResource"] = None,
         enable_internet_security: Optional[bool] = None,
         routing_configuration: Optional["_models.RoutingConfiguration"] = None,
-        enable_only_i_pv6_peering: Optional[bool] = None,
+        enable_only_ipv6_peering: Optional[bool] = None,
     ) -> None: ...
 
     @overload

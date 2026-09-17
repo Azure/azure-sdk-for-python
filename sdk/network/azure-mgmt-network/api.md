@@ -26460,7 +26460,7 @@ namespace azure.mgmt.network.models
         allow_remote_vnet_to_use_hub_vnet_gateways: Optional[bool]
         connection_policy: Optional[SubResource]
         enable_internet_security: Optional[bool]
-        enable_only_i_pv6_peering: Optional[bool]
+        enable_only_ipv6_peering: Optional[bool]
         provisioning_state: Optional[Union[str, ProvisioningState]]
         remote_virtual_network: Optional[SubResource]
         routing_configuration: Optional[RoutingConfiguration]
@@ -26473,7 +26473,7 @@ namespace azure.mgmt.network.models
                 allow_remote_vnet_to_use_hub_vnet_gateways: Optional[bool] = ..., 
                 connection_policy: Optional[SubResource] = ..., 
                 enable_internet_security: Optional[bool] = ..., 
-                enable_only_i_pv6_peering: Optional[bool] = ..., 
+                enable_only_ipv6_peering: Optional[bool] = ..., 
                 remote_virtual_network: Optional[SubResource] = ..., 
                 routing_configuration: Optional[RoutingConfiguration] = ...
             ) -> None: ...
