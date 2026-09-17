@@ -165,10 +165,6 @@ IGNORED_SAMPLES = {
         "blob_samples_container_access_policy_async.py",
         "blob_samples_client_side_encryption_keyvault.py"
     ],
-    "azure-ai-projects": [
-        "sample_voice_agent_live_text_conversation.py",  # Blocking input() loop; interactive-only.
-        "sample_voice_agent_live_text_conversation_async.py",  # Blocking input() loop; interactive-only.
-    ],
 }
 
 def run_check_call_with_timeout(
