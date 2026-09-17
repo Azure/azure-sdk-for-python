@@ -9,6 +9,7 @@ import logging
 from unittest import mock
 
 from azure.core.exceptions import ClientAuthenticationError
+from azure.core.pipeline.transport import RequestsTransport
 from azure.identity import ManagedIdentityCredential, CredentialUnavailableError
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.imds import IMDS_AUTHORITY, IMDS_TOKEN_PATH
@@ -55,7 +56,7 @@ ALL_ENVIRONMENTS = (
         EnvironmentVariables.MSI_SECRET: "...",
     },  # Azure ML
 )
-# Workaround while Service Fabric requires requests.Session for MSAL >= 1.38.0
+# Service Fabric requires a RequestsTransport because MSAL requires requests.Session
 AZURE_CORE_TRANSPORT_ENVIRONMENTS = tuple(
     environ for environ in ALL_ENVIRONMENTS if environ is not SERVICE_FABRIC_ENVIRON
 )
@@ -127,6 +128,30 @@ def test_service_fabric_context_manager():
             close.assert_not_called()
 
     close.assert_called_once_with()
+
+
+def test_service_fabric_reuses_requests_transport_session():
+    session = requests.Session()
+    transport = RequestsTransport(session=session, session_owner=False)
+    with (
+        mock.patch.dict("os.environ", SERVICE_FABRIC_ENVIRON, clear=True),
+        mock.patch.object(session, "close") as close,
+    ):
+        credential = ManagedIdentityCredential(transport=transport)
+        assert credential._credential._client is session
+        credential.close()
+
+    close.assert_not_called()
+
+
+def test_service_fabric_uses_requests_transport_created_session():
+    transport = RequestsTransport()
+    with mock.patch.dict("os.environ", SERVICE_FABRIC_ENVIRON, clear=True):
+        credential = ManagedIdentityCredential(transport=transport)
+        assert credential._credential._client is transport.session
+        credential.close()
+
+    assert transport.session is None
 
 
 @pytest.mark.parametrize(

@@ -12,13 +12,13 @@
 ### Bugs Fixed
 
 - Fixed `AzureDeveloperCliCredential` to correctly parse error messages from Azure Developer CLI v1.23.7 and later, which previously caused raw JSON to surface in `ClientAuthenticationError` instead of the underlying error text.
-- Fixed synchronous Service Fabric managed identity authentication with MSAL 1.38.0 and later. Service Fabric now uses a `requests.Session`; a supplied `transport` is ignored with a warning.
+- Fixed synchronous Service Fabric managed identity authentication with MSAL 1.39.0 and later. Service Fabric now uses the session from an Azure Core `RequestsTransport`.
 
 ### Other Changes
 
 - Added `RequestIdPolicy` to the default pipeline policies to ensure a unique `x-ms-client-request-id` header is sent with each request. ([#46070](https://github.com/Azure/azure-sdk-for-python/pull/46070))
 - `CertificateCredential` now passes the PEM private_key to MSAL as a str rather than bytes, matching MSAL's documented `client_credential` contract. ([#46801](https://github.com/Azure/azure-sdk-for-python/pull/46801))
-- Bumped the minimum dependency on `msal` to `>=1.38.0`.
+- Bumped the minimum dependency on `msal` to `>=1.39.0`.
 
 ## 1.25.3 (2026-03-12)
 
