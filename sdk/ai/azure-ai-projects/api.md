@@ -477,7 +477,6 @@ namespace azure.ai.projects.aio.operations
         def open_websocket(
                 self,
                 *,
-                open_timeout: Optional[float] = 10,
                 query_parameters: Optional[Mapping[str, str]] = ...,
                 subprotocols: Optional[Sequence[str]] = ...
             ) -> AsyncOpenEnvWebSocket: ...
@@ -516,7 +515,6 @@ namespace azure.ai.projects.aio.operations
                 _on_close: Optional[Callable[[AsyncOpenEnvWebSocket], None]] = ...,
                 credential: AsyncTokenCredential,
                 credential_scopes: Sequence[str],
-                open_timeout: Optional[float] = 10,
                 subprotocols: Optional[Sequence[str]] = ...
             ) -> None: ...
 
@@ -12367,7 +12365,6 @@ namespace azure.ai.projects.operations
         def open_websocket(
                 self,
                 *,
-                open_timeout: Optional[float] = 10,
                 query_parameters: Optional[Mapping[str, str]] = ...,
                 subprotocols: Optional[Sequence[str]] = ...
             ) -> OpenEnvWebSocket: ...
@@ -12406,7 +12403,6 @@ namespace azure.ai.projects.operations
                 _on_close: Optional[Callable[[OpenEnvWebSocket], None]] = ...,
                 credential: TokenCredential,
                 credential_scopes: Sequence[str],
-                open_timeout: Optional[float] = 10,
                 subprotocols: Optional[Sequence[str]] = ...
             ) -> None: ...
 

@@ -29,10 +29,11 @@ from typing import (
 from websockets.asyncio.client import ClientConnection, connect as websocket_connect
 from websockets.exceptions import InvalidMessage, InvalidStatus
 from websockets.typing import Subprotocol
+
 try:
     from websockets.exceptions import InvalidProxyStatus as _InvalidProxyStatus
 except ImportError:  # websockets 14.0 doesn't define InvalidProxyStatus.
-    _InvalidProxyStatus = InvalidStatus
+    _InvalidProxyStatus = InvalidStatus  # type: ignore[misc, assignment]
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import AzureError, HttpResponseError
@@ -61,8 +62,9 @@ from ...operations._patch_rle import (
     _OpenEnvWebSocketConfig,
     _TRANSIENT_HEALTH_STATUS_CODES,
     _WEBSOCKET_LOGGER,
+    _WEBSOCKET_ATTEMPT_TIMEOUT_S,
     _WEBSOCKET_CONNECT_ATTEMPTS,
-    _WEBSOCKET_RETRY_BACKOFF_S,
+    _WEBSOCKET_CONNECTION_TIMEOUT_S,
     _build_openenv_websocket_url,
     _capacity_retry,
     _error_code,
@@ -71,6 +73,7 @@ from ...operations._patch_rle import (
     _status_matches,
     _is_retryable_websocket_error,
     _remaining_websocket_timeout,
+    _websocket_retry_delay,
     _validate_instance_acquire_timeout,
     _validate_pagination_limit,
     _validate_poll_interval,
@@ -99,16 +102,18 @@ async def _connect_openenv_websocket(
     url: str,
     *,
     token: str,
-    open_timeout: Optional[float],
     subprotocols: Optional[Sequence[Subprotocol]],
 ) -> ClientConnection:
-    deadline = None if open_timeout is None else time.monotonic() + open_timeout
+    deadline = time.monotonic() + _WEBSOCKET_CONNECTION_TIMEOUT_S
     for attempt in range(_WEBSOCKET_CONNECT_ATTEMPTS):
         try:
             return await websocket_connect(
                 url,
                 additional_headers={"Authorization": f"Bearer {token}"},
-                open_timeout=_remaining_websocket_timeout(deadline),
+                open_timeout=min(
+                    _WEBSOCKET_ATTEMPT_TIMEOUT_S,
+                    _remaining_websocket_timeout(deadline),
+                ),
                 subprotocols=subprotocols,
                 logger=_WEBSOCKET_LOGGER,
             )
@@ -125,8 +130,8 @@ async def _connect_openenv_websocket(
                 or not _is_retryable_websocket_error(exc)
             ):
                 raise
-            backoff = _WEBSOCKET_RETRY_BACKOFF_S[attempt]
-            if deadline is not None and deadline - time.monotonic() <= backoff:
+            backoff = _websocket_retry_delay(attempt)
+            if deadline - time.monotonic() <= backoff:
                 raise TimeoutError(
                     "timed out while opening the OpenEnv WebSocket"
                 ) from exc
@@ -141,9 +146,9 @@ class AsyncOpenEnvWebSocket:
     context manager. Text and binary messages are supported. The service preserves message
     fragmentation, negotiates requested subprotocols with the sandbox, and propagates peer close
     status and reason. The opening handshake makes up to three attempts for transient connectivity
-    failures and HTTP 408, 429, 500, 502, 503, and 504 responses, using one- and two-second backoffs
-    within the ``open_timeout`` budget. After the connection is established, automatic reconnect and
-    application-level session resumption aren't supported.
+    failures and HTTP 408, 429, 500, 502, 503, and 504 responses. Retries use full-jitter delays of
+    up to two and four seconds within a 90-second overall connection deadline. After the connection
+    is established, automatic reconnect and application-level session resumption aren't supported.
 
     :param url: Public RLE WebSocket URL. Required.
     :type url: str
@@ -151,8 +156,6 @@ class AsyncOpenEnvWebSocket:
     :paramtype credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword credential_scopes: OAuth scopes used to request the handshake token. Required.
     :paramtype credential_scopes: tuple[str, ...]
-    :keyword open_timeout: Maximum time in seconds to wait for the opening handshake. Defaults to 10.
-    :paramtype open_timeout: float or None
     :keyword subprotocols: WebSocket subprotocols to offer to the sandbox, in preference order.
     :paramtype subprotocols: sequence[str] or None
     """
@@ -163,14 +166,12 @@ class AsyncOpenEnvWebSocket:
         *,
         credential: "AsyncTokenCredential",
         credential_scopes: Sequence[str],
-        open_timeout: Optional[float] = 10,
         subprotocols: Optional[Sequence[str]] = None,
         _on_close: Optional[Callable[["AsyncOpenEnvWebSocket"], None]] = None,
     ) -> None:
         self._url = url
         self._credential = credential
         self._credential_scopes = tuple(credential_scopes)
-        self._open_timeout = open_timeout
         self._subprotocols = (
             tuple(Subprotocol(value) for value in subprotocols)
             if subprotocols
@@ -190,7 +191,6 @@ class AsyncOpenEnvWebSocket:
             self._connection = await _connect_openenv_websocket(
                 self._url,
                 token=token.token,
-                open_timeout=self._open_timeout,
                 subprotocols=self._subprotocols,
             )
         except BaseException:
@@ -565,7 +565,6 @@ class AsyncOpenEnvInstance:  # pylint: disable=too-many-instance-attributes
     def open_websocket(
         self,
         *,
-        open_timeout: Optional[float] = 10,
         subprotocols: Optional[Sequence[str]] = None,
         query_parameters: Optional[Mapping[str, str]] = None,
     ) -> AsyncOpenEnvWebSocket:
@@ -575,9 +574,6 @@ class AsyncOpenEnvInstance:  # pylint: disable=too-many-instance-attributes
         reconnect or message replay. Query parameters and requested subprotocols are forwarded to the
         sandbox.
 
-        :keyword open_timeout: Maximum time in seconds to wait for the opening handshake. Defaults
-         to 10. Pass ``None`` to disable the timeout.
-        :paramtype open_timeout: float or None
         :keyword subprotocols: WebSocket subprotocols to offer to the sandbox, in preference order.
         :paramtype subprotocols: sequence[str] or None
         :keyword query_parameters: Additional query parameters to forward to the sandbox.
@@ -608,7 +604,6 @@ class AsyncOpenEnvInstance:  # pylint: disable=too-many-instance-attributes
             ),
             credential=config.credential,
             credential_scopes=config.credential_scopes,
-            open_timeout=open_timeout,
             subprotocols=subprotocols,
             _on_close=self._websockets.discard,
         )

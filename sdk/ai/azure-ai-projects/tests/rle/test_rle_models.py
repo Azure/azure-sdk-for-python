@@ -1769,7 +1769,6 @@ def test_openenv_websocket_authenticates_and_relays_text_and_binary(monkeypatch)
     with client:
         with client.get_instance() as instance:
             with instance.open_websocket(
-                open_timeout=23,
                 subprotocols=("openenv.v1", "openenv.v0"),
                 query_parameters={"session": "a b"},
             ) as websocket:
@@ -1788,7 +1787,7 @@ def test_openenv_websocket_authenticates_and_relays_text_and_binary(monkeypatch)
         "rl_environments/env-1/versions/resolved-latest/instance_groups/grp-1/"
         "instances/inst-0/openenv/ws?api-version=v1&session=a+b"
     )
-    assert connect_kwargs.pop("open_timeout") == pytest.approx(23, abs=0.1)
+    assert connect_kwargs.pop("open_timeout") == 25.0
     assert connect_kwargs == {
         "additional_headers": {"Authorization": "Bearer token"},
         "subprotocols": ("openenv.v1", "openenv.v0"),
@@ -1812,6 +1811,7 @@ def test_openenv_websocket_logger_redacts_authorization(caplog):
 def test_openenv_websocket_retries_transient_connectivity_errors(monkeypatch):
     attempts = []
     backoffs = []
+    jitter_bounds = []
     connection = SimpleNamespace(close=lambda: None)
 
     def connect(url, **kwargs):
@@ -1826,18 +1826,22 @@ def test_openenv_websocket_retries_transient_connectivity_errors(monkeypatch):
     monkeypatch.setattr(
         "azure.ai.projects.operations._patch_rle.time.sleep", backoffs.append
     )
+    monkeypatch.setattr(
+        "azure.ai.projects.operations._patch_rle.random.uniform",
+        lambda lower, upper: jitter_bounds.append((lower, upper)) or upper / 2,
+    )
 
     assert (
         _connect_openenv_websocket(
             "wss://example.test/openenv/ws",
             token="token",
-            open_timeout=None,
             subprotocols=None,
         )
         is connection
     )
     assert len(attempts) == 3
     assert backoffs == [1.0, 2.0]
+    assert jitter_bounds == [(0, 2.0), (0, 4.0)]
 
 
 @pytest.mark.parametrize("wrapped", [False, True])
@@ -1862,12 +1866,15 @@ def test_openenv_websocket_retries_premature_eof(monkeypatch, wrapped):
     monkeypatch.setattr(
         "azure.ai.projects.operations._patch_rle.time.sleep", backoffs.append
     )
+    monkeypatch.setattr(
+        "azure.ai.projects.operations._patch_rle.random.uniform",
+        lambda lower, upper: upper / 2,
+    )
 
     assert (
         _connect_openenv_websocket(
             "wss://example.test/openenv/ws",
             token="token",
-            open_timeout=None,
             subprotocols=None,
         )
         is connection
@@ -1890,24 +1897,30 @@ def test_openenv_websocket_stops_after_three_transient_failures(monkeypatch):
     monkeypatch.setattr(
         "azure.ai.projects.operations._patch_rle.time.sleep", backoffs.append
     )
+    monkeypatch.setattr(
+        "azure.ai.projects.operations._patch_rle.random.uniform",
+        lambda lower, upper: upper / 2,
+    )
 
     with pytest.raises(OSError, match="connection refused"):
         _connect_openenv_websocket(
             "wss://example.test/openenv/ws",
             token="token",
-            open_timeout=None,
             subprotocols=None,
         )
     assert len(attempts) == 3
     assert backoffs == [1.0, 2.0]
 
 
-def test_openenv_websocket_does_not_retry_non_transient_status(monkeypatch):
+@pytest.mark.parametrize("status_code", [400, 401, 403, 404])
+def test_openenv_websocket_does_not_retry_non_transient_status(
+    monkeypatch, status_code
+):
     attempts = []
 
     def connect(*args, **kwargs):
         attempts.append((args, kwargs))
-        raise InvalidStatus(SimpleNamespace(status_code=401))
+        raise InvalidStatus(SimpleNamespace(status_code=status_code))
 
     monkeypatch.setattr(
         "azure.ai.projects.operations._patch_rle.websocket_connect", connect
@@ -1917,7 +1930,6 @@ def test_openenv_websocket_does_not_retry_non_transient_status(monkeypatch):
         _connect_openenv_websocket(
             "wss://example.test/openenv/ws",
             token="token",
-            open_timeout=None,
             subprotocols=None,
         )
     assert len(attempts) == 1
@@ -1929,7 +1941,7 @@ def test_openenv_websocket_retries_respect_overall_timeout(monkeypatch):
 
     def connect(*args, **kwargs):
         attempts.append((args, kwargs))
-        clock.now += 0.5
+        clock.now += 90
         raise InvalidStatus(SimpleNamespace(status_code=503))
 
     monkeypatch.setattr(
@@ -1939,15 +1951,49 @@ def test_openenv_websocket_retries_respect_overall_timeout(monkeypatch):
         "azure.ai.projects.operations._patch_rle.time.monotonic",
         lambda: clock.now,
     )
+    monkeypatch.setattr(
+        "azure.ai.projects.operations._patch_rle.random.uniform",
+        lambda lower, upper: upper,
+    )
 
     with pytest.raises(TimeoutError, match="timed out"):
         _connect_openenv_websocket(
             "wss://example.test/openenv/ws",
             token="token",
-            open_timeout=1,
             subprotocols=None,
         )
     assert len(attempts) == 1
+
+
+def test_openenv_websocket_caps_overall_deadline(monkeypatch):
+    clock = SimpleNamespace(now=0.0)
+    attempt_timeouts = []
+
+    def connect(*args, **kwargs):
+        attempt_timeouts.append(kwargs["open_timeout"])
+        clock.now += 45
+        raise OSError("connection refused")
+
+    monkeypatch.setattr(
+        "azure.ai.projects.operations._patch_rle.websocket_connect", connect
+    )
+    monkeypatch.setattr(
+        "azure.ai.projects.operations._patch_rle.time.monotonic",
+        lambda: clock.now,
+    )
+    monkeypatch.setattr(
+        "azure.ai.projects.operations._patch_rle.random.uniform",
+        lambda lower, upper: 0,
+    )
+
+    with pytest.raises(TimeoutError, match="timed out"):
+        _connect_openenv_websocket(
+            "wss://example.test/openenv/ws",
+            token="token",
+            subprotocols=None,
+        )
+
+    assert attempt_timeouts == [25.0, 25.0]
 
 
 def test_openenv_websocket_rejects_insecure_project_endpoint():
@@ -2063,7 +2109,6 @@ def test_async_openenv_websocket_authenticates_and_relays_text_and_binary(monkey
         async with client:
             async with client.get_instance() as instance:
                 async with instance.open_websocket(
-                    open_timeout=17,
                     subprotocols=("openenv.v1", "openenv.v0"),
                     query_parameters={"session": "a b"},
                 ) as websocket:
@@ -2082,7 +2127,7 @@ def test_async_openenv_websocket_authenticates_and_relays_text_and_binary(monkey
             "rl_environments/env-1/versions/resolved-latest/instance_groups/grp-1/"
             "instances/inst-0/openenv/ws?api-version=v1&session=a+b"
         )
-        assert connect_kwargs.pop("open_timeout") == pytest.approx(17, abs=0.1)
+        assert connect_kwargs.pop("open_timeout") == 25.0
         assert connect_kwargs == {
             "additional_headers": {"Authorization": "Bearer async-token"},
             "subprotocols": ("openenv.v1", "openenv.v0"),
@@ -2117,18 +2162,49 @@ def test_async_openenv_websocket_retries_transient_status(monkeypatch, status_co
         monkeypatch.setattr(
             "azure.ai.projects.aio.operations._patch_rle_async.asyncio.sleep", sleep
         )
+        monkeypatch.setattr(
+            async_rle_patch,
+            "_websocket_retry_delay",
+            lambda attempt: (1.0, 2.0)[attempt],
+        )
 
         assert (
             await _connect_openenv_websocket_async(
                 "wss://example.test/openenv/ws",
                 token="token",
-                open_timeout=None,
                 subprotocols=None,
             )
             is connection
         )
         assert len(attempts) == 3
         assert backoffs == [1.0, 2.0]
+
+    asyncio.run(run())
+
+
+def test_async_openenv_websocket_caps_each_attempt(monkeypatch):
+    async def run():
+        attempt_timeouts = []
+        connection = SimpleNamespace()
+
+        async def connect(*args, **kwargs):
+            attempt_timeouts.append(kwargs["open_timeout"])
+            return connection
+
+        monkeypatch.setattr(
+            "azure.ai.projects.aio.operations._patch_rle_async.websocket_connect",
+            connect,
+        )
+
+        assert (
+            await _connect_openenv_websocket_async(
+                "wss://example.test/openenv/ws",
+                token="token",
+                subprotocols=None,
+            )
+            is connection
+        )
+        assert attempt_timeouts == [25.0]
 
     asyncio.run(run())
 
@@ -2151,12 +2227,14 @@ def test_async_openenv_websocket_retry_respects_cancellation(monkeypatch):
         monkeypatch.setattr(
             "azure.ai.projects.aio.operations._patch_rle_async.asyncio.sleep", sleep
         )
+        monkeypatch.setattr(
+            async_rle_patch, "_websocket_retry_delay", lambda attempt: 1.0
+        )
 
         with pytest.raises(asyncio.CancelledError):
             await _connect_openenv_websocket_async(
                 "wss://example.test/openenv/ws",
                 token="token",
-                open_timeout=None,
                 subprotocols=None,
             )
         assert len(attempts) == 1
@@ -2181,7 +2259,6 @@ def test_async_openenv_websocket_does_not_retry_certificate_validation(monkeypat
             await _connect_openenv_websocket_async(
                 "wss://example.test/openenv/ws",
                 token="token",
-                open_timeout=None,
                 subprotocols=None,
             )
         assert len(attempts) == 1

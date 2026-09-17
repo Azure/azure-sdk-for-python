@@ -9,7 +9,7 @@
 ### Features Added
 
 * Added private-preview Reinforcement Learning Environments (RLE) support through `AIProjectClient.rle` when constructed with `allow_preview=True`, including OpenEnv instance lifecycle management and environment management operations.
-* Added WebSocket interactions for leased OpenEnv instances through `OpenEnvInstance.open_websocket()` and its asynchronous equivalent, including text and binary messages, query parameters, subprotocol negotiation, and bounded retries for transient opening-handshake failures.
+* Added WebSocket interactions for leased OpenEnv instances through `OpenEnvInstance.open_websocket()` and its asynchronous equivalent, including text and binary messages, query parameters, subprotocol negotiation, and bounded retries for transient opening-handshake failures. Initial connections make at most three attempts, cap each attempt at 25 seconds and the overall connection at 90 seconds, and use full-jitter backoff.
 * Added environment-specific keyword fields to synchronous and asynchronous OpenEnv instance `reset()` operations.
 
 ### Sample updates
