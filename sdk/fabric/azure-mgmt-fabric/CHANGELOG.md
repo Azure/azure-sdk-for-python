@@ -6,10 +6,6 @@
 
   - `FabricCapacityProperties.overage` is now required.
 
-### Other Changes
-
-  - Regenerated from the latest service API specification.
-
 ## 1.1.0b1 (2026-08-07)
 
 ### Features Added
