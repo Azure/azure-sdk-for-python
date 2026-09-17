@@ -24,6 +24,7 @@ from devtools_testutils import (
     add_body_key_sanitizer,
     add_remove_header_sanitizer,
 )
+from agent_insights.sanitizers import add_agent_insights_sanitizers
 
 if not load_dotenv(find_dotenv(), override=True):
     print("Did not find a .env file. Using default environment variable values for tests.")
@@ -82,6 +83,12 @@ def start_proxy(test_proxy):
     return
 
 
+@pytest.fixture
+def sanitizer_configuration():
+    """Expose this package's sanitizer setup without importing a conftest module."""
+    return add_sanitizers.__wrapped__
+
+
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy, sanitized_values):
 
@@ -133,6 +140,8 @@ def add_sanitizers(test_proxy, sanitized_values):
 
     # Sanitize checkpoint IDs in URLs and response bodies
     add_general_regex_sanitizer(regex=r"ftchkpt-[a-f0-9]+", value="sanitized-checkpoint-id")
+
+    add_agent_insights_sanitizers()
 
     # Sanitize eval dataset names with timestamps (e.g., eval-data-2026-01-19_040648_UTC)
     add_general_regex_sanitizer(regex=r"eval-data-\d{4}-\d{2}-\d{2}_\d{6}_UTC", value="eval-data-sanitized-timestamp")
@@ -252,16 +261,6 @@ def add_sanitizers(test_proxy, sanitized_values):
         )
         if value and value != sanitized_values["model_deployment_name"]
     }
-    for model_deployment_name in model_deployment_names:
-        add_general_regex_sanitizer(
-            regex=re.escape(model_deployment_name),
-            value=sanitized_values["model_deployment_name"],
-        )
-        add_body_string_sanitizer(
-            target=model_deployment_name,
-            value=sanitized_values["model_deployment_name"],
-        )
-
     agent_names = {
         value
         for value in (
@@ -270,14 +269,18 @@ def add_sanitizers(test_proxy, sanitized_values):
         )
         if value and value != sanitized_values["agent_name"]
     }
-    for agent_name in agent_names:
+    names_to_sanitize = [(name, sanitized_values["model_deployment_name"]) for name in model_deployment_names] + [
+        (name, sanitized_values["agent_name"]) for name in agent_names
+    ]
+    # Replace full names before any model or agent name contained within them.
+    for name, placeholder in sorted(names_to_sanitize, key=lambda item: len(item[0]), reverse=True):
         add_general_regex_sanitizer(
-            regex=re.escape(agent_name),
-            value=sanitized_values["agent_name"],
+            regex=re.escape(name),
+            value=placeholder,
         )
         add_body_string_sanitizer(
-            target=agent_name,
-            value=sanitized_values["agent_name"],
+            target=name,
+            value=placeholder,
         )
 
     # Deterministic fallback sanitization for model deployment names returned by
@@ -363,6 +366,7 @@ def add_sanitizers(test_proxy, sanitized_values):
     add_remove_header_sanitizer(
         headers="x-stainless-arch, x-stainless-async, x-stainless-lang, x-stainless-os, x-stainless-package-version, x-stainless-read-timeout, x-stainless-retry-count, x-stainless-runtime, x-stainless-runtime-version"
     )
+    add_remove_header_sanitizer(headers="openai-organization, openai-project, azureml-served-by-cluster")
 
     # Strip Content-Encoding so playback doesn't try to decompress a body that the test-proxy
     # has already stored decoded (notably brotli responses from openai endpoints which httpx

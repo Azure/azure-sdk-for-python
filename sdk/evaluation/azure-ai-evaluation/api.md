@@ -3,6 +3,7 @@ namespace azure.ai.evaluation
 
     def azure.ai.evaluation.evaluate(
             *, 
+            aoai_output_items_page_size: int = 100,
             azure_ai_project: Optional[Union[str, AzureAIProject]] = ..., 
             data: Union[str, PathLike], 
             evaluation_name: Optional[str] = ..., 

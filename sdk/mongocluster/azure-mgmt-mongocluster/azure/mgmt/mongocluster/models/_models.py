@@ -1667,7 +1667,8 @@ class PrivateLinkServiceConnectionState(_Model):
 class PromoteReplicaRequest(_Model):
     """Promote replica request properties.
 
-    :ivar promote_option: The promote option to apply to the operation. Required. "Forced"
+    :ivar promote_option: The promote option to apply to the operation. Required. Known values are:
+     "Forced" and "Planned".
     :vartype promote_option: str or ~azure.mgmt.mongocluster.models.PromoteOption
     :ivar mode: The mode to apply to the promote operation. Value is optional and default value is
      'Switchover'. "Switchover"
@@ -1677,7 +1678,8 @@ class PromoteReplicaRequest(_Model):
     promote_option: Union[str, "_models.PromoteOption"] = rest_field(
         name="promoteOption", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The promote option to apply to the operation. Required. \"Forced\""""
+    """The promote option to apply to the operation. Required. Known values are: \"Forced\" and
+     \"Planned\"."""
     mode: Optional[Union[str, "_models.PromoteMode"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
