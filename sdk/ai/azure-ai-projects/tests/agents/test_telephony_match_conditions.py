@@ -50,7 +50,7 @@ def test_prep_if_none_match(etag, match_condition, expected):
     ],
 )
 def test_telephony_builders_apply_match_condition(build_request):
-    assert build_request(etag="etag").headers["If-Match"] == '"etag"'
+    assert build_request(etag="etag", match_condition=MatchConditions.IfNotModified).headers["If-Match"] == '"etag"'
     assert build_request(etag="etag", match_condition=MatchConditions.IfPresent).headers["If-Match"] == "*"
 
 
@@ -63,4 +63,4 @@ def test_telephony_operations_expose_match_condition(operations_type, method_nam
     parameter = inspect.signature(getattr(operations_type, method_name)).parameters["match_condition"]
 
     assert parameter.annotation is MatchConditions
-    assert parameter.default == MatchConditions.IfNotModified
+    assert parameter.default is inspect.Parameter.empty

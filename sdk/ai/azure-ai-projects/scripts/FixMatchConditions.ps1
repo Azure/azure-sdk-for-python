@@ -85,8 +85,9 @@ foreach ($operationFile in $operationFiles) {
     $c = [regex]::Replace(
         $c,
         'etag: str,(?!\s*match_condition:)',
-        'etag: str, match_condition: MatchConditions = MatchConditions.IfNotModified,'
+        'etag: str, match_condition: MatchConditions,'
     )
+    $c = $c -replace 'match_condition: MatchConditions = MatchConditions\.IfNotModified,', 'match_condition: MatchConditions,'
 
     $lines = $c -split '\r?\n'
     $out = [System.Collections.Generic.List[string]]::new()
@@ -104,18 +105,14 @@ foreach ($operationFile in $operationFiles) {
             $nextLine = if ($i + 1 -lt $lines.Length) { $lines[$i + 1].Trim() } else { '' }
             if ($nextLine -notmatch '^:keyword match_condition:') {
                 $indent = ([regex]::Match($line, '^\s*')).Value
-                $out.Add($indent + ':keyword match_condition: The match condition to use upon the etag. Default value is')
-                $out.Add($indent + ' MatchConditions.IfNotModified.')
+                $out.Add($indent + ':keyword match_condition: The match condition to use upon the etag. Required.')
                 $out.Add($indent + ':paramtype match_condition: ~azure.core.MatchConditions')
             }
         }
     }
     $c = $out -join "`r`n"
 
-    $signatureCount = [regex]::Matches(
-        $c,
-        'match_condition: MatchConditions = MatchConditions\.IfNotModified'
-    ).Count
+    $signatureCount = [regex]::Matches($c, 'match_condition: MatchConditions,').Count
     $argumentCount = [regex]::Matches($c, '(?m)^\s*match_condition=match_condition,\r?$').Count
     $docCount = [regex]::Matches($c, '(?m)^\s*:paramtype match_condition: ~azure\.core\.MatchConditions\r?$').Count
     if ($signatureCount -ne $operationFile.ExpectedSignatures -or $argumentCount -ne 4 -or $docCount -ne 10) {
