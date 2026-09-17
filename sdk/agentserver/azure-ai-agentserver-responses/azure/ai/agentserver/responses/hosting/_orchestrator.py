@@ -1322,6 +1322,7 @@ class _PipelineState:
         "provider_created",
         "deferred_terminal_persist",
         "defer_evict",
+        "execution_task",
         "next_seq",
         "leave_stream_open_for_recovery",
         "last_persisted_snapshot",
@@ -1337,6 +1338,14 @@ class _PipelineState:
         self.provider_created: bool = False
         self.deferred_terminal_persist: Callable[[], Awaitable[None]] | None = None
         self.defer_evict: bool = False
+        # The in-process task draining the handler for a store=True stream
+        # (the ``_resilient_stream_fallback`` task). Tracked so it can be
+        # attached to the canonical runtime-state record at registration —
+        # graceful shutdown drains records whose ``execution_task`` is live, so
+        # attaching it up front (rather than after the handler drains) prevents
+        # the shutdown wait loop from returning before the deferred terminal
+        # write completes.
+        self.execution_task: "asyncio.Task[Any] | None" = None
         # Next sequence number to stamp on the outgoing event. Seeded
         # from the prior persisted event count on recovered entry so
         # the recovered attempt's events have seq numbers strictly
@@ -2087,6 +2096,13 @@ class _ResponseOrchestrator:
         execution.subject = await streams.get_or_create(ctx.response_id)
         state.bg_record = execution
         assert state.bg_record.subject is not None
+        # Attach the draining task (set by the in-process store=True fallback)
+        # to the canonical record at registration so a shutdown that snapshots
+        # runtime state mid-stream waits for the deferred terminal write to
+        # finish instead of racing event-loop teardown. Harmless (stays None)
+        # for the resilient body, which tracks its own task separately.
+        if state.execution_task is not None:
+            execution.execution_task = state.execution_task
         await self._runtime_state.add(execution)
         if ctx.store:
             _context = ctx.context.platform_context if ctx.context else None
@@ -3130,6 +3146,14 @@ class _ResponseOrchestrator:
                 # start a resilient task. Runs the same ``_process_handler_events``
                 # pipeline as the resilient body so events still reach the
                 # per-response wire stream this connection subscribes to.
+                #
+                # Track THIS task from the start so it is attached to the
+                # canonical record at registration (``_register_bg_execution``);
+                # graceful shutdown drains records with a live ``execution_task``,
+                # so attaching it up front — not after the handler drains —
+                # prevents the shutdown wait loop from returning before the
+                # deferred terminal write below completes.
+                state.execution_task = asyncio.current_task()
                 try:
                     async for _event in self._process_handler_events(ctx, state, handler_iterator):
                         pass
@@ -3137,14 +3161,19 @@ class _ResponseOrchestrator:
                         # Resolve/persist the terminal on the canonical
                         # runtime_state record so a later GET (and the deferred
                         # persistence-failure stamping) observes the same object
-                        # the GET read-through serves. ``state.bg_record`` may be
-                        # an ephemeral stand-in not present in runtime_state.
-                        r = (
-                            await self._runtime_state.get(ctx.response_id)
-                            or state.bg_record
-                            or _make_ephemeral_record(ctx, state)
-                        )
-                        r.execution_task = asyncio.current_task()
+                        # the GET read-through serves.
+                        r = await self._runtime_state.get(ctx.response_id) or state.bg_record
+                        if r is None:
+                            # No canonical record was registered (e.g. the
+                            # handler produced a terminal without a create
+                            # event, so ``_register_bg_execution`` never ran).
+                            # Synthesize one AND register it before emitting the
+                            # terminal, so a GET during the deferred-persist
+                            # window serves it (not 404) and any stamped
+                            # persistence failure is reachable.
+                            r = _make_ephemeral_record(ctx, state)
+                            await self._runtime_state.add(r)
+                        r.execution_task = state.execution_task
                         await self._resolve_emit_and_defer_terminal_persist(ctx, state, r)
                 finally:
                     await self._finalize_stream(ctx, state)

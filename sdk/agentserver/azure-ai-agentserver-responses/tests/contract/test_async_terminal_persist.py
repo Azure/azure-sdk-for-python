@@ -235,6 +235,56 @@ class TestAsyncTerminalPersist:
         release.set()
 
     @pytest.mark.asyncio
+    async def test_deferred_write_reaches_provider_after_release(self) -> None:
+        """After the gate releases, the deferred terminal write actually
+        resumes and reaches the backing provider — the eventual-persistence
+        guarantee (the client already received ``response.completed`` before
+        this write happened)."""
+        release = asyncio.Event()
+        provider = _ControllableProvider(InMemoryResponseProvider(), release=release)
+        app = _make_app(provider)
+        client = _AsyncAsgiClient(app)
+
+        post_resp = await client.post(
+            "/responses",
+            json_body={
+                "model": "test-model",
+                "input": [{"role": "user", "content": "hi"}],
+                "stream": True,
+                "store": True,
+            },
+        )
+        assert post_resp.status_code == 200
+        events = _parse_sse_bytes(post_resp.body)
+        assert "response.completed" in [e["type"] for e in events]
+        response_id = _extract_response_id(events)
+        assert response_id is not None
+
+        # Deferred write has begun but is gated (client already got the terminal).
+        for _ in range(100):
+            if provider.update_started.is_set():
+                break
+            await asyncio.sleep(0.01)
+        assert provider.update_started.is_set()
+        assert provider.update_completed is False
+
+        # Release the gate and require the deferred write to actually resume and
+        # reach the provider — this fails if the fallback task were cancelled
+        # after the response closed instead of completing the write.
+        release.set()
+        for _ in range(200):
+            if provider.update_completed:
+                break
+            await asyncio.sleep(0.01)
+        assert provider.update_completed is True, "deferred terminal write never reached the provider"
+
+        # The terminal is durably persisted in the backing provider.
+        persisted = await provider._inner.get_response(response_id)  # pylint: disable=protected-access
+        assert persisted is not None
+        persisted_status = persisted.get("status") if isinstance(persisted, dict) else getattr(persisted, "status", None)
+        assert persisted_status == "completed"
+
+    @pytest.mark.asyncio
     async def test_deferred_update_failure_surfaces_via_get(self) -> None:
         """A deferred terminal-write failure surfaces on a later GET; the
         record is not evicted, and the client still saw ``response.completed``."""
