@@ -7,10 +7,8 @@
 """
 DESCRIPTION:
     This sample demonstrates the voice-agent management lifecycle using the
-    unified Agents API in the Microsoft Foundry Python SDK (azure-ai-projects):
-    creating a voice agent (with an audio/voice configuration and conversation
-    storage enabled), retrieving it, listing the voice agents in the project,
-    creating a new version, disabling/enabling it, and deleting it.
+    asynchronous AIProjectClient: creating a voice agent, retrieving it,
+    listing the voice agents in the project, and deleting it.
 
     Voice agents are exposed through `project_client.agents` with
     `kind="voice"`, the same surface used for prompt, workflow, hosted, and
