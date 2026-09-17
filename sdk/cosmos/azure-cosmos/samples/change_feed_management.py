@@ -60,6 +60,7 @@ def print_all_versions_and_deletes_change(change):
     print('Current item: {}'.format(change.get('current')))
 
     # `previous` is provisional and is returned only when previous images are enabled for the container.
+    # Request preview access at https://aka.ms/cosmosdb-change-feed-deletes.
     previous = change.get('previous')
     if previous is not None:
         print('Previous item: {}'.format(previous))
