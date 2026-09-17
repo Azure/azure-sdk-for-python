@@ -423,6 +423,7 @@ async def audio_conversation() -> None:
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     ):
+        created_version = None
         try:
             # 1) Create a voice agent with conversation persistence enabled (`store=True`) so the
             #    session's conversation can be fetched back by id afterward.
@@ -436,7 +437,7 @@ async def audio_conversation() -> None:
                 output_modalities=[VoiceOutputModality.AUDIO],
                 store=True,
             )
-            await project_client.agents.create_version(
+            created_version = await project_client.agents.create_version(
                 agent_name=agent_name,
                 definition=definition,
             )
@@ -469,8 +470,9 @@ async def audio_conversation() -> None:
             print(f"Service responded with an error: {e.status_code} {e.reason}")
         finally:
             # 4) Clean up the agent created for this sample.
-            await project_client.agents.delete(agent_name=agent_name)
-            print(f"Deleted voice agent: {agent_name}")
+            if created_version is not None:
+                await project_client.agents.delete_version(agent_name=agent_name, agent_version=created_version.version)
+                print(f"Deleted voice agent version: {created_version.version}")
 
 
 if __name__ == "__main__":

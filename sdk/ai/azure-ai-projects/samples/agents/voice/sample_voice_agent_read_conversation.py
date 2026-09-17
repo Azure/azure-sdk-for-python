@@ -65,8 +65,6 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME")
 conversation_id = os.environ.get("FOUNDRY_VOICE_CONVERSATION_ID")
 model = os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
-# Only clean up the agent afterward when this sample created it itself (no name was given).
-delete_agent_when_done = not agent_name
 agent_name = agent_name or "sample-read-conversation-agent"
 
 with (
@@ -74,10 +72,11 @@ with (
     AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
 ):
     conversations = project_client.beta.voice_agents.conversations
+    created_version = None
     try:
         if not conversation_id:
             print(f"No FOUNDRY_VOICE_CONVERSATION_ID set; holding a short conversation with '{agent_name}' first...")
-            project_client.agents.create_version(
+            created_version = project_client.agents.create_version(
                 agent_name=agent_name,
                 definition=VoiceAgentDefinition(
                     model_type=VoiceModelType.MANAGED,
@@ -133,6 +132,6 @@ with (
         # 404 typically means the conversation was not persisted (agent ran with `store=False`).
         print(f"Service responded with an error: {e.status_code} {e.reason}")
     finally:
-        if delete_agent_when_done:
-            project_client.agents.delete(agent_name=agent_name)
-            print(f"Deleted temporary voice agent: {agent_name}")
+        if created_version is not None:
+            project_client.agents.delete_version(agent_name=agent_name, agent_version=created_version.version)
+            print(f"Deleted temporary voice agent version: {created_version.version}")

@@ -178,8 +178,9 @@ def main() -> None:
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     ):
+        created_version = None
         try:
-            project_client.agents.create_version(
+            created_version = project_client.agents.create_version(
                 agent_name=agent_name,
                 definition=VoiceAgentDefinition(
                     model_type=VoiceModelType.MANAGED,
@@ -196,8 +197,9 @@ def main() -> None:
 
             _run_turn_with_tool_support(project_client, agent_name, "What's the weather like in Seattle right now?")
         finally:
-            project_client.agents.delete(agent_name=agent_name)
-            print(f"Deleted voice agent: {agent_name}")
+            if created_version is not None:
+                project_client.agents.delete_version(agent_name=agent_name, agent_version=created_version.version)
+                print(f"Deleted voice agent version: {created_version.version}")
 
 
 if __name__ == "__main__":
