@@ -438,7 +438,8 @@ namespace azure.ai.projects.aio.operations
                 name: str, 
                 poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
                 runtime: RLEInstanceRuntimeOperations, 
-                version: Optional[str] = ...
+                version: Optional[str] = ...,
+                websocket_config: Optional[_OpenEnvWebSocketConfig] = ...
             ) -> None: ...
 
         async def close(self) -> None: ...
@@ -463,7 +464,8 @@ namespace azure.ai.projects.aio.operations
                 instances: RLEInstancesOperations, 
                 is_client_closed: Callable[[], bool], 
                 poll_interval_s: float, 
-                runtime: RLEInstanceRuntimeOperations
+                runtime: RLEInstanceRuntimeOperations,
+                websocket_config: Optional[_OpenEnvWebSocketConfig] = ...
             ) -> None: ...
 
         @distributed_trace_async
@@ -471,6 +473,13 @@ namespace azure.ai.projects.aio.operations
 
         @distributed_trace_async
         async def metadata(self) -> Dict[str, Any]: ...
+
+        def open_websocket(
+                self,
+                *,
+                query_parameters: Optional[Mapping[str, str]] = ...,
+                subprotocols: Optional[Sequence[str]] = ...
+            ) -> AsyncOpenEnvWebSocket: ...
 
         async def release(self) -> None: ...
 
@@ -494,6 +503,26 @@ namespace azure.ai.projects.aio.operations
                 action: Any = None, 
                 **action_kwargs: Any
             ) -> RLEStepResult: ...
+
+
+    class azure.ai.projects.aio.operations.AsyncOpenEnvWebSocket: implements AsyncContextManager
+        property subprotocol: Optional[str]    # Read-only
+
+        def __init__(
+                self,
+                url: str,
+                *,
+                _on_close: Optional[Callable[[AsyncOpenEnvWebSocket], None]] = ...,
+                credential: AsyncTokenCredential,
+                credential_scopes: Sequence[str],
+                subprotocols: Optional[Sequence[str]] = ...
+            ) -> None: ...
+
+        async def close(self) -> None: ...
+
+        async def recv(self) -> Union[str, bytes]: ...
+
+        async def send(self, message: Union[str, bytes]) -> None: ...
 
 
     class azure.ai.projects.aio.operations.BetaAgentsOperations(BetaAgentsOperationsGenerated):
@@ -12299,7 +12328,8 @@ namespace azure.ai.projects.operations
                 name: str, 
                 poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
                 runtime: RLEInstanceRuntimeOperations, 
-                version: Optional[str] = ...
+                version: Optional[str] = ...,
+                websocket_config: Optional[_OpenEnvWebSocketConfig] = ...
             ) -> None: ...
 
         def close(self) -> None: ...
@@ -12322,7 +12352,8 @@ namespace azure.ai.projects.operations
                 environment_version: str, 
                 instance: RLEInstance, 
                 instances: RLEInstancesOperations, 
-                runtime: RLEInstanceRuntimeOperations
+                runtime: RLEInstanceRuntimeOperations,
+                websocket_config: Optional[_OpenEnvWebSocketConfig] = ...
             ) -> None: ...
 
         @distributed_trace
@@ -12330,6 +12361,13 @@ namespace azure.ai.projects.operations
 
         @distributed_trace
         def metadata(self) -> Dict[str, Any]: ...
+
+        def open_websocket(
+                self,
+                *,
+                query_parameters: Optional[Mapping[str, str]] = ...,
+                subprotocols: Optional[Sequence[str]] = ...
+            ) -> OpenEnvWebSocket: ...
 
         def release(self) -> None: ...
 
@@ -12353,6 +12391,26 @@ namespace azure.ai.projects.operations
                 action: Any = None, 
                 **action_kwargs: Any
             ) -> RLEStepResult: ...
+
+
+    class azure.ai.projects.operations.OpenEnvWebSocket: implements ContextManager
+        property subprotocol: Optional[str]    # Read-only
+
+        def __init__(
+                self,
+                url: str,
+                *,
+                _on_close: Optional[Callable[[OpenEnvWebSocket], None]] = ...,
+                credential: TokenCredential,
+                credential_scopes: Sequence[str],
+                subprotocols: Optional[Sequence[str]] = ...
+            ) -> None: ...
+
+        def close(self) -> None: ...
+
+        def recv(self) -> Union[str, bytes]: ...
+
+        def send(self, message: Union[str, bytes]) -> None: ...
 
 
     class azure.ai.projects.operations.RLEInstanceAcquireTimeoutError(RLEError):
