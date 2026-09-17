@@ -14,6 +14,8 @@
 
 ### Other Changes
 
+- Preserve the built-in Breeze SDKStats route when the OneSettings feature key is unavailable or invalid, while still applying OneSettings connection-string updates when present.
+
 ## 1.0.0b57 (2026-09-02)
 
 ### Features Added
