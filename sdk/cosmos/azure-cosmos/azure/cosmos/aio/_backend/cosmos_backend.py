@@ -79,6 +79,13 @@ class AsyncCosmosBackend(abc.ABC):
     #: ``BACKEND_NAME_RUST`` etc.
     name: str = "abstract"
 
+    async def close(self) -> None:
+        """Release resources owned by this backend.
+
+        Stateless backends have nothing to release. Backends that own resources
+        override this method.
+        """
+
     @abc.abstractmethod
     async def execute(
         self, prepared: PreparedRequest, *, deadline: Optional[float] = None

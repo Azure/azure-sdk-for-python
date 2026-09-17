@@ -8,6 +8,8 @@ use super::*;
 /// container link and partition-key header on the PreparedRequest are unused here;
 /// the offer query JSON (the same filter the legacy path sends) is sent in the body
 /// and the matching offer records come back in the `{"Offers":[...]}` payload.
+/// The binding adds the query `Content-Type` and `x-ms-documentdb-isquery`
+/// markers that `query_offers` requires.
 /// Without it, get_throughput could not run on the rust driver and would stay on
 /// the core-python path.
 #[pyfunction]
@@ -28,8 +30,10 @@ pub(crate) fn read_offer<'py>(
 /// offer to overwrite) is carried in `PreparedRequest.item_id` and the mutated offer
 /// document is sent in the body. Returns the single updated offer document (the
 /// single-document tuple shape), so `get_throughput`'s caller can read back the
-/// applied RU/s. Without it, `replace_throughput` could not run on the rust driver
-/// and would stay on the core-python path.
+/// applied RU/s. Unlike the read path there is no query `Content-Type` to force:
+/// a replace carries a resource body and the driver defaults `Content-Type` to
+/// `application/json`. Without it, `replace_throughput` could not run on the rust
+/// driver and would stay on the core-python path.
 #[pyfunction]
 pub(crate) fn replace_offer<'py>(
     py: Python<'py>,

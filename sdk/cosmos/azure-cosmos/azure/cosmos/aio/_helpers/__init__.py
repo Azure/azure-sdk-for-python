@@ -23,18 +23,18 @@ the rules for what a request looks like in one place.
 These helpers are not all at the same stage, and the difference is worth
 knowing before reading them. Single items have finished moving: that
 helper holds a backend and nothing else. Containers and databases are
-still being moved and still reach for the older Python connection
+still being moved and still reach for the legacy Python connection
 alongside the backend. Expect to see both styles side by side for now.
 
-The legacy item helper is a separate thing again. It uses the older
+The legacy item helper is a separate thing again. It uses the legacy
 connection on purpose and serves callers who ask for that path by name. It
 is not a safety net: a request that fails on the normal path is never
 re-sent through it.
 
 The mixture is temporary. As each group finishes moving, its reach into the
-older connection goes away, and once every group is done the legacy helper
-and the older connection are deleted outright. The single-item helper shows
+legacy connection goes away, and once every group is done the legacy helper
+and the legacy connection are deleted outright. The single-item helper shows
 where the rest are headed: public class, helper, backend, driver, and
 nothing else in the chain. New work should follow that shape rather than
-copying the older one.
+copying the legacy one.
 """

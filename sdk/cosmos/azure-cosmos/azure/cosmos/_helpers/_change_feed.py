@@ -252,7 +252,8 @@ class ChangeFeedConfig(ReadAllConfig):
                 and not inner.strip('"').isdigit()
             ):
                 raise ValueError("Invalid change-feed continuation settings.")
-            # Validate our envelope without depending on the driver's private token schema.
+            # Check our own bookmark format without relying on the layout of the
+    # token the driver keeps to itself.
             values: dict[str, Any] = {
                 "mode": settings.get("mode"),
                 "start_time": settings.get("start"),
@@ -429,7 +430,8 @@ class ChangeFeedPageState(ReadAllPageState):
         if not isinstance(inner, str) or not inner:
             raise ValueError("Legacy change feed returned no durable continuation.")
         self.inner_token = inner
-        # Keep V2's self-describing bookmark, including its authoritative scope.
+        # Keep V2's bookmark, which describes itself and carries the scope that
+        # should be trusted.
         self.token = (
             inner
             if self.fetcher._change_feed_state.version == ChangeFeedStateVersion.V2
@@ -467,7 +469,9 @@ class ChangeFeedPageIterator(PageIterator):
 
     @staticmethod
     def _unpack(value: tuple[Optional[str], list[dict[str, Any]]]) -> Any:
-        # azure-core's extractor annotation excludes its runtime terminal token.
+        # azure-core types this callback as never receiving the None it sends
+        # to mark the end of iteration, so the annotation here is narrower than
+        # what can actually arrive. The value is passed straight through.
         return value
 
     def _fetch(

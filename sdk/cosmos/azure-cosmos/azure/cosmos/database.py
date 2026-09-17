@@ -78,7 +78,9 @@ class DatabaseProxy(object):
     """An interface to interact with a specific database.
 
     This class should not be instantiated directly. Instead use the
-    :func:`CosmosClient.get_database_client` method.
+    :func:`~azure.cosmos.CosmosClient.get_database_client` method to obtain a local
+    database proxy, or :func:`~azure.cosmos.CosmosClient.create_database` to create
+    a new database.
 
     A database contains one or more containers, each of which can contain items,
     stored procedures, triggers, and user-defined functions.
@@ -109,7 +111,8 @@ class DatabaseProxy(object):
         _item_context: "Optional[ItemClientContext[CosmosBackend]]" = None,
     ) -> None:
         """
-        :param ClientSession client_connection: Client from which this database was retrieved.
+        :param client_connection: Connection owned by the client creating this proxy.
+        :type client_connection: ~azure.cosmos._cosmos_client_connection.CosmosClientConnection
         :param str id: ID (name) of the database.
         """
         self.client_connection = client_connection
@@ -180,7 +183,8 @@ class DatabaseProxy(object):
             kwargs['initial_headers'] = initial_headers
         response_hook = kwargs.pop("response_hook", None)
         request_options = build_options(kwargs)
-        # Wildcard conditions may leave an unused ETag after validation builds the guard.
+        # A wildcard match condition does not need an etag, so one may be left
+        # over in kwargs after the options are built. Drop it.
         kwargs.pop("etag", None)
         self._properties = DatabaseHelper(
             self.client_connection,
@@ -475,7 +479,8 @@ class DatabaseProxy(object):
             definition["materializedViewDefinition"] = gsi_dict
         response_hook = kwargs.pop("response_hook", None)
         request_options = build_options(kwargs)
-        # Wildcard conditions can leave an unused ETag after validation builds the header.
+        # A wildcard match condition does not need an etag, so one may be left
+        # over in kwargs after the options are built. Drop it.
         kwargs.pop("etag", None)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
         result = ContainerHelper(
@@ -1490,7 +1495,10 @@ class DatabaseProxy(object):
             throughput=throughput,
             not_found_message="Could not find ThroughputProperties for database " + self.database_link,
             kwargs=kwargs,
-            # The sync method has always run the offer read with no keywords, and
-            # applied the caller's keywords only to the replace.
+            # Empty on purpose: the lookup of the current throughput is done
+            # with no keyword arguments, and the caller's keyword arguments
+            # apply only to the replace that follows. The async version in
+            # azure/cosmos/aio/_database.py does not do this, so there the
+            # caller's keyword arguments reach the lookup as well.
             read_kwargs={},
         )

@@ -79,8 +79,8 @@ class DatabaseProxy(object):
     """An interface to interact with a specific database.
 
     This class should not be instantiated directly. Instead use the
-    :func:`~azure.cosmos.aio.CosmosClient.get_database_client` method to get an existing
-    database, or the :func:`~azure.cosmos.aio.CosmosClient.create_database` method to create
+    :func:`~azure.cosmos.aio.CosmosClient.get_database_client` method to obtain a local
+    database proxy, or :func:`~azure.cosmos.aio.CosmosClient.create_database` to create
     a new database.
 
     A database contains one or more containers, each of which can contain items,
@@ -112,8 +112,8 @@ class DatabaseProxy(object):
         _item_context: "Optional[ItemClientContext[AsyncCosmosBackend]]" = None,
     ) -> None:
         """
-        :param client_connection: Client from which this database was retrieved.
-        :type client_connection: ~azure.cosmos.aio.CosmosClientConnection
+        :param client_connection: Connection owned by the client creating this proxy.
+        :type client_connection: ~azure.cosmos.aio._cosmos_client_connection_async.CosmosClientConnection
         :param str id: ID (name) of the database.
         """
         self.client_connection = client_connection
@@ -185,7 +185,8 @@ class DatabaseProxy(object):
             kwargs['initial_headers'] = initial_headers
         response_hook = kwargs.pop("response_hook", None)
         request_options = _build_options(kwargs)
-        # Wildcard conditions may leave an unused ETag after validation builds the guard.
+        # A wildcard match condition does not need an etag, so one may be left
+        # over in kwargs after the options are built. Drop it.
         kwargs.pop("etag", None)
 
         self._properties = await AsyncDatabaseHelper(
@@ -497,7 +498,8 @@ class DatabaseProxy(object):
             definition["materializedViewDefinition"] = gsi_dict
         response_hook = kwargs.pop("response_hook", None)
         request_options = _build_options(kwargs)
-        # Wildcard conditions can leave an unused ETag after validation builds the header.
+        # A wildcard match condition does not need an etag, so one may be left
+        # over in kwargs after the options are built. Drop it.
         kwargs.pop("etag", None)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
@@ -1542,4 +1544,9 @@ class DatabaseProxy(object):
             throughput=throughput,
             not_found_message="Could not find Offer for database " + self.database_link,
             kwargs=kwargs,
+            # Note a difference from the sync version in
+            # azure/cosmos/database.py: that one passes an empty read_kwargs so
+            # the caller's keyword arguments are kept off the throughput
+            # lookup. Here they are left in place, so they reach both the
+            # lookup and the replace.
         )

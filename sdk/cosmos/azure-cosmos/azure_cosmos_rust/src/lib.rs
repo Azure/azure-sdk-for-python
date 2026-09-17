@@ -8,146 +8,56 @@
 //! driver crate is statically linked into the same binary so the
 //! wheel ships exactly one Rust file.
 //!
-//! Python-callable entry points include:
+//! Operations take the driver handle returned by `acquire_driver_handle` plus a
+//! `PreparedRequest`, and return the 5-tuple
+//! `(status, sub_status, headers, body, diagnostics)`, which Python builds
+//! back into its `BackendResponse` dataclass. Each one resolves the container,
+//! builds a typed driver operation, and runs it on the shared Tokio runtime
+//! with the GIL released.
 //!
-//!   * `acquire_driver_handle(endpoint, master_key=None, config=None, credential=None) -> driver_handle`
-//!         Lazily stands up a per-process Tokio runtime + driver
-//!         runtime, builds a `CosmosDriver` for the given endpoint
-//!         (applying the optional `PreparedClientConfig`'s settings,
-//!         e.g. preferred_locations), and returns a string handle the
-//!         Python side keeps and passes back on every operation. Auth is
-//!         either the `master_key` or a `credential` (a synchronous Python
-//!         token credential wrapped as `PyTokenCredential`); the Python
-//!         factory supplies exactly one.
+//! Every operation below has an `_async` twin that returns a Python awaitable
+//! instead of a ready result. The driver lifecycle, diagnostics, and settings
+//! entry points are sync only, because they read process-local state rather
+//! than the network; most of them take no arguments at all. The detail for each
+//! entry point lives on the function itself, not here.
 //!
-//!   * `release_driver_handle(driver_handle) -> None`
-//!         Drops one client's reference to the per-endpoint driver in the
-//!         process-local cache. The driver is evicted only when the last client
-//!         sharing that account closes (the cache is reference-counted), so
-//!         closing one of several clients to one account does not break the
-//!         others. An unknown or already-evicted handle is a no-op, so close is
-//!         idempotent.
+//! Driver lifecycle (`runtime.rs`):
+//!   `acquire_driver_handle`, `release_driver_handle`, `runtime_configuration`,
+//!   `fault_injection_rule_hit_count`
 //!
-//!   * `create_item(driver_handle, prepared) -> (status, sub_status,
-//!                                         headers, body, diagnostics)`
-//!         Resolves the container, builds a typed
-//!         `CosmosOperation::create_item`, runs it on the Tokio
-//!         runtime with the GIL released, and converts the
-//!         `CosmosResponse` into a tuple matching the Python
-//!         `BackendResponse` dataclass. Python normally carries the
-//!         already-resolved document id in `PreparedRequest.item_id`; the
-//!         binding reads `body_bytes` only as a compatibility fallback.
+//! Items (`documents/items.rs`):
+//!   `create_item`, `upsert_item`, `replace_item`, `delete_item`, `read_item`,
+//!   `patch_item`
 //!
-//!   * `upsert_item(driver_handle, prepared) -> (status, sub_status,
-//!                                         headers, body, diagnostics)`
-//!         Same input/output shape as `create_item`: Python normally carries
-//!         the document id in `PreparedRequest.item_id`, with `body_bytes`
-//!         retained as the compatibility fallback. The only
-//!         difference is the operation kind —
-//!         `CosmosOperation::upsert_item` — which makes the driver
-//!         pipeline stamp `x-ms-documentdb-is-upsert: true` and POST to
-//!         the collection feed, so an existing `(partition_key, id)` is
-//!         replaced (HTTP 200) rather than rejected with 409; a new id
-//!         inserts (HTTP 201). `If-Match` / `If-None-Match` (built by
-//!         the Python helper from `etag` + `match_condition`:
-//!         insert-only or version-guarded replace) flow through
-//!         `custom_headers`.
+//! Queries and feeds (`documents/query.rs`, `wire/item_feed.rs`):
+//!   `query_items`, `read_all_items`, `fetch_page_with_cursor`, and the
+//!   `ItemFeedCursor` class
 //!
-//!   * `replace_item(driver_handle, prepared) -> (status, sub_status,
-//!                                          headers, body, diagnostics)`
-//!         Carries a body like `create_item` / `upsert_item`, but the id
-//!         of the document to overwrite comes from `PreparedRequest.item_id`
-//!         (not the body). Maps to `OperationType::Replace`: an existing
-//!         item is overwritten (HTTP 200), a missing one is a 404 (replace
-//!         never inserts). Returns the saved document unless
-//!         `no_response=True`. `If-Match` / `If-None-Match` flow through
-//!         `custom_headers`.
+//! Feed ranges (`documents/feed_range.rs`, `feed_range_subset.rs`):
+//!   `read_feed_ranges`, `feed_range_from_partition_key`, `is_feed_range_subset`
 //!
-//!   * `delete_item(driver_handle, prepared) -> (status, sub_status,
-//!                                         headers, body, diagnostics)`
-//!         Same shape as `create_item` but builds a
-//!         `CosmosOperation::delete_item` with no body. The document
-//!         id is carried on `PreparedRequest.item_id` because there is no
-//!         body to extract it from. On success the driver returns
-//!         HTTP 204 with an empty body.
+//! Throughput offers (`documents/offers.rs`):
+//!   `read_offer`, `replace_offer`
 //!
-//!   * `read_item(driver_handle, prepared) -> (status, sub_status,
-//!                                       headers, body, diagnostics)`
-//!         Same input shape as `delete_item` (bodiless GET, document
-//!         id on `PreparedRequest.item_id`). On success returns HTTP
-//!         200 with the document JSON. Conditional reads
-//!         (`If-None-Match` driven by Python's `etag` +
-//!         `MatchConditions.IfModified`) appear as **HTTP 304** with
-//!         an empty body when the customer's cached etag still
-//!         matches the server version — the Python parser treats 304
-//!         as a non-error and returns an empty `CosmosDict`.
-//!         `x-ms-dedicatedgateway-max-age` (driven by
-//!         `max_integrated_cache_staleness_in_ms`) is forwarded
-//!         through `custom_headers` like any other per-request header.
+//! Databases (`documents/databases.rs`):
+//!   `create_database`, `read_database`, `delete_database`, `list_databases`,
+//!   `query_databases`
 //!
-//!   * `patch_item(driver_handle, prepared) -> (status, sub_status,
-//!                                        headers, body, diagnostics)`
-//!         Carries a body like the write-with-body ops, but the body is
-//!         the `PatchInstructions` payload (`{"operations": [...]}`) rather
-//!         than a document, and the URL id comes from
-//!         `PreparedRequest.item_id`. Maps to `OperationType::Patch`: the
-//!         driver reads the item, applies the ops, and writes it back with
-//!         an `If-Match`-guarded `Replace`. The Python helper only routes
-//!         the supported subset here; a `filter_predicate` or an `etag` /
-//!         `match_condition` precondition takes the legacy path instead.
+//! Containers (`documents/containers.rs`):
+//!   `create_container`, `read_container`, `replace_container`,
+//!   `delete_container`, `list_containers`, `query_containers`,
+//!   `get_container_metadata`
 //!
-//!   * `query_items(driver_handle, prepared) -> (status, sub_status,
-//!                                        headers, body, diagnostics)`
-//!         Executes one query page. The query JSON is in
-//!         `PreparedRequest.body_bytes`; `PreparedRequest.partition_key`
-//!         selects the scope (typed components for one logical partition, or
-//!         cross-partition/full-container). Returns a feed envelope body
-//!         (`{"Documents":[...]}`) so the Python query iterator can consume it
-//!         with the same shape as the legacy path.
-//!
-//!   * `read_all_items(driver_handle, prepared) -> (status, sub_status,
-//!                                           headers, body, diagnostics)`
-//!         Uses native read-feed for one logical partition. Whole-container
-//!         scope uses the same internal `SELECT *` query rewrite as legacy
-//!         Python so the driver query pipeline can fan out across partitions.
-//!
-//!   * `read_feed_ranges(driver_handle, prepared) -> (status, sub_status,
-//!                                             headers, body, diagnostics)`
-//!         Enumerates the container's partition-key ranges (routing map view).
-//!         The request body may carry `{"forceRefresh": true}` to force a cache
-//!         refresh. Returns body shape
-//!         `{"PartitionKeyRanges":[{"id","minInclusive","maxExclusive"},...]}`.
-//!
-//!   * `feed_range_from_partition_key(driver_handle, prepared) -> (status, sub_status,
-//!                                                     headers, body, diagnostics)`
-//!         Computes the feed range one partition key falls into and returns body
-//!         shape `{"Range":{"min","max","isMinInclusive","isMaxInclusive"}}`.
-//!
-//!   * `read_offer(driver_handle, prepared) -> (status, sub_status,
-//!                                       headers, body, diagnostics)`
-//!         Reads a container's provisioned throughput by querying the account's
-//!         `/offers` feed (an account-level, non-partitioned resource). The request
-//!         body carries the same offer query JSON the legacy path sends; the binding
-//!         adds the query `Content-Type`/`x-ms-documentdb-isquery` markers that
-//!         `query_offers` requires. Returns body shape `{"Offers":[...]}`.
-//!
-//!   * `replace_offer(driver_handle, prepared) -> (status, sub_status,
-//!                                          headers, body, diagnostics)`
-//!         Replaces a container's provisioned throughput by PUTting the mutated
-//!         offer document to `/offers/{rid}` (an account-level, non-partitioned
-//!         resource). The offer RID is carried in `PreparedRequest.item_id`; the mutated
-//!         offer document is sent in the body. Unlike the read path there is no query
-//!         `Content-Type` to force -- a replace carries a resource body and the
-//!         driver defaults `Content-Type` to `application/json`. Returns the single
-//!         updated offer document.
-//!
+//! Diagnostics and settings (`wire/`):
+//!   `operation_count`, `attempt_count`, `retry_count`,
+//!   `request_settings_schema`
 //! `x-ms-activity-id` and `x-ms-session-token` are forwarded to the
 //! driver's typed operation fields. `responsePayloadOnWriteDisabled`
-//! is lifted to the typed `OperationOptions::content_response_on_write`
+//! is pulled out into the typed `OperationOptions::content_response_on_write`
 //! field. Every other per-request header (intended-collection-rid,
 //! indexing directive, pre/post triggers, priority, throughput bucket,
 //! plus any already-`x-ms-...`-named entry) is pushed through the
-//! driver's `OperationOptions::with_custom_headers` passthrough so
+//! driver's `OperationOptions::with_custom_headers`, which forwards them unchanged, so
 //! it lands on the wire.
 
 mod credential;
@@ -233,7 +143,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::delete_container_async);
     add_pyfn!(m, documents::replace_container_async);
     add_pyfn!(m, documents::get_container_metadata_async);
-    // Concrete backend provenance: a counter incremented inside the binding on
+    // Proof of which backend actually ran: a counter incremented inside the binding on
     // every operation, so the perf harness can prove the Rust path actually ran
     // (not just that COSMOS_BACKEND said so). See wire::BINDING_OP_COUNT.
     add_pyfn!(m, wire::operation_count);

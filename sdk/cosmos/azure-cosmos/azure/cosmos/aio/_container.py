@@ -367,8 +367,8 @@ class ContainerProxy:
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         deadline = prepare_create_item_kwargs(kwargs)
-        # Move the explicit kwargs into the kwargs dict so the helper
-        # sees a single dict.
+        # Fold the named keyword arguments back into kwargs so the helper
+        # receives a single dict.
         merge_create_item_explicit_kwargs(
             kwargs,
             pre_trigger_include=pre_trigger_include,
@@ -462,10 +462,9 @@ class ContainerProxy:
                 :name: update_item
         """
         prepare_item_target(kwargs, item)
-        # Validate the cache-staleness value here so a ValueError points
-        # at the caller, not three frames deep in the helper. None
-        # skips validation. Zero is allowed; the prep layer treats it
-        # as a no-op and emits no x-ms-dedicatedgateway-max-age header.
+        # Check the cache-staleness value here rather than deeper in, so a bad
+        # value raises where the caller can see it. None means skip the check.
+        # Zero is allowed and simply means no max-age header is sent.
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
 
@@ -635,8 +634,8 @@ class ContainerProxy:
         kwargs['max_concurrency'] = max_concurrency
         kwargs["containerProperties"] = self._get_properties_with_options
         query_options = legacy_deadline_options(_build_options(kwargs), deadline)
-        # consistency_level has no entry in the common kwarg-to-option map, so we write the
-        # option key directly. Leaving it in kwargs would forward it to the transport.
+        # consistency_level is not in the shared keyword-to-option map, so set
+        # the option directly. Left in kwargs it would be sent on the wire.
         if consistency_level is not None:
             query_options['consistencyLevel'] = consistency_level
         await run_with_deadline(lambda: self._get_properties_with_options(query_options), deadline)
@@ -1403,11 +1402,10 @@ class ContainerProxy:
         :returns: A CosmosDict representing the upserted item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        # upsert is write-with-body like create, so the helper extracts
-        # the partition key from the body. It honours etag /
-        # match_condition (insert-only or version-guarded replace) and
-        # writes the legacy disableAutomaticIdGeneration flag so the
-        # fall-through path matches.
+        # Upsert sends a body, like create, so the partition key is read out
+        # of that body during the send. It also accepts etag and
+        # match_condition, which narrow it to insert-only or to a replace
+        # guarded by version.
         merge_upsert_item_explicit_kwargs(
             kwargs,
             pre_trigger_include=pre_trigger_include,
@@ -1538,15 +1536,12 @@ class ContainerProxy:
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         prepare_item_target(kwargs, item)
-        # The id of the document to overwrite comes from ``item`` (a string
-        # id, or the ``id`` of a dict), not the body -- matching delete_item /
-        # read_item and the legacy ReplaceItem. The binding puts this id on the
-        # wire URL.
+        # The id of the item to overwrite comes from ``item`` -- either a
+        # string id, or the ``id`` of a dict -- and not from the body. This
+        # matches read_item and delete_item. That id goes in the URL.
         item_id = item if isinstance(item, str) else item["id"]
-        # replace_item takes the same kwargs as upsert_item, so reuse upsert's
-        # merge and options build (the async surface has no populate_query_metrics).
-        # document_link is the fall-through target for the legacy ReplaceItem
-        # when no rust backend is wired.
+        # Replace takes the same keywords as upsert, so it reuses upsert's
+        # merge and options build.
         merge_upsert_item_explicit_kwargs(
             kwargs,
             pre_trigger_include=pre_trigger_include,
@@ -1645,7 +1640,7 @@ class ContainerProxy:
             `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        # Stamp the explicit kwargs into kwargs, then hand off to the helper.
+        # Fold the named keyword arguments into kwargs, then hand off.
         merge_patch_item_explicit_kwargs(
             kwargs,
             pre_trigger_include=pre_trigger_include,

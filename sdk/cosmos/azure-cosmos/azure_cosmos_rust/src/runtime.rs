@@ -388,23 +388,27 @@ pub(crate) fn runtime_configuration() -> Option<(Option<bool>, Option<f64>, Opti
     }
 }
 
-// The entry point, called once on a rust-backed client's first Rust operation.
-// It returns the driver handle -- the `(endpoint, credential, config)` cache key
-// -- and makes sure a rust driver for that key exists:
-//   * Fast path: a driver for this key already exists (another client with the
-//     same endpoint, credential, and config), so just add one reference and reuse
-//     it. This is what makes same-settings clients share one rust driver.
-//   * Slow path: no driver yet, so build one on the shared Tokio runtime (via the
-//     process-wide driver runtime) and insert it as the first reference.
-// Process-wide vs per-key: the runtimes are shared once for the process; the rust
-// driver this builds is per key. The optional `config` is a Python
-// `PreparedClientConfig` of construction settings the driver honors --
-// preferred_locations, process-wide connection-pool settings, plus account-level
-// operation options (excluded locations, throttle-retry caps, hedging threshold,
-// consistency level). They apply when the runtime/driver is first built; later
-// clients with the same key share the driver.
-// Without this entry point there would be no way to get or make a client's rust
-// driver, and no reference counting to share and tear it down safely.
+/// The entry point, called once on a rust-backed client's first Rust operation.
+/// It returns the driver handle -- the `(endpoint, credential, config)` cache key
+/// -- and makes sure a rust driver for that key exists:
+///   * Fast path: a driver for this key already exists (another client with the
+///     same endpoint, credential, and config), so just add one reference and reuse
+///     it. This is what makes same-settings clients share one rust driver.
+///   * Slow path: no driver yet, so build one on the shared Tokio runtime (via the
+///     process-wide driver runtime) and insert it as the first reference.
+/// Process-wide vs per-key: the runtimes are shared once for the process; the rust
+/// driver this builds is per key. The optional `config` is a Python
+/// `PreparedClientConfig` of construction settings the driver honors --
+/// preferred_locations, process-wide connection-pool settings, plus account-level
+/// operation options (excluded locations, throttle-retry caps, hedging threshold,
+/// consistency level). They apply when the runtime/driver is first built; later
+/// clients with the same key share the driver.
+/// Without this entry point there would be no way to get or make a client's rust
+/// driver, and no reference counting to share and tear it down safely.
+///
+/// Auth is either the `master_key` or a `credential` (a synchronous Python
+/// token credential wrapped as `PyTokenCredential`); the Python factory
+/// supplies exactly one.
 
 #[pyfunction]
 #[pyo3(signature = (endpoint, master_key=None, config=None, credential=None))]
@@ -735,7 +739,7 @@ fn operation_options_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<
 
     // throttling_max_retry_count / _wait_time_seconds -> ThrottlingRetryOptions.
     // Carried only when the customer tuned one of them; an untuned client leaves
-    // the driver's defaults (9 retries / 30 s) in place, which match Python-core.
+    // the driver's defaults (9 retries / 30 s) in place, which match core-python.
     for name in [
         "throttling_max_retry_count",
         "throttling_max_retry_wait_time_seconds",
@@ -844,6 +848,11 @@ where
     }
 }
 
+/// Drop one client's reference to the per-endpoint driver in the process-local
+/// cache. The driver is evicted only when the last client sharing that account
+/// closes, because the cache is reference-counted, so closing one of several
+/// clients pointed at one account does not break the others. An unknown or
+/// already-evicted handle is a no-op, so close is idempotent.
 #[pyfunction]
 pub(crate) fn release_driver_handle(driver_handle: &str) -> PyResult<()> {
     // Drop one client's reference; only the last closer evicts the driver. An unknown

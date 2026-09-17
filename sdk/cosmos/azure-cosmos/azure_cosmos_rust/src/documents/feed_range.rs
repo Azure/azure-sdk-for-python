@@ -3,7 +3,11 @@
 
 use super::*;
 
-/// Enumerate the container's partition-key ranges.
+/// Enumerate the container's partition-key ranges (routing map view).
+///
+/// The request body may carry `{"forceRefresh": true}` to force a cache
+/// refresh. Returns body shape
+/// `{"PartitionKeyRanges":[{"id","minInclusive","maxExclusive"},...]}`.
 #[pyfunction]
 pub(crate) fn read_feed_ranges<'py>(
     py: Python<'py>,
@@ -21,6 +25,9 @@ pub(crate) fn read_feed_ranges<'py>(
 }
 
 /// feed_range_from_partition_key: compute the feed range that one partition key falls into.
+///
+/// Returns body shape
+/// `{"Range":{"min","max","isMinInclusive","isMaxInclusive"}}`.
 #[pyfunction]
 pub(crate) fn feed_range_from_partition_key<'py>(
     py: Python<'py>,

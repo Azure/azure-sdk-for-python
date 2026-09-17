@@ -4,6 +4,12 @@
 use super::*;
 
 /// Execute one query page through the shared driver.
+///
+/// The query JSON is in `PreparedRequest.body_bytes`.
+/// `PreparedRequest.partition_key` selects the scope: typed components for one
+/// logical partition, or cross-partition/full-container. Returns a feed body
+/// (`{"Documents":[...]}`) so the Python query iterator can consume it with the
+/// same shape as the legacy path.
 #[pyfunction]
 pub(crate) fn query_items<'py>(
     py: Python<'py>,
@@ -24,6 +30,10 @@ pub(crate) fn query_items<'py>(
 
 /// `read_all_items`: a specific partition key uses read-feed; full-container
 /// scope uses the legacy-compatible internal query rewrite.
+///
+/// One logical partition uses native read-feed. Whole-container scope uses the
+/// same internal `SELECT *` query rewrite as legacy Python, so the driver query
+/// pipeline can fan out across partitions.
 #[pyfunction]
 pub(crate) fn read_all_items<'py>(
     py: Python<'py>,

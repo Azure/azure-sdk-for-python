@@ -435,7 +435,7 @@ fn backend_response_tuple_from_feed_success<'py>(
 /// `ResponseBody` is an enum (`NoPayload | Bytes | Items`); `create_item`
 /// always produces a single payload (or no payload when the caller passed
 /// `no_response=True`), so we never expect the `Items` feed-shape here.
-/// We concatenate it as a defensive fallback rather than panic — if it ever
+/// We concatenate it as a defensive fallback rather than panic -- if it ever
 /// fires the test harness will show a body mismatch that's easier to
 /// diagnose than an unwrap panic from inside the binding.
 fn response_body_to_vec(body: ResponseBody) -> PyResult<Vec<u8>> {
@@ -450,7 +450,7 @@ fn response_body_to_vec(body: ResponseBody) -> PyResult<Vec<u8>> {
 }
 
 /// Wrap the driver's query results into the `{"Documents":[ ... ]}` JSON envelope
-/// the Python query parser expects — the same shape the Cosmos REST service
+/// the Python query parser expects -- the same shape the Cosmos REST service
 /// returns for a query. The driver returns the rows as a list of item bytes
 /// (or raw bytes, or nothing); this assembles them into that envelope so the parser
 /// can read a Rust-served page without knowing it came from Rust. No rows becomes
@@ -615,7 +615,7 @@ fn feed_range_to_response_body(payload: &FeedRangeFromPartitionKeyPayload) -> Py
 /// tracked wire attempts before the deadline fired).
 ///
 /// Call exactly once per response-less `CosmosError` path, **before** converting
-/// to `DriverTransportError`.  Do not call for wire-response errors — those are
+/// to `DriverTransportError`.  Do not call for wire-response errors -- those are
 /// already counted by `backend_response_tuple_from_cosmos_error` /
 /// `backend_response_tuple_from_cosmos_error_feed`.
 fn record_diagnostics_for_responseless(error: &CosmosError) {
@@ -990,7 +990,7 @@ mod tests {
         );
     }
 
-    // ── record_diagnostics_for_responseless tests ─────────────────────────────
+    // record_diagnostics_for_responseless tests --------------------------
 
     #[test]
     fn responseless_error_without_diagnostics_does_not_increment_counters() {

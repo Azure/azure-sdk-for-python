@@ -4,7 +4,7 @@
 //! The pure feed-range math behind `is_feed_range_subset`: parse two feed-range
 //! dicts, normalize each to `[min, max)` bounds, and ask the driver whether one
 //! sits entirely inside the other. There is no network and no Python here -- the
-//! wire/binding plumbing (turning the yes/no into a `BackendResponse` tuple and
+//! wire/binding work (turning the yes/no into a `BackendResponse` tuple and
 //! running it sync/async) stays in `wire/feed_range.rs` and calls
 //! [`compute_is_feed_range_subset`].
 //!
@@ -155,7 +155,7 @@ fn feed_range_from_normalized_bounds(min: String, max: String) -> Result<FeedRan
 
 /// The whole client-side computation for is_feed_range_subset: parse the
 /// `{"parent","child"}` body, normalize both ranges, and ask the driver whether
-/// the child is a subset of the parent. The pyo3 plumbing that packages this
+/// the child is a subset of the parent. The pyo3 code that packages this
 /// yes/no into a `BackendResponse` tuple lives in `wire/feed_range.rs`.
 pub(crate) fn compute_is_feed_range_subset(body_bytes: &[u8]) -> Result<bool, String> {
     let parsed: IsFeedRangeSubsetBody = serde_json::from_slice(body_bytes).map_err(|e| {

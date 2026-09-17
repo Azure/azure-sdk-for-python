@@ -3,12 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Operation discriminators and native binding dispatch tables.
+"""Operation names, and the tables that map them to binding functions.
 
-Single replies use OP_TO_BINDING_METHOD. Pages use either the stateless or
-cursor table according to their call signature. Names and data are independent
-of migration fallback policy; adding a migrated operation does not require a
-new executor method."""
+Each operation has a name (the ``OP_*`` constants). Dispatch means looking up
+which binding function to call for one of those names.
+
+Operations that return a single reply use ``OP_TO_BINDING_METHOD``. Operations
+that return pages use one of the two page tables instead, depending on whether
+they keep a cursor between pages.
+
+These tables hold names and data only. They say nothing about which operations
+are allowed to fall back to the legacy path, so adding an operation here does
+not mean writing a new method on the backend."""
 
 from __future__ import annotations
 

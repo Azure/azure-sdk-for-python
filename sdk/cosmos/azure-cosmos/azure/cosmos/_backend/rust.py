@@ -73,9 +73,10 @@ except ImportError:
         "will raise NotImplementedError until the Rust module is built."
     )
 
-# The binding's response-less transport error, captured once at load. A driver
-# op that fails before any wire response raises this; we re-raise it as
-# azure-core's ServiceResponseError (see driver_transport_error_type).
+# The binding's error for a failure that produced no HTTP response, captured
+# once at load. A driver operation that fails before any reply comes back
+# raises this; we re-raise it as azure-core's ServiceResponseError (see
+# driver_transport_error_type).
 _DRIVER_TRANSPORT_ERROR = driver_transport_error_type(_rust_module)
 _DRIVER_RESPONSE_ERROR = _binding_error_type(_rust_module, "DriverResponseError")
 _UNSUPPORTED_QUERY_ERROR = driver_unsupported_query_error_type(_rust_module)
@@ -156,13 +157,14 @@ class RustBackend(RustBackendShared, CosmosBackend):
     made from ``(endpoint, credential, config)``. The binding keeps one rust driver
     per distinct ``(endpoint, credential, config)`` and reference-counts it, so
     several clients with the same settings share a single rust driver; ``close``
-    drops this client's reference and only the last one shuts the driver down.
+    drops this client's reference. Active operations can keep the driver alive
+    after the last client closes.
     Operations route by kind; when the compiled binding is missing, every
     operation raises ``NotImplementedError``.
 
-    Per-client state, guard registration, and teardown live in
-    :class:`~azure.cosmos._backend._shared.RustBackendShared`; this class adds only
-    the synchronous (blocking) handle build and dispatch.
+    :class:`~azure.cosmos._backend._shared.RustBackendShared` stores common client
+    state and registrations. This class builds the driver, sends synchronous
+    operations, and releases this client's resources.
     """
 
     name = BACKEND_NAME_RUST
@@ -221,18 +223,11 @@ class RustBackend(RustBackendShared, CosmosBackend):
             return self._driver_handle
 
     def close(self) -> None:
-        """Drop this client's reference to the shared rust driver.
+        """Release this client's registration, credential-bridge hold, and Rust driver reference.
 
-        Releases the guard registration once, stops the credential bridge, marks the
-        client closed and clears the handle, then tells the binding to
-        ``release_driver_handle(driver_handle)`` -- which drops this client's reference; the rust
-        driver is only torn down when the last client sharing it closes. Without this
-        the guard count leaks, the bridge thread keeps running, and the rust driver's
-        connection pool is never released.
-
-        Closing twice is harmless: the handle is taken under the lock, so only the
-        first call reaches ``release_driver_handle`` and no other client's shared driver can
-        be released early.
+        Mark the client closed and take its handle once, so repeated calls cannot
+        release another client's reference. Other clients and operations can keep
+        the driver alive. The customer's own credential is not closed.
         """
         with self._driver_handle_lock:
             self._closing = True
@@ -288,10 +283,12 @@ class RustBackend(RustBackendShared, CosmosBackend):
             prepared.op,
             OP_TO_BINDING_METHOD.get(prepared.op),
         )
-        # A response-less driver failure (transport error, client-side
-        # validation, pre-HTTP timeout) is raised as the binding's
-        # DriverTransportError; translate it to azure-core's ServiceResponseError
-        # so customer handlers and transport-retry policies match the legacy path.
+        # A driver failure that produced no HTTP response at all (a
+        # transport error, a check that failed before sending, or a
+        # timeout before the request went out) is raised as the binding's
+        # DriverTransportError. Translate it to azure-core's
+        # ServiceResponseError so customer error handling and transport
+        # retry policies behave the same as on the legacy path.
         try:
             raw_response = (
                 binding_function(driver_handle, prepared)

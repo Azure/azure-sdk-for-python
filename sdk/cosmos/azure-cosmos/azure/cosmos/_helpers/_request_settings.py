@@ -136,7 +136,8 @@ def get_common_options() -> Mapping[str, str]:
 # value is *truthy* -- a ``0`` / ``None`` / ``""`` value omits the header
 # entirely. ``indexing_directive=IndexingDirective.Default`` is ``0`` and
 # ``throughput_bucket=0`` is not a real bucket, so both must send no header to
-# match v4. ``maxIntegratedCacheStaleness`` has the same compatibility gate.
+# match v4. ``maxIntegratedCacheStaleness`` is treated the same way, for the
+# same compatibility reason.
 _TRUTHY_GATED_OPTION_KEYS = frozenset(
     {
         "autoUpgradePolicy",
@@ -230,8 +231,8 @@ OPTION_HEADER_NAMES = {
 
 # The Rust driver intentionally owns these standard headers and overwrites
 # custom values after the binding adds ``initial_headers``. The legacy pipeline
-# preserves per-call overrides for the same names, so such reads must stay on
-# legacy until the driver exposes an equivalent override contract.
+# keeps per-call overrides for the same names, so such reads must stay on
+# legacy until the driver offers a way to override them too.
 HEADERS_THE_DRIVER_WOULD_SILENTLY_OVERWRITE = frozenset(
     {
         "accept",
@@ -242,9 +243,10 @@ HEADERS_THE_DRIVER_WOULD_SILENTLY_OVERWRITE = frozenset(
 )
 
 
-# Exclude SDK transport defaults from direct Rust preparation. This is not the
-# customer-override gate above: authorization, date and content type are protocol
-# values, whereas the gate protects overrides the legacy transport can honor.
+# Exclude SDK transport defaults from direct Rust preparation. These are not the
+# customer overrides listed above: authorization, date and content type are
+# protocol values, whereas the list above protects overrides the legacy
+# transport can honor.
 HEADERS_THE_DRIVER_REGENERATES = frozenset(
     {
         "accept",

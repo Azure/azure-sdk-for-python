@@ -157,8 +157,9 @@ class ReadAllConfig:
         options.pop("continuation", None)
         options.pop("maxItemCount", None)
         headers, settings = build_request_headers_and_settings(options)
-        # The outer native deadline includes metadata and planning; driver
-        # request-level timeouts may not extend that budget.
+        # The overall time limit covers metadata lookup and planning as
+        # well. Timeouts set on individual driver requests cannot extend
+        # past it.
         remaining = remaining_timeout(deadline)
         if remaining is not None:
             settings = replace(settings, timeout_seconds=remaining)
@@ -231,8 +232,9 @@ class ReadAllPageState:
         rows = result["Documents"]
         if self.config.operation != "query_items" and any(not isinstance(row, dict) for row in rows):
             raise ValueError("read_all_items received a non-object document.")
-        # A terminal None from execute_plan is a local drain signal, not a
-        # service response; do not manufacture a response hook/charge for it.
+        # A None returned by execute_plan means this pager has finished
+        # locally. It is not a service response, so do not invent a
+        # response hook call or a request charge for it.
         if rows or page.continuation is not None or page.headers:
             self.capture(result.get_response_headers(), result)
         self.token = page.continuation
@@ -299,7 +301,9 @@ class ReadAllPageIterator(PageIterator):
 
     @staticmethod
     def _unpack(value: tuple[Optional[str], list[dict[str, Any]]]) -> Any:
-        # azure-core's extractor annotation excludes its own None terminal token.
+        # azure-core types this callback as never receiving the None it sends
+        # to mark the end of iteration, so the annotation here is narrower than
+        # what can actually arrive. The value is passed straight through.
         return value
 
     def _fetch(

@@ -356,10 +356,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :caption: Get an item from the database and update one of its properties:
         """
         prepare_item_target(kwargs, item)
-        # Validate the cache-staleness value here so a ValueError points
-        # at the caller, not three frames deep in the helper. None
-        # skips validation. Zero is allowed; the prep layer treats it
-        # as a no-op and emits no x-ms-dedicatedgateway-max-age header.
+        # Check the cache-staleness value here rather than deeper in, so a bad
+        # value raises where the caller can see it. None means skip the check.
+        # Zero is allowed and simply means no max-age header is sent.
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
 
@@ -462,8 +461,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         kwargs['max_concurrency'] = max_concurrency
         query_options = legacy_deadline_options(build_options(kwargs), deadline)
-        # consistency_level has no entry in the common kwarg-to-option map, so we write the
-        # option key directly. Leaving it in kwargs would forward it to the transport.
+        # consistency_level is not in the shared keyword-to-option map, so set
+        # the option directly. Left in kwargs it would be sent on the wire.
         if consistency_level is not None:
             query_options['consistencyLevel'] = consistency_level
         self._get_properties_with_options(query_options)
@@ -1108,7 +1107,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         # Get container property and init client container caches
         container_properties = self._get_properties_with_options(feed_options)
-        # The legacy query path resolves full keys and hierarchical prefixes here.
+        # The legacy query path works out full and partial partition keys here.
         kwargs["container_properties"] = container_properties
 
         # Update 'feed_options' from 'kwargs'
@@ -1174,7 +1173,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
 
-        # Explicit core-python selection retains the legacy execution context.
+        # Choosing core-python explicitly keeps the legacy path.
         items = self.client_connection.QueryItems(
             database_or_container_link=self.container_link,
             query=query,
@@ -1294,13 +1293,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         prepare_item_target(kwargs, item)
-        # The id of the document to overwrite comes from ``item`` (a string
-        # id, or the ``id`` of a dict), not the body -- matching delete_item /
-        # read_item and the legacy ReplaceItem. The binding puts this id on the
-        # wire URL.
+        # The id of the item to overwrite comes from ``item`` -- either a
+        # string id, or the ``id`` of a dict -- and not from the body. This
+        # matches read_item and delete_item. That id goes in the URL.
         item_id = item if isinstance(item, str) else item["id"]
-        # replace_item takes the same kwargs as upsert_item, so reuse upsert's
-        # merge and options build. Legacy addressing is built in its adapter.
+        # Replace takes the same keywords as upsert, so it reuses upsert's
+        # merge and options build.
         merge_upsert_item_explicit_kwargs(
             kwargs,
             pre_trigger_include=pre_trigger_include,
@@ -1384,13 +1382,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: A CosmosDict representing the upserted item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        # upsert is write-with-body like create, so the helper extracts
-        # the partition key from the body. The helper also honours
-        # etag / match_condition (an upsert can be narrowed to
-        # insert-only or a version-guarded replace) and writes the legacy
-        # disableAutomaticIdGeneration flag so the fall-through path
-        # matches. populate_query_metrics is deprecated; the helper warns
-        # and writes it onto the legacy options.
+        # Upsert sends a body, like create, so the partition key is read out
+        # of that body during the send. It also accepts etag and
+        # match_condition, which narrow it to insert-only or to a replace
+        # guarded by version. populate_query_metrics is deprecated here: the
+        # helper warns and then ignores it.
         merge_upsert_item_explicit_kwargs(
             kwargs,
             pre_trigger_include=pre_trigger_include,
@@ -1483,8 +1479,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         deadline = prepare_create_item_kwargs(kwargs)
-        # Move the explicit kwargs into the kwargs dict so the helper
-        # sees a single dict.
+        # Fold the named keyword arguments back into kwargs so the helper
+        # receives a single dict.
         merge_create_item_explicit_kwargs(
             kwargs,
             pre_trigger_include=pre_trigger_include,
@@ -1583,7 +1579,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        # Stamp the explicit kwargs into kwargs, then hand off to the helper.
+        # Fold the named keyword arguments into kwargs, then hand off.
         merge_patch_item_explicit_kwargs(
             kwargs,
             pre_trigger_include=pre_trigger_include,
@@ -1764,17 +1760,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: None
         """
         if populate_query_metrics is not None:
-            # populate_query_metrics has no effect on a point DELETE
-            # (there are no query metrics for a single-document write).
-            # Warn and drop so the header is never built.
+            # populate_query_metrics does nothing on a single-item delete, since
+            # there is no query to measure. Warn and drop it so no header is built.
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 DeprecationWarning,
             )
 
-        # pre_trigger_include and post_trigger_include are positional-
-        # or-keyword on the public method; move them into kwargs so
-        # the helper sees one unified dict.
+        # pre_trigger_include and post_trigger_include can be passed either by
+        # position or by name, so move them into kwargs to get one dict.
         merge_delete_item_explicit_kwargs(
             kwargs,
             pre_trigger_include=pre_trigger_include,

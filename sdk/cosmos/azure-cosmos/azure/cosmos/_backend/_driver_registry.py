@@ -181,7 +181,8 @@ def _canonicalize_endpoint(endpoint: str) -> str:
         return urlunsplit((scheme, netloc, path, "", ""))
     except ValueError:
         # Malformed URL (e.g. a bad port): fall back to the raw string rather than
-        # guessing, so the guard never coalesces things it cannot parse.
+        # guessing, so two endpoints the code cannot parse are never treated as
+        # the same account.
         return endpoint
 
 

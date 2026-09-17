@@ -37,7 +37,7 @@ pub(crate) fn create_database_async<'py>(
 /// so Python does the combining and needs both halves available here.
 ///
 /// Without this the read half had no Rust call to make, and a customer on the
-/// Rust backend would have had both of those methods drop to the older Python
+/// Rust backend would have had both of those methods drop to the legacy Python
 /// transport -- different retry behavior and different diagnostics from every
 /// other call on the same client.
 #[pyfunction]

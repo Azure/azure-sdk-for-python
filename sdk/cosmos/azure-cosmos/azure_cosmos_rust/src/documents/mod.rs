@@ -71,6 +71,8 @@ const DELETE_DATABASE_ID_REQUIRED: &str =
     "delete_database: PreparedRequest.item_id is required (the id of the database to delete)";
 const READ_ITEM_ID_REQUIRED: &str =
     "read_item: PreparedRequest.item_id is required for read operations";
+const DELETE_ITEM_PARTITION_KEY_REQUIRED: &str = "delete_item requires an explicit partition key";
+const READ_ITEM_PARTITION_KEY_REQUIRED: &str = "read_item requires an explicit partition key";
 const PATCH_ITEM_ID_REQUIRED: &str = "patch_item: PreparedRequest.item_id is required (the id of the document to patch, resolved from the `item` argument)";
 
 type CommonInputs = (String, PartitionKeyInput, RequestHeadersAndOptions);
@@ -90,26 +92,28 @@ type FeedRangeFromPartitionKeyInputs = (String, PartitionKeyInput);
 
 /// Pull the common fields (container link, partition-key header, per-request
 /// modifiers) plus a *required* item id off the PreparedRequest. Used by the
-/// bodiless ops (delete, read), where the id comes from the request. Without a
+/// operations that send no body (delete, read), where the id comes from the request. Without a
 /// single shared extractor each op would re-derive the same inputs and could
 /// diverge on which fields it reads or which error it raises.
+///
+/// Both error messages are passed in by the caller so the failure names the
+/// operation the customer actually called, rather than the shared extractor.
 fn extract_item_inputs(
     prepared: &Bound<'_, PyAny>,
-    error_message: &'static str,
+    item_id_error: &'static str,
+    partition_key_error: &'static str,
 ) -> PyResult<ItemInputs> {
     let (container_link, partition_key, modifiers): CommonInputs =
         extract_common_prepared_inputs(prepared)?;
     if matches!(partition_key, PartitionKeyInput::Extract) {
-        return Err(PyValueError::new_err(
-            "A bodiless item operation requires an explicit partition key",
-        ));
+        return Err(PyValueError::new_err(partition_key_error));
     }
-    let item_id = extract_required_item_id(prepared, error_message)?;
+    let item_id = extract_required_item_id(prepared, item_id_error)?;
     Ok((container_link, partition_key, modifiers, item_id))
 }
 
-/// Common fields plus the document body, then use the item id Python already
-/// resolved on `PreparedRequest.item_id`. Older callers may leave that field
+/// Common fields plus the item body, then use the item id Python already
+/// resolved on `PreparedRequest.item_id`. Callers that have not been updated may leave that field
 /// unset, in which case `extract_create_item_id` reads the id from the body.
 /// Without this shared extractor, create and upsert could disagree on that
 /// preference and fallback behavior.
@@ -130,7 +134,7 @@ fn extract_create_body_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<ItemBodyI
 
 /// Common fields plus the body plus a *required* item id taken from the request
 /// (not the body). Used by replace and patch. Taking the id from the request is
-/// the safety point: deriving it from the body could target the wrong document
+/// the safety point: deriving it from the body could target the wrong item
 /// if the body's id disagreed with the `item` argument the customer passed.
 fn extract_item_body_inputs(
     prepared: &Bound<'_, PyAny>,

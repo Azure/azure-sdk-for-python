@@ -72,7 +72,7 @@ def _container_rid(
     rid = properties.get("_rid")
     if isinstance(rid, str):
         return rid
-    # Preserve the existing cache contract for test doubles and older connection
+    # Preserve the existing cache contract for test doubles and legacy connection
     # implementations whose property-population callback returns no value.
     return client_connection._container_properties_cache[container_link]["_rid"]
 

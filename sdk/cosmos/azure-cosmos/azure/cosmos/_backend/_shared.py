@@ -10,9 +10,10 @@ identified by a driver handle; the runtime owns process-wide transport settings.
 Native acquisition is lazy and independent of Python client registration.
 
 Construction reserves client identity and provisional process policies with
-register_driver_client. Close releases that registration exactly once and stops
-an async credential bridge when present. The Python registry predicts isolation
-conflicts; its counts do not own native driver handles or their reference counts.
+register_driver_client. Close releases that registration exactly once and releases
+this client's hold on an async credential bridge when present. The Python registry
+predicts isolation conflicts; its counts do not own native driver handles or their
+reference counts.
 """
 from __future__ import annotations
 
@@ -126,17 +127,11 @@ def driver_unsupported_query_error_type(rust_module: Optional[Any]) -> _BindingE
 
 
 def close_credential_bridge_quietly(credential: Optional[Any]) -> None:
-    """Stop our async-credential bridge on close, and never raise.
+    """Release an SDK credential-bridge hold, logging cleanup failures.
 
-    It checks whether the object *has* the private ``_close_cosmos_async_bridge`` method
-    (duck typing -- a "does it have this method" check, not an ``isinstance`` type
-    check), so it only ever shuts down *our own* bridge -- never the customer's own
-    credential, whose lifetime the customer controls (a sync credential simply has no
-    such method and is left untouched).
-
-    Why it exists: without it, the bridge's background thread keeps running after close.
-    And without the "quietly" part -- it catches and logs any error -- a teardown error
-    on this close/finalizer path could hide the actual close.
+    Only the bridge exposes this private release method. Do not call the
+    customer's credential.close(): the application owns that credential.
+    The last bridge holder requests shutdown of its background thread.
     """
     closer = getattr(credential, "_close_cosmos_async_bridge", None)
     if callable(closer):
@@ -217,8 +212,8 @@ class RustBackendShared:
         self._config_released = True
         # Proxy allowance and transport timeouts are process-global for the Rust
         # runtime, not per-account like the driver registration below. Enforce them
-        # here before recording a registration; the binding repeats the checks as a
-        # lazy-initialization fallback.
+        # here before recording a registration; the binding checks them again later
+        # in case the runtime is only started at that point.
         try:
             register_driver_client(
                 endpoint,
@@ -289,15 +284,7 @@ class RustBackendShared:
         )
 
     def _close_token_credential_bridge(self) -> None:
-        """Stop the bridge's background thread on close (only our bridge; a customer
-        credential is left alone).
-
-        A one-line forwarding method (a "thin wrapper" -- a small method that just calls
-        another; *not* the Python-layer "python wrapper"). It calls
-        ``close_credential_bridge_quietly(self._token_credential)``. Skip it and the
-        bridge's background thread -- plus the credential's event loop running on it --
-        keeps running after the client is gone.
-        """
+        """Release this client's bridge hold once, leaving the customer's credential open."""
         close_credential_bridge_quietly(self._take_token_credential_for_close())
 
     def _take_token_credential_for_close(self) -> Optional[Any]:

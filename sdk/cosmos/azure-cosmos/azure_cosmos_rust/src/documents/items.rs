@@ -53,6 +53,10 @@ fn patch_operation(
 }
 
 /// Insert a new item, rejecting an existing item with the same id and partition key.
+///
+/// Python normally carries the already-resolved item id on
+/// `PreparedRequest.item_id`; the binding reads the id out of `body_bytes` only
+/// as a compatibility fallback.
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn create_item<'py>(
@@ -83,6 +87,13 @@ pub(crate) fn create_item<'py>(
 /// (partition key, id) is *replaced* instead of rejected with 409. Without it
 /// customers could not do "insert-or-overwrite" in a single call on the rust
 /// backend.
+///
+/// The operation kind makes the driver pipeline set
+/// `x-ms-documentdb-is-upsert: true` and POST to the collection feed, so an
+/// existing `(partition_key, id)` is replaced (HTTP 200) and a new id inserts
+/// (HTTP 201). `If-Match` / `If-None-Match`, built by the Python helper from
+/// `etag` + `match_condition` (insert-only or version-guarded replace), flow
+/// through `custom_headers`.
 #[pyfunction]
 pub(crate) fn upsert_item<'py>(
     py: Python<'py>,
@@ -106,20 +117,24 @@ pub(crate) fn upsert_item<'py>(
     )
 }
 
-/// replace_item: write-with-body, but the URL id (which document to overwrite)
+/// replace_item: write-with-body, but the URL id (which item to overwrite)
 /// comes from `PreparedRequest.item_id`, not the body. Maps to
 /// `OperationType::Replace` (overwrite-only PUT): a missing target is a 404,
 /// never a silent insert. Without it there is no safe overwrite -- and taking
-/// the id from the body could overwrite the *wrong* document if the body's id
+/// the id from the body could overwrite the *wrong* item if the body's id
 /// disagreed with the `item` argument.
+///
+/// An existing item is overwritten (HTTP 200). Returns the saved item unless
+/// `no_response=True`. `If-Match` / `If-None-Match` flow through
+/// `custom_headers`.
 #[pyfunction]
 pub(crate) fn replace_item<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    // The URL id (which document to overwrite) comes from item_id, not the
-    // body -- deriving it from the body could overwrite the wrong document if
+    // The URL id (which item to overwrite) comes from item_id, not the
+    // body -- deriving it from the body could overwrite the wrong item if
     // the body's id disagreed with `item`.
     let (container_link, partition_key, modifiers, item_id, body_bytes) =
         extract_item_body_inputs(prepared, REPLACE_ITEM_ID_REQUIRED)?;
@@ -138,17 +153,22 @@ pub(crate) fn replace_item<'py>(
     )
 }
 
-/// delete_item: bodiless; id from `PreparedRequest.item_id`; passes `false` for
+/// delete_item: sends no body; id from `PreparedRequest.item_id`; passes `false` for
 /// the content-response toggle (a DELETE has nothing to return to suppress).
 /// Without it there is no way to delete a single item on the rust backend.
+///
+/// On success the driver returns HTTP 204 with an empty body.
 #[pyfunction]
 pub(crate) fn delete_item<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    let (container_link, partition_key, modifiers, item_id) =
-        extract_item_inputs(prepared, DELETE_ITEM_ID_REQUIRED)?;
+    let (container_link, partition_key, modifiers, item_id) = extract_item_inputs(
+        prepared,
+        DELETE_ITEM_ID_REQUIRED,
+        DELETE_ITEM_PARTITION_KEY_REQUIRED,
+    )?;
 
     execute_item_operation_sync(
         py,
@@ -164,10 +184,19 @@ pub(crate) fn delete_item<'py>(
     )
 }
 
-/// read_item: bodiless; id from `PreparedRequest.item_id`. A conditional read
+/// read_item: sends no body; id from `PreparedRequest.item_id`. A conditional read
 /// comes back as HTTP 304, which the Python parser treats as success. Without it
 /// the single most common operation -- the point read -- would not work on the
 /// rust backend.
+///
+/// On success returns HTTP 200 with the item JSON. Conditional reads
+/// (`If-None-Match`, driven by Python's `etag` + `MatchConditions.IfModified`)
+/// come back as HTTP 304 with an empty body when the customer's cached etag
+/// still matches the server version; the Python parser treats 304 as a
+/// non-error and returns an empty `CosmosDict`.
+/// `x-ms-dedicatedgateway-max-age`, driven by
+/// `max_integrated_cache_staleness_in_ms`, is forwarded through
+/// `custom_headers` like any other per-request header.
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn read_item<'py>(
@@ -176,8 +205,11 @@ pub(crate) fn read_item<'py>(
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    let (container_link, partition_key, mut modifiers, item_id) =
-        extract_item_inputs(prepared, READ_ITEM_ID_REQUIRED)?;
+    let (container_link, partition_key, mut modifiers, item_id) = extract_item_inputs(
+        prepared,
+        READ_ITEM_ID_REQUIRED,
+        READ_ITEM_PARTITION_KEY_REQUIRED,
+    )?;
     modifiers.item_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_sync(
@@ -197,6 +229,13 @@ pub(crate) fn read_item<'py>(
 /// Patch using the driver's Auto strategy, with a typed caller If-Match guard.
 /// Remove the guard from custom headers so it cannot leak to an internal read
 /// or override the fresh ETag protecting an internal replacement.
+///
+/// The body is the `PatchInstructions` payload (`{"operations": [...]}`) rather
+/// than an item, and the URL id comes from `PreparedRequest.item_id`. The driver
+/// reads the item, applies the operations, and writes it back with an
+/// `If-Match`-guarded replace. The Python helper routes only the supported
+/// subset here; a `filter_predicate`, or an `etag` / `match_condition`
+/// precondition, takes the legacy path instead.
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn patch_item<'py>(
@@ -315,8 +354,11 @@ pub(crate) fn delete_item_async<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let (container_link, partition_key, modifiers, item_id) =
-        extract_item_inputs(prepared, DELETE_ITEM_ID_REQUIRED)?;
+    let (container_link, partition_key, modifiers, item_id) = extract_item_inputs(
+        prepared,
+        DELETE_ITEM_ID_REQUIRED,
+        DELETE_ITEM_PARTITION_KEY_REQUIRED,
+    )?;
 
     execute_item_operation_async(
         py,
@@ -342,8 +384,11 @@ pub(crate) fn read_item_async<'py>(
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let (container_link, partition_key, mut modifiers, item_id) =
-        extract_item_inputs(prepared, READ_ITEM_ID_REQUIRED)?;
+    let (container_link, partition_key, mut modifiers, item_id) = extract_item_inputs(
+        prepared,
+        READ_ITEM_ID_REQUIRED,
+        READ_ITEM_PARTITION_KEY_REQUIRED,
+    )?;
     modifiers.item_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_async(

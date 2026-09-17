@@ -5,18 +5,18 @@
 # -------------------------------------------------------------------------
 """Async backend that sends operations to the rust driver through the compiled binding.
 
-Terms, consistent across the backend layer: the **binding** is the compiled
-``azure.cosmos._rust`` extension Python calls into; the **rust driver** is the
-driver the binding builds (it owns the connection pool, request signing, and
-region routing); the **driver handle** is the string ``acquire_driver_handle`` returns -- a
-key made from ``(endpoint, credential, config)`` that names *which* rust driver a
-client uses. The compiled ``_rust`` file contains both the binding and the rust
-driver code.
+The sync version in azure/cosmos/_backend/rust.py defines the three terms
+used throughout this layer -- binding, rust driver, driver handle -- and
+explains why the import of the compiled module is guarded. Read it first.
 
-This is one of only two modules allowed to import ``azure.cosmos._rust``
-(a unit test enforces that). The binding is not present until it
-has been built, so the import is guarded; until then, operations raise
-``NotImplementedError`` pointing at the build step.
+What differs here is when work leaves the calling thread:
+
+- Sending is awaited. The awaitable finishes on the binding's shared Tokio
+  runtime, so an operation in flight occupies no Python thread.
+- Building the handle the first time still blocks, so it is pushed to a
+  background thread. AsyncRustBackend._ensure_driver_handle covers the rest.
+- Closing hands its blocking teardown to a background thread too, and
+  protects the handoff so a cancelled caller cannot strand it.
 """
 from __future__ import annotations
 from ..._backend.request_settings import native_settings_contract_error
@@ -26,6 +26,7 @@ import asyncio
 import json
 import logging
 import threading
+from concurrent.futures import Future
 from typing import TYPE_CHECKING, Any, AsyncIterator, Optional
 
 from azure.cosmos._backend.operations import (
@@ -149,13 +150,9 @@ def build_binding_request_from_page(prepared: PreparedQuery) -> PreparedRequest:
 
 
 def _close_driver_handle_quietly(driver_handle: str) -> None:
-    """Drop one client's reference to the shared rust driver named by ``handle``;
-    never raise.
+    """Release one native driver reference, logging cleanup failures.
 
-    Calls the binding's ``release_driver_handle(driver_handle)``, which decrements the rust
-    driver's reference count and tears the driver down only when the last client
-    sharing it closes. Used by close(), finalization, and when a handle was built
-    just as the client was closing and now has to be thrown away.
+    Other clients and operations can keep the driver alive after this release.
     """
     if _rust_module is None:
         return
@@ -177,26 +174,20 @@ def _runtime_configuration() -> Optional[tuple[Optional[bool], Optional[float], 
 class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
     """Sends async operations from one ``CosmosClient`` to a shared rust driver.
 
-    Terms are the same as the sync backend: the **binding** is the compiled
-    ``azure.cosmos._rust`` extension; the **rust driver** is the driver it builds
-    (connection pool, request signing, region routing); the **driver handle** is
-    the string ``acquire_driver_handle`` returns, a key made from ``(endpoint, credential,
-    config)`` naming which rust driver a client uses. The binding keeps one rust
-    driver per distinct ``(endpoint, credential, config)`` and reference-counts it,
-    so same-settings clients share one rust driver.
+    Driver sharing works exactly as described on the sync RustBackend: one
+    rust driver per distinct endpoint, credential, and config, reference
+    counted. Closing releases this client's reference; active operations can
+    keep the driver alive after the last client closes.
 
-    Each operation calls the binding's ``*_item_async`` function, which returns an
-    awaitable that finishes on the binding's shared Tokio runtime -- the one
-    process-wide thread pool where every rust driver's work runs, not a per-driver
-    runtime. Awaiting it uses no Python thread, so the number of operations in
-    flight is limited by the service and the driver's connection pool, not by a
-    thread count. The only blocking step is building the handle once in
-    ``_ensure_driver_handle``, run on a background thread. When the compiled binding is
-    missing, every operation raises ``NotImplementedError``.
+    The difference is what holds an operation open while it runs. Awaiting
+    the binding costs no Python thread, so how many operations can be in
+    flight is a question about the service and the driver's connection pool,
+    not about a thread count. Only two steps block, and both are pushed to a
+    background thread: building the handle the first time, and teardown.
 
-    Per-client state, guard registration, and teardown live in
-    :class:`~azure.cosmos._backend._shared.RustBackendShared`; this class adds the
-    cross-event-loop handle-build coalescing and the awaitable dispatch.
+    RustBackendShared stores common client state and registrations. This class
+    owns async dispatch and shares driver initialization and cleanup across
+    callers, including callers on different event loops.
     """
 
     name = BACKEND_NAME_RUST
@@ -217,6 +208,8 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
         # init) is held only to set or read the handle and the closing flag, never
         # during acquire_driver_handle, so close() never waits for a build to finish.
         self._build_lock = threading.Lock()
+        self._close_lock = threading.Lock()
+        self._close_future: Optional[Future[None]] = None
         # When many operations start at once on a fresh client they all need the
         # handle. These hold the one running build so they share it instead of each
         # starting their own (see _ensure_driver_handle). Read and set on the event-loop
@@ -273,20 +266,28 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
             return driver_handle
 
     async def _ensure_driver_handle(self) -> str:
-        """Return the Rust handle, sharing one initialization across callers."""
+        """Return the handle, building it at most once across all callers.
+
+        Building blocks, so it runs on a background thread. The wrinkle is
+        that on a fresh client many operations can start at once and all
+        arrive here before a handle exists. Rather than each starting its own
+        build, the first one stores its pending result and the rest await
+        that same one.
+
+        The check and the store happen with no await between them, so only
+        one build can ever be started. A caller on a different event loop
+        gets a fresh one instead, because a pending result belongs to the
+        loop that created it and that loop may be gone.
+        """
         if _REQUEST_CONTRACT_ERROR is not None:
             raise RuntimeError(_REQUEST_CONTRACT_ERROR)
-        # If the handle is already built, return it without locking.
+        if self._closing:
+            raise RuntimeError("AsyncRustBackend: the client is closed.")
+        # Already built: return it without taking any lock.
         driver_handle = self._driver_handle
         if driver_handle is not None:
             return driver_handle
         loop = asyncio.get_running_loop()
-        # acquire_driver_handle blocks, so build the handle once on a background thread. When
-        # many operations start at once on a fresh client they all reach here before
-        # the handle exists; share one build so they don't each start their own. The
-        # check-and-set has no await in it, so only one future is created -- a new one
-        # if a different loop drives this backend, so it is never bound to a loop that
-        # is gone.
         init_future = self._init_future
         if init_future is None or self._init_future_loop is not loop:
             init_future = loop.run_in_executor(None, self._build_driver_handle)
@@ -295,34 +296,79 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
         try:
             return await init_future
         finally:
-            # Clear the shared future once it finishes so a failed build is retried
-            # next time instead of returning the same error. On success the handle is
-            # set, so later calls return it directly and never rebuild.
+            # Forget the shared build once it settles, so a failure is retried
+            # next time rather than handed out again. After a success the
+            # handle itself is set, so callers stop reaching this point.
             if self._init_future is init_future:
                 self._init_future = None
                 self._init_future_loop = None
 
     async def close(self) -> None:
-        """Drop this client's reference to the shared rust driver.
+        """Release this client's Rust resources once.
 
-        Call this once every operation on the client has finished. An operation that
-        is still running keeps its own handle, so closing while one is in flight makes
-        that operation fail with a closed-client error. Releasing this client's
-        reference lets the binding tear the rust driver down when the last client
-        sharing it closes.
+        Finish operations before closing. Other clients and operations can retain
+        the driver. Cancelling a close caller stops its wait, not the cleanup.
+        Subsequent callers wait for the same cleanup, even on another event loop.
         """
-        driver_handle = self._take_driver_handle_for_close()
-        credential = self._take_token_credential_for_close()
-        self._release_config_once()
-
-        def teardown() -> None:
-            close_credential_bridge_quietly(credential)
-            if driver_handle is not None:
-                _close_driver_handle_quietly(driver_handle)
-
-        # Transfer ownership before awaiting, so cancellation cannot strand it.
         loop = asyncio.get_running_loop()
-        await asyncio.shield(loop.run_in_executor(None, teardown))
+        with self._close_lock:
+            completion = self._close_future
+            if completion is None:
+                with self._driver_handle_lock:
+                    self._closing = True
+                self._release_config_once()
+                driver_handle = self._take_driver_handle_for_close()
+                credential = self._take_token_credential_for_close()
+                pending_close: Future[None] = Future()
+                self._close_future = completion = pending_close
+                teardown_lock = threading.Lock()
+
+                def teardown() -> None:
+                    # Submission can queue the job before raising; the fallback must not release it twice.
+                    with teardown_lock:
+                        if pending_close.running() or pending_close.done():
+                            return
+                        if not pending_close.set_running_or_notify_cancel():
+                            return
+                    try:
+                        try:
+                            close_credential_bridge_quietly(credential)
+                        finally:
+                            if driver_handle is not None:
+                                _close_driver_handle_quietly(driver_handle)
+                    except BaseException as error:
+                        pending_close.set_exception(error)
+                    else:
+                        pending_close.set_result(None)
+
+                if driver_handle is None and credential is None:
+                    pending_close.set_result(None)
+                else:
+                    def worker_finished(work: asyncio.Future[None]) -> None:
+                        error = None if work.cancelled() else work.exception()
+                        if not work.cancelled() and error is None:
+                            return
+                        _LOGGER.warning(
+                            "Background client cleanup did not complete; cleaning up on the calling thread",
+                            exc_info=(type(error), error, error.__traceback__) if error is not None else None,
+                        )
+                        teardown()
+
+                    try:
+                        work = loop.run_in_executor(None, teardown)
+                        work.add_done_callback(worker_finished)
+                    except Exception:  # pylint: disable=broad-except
+                        _LOGGER.warning(
+                            "Could not start background client cleanup; cleaning up on the calling thread",
+                            exc_info=True,
+                        )
+                        teardown()
+
+        if completion.done():
+            completion.result()
+            return
+        # Each loop gets its own awaitable; cancelling it must not cancel the shared work.
+        await asyncio.shield(asyncio.wrap_future(completion))
 
     def __del__(self) -> None:
         """Release resources if the client was not closed explicitly."""

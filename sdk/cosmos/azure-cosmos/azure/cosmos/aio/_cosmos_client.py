@@ -41,8 +41,8 @@ from .._base import build_options as _build_options, _set_throughput_options
 from .._constants import _Constants as Constants
 from .._client_lifecycle import unwind_client_construction
 from .._connection_policy import copy_connection_policy, resolve_connection_policy_kwargs, resolve_retry_option
+from .._connection_string import parse_connection_string
 from .._cosmos_responses import CosmosDict
-from ..cosmos_client import _parse_connection_str
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ._backend.cosmos_backend import AsyncCosmosBackend
 from .._helpers._item_context import ItemClientContext, ItemClientDefaults
@@ -245,24 +245,24 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     ) -> None:
         """Instantiate a new CosmosClient."""
         kwargs = resolve_connection_policy_kwargs(kwargs)
-        # Pick the backend for this client (precedence: ``_backend=``
-        # kwarg > COSMOS_BACKEND env var > ``core-python``). The factory
-        # returns a concrete ``AsyncRustBackend`` or ``AsyncLegacyBackend``.
+        # Choose which backend this client will use. A ``_backend=`` argument
+        # wins; otherwise the COSMOS_BACKEND environment variable decides;
+        # otherwise it falls back to core-python.
         backend_choice = kwargs.pop("_backend", None)
         fault_injection_rules = kwargs.pop("_fault_injection_rules", None)
         proxy_allowed = kwargs.pop("proxy_allowed", None)
         connection_timeout, read_timeout = resolve_client_transport_timeouts(kwargs)
-        # Read (don't pop) the startup settings the Rust backend can carry to the
-        # driver; the legacy connection policy still receives them via **kwargs
-        # below. Shared normalization resolves policy/keyword precedence, including
-        # explicit zero throttle limits. On the
-        # async client ``availability_strategy`` is an explicit parameter
-        # (default ``False``), so it is passed directly rather than read from
-        # kwargs; False/None select the binding's disabled default, while True/dict
-        # carry the enabled threshold.
-        # ``consistency_level`` is the named constructor arg, carried so the
-        # chosen level reaches the driver instead of every read falling back to
-        # the account default.
+        # These startup settings are read, not removed, so that they are still
+        # in kwargs when the legacy connection is built further down. Both need
+        # them. See azure/cosmos/cosmos_client.py for the same handling.
+        #
+        # One difference from the sync client: here availability_strategy is a
+        # real parameter with a default of False, so it is passed straight
+        # through instead of being read out of kwargs. False or None means the
+        # feature stays off; True or a dict carries the threshold that turns it
+        # on. consistency_level comes from the named argument above, so that the
+        # level the caller asked for actually reaches the driver rather than
+        # every read quietly using whatever the account defaults to.
         chosen = make_async_backend(
             backend_choice,
             url=url,
@@ -278,9 +278,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             connection_timeout_seconds=connection_timeout,
             read_timeout_seconds=read_timeout,
             fault_injection_rules=fault_injection_rules,
-            # Transport/TLS knobs the Rust path can't honor yet: read (don't pop)
-            # so the legacy connection still consumes them on the core-python path,
-            # while the Rust branch rejects them instead of silently ignoring them.
+            # Proxy and TLS settings, which the Rust path cannot apply yet.
+            # They are read rather than removed so the legacy connection can
+            # still use them. The Rust backend refuses them outright rather
+            # than accepting them and quietly doing nothing.
             proxy_config=kwargs.get("proxy_config"),
             proxies=kwargs.get("proxies"),
             connection_verify=kwargs.get("connection_verify"),
@@ -318,8 +319,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             enable_compact_utf8_item_writes=enable_compact_utf8_item_writes,
             **kwargs
         )
-        # Retained for unmigrated families. Point operations receive their
-        # backend/defaults/state through _item_context, not this connection.
+        # Item operations get the backend and their defaults directly through
+        # _item_context. Every other kind of operation still reaches them
+        # through this connection, which is why it is kept.
         self.client_connection._backend = self._backend  # pylint: disable=protected-access
 
     def __repr__(self) -> str:
@@ -345,12 +347,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 await self.client_connection.pipeline_client.__aexit__(*args)
         finally:
             try:
-                backend = getattr(self.client_connection, "_backend", None)
-                close_backend = getattr(backend, "close", None)
-                if callable(close_backend):
-                    maybe_awaitable = close_backend()
-                    if hasattr(maybe_awaitable, "__await__"):
-                        await maybe_awaitable
+                await self._backend.close()
             except Exception:  # pylint: disable=broad-except
                 logging.getLogger(__name__).warning("Failed closing async client backend", exc_info=True)
             try:
@@ -359,7 +356,16 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 logging.getLogger(__name__).warning("Failed releasing async client routing state", exc_info=True)
 
     async def close(self) -> None:
-        """Close this instance of CosmosClient."""
+        """Release local resources owned by this client, as on leaving an ``async with`` block.
+
+        Finish outstanding operations before closing. This does not delete data
+        or close the customer's credential. Other clients can continue using
+        shared Rust resources. Safe to call multiple times; repeated calls wait
+        for Rust cleanup already in progress.
+
+        Backend cleanup failures are logged rather than raised. Errors closing
+        the Python HTTP resources or account-refresh task can still raise.
+        """
         await self.__aexit__()
 
     @classmethod
@@ -370,7 +376,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         consistency_level: Optional[str] = None,
         **kwargs: Any
     ) -> "CosmosClient":
-        """Create a CosmosClient instance from a connection string.
+        """Create a CosmosClient instance using key-based authentication.
 
         The connection string must contain both AccountEndpoint and AccountKey.
         A separate credential is not accepted, so there is only one source for the key.
@@ -378,19 +384,20 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         Other client settings are forwarded to the CosmosClient constructor.
 
         :param str conn_str: The connection string containing the account endpoint and key.
-        :keyword str consistency_level: Consistency level to use for the session. Default value is None (account-level).
+        :keyword str consistency_level:
+            Default consistency level for requests made by this client. None uses the account default.
             More on consistency levels and possible values: https://aka.ms/cosmos-consistency-levels
         :returns: a CosmosClient instance
         :rtype: ~azure.cosmos.aio.CosmosClient
         :raises ValueError: The connection string is malformed or a required setting is missing or empty.
-        :raises TypeError: A separate credential is supplied.
+        :raises TypeError: The connection string is not a string, or a separate credential is supplied.
         """
         if "credential" in kwargs:
             raise TypeError(
                 "from_connection_string() does not accept 'credential'; "
                 "use CosmosClient(url, credential=...) for a separate credential."
             )
-        settings = _parse_connection_str(conn_str)
+        settings = parse_connection_string(conn_str)
         return cls(
             url=settings['AccountEndpoint'],
             credential=settings['AccountKey'],
@@ -676,14 +683,21 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             return database_proxy, result
         return database_proxy
 
-    def get_database_client(self, database: Union[str, DatabaseProxy, dict[str, Any]]) -> DatabaseProxy:
+    def get_database_client(self, database: Union[str, DatabaseProxy, Mapping[str, Any]]) -> DatabaseProxy:
         """Return a local proxy for a database without checking its existence.
 
-        :param database: The ID (name), dict representing the properties, or :class:`DatabaseProxy`
-            instance. An ID supplied in properties is converted to a string.
-        :type database: Union[str, ~azure.cosmos.DatabaseProxy, dict[str, Any]]
-        :returns: A `DatabaseProxy` instance representing the retrieved database.
-        :rtype: ~azure.cosmos.DatabaseProxy
+        This method makes no service request. It always creates a new proxy attached
+        to this client. An existing proxy supplies only its ID, not its connection
+        or cached properties. Properties mappings supply only ``id``, which is
+        converted to a string; other properties are not cached.
+        Call this method without ``await``; await the returned proxy's service operations.
+
+        :param database: The ID (name), a mapping of properties containing ``id``,
+            or a :class:`~azure.cosmos.aio.DatabaseProxy` instance.
+        :type database: Union[str, ~azure.cosmos.aio.DatabaseProxy, Mapping[str, Any]]
+        :returns: A new async `DatabaseProxy` instance attached to this client.
+        :rtype: ~azure.cosmos.aio.DatabaseProxy
+        :raises KeyError: If the properties mapping does not contain ``id``.
         """
         if isinstance(database, str):
             id_value = database
@@ -852,7 +866,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         request_options = _build_options(kwargs)
-        # Wildcard conditions can leave an unused etag after the guard is validated and built.
+        # A wildcard match condition does not need an etag, so one may be left
+        # over in kwargs after the options are built. Drop it.
         kwargs.pop("etag", None)
         database_link = _get_database_link(database)
         await AsyncDatabaseHelper(self.client_connection, self._backend).delete_database(
@@ -877,9 +892,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
         :rtype: ~azure.cosmos.DatabaseAccount
         """
-        # On a Rust-backed client, fail loudly instead of silently using the
-        # legacy core-python connection -- the Rust path doesn't surface the
-        # account read yet (a tracked gap).
+        # Reading account properties has not moved to the Rust path yet. On a
+        # Rust-backed client, raise rather than quietly falling back to the
+        # legacy connection, which would hide that this is still missing.
         raise_account_read_unsupported(self._backend)
         result = await self.client_connection.GetDatabaseAccount(**kwargs)
         if response_hook:

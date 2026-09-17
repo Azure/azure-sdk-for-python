@@ -43,7 +43,8 @@ class ScriptType:
 
 
 class ScriptsProxy:
-    """An interface to interact with stored procedures.
+    """An interface to interact with stored procedures, triggers and user
+    defined functions.
 
     This class should not be instantiated directly. Instead, use the
     :func:`ContainerProxy.scripts` attribute.

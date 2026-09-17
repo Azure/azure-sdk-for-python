@@ -60,11 +60,12 @@ class PreparedRequest:
     #: e.g. ``"dbs/{db}/colls/{coll}"``.
     container_link: str
 
-    #: Request body already serialized to JSON bytes. Empty for
-    #: bodiless ops (e.g. ``delete_item``).
+    #: Request body, already turned into JSON bytes. Empty for operations that
+    #: send no body, such as ``delete_item``.
     body_bytes: bytes
 
-    #: Typed components and explicit extraction/scope/sentinel provenance.
+    #: The partition key for this request, broken into its parts, along with
+    #: where each part came from and how it was worked out.
     partition_key: PartitionKeyInput
 
     #: Actual HTTP request headers only, including customer headers.
@@ -73,10 +74,11 @@ class PreparedRequest:
     #: Typed settings; headers contain only caller/default header overrides.
     settings: RequestSettings = field(default_factory=RequestSettings)
 
-    #: Target document id. Bodiless and target-specific operations require it.
-    #: Create and upsert also carry the already-resolved body id when it is a
-    #: non-empty string, avoiding another JSON parse in the binding; older
-    #: callers may leave it unset and let the binding read the body.
+    #: Target item id. Operations that send no body, and those aimed at one
+    #: item, require it. Create and upsert also carry the id already read out
+    #: of the body when it is a non-empty string, which saves the binding
+    #: parsing the JSON a second time. Callers that have not been updated may
+    #: leave it unset, in which case the binding reads the body itself.
     item_id: Optional[str] = None
 
     def __post_init__(self) -> None:
@@ -143,13 +145,13 @@ class PreparedClientConfig:
     #: Max number of service-throttle (HTTP 429) retries -- the customer's
     #: ``retry_throttle_total`` (preferred) or ``retry_total``. ``None`` means
     #: "not tuned", so the driver keeps its own default (9), which matches
-    #: Python-core's default. Maps to ``ThrottlingRetryOptions.max_retry_count``.
+    #: the core-python default. Maps to ``ThrottlingRetryOptions.max_retry_count``.
     throttling_max_retry_count: Optional[int] = None
 
     #: Cumulative cap, in seconds, on time spent waiting across throttle retries
     #: -- the customer's ``retry_throttle_backoff_max`` (preferred) or
     #: ``retry_backoff_max``. ``None`` keeps the driver default (30 s), which
-    #: matches Python-core. Maps to ``ThrottlingRetryOptions.max_retry_wait_time``.
+    #: matches core-python. Maps to ``ThrottlingRetryOptions.max_retry_wait_time``.
     throttling_max_retry_wait_time_seconds: Optional[float] = None
 
     #: Cross-region hedging threshold in milliseconds (the ``threshold_ms`` of
@@ -221,13 +223,14 @@ class BackendResponse:
     #: Cosmos sub-status code (``x-ms-substatus``); ``0`` if absent.
     sub_status: int = 0
 
-    #: Full response header map (long-tail headers preserved).
+    #: Full response header map. Uncommon headers are kept, not filtered out.
     headers: Optional[CaseInsensitiveDict] = None
 
     #: Raw response body bytes. May be empty for 204 / no-content.
     body: bytes = b""
 
-    #: Per-backend diagnostics blob the helper does not introspect.
+    #: Diagnostics from the backend. The helper passes this along without
+    #: looking inside it.
     diagnostics: Any = None
 
 
@@ -268,12 +271,13 @@ class PreparedQuery:
 
     protocol_version: ClassVar[int] = 3
 
-    #: An operation supported by the stateless or cursor page-dispatch table.
+    #: An operation that the page-dispatch tables support, whether it keeps a
+    #: cursor between pages or not.
     op: str
 
     #: e.g. ``"dbs/{db}/colls/{coll}"`` -- the resource being queried. Empty for
-    #: the account-scoped paged ops (``list_databases``), which have no
-    #: container; the binding ignores the field for those.
+    #: paged operations that cover a whole account (``list_databases``) and so
+    #: have no container; the binding ignores the field for those.
     container_link: str
 
     #: Query text (``"SELECT * FROM c WHERE c.k = @k"``), or ``None`` for the
@@ -299,11 +303,13 @@ class PreparedQuery:
     #: Typed settings, preserved by the binding page adapter.
     settings: RequestSettings = field(default_factory=RequestSettings)
 
-    #: Pager-owned native cursor; None selects stateless dispatch.
+    #: The cursor the pager owns. ``None`` means this operation does not keep
+    #: a cursor between pages.
     cursor: Optional[ItemFeedCursor] = None
     #: Normalized change-feed mode, start marker and scope; never SQL.
     change_feed: Optional[Mapping[str, Any]] = None
-    #: Query scope and cross-partition permission for retained query paging.
+    #: Query scope, and whether a cross-partition query is allowed, for paging
+    #: a query through a pager that keeps its cursor across pages.
     query_scope: Optional[QueryScope] = None
 
     def __post_init__(self) -> None:
@@ -328,26 +334,29 @@ class QueryPage:
     #: HTTP status code for the page fetch.
     status_code: int
 
-    #: Token for the next page (``x-ms-continuation``). Retained queries may
-    #: have more results but no snapshot support; consult ``has_more`` too.
+    #: Token for the next page (``x-ms-continuation``). A pager that keeps its
+    #: cursor across pages may have more results without being able to give a
+    #: token, so check ``has_more`` as well.
     continuation: Optional[str] = None
 
     #: Cosmos sub-status code (``x-ms-substatus``); ``0`` if absent.
     sub_status: int = 0
 
-    #: Full response header map for this page (long-tail headers preserved).
+    #: Full response header map for this page. Uncommon headers are kept.
     headers: Optional[CaseInsensitiveDict] = None
 
-    #: Raw response body bytes. The existing response parser turns this into
-    #: the resource-specific result envelope and maps non-success responses.
+    #: Raw response body bytes. The response parser turns this into the result
+    #: type for the resource, and turns failures into errors.
     body: bytes = b""
 
-    #: Per-backend diagnostics blob the helper does not introspect.
+    #: Diagnostics from the backend. The helper passes this along without
+    #: looking inside it.
     diagnostics: Any = None
-    #: Retained execution may continue even when the driver cannot mint a token.
+    #: A pager that keeps its cursor across pages may have more results even
+    #: when the driver cannot produce a token, so this can still be true.
     has_more: Optional[bool] = None
     continuation_supported: bool = True
 
 
-#: The implemented wire reply shapes.
+#: The reply shapes that are implemented.
 BackendReply = Union[BackendResponse, QueryPage]

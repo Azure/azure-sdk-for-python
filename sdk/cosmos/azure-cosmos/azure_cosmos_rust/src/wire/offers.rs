@@ -146,7 +146,7 @@ pub(crate) fn run_replace_offer_operation_async<'py>(
 /// them itself -- adds the query `Content-Type` and `x-ms-documentdb-isquery`
 /// markers the service needs to treat the body as a query. The container-recreate
 /// guard header (`x-ms-cosmos-intended-collection-rid`) the wrapper attached rides
-/// through the custom-header passthrough untouched. `entry(...).or_insert_with` is
+/// through `with_custom_headers` unchanged. `entry(...).or_insert_with` is
 /// used so a caller-supplied value for either marker is never overwritten.
 async fn run_read_offer_future(
     driver: Arc<CosmosDriver>,
@@ -190,7 +190,7 @@ async fn run_read_offer_future(
 /// `Content-Type` to force: a replace carries a resource body, and the driver's
 /// transport defaults an absent `Content-Type` to `application/json`. The
 /// container-recreate guard header the wrapper attached rides through the
-/// custom-header passthrough untouched. This is a single-document write, so it uses
+/// `with_custom_headers` unchanged. This is a single-document write, so it uses
 /// `execute_singleton_operation` (returns one `CosmosResponse`), and the callers
 /// shape it with `tuple_from_result` -- not the offer-feed envelope the read uses.
 async fn run_replace_offer_future(

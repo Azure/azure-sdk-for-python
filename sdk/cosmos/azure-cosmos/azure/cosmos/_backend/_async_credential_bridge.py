@@ -302,14 +302,15 @@ class AsyncTokenCredentialBridge:
         self._credential = async_credential
         self._token_timeout = token_timeout
         self._join_timeout = _join_timeout_from_env() if join_timeout is None else join_timeout
-        # Pick the coroutine token method once. Prefer get_token (original
-        # TokenCredential, returns AccessToken); fall back to get_token_info (newer
-        # SupportsTokenInfo, returns AccessTokenInfo with extra context) for a
-        # credential that only offers that one. Either way we read just .token /
-        # .expires_on. If neither is
-        # a coroutine (the factory only wraps async credentials, so this is not
-        # expected) default to get_token so any failure shows up clearly at call
-        # time.
+        # Pick the coroutine token method once. Prefer get_token (the original
+        # TokenCredential, which returns AccessToken); fall back to
+        # get_token_info (the newer SupportsTokenInfo, which returns
+        # AccessTokenInfo with extra context) for a credential that offers only
+        # that one. Either way we read just .token and .expires_on.
+        #
+        # If neither is a coroutine, default to get_token so the failure shows
+        # up clearly at call time. The factory only wraps async credentials, so
+        # this is not expected.
         if _is_coroutine_method(async_credential, "get_token"):
             self._token_method_name = "get_token"
         elif _is_coroutine_method(async_credential, "get_token_info"):
@@ -488,7 +489,7 @@ class AsyncTokenCredentialBridge:
         """
         # Only the last holder of a shared (acquired) bridge tears it down; a
         # directly-built bridge (_registry_key is None) always tears down. Held
-        # under the registry lock so acquire and close serialize.
+        # under the registry lock so acquire and close cannot run at once.
         if self._registry_key is not None:
             with _REGISTRY_LOCK:
                 if self._refcount > 0:

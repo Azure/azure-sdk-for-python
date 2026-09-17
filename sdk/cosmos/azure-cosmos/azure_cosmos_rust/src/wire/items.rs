@@ -29,7 +29,7 @@ use crate::runtime::require_runtime_context;
 /// Steps: increment the binding-invocation counter, look up the rust driver by handle,
 /// parse the container link and any explicit key, then -- with the GIL released --
 /// block the calling thread on the shared Tokio runtime until the driver resolves
-/// the container, extracts an omitted document key, builds and runs the operation,
+/// the container, extracts an omitted item key, builds and runs the operation,
 /// and returns. Turn the driver's
 /// `CosmosResponse` (or a `CosmosError` that still carries a wire response) into
 /// the `BackendResponse` tuple the Python parser reads. Only three things vary per

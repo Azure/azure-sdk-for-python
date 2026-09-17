@@ -179,7 +179,7 @@ impl TokenCredential for PyTokenCredential {
     // token without claims and the challenge cannot be satisfied. This is a real
     // gap for AAD tenants that enforce CAE, but it lives in the rust driver +
     // azure_core, not in this binding -- forwarding `_options` here changes nothing.
-    // Revisit once the rust driver plumbs challenge claims through `get_token`.
+    // Revisit once the rust driver passes challenge claims through `get_token`.
     async fn get_token(
         &self,
         scopes: &[&str],

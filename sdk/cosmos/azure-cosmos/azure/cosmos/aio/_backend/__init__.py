@@ -6,7 +6,7 @@
 """Async backends that send Cosmos requests and hand back the raw reply.
 
 A backend is the layer that actually talks to the service. There are two
-here: one that calls the Rust driver, and one that uses the older Python
+here: one that calls the Rust driver, and one that uses the legacy Python
 code. A factory picks between them once, when the client is built, and
 nothing above this package has to know which one it got.
 
@@ -18,7 +18,7 @@ helper package does both.
 Operations that have finished moving to Rust go straight to the driver.
 Operations still being moved go through a wrapper that first works out
 which path to use. There are three possible answers: the Rust path can
-handle the request, so it does; the Rust path cannot, but the older Python
+handle the request, so it does; the Rust path cannot, but the legacy Python
 path is allowed to step in for this kind of request, so it does; or neither
 can, and the call fails right away with a message naming the option to
 remove. That choice is made before anything is sent.
@@ -36,7 +36,7 @@ Two kinds of cleanup are tracked apart. Closing one client releases that
 client's own registration, while a Rust driver shared with other clients
 stays alive until the last of them is done with it.
 
-Having two backends is a stage, not the destination. The older Python
+Having two backends is a stage, not the destination. The legacy Python
 backend exists only until every operation works on Rust. When that lands,
 it is deleted, and so is the wrapper that chooses between paths, because
 there will be nothing left to choose between. What remains is the shape

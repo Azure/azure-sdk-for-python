@@ -48,7 +48,7 @@ breaks without it:
    request and calls the driver.
 
 What would have happened without all of this: a customer who built a rust-backed
-client would still have had ``db.read()`` quietly run on the older python
+client would still have had ``db.read()`` quietly run on the legacy Python
 transport. Same result, but different retry behavior and different diagnostics
 from every other call on the same client -- which is the kind of difference that
 only shows up during an incident.

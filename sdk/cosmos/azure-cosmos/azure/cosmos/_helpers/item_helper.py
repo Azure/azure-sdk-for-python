@@ -19,7 +19,7 @@ A call moves through four steps, in this order:
 
 Which path a client uses was settled earlier, up in the container class.
 By the time this helper exists the choice is made, so nothing here inspects
-it, and there is no route back to the older Python code from this file.
+it, and there is no route back to the legacy Python code from this file.
 
 The async version in azure/cosmos/aio/_helpers/item_helper.py makes the
 same decisions in the same order, and imports steps 1 to 3 from here rather
@@ -113,7 +113,7 @@ def validate_rust_item_options(args: Dict[str, Any], options: Dict[str, Any]) ->
     """Reject options this path cannot honor, before anything is sent.
 
     Failing here is the point. The alternatives would be to send the request
-    with the option silently dropped, or to divert to the older Python code,
+    with the option silently dropped, or to divert to the legacy Python code,
     and both leave the caller believing something happened that did not. The
     error names the option so it can be removed.
     """
@@ -199,8 +199,8 @@ class ItemHelper:
 
     Holds three things and nothing else: a backend to send through, the
     client-wide defaults, and somewhere to record the headers from the most
-    recent reply. It does not hold the older Python connection, which is why
-    there is no way to reach the older path from here.
+    recent reply. It does not hold the legacy Python connection, which is why
+    there is no way to reach the legacy path from here.
     """
 
     def __init__(

@@ -26,8 +26,8 @@ VALID_BACKEND_NAMES = (BACKEND_NAME_CORE_PYTHON, BACKEND_NAME_RUST)
 #: Backend used when the caller passed neither ``_backend=`` nor the env var.
 DEFAULT_BACKEND_NAME = BACKEND_NAME_CORE_PYTHON
 
-#: Env var read by the factory. Precedence:
-#: constructor kwarg > env var > ``DEFAULT_BACKEND_NAME``.
+#: Env var read by the factory. A ``_backend=`` argument wins; otherwise this
+#: env var decides; otherwise ``DEFAULT_BACKEND_NAME`` is used.
 BACKEND_ENV_VAR = "COSMOS_BACKEND"
 
 
@@ -40,10 +40,11 @@ def is_rust_backend(backend: Any) -> bool:
 #: When truthy, building a second ``CosmosClient`` to an account whose
 #: client-construction config differs from the first live client's raises
 #: ``StrictDriverIsolationError`` instead of silently building a second isolated
-#: driver. Off by default (silent isolation). Precedence: factory toggle > env var >
-#: off. On/off values are in ``STRICT_ISOLATION_TRUE_VALUES`` /
-#: ``STRICT_ISOLATION_FALSE_VALUES``; an unrecognized value raises ``ValueError``
-#: rather than silently disabling the toggle.
+#: driver. Off by default (silent isolation). The factory toggle wins; otherwise
+#: this env var decides; otherwise it is off. On/off values are in
+#: ``STRICT_ISOLATION_TRUE_VALUES`` / ``STRICT_ISOLATION_FALSE_VALUES``; an
+#: unrecognized value raises ``ValueError`` rather than silently disabling the
+#: toggle.
 RUST_STRICT_ISOLATION_ENV_VAR = "COSMOS_RUST_STRICT_ISOLATION"
 
 #: Case-insensitive env-var values (after trimming whitespace) that turn strict

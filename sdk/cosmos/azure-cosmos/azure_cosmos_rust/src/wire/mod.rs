@@ -19,10 +19,24 @@
 //! header mapping, error mapping, and response conversion differently.
 //!
 //! Terminology (consistent with `factory.py`, `rust.py`, `credential.rs`,
-//! `documents/`, `runtime.rs`): binding = this compiled `_rust` extension; rust
-//! driver = the `CosmosDriver` driver; shared Tokio runtime = the one process-wide
-//! Tokio thread pool that runs the driver's work; driver handle = the string
-//! naming which rust driver a client uses.
+//! `documents/`, `runtime.rs`, and the Python `_backend` / `_helpers`
+//! package docs):
+//!
+//!   * binding = this compiled `_rust` extension.
+//!   * rust driver = the `CosmosDriver` driver. It owns connection pooling,
+//!     request signing, and choosing which region to talk to.
+//!   * shared Tokio runtime = the one process-wide Tokio thread pool that
+//!     runs the driver's work.
+//!   * driver handle = the string naming which rust driver a client uses.
+//!   * legacy = the Python implementation that predates the rust driver. It
+//!     is being removed.
+//!   * item = one stored record. The service calls these documents on the
+//!     wire, so the JSON keys stay `Documents`, but prose says item.
+//!   * envelope = the JSON wrapper the service puts a feed in, such as
+//!     `{"Documents":[...]}` or `{"Offers":[...]}`. The name of the wrapper
+//!     for a given feed is carried as `envelope_name`.
+//!   * point operation = an operation on a single item, found by its id and
+//!     partition key. As opposed to a query or a feed, which return many.
 
 use std::sync::Arc;
 
@@ -33,7 +47,7 @@ use azure_data_cosmos_driver::driver::CosmosDriver;
 
 use crate::runtime::drivers;
 
-// ── Extracted sub-modules ────────────────────────────────────────────────────
+// Extracted sub-modules --------------------------------------------------
 mod container_metadata;
 pub(crate) mod deadline;
 mod diagnostics;
@@ -42,14 +56,14 @@ mod errors;
 mod request;
 mod response;
 
-// ── Public-facing exception re-exports (lib.rs registers these) ──────────────
+// Public-facing exception re-exports (lib.rs registers these) ------------
 pub use errors::{DriverResponseError, DriverTransportError, UnsupportedQueryFeatureError};
 
-// ── Diagnostics counter re-exports (pub(crate) so lib.rs can register them) ──
+// Diagnostics counter re-exports (pub(crate) so lib.rs can register them) ---
 pub(crate) use container_metadata::{get_container_metadata, get_container_metadata_async};
 pub(crate) use diagnostics::{attempt_count, operation_count, retry_count};
 
-// ── Request-side re-exports ───────────────────────────────────────────────────
+// Request-side re-exports ------------------------------------------------
 // pub(crate): documents/mod.rs imports these by explicit crate::wire:: path.
 pub(crate) use request::{
     extract_account_prepared_modifiers, extract_body_bytes, extract_common_prepared_inputs,
@@ -84,7 +98,7 @@ fn lookup_driver(driver_handle: &str) -> PyResult<Arc<CosmosDriver>> {
         })
 }
 
-// ── Operation modules ─────────────────────────────────────────────────────────
+// Operation modules ------------------------------------------------------
 mod containers;
 mod databases;
 mod feed_range;
@@ -203,7 +217,7 @@ mod tests {
         assert!(passthrough.is_none());
     }
 
-    // ── AbortOnDrop cancellation safety ──────────────────────────────────────
+    // AbortOnDrop cancellation safety ------------------------------------
     //
     // Proves that dropping the guard aborts a spawned task: the join returns
     // `is_cancelled()` and the task's body never reaches the line after the

@@ -38,7 +38,7 @@ use super::query::QueryTarget;
 /// Binding inputs extracted from `PreparedRequest.headers` and `request_options` by
 /// `settings::extract_settings`. Headers such as activity-id and session token
 /// and options such as no-response, excluded regions, timeout, and availability
-/// strategy become typed fields. Other headers use the custom-headers passthrough.
+/// strategy become typed fields. Other headers go through `with_custom_headers`.
 /// Fields are `pub(crate)` so the operation runners
 /// in sibling modules can consume them directly without going through an accessor.
 pub(crate) struct RequestHeadersAndOptions {
@@ -51,7 +51,7 @@ pub(crate) struct RequestHeadersAndOptions {
     pub(crate) excluded_regions_value: Option<ExcludedRegions>,
     pub(crate) end_to_end_timeout: Option<EndToEndOperationLatencyPolicy>,
     pub(crate) item_timeout: Option<Duration>,
-    // Per-request cross-region hedging control lifted from the
+    // Per-request cross-region hedging control pulled out of the
     // ``availabilityStrategy`` option-key. ``Disabled`` turns hedging off for
     // this request (the ``availability_strategy=False`` case); ``Hedging(..)``
     // turns it on with the caller's threshold. ``None`` means the caller did
@@ -145,7 +145,7 @@ pub(crate) fn extract_required_item_id<'py>(
 }
 
 /// Build an OperationOptions from the typed-field values the binding
-/// lifted out of the headers dict. ``content_response`` is ``Some(_)`` for
+/// pulled out of the headers dict. ``content_response`` is ``Some(_)`` for
 /// the write ops (create / upsert / replace) and ``None`` for reads /
 /// deletes, which leave the driver default in place.
 pub(super) fn build_operation_options(
@@ -251,7 +251,7 @@ pub(super) fn json_value_to_pk_component(value: serde_json::Value) -> PyResult<P
         },
         serde_json::Value::String(s) => Ok(PartitionKeyValue::from(s)),
         // Empty JSON object `{}` is the wire shape for "PK path missing
-        // on this document" (Python's `_Undefined`). Map it to the
+        // on this item" (Python's `_Undefined`). Map it to the
         // driver's dedicated ``UNDEFINED`` constant.
         serde_json::Value::Object(obj) if obj.is_empty() => Ok(PartitionKeyValue::UNDEFINED),
         // Anything else is not a valid partition-key component on the wire.
@@ -367,9 +367,9 @@ fn partition_key_path_tokens(path: &str) -> PyResult<Vec<&str>> {
     Ok(tokens)
 }
 
-/// A partial view of a document body that deserializes only the `id` field.
+/// A partial view of an item body that deserializes only the `id` field.
 ///
-/// This skips the rest of the document, so a large body isn't parsed in full
+/// This skips the rest of the item, so a large body isn't parsed in full
 /// just to get one string. The `id` is kept as a `Value` so a
 /// present-but-non-string value still gives the "no string id" error rather
 /// than a deserialization failure.
@@ -378,7 +378,7 @@ struct BodyId {
     id: Option<serde_json::Value>,
 }
 
-/// Read the document `id` out of a JSON body.
+/// Read the item `id` out of a JSON body.
 ///
 /// The caller guarantees it is present; we error if it is not rather than
 /// inventing one.
@@ -395,16 +395,16 @@ pub(crate) fn extract_item_id(body: &[u8]) -> PyResult<String> {
 
 /// Resolve the item id for a create / upsert without re-parsing the whole body.
 ///
-/// Python already holds the document dict and resolved its id during request prep
+/// Python already holds the item dict and resolved its id during request prep
 /// (`ensure_item_id` for create, the body's own id for upsert), so it carries the
 /// id on `PreparedRequest.item_id`. Prefer that: reading one Python attribute is
 /// O(1), whereas re-parsing the body to find `id` has no early exit -- serde must
-/// scan the entire document to consume it. On a small item that is microseconds
+/// scan the entire item to consume it. On a small item that is microseconds
 /// against a multi-ms network call, but on a large body (e.g. a 256 KB blob) at
 /// thousands/sec it is real, repeated CPU for one field Python already had.
 ///
 /// Fall back to parsing the body only when the attribute is absent or empty -- an
-/// older Python prep that did not set it. The fallback also preserves the existing
+/// Python prep that has not been updated to set it. The fallback also preserves the existing
 /// "body has no string `id`" / "non-string id" error behavior, because Python only
 /// fills the attribute with a non-empty string id (anything else stays unset and
 /// lands here). For create/upsert the body's id is authoritative and Python derived
@@ -472,7 +472,7 @@ mod tests {
 
     #[test]
     fn item_id_read_from_body_and_ignores_other_fields() {
-        // Only `id` matters; the rest of the document is skipped, including when
+        // Only `id` matters; the rest of the item is skipped, including when
         // it precedes/follows id, so it works regardless of field order.
         assert_eq!(extract_item_id(br#"{"id":"C-42"}"#).unwrap(), "C-42");
         assert_eq!(

@@ -131,7 +131,7 @@ def build_client_config(
     * ``preferred_locations`` / ``excluded_locations`` -- empty means "no
       preference / no exclusion".
     * throttling caps -- ``None`` means "untuned"; the driver keeps its own
-      defaults (9 retries / 30 s), which match Python-core's.
+      defaults (9 retries / 30 s), which match core-python's.
     * ``availability_strategy`` -- ``None`` (absent) and ``False`` carry no
       threshold, which the binding maps to ``AvailabilityStrategy::Disabled``.
       ``True`` or a dict carries the enabled hedging threshold.
@@ -427,7 +427,7 @@ def _resolve_hedging(availability_strategy: Any) -> Optional[int]:
     consistent. Carries a threshold only when the customer *enabled* hedging:
     ``True`` uses the default threshold and a dict uses its ``threshold_ms``
     (validated ``> 0``). ``None`` (absent) and ``False`` carry nothing -- matching
-    Python-core, where the client default is "no strategy" -- so sync (kwarg) and
+    core-python, where the client default is "no strategy" -- so sync (kwarg) and
     async (an explicit ``False``-default parameter) behave identically.
     The binding maps a missing threshold (including absent config) to the
     driver's explicit Disabled strategy, not its default-enabled behavior.
