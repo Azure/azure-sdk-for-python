@@ -138,7 +138,7 @@ class ServiceBusClient(
         if uamqp_transport:
             # Deprecation of uamqp transport
             warnings.warn(
-                "uAMQP legacy support will be removed in the 7.15.0 minor release. "
+                "uAMQP legacy support will be removed in a future major release. "
                 "Please remove the use of `uamqp_transport` keyword argument from the client in order "
                 "to use the pure Python AMQP transport. "
                 "If you rely on this, please comment on [this issue]"
