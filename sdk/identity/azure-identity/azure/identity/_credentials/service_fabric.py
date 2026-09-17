@@ -49,8 +49,8 @@ class ServiceFabricCredential(MsalManagedIdentityClient):
         if ignored_options:
             warnings.warn(
                 "The following arguments are ignored for synchronous Service Fabric managed identity credential "
-                "because MSAL requires a requests.Session and does not support Azure Core pipeline "
-                "customization: {}.".format(", ".join(ignored_options)),
+                "because MSAL sends the request through a derived requests.Session instead of the Azure Core "
+                "pipeline: {}.".format(", ".join(ignored_options)),
                 UserWarning,
                 stacklevel=3,
             )
