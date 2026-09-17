@@ -33,6 +33,8 @@ All fakes, no Cosmos account.
 """
 
 from __future__ import annotations
+from common.typed_requests import legacy_partition_key_from_request
+from common.typed_requests import wire_headers, settings_options, legacy_settings
 
 import asyncio
 import inspect
@@ -58,7 +60,7 @@ from azure.cosmos._backend.operations import (
     OP_QUERY_CONTAINERS,
     OP_READ_CONTAINER,
     OP_TO_BINDING_METHOD,
-    QUERY_TO_BINDING_METHOD,
+    STATELESS_QUERY_TO_BINDING_METHOD,
 )
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._cosmos_responses import CosmosDict
@@ -69,8 +71,8 @@ from azure.cosmos._helpers._request_container import (
     is_read_container_rust_eligible,
 )
 from azure.cosmos._helpers.container_helper import ContainerHelper
-from azure.cosmos._helpers._item_context import ResponseHeaderState
-from azure.cosmos._helpers._request_headers import flatten_options_to_headers
+from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
+from common.typed_requests import flatten_options_to_headers
 from azure.cosmos._query_rust_routing import (
     build_list_containers_prepared_query,
     build_query_containers_prepared_query,
@@ -118,7 +120,7 @@ class _RustBackend(CosmosBackend):
         self.response = response or _created_container_response()
         self.prepared = None
 
-    def execute(self, prepared):
+    def execute(self, prepared, *, deadline=None):
         """Record the prepared request and return the canned reply."""
         self.prepared = prepared
         return self.response
@@ -139,7 +141,7 @@ class _AsyncRustBackend(AsyncCosmosBackend):
         self.response = response or _created_container_response()
         self.prepared = None
 
-    async def execute(self, prepared):
+    async def execute(self, prepared, *, deadline=None):
         """Record the prepared request and return the canned reply."""
         self.prepared = prepared
         return self.response
@@ -369,13 +371,13 @@ def test_container_create_preserves_throughput_headers_and_deadlines(container_c
     prepared = case.backend.prepared
     assert prepared.op == OP_CREATE_CONTAINER
     assert prepared.item_id == "db1"
-    assert prepared.headers["initialHeaders"] == {"x-my-app": "provisioner"}
-    assert prepared.headers["throughputBucket"] == 7
-    assert prepared.headers.get(Constants.OVERALL_TIMEOUT_SECONDS) == timeout
+    assert all(wire_headers(prepared).get(key.lower()) == str(value) for key, value in ({"x-my-app": "provisioner"}).items())
+    assert wire_headers(prepared)["x-ms-cosmos-throughput-bucket"] == '7'
+    assert settings_options(prepared).get("timeout_seconds") == timeout
     if autoscale:
-        assert json.loads(prepared.headers["autoUpgradePolicy"]) == {"maxThroughput": 4000}
+        assert json.loads(wire_headers(prepared)["x-ms-cosmos-offer-autopilot-settings"]) == {"maxThroughput": 4000}
     else:
-        assert prepared.headers["offerThroughput"] == 400
+        assert wire_headers(prepared)["x-ms-offer-throughput"] == '400'
     case.connection.CreateContainer.assert_not_called()
 
 
@@ -459,9 +461,12 @@ def test_container_create_preserves_conditional_headers(container_create_case, u
         headers = flatten_options_to_headers(call.kwargs["options"])
         assert "etag" not in call.kwargs
     else:
-        headers = case.backend.prepared.headers
+        headers = wire_headers(case.backend.prepared)
         case.connection.CreateContainer.assert_not_called()
-    assert {key: headers[key] for key in ("If-Match", "If-None-Match") if key in headers} == expected
+    assert {
+        key.lower(): value for key, value in headers.items()
+        if key.lower() in ("if-match", "if-none-match")
+    } == {key.lower(): value for key, value in expected.items()}
 
 
 @pytest.mark.parametrize(
@@ -632,12 +637,12 @@ def test_container_get_or_create_preserves_shapes_and_existing_settings(
             [OP_READ_CONTAINER, OP_CREATE_CONTAINER] if case.missing else [OP_READ_CONTAINER]
         )
         for op in operations:
-            assert op.headers["__overall_timeout_seconds"] == 10
-            assert op.headers["initialHeaders"]["x-company-trace"] == "setup"
+            assert settings_options(op)["timeout_seconds"] == 10
+            assert op.headers["x-company-trace"] == "setup"
         assert "offerThroughput" not in operations[0].headers
         if case.missing:
             assert json.loads(operations[1].body_bytes)["defaultTtl"] == 99
-            assert operations[1].headers["offerThroughput"] == 400
+            assert operations[1].settings.resource.offer_throughput == 400
 
 
 @pytest.mark.parametrize("kwargs", [
@@ -712,7 +717,7 @@ def test_container_get_or_create_forwards_conditions_without_ignored_warnings(
             assert "etag" not in call.kwargs
     else:
         for call in case.backend.execute.call_args_list:
-            assert CaseInsensitiveDict(call.args[0].headers)[expected[0]] == expected[1]
+            assert CaseInsensitiveDict(wire_headers(call.args[0]))[expected[0]] == expected[1]
         case.connection.ReadContainer.assert_not_called()
         case.connection.CreateContainer.assert_not_called()
 
@@ -880,13 +885,13 @@ def test_container_get_or_create_preflight_does_not_mutate_caller_options():
 def test_create_container_is_a_single_response_operation():
     """One create, one reply: it dispatches through ``execute``, not the paged path."""
     assert OP_TO_BINDING_METHOD[OP_CREATE_CONTAINER] == "create_container"
-    assert OP_CREATE_CONTAINER not in QUERY_TO_BINDING_METHOD
+    assert OP_CREATE_CONTAINER not in STATELESS_QUERY_TO_BINDING_METHOD
 
 
 def test_container_feeds_are_paged_operations():
     """Both feeds dispatch through ``execute_pages``, never the single-reply path."""
-    assert QUERY_TO_BINDING_METHOD[OP_LIST_CONTAINERS] == "list_containers"
-    assert QUERY_TO_BINDING_METHOD[OP_QUERY_CONTAINERS] == "query_containers"
+    assert STATELESS_QUERY_TO_BINDING_METHOD[OP_LIST_CONTAINERS] == "list_containers"
+    assert STATELESS_QUERY_TO_BINDING_METHOD[OP_QUERY_CONTAINERS] == "query_containers"
     assert OP_LIST_CONTAINERS not in OP_TO_BINDING_METHOD
     assert OP_QUERY_CONTAINERS not in OP_TO_BINDING_METHOD
 
@@ -913,11 +918,11 @@ def test_create_container_prepared_names_the_database_and_carries_the_definition
     assert prepared.op == OP_CREATE_CONTAINER
     assert prepared.item_id == "db1"
     assert prepared.container_link == ""
-    assert prepared.partition_key_header == "[]"
+    assert legacy_partition_key_from_request(prepared) == "[]"
     assert json.loads(prepared.body_bytes) == definition
-    assert prepared.headers["offerThroughput"] == 400
-    assert prepared.headers["initialHeaders"] == {"x-custom": "value"}
-    assert prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 3.5
+    assert wire_headers(prepared)["x-ms-offer-throughput"] == '400'
+    assert all(wire_headers(prepared).get(key.lower()) == str(value) for key, value in ({"x-custom": "value"}).items())
+    assert settings_options(prepared)["timeout_seconds"] == 3.5
 
 
 def test_create_container_prepared_drops_the_session_token():
@@ -930,8 +935,8 @@ def test_create_container_prepared_drops_the_session_token():
         {"sessionToken": "s1", "offerThroughput": 400},
     )
 
-    assert "sessionToken" not in prepared.headers
-    assert prepared.headers["offerThroughput"] == 400
+    assert "sessionToken" not in wire_headers(prepared)
+    assert wire_headers(prepared)["x-ms-offer-throughput"] == '400'
 
 
 def test_create_container_prepared_rejects_a_link_with_no_database():
@@ -953,17 +958,17 @@ def test_create_container_prepared_drops_a_null_initial_headers():
         {"initialHeaders": None, "offerThroughput": 400},
     )
 
-    assert "initialHeaders" not in prepared.headers
-    assert prepared.headers["offerThroughput"] == 400
+    assert "initialHeaders" not in wire_headers(prepared)
+    assert wire_headers(prepared)["x-ms-offer-throughput"] == '400'
 
 
 def test_list_containers_sends_no_query_body():
     """A read feed has no SQL. The page adapter refuses a feed op that is not on its
     parameterless list, so leaving ``list_containers`` off it makes every
     ``list_containers`` call fail once it reaches the binding."""
-    from azure.cosmos._backend.rust import _binding_request_from_page
+    from azure.cosmos._backend.rust import build_binding_request_from_page
 
-    request = _binding_request_from_page(
+    request = build_binding_request_from_page(
         build_list_containers_prepared_query(
             path="dbs/db1/colls",
             options={},
@@ -977,9 +982,9 @@ def test_list_containers_sends_no_query_body():
 
 def test_query_containers_sends_the_query_body():
     """The query payload must arrive as JSON in ``body_bytes``, not as a URL parameter."""
-    from azure.cosmos._backend.rust import _binding_request_from_page
+    from azure.cosmos._backend.rust import build_binding_request_from_page
 
-    request = _binding_request_from_page(
+    request = build_binding_request_from_page(
         build_query_containers_prepared_query(
             path="dbs/db1/colls",
             query_payload={"query": "SELECT * FROM c"},
@@ -1142,7 +1147,7 @@ def test_container_feed_headers_keep_the_customers_own_headers():
         req_headers={"x-custom-tag": "value"},
     )
 
-    assert prepared.headers["initialHeaders"] == {"x-custom-tag": "value"}
+    assert all(wire_headers(prepared).get(key.lower()) == str(value) for key, value in ({"x-custom-tag": "value"}).items())
 
 
 # --- feed eligibility -----------------------------------------------------
@@ -1308,7 +1313,7 @@ class _CapturingPagedBackend(CosmosBackend):
         self.body = body
         self.prepared = None
 
-    def execute_pages(self, prepared):
+    def execute_pages(self, prepared, *, deadline=None):
         """Record the prepared query and yield one canned page."""
         self.prepared = prepared
         yield QueryPage(
@@ -1318,7 +1323,7 @@ class _CapturingPagedBackend(CosmosBackend):
             body=self.body,
         )
 
-    def execute(self, prepared):
+    def execute(self, prepared, *, deadline=None):
         """Fail immediately — a paged backend must never be called through the single-reply path."""
         raise AssertionError("a feed must not dispatch through the single-reply path")
 
@@ -1331,7 +1336,7 @@ class _CapturingAsyncPagedBackend(AsyncCosmosBackend):
         self.body = body
         self.prepared = None
 
-    async def execute_pages(self, prepared):
+    async def execute_pages(self, prepared, *, deadline=None):
         """Record the prepared query and yield one canned page."""
         self.prepared = prepared
         yield QueryPage(
@@ -1341,7 +1346,7 @@ class _CapturingAsyncPagedBackend(AsyncCosmosBackend):
             body=self.body,
         )
 
-    async def execute(self, prepared):
+    async def execute(self, prepared, *, deadline=None):
         """Fail immediately — a paged backend must never be called through the single-reply path."""
         raise AssertionError("a feed must not dispatch through the single-reply path")
 
@@ -1349,7 +1354,7 @@ class _CapturingAsyncPagedBackend(AsyncCosmosBackend):
 def _new_sync_connection() -> SyncConnection:
     """Build a minimal ``SyncConnection`` with no live transport, for dispatch tests."""
     conn = SyncConnection.__new__(SyncConnection)
-    conn._response_state = ResponseHeaderState()
+    conn._response_state = ClientLastResponseHeaders()
     conn._backend = LEGACY_BACKEND
     conn._query_compatibility_mode = SyncConnection._QueryCompatibilityMode.Query
     conn.default_headers = {}
@@ -1373,7 +1378,7 @@ def _new_sync_connection() -> SyncConnection:
 def _new_async_connection() -> AsyncConnection:
     """Build a minimal ``AsyncConnection`` with no live transport, for dispatch tests."""
     conn = AsyncConnection.__new__(AsyncConnection)
-    conn._response_state = ResponseHeaderState()
+    conn._response_state = ClientLastResponseHeaders()
     conn._backend = ASYNC_LEGACY_BACKEND
     conn._query_compatibility_mode = AsyncConnection._QueryCompatibilityMode.Query
     conn.default_headers = {}
@@ -1541,7 +1546,7 @@ def test_read_container_prepared_drops_the_session_token():
         {"sessionToken": "0:1#22"},
     )
 
-    assert "sessionToken" not in prepared.headers
+    assert "sessionToken" not in wire_headers(prepared)
 
 
 def test_read_container_is_rust_eligible_for_a_plain_read():

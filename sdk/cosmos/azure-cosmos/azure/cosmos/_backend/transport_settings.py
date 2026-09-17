@@ -13,6 +13,10 @@ a customer would believe their proxy or certificate was in effect when it was
 not. :func:`reject_unsupported_transport_settings` therefore raises at client
 construction if any of them were passed.
 
+Both public constructors normalize grouped ``connection_policy`` settings and
+keyword overrides before calling this validation, so nesting proxy/TLS settings
+does not bypass the Rust rejection.
+
 Two transport settings *do* carry across, because they are plain numbers rather
 than objects: the connection and read timeouts.
 :func:`resolve_client_transport_timeouts` reads that pair from the constructor

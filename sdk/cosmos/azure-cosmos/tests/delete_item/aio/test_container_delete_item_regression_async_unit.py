@@ -14,6 +14,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 from azure.core.utils import CaseInsensitiveDict
 
+from azure.cosmos._backend.contracts import ContainerMetadata
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.operations import OP_DELETE_ITEM
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
@@ -47,10 +48,10 @@ class _CapturingAsyncBackend(AsyncCosmosBackend):
         self.executed = False
         self.prepared = None
 
-    async def resolve_container_metadata(self, link):
-        return BackendResponse(200, 0, {}, b'{"_rid":"rid-cached"}', None)
+    async def get_container_metadata(self, link):
+        return ContainerMetadata("rid-cached")
 
-    async def execute(self, prepared):
+    async def execute(self, prepared, *, deadline=None):
         self.executed = True
         self.prepared = prepared
         return BackendResponse(

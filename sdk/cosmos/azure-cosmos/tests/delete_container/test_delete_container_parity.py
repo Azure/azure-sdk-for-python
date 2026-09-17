@@ -15,10 +15,7 @@ from azure.core import MatchConditions
 from azure.cosmos import CosmosClient, exceptions
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos.partition_key import PartitionKey
-from common._parity_helpers import (
-    run_target_operation, run_target_operation_async,
-    skip_unless_emulator, skip_unless_rust_binding,
-)
+from common._parity_helpers import run_target_operation, run_target_operation_async, skip_unless_emulator, skip_unless_rust_binding
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 

@@ -21,14 +21,15 @@ crate-type = ["cdylib"]
 # PyO3 makes Rust functions Python-callable.
 #
 # `extension-module` : build a Python extension (no link to libpython).
-# `abi3-py39`        : target the stable ABI from Python 3.9 onward, so
-#                      one wheel per platform works for every Python 3.9+.
-pyo3 = { version = "0.22", features = ["extension-module", "abi3-py39"] }
+# `abi3-py310`      : use the stable ABI from Python 3.10 onward.
+# `generate-import-lib`: support Windows ARM64 builds on an x64 machine.
+pyo3 = { version = "0.22", features = [
+    "extension-module",
+    "abi3-py310",
+    "generate-import-lib",
+] }
 
-# The driver crate, pulled in as a path dependency from a sibling clone of
-# the azure-sdk-for-rust repo. Both repos are expected to live side-by-side
-# under the same parent directory (e.g. ~/source/repos/). If you keep them
-# elsewhere, edit this path or change it to a `git = ...` dependency.
+# The workspace pins the driver source so CI needs no neighboring checkout.
 #
 # The `__internal_native_query_plan` feature turns on the driver's local
 # query-plan builder. A query plan is the recipe for how to run a query
@@ -40,7 +41,7 @@ pyo3 = { version = "0.22", features = ["extension-module", "abi3-py39"] }
 # read_feed_ranges does not use it (listing key-space slices needs no query
 # plan). The `__internal_` prefix marks it as an unstable, not-yet-public
 # driver feature.
-azure_data_cosmos_driver = { path = "../../../../../azure-sdk-for-rust/sdk/cosmos/azure_data_cosmos_driver", features = ["__internal_native_query_plan", "fault_injection"] }
+azure_data_cosmos_driver = { workspace = true, features = ["__internal_native_query_plan", "fault_injection"] }
 
 # Tokio runtime. Lives here, not in the driver, because the binding is
 # what bridges Python's sync call into Rust's async world.
@@ -75,3 +76,7 @@ serde_json = { workspace = true }
 # Surfaced at the binding boundary when forwarding driver errors. Inherit the
 # workspace's driver-aligned crates.io version so the Rust types unify.
 azure_core = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util"] }
+azure_data_cosmos_driver = { workspace = true, features = ["__internal_in_memory_emulator"] }

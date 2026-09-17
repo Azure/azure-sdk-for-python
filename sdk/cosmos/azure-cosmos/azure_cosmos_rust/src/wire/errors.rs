@@ -35,6 +35,17 @@ mod transport_error {
 pub use transport_error::DriverTransportError;
 
 #[allow(unexpected_cfgs)]
+mod response_error {
+    pyo3::create_exception!(
+        azure_cosmos_rust,
+        DriverResponseError,
+        pyo3::exceptions::PyRuntimeError,
+        "A metadata operation failed; args[0] contains its error response tuple."
+    );
+}
+pub use response_error::DriverResponseError;
+
+#[allow(unexpected_cfgs)]
 mod unsupported_query_error {
     pyo3::create_exception!(
         azure_cosmos_rust,

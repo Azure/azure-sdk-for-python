@@ -18,6 +18,7 @@ These tests mock the compiled binding so they exercise the dispatch path
 without a real Cosmos account. Sibling of
 ``tests/common/test_backend_wiring_unit.py``.
 """
+from common.typed_requests import key_from_legacy_header
 import asyncio
 from unittest.mock import AsyncMock, MagicMock
 
@@ -35,7 +36,7 @@ def _upsert_prepared() -> PreparedRequest:
         op=OP_UPSERT_ITEM,
         container_link="dbs/d/colls/c",
         body_bytes=b'{"id":"order-42","pk":"customerA"}',
-        partition_key_header='["customerA"]',
+        partition_key=key_from_legacy_header('["customerA"]'),
         headers={},
     )
 
@@ -45,7 +46,7 @@ def test_sync_rust_backend_dispatches_upsert_to_binding(monkeypatch):
     ``create_item``) for an upsert op and wraps the 4-tuple it returns.
     A 200 here models the replace half of insert-or-replace."""
     fake_module = MagicMock()
-    fake_module.init_client.return_value = "handle-1"
+    fake_module.acquire_driver_handle.return_value = "handle-1"
     fake_module.upsert_item.return_value = (200, 0, {"etag": "v2"}, b'{"id":"order-42"}')
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
 
@@ -65,7 +66,7 @@ def test_async_rust_backend_dispatches_upsert_to_binding(monkeypatch):
     ``upsert_item_async`` function, never the sync ``upsert_item`` and never
     ``create_item_async``. A 201 here models the insert half."""
     fake_module = MagicMock()
-    fake_module.init_client.return_value = "handle-1"
+    fake_module.acquire_driver_handle.return_value = "handle-1"
     fake_module.upsert_item_async = AsyncMock(
         return_value=(201, 0, {"etag": "v1"}, b'{"id":"order-42"}')
     )

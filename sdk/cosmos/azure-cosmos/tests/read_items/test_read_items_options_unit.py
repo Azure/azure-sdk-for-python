@@ -15,7 +15,7 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos import documents, http_constants
 from azure.cosmos._base import GetHeaders
 from azure.cosmos._constants import _Constants as Constants
-from azure.cosmos._helpers._options import COMMON_OPTIONS
+from azure.cosmos._helpers._request_settings import COMMON_OPTIONS
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos._read_items_helper import ReadItemsHelperSync

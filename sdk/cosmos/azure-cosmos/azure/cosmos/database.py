@@ -22,7 +22,9 @@
 """Interact with databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Union, Optional, Mapping, Callable, overload, Literal
+from azure.cosmos._backend.capabilities import OperationRouting
+
+from typing import TYPE_CHECKING, Any, Union, Optional, Mapping, Callable, overload, Literal
 
 import warnings
 from azure.core.tracing.decorator import distributed_trace
@@ -37,11 +39,10 @@ from .exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
 from .documents import IndexingMode
 from ._cosmos_responses import CosmosDict
-from ._helpers._item_dispatch import pick_backend
+from ._helpers._item_dispatch import get_selected_backend
 from ._helpers._page_response_hook import wrap_page_response_hook
 from ._helpers.container_helper import ContainerHelper
 from ._helpers._request_container import (
-    RUST_GET_OR_CREATE_CONTAINER_UNSUPPORTED_MESSAGE,
     parse_container_create_args,
     prepare_container_get_or_create_read,
     validate_container_create_kwargs,
@@ -52,6 +53,10 @@ from ._helpers.database_throughput_helper import (
     replace_database_throughput,
 )
 from ._global_secondary_index import GlobalSecondaryIndexDefinition, _normalize_gsi_container_properties
+
+if TYPE_CHECKING:
+    from ._backend.cosmos_backend import CosmosBackend
+    from ._helpers._item_context import ItemClientContext
 
 __all__ = ("DatabaseProxy",)
 
@@ -101,7 +106,7 @@ class DatabaseProxy(object):
         id: str,
         properties: Optional[dict[str, Any]] = None,
         *,
-        _item_context: Any = None,
+        _item_context: "Optional[ItemClientContext[CosmosBackend]]" = None,
     ) -> None:
         """
         :param ClientSession client_connection: Client from which this database was retrieved.
@@ -179,7 +184,7 @@ class DatabaseProxy(object):
         kwargs.pop("etag", None)
         self._properties = DatabaseHelper(
             self.client_connection,
-            pick_backend(self.client_connection),
+            get_selected_backend(self.client_connection),
         ).read_database(
             self.id,
             request_options,
@@ -475,7 +480,7 @@ class DatabaseProxy(object):
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
         result = ContainerHelper(
             self.client_connection,
-            pick_backend(self.client_connection),
+            get_selected_backend(self.client_connection),
         ).create_container(
             self.database_link,
             definition,
@@ -733,14 +738,16 @@ class DatabaseProxy(object):
         container_proxy = self.get_container_client(id)
         try:
             properties = ContainerHelper(
-                self.client_connection, pick_backend(self.client_connection)
+                self.client_connection, get_selected_backend(self.client_connection)
             ).read_container(
                 container_proxy.container_link,
                 read_options,
                 kwargs=read_kwargs,
-                rust_eligible=rust_eligible,
-                allow_legacy_fallback=False,
-                unsupported_message=RUST_GET_OR_CREATE_CONTAINER_UNSUPPORTED_MESSAGE,
+                routing=OperationRouting(
+                    "read_container",
+                    rust_eligible,
+                    capability="create_container_if_not_exists",
+                ),
             )
         except CosmosResourceNotFoundError:
             return self.create_container(
@@ -808,7 +815,7 @@ class DatabaseProxy(object):
         request_options = build_options(kwargs)
         kwargs.pop("etag", None)
         collection_link = self._get_container_link(container)
-        ContainerHelper(self.client_connection, pick_backend(self.client_connection)).delete_container(
+        ContainerHelper(self.client_connection, get_selected_backend(self.client_connection)).delete_container(
             collection_link, request_options, response_hook=response_hook, kwargs=kwargs,
         )
 
@@ -1219,7 +1226,7 @@ class DatabaseProxy(object):
             parameters["materializedViewDefinition"] = gsi_dict
 
         container_properties = ContainerHelper(
-            self.client_connection, pick_backend(self.client_connection),
+            self.client_connection, get_selected_backend(self.client_connection),
         ).replace_container(
             container_link, parameters, request_options, response_hook=response_hook, kwargs=kwargs,
         )

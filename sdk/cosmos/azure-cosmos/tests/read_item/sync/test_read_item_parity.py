@@ -45,32 +45,25 @@ What this file pins for ``read_item``:
     surfaced as an empty ``CosmosDict`` with the etag readable on
     ``get_response_headers()``.
   * ``etag`` + ``IfNotModified``, etag matches -> ``200`` + body.
-  * ``etag`` + ``IfNotModified``, etag stale -> ``412``
-    ``CosmosAccessConditionFailedError``.
-* **typed exceptions and sync-only deprecations.**
+  * ``etag`` + ``IfNotModified``, etag stale -> preserve the service's
+    response (historically 200 on item GET, not a locally invented 412).
+* **typed exceptions and retired arguments.**
   * ``etag=`` without ``match_condition=`` raises ``ValueError``
     *before* any network call (parity with delete; the SDK refuses to
     guess).
-  * ``populate_query_metrics=True`` is sync-only-deprecated and DROPPED
-    before the helper layer -- the wire header must not appear on the
-    outgoing GET.
+  * ``populate_query_metrics`` is rejected whenever supplied, including
+    None/False, on both clients and both backends.
 """
 from __future__ import annotations
 
 import uuid
-import warnings
 from typing import Any, Dict
 
 import pytest
 
 from azure.core import MatchConditions
 
-from common._parity_helpers import (
-    BackendComparison,
-    run_on_both_backends,
-    skip_unless_emulator,
-    skip_unless_rust_binding,
-)
+from common._parity_helpers import BackendComparison, run_on_both_backends, skip_unless_emulator, skip_unless_rust_binding
 
 
 pytestmark = [
@@ -595,90 +588,15 @@ def test_etag_without_match_condition_raises_value_error_up_front(container_for)
 
 
 # ---------------------------------------------------------------------------
-# (sync-only) deprecated kwargs that are dropped before the wire
+# Retired kwargs are rejected before dispatch.
 # ---------------------------------------------------------------------------
 
-def _assert_deprecation_warning_fired(recorded, kwarg_name: str) -> None:
-    """Confirm customers receive the documented deprecation warning."""
-    matches = [w for w in recorded
-               if issubclass(w.category, DeprecationWarning)
-               and kwarg_name in str(w.message)]
-    assert matches, (
-        "expected a DeprecationWarning mentioning {!r}, got: {}".format(
-            kwarg_name, [str(w.message) for w in recorded]
-        )
-    )
+@pytest.mark.parametrize("value", [None, False, True])
+def test_populate_query_metrics_is_rejected(container_for, value):
+    def read(client):
+        container = client.get_database_client("parity_db").get_container_client(container_for.id)
+        return container.read_item("unused", "a", populate_query_metrics=value)
 
-
-def test_populate_query_metrics_deprecated_and_not_on_wire(container_for):
-    """``populate_query_metrics=True`` is deprecated AND not forwarded.
-
-    Two pinned guarantees, same shape as the delete_item deprecated-kwarg test:
-
-    1. The public sync ``read_item`` emits a ``DeprecationWarning``
-       mentioning ``populate_query_metrics``.
-    2. The ``x-ms-documentdb-populatequerymetrics`` request header is
-       NOT present on the outgoing GET -- the value is dropped before
-       the helper layer sees it. We assert this by wrapping the legacy
-       ``CosmosClientConnection.__Get`` method and inspecting the
-       captured header dict.
-
-    Runs against core-python only because the kwarg is a sync-only-
-    and-deprecated Python-side wrapper concern; the rust backend never
-    receives it through the helper layer either way (the public method
-    drops it).
-    """
-    from azure.cosmos import CosmosClient
-    from azure.cosmos import _cosmos_client_connection as _ccc_module
-    from azure.cosmos.http_constants import HttpHeaders
-    import os
-
-    captured_get_headers: Dict[str, Any] = {}
-
-    # The name-mangled __Get receives ``req_headers`` already fully
-    # built. Any populate-query-metrics that reached this far would
-    # show up there.
-    original_get = _ccc_module.CosmosClientConnection._CosmosClientConnection__Get  # type: ignore[attr-defined]
-
-    def _capturing_get(self, path, request_params, req_headers, **kwargs):  # type: ignore[no-redef]
-        if "/docs/" in path:
-            captured_get_headers.clear()
-            captured_get_headers.update(dict(req_headers))
-        return original_get(self, path, request_params, req_headers, **kwargs)
-
-    _ccc_module.CosmosClientConnection._CosmosClientConnection__Get = _capturing_get  # type: ignore[attr-defined]
-    try:
-        client = CosmosClient(
-            os.environ["ACCOUNT_HOST"],
-            os.environ["ACCOUNT_KEY"],
-            _backend="core-python",  # type: ignore[arg-type]
-        )
-        cont = client.get_database_client("parity_db").get_container_client(container_for.id)
-        item_id = uuid.uuid4().hex
-        cont.create_item({"id": item_id, "pk": "a"})
-        with warnings.catch_warnings(record=True) as recorded:
-            warnings.simplefilter("always")
-            cont.read_item(
-                item_id,
-                partition_key="a",
-                populate_query_metrics=True,
-            )
-    finally:
-        _ccc_module.CosmosClientConnection._CosmosClientConnection__Get = original_get  # type: ignore[attr-defined]
-
-    _assert_deprecation_warning_fired(recorded, "populate_query_metrics")
-    pqm_header = HttpHeaders.PopulateQueryMetrics  # 'x-ms-documentdb-populatequerymetrics'
-    assert pqm_header not in captured_get_headers, (
-        "populate_query_metrics must be DROPPED before the helper layer "
-        "on read_item -- the wire header {!r} must NOT be on the outgoing "
-        "GET. Captured headers: {!r}".format(
-            pqm_header, sorted(captured_get_headers)
-        )
-    )
-    print(
-        "populate_query_metrics: DeprecationWarning fired AND "
-        "{!r} absent from outgoing GET headers (captured {} headers)".format(
-            pqm_header, len(captured_get_headers)
-        )
-    )
-
+    comparison = run_on_both_backends(read, description="read_item rejects retired query metrics")
+    for outcome in (comparison.core_python, comparison.rust):
+        assert isinstance(outcome.raised, TypeError)

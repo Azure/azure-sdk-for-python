@@ -39,11 +39,7 @@ import pytest
 from azure.cosmos import CosmosClient, PartitionKey
 from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._routing.routing_range import Range
-from common._parity_helpers import (
-    run_on_both_backends,
-    skip_unless_emulator,
-    skip_unless_rust_binding,
-)
+from common._parity_helpers import run_on_both_backends, skip_unless_emulator, skip_unless_rust_binding
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 

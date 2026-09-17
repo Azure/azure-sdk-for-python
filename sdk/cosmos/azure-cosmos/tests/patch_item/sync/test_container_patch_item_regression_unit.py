@@ -11,10 +11,10 @@ the patch sends on. They check two things:
 1. When no Rust backend is set, the patch goes to the existing client with
    the right document, the operations unchanged, the filter, the partition
    key, and the options.
-2. Routing: a plain patch goes to the Rust backend, but a patch with a
-   filter or a version guard goes to the existing client instead (the only
-   path that can apply them).
+2. Routing: plain and If-Match patches use Rust. Unsupported filters raise
+   without legacy replay.
 """
+from common.typed_requests import wire_headers, settings_options, legacy_settings
 import json
 import unittest
 from unittest.mock import MagicMock, patch
@@ -23,6 +23,7 @@ from azure.core import MatchConditions
 from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
+from azure.cosmos._backend.contracts import ContainerMetadata
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.operations import OP_PATCH_ITEM
 from azure.cosmos._constants import _Constants as Constants
@@ -200,10 +201,10 @@ class _CapturingBackend(CosmosBackend):
         self.executed = False
         self.prepared = None
 
-    def resolve_container_metadata(self, link):
-        return BackendResponse(200, 0, {}, b'{"_rid":"rid-cached"}', None)
+    def get_container_metadata(self, link):
+        return ContainerMetadata("rid-cached")
 
-    def execute(self, prepared):
+    def execute(self, prepared, *, deadline=None):
         self.executed = True
         self.prepared = prepared
         return BackendResponse(
@@ -223,7 +224,7 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
         the operations as its body; the existing client is not called.
 
         The operations are sent with the driver's wording, so ``incr``
-        becomes ``increment``.
+        retains the canonical service spelling.
         """
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()
@@ -237,13 +238,13 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
         prepared = backend.prepared
         self.assertEqual(prepared.op, OP_PATCH_ITEM)
         self.assertEqual(prepared.item_id, "patch_item")
-        # The body holds the operations, with ``incr`` renamed to ``increment``.
+        # The body holds canonical service instructions.
         body = json.loads(prepared.body_bytes)
         self.assertEqual(
             body,
             {"operations": [
                 {"op": "add", "path": "/color", "value": "yellow"},
-                {"op": "increment", "path": "/number", "value": 7},
+                {"op": "incr", "path": "/number", "value": 7},
             ]},
         )
 
@@ -263,20 +264,19 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
         self.assertFalse(backend.executed)
         cc.PatchItem.assert_not_called()
 
-    def test_version_guarded_patch_raises_without_legacy(self):
-        """Unsupported guards fail without crossing engines."""
+    def test_version_guarded_patch_uses_rust_without_legacy(self):
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()
         cc._backend = backend
         proxy._item_context = ItemClientContext(backend)
 
-        with self.assertRaises(NotImplementedError):
-            proxy.patch_item(
-                "patch_item", "a", _OPERATIONS,
-                etag="abc", match_condition=MatchConditions.IfNotModified,
-            )
+        proxy.patch_item(
+            "patch_item", "a", _OPERATIONS,
+            etag="abc", match_condition=MatchConditions.IfNotModified,
+        )
 
-        self.assertFalse(backend.executed)
+        self.assertTrue(backend.executed)
+        self.assertEqual(wire_headers(backend.prepared)["if-match"], "abc")
         cc.PatchItem.assert_not_called()
 
 

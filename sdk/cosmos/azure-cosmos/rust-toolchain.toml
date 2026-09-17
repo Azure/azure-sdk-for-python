@@ -1,0 +1,4 @@
+# Microsoft toolchains require msrustup rather than public rustup.
+[toolchain]
+channel = "ms-prod-1.97"
+profile = "minimal"

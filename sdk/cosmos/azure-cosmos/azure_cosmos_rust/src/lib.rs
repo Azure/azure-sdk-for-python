@@ -10,7 +10,7 @@
 //!
 //! Python-callable entry points include:
 //!
-//!   * `init_client(endpoint, master_key=None, config=None, credential=None) -> handle`
+//!   * `acquire_driver_handle(endpoint, master_key=None, config=None, credential=None) -> driver_handle`
 //!         Lazily stands up a per-process Tokio runtime + driver
 //!         runtime, builds a `CosmosDriver` for the given endpoint
 //!         (applying the optional `PreparedClientConfig`'s settings,
@@ -20,7 +20,7 @@
 //!         token credential wrapped as `PyTokenCredential`); the Python
 //!         factory supplies exactly one.
 //!
-//!   * `close_client(handle) -> None`
+//!   * `release_driver_handle(driver_handle) -> None`
 //!         Drops one client's reference to the per-endpoint driver in the
 //!         process-local cache. The driver is evicted only when the last client
 //!         sharing that account closes (the cache is reference-counted), so
@@ -28,7 +28,7 @@
 //!         others. An unknown or already-evicted handle is a no-op, so close is
 //!         idempotent.
 //!
-//!   * `create_item(handle, prepared) -> (status, sub_status,
+//!   * `create_item(driver_handle, prepared) -> (status, sub_status,
 //!                                         headers, body, diagnostics)`
 //!         Resolves the container, builds a typed
 //!         `CosmosOperation::create_item`, runs it on the Tokio
@@ -38,7 +38,7 @@
 //!         already-resolved document id in `PreparedRequest.item_id`; the
 //!         binding reads `body_bytes` only as a compatibility fallback.
 //!
-//!   * `upsert_item(handle, prepared) -> (status, sub_status,
+//!   * `upsert_item(driver_handle, prepared) -> (status, sub_status,
 //!                                         headers, body, diagnostics)`
 //!         Same input/output shape as `create_item`: Python normally carries
 //!         the document id in `PreparedRequest.item_id`, with `body_bytes`
@@ -53,7 +53,7 @@
 //!         insert-only or version-guarded replace) flow through
 //!         `custom_headers`.
 //!
-//!   * `replace_item(handle, prepared) -> (status, sub_status,
+//!   * `replace_item(driver_handle, prepared) -> (status, sub_status,
 //!                                          headers, body, diagnostics)`
 //!         Carries a body like `create_item` / `upsert_item`, but the id
 //!         of the document to overwrite comes from `PreparedRequest.item_id`
@@ -63,7 +63,7 @@
 //!         `no_response=True`. `If-Match` / `If-None-Match` flow through
 //!         `custom_headers`.
 //!
-//!   * `delete_item(handle, prepared) -> (status, sub_status,
+//!   * `delete_item(driver_handle, prepared) -> (status, sub_status,
 //!                                         headers, body, diagnostics)`
 //!         Same shape as `create_item` but builds a
 //!         `CosmosOperation::delete_item` with no body. The document
@@ -71,7 +71,7 @@
 //!         body to extract it from. On success the driver returns
 //!         HTTP 204 with an empty body.
 //!
-//!   * `read_item(handle, prepared) -> (status, sub_status,
+//!   * `read_item(driver_handle, prepared) -> (status, sub_status,
 //!                                       headers, body, diagnostics)`
 //!         Same input shape as `delete_item` (bodiless GET, document
 //!         id on `PreparedRequest.item_id`). On success returns HTTP
@@ -85,7 +85,7 @@
 //!         `max_integrated_cache_staleness_in_ms`) is forwarded
 //!         through `custom_headers` like any other per-request header.
 //!
-//!   * `patch_item(handle, prepared) -> (status, sub_status,
+//!   * `patch_item(driver_handle, prepared) -> (status, sub_status,
 //!                                        headers, body, diagnostics)`
 //!         Carries a body like the write-with-body ops, but the body is
 //!         the `PatchInstructions` payload (`{"operations": [...]}`) rather
@@ -96,34 +96,34 @@
 //!         the supported subset here; a `filter_predicate` or an `etag` /
 //!         `match_condition` precondition takes the legacy path instead.
 //!
-//!   * `query_items(handle, prepared) -> (status, sub_status,
+//!   * `query_items(driver_handle, prepared) -> (status, sub_status,
 //!                                        headers, body, diagnostics)`
 //!         Executes one query page. The query JSON is in
-//!         `PreparedRequest.body_bytes`; `PreparedRequest.partition_key_header`
-//!         selects the scope (`["pk"]` for one logical partition, `[]` for
+//!         `PreparedRequest.body_bytes`; `PreparedRequest.partition_key`
+//!         selects the scope (typed components for one logical partition, or
 //!         cross-partition/full-container). Returns a feed envelope body
 //!         (`{"Documents":[...]}`) so the Python query iterator can consume it
 //!         with the same shape as the legacy path.
 //!
-//!   * `read_all_items(handle, prepared) -> (status, sub_status,
+//!   * `read_all_items(driver_handle, prepared) -> (status, sub_status,
 //!                                           headers, body, diagnostics)`
 //!         Uses native read-feed for one logical partition. Whole-container
 //!         scope uses the same internal `SELECT *` query rewrite as legacy
 //!         Python so the driver query pipeline can fan out across partitions.
 //!
-//!   * `read_feed_ranges(handle, prepared) -> (status, sub_status,
+//!   * `read_feed_ranges(driver_handle, prepared) -> (status, sub_status,
 //!                                             headers, body, diagnostics)`
 //!         Enumerates the container's partition-key ranges (routing map view).
 //!         The request body may carry `{"forceRefresh": true}` to force a cache
 //!         refresh. Returns body shape
 //!         `{"PartitionKeyRanges":[{"id","minInclusive","maxExclusive"},...]}`.
 //!
-//!   * `feed_range_from_partition_key(handle, prepared) -> (status, sub_status,
+//!   * `feed_range_from_partition_key(driver_handle, prepared) -> (status, sub_status,
 //!                                                     headers, body, diagnostics)`
 //!         Computes the feed range one partition key falls into and returns body
 //!         shape `{"Range":{"min","max","isMinInclusive","isMaxInclusive"}}`.
 //!
-//!   * `read_offer(handle, prepared) -> (status, sub_status,
+//!   * `read_offer(driver_handle, prepared) -> (status, sub_status,
 //!                                       headers, body, diagnostics)`
 //!         Reads a container's provisioned throughput by querying the account's
 //!         `/offers` feed (an account-level, non-partitioned resource). The request
@@ -131,7 +131,7 @@
 //!         adds the query `Content-Type`/`x-ms-documentdb-isquery` markers that
 //!         `query_offers` requires. Returns body shape `{"Offers":[...]}`.
 //!
-//!   * `replace_offer(handle, prepared) -> (status, sub_status,
+//!   * `replace_offer(driver_handle, prepared) -> (status, sub_status,
 //!                                          headers, body, diagnostics)`
 //!         Replaces a container's provisioned throughput by PUTting the mutated
 //!         offer document to `/offers/{rid}` (an account-level, non-partitioned
@@ -173,8 +173,13 @@ macro_rules! add_pyfn {
 
 #[pymodule]
 fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
-    add_pyfn!(m, runtime::init_client);
-    add_pyfn!(m, runtime::close_client);
+    add_pyfn!(m, wire::settings::request_settings_schema);
+    m.add_class::<wire::item_feed::ItemFeedCursor>()?;
+    add_pyfn!(m, wire::item_feed::fetch_page_with_cursor);
+    add_pyfn!(m, wire::item_feed::fetch_page_with_cursor_async);
+    add_pyfn!(m, runtime::acquire_driver_handle);
+    add_pyfn!(m, runtime::runtime_configuration);
+    add_pyfn!(m, runtime::release_driver_handle);
     add_pyfn!(m, runtime::fault_injection_rule_hit_count);
     add_pyfn!(m, documents::create_item);
     add_pyfn!(m, documents::upsert_item);
@@ -200,7 +205,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::read_container);
     add_pyfn!(m, documents::delete_container);
     add_pyfn!(m, documents::replace_container);
-    add_pyfn!(m, documents::resolve_container_metadata);
+    add_pyfn!(m, documents::get_container_metadata);
     // Async siblings: each returns a Python awaitable that completes on the
     // driver's runtime, so the async backend holds no worker thread per call.
     add_pyfn!(m, documents::create_item_async);
@@ -227,7 +232,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::read_container_async);
     add_pyfn!(m, documents::delete_container_async);
     add_pyfn!(m, documents::replace_container_async);
-    add_pyfn!(m, documents::resolve_container_metadata_async);
+    add_pyfn!(m, documents::get_container_metadata_async);
     // Concrete backend provenance: a counter incremented inside the binding on
     // every operation, so the perf harness can prove the Rust path actually ran
     // (not just that COSMOS_BACKEND said so). See wire::BINDING_OP_COUNT.
@@ -245,6 +250,10 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add(
         "DriverTransportError",
         m.py().get_type_bound::<wire::DriverTransportError>(),
+    )?;
+    m.add(
+        "DriverResponseError",
+        m.py().get_type_bound::<wire::DriverResponseError>(),
     )?;
     m.add(
         "UnsupportedQueryFeatureError",

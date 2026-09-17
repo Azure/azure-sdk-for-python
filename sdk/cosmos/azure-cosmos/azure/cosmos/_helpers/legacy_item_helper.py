@@ -7,9 +7,17 @@
 from __future__ import annotations
 
 import logging
+import time
+from collections.abc import Mapping
+from copy import deepcopy
 from typing import Any, Callable, Dict, Optional, Type, TypeVar
 
 from .._constants import _Constants as Constants
+from .._base import _build_properties_cache
+from .._operation_deadline import remaining_timeout
+from .item_helper import normalize_item_partition_key
+from ._document import build_create_document
+from ._wire_encoding import serialize_body_to_bytes
 from .._backend.constants import BACKEND_NAME_CORE_PYTHON
 from ._item_dispatch import (
     build_create_item_request_options, build_delete_item_request_options,
@@ -18,6 +26,18 @@ from ._item_dispatch import (
 )
 
 _LegacyItemHelperT = TypeVar("_LegacyItemHelperT", bound="LegacyItemHelper")
+
+
+def _prepare_legacy_create_item_body(
+    body: Any, *, generate_id: bool, compact_utf8: bool
+) -> Dict[str, Any]:
+    """Temporary parity snapshot for the dictionary-based legacy pipeline."""
+    if not isinstance(body, Mapping):
+        raise TypeError("create_item body must be a mapping.")
+    prepared = build_create_document(deepcopy(dict(body)), generate_id=generate_id)
+    # Preserve pre-I/O encoding errors until the legacy pipeline is removed.
+    serialize_body_to_bytes(prepared, ensure_ascii=not compact_utf8, allow_nan=False)
+    return prepared
 
 
 def require_legacy_item_connection(connection: Any) -> None:
@@ -35,19 +55,34 @@ def require_legacy_item_connection(connection: Any) -> None:
         )
 
 
-def prepare_legacy_item_arguments(op: str, arguments: Dict[str, Any]) -> tuple[Dict[str, Any], Dict[str, Any]]:
+def prepare_legacy_item_arguments(
+    op: str, arguments: Dict[str, Any], *, compact_utf8: bool = False,
+    deadline: Optional[float] = None,
+) -> tuple[Dict[str, Any], Dict[str, Any]]:
     """Keep legacy build_options, mutations and pipeline bookkeeping in parity only."""
     kwargs = dict(arguments)
+    inherited_deadline = kwargs.pop("_item_operation_deadline", deadline)
     args = {
         "container_link": kwargs.pop("container_link"),
-        "document_link": kwargs.pop("document_link", None),
         "item_id": kwargs.pop("item_id", None),
         "body": kwargs.pop("body", None),
         "patch_operations": kwargs.pop("patch_operations", None),
         "filter_predicate": kwargs.pop("filter_predicate", None),
         "indexing_directive": kwargs.pop("indexing_directive", None),
         "enable_automatic_id_generation": kwargs.pop("enable_automatic_id_generation", False),
+        "deadline": deadline if op == "create_item" else inherited_deadline,
     }
+    if op in ("read_item", "delete_item", "replace_item", "patch_item"):
+        if "_item_self_link" in kwargs:
+            args["document_link"] = kwargs.pop("_item_self_link")
+        elif "document_link" in kwargs:
+            args["document_link"] = kwargs.pop("document_link")
+        else:
+            args["document_link"] = "{}/docs/{}".format(args["container_link"], args["item_id"])
+    if op == "create_item":
+        args["body"] = _prepare_legacy_create_item_body(
+            args["body"], generate_id=args["enable_automatic_id_generation"], compact_utf8=compact_utf8,
+        )
     populate_query_metrics = kwargs.pop("populate_query_metrics", None)
     if op == "create_item":
         options = build_create_item_request_options(
@@ -70,9 +105,45 @@ def prepare_legacy_item_arguments(op: str, arguments: Dict[str, Any]) -> tuple[D
     return args, options
 
 
+def set_legacy_item_timeout(args: Dict[str, Any], options: Dict[str, Any]) -> None:
+    """Adapt the shared monotonic budget to legacy per-request timing."""
+    remaining = remaining_timeout(args["deadline"])
+    if remaining is not None:
+        options[Constants.Kwargs.TIMEOUT] = remaining
+        options[Constants.OperationStartTime] = time.time()
+        args["kwargs"][Constants.Kwargs.TIMEOUT] = remaining
+        options["_item_operation_deadline"] = args["deadline"]
+
+
+def prepare_legacy_item_metadata(
+    op: str, args: Dict[str, Any], options: Dict[str, Any], properties: Dict[str, Any]
+) -> None:
+    """Normalize sentinels only after metadata has been resolved inside the budget."""
+    if op == "read_item":
+        options["partitionKey"] = normalize_item_partition_key(
+            options["partitionKey"], properties.get("partitionKey", {}).get("systemKey", False)
+        )
+    rid = properties.get("_rid")
+    if isinstance(rid, str):
+        options[Constants.ContainerRID] = rid
+    set_legacy_item_timeout(args, options)
+
+
+def legacy_item_metadata_options(options: Dict[str, Any]) -> Dict[str, Any]:
+    """Do not apply item conditions, hooks, or partition keys to the metadata GET."""
+    return {
+        key: options[key] for key in (
+            Constants.Kwargs.TIMEOUT, Constants.Kwargs.READ_TIMEOUT,
+            Constants.OperationStartTime, "excludedLocations",
+        ) if key in options
+    }
+
+
 def legacy_item_call(connection: Any, op: str, args: Dict[str, Any], options: Dict[str, Any]) -> Any:
     """Retain the six original legacy signatures and option shapes."""
     kwargs = args["kwargs"]
+    if op in ("read_item", "create_item"):
+        options.pop("_item_operation_deadline", None)
     if op in ("create_item", "upsert_item"):
         method = connection.CreateItem if op == "create_item" else connection.UpsertItem
         return method(
@@ -109,9 +180,31 @@ class LegacyItemHelper:
         require_legacy_item_connection(client_connection)
         return cls(client_connection, ensure_container_cached)
 
-    def _run(self, op: str, arguments: Dict[str, Any]) -> Any:
-        args, options = prepare_legacy_item_arguments(op, arguments)
+    def _run(
+        self, op: str, arguments: Dict[str, Any], *, deadline: Optional[float] = None
+    ) -> Any:
+        args, options = prepare_legacy_item_arguments(
+            op, arguments, compact_utf8=getattr(self.client_connection, "_enable_compact_utf8_item_writes", False) is True,
+            deadline=deadline,
+        )
         link = args["container_link"]
+        if op in ("read_item", "create_item"):
+            set_legacy_item_timeout(args, options)
+            if self._ensure_container_cached is not None:
+                self._ensure_container_cached(options)
+            elif link not in self.client_connection._container_properties_cache and args["deadline"] is None:
+                self.client_connection._refresh_container_properties_cache(link)
+            elif link not in self.client_connection._container_properties_cache:
+                metadata_options = legacy_item_metadata_options(options)
+                properties = self.client_connection.ReadContainer(
+                    link, options=metadata_options,
+                    **{key: metadata_options[key] for key in ("timeout", "read_timeout") if key in metadata_options},
+                )
+                self.client_connection._set_container_properties_cache(
+                    link, _build_properties_cache(properties, link)
+                )
+            prepare_legacy_item_metadata(op, args, options, self.client_connection._container_properties_cache[link])
+            return legacy_item_call(self.client_connection, op, args, options)
         try:
             if self._ensure_container_cached is not None:
                 self._ensure_container_cached(options)
@@ -124,8 +217,8 @@ class LegacyItemHelper:
             logging.getLogger(__name__).warning("Could not resolve legacy container rid for %r: %s", link, exc)
         return legacy_item_call(self.client_connection, op, args, options)
 
-    def create_item(self, **kwargs: Any) -> Any:
-        return self._run("create_item", kwargs)
+    def create_item(self, *, deadline: Optional[float], **kwargs: Any) -> Any:
+        return self._run("create_item", kwargs, deadline=deadline)
 
     def read_item(self, **kwargs: Any) -> Any:
         return self._run("read_item", kwargs)

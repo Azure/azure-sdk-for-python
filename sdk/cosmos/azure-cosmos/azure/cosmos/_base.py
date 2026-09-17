@@ -49,12 +49,12 @@ from .auth import _get_authorization_header
 from .offer import ThroughputProperties
 from .partition_key import _Empty, _Undefined
 # COMMON_OPTIONS (kwarg name -> internal option-key) lives in
-# ``_helpers/_options.py`` so the rust-backend item helper and the
+# ``_helpers/_request_settings.py`` so the rust-backend item helper and the
 # core-python ``build_options`` consume the same mapping table.
 # The leading-underscore alias is kept here for source compatibility.
-from ._helpers._options import COMMON_OPTIONS as _COMMON_OPTIONS
-from ._helpers._options import get_match_headers
+from ._helpers._request_settings import COMMON_OPTIONS as _COMMON_OPTIONS, get_match_headers
 from ._helpers._paths import parse_paths
+from ._helpers._resource_validation import validate_resource as _validate_resource
 
 if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
@@ -66,13 +66,6 @@ if TYPE_CHECKING:
 
 # pylint: disable=protected-access
 #cspell:ignore PPAF, ppaf
-
-
-# Cosmos resource ID validation regex breakdown:
-# ^ Match start of string.
-# [^/\#?] Match any character that is not /\#?\n\r\t.
-# $ End of string
-_VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]*$")
 
 
 def _get_match_headers(kwargs: dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
@@ -865,18 +858,6 @@ def validate_cache_staleness_value(max_integrated_cache_staleness: Any) -> None:
     if max_integrated_cache_staleness < 0:
         raise ValueError("Parameter 'max_integrated_cache_staleness_in_ms' can only be an "
                          "integer greater than or equal to zero")
-
-
-def _validate_resource(resource: Mapping[str, Any]) -> None:
-    id_: Optional[str] = resource.get("id")
-    if id_:
-        try:
-            if _VALID_COSMOS_RESOURCE.match(id_) is None:
-                raise ValueError("Id contains illegal chars.")
-            if id_[-1] in [" ", "\n"]:
-                raise ValueError("Id ends with a space or newline.")
-        except TypeError as e:
-            raise TypeError("Id type must be a string.") from e
 
 
 def _stringify_auto_scale(offer: ThroughputProperties) -> str:

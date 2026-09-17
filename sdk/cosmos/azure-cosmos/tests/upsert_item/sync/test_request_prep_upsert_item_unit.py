@@ -7,7 +7,7 @@
 
 These pin the three helpers the migrated ``upsert_item`` adds:
 
-* ``build_upsert_item_request`` -- carries the body like create does (the
+* ``prepare_upsert_item_request`` -- carries the body like create does (the
   id rides inside the body, which is serialised to JSON bytes), but it
   never mints an id and it can emit ``If-Match`` / ``If-None-Match`` from
   an access condition (an upsert honours ``etag`` / ``match_condition``).
@@ -25,6 +25,8 @@ body-carrying shape) and
 access-condition translation).
 """
 from __future__ import annotations
+from common.typed_requests import legacy_partition_key_from_request
+from common.typed_requests import wire_headers, settings_options, legacy_settings
 
 import json
 
@@ -39,7 +41,9 @@ from azure.cosmos._helpers._item_dispatch import (
     build_upsert_item_request_options,
     merge_upsert_item_explicit_kwargs,
 )
-from azure.cosmos._helpers._request_item import build_upsert_item_request
+from common.request_preparation import (
+    prepare_upsert_item_request,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -52,7 +56,7 @@ def test_baseline_is_write_with_body_not_bodiless():
     body to JSON bytes -- unlike the bodiless delete / read prep. It also copies
     the body's id onto ``item_id`` as a fast-path hint so the binding can skip
     re-parsing the whole body just to read one field."""
-    prepared = build_upsert_item_request(
+    prepared = prepare_upsert_item_request(
         container_link="dbs/d/colls/orders",
         body={"id": "order-42", "pk": "customerA", "total": 109.5},
         partition_key_value="customerA",
@@ -63,19 +67,19 @@ def test_baseline_is_write_with_body_not_bodiless():
     assert prepared.op == OP_UPSERT_ITEM
     assert prepared.container_link == "dbs/d/colls/orders"
     assert prepared.body_bytes == b'{"id":"order-42","pk":"customerA","total":109.5}'
-    assert prepared.partition_key_header == '["customerA"]'
+    assert legacy_partition_key_from_request(prepared) == '["customerA"]'
     # The id is authoritative in the body; the prep also forwards it on item_id
     # so the binding reads one Python attribute instead of re-parsing the body.
     assert prepared.item_id == "order-42"
     # Dropped-and-recreated container guard: the rid is stamped under the standard key.
-    assert prepared.headers[Constants.ContainerRID] == "RID=="
+    assert wire_headers(prepared)["x-ms-cosmos-intended-collection-rid"] == "RID=="
 
 
 def test_body_bytes_round_trip_to_the_same_dict():
     """The serialised bytes parse back to the body the customer passed --
     upsert never rewrites the body."""
     body = {"id": "order-42", "pk": "customerA"}
-    prepared = build_upsert_item_request(
+    prepared = prepare_upsert_item_request(
         container_link="dbs/d/colls/c",
         body=body,
         partition_key_value="customerA",
@@ -96,7 +100,7 @@ def test_missing_id_is_not_minted_and_body_is_not_mutated():
     server rejects it -- the prep must not invent an id, which would defeat
     the "replace if present" half of insert-or-replace."""
     body = {"pk": "customerA", "total": 109.5}
-    prepared = build_upsert_item_request(
+    prepared = prepare_upsert_item_request(
         container_link="dbs/d/colls/c",
         body=body,
         partition_key_value="customerA",
@@ -128,7 +132,7 @@ def test_if_missing_translates_to_if_none_match_wildcard_insert_only():
     options = build_upsert_item_request_options({"match_condition": MatchConditions.IfMissing})
     assert options["accessCondition"] == {"type": "IfNoneMatch", "condition": "*"}
 
-    prepared = build_upsert_item_request(
+    prepared = prepare_upsert_item_request(
         container_link="dbs/d/colls/c",
         body={"id": "order-42", "pk": "customerA"},
         partition_key_value="customerA",
@@ -136,8 +140,8 @@ def test_if_missing_translates_to_if_none_match_wildcard_insert_only():
         access_condition=options.get("accessCondition"),
         kwargs={},
     )
-    assert prepared.headers["If-None-Match"] == "*"
-    assert "If-Match" not in prepared.headers
+    assert wire_headers(prepared)["if-none-match"] == "*"
+    assert "if-match" not in wire_headers(prepared)
 
 
 def test_etag_if_not_modified_translates_to_if_match_guarded_replace():
@@ -149,7 +153,7 @@ def test_etag_if_not_modified_translates_to_if_match_guarded_replace():
     })
     assert options["accessCondition"] == {"type": "IfMatch", "condition": "abc"}
 
-    prepared = build_upsert_item_request(
+    prepared = prepare_upsert_item_request(
         container_link="dbs/d/colls/c",
         body={"id": "order-42", "pk": "customerA"},
         partition_key_value="customerA",
@@ -157,15 +161,15 @@ def test_etag_if_not_modified_translates_to_if_match_guarded_replace():
         access_condition=options.get("accessCondition"),
         kwargs={},
     )
-    assert prepared.headers["If-Match"] == "abc"
-    assert "If-None-Match" not in prepared.headers
+    assert wire_headers(prepared)["if-match"] == "abc"
+    assert "if-none-match" not in wire_headers(prepared)
 
 
 def test_if_present_translates_to_if_match_wildcard():
     """``match_condition=IfPresent`` (no etag) → ``If-Match: *`` (replace
     only if it exists at all)."""
     options = build_upsert_item_request_options({"match_condition": MatchConditions.IfPresent})
-    prepared = build_upsert_item_request(
+    prepared = prepare_upsert_item_request(
         container_link="dbs/d/colls/c",
         body={"id": "x", "pk": "a"},
         partition_key_value="a",
@@ -173,13 +177,13 @@ def test_if_present_translates_to_if_match_wildcard():
         access_condition=options.get("accessCondition"),
         kwargs={},
     )
-    assert prepared.headers["If-Match"] == "*"
+    assert wire_headers(prepared)["if-match"] == "*"
 
 
 def test_no_access_condition_emits_no_precondition_headers():
     """A plain upsert (no etag / match_condition) carries neither
     ``If-Match`` nor ``If-None-Match``."""
-    prepared = build_upsert_item_request(
+    prepared = prepare_upsert_item_request(
         container_link="dbs/d/colls/c",
         body={"id": "x", "pk": "a"},
         partition_key_value="a",
@@ -187,10 +191,10 @@ def test_no_access_condition_emits_no_precondition_headers():
         access_condition=None,
         kwargs={},
     )
-    assert "If-Match" not in prepared.headers
-    assert "If-None-Match" not in prepared.headers
+    assert "if-match" not in wire_headers(prepared)
+    assert "if-none-match" not in wire_headers(prepared)
     # The raw internal shape must never leak onto the wire as a header.
-    assert "accessCondition" not in prepared.headers
+    assert "accessCondition" not in wire_headers(prepared)
 
 
 def test_etag_without_match_condition_raises_value_error_up_front():
@@ -209,23 +213,23 @@ def test_etag_without_match_condition_raises_value_error_up_front():
 def test_initial_headers_are_flattened_into_outer_headers():
     """``initial_headers={'x-trace-id': 'abc'}`` is kept as a nested
     ``initialHeaders`` dict so the binding forwards each entry verbatim."""
-    prepared = build_upsert_item_request(
+    prepared = prepare_upsert_item_request(
         container_link="dbs/d/colls/c",
         body={"id": "x", "pk": "a"},
         partition_key_value="a",
         container_rid=None,
         kwargs={"initial_headers": {"x-trace-id": "abc-123"}},
     )
-    assert prepared.headers["initialHeaders"] == {"x-trace-id": "abc-123"}
-    assert "x-trace-id" not in prepared.headers
-    assert "initial_headers" not in prepared.headers
+    assert all(wire_headers(prepared).get(key.lower()) == str(value) for key, value in ({"x-trace-id": "abc-123"}).items())
+    assert wire_headers(prepared)["x-trace-id"] == "abc-123"
+    assert "initial_headers" not in wire_headers(prepared)
 
 
 def test_trigger_priority_bucket_no_response_land_as_option_keys():
     """The body-carrying option set reaches the headers map under the
     internal option-key names (the binding then renders each on the wire).
     ``no_response`` is kept on upsert, unlike delete / read."""
-    prepared = build_upsert_item_request(
+    prepared = prepare_upsert_item_request(
         container_link="dbs/d/colls/c",
         body={"id": "x", "pk": "a"},
         partition_key_value="a",
@@ -238,25 +242,25 @@ def test_trigger_priority_bucket_no_response_land_as_option_keys():
             "no_response": True,
         },
     )
-    assert prepared.headers["preTriggerInclude"] == "validateOrder"
-    assert prepared.headers["postTriggerInclude"] == "auditOrder"
-    assert prepared.headers["priorityLevel"] == "High"
-    assert prepared.headers["throughputBucket"] == 1
-    assert prepared.headers["responsePayloadOnWriteDisabled"] is True
+    assert wire_headers(prepared)["x-ms-documentdb-pre-trigger-include"] == "validateOrder"
+    assert wire_headers(prepared)["x-ms-documentdb-post-trigger-include"] == "auditOrder"
+    assert wire_headers(prepared)["x-ms-cosmos-priority-level"] == "High"
+    assert wire_headers(prepared)["x-ms-cosmos-throughput-bucket"] == '1'
+    assert settings_options(prepared)["responsePayloadOnWriteDisabled"] is True
 
 
 def test_timeout_kwarg_is_forwarded_under_sentinel_header():
     """``timeout=30`` is forwarded as ``__overall_timeout_seconds: 30`` so
     the binding can lift it into the driver's own timeout setting -- the
     same mechanism as create / delete / read prep."""
-    prepared = build_upsert_item_request(
+    prepared = prepare_upsert_item_request(
         container_link="dbs/d/colls/c",
         body={"id": "x", "pk": "a"},
         partition_key_value="a",
         container_rid=None,
         kwargs={"timeout": 30},
     )
-    assert prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 30
+    assert settings_options(prepared)["timeout_seconds"] == 30
 
 
 def test_compose_consumes_recognised_kwargs():
@@ -264,15 +268,15 @@ def test_compose_consumes_recognised_kwargs():
     from the input dict, so the caller doesn't forward them again to the
     legacy path."""
     kwargs = {"pre_trigger_include": "validateOrder", "extra_unknown": "left-alone"}
-    build_upsert_item_request(
+    prepare_upsert_item_request(
         container_link="dbs/d/colls/c",
         body={"id": "x", "pk": "a"},
         partition_key_value="a",
         container_rid=None,
         kwargs=kwargs,
     )
-    assert "pre_trigger_include" not in kwargs
-    assert kwargs == {"extra_unknown": "left-alone"}
+    assert kwargs["pre_trigger_include"] == "validateOrder"
+    assert kwargs == {"pre_trigger_include": "validateOrder", "extra_unknown": "left-alone"}
 
 
 # ---------------------------------------------------------------------------
@@ -360,4 +364,3 @@ def test_populate_query_metrics_none_is_silent():
         _warnings.simplefilter("error")  # any warning becomes an error
         request_options = build_upsert_item_request_options({}, populate_query_metrics=None)
     assert "populateQueryMetrics" not in request_options
-

@@ -20,14 +20,16 @@ These pin the binding-layer fixes for two behaviours:
   ignores.
 """
 from __future__ import annotations
+from common.typed_requests import wire_headers, settings_options, legacy_settings
 
 from azure.cosmos.http_constants import HttpHeaders
-from azure.cosmos._helpers._request_headers import apply_no_response_on_write_default, flatten_options_to_headers
-from azure.cosmos._helpers._request_item import (
-    build_create_item_request,
-    build_patch_item_request,
-    build_replace_item_request,
-    build_upsert_item_request,
+from azure.cosmos._helpers._request_settings import apply_no_response_on_write_default
+from common.typed_requests import flatten_options_to_headers
+from common.request_preparation import (
+    prepare_create_item_request,
+    prepare_patch_item_request,
+    prepare_replace_item_request,
+    prepare_upsert_item_request,
 )
 
 # The internal option-key the binding lifts into ContentResponseOnWrite.
@@ -56,15 +58,16 @@ def test_consistency_level_falsy_emits_no_header():
 def test_consistency_level_reaches_wire_through_request_options_on_create():
     """The override the customer hand-builds in ``request_options`` survives the
     full create prep as the proper wire header."""
-    prepared, _ = build_create_item_request(
+    prepared = prepare_create_item_request(
         container_link="dbs/d/colls/orders",
         body={"id": "order-1", "pk": "a"},
         partition_key_value="a",
         container_rid="RID==",
         kwargs={"request_options": {"consistencyLevel": "Eventual"}},
     )
-    assert prepared.headers[HttpHeaders.ConsistencyLevel] == "Eventual"
-    assert "consistencyLevel" not in prepared.headers
+    _ = prepared.item_id
+    assert wire_headers(prepared)[HttpHeaders.ConsistencyLevel] == "Eventual"
+    assert "consistencyLevel" not in wire_headers(prepared)
 
 
 # ---------------------------------------------------------------------------
@@ -113,9 +116,9 @@ def test_internal_option_keys_are_not_emitted_as_headers():
         "retry_write",
     ):
         assert internal_key not in headers
-    assert headers["enableCrossPartitionQuery"] is True
-    assert headers["sessionToken"] == "0:-1#5"
-    assert headers["priorityLevel"] == "High"
+    assert headers["x-ms-documentdb-query-enablecrosspartition"] == "True"
+    assert headers["x-ms-session-token"] == "0:-1#5"
+    assert headers["x-ms-cosmos-priority-level"] == "High"
     assert headers[HttpHeaders.ConsistencyLevel] == "Session"
 
 
@@ -132,7 +135,7 @@ def test_container_rid_is_truthy_gated():
     """
     assert "containerRID" not in flatten_options_to_headers({"containerRID": ""})
     assert "containerRID" not in flatten_options_to_headers({"containerRID": None})
-    assert flatten_options_to_headers({"containerRID": "rid1"})["containerRID"] == "rid1"
+    assert flatten_options_to_headers({"containerRID": "rid1"})["x-ms-cosmos-intended-collection-rid"] == "rid1"
 
 
 # ---------------------------------------------------------------------------
@@ -171,9 +174,9 @@ def test_percall_value_wins_over_default():
 # ---------------------------------------------------------------------------
 
 
-def _create_headers(*, default, kwargs):
+def _create_options(*, default, kwargs):
     """Return headers prepared for an item create request."""
-    prepared, _ = build_create_item_request(
+    prepared = prepare_create_item_request(
         container_link="dbs/d/colls/orders",
         body={"id": "o", "pk": "a"},
         partition_key_value="a",
@@ -181,24 +184,25 @@ def _create_headers(*, default, kwargs):
         no_response_on_write_default=default,
         kwargs=kwargs,
     )
-    return prepared.headers
+    _ = prepared.item_id
+    return settings_options(prepared)
 
 
-def _upsert_headers(*, default, kwargs):
+def _upsert_options(*, default, kwargs):
     """Return headers prepared for an item upsert request."""
-    return build_upsert_item_request(
+    return settings_options(prepare_upsert_item_request(
         container_link="dbs/d/colls/orders",
         body={"id": "o", "pk": "a"},
         partition_key_value="a",
         container_rid="RID==",
         no_response_on_write_default=default,
         kwargs=kwargs,
-    ).headers
+    ))
 
 
-def _replace_headers(*, default, kwargs):
+def _replace_options(*, default, kwargs):
     """Return headers prepared for an item replace request."""
-    return build_replace_item_request(
+    return settings_options(prepare_replace_item_request(
         container_link="dbs/d/colls/orders",
         body={"id": "o", "pk": "a"},
         item_id="o",
@@ -206,12 +210,12 @@ def _replace_headers(*, default, kwargs):
         container_rid="RID==",
         no_response_on_write_default=default,
         kwargs=kwargs,
-    ).headers
+    ))
 
 
-def _patch_headers(*, default, kwargs):
+def _patch_options(*, default, kwargs):
     """Return headers prepared for an item patch request."""
-    return build_patch_item_request(
+    return settings_options(prepare_patch_item_request(
         container_link="dbs/d/colls/orders",
         item_id="o",
         patch_operations=[{"op": "set", "path": "/total", "value": 1}],
@@ -219,10 +223,10 @@ def _patch_headers(*, default, kwargs):
         container_rid="RID==",
         no_response_on_write_default=default,
         kwargs=kwargs,
-    ).headers
+    ))
 
 
-_BUILDERS = (_create_headers, _upsert_headers, _replace_headers, _patch_headers)
+_BUILDERS = (_create_options, _upsert_options, _replace_options, _patch_options)
 
 
 def test_client_default_suppresses_echo_on_every_write_builder():

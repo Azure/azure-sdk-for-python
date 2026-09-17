@@ -21,6 +21,7 @@ regression in that normalization would surface only in a slow emulator run, or i
 production as a silently mismatched feed-range value.
 """
 from __future__ import annotations
+from common.typed_requests import legacy_partition_key_from_request
 
 from types import SimpleNamespace
 
@@ -159,7 +160,7 @@ def test_feed_range_from_partition_key_builds_prepared_request():
     )
     assert prepared.op == OP_FEED_RANGE_FROM_PARTITION_KEY
     assert prepared.container_link == "dbs/d/colls/c"
-    assert prepared.partition_key_header == '["customerA"]'
+    assert legacy_partition_key_from_request(prepared) == '["customerA"]'
     assert prepared.body_bytes == b""
 
 

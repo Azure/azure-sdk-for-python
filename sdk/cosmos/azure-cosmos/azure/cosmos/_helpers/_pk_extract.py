@@ -20,6 +20,7 @@ from collections.abc import Mapping
 from typing import Any, List, Optional, Union
 
 from ._paths import parse_paths
+from .._backend.contracts import ContainerMetadata
 from ..partition_key import (
     _Empty,
     _PartitionKeyKind,
@@ -29,7 +30,7 @@ from ..partition_key import (
 
 
 def extract_partition_key_value(
-    partition_key_definition: Mapping[str, Any],
+    metadata: ContainerMetadata,
     document: Mapping[str, Any],
 ) -> Any:
     """Return the partition-key value for ``document`` per the definition.
@@ -40,28 +41,29 @@ def extract_partition_key_value(
     value (or an ``_Undefined`` / ``_Empty`` sentinel when the path is
     absent).
 
-    :param partition_key_definition: The container's partition-key
-        definition (``kind`` / ``paths`` / optional ``systemKey``).
-    :type partition_key_definition: Mapping[str, Any]
+    :param metadata: Container identity and partition-key facts.
+    :type metadata: ContainerMetadata
     :param document: The Cosmos document to read the value out of.
     :type document: Mapping[str, Any]
     :returns: The extracted partition-key value (or sentinel / list).
     :rtype: Any
     """
-    if partition_key_definition["kind"] == _PartitionKeyKind.MULTI_HASH:
+    if metadata.partition_key_kind is None:
+        return _Empty()
+    is_system_key = metadata.system_key is True
+    if metadata.partition_key_kind == _PartitionKeyKind.MULTI_HASH:
         ret: List[Optional[Union[str, float, bool]]] = []
-        for partition_key_level in partition_key_definition["paths"]:
+        for partition_key_level in metadata.partition_key_paths:
             # Parse one path into a token per property, then walk to its leaf.
             partition_key_parts = parse_paths([partition_key_level])
-            is_system_key = partition_key_definition.get("systemKey", False)
             val = _retrieve_partition_key(partition_key_parts, document, is_system_key)
             if isinstance(val, (_Undefined, _Empty)):
-                val = None
-            ret.append(val)
+                ret.append(None)
+            else:
+                ret.append(val)
         return ret
 
-    partition_key_parts = parse_paths(partition_key_definition["paths"])
-    is_system_key = partition_key_definition.get("systemKey", False)
+    partition_key_parts = parse_paths(list(metadata.partition_key_paths))
     return _retrieve_partition_key(partition_key_parts, document, is_system_key)
 
 
@@ -69,7 +71,7 @@ def _retrieve_partition_key(
     partition_key_parts: List[str],
     document: Mapping[str, Any],
     is_system_key: bool,
-) -> Union[str, float, bool, _Empty, _Undefined]:
+) -> Union[str, float, bool, None, _Empty, _Undefined]:
     """Walk ``document`` along ``partition_key_parts`` to the leaf value.
 
     Mirror of the legacy ``_retrieve_partition_key``: an absent or non-leaf

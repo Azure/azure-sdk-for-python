@@ -42,14 +42,9 @@ What this file pins for async ``read_item``:
   server etag surfaces 304 as an empty ``CosmosDict``; ``etag`` +
   ``IfNotModified`` on a match returns 200 + body.
 * **``etag=`` without ``match_condition=``** raises ``ValueError``
-  before any network call. The gate lives in ``_base._get_match_headers``,
-  which sync and async share -- this test is what proves the async path
-  actually reaches it.
-
-Deliberately NOT mirrored from the sync suite: the ``populate_query_metrics``
-deprecation test. That keyword is a sync-only positional parameter; the async
-``read_item`` signature does not accept it, so there is no async behaviour to
-pin.
+  before metadata or item dispatch, using shared public validation.
+* **``populate_query_metrics``** is rejected by presence on both clients,
+  including None/False, rather than forwarded or treated as a warning.
 """
 from __future__ import annotations
 
@@ -61,12 +56,7 @@ import pytest
 from azure.core import MatchConditions
 
 from azure.cosmos import CosmosClient, PartitionKey
-from common._parity_helpers import (
-    BackendComparison,
-    run_on_both_backends_async,
-    skip_unless_emulator,
-    skip_unless_rust_binding,
-)
+from common._parity_helpers import BackendComparison, run_on_both_backends_async, skip_unless_emulator, skip_unless_rust_binding
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 
@@ -505,10 +495,8 @@ async def test_etag_without_match_condition_raises_value_error_up_front(containe
     """``etag=`` without ``match_condition=`` raises ``ValueError`` before
     any network call.
 
-    The SDK refuses to guess what the caller meant. The gate itself lives in
-    ``_base._get_match_headers``, which the sync and async paths share -- so
-    what this test actually proves is that the *async* option-build path
-    reaches that gate, on both backends, before dispatching a request.
+    The SDK refuses to guess what the caller meant. Both public clients use
+    shared condition validation before resolving metadata or reading the item.
     """
     async def _do(client):
         cont = client.get_database_client("parity_db").get_container_client(container_for.id)
@@ -526,3 +514,15 @@ async def test_etag_without_match_condition_raises_value_error_up_front(containe
         "core-python must raise ValueError; got {!r}".format(cmp.core_python.raised))
     assert isinstance(cmp.rust.raised, ValueError), (
         "rust must raise ValueError; got {!r}".format(cmp.rust.raised))
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("value", [None, False, True])
+async def test_populate_query_metrics_is_rejected(container_for, value):
+    async def read(client):
+        container = client.get_database_client("parity_db").get_container_client(container_for.id)
+        return await container.read_item("unused", "a", populate_query_metrics=value)
+
+    comparison = await run_on_both_backends_async(read, description="read_item rejects retired query metrics")
+    for outcome in (comparison.core_python, comparison.rust):
+        assert isinstance(outcome.raised, TypeError)

@@ -24,13 +24,13 @@ import threading
 import warnings
 from concurrent.futures.thread import ThreadPoolExecutor
 from datetime import datetime
-from typing import Any, Callable, cast, Iterable, Mapping, Optional, overload, Sequence, Tuple, Union, Dict
+from typing import TYPE_CHECKING, Any, Callable, cast, Iterable, Mapping, Optional, overload, Sequence, Tuple, Union, Dict
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from azure.cosmos._change_feed.change_feed_utils import add_args_to_kwargs, validate_kwargs
+from azure.core.utils import CaseInsensitiveDict
 
 from . import _utils as utils
 from ._availability_strategy_config import _validate_request_hedging_strategy
@@ -45,9 +45,15 @@ from ._helpers._item_dispatch import (
     merge_patch_item_explicit_kwargs,
     merge_read_item_explicit_kwargs,
     merge_upsert_item_explicit_kwargs,
-    pick_backend,
+    get_selected_backend,
 )
 from ._helpers.item_helper import ItemHelper
+from ._helpers._item_prep import prepare_read_item_kwargs, prepare_create_item_kwargs, prepare_item_target
+from ._helpers._read_items import complete_read_items_response, prepare_read_items
+from ._helpers._read_all_items import read_all_items as _read_all_items
+from ._helpers._query_items import query_items as _query_items, uses_rust, reject_rust_bookmark
+from ._helpers._response_parse import complete_item_response
+from ._operation_deadline import deadline_lock, legacy_deadline_options, remaining_timeout
 from ._helpers.container_helper import ContainerHelper
 from ._helpers._request_container import validate_container_create_kwargs
 from ._helpers.feed_range_helper import (
@@ -68,6 +74,11 @@ from .partition_key import (_build_partition_key_from_properties, PartitionKeyTy
                             _return_undefined_or_empty_partition_key, _SequentialPartitionKeyType,
                             NonePartitionKeyValue, NullPartitionKeyValue, PartitionKey)
 from .scripts import ScriptsProxy
+
+if TYPE_CHECKING:
+    from ._backend.cosmos_backend import CosmosBackend
+    from ._helpers._item_context import ItemClientContext
+    from ._helpers.legacy_item_helper import LegacyItemHelper
 
 __all__ = ("ContainerProxy",)
 
@@ -104,12 +115,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         id: str,
         properties: Optional[dict[str, Any]] = None,
         *,
-        _item_context: Any = None,
+        _item_context: "Optional[ItemClientContext[CosmosBackend]]" = None,
     ) -> None:
         self.id = id
         self.container_link = "{}/colls/{}".format(database_link, self.id)
         self.client_connection = client_connection
         self._item_context = _item_context
+        self._item_helper_cache: "Optional[tuple[ItemClientContext[CosmosBackend], ItemHelper]]" = None
         self.container_cache_lock = threading.Lock()
         self._scripts: Optional[ScriptsProxy] = None
         if properties and client_connection is not None:
@@ -120,16 +132,23 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
-    def _create_item_helper(self) -> Any:
-        """Select parity before entering the connection-free Rust helper."""
+    def _get_item_helper(self) -> "Union[ItemHelper, LegacyItemHelper]":
+        """Reuse Rust helpers; keep container-bound legacy adapters short-lived."""
         context = self._item_context
+        cached = self._item_helper_cache
+        if cached is not None:
+            if cached[0] is context:
+                return cached[1]
+            self._item_helper_cache = None
         if context is None:
             from ._helpers.legacy_item_helper import LegacyItemHelper
             return LegacyItemHelper.from_legacy_connection(self.client_connection, self._get_properties_with_options)
         if context.backend.name == "core-python":
             from ._helpers.legacy_item_helper import LegacyItemHelper
             return LegacyItemHelper(self.client_connection, self._get_properties_with_options)
-        return ItemHelper(context.backend, context.defaults, context.response_state)
+        helper = ItemHelper(context.backend, context.defaults, context.response_state)
+        self._item_helper_cache = (context, helper)
+        return helper
 
     def _set_item_partition_key(self, partition_key: PartitionKeyType) -> PartitionKeyType:
         """Leave Rust sentinel resolution to its own metadata provider."""
@@ -143,6 +162,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def _get_properties_with_options(self, options: Optional[dict[str, Any]] = None) -> dict[str, Any]:
         kwargs = {}
         if options:
+            if "_item_operation_deadline" in options:
+                kwargs["_item_operation_deadline"] = options["_item_operation_deadline"]
             if "excludedLocations" in options:
                 kwargs['excluded_locations'] = options['excludedLocations']
             if Constants.OperationStartTime in options:
@@ -154,9 +175,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return self._get_properties(**kwargs)
 
     def _get_properties(self, **kwargs: Any) -> dict[str, Any]:
+        deadline = kwargs.pop("_item_operation_deadline", None)
         if self.container_link not in self.__get_client_container_caches():
-            with self.container_cache_lock:
+            with deadline_lock(self.container_cache_lock, deadline):
                 if self.container_link not in self.__get_client_container_caches():
+                    if deadline is not None:
+                        kwargs["timeout"] = remaining_timeout(deadline)
                     self.read(**kwargs)
         return self.__get_client_container_caches()[self.container_link]
 
@@ -183,11 +207,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if self._scripts is None:
             self._scripts = ScriptsProxy(self.client_connection, self.container_link, self.is_system_key)
         return self._scripts
-
-    def _get_document_link(self, item_or_link: Union[str, Mapping[str, Any]]) -> str:
-        if isinstance(item_or_link, str):
-            return "{}/docs/{}".format(self.container_link, item_or_link)
-        return item_or_link["_self"]
 
     def _get_conflict_link(self, conflict_or_link: Union[str, Mapping[str, Any]]) -> str:
         if isinstance(conflict_or_link, str):
@@ -255,7 +274,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["populateQuotaInfo"] = populate_quota_info
         container = ContainerHelper(
             self.client_connection,
-            pick_backend(self.client_connection),
+            get_selected_backend(self.client_connection),
         ).read_container(
             self.container_link,
             request_options,
@@ -273,9 +292,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self,
         item: Union[str, Mapping[str, Any]],
         partition_key: PartitionKeyType,
-        populate_query_metrics: Optional[bool] = None,
-        post_trigger_include: Optional[str] = None,
         *,
+        post_trigger_include: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         session_token: Optional[str] = None,
         initial_headers: Optional[dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
@@ -293,10 +313,18 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             to fetch an item with a partition key of null. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
         :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
-        :param str post_trigger_include: trigger id to be used as post operation trigger.
+        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
+        :keyword str etag: ETag used with ``IfModified`` or ``IfNotModified``.
+        :keyword match_condition: Service-enforced conditional read. ``IfPresent`` and ``IfMissing``
+            use wildcard conditions. A matching ``IfModified`` returns an empty CosmosDict (HTTP 304).
+            If-Match on GET does not guarantee that the service will return HTTP 412.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword float timeout: One budget in seconds for metadata lookup and the item read;
+            must be finite, at least one second, and less than 2**64.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: Called once on success with independent header and CosmosDict body
+            snapshots, including an empty CosmosDict for HTTP 304. Hook exceptions propagate.
         :paramtype response_hook: Callable[[dict[str, str], dict[str, Any]], None]
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -327,16 +355,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :dedent: 0
                 :caption: Get an item from the database and update one of its properties:
         """
-        doc_link = self._get_document_link(item)
-        # populate_query_metrics is deprecated on read_item. Warn and
-        # drop it before the helper builds the request so no header
-        # goes on the wire.
-        if populate_query_metrics is not None:
-            warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
-                DeprecationWarning,
-            )
-
+        prepare_item_target(kwargs, item)
         # Validate the cache-staleness value here so a ValueError points
         # at the caller, not three frames deep in the helper. None
         # skips validation. Zero is allowed; the prep layer treats it
@@ -344,32 +363,27 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
 
-        # Move the positional-or-keyword post_trigger_include into
-        # kwargs so the helper sees one unified dict.
         merge_read_item_explicit_kwargs(
             kwargs,
             post_trigger_include=post_trigger_include,
+            etag=etag,
+            match_condition=match_condition,
             session_token=session_token,
             initial_headers=initial_headers,
             max_integrated_cache_staleness_in_ms=max_integrated_cache_staleness_in_ms,
             priority=priority,
             throughput_bucket=throughput_bucket,
             availability_strategy=availability_strategy,
-            response_hook=response_hook,
         )
-
-        # Put the partition key in the options, keeping any options the
-        # caller already passed.
-        request_options = kwargs.setdefault("request_options", {})
-        request_options["partitionKey"] = self._set_item_partition_key(partition_key)
+        deadline = prepare_read_item_kwargs(kwargs, partition_key)
         item_id = item if isinstance(item, str) else item["id"]
 
-        return self._create_item_helper().read_item(
+        result = self._get_item_helper().read_item(
             container_link=self.container_link,
-            document_link=doc_link,
             item_id=item_id,
             **kwargs,
         )
+        return complete_item_response(result, response_hook, deadline)
 
     @distributed_trace
     def read_items(
@@ -389,15 +403,16 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     ) -> CosmosList:
         """Reads multiple items from the container.
 
-        This method is a batched point-read operation. It is more efficient than
-        issuing multiple individual point reads.
+        Groups known ID/partition-key pairs into concurrent point reads and queries.
+        Request count and RU cost depend on partition placement and chunking.
 
         :param items: A list of tuples, where each tuple contains an item's ID and partition key.
         :type items: list[Tuple[str, PartitionKeyType]]
         :keyword executor: Optional ThreadPoolExecutor for handling concurrent operations.
                       If not provided, a new executor will be created as needed.
         :keyword int max_concurrency: The maximum number of concurrent operations for the
-                      items request. This value is ignored if an executor is provided. If not specified,
+                      items request. If supplied, must be a positive integer (not bool).
+                      Scheduling is controlled by the executor if one is provided. If not specified,
                       the default max_concurrency defined by Python's ThreadPoolExecutor will be applied.
         :keyword str consistency_level: The consistency level to use for the request.
         :keyword str session_token: Token for use with Session consistency.
@@ -413,13 +428,24 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
+        :keyword response_hook: Optional callback receiving independent header and CosmosList snapshots once
+            after success, including empty input. None disables the callback.
+        :keyword float timeout: One operation budget in seconds, including metadata, routing and queued work.
+            Pending work is cancelled on failure; already-running synchronous requests may finish later.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
         :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
             The items that are returned preserve their relative order from the input ``items`` sequence. Because
             missing items are omitted, the result may contain fewer entries than were requested, so callers should
-            not index the result positionally against the input; match on item id when some items may be missing.
+            not index the result positionally against the input; match on ID and partition key.
+            Repeated pairs produce one result per occurrence. Empty input performs no network calls.
         :rtype: ~azure.cosmos.CosmosList
         """
+
+        items, deadline = prepare_read_items(items, max_concurrency, kwargs)
+        if not items:
+            return complete_read_items_response(
+                CosmosList([], response_headers=CaseInsensitiveDict()), kwargs.get("response_hook"), deadline
+            )
 
         if session_token is not None:
             kwargs['session_token'] = session_token
@@ -435,22 +461,21 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
 
         kwargs['max_concurrency'] = max_concurrency
-        query_options = build_options(kwargs)
+        query_options = legacy_deadline_options(build_options(kwargs), deadline)
         # consistency_level has no entry in the common kwarg-to-option map, so we write the
         # option key directly. Leaving it in kwargs would forward it to the transport.
         if consistency_level is not None:
             query_options['consistencyLevel'] = consistency_level
         self._get_properties_with_options(query_options)
+        remaining_timeout(deadline)
         query_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         query_options["enableCrossPartitionQuery"] = True
         query_options[Constants.TimeoutScope] = TimeoutScope.OPERATION
 
-        item_tuples = [(item_id, self._set_partition_key(pk)) for item_id, pk in items]
-
         return self.client_connection.read_items(
             _item_context=self._item_context,
             collection_link=self.container_link,
-            items=item_tuples,
+            items=items,
             options=query_options,
             executor=executor,
             **kwargs)
@@ -460,9 +485,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def read_all_items(  # pylint:disable=docstring-missing-param
         self,
-        max_item_count: Optional[int] = None,
-        populate_query_metrics: Optional[bool] = None,
         *,
+        max_item_count: Optional[int] = None,
         session_token: Optional[str] = None,
         initial_headers: Optional[dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
@@ -474,10 +498,23 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     ) -> ItemPaged[dict[str, Any]]:
         """List all the items in the container.
 
-        :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        Metadata and pages are fetched lazily. All arguments are keyword-only.
+        Rust uses an internal query and retains cross-partition paging state.
+        Save ``by_page().continuation_token`` after processing a complete page;
+        bookmarks cannot be moved between Rust and core-python. Unsupported
+        Rust settings raise instead of switching backends. Query metrics are
+        not accepted, including an explicit ``populate_query_metrics=None``.
+
+        :keyword float timeout: Per-page fetch budget, including metadata, planning,
+            and internal empty pages. Must be finite and at least one second.
+            Customer processing between pages does not consume the next page's budget.
+        :keyword int max_item_count: Requested page size, not a total result limit.
+            Use a positive integer, -1 for a service-selected size, or None for the default.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: Called once per fetched public page with independent
+            headers and a deep copy of the Documents envelope. Callback failures
+            do not replay the page; resume a new pager from the last delivered bookmark.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -496,6 +533,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
+            Per-call availability overrides are supported only on core-python.
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -511,27 +549,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
-        feed_options = build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-        if populate_query_metrics is not None:
-            warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
-                DeprecationWarning,
-            )
-            feed_options["populateQueryMetrics"] = populate_query_metrics
-        if max_integrated_cache_staleness_in_ms:
-            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-        if response_hook and hasattr(response_hook, "clear"):
-            response_hook.clear()
-
-        self._get_properties_with_options(feed_options)
-        feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-
-        items = self.client_connection.ReadItems(
-            collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs)
-        return items
+            kwargs["max_item_count"] = max_item_count
+        if max_integrated_cache_staleness_in_ms is not None:
+            kwargs["max_integrated_cache_staleness_in_ms"] = max_integrated_cache_staleness_in_ms
+        return _read_all_items(self, kwargs)
 
     @overload
     def query_items_change_feed(
@@ -546,7 +568,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             **kwargs: Any
     ) -> ItemPaged[dict[str, Any]]:
-        """Get a sorted list of items that were changed, in the order in which they were modified.
+        """Read item changes, ordered within a logical partition but not globally.
 
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword start_time:The start time to start processing chang feed items.
@@ -601,7 +623,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             **kwargs: Any
     ) -> ItemPaged[dict[str, Any]]:
 
-        """Get a sorted list of items that were changed, in the order in which they were modified.
+        """Read item changes, ordered within a logical partition but not globally.
 
         :keyword dict[str, Any] feed_range: The feed range that is used to define the scope.
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -648,7 +670,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             **kwargs: Any
     ) -> ItemPaged[dict[str, Any]]:
-        """Get a sorted list of items that were changed, in the order in which they were modified.
+        """Read item changes, ordered within a logical partition but not globally.
 
         :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
         :paramtype continuation: str
@@ -686,8 +708,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             **kwargs: Any
     ) -> ItemPaged[dict[str, Any]]:
-        """Get a sorted list of items that were changed in the entire container,
-         in the order in which they were modified,
+        """Read changes across the container without a global modification order.
 
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword start_time:The start time to start processing chang feed items.
@@ -725,10 +746,19 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def query_items_change_feed(
             self,
-            *args: Any,
             **kwargs: Any
     ) -> ItemPaged[dict[str, Any]]:
-        """Get a sorted list of items that were changed, in the order in which they were modified.
+        """Read item changes, ordered within a logical partition but not globally.
+
+        All settings are keyword-only. A valid continuation restores mode, start
+        position and scope. ``by_page()`` exposes a caught-up empty page with an
+        updated bookmark before ending; resume a new pager to poll again.
+        Save a bookmark only after processing its complete page. A failed pager
+        must be replaced using the last delivered bookmark.
+
+        Rust currently rejects scopes spanning multiple physical partitions
+        without falling back to Python. Explicit legacy execution retains both
+        modes and cross-partition polling. Bookmarks cannot cross backends.
 
         :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
         :keyword dict[str, Any] feed_range: The feed range that is used to define the scope.
@@ -765,54 +795,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
-        :param Any args: args
-        :returns: An Iterable of items (dicts).
+        :keyword float timeout: Budget for one page fetch, including metadata, routing and internal polls.
+        :returns: An Iterable of items (dicts), or change records for AllVersionsAndDeletes.
         :rtype: Iterable[dict[str, Any]]
         """
 
-        # pylint: disable=too-many-statements
-        add_args_to_kwargs(args, kwargs)
-        validate_kwargs(kwargs)
-        feed_options = build_options(kwargs)
+        from ._helpers._change_feed import query_items_change_feed
 
-        change_feed_state_context = {}
-        if "mode" in kwargs:
-            change_feed_state_context["mode"] = kwargs.pop("mode")
-        if "partition_key_range_id" in kwargs:
-            change_feed_state_context["partitionKeyRangeId"] = kwargs.pop("partition_key_range_id")
-        if "is_start_from_beginning" in kwargs and kwargs.pop('is_start_from_beginning') is True:
-            change_feed_state_context["startTime"] = "Beginning"
-        elif "start_time" in kwargs:
-            change_feed_state_context["startTime"] = kwargs.pop("start_time")
-
-        container_properties = self._get_properties_with_options(feed_options)
-        if "partition_key" in kwargs:
-            partition_key = kwargs.pop("partition_key")
-            change_feed_state_context["partitionKey"] = self._set_partition_key(cast(PartitionKeyType, partition_key))
-            change_feed_state_context["partitionKeyFeedRange"] = \
-                _get_epk_range_for_partition_key(container_properties, partition_key)
-        if "feed_range" in kwargs:
-            change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
-        if "continuation" in feed_options:
-            change_feed_state_context["continuation"] = feed_options.pop("continuation")
-
-        feed_options["changeFeedStateContext"] = change_feed_state_context
-        feed_options[Constants.ContainerRID] = container_properties["_rid"]
-
-        # populate availability_strategy
-        if (Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
-                and feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] is not None):
-            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] =\
-                _validate_request_hedging_strategy(feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY))
-
-        response_hook = kwargs.pop("response_hook", None)
-        if hasattr(response_hook, "clear"):
-            response_hook.clear()
-
-        result = self.client_connection.QueryItemsChangeFeed(
-            self.container_link, options=feed_options, response_hook=response_hook, **kwargs
-        )
-        return result
+        return query_items_change_feed(self, kwargs)
 
     @overload
     def query_items(
@@ -1023,6 +1013,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     ) -> CosmosItemPaged:
         """Return all results matching the given `query`.
 
+        On the Rust backend, iteration retains its query plan across pages.
+        Save a page's continuation token after consuming that page and resume
+        with the same query, parameters, scope and backend. Legacy bookmarks
+        are not interchangeable with Rust query bookmarks. Supported query
+        shapes without driver snapshot support can still be fully enumerated,
+        but accessing their page iterator's continuation token raises
+        ``NotImplementedError``. Unsupported Rust query shapes and options
+        fail explicitly without replaying on the legacy backend.
+
         You can use any value for the container name in the FROM clause, but
         often the container name is used. In the examples below, the container
         name is "products," and is aliased as "p" for easier referencing in
@@ -1102,11 +1101,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         original_positional_arg_names = ["query", "parameters", "partition_key", "enable_cross_partition_query",
                                          "max_item_count", "enable_scan_in_query", "populate_query_metrics"]
         utils.add_args_to_kwargs(original_positional_arg_names, args, kwargs)
+        if uses_rust(self):
+            return _query_items(self, kwargs)
+        reject_rust_bookmark(kwargs)
         feed_options = build_options(kwargs)
 
         # Get container property and init client container caches
         container_properties = self._get_properties_with_options(feed_options)
-        # Rust eligibility needs metadata; full keys still use normal PartitionKey routing.
+        # The legacy query path resolves full keys and hierarchical prefixes here.
         kwargs["container_properties"] = container_properties
 
         # Update 'feed_options' from 'kwargs'
@@ -1172,9 +1174,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
 
-        # This method does not choose between core-python and rust; it just hands the
-        # query to the client connection. The rust choice for queries is made one layer
-        # down, per page, inside the connection's paging loop.
+        # Explicit core-python selection retains the legacy execution context.
         items = self.client_connection.QueryItems(
             database_or_container_link=self.container_link,
             query=query,
@@ -1293,15 +1293,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        item_link = self._get_document_link(item)
+        prepare_item_target(kwargs, item)
         # The id of the document to overwrite comes from ``item`` (a string
         # id, or the ``id`` of a dict), not the body -- matching delete_item /
         # read_item and the legacy ReplaceItem. The binding puts this id on the
         # wire URL.
         item_id = item if isinstance(item, str) else item["id"]
         # replace_item takes the same kwargs as upsert_item, so reuse upsert's
-        # merge and options build. document_link is the fall-through target for
-        # the legacy ReplaceItem when no rust backend is wired.
+        # merge and options build. Legacy addressing is built in its adapter.
         merge_upsert_item_explicit_kwargs(
             kwargs,
             pre_trigger_include=pre_trigger_include,
@@ -1318,9 +1317,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook=response_hook,
         )
 
-        return self._create_item_helper().replace_item(
+        return self._get_item_helper().replace_item(
             container_link=self.container_link,
-            document_link=item_link,
             item_id=item_id,
             body=body,
             populate_query_metrics=populate_query_metrics,
@@ -1409,7 +1407,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook=response_hook,
         )
 
-        return self._create_item_helper().upsert_item(
+        return self._get_item_helper().upsert_item(
             container_link=self.container_link,
             body=body,
             populate_query_metrics=populate_query_metrics,
@@ -1420,11 +1418,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def create_item(  # pylint:disable=docstring-missing-param
         self,
         body: dict[str, Any],
-        populate_query_metrics: Optional[bool] = None,
+        *,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
         indexing_directive: Optional[int] = None,
-        *,
         enable_automatic_id_generation: bool = False,
         session_token: Optional[str] = None,
         initial_headers: Optional[dict[str, str]] = None,
@@ -1441,17 +1438,23 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         To update or replace an existing item, use the
         :func:`ContainerProxy.upsert_item` method.
 
+        Only ``body`` may be positional. The caller's body is not modified.
+        ``populate_query_metrics``, ``etag``, and ``match_condition`` are rejected
+        even when supplied as ``None``. Automatically generated IDs are available
+        in the returned item when a response body is requested.
+
         :param body: A dict-like object representing the item to create.
         :type body: dict[str, Any]
-        :param str pre_trigger_include: trigger id to be used as pre operation trigger.
-        :param str post_trigger_include: trigger id to be used as post operation trigger.
-        :param indexing_directive: Enumerates the possible values to indicate whether the document should
+        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
+        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
+        :keyword indexing_directive: Enumerates the possible values to indicate whether the document should
             be omitted from indexing. Possible values include: 0 for Default, 1 for Exclude, or 2 for Include.
-        :type indexing_directive: Union[int, ~azure.cosmos.documents.IndexingDirective]
+        :paramtype indexing_directive: Union[int, ~azure.cosmos.documents.IndexingDirective]
         :keyword bool enable_automatic_id_generation: Enable automatic id generation if no id present.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: Called once on success with independent header and CosmosDict snapshots.
+            The body is empty with ``no_response=True``; callback exceptions propagate without replay.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
@@ -1472,23 +1475,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             False (disable hedging even if client has it enabled),
             or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
+        :keyword float timeout: One metadata-plus-write budget, finite and at least one second.
+        :raises TypeError: A retired keyword, invalid body type, or non-string ID was supplied.
+        :raises ValueError: The ID, JSON body, or timeout is invalid.
+        :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: The ID already exists in the logical partition.
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        etag = kwargs.get('etag')
-        if etag is not None:
-            warnings.warn(
-                "The 'etag' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
-        if match_condition is not None:
-            warnings.warn(
-                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-
+        deadline = prepare_create_item_kwargs(kwargs)
         # Move the explicit kwargs into the kwargs dict so the helper
         # sees a single dict.
         merge_create_item_explicit_kwargs(
@@ -1502,21 +1496,17 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             retry_write=retry_write,
             throughput_bucket=throughput_bucket,
             availability_strategy=availability_strategy,
-            response_hook=response_hook,
         )
 
-        # The ensure_container_cached callback routes the cache lookup
-        # back through this proxy, so the existing container-cache
-        # lock and per-call options (excluded_locations, timeouts)
-        # still reach the refresh path.
-        return self._create_item_helper().create_item(
+        result = self._get_item_helper().create_item(
+            deadline=deadline,
             container_link=self.container_link,
             body=body,
-            populate_query_metrics=populate_query_metrics,
             indexing_directive=indexing_directive,
             enable_automatic_id_generation=enable_automatic_id_generation,
             **kwargs,
         )
+        return complete_item_response(result, response_hook, deadline)
 
     @distributed_trace
     def patch_item(
@@ -1541,6 +1531,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     ) -> CosmosDict:
         """ Patches the specified item with the provided operations if it
          exists in the container.
+
+        With Rust, caller If-Match is supported; filter predicates and If-None-Match
+        raise ``NotImplementedError`` without legacy replay. Rust retains its Auto
+        strategy (server PATCH or client-side Read-Modify-Replace). One explicit
+        timeout covers preparation, metadata, and execution. Success hooks receive
+        isolated body/header snapshots and are never retried.
 
         If the item does not already exist in the container, an exception is raised.
 
@@ -1605,14 +1601,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         # Put the partition key in the options, keeping any options the
         # caller already passed.
-        request_options = kwargs.setdefault("request_options", {})
+        request_options = dict(kwargs.get("request_options") or {})
+        kwargs["request_options"] = request_options
         request_options["partitionKey"] = self._set_item_partition_key(partition_key)
-        document_link = self._get_document_link(item)
+        prepare_item_target(kwargs, item)
         item_id = item if isinstance(item, str) else item["id"]
 
-        return self._create_item_helper().patch_item(
+        return self._get_item_helper().patch_item(
             container_link=self.container_link,
-            document_link=document_link,
             item_id=item_id,
             patch_operations=patch_operations,
             filter_predicate=filter_predicate,
@@ -1798,12 +1794,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         # caller already passed.
         request_options = kwargs.setdefault("request_options", {})
         request_options["partitionKey"] = self._set_item_partition_key(partition_key)
-        document_link = self._get_document_link(item)
+        prepare_item_target(kwargs, item)
         item_id = item if isinstance(item, str) else item["id"]
 
-        return self._create_item_helper().delete_item(
+        return self._get_item_helper().delete_item(
             container_link=self.container_link,
-            document_link=document_link,
             item_id=item_id,
             **kwargs,
         )

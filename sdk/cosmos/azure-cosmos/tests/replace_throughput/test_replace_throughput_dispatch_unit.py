@@ -56,11 +56,11 @@ def test_sync_replace_throughput_routes_to_rust_when_supported(monkeypatch: pyte
             """Initialise the call log."""
             self.calls: List[str] = []
 
-        def run_operation(self, *, legacy_operation: Any, rust_eligible: bool, **_kwargs: Any) -> Any:
+        def run_operation(self, *, routing: Any, legacy_call: Any, **_kwargs: Any) -> Any:
             """Assert rust eligibility, record the operation name, and return a canned offer."""
-            assert rust_eligible is True
-            self.calls.append(legacy_operation.op)
-            return [_offer()] if legacy_operation.op == "read_offer" else _offer(500)
+            assert routing.supported is True
+            self.calls.append(routing.op)
+            return [_offer()] if routing.op == "read_offer" else _offer(500)
 
     backend = _Backend()
 
@@ -127,10 +127,10 @@ def test_sync_replace_throughput_falls_back_on_read_timeout(monkeypatch: pytest.
     class _Backend:
         """A backend stub that enforces rust-ineligibility and invokes the legacy operation."""
 
-        def run_operation(self, *, legacy_operation: Any, rust_eligible: bool, **_kwargs: Any) -> Any:
+        def run_operation(self, *, routing: Any, legacy_call: Any, **_kwargs: Any) -> Any:
             """Assert the call is rust-ineligible, then delegate to the legacy operation."""
-            assert rust_eligible is False
-            return legacy_operation.invoke()
+            assert routing.supported is False
+            return legacy_call()
 
     container.client_connection = SimpleNamespace(
         _backend=_Backend(),
@@ -174,12 +174,12 @@ async def test_async_replace_throughput_routes_to_rust_when_supported(
             self.calls: List[str] = []
 
         async def run_operation(
-            self, *, legacy_operation: Any, rust_eligible: bool, **_kwargs: Any
+            self, *, routing: Any, legacy_call: Any, **_kwargs: Any
         ) -> Any:
             """Assert rust eligibility, record the operation name, and return a canned offer."""
-            assert rust_eligible is True
-            self.calls.append(legacy_operation.op)
-            return [_offer()] if legacy_operation.op == "read_offer" else _offer(500)
+            assert routing.supported is True
+            self.calls.append(routing.op)
+            return [_offer()] if routing.op == "read_offer" else _offer(500)
 
     backend = _Backend()
 
@@ -282,11 +282,11 @@ async def test_async_replace_throughput_falls_back_on_read_timeout(
         """A backend stub that enforces rust-ineligibility and awaits the legacy operation."""
 
         async def run_operation(
-            self, *, legacy_operation: Any, rust_eligible: bool, **_kwargs: Any
+            self, *, routing: Any, legacy_call: Any, **_kwargs: Any
         ) -> Any:
             """Assert the call is rust-ineligible, then await the legacy operation."""
-            assert rust_eligible is False
-            return await legacy_operation.invoke()
+            assert routing.supported is False
+            return await legacy_call()
 
     container.client_connection = SimpleNamespace(
         _backend=_Backend(),

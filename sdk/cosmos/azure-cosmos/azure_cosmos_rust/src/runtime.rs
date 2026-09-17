@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 //! Per-process runtime, the driver cache, and the client lifecycle entry points
-//! (`init_client` / `close_client`).
+//! (`acquire_driver_handle` / `release_driver_handle`).
 //!
 //! This file is the rust backend's pooling-and-lifecycle brain. It exists so the
 //! whole process shares one set of runtimes, so clients with the same
@@ -22,7 +22,7 @@
 //!   * driver runtime (`CosmosDriverRuntime`) -- the *factory* that builds rust
 //!     drivers and carries the process-wide connection-pool config. Also one per
 //!     process. It is built *on* the Tokio runtime.
-//!   * rust driver (`CosmosDriver`) -- the per-account *engine* that signs,
+//!   * rust driver (`CosmosDriver`) -- the per-account *driver* that signs,
 //!     routes, and retries. This is the one thing here that is NOT process-wide:
 //!     there is one per distinct `(endpoint, credential, config)`, produced by
 //!     `driver_runtime.create_driver(...)`, and its async work runs on the shared
@@ -33,7 +33,7 @@
 //! driver runtime is a factory that makes many rust drivers (one per key), which
 //! this file caches and reference-counts.
 //!
-//! The driver handle `init_client` returns is exactly that
+//! The driver handle `acquire_driver_handle` returns is exactly that
 //! `(endpoint, credential, config)` cache key. Clients that match on all three
 //! share one rust driver, and it is dropped when the last one closes. A client
 //! that differs in credential or config gets its own driver, so one client's auth
@@ -96,7 +96,7 @@ struct RuntimeSettings {
 
 /// One cached driver plus a count of how many live clients use it.
 ///
-/// The handle `init_client` returns is the `(endpoint, credential, config)` key, so
+/// The handle `acquire_driver_handle` returns is the `(endpoint, credential, config)` key, so
 /// clients that match on all three share one `CosmosDriver` and clients that differ
 /// get their own. This map is the only per-account cache, since the driver runtime
 /// builds a fresh driver on every `create_driver`.
@@ -116,8 +116,8 @@ struct RuntimeSettings {
 /// config; a normal app (one credential, one config per account) still gets one driver
 /// per account. Sharing only happens when all three match.
 ///
-/// The count keeps the shared driver alive until the last user closes: `init_client`
-/// adds one, `close_client` drops one, and the driver is evicted at zero. Without it,
+/// The count keeps the shared driver alive until the last user closes: `acquire_driver_handle`
+/// adds one, `release_driver_handle` drops one, and the driver is evicted at zero. Without it,
 /// closing one of two sharers would evict the driver the other still needs.
 pub(crate) struct DriverEntry {
     pub(crate) driver: Arc<CosmosDriver>,
@@ -126,7 +126,7 @@ pub(crate) struct DriverEntry {
 }
 
 /// Compute a `DriverEntry`'s next refcount and whether to evict it. Split out of
-/// `close_client` so the drop-one / evict-at-zero rule can be tested without a real
+/// `release_driver_handle` so the drop-one / evict-at-zero rule can be tested without a real
 /// `CosmosDriver`. `saturating_sub` keeps a stray extra close from underflowing.
 fn apply_close(refcount: usize) -> (usize, bool) {
     let next = refcount.saturating_sub(1);
@@ -248,9 +248,10 @@ fn setting_conflicts<T: PartialEq>(initialized: Option<T>, requested: Option<T>)
     requested.is_some() && initialized != requested
 }
 
-const AUTH_REQUIRED_ERROR: &str = "init_client requires either a master_key or a token credential";
+const AUTH_REQUIRED_ERROR: &str =
+    "acquire_driver_handle requires either a master_key or a token credential";
 const AUTH_EXCLUSIVE_ERROR: &str =
-    "init_client received both master_key and token credential; exactly one must be set";
+    "acquire_driver_handle received both master_key and token credential; exactly one must be set";
 
 /// Require exactly one auth input -- a master key or a token credential -- at the
 /// API boundary. Rejects "both" (ambiguous: which one signs requests?) and
@@ -353,24 +354,40 @@ fn connection_pool_from_settings(
 
 /// Read-only fetch of the process-wide `RuntimeContext` for the per-operation
 /// path (`wire/`), which needs the shared Tokio runtime to run a request but
-/// must not (re)build it. Raises a clear "init_client must be called before
+/// must not (re)build it. Raises a clear "acquire_driver_handle must be called before
 /// {op_name}" if no client has initialized the runtimes yet. Without it, an
-/// operation issued before `init_client` would fail deep down with an obscure
+/// operation issued before `acquire_driver_handle` would fail deep down with an obscure
 /// error instead of a plain one naming the missing step.
 pub(crate) fn require_runtime_context(op_name: &str) -> PyResult<&'static RuntimeContext> {
     match RUNTIME_CONTEXT.get() {
         Some(Ok(ctx)) => Ok(ctx),
         Some(Err(message)) => Err(PyRuntimeError::new_err(message.clone())),
         None => Err(PyRuntimeError::new_err(format!(
-            "init_client must be called before {op_name}"
+            "acquire_driver_handle must be called before {op_name}"
         ))),
     }
 }
 
 // ---------------------------------------------------------------------------
-// init_client
+// acquire_driver_handle
 // ---------------------------------------------------------------------------
 //
+#[pyfunction]
+pub(crate) fn runtime_configuration() -> Option<(Option<bool>, Option<f64>, Option<f64>)> {
+    match RUNTIME_CONTEXT.get() {
+        Some(Ok(ctx)) => Some((
+            ctx.settings.proxy_allowed,
+            ctx.settings
+                .max_connect_timeout
+                .map(|value| value.as_secs_f64()),
+            ctx.settings
+                .max_dataplane_request_timeout
+                .map(|value| value.as_secs_f64()),
+        )),
+        _ => None,
+    }
+}
+
 // The entry point, called once on a rust-backed client's first Rust operation.
 // It returns the driver handle -- the `(endpoint, credential, config)` cache key
 // -- and makes sure a rust driver for that key exists:
@@ -391,7 +408,7 @@ pub(crate) fn require_runtime_context(op_name: &str) -> PyResult<&'static Runtim
 
 #[pyfunction]
 #[pyo3(signature = (endpoint, master_key=None, config=None, credential=None))]
-pub(crate) fn init_client(
+pub(crate) fn acquire_driver_handle(
     py: Python<'_>,
     endpoint: &str,
     master_key: Option<&str>,
@@ -420,32 +437,29 @@ pub(crate) fn init_client(
     // Fingerprint the config so it joins the key too. Read here under the GIL, since
     // config is a Python object. An absent config maps to `cfg:none`.
     let config_fp = config_fingerprint(config)?;
-    let handle = compose_cache_key(endpoint, &credential_fp, &config_fp);
+    let driver_handle = compose_cache_key(endpoint, &credential_fp, &config_fp);
 
     // Fast path: a driver for this key already exists, so this is another client with
     // the same endpoint, credential, and config. Add a reference and reuse it. A
-    // write lock is taken because we change the count; init_client runs once per
+    // write lock is taken because we change the count; acquire_driver_handle runs once per
     // client.
     {
         let mut cache = drivers().write();
-        if let Some(entry) = cache.get_mut(&handle) {
+        if let Some(entry) = cache.get_mut(&driver_handle) {
             entry.refcount += 1;
-            return Ok(handle);
+            return Ok(driver_handle);
         }
     }
 
-    // Read the client-construction settings while the GIL is still held (config
-    // is a Python object). An absent config leaves both routing and the
-    // per-account operation options unset, so the driver is built with only the
-    // account and otherwise keeps its defaults.
-    let (preferred_regions, operation_options, user_agent_suffix, fault_rules) = match config {
+    // Python clients default to no hedging, even when no config was prepared.
+    let operation_options = operation_options_from_config(config)?;
+    let (preferred_regions, user_agent_suffix, fault_rules) = match config {
         Some(client_config) => (
             preferred_regions_from_config(client_config)?,
-            operation_options_from_config(client_config)?,
             user_agent_suffix_from_config(client_config)?,
             fault_rules_from_config(client_config)?,
         ),
-        None => (Vec::new(), None, None, Vec::new()),
+        None => (Vec::new(), None, Vec::new()),
     };
 
     // Slow path: build the driver. Held without any of our locks because
@@ -468,16 +482,11 @@ pub(crate) fn init_client(
     };
 
     // `create_driver` takes a single required `DriverOptions` that carries the
-    // account itself, so always build one. When the client tuned nothing, the
-    // builder gets only the account and the driver keeps its defaults; each
-    // present setting is layered on top.
+    // account itself and the Python client's operation defaults.
     let driver_options = {
-        let mut builder = DriverOptions::builder(account);
+        let mut builder = DriverOptions::builder(account).with_operation_options(operation_options);
         if !preferred_regions.is_empty() {
             builder = builder.with_preferred_regions(preferred_regions);
-        }
-        if let Some(operation_options) = operation_options {
-            builder = builder.with_operation_options(operation_options);
         }
         if let Some(user_agent_suffix) = user_agent_suffix {
             builder = builder.with_user_agent_suffix(user_agent_suffix);
@@ -516,14 +525,14 @@ pub(crate) fn init_client(
     let mut surplus_driver: Option<Arc<CosmosDriver>> = None;
     {
         let mut cache = drivers().write();
-        match cache.get_mut(&handle) {
+        match cache.get_mut(&driver_handle) {
             Some(entry) => {
                 entry.refcount += 1;
                 surplus_driver = Some(driver);
             }
             None => {
                 cache.insert(
-                    handle.clone(),
+                    driver_handle.clone(),
                     DriverEntry {
                         driver,
                         fault_rules: fault_rules
@@ -539,7 +548,7 @@ pub(crate) fn init_client(
     // Drop the race-loser driver (if any) now that the lock is released.
     drop(surplus_driver);
 
-    Ok(handle)
+    Ok(driver_handle)
 }
 
 /// Read the process-wide connection-pool settings from the prepared config.
@@ -570,7 +579,7 @@ fn timeout_from_config(config: &Bound<'_, PyAny>, field_name: &str) -> PyResult<
 /// Read the optional `preferred_locations` off the prepared client config and
 /// turn each region name into a driver `Region` for preferred-region routing.
 ///
-/// Matches how `extract_op_modifiers` reads `excludedlocations`: it accepts any
+/// Matches how `extract_request_headers_and_options` reads `excludedlocations`: it accepts any
 /// Python sequence of strings (the `PreparedClientConfig` stores a tuple) and
 /// lets the driver normalize each name ("West US" -> "westus"). A config object
 /// without the attribute, or a Python `None`, yields no regions rather than an
@@ -579,7 +588,8 @@ fn timeout_from_config(config: &Bound<'_, PyAny>, field_name: &str) -> PyResult<
 fn preferred_regions_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Region>> {
     let value = match config.getattr("preferred_locations") {
         Ok(value) => value,
-        Err(_) => return Ok(Vec::new()),
+        Err(err) if err.is_instance_of::<PyAttributeError>(config.py()) => return Ok(Vec::new()),
+        Err(err) => return Err(err),
     };
     if value.is_none() {
         return Ok(Vec::new());
@@ -589,7 +599,17 @@ fn preferred_regions_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Regi
             "preferred_locations must be a sequence of region-name strings: {e}"
         ))
     })?;
+    validate_region_names(&region_names)?;
     Ok(region_names.into_iter().map(Region::from).collect())
+}
+
+fn validate_region_names(names: &[String]) -> PyResult<()> {
+    if names.iter().any(|name| name.trim().is_empty()) {
+        return Err(PyValueError::new_err(
+            "region names must be non-empty strings",
+        ));
+    }
+    Ok(())
 }
 
 /// Read the optional `user_agent_suffix` and turn it into the driver's
@@ -692,29 +712,45 @@ fn fault_rules_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Arc<FaultI
 /// threshold, and the chosen read consistency level. These are carried on the
 /// "account" layer the driver applies to every request the client makes.
 ///
-/// Returns `None` when the config carries none of them, so a client that only
-/// set (say) `preferred_locations` still passes no operation options and the
-/// driver keeps its defaults. Each field is read defensively: a missing
-/// attribute or a Python `None` is "unset" rather than an error, so the binding
-/// stays compatible with older/newer `PreparedClientConfig` shapes.
-fn operation_options_from_config(config: &Bound<'_, PyAny>) -> PyResult<Option<OperationOptions>> {
-    let mut builder = OperationOptionsBuilder::new();
-    let mut any_set = false;
+/// Missing config or threshold means Python's default: hedging disabled.
+/// Other absent fields keep the driver's defaults. An enabled per-operation
+/// strategy can still override this client-level strategy.
+fn operation_options_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<OperationOptions> {
+    let mut builder =
+        OperationOptionsBuilder::new().with_availability_strategy(AvailabilityStrategy::Disabled);
+    let Some(config) = config else {
+        return Ok(builder.build());
+    };
 
     // excluded_locations -> ExcludedRegions. Same collection shape the
     // per-operation `excludedLocations` option already uses; the driver
     // normalizes each region name.
     if let Some(region_names) = get_config_opt::<Vec<String>>(config, "excluded_locations")? {
+        validate_region_names(&region_names)?;
         if !region_names.is_empty() {
             builder = builder
                 .with_excluded_regions(region_names.into_iter().collect::<ExcludedRegions>());
-            any_set = true;
         }
     }
 
     // throttling_max_retry_count / _wait_time_seconds -> ThrottlingRetryOptions.
     // Carried only when the customer tuned one of them; an untuned client leaves
     // the driver's defaults (9 retries / 30 s) in place, which match Python-core.
+    for name in [
+        "throttling_max_retry_count",
+        "throttling_max_retry_wait_time_seconds",
+    ] {
+        if let Some(value) = get_config_opt::<PyObject>(config, name)? {
+            if value
+                .bind(config.py())
+                .is_instance_of::<pyo3::types::PyBool>()
+            {
+                return Err(PyValueError::new_err(format!(
+                    "{name} must be numeric, not bool"
+                )));
+            }
+        }
+    }
     let max_retry_count = get_config_opt::<u32>(config, "throttling_max_retry_count")?;
     let max_retry_wait_seconds =
         get_config_opt::<f64>(config, "throttling_max_retry_wait_time_seconds")?;
@@ -724,28 +760,25 @@ fn operation_options_from_config(config: &Bound<'_, PyAny>) -> PyResult<Option<O
             throttle = throttle.with_max_retry_count(count);
         }
         if let Some(seconds) = max_retry_wait_seconds {
-            // Guard against non-finite / negative values, which would panic in
-            // Duration::from_secs_f64; treat them as "unset" like the timeout path.
-            if seconds.is_finite() && seconds >= 0.0 {
-                throttle = throttle.with_max_retry_wait_time(Duration::from_secs_f64(seconds));
-            }
+            let duration = Duration::try_from_secs_f64(seconds).map_err(|_| {
+                PyValueError::new_err(
+                    "throttling retry wait must be finite nonnegative seconds within range",
+                )
+            })?;
+            throttle = throttle.with_max_retry_wait_time(duration);
         }
         builder = builder.with_throttling_retry_options(throttle.build());
-        any_set = true;
     }
 
     // hedging threshold -> AvailabilityStrategy::Hedging. Present only when the
     // customer enabled hedging (availability_strategy True / dict). The Python
-    // side already validated threshold_ms > 0; a 0 here (only reachable from a
-    // hand-built config) makes HedgeThreshold::new return None, which we treat as
-    // "no hedging" rather than an error.
+    // side validates threshold_ms > 0; reject an invalid hand-built config too.
     if let Some(threshold_ms) = get_config_opt::<u64>(config, "hedging_threshold_ms")? {
-        if let Some(threshold) = HedgeThreshold::new(Duration::from_millis(threshold_ms)) {
-            builder = builder.with_availability_strategy(AvailabilityStrategy::Hedging(
-                HedgingStrategy::new(threshold),
-            ));
-            any_set = true;
-        }
+        let threshold = HedgeThreshold::new(Duration::from_millis(threshold_ms))
+            .ok_or_else(|| PyValueError::new_err("hedging_threshold_ms must be positive"))?;
+        builder = builder.with_availability_strategy(AvailabilityStrategy::Hedging(
+            HedgingStrategy::new(threshold),
+        ));
     }
 
     // consistency_level -> ReadConsistencyStrategy. Set only when the customer
@@ -759,7 +792,6 @@ fn operation_options_from_config(config: &Bound<'_, PyAny>) -> PyResult<Option<O
             match read_consistency_from_str(&level) {
                 Some(strategy) => {
                     builder = builder.with_read_consistency_strategy(strategy);
-                    any_set = true;
                 }
                 None => {
                     return Err(PyValueError::new_err(format!(
@@ -771,7 +803,7 @@ fn operation_options_from_config(config: &Bound<'_, PyAny>) -> PyResult<Option<O
         }
     }
 
-    Ok(if any_set { Some(builder.build()) } else { None })
+    Ok(builder.build())
 }
 
 /// Map a Python consistency-level string to the driver's `ReadConsistencyStrategy`.
@@ -813,14 +845,14 @@ where
 }
 
 #[pyfunction]
-pub(crate) fn close_client(handle: &str) -> PyResult<()> {
+pub(crate) fn release_driver_handle(driver_handle: &str) -> PyResult<()> {
     // Drop one client's reference; only the last closer evicts the driver. An unknown
     // handle is a no-op, so close stays idempotent and safe from both close() and
     // __del__. The evicted entry is removed under the lock but dropped after it, so a
     // CosmosDriver's teardown never runs while the cache lock is held.
     let evicted: Option<DriverEntry> = {
         let mut cache = drivers().write();
-        let evict = match cache.get_mut(handle) {
+        let evict = match cache.get_mut(driver_handle) {
             Some(entry) => {
                 let (next, evict) = apply_close(entry.refcount);
                 entry.refcount = next;
@@ -829,7 +861,7 @@ pub(crate) fn close_client(handle: &str) -> PyResult<()> {
             None => false,
         };
         if evict {
-            cache.remove(handle)
+            cache.remove(driver_handle)
         } else {
             None
         }
@@ -839,10 +871,10 @@ pub(crate) fn close_client(handle: &str) -> PyResult<()> {
 }
 
 #[pyfunction]
-pub(crate) fn fault_injection_rule_hit_count(handle: &str, rule_id: &str) -> PyResult<u32> {
+pub(crate) fn fault_injection_rule_hit_count(driver_handle: &str, rule_id: &str) -> PyResult<u32> {
     let cache = drivers().read();
     let entry = cache
-        .get(handle)
+        .get(driver_handle)
         .ok_or_else(|| PyValueError::new_err("unknown or closed Rust client handle"))?;
     let rule = entry.fault_rules.get(rule_id).ok_or_else(|| {
         PyValueError::new_err(format!("unknown fault injection rule id: {rule_id:?}"))
@@ -855,14 +887,158 @@ mod tests {
     use super::{
         apply_close, compose_cache_key, config_fingerprint_from_repr,
         connection_pool_from_settings, get_config_opt, master_key_fingerprint,
-        read_consistency_from_str, runtime_settings_conflict, runtime_settings_from_config,
-        token_credential_fingerprint, validate_auth_inputs, RuntimeSettings, AUTH_EXCLUSIVE_ERROR,
-        AUTH_REQUIRED_ERROR,
+        operation_options_from_config, read_consistency_from_str, runtime_settings_conflict,
+        runtime_settings_from_config, token_credential_fingerprint, validate_auth_inputs,
+        RuntimeSettings, AUTH_EXCLUSIVE_ERROR, AUTH_REQUIRED_ERROR,
     };
-    use azure_data_cosmos_driver::options::ReadConsistencyStrategy;
+    use azure_data_cosmos_driver::options::{
+        AvailabilityStrategy, HedgeThreshold, HedgingStrategy, OperationOptionsBuilder,
+        OperationOptionsView, ReadConsistencyStrategy,
+    };
     use pyo3::prelude::*;
     use pyo3::types::{PyModule, PyString};
     use std::time::Duration;
+
+    #[test]
+    fn client_config_rejects_invalid_retries_and_regions() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let config = PyModule::import_bound(py, "types")
+                .unwrap()
+                .getattr("SimpleNamespace")
+                .unwrap()
+                .call0()
+                .unwrap();
+            for count in [-1_i64, 4294967296] {
+                config.setattr("throttling_max_retry_count", count).unwrap();
+                assert!(operation_options_from_config(Some(&config)).is_err());
+            }
+            config.setattr("throttling_max_retry_count", true).unwrap();
+            assert!(operation_options_from_config(Some(&config)).is_err());
+            config.setattr("throttling_max_retry_count", 0).unwrap();
+            for wait in [-1.0, f64::NAN, f64::INFINITY, 2_f64.powi(64)] {
+                config
+                    .setattr("throttling_max_retry_wait_time_seconds", wait)
+                    .unwrap();
+                assert!(operation_options_from_config(Some(&config)).is_err());
+            }
+            config
+                .setattr("throttling_max_retry_wait_time_seconds", true)
+                .unwrap();
+            assert!(operation_options_from_config(Some(&config)).is_err());
+            config
+                .setattr("throttling_max_retry_wait_time_seconds", 0)
+                .unwrap();
+            assert!(operation_options_from_config(Some(&config)).is_ok());
+            config.setattr("preferred_locations", vec![123]).unwrap();
+            assert!(super::preferred_regions_from_config(&config).is_err());
+            config.setattr("preferred_locations", vec![" "]).unwrap();
+            assert!(super::preferred_regions_from_config(&config).is_err());
+            config.setattr("excluded_locations", vec![123]).unwrap();
+            assert!(operation_options_from_config(Some(&config)).is_err());
+            config.setattr("excluded_locations", vec![" "]).unwrap();
+            assert!(operation_options_from_config(Some(&config)).is_err());
+        });
+    }
+
+    #[test]
+    fn client_hedging_defaults_to_disabled_with_or_without_config() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let options = operation_options_from_config(None).unwrap();
+            assert_eq!(
+                options.availability_strategy,
+                Some(AvailabilityStrategy::Disabled)
+            );
+            let module = PyModule::from_code_bound(
+                py,
+                r#"
+class Empty:
+    pass
+class Missing:
+    preferred_locations = ("West US",)
+class ExplicitNone:
+    hedging_threshold_ms = None
+    consistency_level = "Session"
+"#,
+                "hedging_config_test.py",
+                "hedging_config_test",
+            )
+            .unwrap();
+            for name in ["Empty", "Missing", "ExplicitNone"] {
+                let config = module.getattr(name).unwrap().call0().unwrap();
+                let options = operation_options_from_config(Some(&config)).unwrap();
+                assert_eq!(
+                    options.availability_strategy,
+                    Some(AvailabilityStrategy::Disabled)
+                );
+                if name == "ExplicitNone" {
+                    assert_eq!(
+                        options.read_consistency_strategy,
+                        Some(ReadConsistencyStrategy::Session)
+                    );
+                }
+            }
+        });
+    }
+
+    #[test]
+    fn client_hedging_enabled_preserves_default_and_custom_thresholds() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let types = PyModule::import_bound(py, "types").unwrap();
+            for threshold_ms in [500_u64, 25] {
+                let config = types.getattr("SimpleNamespace").unwrap().call0().unwrap();
+                config
+                    .setattr("hedging_threshold_ms", threshold_ms)
+                    .unwrap();
+                let options = operation_options_from_config(Some(&config)).unwrap();
+                let expected = AvailabilityStrategy::Hedging(HedgingStrategy::new(
+                    HedgeThreshold::new(Duration::from_millis(threshold_ms)).unwrap(),
+                ));
+                assert_eq!(options.availability_strategy, Some(expected));
+            }
+        });
+    }
+
+    #[test]
+    fn client_hedging_rejects_invalid_threshold_instead_of_disabling_silently() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let config = PyModule::import_bound(py, "types")
+                .unwrap()
+                .getattr("SimpleNamespace")
+                .unwrap()
+                .call0()
+                .unwrap();
+            config.setattr("hedging_threshold_ms", 0).unwrap();
+            let error = operation_options_from_config(Some(&config)).unwrap_err();
+            assert!(error.is_instance_of::<pyo3::exceptions::PyValueError>(py));
+            assert!(error
+                .to_string()
+                .contains("hedging_threshold_ms must be positive"));
+            config.setattr("hedging_threshold_ms", "invalid").unwrap();
+            assert!(operation_options_from_config(Some(&config)).is_err());
+        });
+    }
+
+    #[test]
+    fn client_hedging_default_allows_explicit_request_override() {
+        let account = std::sync::Arc::new(operation_options_from_config(None).unwrap());
+        let enabled = AvailabilityStrategy::Hedging(HedgingStrategy::new(
+            HedgeThreshold::new(Duration::from_millis(50)).unwrap(),
+        ));
+        let operation = OperationOptionsBuilder::new()
+            .with_availability_strategy(enabled)
+            .build();
+        let view = OperationOptionsView::new(None, None, Some(account.clone()), Some(&operation));
+        assert_eq!(view.availability_strategy(), Some(&enabled));
+        let view = OperationOptionsView::new(None, None, Some(account), None);
+        assert_eq!(
+            view.availability_strategy(),
+            Some(&AvailabilityStrategy::Disabled)
+        );
+    }
 
     // The reference-counted driver cache evicts an endpoint's driver only when
     // its last client closes. apply_close is the decision behind that: it must

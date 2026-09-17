@@ -3,12 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Process-wide count of Rust attempts that were retried on the legacy path.
+"""Process-wide count of permitted pre-dispatch legacy compatibility routes.
 
-When a Rust request hits a narrow compatibility gap, the backend retries it
-through the equivalent core-python call. The request still succeeds and nothing
-surfaces to the caller, so this counter is how a test or a diagnostic finds out
-that it happened at all.
+When a Rust-selected request is ineligible or static preflight detects an
+allowed capability gap, the coordinator invokes its legacy callable instead.
+No Rust execution is retried. Explicit core-python selection is not counted.
 
 The count is shared by every client in the process and can be incremented from
 any thread, so both functions take a lock. The async backends record through
@@ -25,13 +24,13 @@ _RUST_COMPATIBILITY_FALLBACK_COUNT_LOCK = Lock()
 
 
 def rust_compatibility_fallback_count() -> int:
-    """Return Rust attempts retried through a legacy compatibility operation."""
+    """Return the number of permitted pre-dispatch compatibility routes."""
     with _RUST_COMPATIBILITY_FALLBACK_COUNT_LOCK:
         return _RUST_COMPATIBILITY_FALLBACK_COUNT
 
 
 def record_rust_compatibility_fallback() -> None:
-    """Record a request retried with the Python implementation."""
+    """Record pre-dispatch routing to the Python implementation."""
     global _RUST_COMPATIBILITY_FALLBACK_COUNT  # pylint: disable=global-statement
     with _RUST_COMPATIBILITY_FALLBACK_COUNT_LOCK:
         _RUST_COMPATIBILITY_FALLBACK_COUNT += 1

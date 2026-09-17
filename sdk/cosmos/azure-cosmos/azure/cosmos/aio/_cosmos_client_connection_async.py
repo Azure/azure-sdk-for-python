@@ -48,6 +48,7 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos.aio._global_partition_endpoint_manager_per_partition_automatic_failover_async import (
     _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync)
 from .. import _base as base
+from .._operation_deadline import legacy_deadline_options
 from .._availability_strategy_config import CrossRegionHedgingStrategy, validate_client_hedging_strategy
 from .._backend.operations import (
     OP_LIST_CONTAINERS,
@@ -57,8 +58,9 @@ from .._backend.operations import (
     OP_QUERY_ITEMS,
     OP_READ_ALL_ITEMS,
 )
-from .._backend.contracts import LegacyOperation, PreparedQuery
-from .._backend.errors import PageNotSupportedByBackendError
+from .._backend.contracts import PreparedQuery
+from .._backend.capabilities import OperationRouting
+
 from .._base import _build_properties_cache
 from .. import documents
 from .._change_feed.aio.change_feed_iterable import ChangeFeedIterable
@@ -83,29 +85,11 @@ from ..documents import ConnectionPolicy, DatabaseAccount
 from .._constants import _Constants as Constants
 from .._query_advisor import get_query_advice_info
 from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
-from .._query_rust_routing import (
-    RUST_LIST_CONTAINERS_UNSUPPORTED_MESSAGE,
-    RUST_LIST_DATABASES_UNSUPPORTED_MESSAGE,
-    RUST_QUERY_DATABASES_UNSUPPORTED_MESSAGE,
-    RUST_QUERY_CONTAINERS_UNSUPPORTED_MESSAGE,
-    build_list_databases_prepared_query,
-    build_query_databases_prepared_query,
-    build_list_containers_prepared_query,
-    build_query_containers_prepared_query,
-    build_read_all_items_prepared_query,
-    build_query_items_prepared_query,
-    can_use_rust_backend_for_list_databases_page,
-    can_use_rust_backend_for_query_databases_page,
-    can_use_rust_backend_for_list_containers_page,
-    can_use_rust_backend_for_query_containers_page,
-    can_use_rust_backend_for_query_page,
-    can_use_rust_backend_for_read_all_items_page,
-    parse_and_finalize_rust_page,
-)
+from .._query_rust_routing import build_list_databases_prepared_query, build_query_databases_prepared_query, build_list_containers_prepared_query, build_query_containers_prepared_query, build_read_all_items_prepared_query, build_query_items_prepared_query, can_use_rust_backend_for_list_databases_page, can_use_rust_backend_for_query_databases_page, can_use_rust_backend_for_list_containers_page, can_use_rust_backend_for_query_containers_page, can_use_rust_backend_for_query_page, can_use_rust_backend_for_read_all_items_page, process_query_page
 from .. import http_constants, exceptions
 from . import _query_iterable_async as query_iterable
 from ._backend.cosmos_backend import AsyncCosmosBackend
-from .._helpers._item_context import ResponseHeaderState
+from .._helpers._item_context import ClientLastResponseHeaders
 from ._backend.legacy import ASYNC_LEGACY_BACKEND
 from .. import _runtime_constants as runtime_constants
 from .. import _request_object
@@ -248,7 +232,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
         # Keeps the latest response headers from the server.
-        self._response_state = kwargs.pop("_response_state", None) or ResponseHeaderState()
+        self._response_state = kwargs.pop("_response_state", None) or ClientLastResponseHeaders()
         self.UseMultipleWriteLocations = False
         self._global_endpoint_manager = _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(self)
 
@@ -2407,8 +2391,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             **kwargs)
         return await helper.read_items()
 
-
-
     def ReadItems(
         self,
         collection_link: str,
@@ -2493,7 +2475,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     response_headers=response_headers,
                     **kwargs
                 ),
-                self.last_response_headers,
+                response_headers if "_read_all_response_headers" in options else self.last_response_headers,
             )
 
         return CosmosAsyncItemPaged(
@@ -3094,6 +3076,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
+        page_backend = kwargs.pop("_read_all_backend", self._backend)
+        deadline = options.get("_item_operation_deadline")
+        if deadline is not None:
+            options = legacy_deadline_options(options, deadline)
+            kwargs["timeout"] = options["timeout"]
+            kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
         read_timeout = options.get("read_timeout")
         if read_timeout is not None:
             # we currently have a gap where kwargs are not getting passed correctly down the pipeline. In order to make
@@ -3180,9 +3168,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 )
                 change_feed_state: Optional[ChangeFeedState] = options.get("changeFeedState")
                 if change_feed_state is not None:
-                    feed_options = {}
-                    if 'excludedLocations' in options:
-                        feed_options['excludedLocations'] = options['excludedLocations']
+                    feed_options = dict(options)
                     await change_feed_state.populate_request_headers_async(
                         self._routing_map_provider, headers, feed_options
                     )
@@ -3197,7 +3183,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     response_headers.clear()
                     response_headers.update(last_response_headers)
                 if response_hook:
-                    response_hook(self.last_response_headers, result)
+                    response_hook(last_response_headers, result)
                 return __GetBodiesFromQueryResult(result)
 
             rust_request_headers: Mapping[str, Any] = {}
@@ -3210,25 +3196,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     resource_type=resource_type,
                 )
 
-                async def _build_list_databases_page():
+                def _build_list_databases_page() -> PreparedQuery:
                     nonlocal rust_request_headers
-                    list_headers = base.GetHeaders(
-                        self,
-                        initial_headers,
-                        "get",
-                        path,
-                        id_,
-                        resource_type,
-                        documents._OperationType.ReadFeed,
-                        options,
-                        None,
-                    )
-                    rust_request_headers = list_headers
-                    return build_list_databases_prepared_query(
+                    prepared = build_list_databases_prepared_query(
                         options=options,
-                        req_headers=list_headers,
+                        req_headers=self.default_headers,
                     )
-                prepare_request_page = _build_list_databases_page
+                    rust_request_headers = prepared.headers
+                    return prepared
+                build_request_page = _build_list_databases_page
             elif resource_type == http_constants.ResourceType.Collection:
                 page_op = OP_LIST_CONTAINERS
                 rust_eligible = can_use_rust_backend_for_list_containers_page(
@@ -3239,26 +3215,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     resource_type=resource_type,
                 )
 
-                async def _build_list_containers_page():
+                def _build_list_containers_page() -> PreparedQuery:
                     nonlocal rust_request_headers
-                    list_headers = base.GetHeaders(
-                        self,
-                        initial_headers,
-                        "get",
-                        path,
-                        id_,
-                        resource_type,
-                        documents._OperationType.ReadFeed,
-                        options,
-                        None,
-                    )
-                    rust_request_headers = list_headers
-                    return build_list_containers_prepared_query(
+                    prepared = build_list_containers_prepared_query(
                         path=path,
                         options=options,
-                        req_headers=list_headers,
+                        req_headers=self.default_headers,
                     )
-                prepare_request_page = _build_list_containers_page
+                    rust_request_headers = prepared.headers
+                    return prepared
+                build_request_page = _build_list_containers_page
             else:
                 page_op = OP_READ_ALL_ITEMS
                 rust_eligible = can_use_rust_backend_for_read_all_items_page(
@@ -3269,43 +3235,19 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     partition_key_range_id=partition_key_range_id,
                 )
 
-                async def _build_read_all_items_page():
+                def _build_read_all_items_page() -> PreparedQuery:
                     nonlocal rust_request_headers
-                    read_headers = base.GetHeaders(
-                        self,
-                        self.default_headers,
-                        "get",
-                        path,
-                        id_,
-                        resource_type,
-                        documents._OperationType.ReadFeed,
-                        options,
-                        partition_key_range_id,
-                    )
-                    session_request = _request_object.RequestObject(
-                        resource_type,
-                        documents._OperationType.ReadFeed,
-                        read_headers,
-                        options.get("partitionKey", None),
-                    )
-                    await base.set_session_token_header_async(
-                        self,
-                        read_headers,
-                        path,
-                        session_request,
-                        options,
-                        partition_key_range_id,
-                    )
-                    rust_request_headers = read_headers
-                    return build_read_all_items_prepared_query(
+                    prepared = build_read_all_items_prepared_query(
                         path=path,
                         options=options,
-                        req_headers=read_headers,
+                        req_headers=self.default_headers,
                     )
-                prepare_request_page = _build_read_all_items_page
+                    rust_request_headers = prepared.headers
+                    return prepared
+                build_request_page = _build_read_all_items_page
 
             def _parse_rust_page(page):
-                parsed_page = parse_and_finalize_rust_page(
+                parsed_page = process_query_page(
                     page=page,
                     client_connection=self,
                     req_headers=rust_request_headers,
@@ -3315,18 +3257,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 )
                 return __GetBodiesFromQueryResult(parsed_page.body)
 
-            return await self._backend.run_page_operation(
-                prepare_request=prepare_request_page,
-                legacy_operation=LegacyOperation(op=page_op, invoke=_run_legacy_read_feed),
-                parse_response=_parse_rust_page,
-                rust_eligible=rust_eligible,
-                fallback_exceptions=(PageNotSupportedByBackendError,),
-                allow_legacy_fallback=page_op not in (OP_LIST_DATABASES, OP_LIST_CONTAINERS),
-                unsupported_message=(
-                    RUST_LIST_DATABASES_UNSUPPORTED_MESSAGE if page_op == OP_LIST_DATABASES
-                    else RUST_LIST_CONTAINERS_UNSUPPORTED_MESSAGE if page_op == OP_LIST_CONTAINERS
-                    else None
-                ),
+            return await page_backend.run_page_operation(
+                build_request=build_request_page,
+                routing=OperationRouting(page_op, rust_eligible),
+                legacy_call=_run_legacy_read_feed,
+                process_response=_parse_rust_page,
             )
 
         query = self.__CheckAndUnifyQueryFormat(query)
@@ -3342,19 +3277,30 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         else:
             raise SystemError("Unexpected query compatibility mode.")
 
-        # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
-        req_headers = base.GetHeaders(self, initial_headers, "post", path, id_, resource_type,
-                                      documents._OperationType.SqlQuery, options, partition_key_range_id)
-        request_params = _request_object.RequestObject(resource_type,
-                                                       documents._OperationType.SqlQuery,
-                                                       req_headers,
-                                                       options.get("partitionKey", None))
-        request_params.set_excluded_location_from_options(options)
-        request_params.set_availability_strategy(options, self.availability_strategy)
-        request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
-        if not is_query_plan:
-            await base.set_session_token_header_async(self, req_headers, path, request_params, options,
-                                                      partition_key_range_id)
+        req_headers: dict[str, Any] = {}
+        legacy_request_params: Optional[_request_object.RequestObject] = None
+        rust_query_headers: Mapping[str, Any] = {}
+
+        async def _prepare_legacy_query_request() -> _request_object.RequestObject:
+            nonlocal req_headers, legacy_request_params
+            if legacy_request_params is not None:
+                return legacy_request_params
+            req_headers = base.GetHeaders(
+                self, initial_headers, "post", path, id_, resource_type,
+                documents._OperationType.SqlQuery, options, partition_key_range_id,
+            )
+            legacy_request_params = _request_object.RequestObject(
+                resource_type, documents._OperationType.SqlQuery,
+                req_headers, options.get("partitionKey", None),
+            )
+            legacy_request_params.set_excluded_location_from_options(options)
+            legacy_request_params.set_availability_strategy(options, self.availability_strategy)
+            legacy_request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
+            if not is_query_plan:
+                await base.set_session_token_header_async(
+                    self, req_headers, path, legacy_request_params, options, partition_key_range_id,
+                )
+            return legacy_request_params
 
         # A feed of databases is account-scoped: no container, no partition key,
         # and its own binding entry point. The feed-range block below is reached
@@ -3371,12 +3317,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 resource_type=resource_type,
             )
 
-            async def _build_query_page() -> PreparedQuery:
-                return build_query_databases_prepared_query(
+            def _build_query_page() -> PreparedQuery:
+                nonlocal rust_query_headers
+                prepared = build_query_databases_prepared_query(
                     query_payload=query,
                     options=options,
-                    req_headers=req_headers,
+                    req_headers=self.default_headers,
                 )
+                rust_query_headers = prepared.headers
+                return prepared
         elif resource_type == http_constants.ResourceType.Collection:
             # A feed of containers is database-scoped. Same shape as the
             # database feed above -- no partition key, its own binding entry
@@ -3392,13 +3341,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 resource_type=resource_type,
             )
 
-            async def _build_query_page() -> PreparedQuery:
-                return build_query_containers_prepared_query(
+            def _build_query_page() -> PreparedQuery:
+                nonlocal rust_query_headers
+                prepared = build_query_containers_prepared_query(
                     path=path,
                     query_payload=query,
                     options=options,
-                    req_headers=req_headers,
+                    req_headers=self.default_headers,
                 )
+                rust_query_headers = prepared.headers
+                return prepared
         else:
             page_op = OP_QUERY_ITEMS
             rust_eligible = can_use_rust_backend_for_query_page(
@@ -3410,13 +3362,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 resource_type=resource_type,
             )
 
-            async def _build_query_page() -> PreparedQuery:
-                return build_query_items_prepared_query(
+            def _build_query_page() -> PreparedQuery:
+                nonlocal rust_query_headers
+                prepared = build_query_items_prepared_query(
                     path=path,
                     query_payload=query,
                     options=options,
-                    req_headers=req_headers,
+                    req_headers=self.default_headers,
                 )
+                rust_query_headers = prepared.headers
+                return prepared
 
         # Check if the overlapping ranges can be populated
         feed_range_epk = None
@@ -3432,11 +3387,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             partition_key_obj = _build_partition_key_from_properties(container_property)
             # Only HPK prefixes require EPK routing; complete keys keep the normal PartitionKey request path.
             if partition_key_obj._is_prefix_partition_key(partition_key_value):
+                await _prepare_legacy_query_request()
                 req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
                 partition_key_value = cast(_SequentialPartitionKeyType, partition_key_value)
                 feed_range_epk = partition_key_obj._get_epk_range_for_prefix_partition_key(partition_key_value)
 
         if feed_range_epk is not None:
+            request_params = await _prepare_legacy_query_request()
             if id_ is None:
                 raise ValueError("resource_id is required for feed_range continuation.")
             # The None-check above already narrows ``id_`` to ``str`` for the
@@ -3744,6 +3701,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 return []
 
         async def _run_legacy_query_page() -> list[dict[str, Any]]:
+            request_params = await _prepare_legacy_query_request()
             result, last_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)
             self.last_response_headers = last_response_headers
             if internal_headers_capture is not None:
@@ -3767,28 +3725,21 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             return __GetBodiesFromQueryResult(result)
 
         def _parse_rust_query_page(page):
-            parsed_page = parse_and_finalize_rust_page(
+            parsed_page = process_query_page(
                 page=page,
                 client_connection=self,
-                req_headers=req_headers,
+                req_headers=rust_query_headers,
                 internal_headers_capture=internal_headers_capture,
                 response_headers=response_headers,
                 response_hook=response_hook,
             )
             return __GetBodiesFromQueryResult(parsed_page.body)
 
-        return await self._backend.run_page_operation(
-            prepare_request=_build_query_page,
-            legacy_operation=LegacyOperation(op=page_op, invoke=_run_legacy_query_page),
-            parse_response=_parse_rust_query_page,
-            rust_eligible=rust_eligible,
-            fallback_exceptions=(PageNotSupportedByBackendError,),
-            allow_legacy_fallback=page_op not in (OP_QUERY_DATABASES, OP_QUERY_CONTAINERS),
-            unsupported_message=(
-                RUST_QUERY_DATABASES_UNSUPPORTED_MESSAGE if page_op == OP_QUERY_DATABASES
-                else RUST_QUERY_CONTAINERS_UNSUPPORTED_MESSAGE if page_op == OP_QUERY_CONTAINERS
-                else None
-            ),
+        return await page_backend.run_page_operation(
+            build_request=_build_query_page,
+            routing=OperationRouting(page_op, rust_eligible),
+            legacy_call=_run_legacy_query_page,
+            process_response=_parse_rust_query_page,
         )
 
     def __CheckAndUnifyQueryFormat(
@@ -4088,6 +4039,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             "supportedQueryFeatures": supported_query_features,
             "queryVersion": http_constants.Versions.QueryVersion,
         }
+        deadline = kwargs.pop("_item_operation_deadline", None)
+        if deadline is not None:
+            options = legacy_deadline_options(options, deadline)
         if excluded_locations is not None:
             options["excludedLocations"] = excluded_locations
         path = base.GetPathFromLink(resource_link, http_constants.ResourceType.Document)

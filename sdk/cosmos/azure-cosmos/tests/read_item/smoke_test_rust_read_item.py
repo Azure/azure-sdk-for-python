@@ -37,6 +37,7 @@ import uuid
 from azure.cosmos import CosmosClient, PartitionKey
 from azure.cosmos._backend.operations import OP_CREATE_ITEM, OP_READ_ITEM
 from azure.cosmos._backend.contracts import PreparedRequest
+from azure.cosmos._backend.partition_key import PartitionKeyInput
 from azure.cosmos._backend.rust import RustBackend
 
 ENDPOINT = os.environ.get("ACCOUNT_HOST")
@@ -99,7 +100,7 @@ def main() -> int:
 
     item_id = f"smoke-read-{uuid.uuid4()}"
     container_link = f"dbs/{DB}/colls/{COLL}"
-    pk_header = '["smokeA"]'
+    partition_key = PartitionKeyInput("components", ("smokeA",))
 
     backend = RustBackend(endpoint=ENDPOINT, master_key=KEY)
 
@@ -108,7 +109,7 @@ def main() -> int:
         op=OP_CREATE_ITEM,
         container_link=container_link,
         body_bytes=f'{{"id":"{item_id}","pk":"smokeA","value":1}}'.encode(),
-        partition_key_header=pk_header,
+        partition_key=partition_key,
         headers={},
     )
 
@@ -133,7 +134,7 @@ def main() -> int:
         op=OP_READ_ITEM,
         container_link=container_link,
         body_bytes=b"",
-        partition_key_header=pk_header,
+        partition_key=partition_key,
         headers={},
         item_id=item_id,
     )
@@ -159,4 +160,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

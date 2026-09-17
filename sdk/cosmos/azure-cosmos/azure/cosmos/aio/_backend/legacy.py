@@ -3,30 +3,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""The explicit core-python backend for async migration coordinators.
+"""Explicit core-python selection for remaining migration coordinators.
 
-Async twin of :mod:`azure.cosmos._backend.legacy`. See that module for the full
-rationale: the core-python engine is a first-class
-:class:`~azure.cosmos.aio._backend.cosmos_backend.AsyncCosmosBackend` so every async
-unmigrated family coordinator holds one backend by interface and never interprets
-``None`` from selection or ``execute``.
+This stateless backend invokes the supplied plain callable without building or
+executing a prepared request. Point parity uses the separate legacy item helper."""
 
-Like the sync backend, the legacy engine is not ``PreparedRequest``-driven, so
-this backend does not implement the wire primitive ``execute``; it awaits the
-:class:`~azure.cosmos._backend.cosmos_backend.LegacyOperation` the coordinator hands to
-``run_operation``. That typed port already closes over the connection and the
-per-call arguments, so this backend holds no per-client state and a single
-shared instance (:data:`ASYNC_LEGACY_BACKEND`) serves every core-python async
-client. Point-operation parity uses ``AsyncLegacyItemHelper`` separately; the
-Rust ``AsyncItemHelper`` never constructs a legacy operation or falls back here.
-"""
 from __future__ import annotations
 
-from typing import Any, Awaitable, Callable, Optional
+from azure.cosmos._backend.capabilities import OperationRouting
+from azure.cosmos._backend.errors import BackendProtocolError
+
+from typing import Awaitable, Any, Callable, Optional
 
 from azure.cosmos._backend.contracts import (
     BackendResponse,
-    LegacyOperation,
     PreparedQuery,
     PreparedRequest,
     QueryPage,
@@ -39,15 +29,17 @@ from .cosmos_backend import AsyncCosmosBackend
 class AsyncLegacyBackend(AsyncCosmosBackend):
     """Core-python async backend: awaits the legacy ``client_connection`` call.
 
-    Stateless -- it only forwards to the :class:`~azure.cosmos._backend.contracts.LegacyOperation`
+    Stateless -- it only forwards to the legacy callable
     the async coordinator supplies -- so :data:`ASYNC_LEGACY_BACKEND` is shared by
     every core-python async client.
     """
 
     name = BACKEND_NAME_CORE_PYTHON
 
-    async def execute(self, prepared: Optional[PreparedRequest]) -> Optional[BackendResponse]:
-        """Not supported: the legacy engine is not ``PreparedRequest``-driven.
+    async def execute(
+        self, prepared: PreparedRequest, *, deadline: Optional[float] = None
+    ) -> BackendResponse:
+        """Not supported: the legacy driver is not ``PreparedRequest``-driven.
 
         See :meth:`azure.cosmos._backend.legacy.LegacyBackend.execute`. Every
         async coordinator drives this backend through :meth:`run_operation` or
@@ -63,42 +55,34 @@ class AsyncLegacyBackend(AsyncCosmosBackend):
     async def run_operation(
         self,
         *,
-        prepare_request: Callable[[], Any],
-        legacy_operation: LegacyOperation,
-        parse_response: Callable[[BackendResponse], Any],
-        rust_eligible: bool = True,
-        fallback_exceptions: tuple[type[BaseException], ...] = (),
-        allow_legacy_fallback: bool = True,
-        unsupported_message: Optional[str] = None,
+        routing: OperationRouting,
+        build_request: Callable[[], PreparedRequest],
+        process_response: Callable[[BackendResponse], Any],
+        legacy_call: Optional[Callable[[], Awaitable[Any]]] = None,
+        deadline: Optional[float] = None,
     ) -> Any:
-        """Run the operation on the legacy core-python path.
+        """Run the explicitly selected legacy callable without building a Rust request."""
+        if legacy_call is None:
+            raise BackendProtocolError(
+                f"No legacy callable supplied for {routing.op!r}"
+            )
+        return await legacy_call()
 
-        Always awaits ``legacy_operation.invoke()`` and returns its
-        already-parsed result; ``prepare_request`` / ``parse_response`` /
-        ``rust_eligible`` are ignored because this backend never builds a wire
-        request.
-        """
-        return await legacy_operation.invoke()
-
-    async def run_page_operation(  # pylint: disable=too-many-arguments
+    async def run_page_operation(
         self,
         *,
-        prepare_request: Callable[[], Awaitable[PreparedQuery]],
-        legacy_operation: LegacyOperation,
-        parse_response: Callable[[QueryPage], Any],
-        rust_eligible: bool = True,
-        fallback_exceptions: tuple[type[BaseException], ...] = (),
-        allow_legacy_fallback: bool = True,
-        unsupported_message: Optional[str] = None,
+        routing: OperationRouting,
+        build_request: Callable[[], PreparedQuery],
+        process_response: Callable[[QueryPage], Any],
+        legacy_call: Optional[Callable[[], Awaitable[Any]]] = None,
+        deadline: Optional[float] = None,
     ) -> Any:
-        """Run the paged operation on the legacy core-python path.
-
-        Mirrors :meth:`run_operation` for feeds: ``prepare_request`` /
-        ``parse_response`` / ``rust_eligible`` / ``fallback_exceptions`` are
-        ignored because this backend never builds a wire request, so
-        ``execute_pages`` is never reached.
-        """
-        return await legacy_operation.invoke()
+        """Run the explicitly selected legacy callable without building a Rust request."""
+        if legacy_call is None:
+            raise BackendProtocolError(
+                f"No legacy callable supplied for {routing.op!r}"
+            )
+        return await legacy_call()
 
 
 #: Process-wide shared core-python async backend. ``AsyncLegacyBackend`` holds no

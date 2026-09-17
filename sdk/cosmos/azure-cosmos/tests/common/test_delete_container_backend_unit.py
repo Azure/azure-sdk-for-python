@@ -4,6 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 """Container deletion routing and public contracts without network requests."""
+from common.typed_requests import legacy_partition_key_from_request
+from common.typed_requests import wire_headers, settings_options, legacy_settings
 import asyncio
 import inspect
 import warnings
@@ -22,7 +24,7 @@ from azure.cosmos._backend.operations import OP_DELETE_CONTAINER, OP_TO_BINDING_
 from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._helpers._request_container import build_delete_container_prepared
-from azure.cosmos._helpers._response_parse import parse_delete_response
+from azure.cosmos._helpers._response_parse import process_delete_response
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.aio._database import DatabaseProxy as AsyncDatabaseProxy
@@ -33,14 +35,14 @@ from azure.cosmos.exceptions import CosmosHttpResponseError, CosmosResourceNotFo
 class _RustBackend(CosmosBackend):
     name = "rust"
 
-    def execute(self, prepared):
+    def execute(self, prepared, *, deadline=None):
         return self.response
 
 
 class _AsyncRustBackend(AsyncCosmosBackend):
     name = "rust"
 
-    async def execute(self, prepared):
+    async def execute(self, prepared, *, deadline=None):
         return self.response
 
 
@@ -117,7 +119,7 @@ def test_delete_accepts_target_forms_and_returns_none(delete_case, legacy, targe
         assert prepared.op == OP_DELETE_CONTAINER
         assert prepared.container_link == "dbs/db1/colls/c1"
         assert prepared.body_bytes == b""
-        assert prepared.partition_key_header == "[]"
+        assert legacy_partition_key_from_request(prepared) == "[]"
         assert prepared.item_id is None
         assert "x-ms-cosmos-sdk-diagnostics" in hook.call_args.args[0]
 
@@ -190,11 +192,11 @@ def test_delete_unsupported_rust_settings_never_reach_legacy(delete_case, kwargs
 def test_delete_forwards_supported_timeout_and_application_headers(delete_case, timeout):
     assert _delete(delete_case, "c1", timeout=timeout, initial_headers={"x-company-trace": "cleanup"}) is None
     prepared = delete_case.backend.execute.call_args.args[0]
-    assert prepared.headers["initialHeaders"] == {"x-company-trace": "cleanup"}
+    assert all(wire_headers(prepared).get(key.lower()) == str(value) for key, value in ({"x-company-trace": "cleanup"}).items())
     if timeout is None:
-        assert "__overall_timeout_seconds" not in prepared.headers
+        assert "__overall_timeout_seconds" not in wire_headers(prepared)
     else:
-        assert prepared.headers["__overall_timeout_seconds"] == timeout
+        assert settings_options(prepared)["timeout_seconds"] == timeout
     delete_case.connection.ReadContainer.assert_not_called()
 
 
@@ -333,7 +335,7 @@ def test_delete_builder_does_not_mutate_options_or_forward_session_token():
     options = {"sessionToken": "unused", "initialHeaders": {"x-company-trace": "cleanup"}}
     prepared = build_delete_container_prepared("/dbs/db1/colls/c1/", options)
     assert prepared.container_link == "dbs/db1/colls/c1"
-    assert "sessionToken" not in prepared.headers
+    assert "sessionToken" not in wire_headers(prepared)
     assert options["sessionToken"] == "unused"
 
 
@@ -341,7 +343,7 @@ def test_delete_parser_returns_none_and_does_not_expose_empty_properties():
     connection = SimpleNamespace(last_response_headers={})
     hook = MagicMock()
     response = BackendResponse(status_code=204, headers={"x-ms-request-charge": "1"}, body=b"")
-    assert parse_delete_response(response, client_connection=connection, response_hook=hook) is None
+    assert process_delete_response(response, client_connection=connection, response_hook=hook) is None
     hook.assert_called_once()
     assert hook.call_args.args[1] is None
     assert hook.call_args.args[0] is not connection.last_response_headers

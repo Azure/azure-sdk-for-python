@@ -15,8 +15,8 @@ points:
    disabled.
 2. A wired backend's ``BackendResponse`` is parsed into a ``CosmosDict`` and
    ``PatchItem`` is not awaited.
-3. A ``filter_predicate`` or ``etag`` / ``match_condition`` patch falls through
-   to the legacy ``PatchItem`` instead of the backend.
+3. Caller If-Match uses Rust, while unsupported filters fail without replay
+   through legacy ``PatchItem``.
 
 The partition key arrives as ``request_options={"partitionKey": ...}`` in
 kwargs, the way the container method seeds it.
@@ -28,6 +28,7 @@ from unittest.mock import AsyncMock, MagicMock
 from azure.core import MatchConditions
 from azure.core.utils import CaseInsensitiveDict
 
+from azure.cosmos._backend.contracts import ContainerMetadata
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
@@ -54,10 +55,10 @@ class _CapturingBackend(AsyncCosmosBackend):
     def __init__(self, response):
         self.execute_mock = AsyncMock(return_value=response)
 
-    async def resolve_container_metadata(self, link):
-        return BackendResponse(200, 0, {}, b'{"_rid":"rid-cached"}', None)
+    async def get_container_metadata(self, link):
+        return ContainerMetadata("rid-cached")
 
-    async def execute(self, prepared):
+    async def execute(self, prepared, *, deadline=None):
         return await self.execute_mock(prepared)
 
 
@@ -151,8 +152,7 @@ class TestAsyncPatchItem(unittest.TestCase):
         backend.execute_mock.assert_not_awaited()
         cc.PatchItem.assert_not_awaited()
 
-    def test_async_version_guard_raises_without_legacy(self):
-        """An unsupported guard fails without invoking either transport."""
+    def test_async_version_guard_uses_rust_without_legacy(self):
         cc = _connection_with_cache()
         backend = _async_dispatch_backend(
             BackendResponse(status_code=200, sub_status=0, headers=None, body=b"{}")
@@ -169,9 +169,11 @@ class TestAsyncPatchItem(unittest.TestCase):
                 request_options={"partitionKey": "a"},
             )
 
-        with self.assertRaises(NotImplementedError):
-            asyncio.run(_run())
-        backend.execute_mock.assert_not_awaited()
+        asyncio.run(_run())
+        backend.execute_mock.assert_awaited_once()
+        prepared = backend.execute_mock.call_args.args[0]
+        self.assertEqual(prepared.settings.item.if_match, "abc")
+        self.assertNotIn("if-match", prepared.headers)
         cc.PatchItem.assert_not_awaited()
 
     def test_async_cache_miss_awaits_refresh_and_stamps_rid(self):

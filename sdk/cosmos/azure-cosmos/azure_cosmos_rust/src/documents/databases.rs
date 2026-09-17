@@ -7,24 +7,24 @@ use super::*;
 #[pyfunction]
 pub(crate) fn create_database<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
     let modifiers = extract_account_prepared_modifiers(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
-    run_create_database_operation(py, handle, modifiers, body_bytes, "create_database")
+    run_create_database_operation(py, driver_handle, modifiers, body_bytes, "create_database")
 }
 
 /// Async counterpart of [`create_database`].
 #[pyfunction]
 pub(crate) fn create_database_async<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
     let modifiers = extract_account_prepared_modifiers(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
-    run_create_database_operation_async(py, handle, modifiers, body_bytes, "create_database_async")
+    run_create_database_operation_async(py, driver_handle, modifiers, body_bytes, "create_database_async")
 }
 
 /// Read an account-level database and return its service properties.
@@ -43,24 +43,24 @@ pub(crate) fn create_database_async<'py>(
 #[pyfunction]
 pub(crate) fn read_database<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
     let (database_id, modifiers) =
         extract_database_prepared_inputs(prepared, "read_database requires a database id")?;
-    run_read_database_operation(py, handle, modifiers, database_id, "read_database")
+    run_read_database_operation(py, driver_handle, modifiers, database_id, "read_database")
 }
 
 /// Async counterpart of [`read_database`].
 #[pyfunction]
 pub(crate) fn read_database_async<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
     let (database_id, modifiers) =
         extract_database_prepared_inputs(prepared, "read_database requires a database id")?;
-    run_read_database_operation_async(py, handle, modifiers, database_id, "read_database_async")
+    run_read_database_operation_async(py, driver_handle, modifiers, database_id, "read_database_async")
 }
 
 /// Delete a database and return the service response.
@@ -68,24 +68,24 @@ pub(crate) fn read_database_async<'py>(
 #[pyfunction]
 pub(crate) fn delete_database<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
     let (database_id, modifiers) =
         extract_database_prepared_inputs(prepared, DELETE_DATABASE_ID_REQUIRED)?;
-    run_delete_database_operation(py, handle, modifiers, database_id, "delete_database")
+    run_delete_database_operation(py, driver_handle, modifiers, database_id, "delete_database")
 }
 
 /// Return an awaitable that deletes a database.
 #[pyfunction]
 pub(crate) fn delete_database_async<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
     let (database_id, modifiers) =
         extract_database_prepared_inputs(prepared, DELETE_DATABASE_ID_REQUIRED)?;
-    run_delete_database_operation_async(py, handle, modifiers, database_id, "delete_database_async")
+    run_delete_database_operation_async(py, driver_handle, modifiers, database_id, "delete_database_async")
 }
 
 /// Read one page of the account's databases, for `client.list_databases()`.
@@ -98,44 +98,44 @@ pub(crate) fn delete_database_async<'py>(
 #[pyfunction]
 pub(crate) fn list_databases<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
     let modifiers = extract_account_prepared_modifiers(prepared)?;
-    run_list_databases_operation(py, handle, modifiers, "list_databases")
+    run_list_databases_operation(py, driver_handle, modifiers, "list_databases")
 }
 
 /// Async counterpart of [`list_databases`].
 #[pyfunction]
 pub(crate) fn list_databases_async<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
     let modifiers = extract_account_prepared_modifiers(prepared)?;
-    run_list_databases_operation_async(py, handle, modifiers, "list_databases_async")
+    run_list_databases_operation_async(py, driver_handle, modifiers, "list_databases_async")
 }
 
 /// Run a database query and return one page of matching databases.
 #[pyfunction]
 pub(crate) fn query_databases<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
     let modifiers = extract_account_prepared_modifiers(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
-    run_query_databases_operation(py, handle, modifiers, body_bytes, "query_databases")
+    run_query_databases_operation(py, driver_handle, modifiers, body_bytes, "query_databases")
 }
 
 /// Return an awaitable that runs one page of a database query.
 #[pyfunction]
 pub(crate) fn query_databases_async<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
     let modifiers = extract_account_prepared_modifiers(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
-    run_query_databases_operation_async(py, handle, modifiers, body_bytes, "query_databases_async")
+    run_query_databases_operation_async(py, driver_handle, modifiers, body_bytes, "query_databases_async")
 }

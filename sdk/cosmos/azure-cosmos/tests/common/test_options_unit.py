@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""In-process unit tests for ``_helpers/_options.py`` — no network, no Cosmos emulator.
+"""In-process unit tests for ``_helpers/_request_settings.py`` — no network, no Cosmos emulator.
 
 Cosmos SDK methods accept a long list of customer-facing keyword
 arguments (``pre_trigger_include=``, ``priority=``, ``no_response=``,
@@ -13,7 +13,7 @@ internal strings the service understands (``"preTriggerInclude"``,
 ``"priorityLevel"``, ``"responsePayloadOnWriteDisabled"``,
 ``"sessionToken"``, …).
 
-The translation table lives in this one helper, ``_helpers/_options.py``:
+The translation table lives in this one helper, ``_helpers/_request_settings.py``:
 
 * ``COMMON_OPTIONS`` — the kwarg-name → internal-option-key mapping.
 * ``compose_options_from_kwargs(kwargs)`` — pulls the recognised
@@ -42,11 +42,7 @@ import unittest
 
 from azure.cosmos import _base
 from azure.cosmos._constants import _Constants as Constants
-from azure.cosmos._helpers._options import (
-    COMMON_OPTIONS,
-    compose_options_from_kwargs,
-    get_common_options,
-)
+from azure.cosmos._helpers._request_settings import COMMON_OPTIONS, compose_options_from_kwargs, get_common_options
 
 
 class TestCommonOptionsTableContent(unittest.TestCase):

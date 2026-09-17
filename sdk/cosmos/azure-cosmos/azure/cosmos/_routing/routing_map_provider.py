@@ -30,6 +30,7 @@ from azure.core.utils import CaseInsensitiveDict
 from .. import _base, http_constants
 from .collection_routing_map import CollectionRoutingMap
 from ..exceptions import CosmosHttpResponseError
+from .._operation_deadline import deadline_lock, legacy_deadline_options, remaining_timeout
 from ._routing_map_provider_common import (
     _resolve_endpoint,
     prepare_fetch_options_and_headers,
@@ -275,7 +276,8 @@ class PartitionKeyRangeCache(object):
         # Acquire a lock specific to this collection ID. This prevents race
         # conditions where multiple threads try to refresh the same map.
         collection_lock = self._get_lock_for_collection(collection_id)
-        with collection_lock:
+        deadline = (feed_options or {}).get("_item_operation_deadline")
+        with deadline_lock(collection_lock, deadline):
             # Second check (with lock) — use shared helper for the decision logic.
             should_fetch, base_routing_map = determine_refresh_action(
                 self._collection_routing_map_by_item,
@@ -342,6 +344,7 @@ class PartitionKeyRangeCache(object):
             budget (surfaced as HTTP 503 so the upstream retry policy can
             take over).
         """
+        deadline = (feed_options or {}).get("_item_operation_deadline")
         current_previous_map = previous_routing_map
         incomplete_attempt_count = 0
         inconsistency_attempt_count = 0
@@ -376,6 +379,7 @@ class PartitionKeyRangeCache(object):
             base_headers: Dict[str, Any] = base_kwargs_for_headers['headers']
 
             while True:
+                change_feed_options = legacy_deadline_options(change_feed_options, deadline)
                 request_kwargs = dict(kwargs)
                 # Shallow-copy ``base_headers`` so the per-iter
                 # ``If-None-Match`` override does not bleed across iterations.
@@ -406,6 +410,7 @@ class PartitionKeyRangeCache(object):
                         **request_kwargs
                     )
                     page_ranges.extend(list(pk_range_generator))
+                    remaining_timeout(deadline)
                 except CosmosHttpResponseError as e:
                     logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug,do-not-log-raised-errors
                         "Failed to read partition key ranges for collection '%s': %s",
@@ -461,7 +466,9 @@ class PartitionKeyRangeCache(object):
                     collection_link=collection_link,
                     logger=logger,
                 )
-                time.sleep(backoff)
+                remaining = remaining_timeout(deadline)
+                time.sleep(backoff if remaining is None else min(backoff, remaining))
+                remaining_timeout(deadline)
                 current_previous_map = None
                 continue
 

@@ -1,3 +1,4 @@
+from common.typed_requests import wire_headers, settings_options, legacy_settings
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
@@ -167,8 +168,8 @@ def test_supported_timeout_headers_and_explicit_none_query(query_case, query, ti
     if case.rust:
         for prepared in case.requests:
             assert prepared.op == (OP_LIST_CONTAINERS if query is None else OP_QUERY_CONTAINERS)
-            assert prepared.headers["initialHeaders"]["x-company-trace"] == "query-containers"
-            budget = prepared.headers.get("__overall_timeout_seconds")
+            assert wire_headers(prepared)["x-company-trace"] == "query-containers"
+            budget = settings_options(prepared).get("timeout_seconds")
             assert budget is None if timeout is None else 0 < budget <= timeout
 
 

@@ -67,11 +67,15 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
     async def _create_execution_context_with_query_plan(self):
         self._fetched_query_plan = True
         query_to_use = self._query if self._query is not None else "Select * from root r"
+        read_all_options = {}
+        if "_read_all_response_headers" in self._options:
+            read_all_options["_item_operation_deadline"] = self._options.get("_item_operation_deadline")
         query_plan = await self._client._GetQueryPlanThroughGateway(
             query_to_use,
             self._resource_link,
             self._options.get('excludedLocations'),
-            read_timeout=self._options.get('read_timeout')
+            read_timeout=self._options.get('read_timeout'),
+            **read_all_options
         )
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan)
         qe_info = getattr(query_execution_info, "_query_execution_info", None)

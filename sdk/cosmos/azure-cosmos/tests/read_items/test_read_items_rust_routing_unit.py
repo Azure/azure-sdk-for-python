@@ -8,15 +8,11 @@
 No emulator and no Rust binding needed -- these exercise the pure gate
 ``can_use_rust_backend_for_query_page`` directly, in milliseconds.
 
-read_items keeps its client-side orchestration in Python and routes each leaf
-read to the Rust backend: a single-item chunk becomes a point read (Rust), and a
-multi-item chunk becomes one per-partition ``id IN (...)`` query. That query
-shape currently panics the Rust query path, so read_items marks those queries
-with ``Constants.ReadItemsQueryLeg`` and the gate keeps them on legacy. These
-tests pin that marker branch -- the one line that stops the panic -- so a
-regression is caught here instead of in a slow live run (or in production as a
-process-killing panic). The gate is shared by the sync and async client
-connections, so this covers both paths.
+read_items keeps its orchestration in Python. Singleton chunks can use Rust
+point reads; multi-item chunks deliberately retain legacy queries using
+``Constants.ReadItemsQueryLeg``. These tests pin that strategy boundary, shared
+by both connections. Earlier topology-panic reports are historical, not a
+current reproduction established by this unit test.
 """
 from __future__ import annotations
 
@@ -43,8 +39,7 @@ def _gate(options):
 
 
 def test_query_leg_marker_forces_legacy():
-    """With the marker set, the gate must say no so the query stays on legacy and
-    never reaches the panicking Rust query path."""
+    """The marker keeps internal query chunks on the selected legacy strategy."""
     assert _gate({Constants.ReadItemsQueryLeg: True}) is False
 
 

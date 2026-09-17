@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Unit tests for ``build_read_item_request`` — no network, no emulator.
+"""Unit tests for ``prepare_read_item_request`` — no network, no emulator.
 
 These pin how a ``read_item`` call is turned into a request, end to end:
 
@@ -19,6 +19,8 @@ These pin how a ``read_item`` call is turned into a request, end to end:
 Sibling of ``tests/create_item/sync/test_request_prep_unit.py``.
 """
 from __future__ import annotations
+from common.typed_requests import legacy_partition_key_from_request
+from common.typed_requests import wire_headers, settings_options, legacy_settings
 
 import pytest
 
@@ -31,7 +33,9 @@ from azure.cosmos._helpers._item_dispatch import (
     build_read_item_request_options,
     merge_read_item_explicit_kwargs,
 )
-from azure.cosmos._helpers._request_item import build_read_item_request
+from common.request_preparation import (
+    prepare_read_item_request,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -42,7 +46,7 @@ from azure.cosmos._helpers._request_item import build_read_item_request
 def test_baseline_returns_read_item_prepared_with_no_body():
     """Baseline: the container link, the partition-key shape, and the
     item-id slot are all set, and a read carries no body."""
-    prepared = build_read_item_request(
+    prepared = prepare_read_item_request(
         container_link="dbs/d/colls/c",
         item_id="order-42",
         partition_key_value="customerA",
@@ -53,7 +57,7 @@ def test_baseline_returns_read_item_prepared_with_no_body():
     assert prepared.op == OP_READ_ITEM
     assert prepared.container_link == "dbs/d/colls/c"
     assert prepared.body_bytes == b""  # GET is bodiless
-    assert prepared.partition_key_header == '["customerA"]'
+    assert legacy_partition_key_from_request(prepared) == '["customerA"]'
     assert prepared.item_id == "order-42"
 
 
@@ -61,14 +65,14 @@ def test_baseline_stamps_container_rid_into_headers():
     """The container rid is stamped under the key the binding turns into
     ``x-ms-cosmos-intended-collection-rid`` — the same dropped-and-recreated
     container guard that ``create_item`` and ``delete_item`` get."""
-    prepared = build_read_item_request(
+    prepared = prepare_read_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         partition_key_value="a",
         container_rid="RID==",
         kwargs={},
     )
-    assert prepared.headers[Constants.ContainerRID] == "RID=="
+    assert wire_headers(prepared)["x-ms-cosmos-intended-collection-rid"] == "RID=="
 
 
 # ---------------------------------------------------------------------------
@@ -79,17 +83,17 @@ def test_baseline_stamps_container_rid_into_headers():
 def test_cache_staleness_positive_emits_dedicated_gateway_header():
     """``max_integrated_cache_staleness_in_ms=5000`` →
     ``x-ms-dedicatedgateway-max-age: 5000``."""
-    prepared = build_read_item_request(
+    prepared = prepare_read_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         partition_key_value="a",
         container_rid=None,
         kwargs={"max_integrated_cache_staleness_in_ms": 5000},
     )
-    assert prepared.headers["x-ms-dedicatedgateway-max-age"] == "5000"
+    assert wire_headers(prepared)["x-ms-dedicatedgateway-max-age"] == "5000"
     # It must not also stamp the option-key form -- the prep translates
     # the value, it doesn't just copy it under a new name.
-    assert "maxIntegratedCacheStaleness" not in prepared.headers
+    assert "maxIntegratedCacheStaleness" not in wire_headers(prepared)
 
 
 def test_cache_staleness_zero_is_silent_no_op():
@@ -100,15 +104,15 @@ def test_cache_staleness_zero_is_silent_no_op():
     change for customers who pass ``0`` (a common way of saying "don't
     serve this call from a stale cache").
     """
-    prepared = build_read_item_request(
+    prepared = prepare_read_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         partition_key_value="a",
         container_rid=None,
         kwargs={"max_integrated_cache_staleness_in_ms": 0},
     )
-    assert "x-ms-dedicatedgateway-max-age" not in prepared.headers
-    assert "maxIntegratedCacheStaleness" not in prepared.headers
+    assert "x-ms-dedicatedgateway-max-age" not in wire_headers(prepared)
+    assert "maxIntegratedCacheStaleness" not in wire_headers(prepared)
 
 
 # ---------------------------------------------------------------------------
@@ -129,7 +133,7 @@ def test_etag_if_modified_translates_to_if_none_match():
     # ``accessCondition`` shape ``{type: IfNoneMatch, condition: abc}``.
     assert options["accessCondition"] == {"type": "IfNoneMatch", "condition": "abc"}
 
-    prepared = build_read_item_request(
+    prepared = prepare_read_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         partition_key_value=options["partitionKey"],
@@ -139,8 +143,8 @@ def test_etag_if_modified_translates_to_if_none_match():
         # the ``request_options`` seed.
         kwargs={"request_options": options},
     )
-    assert prepared.headers["If-None-Match"] == "abc"
-    assert "If-Match" not in prepared.headers
+    assert wire_headers(prepared)["if-none-match"] == "abc"
+    assert "if-match" not in wire_headers(prepared)
 
 
 def test_etag_if_not_modified_translates_to_if_match():
@@ -152,15 +156,15 @@ def test_etag_if_not_modified_translates_to_if_match():
         "match_condition": MatchConditions.IfNotModified,
     })
     assert options["accessCondition"] == {"type": "IfMatch", "condition": "abc"}
-    prepared = build_read_item_request(
+    prepared = prepare_read_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         partition_key_value=options["partitionKey"],
         container_rid=None,
         kwargs={"request_options": options},
     )
-    assert prepared.headers["If-Match"] == "abc"
-    assert "If-None-Match" not in prepared.headers
+    assert wire_headers(prepared)["if-match"] == "abc"
+    assert "if-none-match" not in wire_headers(prepared)
 
 
 def test_etag_without_match_condition_raises_value_error_up_front():
@@ -182,18 +186,18 @@ def test_initial_headers_are_flattened_into_outer_headers():
     """A customer's ``initial_headers={'x-trace-id': 'abc'}`` is kept as a nested
     ``initialHeaders`` dict in ``PreparedRequest.headers`` so the binding forwards
     each entry verbatim -- including non-``x-ms-`` names it would otherwise drop."""
-    prepared = build_read_item_request(
+    prepared = prepare_read_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         partition_key_value="a",
         container_rid=None,
         kwargs={"initial_headers": {"x-trace-id": "abc-123"}},
     )
-    assert prepared.headers["initialHeaders"] == {"x-trace-id": "abc-123"}
+    assert all(wire_headers(prepared).get(key.lower()) == str(value) for key, value in ({"x-trace-id": "abc-123"}).items())
     # The customer header is not flattened to the top level, and the snake_case
     # keyword-argument name never survives as a header.
-    assert "x-trace-id" not in prepared.headers
-    assert "initial_headers" not in prepared.headers
+    assert wire_headers(prepared)["x-trace-id"] == "abc-123"
+    assert "initial_headers" not in wire_headers(prepared)
 
 
 # ---------------------------------------------------------------------------
@@ -205,39 +209,39 @@ def test_post_trigger_include_lands_as_option_key():
     """``post_trigger_include='auditRead'`` lands as the ``postTriggerInclude``
     option key in the headers map (the binding then turns it into
     ``x-ms-documentdb-post-trigger-include``)."""
-    prepared = build_read_item_request(
+    prepared = prepare_read_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         partition_key_value="a",
         container_rid=None,
         kwargs={"post_trigger_include": "auditRead"},
     )
-    assert prepared.headers["postTriggerInclude"] == "auditRead"
+    assert wire_headers(prepared)["x-ms-documentdb-post-trigger-include"] == "auditRead"
 
 
 def test_priority_high_lands_as_option_key():
     """``priority="High"`` is stamped as the ``priorityLevel`` request header the
     driver reads."""
-    prepared = build_read_item_request(
+    prepared = prepare_read_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         partition_key_value="a",
         container_rid=None,
         kwargs={"priority": "High"},
     )
-    assert prepared.headers["priorityLevel"] == "High"
+    assert wire_headers(prepared)["x-ms-cosmos-priority-level"] == "High"
 
 
 def test_throughput_bucket_lands_as_option_key():
     """``throughput_bucket=1`` is stamped as the ``throughputBucket`` request header."""
-    prepared = build_read_item_request(
+    prepared = prepare_read_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         partition_key_value="a",
         container_rid=None,
         kwargs={"throughput_bucket": 1},
     )
-    assert prepared.headers["throughputBucket"] == 1
+    assert wire_headers(prepared)["x-ms-cosmos-throughput-bucket"] == '1'
 
 
 # ---------------------------------------------------------------------------
@@ -248,14 +252,14 @@ def test_throughput_bucket_lands_as_option_key():
 def test_timeout_kwarg_is_forwarded_under_sentinel_header():
     """``timeout=30`` is forwarded as ``__overall_timeout_seconds: 30``, a
     sentinel header the binding lifts into the driver's own timeout setting."""
-    prepared = build_read_item_request(
+    prepared = prepare_read_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         partition_key_value="a",
         container_rid=None,
         kwargs={"timeout": 30},
     )
-    assert prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 30
+    assert settings_options(prepared)["timeout_seconds"] == 30
 
 
 # ---------------------------------------------------------------------------
@@ -307,4 +311,3 @@ def test_merge_read_item_explicit_kwargs_does_not_expose_retry_write_or_no_respo
         merge_read_item_explicit_kwargs(kwargs, retry_write=1)  # type: ignore[call-arg]
     with pytest.raises(TypeError):
         merge_read_item_explicit_kwargs(kwargs, no_response=True)  # type: ignore[call-arg]
-

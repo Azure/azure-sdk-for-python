@@ -36,17 +36,11 @@ What this file pins for async ``create_item``:
 * **``response_hook`` fires exactly once per backend.**
 * **409.** Inserting the same id twice raises
   ``CosmosResourceExistsError`` on both.
-* **deprecated-but-ignored kwargs.** ``etag`` and ``match_condition``
-  carry no meaning on an insert; the contract is that they warn and are then
-  dropped rather than honoured. Note this is the *opposite* of the
-  ``delete_item`` contract, where the same pair drives optimistic
-  concurrency -- which is precisely why it is worth pinning per operation.
+* **retired kwargs.** ``populate_query_metrics``, ``etag``, and
+  ``match_condition`` are rejected by presence, including None/False.
 
 Deliberately NOT mirrored from the sync suite:
 
-* The ``populate_query_metrics`` deprecation test. That keyword is a sync-only
-  positional parameter; the async ``create_item`` signature does not expose it,
-  so there is no async behaviour to pin.
 * The partitionless-container (``"[]"``) binding-rejection test and the
   intended-collection-rid wire test. Both assert against the shared binding
   rather than the async entry point, so running them again here would diff the
@@ -57,19 +51,12 @@ from __future__ import annotations
 import copy
 import os
 import uuid
-import warnings
 
 import pytest
 
-from azure.core import MatchConditions
 
 from azure.cosmos import CosmosClient, PartitionKey
-from common._parity_helpers import (
-    BackendComparison,
-    run_on_both_backends_async,
-    skip_unless_emulator,
-    skip_unless_rust_binding,
-)
+from common._parity_helpers import BackendComparison, run_on_both_backends_async, skip_unless_emulator, skip_unless_rust_binding
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 
@@ -434,51 +421,14 @@ async def test_async_duplicate_id_raises_typed_exception(container_for):
 
 
 # ---------------------------------------------------------------------------
-# (additional) deprecated-but-ignored kwargs.
-#
-# ``etag`` and ``match_condition`` describe a precondition on an *existing*
-# document, which an insert has none of. The documented contract is therefore
-# "warn, then ignore" -- the call must still succeed. Pinning this per
-# operation matters because the same two kwargs are load-bearing on
-# ``delete_item`` and ``patch_item``, where they drive optimistic concurrency.
+# Retired arguments are rejected by presence on both backends.
 # ---------------------------------------------------------------------------
 
-def _assert_deprecation_warning_fired(recorded, kwarg_name: str) -> None:
-    """Confirm customers receive the documented deprecation warning."""
-    matches = [w for w in recorded
-               if issubclass(w.category, DeprecationWarning)
-               and kwarg_name in str(w.message)]
-    assert matches, (
-        "expected a DeprecationWarning mentioning {!r}, got: {}".format(
-            kwarg_name, [str(w.message) for w in recorded]
-        )
-    )
-
-
 @pytest.mark.asyncio
-async def test_async_etag_deprecated_and_ignored(container_for):
-    """``etag`` on an async insert warns and is then dropped, not honoured.
-
-    A backend that started *honouring* it would turn this success into a 412,
-    so the assertion covers both halves: the warning fires and the insert still
-    succeeds on both backends.
-    """
+@pytest.mark.parametrize("name", ["populate_query_metrics", "etag", "match_condition"])
+@pytest.mark.parametrize("value", [None, False, True])
+async def test_async_retired_create_arguments_are_rejected(container_for, name, value):
     body = {"id": uuid.uuid4().hex, "pk": "a"}
-    with warnings.catch_warnings(record=True) as recorded:
-        warnings.simplefilter("always")
-        cmp = await _run_create(container_for, body, summary="baseline + etag (deprecated/ignored)",
-                                etag='"foo"')
-    _assert_deprecation_warning_fired(recorded, "etag")
-    cmp.assert_functional_parity()
-
-
-@pytest.mark.asyncio
-async def test_async_match_condition_deprecated_and_ignored(container_for):
-    """``match_condition`` on an async insert warns and is then dropped."""
-    body = {"id": uuid.uuid4().hex, "pk": "a"}
-    with warnings.catch_warnings(record=True) as recorded:
-        warnings.simplefilter("always")
-        cmp = await _run_create(container_for, body, summary="baseline + match_condition (deprecated/ignored)",
-                                match_condition=MatchConditions.IfNotModified)
-    _assert_deprecation_warning_fired(recorded, "match_condition")
-    cmp.assert_functional_parity()
+    comparison = await _run_create(container_for, body, summary=f"create rejects {name}", **{name: value})
+    for outcome in (comparison.core_python, comparison.rust):
+        assert isinstance(outcome.raised, TypeError)

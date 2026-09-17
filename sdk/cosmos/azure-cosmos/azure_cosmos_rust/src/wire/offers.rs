@@ -17,7 +17,7 @@ use azure_data_cosmos_driver::{
 };
 
 use super::diagnostics::BINDING_OP_COUNT;
-use super::request::{build_operation_options, OpModifiers};
+use super::request::{build_operation_options, RequestHeadersAndOptions};
 use super::response::{tuple_from_offer_feed_result, tuple_from_result};
 use super::{lookup_driver, AbortOnDrop};
 use crate::runtime::require_runtime_context;
@@ -30,13 +30,13 @@ use crate::runtime::require_runtime_context;
 /// `{"Offers":[...]}` envelope the Python offer parser reads.
 pub(crate) fn run_read_offer_operation<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     op_name: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
+    let driver = lookup_driver(driver_handle)?;
     let runtime_ctx = require_runtime_context(op_name)?;
 
     let response_result: Result<Option<CosmosResponse>, CosmosError> = py.allow_threads(|| {
@@ -51,13 +51,13 @@ pub(crate) fn run_read_offer_operation<'py>(
 /// Async sibling of `run_read_offer_operation`.
 pub(crate) fn run_read_offer_operation_async<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     op_name: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
+    let driver = lookup_driver(driver_handle)?;
     let runtime_ctx = require_runtime_context(op_name)?;
 
     let join = runtime_ctx
@@ -88,14 +88,14 @@ pub(crate) fn run_read_offer_operation_async<'py>(
 /// single-document shape, not the offer-feed envelope the read uses).
 pub(crate) fn run_replace_offer_operation<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     offer_id: String,
     body_bytes: Vec<u8>,
     op_name: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
+    let driver = lookup_driver(driver_handle)?;
     let runtime_ctx = require_runtime_context(op_name)?;
 
     let response_result: Result<CosmosResponse, CosmosError> = py.allow_threads(|| {
@@ -110,14 +110,14 @@ pub(crate) fn run_replace_offer_operation<'py>(
 /// Async sibling of `run_replace_offer_operation`.
 pub(crate) fn run_replace_offer_operation_async<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     offer_id: String,
     body_bytes: Vec<u8>,
     op_name: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
+    let driver = lookup_driver(driver_handle)?;
     let runtime_ctx = require_runtime_context(op_name)?;
 
     let join = runtime_ctx.tokio_rt.spawn(run_replace_offer_future(
@@ -150,7 +150,7 @@ pub(crate) fn run_replace_offer_operation_async<'py>(
 /// used so a caller-supplied value for either marker is never overwritten.
 async fn run_read_offer_future(
     driver: Arc<CosmosDriver>,
-    modifiers: OpModifiers,
+    modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
 ) -> Result<Option<CosmosResponse>, CosmosError> {
     let account = driver.account().clone();
@@ -195,7 +195,7 @@ async fn run_read_offer_future(
 /// shape it with `tuple_from_result` -- not the offer-feed envelope the read uses.
 async fn run_replace_offer_future(
     driver: Arc<CosmosDriver>,
-    modifiers: OpModifiers,
+    modifiers: RequestHeadersAndOptions,
     offer_id: String,
     body_bytes: Vec<u8>,
 ) -> Result<CosmosResponse, CosmosError> {

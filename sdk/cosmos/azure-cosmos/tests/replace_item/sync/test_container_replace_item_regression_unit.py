@@ -208,6 +208,7 @@ class TestContainerReplaceItemPreservesLegacyBehaviour(unittest.TestCase):
         from azure.core.utils import CaseInsensitiveDict
 
         from azure.cosmos._backend.cosmos_backend import CosmosBackend
+        from azure.cosmos._backend.contracts import ContainerMetadata
         from azure.cosmos._backend.contracts import BackendResponse
 
         proxy, cc, _ = _make_proxy_with_mock_connection()
@@ -216,10 +217,10 @@ class TestContainerReplaceItemPreservesLegacyBehaviour(unittest.TestCase):
         class _CapturingBackend(CosmosBackend):
             name = "rust"
 
-            def resolve_container_metadata(self, link):
-                return BackendResponse(200, 0, {}, b'{"_rid":"rid-cached"}', None)
+            def get_container_metadata(self, link):
+                return ContainerMetadata("rid-cached")
 
-            def execute(self, prepared):
+            def execute(self, prepared, *, deadline=None):
                 captured["prepared"] = prepared
                 return BackendResponse(
                     status_code=200,

@@ -47,17 +47,16 @@ The suite skips cleanly when:
   * ``azure.cosmos._rust`` did not build (``maturin develop`` not run).
 """
 from __future__ import annotations
+from common.typed_requests import key_from_legacy_header
 
 import copy
 import json
 import os
 import uuid
-import warnings
 from typing import Any, Dict
 
 import pytest
 
-from azure.core import MatchConditions
 from azure.cosmos import CosmosClient, PartitionKey
 from azure.cosmos import _cosmos_client_connection as _ccc_module
 from azure.cosmos._backend import rust as _rust_backend_module
@@ -66,11 +65,7 @@ from azure.cosmos._backend.contracts import PreparedRequest
 from azure.cosmos._backend.rust import RustBackend
 from azure.cosmos._constants import _Constants
 
-from common._parity_helpers import (
-    run_on_both_backends,
-    skip_unless_emulator,
-    skip_unless_rust_binding,
-)
+from common._parity_helpers import run_on_both_backends, skip_unless_emulator, skip_unless_rust_binding
 
 
 pytestmark = [
@@ -254,10 +249,10 @@ def test_intended_collection_rid_present_on_wire(container_for):
 
     original_execute = _rust_backend_module.RustBackend.execute
 
-    def _capturing_execute(self, prepared):  # type: ignore[no-redef]
-        if prepared is not None and getattr(prepared, "op", None) == "create_item":
+    def _capturing_execute(self, prepared, *, deadline=None):  # type: ignore[no-redef]
+        if prepared.op == "create_item":
             rust_prepared_headers.update(dict(prepared.headers))
-        return original_execute(self, prepared)
+        return original_execute(self, prepared, deadline=deadline)
 
     def _core_factory(_backend_name: str):
         return CosmosClient(
@@ -558,65 +553,16 @@ def test_duplicate_id_raises_typed_exception(container_for):
 
 
 # ---------------------------------------------------------------------------
-# (additional) deprecated kwargs. The contract is "ignored, but emit
-# a DeprecationWarning". These tests verify that contract on core-python
-# (the only backend that runs the Python create_item entry point that owns
-# the warning) and run the call through the harness so any future divergence
-# in behaviour shows up in the printed report.
+# Retired arguments are rejected by presence on both backends.
 # ---------------------------------------------------------------------------
 
-def _assert_deprecation_warning_fired(recorded, kwarg_name: str) -> None:
-    """Confirm customers receive the documented deprecation warning."""
-    matches = [w for w in recorded
-               if issubclass(w.category, DeprecationWarning)
-               and kwarg_name in str(w.message)]
-    assert matches, (
-        "expected a DeprecationWarning mentioning {!r}, got: {}".format(
-            kwarg_name, [str(w.message) for w in recorded]
-        )
-    )
-
-
-def test_populate_query_metrics_deprecated(container_for):
-    """``populate_query_metrics=True`` is deprecated on create_item.
-
-    The Python entry point must emit a ``DeprecationWarning`` and otherwise
-    behave like the baseline. The flag does not reach the wire, so both
-    backends should produce equivalent results.
-    """
+@pytest.mark.parametrize("name", ["populate_query_metrics", "etag", "match_condition"])
+@pytest.mark.parametrize("value", [None, False, True])
+def test_retired_create_arguments_are_rejected(container_for, name, value):
     body = {"id": uuid.uuid4().hex, "pk": "a"}
-    with warnings.catch_warnings(record=True) as recorded:
-        warnings.simplefilter("always")
-        cmp = _run(container_for, body, summary="baseline + populate_query_metrics=True (deprecated)",
-                   populate_query_metrics=True)
-    _assert_deprecation_warning_fired(recorded, "populate_query_metrics")
-    cmp.assert_functional_parity()
-
-
-def test_etag_deprecated_and_ignored(container_for):
-    """``etag='"foo"'`` is deprecated and ignored on create_item.
-
-    The Python entry point must emit a ``DeprecationWarning`` and the
-    request must succeed regardless (the value is dropped, not honoured).
-    """
-    body = {"id": uuid.uuid4().hex, "pk": "a"}
-    with warnings.catch_warnings(record=True) as recorded:
-        warnings.simplefilter("always")
-        cmp = _run(container_for, body, summary="baseline + etag='\"foo\"' (deprecated/ignored)",
-                   etag='"foo"')
-    _assert_deprecation_warning_fired(recorded, "etag")
-    cmp.assert_functional_parity()
-
-
-def test_match_condition_deprecated_and_ignored(container_for):
-    """``match_condition=MatchConditions.IfNotModified`` is deprecated/ignored."""
-    body = {"id": uuid.uuid4().hex, "pk": "a"}
-    with warnings.catch_warnings(record=True) as recorded:
-        warnings.simplefilter("always")
-        cmp = _run(container_for, body, summary="baseline + match_condition (deprecated/ignored)",
-                   match_condition=MatchConditions.IfNotModified)
-    _assert_deprecation_warning_fired(recorded, "match_condition")
-    cmp.assert_functional_parity()
+    comparison = _run(container_for, body, summary=f"create rejects {name}", **{name: value})
+    for outcome in (comparison.core_python, comparison.rust):
+        assert isinstance(outcome.raised, TypeError)
 
 
 # ---------------------------------------------------------------------------
@@ -673,7 +619,7 @@ def test_partitionless_container_rejected_by_rust_binding():
         op=OP_CREATE_ITEM,
         container_link="dbs/parity_db/colls/does_not_matter",
         body_bytes=json.dumps(body).encode("utf-8"),
-        partition_key_header="[]",  # the partitionless wire shape
+        partition_key=key_from_legacy_header("[]"),  # the partitionless wire shape
         headers={},
     )
 
@@ -693,6 +639,4 @@ def test_partitionless_container_rejected_by_rust_binding():
     print(
         "partitionless container rejection pinned: {}".format(message)
     )
-
-
 

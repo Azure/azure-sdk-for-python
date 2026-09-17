@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""In-process unit tests for ``_helpers/_body_wire.py`` — no network, no Cosmos emulator.
+"""In-process unit tests for ``_helpers/_wire_encoding.py`` — no network, no Cosmos emulator.
 
 ``serialize_body_to_bytes`` is the one function in the SDK that turns
 a customer's Python body (dict / list / str / bytes / None) into the
@@ -25,7 +25,7 @@ milliseconds and is safe to run on every PR.
 import json
 import unittest
 
-from azure.cosmos._helpers._body_wire import serialize_body_to_bytes
+from azure.cosmos._helpers._wire_encoding import serialize_body_to_bytes
 
 
 class TestEmptyAndPrimitiveBodies(unittest.TestCase):

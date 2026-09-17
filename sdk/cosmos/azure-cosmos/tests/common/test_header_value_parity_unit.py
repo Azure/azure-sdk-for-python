@@ -3,53 +3,21 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Differential test for header *values* across the two backends -- no network.
+"""Compare legacy header values with the test-only typed-settings projection.
 
-``test_rust_option_key_parity`` proves the two engines agree on which option
-*keys* exist. It cannot prove they agree on the header each key produces or on
-the value written into it, because it only compares key sets.
-
-This module closes that half. For one options dict it computes the wire headers
-*both* engines would emit and asserts they are identical:
-
-* **legacy** -- call ``_base.GetHeaders`` directly, then subtract the headers it
-  stamps on every request regardless of options (auth, date, activity-id, ...)
-  so only the option-derived ones remain.
-* **rust** -- call ``flatten_options_to_headers`` (the Python half of the split
-  mapping), then apply the camelCase -> ``x-ms-*`` table parsed straight out of
-  ``extract_op_modifiers`` in ``azure_cosmos_rust/src/wire/request.rs`` (the Rust half).
-
-Reading the table from the Rust source rather than restating it here is the
-whole point: a hand-written copy would drift silently, which is the exact class
-of bug this is meant to catch.
-
-This is what makes the "byte for byte" promise in ``_request_headers`` a tested
-claim instead of a comment. It catches a wrong wire name, a dropped truthy gate
-(``indexing_directive=Default`` is ``0`` and must ship *no* header), and a value
-formatted differently by the two paths (a list of trigger ids must comma-join to
-``"t1,t2"``, not arrive as a Python list repr).
-
-Needs no built extension and no emulator -- just the two source files.
+Native serialization is covered separately by Rust reader tests and the actual
+Python/native schema agreement tests. This file preserves the legacy wire-value
+oracle, including omission rules, rather than parsing a removed native table.
 """
 from __future__ import annotations
 
-import re
-from pathlib import Path
 from typing import Any, Dict, Mapping
 
 import pytest
 
 from azure.cosmos import _base
-from azure.cosmos._helpers._request_headers import (
-    RUST_HANDLED_OPTION_KEYS,
-    flatten_options_to_headers,
-)
-
-# wire/request.rs lives at <pkg-root>/azure_cosmos_rust/src/wire/request.rs; this file is at
-# <pkg-root>/tests/common/, so two parents up from the test dir is the pkg root.
-_WIRE_RS = (
-    Path(__file__).resolve().parents[2] / "azure_cosmos_rust" / "src" / "wire" / "request.rs"
-)
+from azure.cosmos._helpers._request_settings import OPTION_HEADER_NAMES, OPTION_FIELDS
+from common.typed_requests import flatten_options_to_headers
 
 # Headers whose value is regenerated per call, so they can never compare equal
 # across two invocations. They are not option-derived, so dropping them costs no
@@ -79,44 +47,16 @@ _STRUCTURALLY_EXCLUDED_KEYS = frozenset({
     "responsePayloadOnWriteDisabled",
     "excludedLocations",
     "availabilityStrategy",
+    "timeout",
     "initialHeaders",
 })
 
 
-def _extract_op_modifiers_body() -> str:
-    """Return just the body of ``fn extract_op_modifiers`` from wire/request.rs.
-
-    Scoping the parse to that one function keeps unrelated string literals
-    elsewhere in the file out of the mapping table.
-    """
-    src = _WIRE_RS.read_text(encoding="utf-8")
-    start = src.find("fn extract_op_modifiers")
-    assert start != -1, f"could not find extract_op_modifiers in {_WIRE_RS}"
-    end = src.find("\nfn ", start + 1)
-    return src[start:end if end != -1 else len(src)]
 
 
 def _rust_option_key_to_wire_name() -> Dict[str, str]:
-    """Parse the lower-cased option-key -> wire-header-name table out of Rust.
-
-    Two arm shapes carry a mapping::
-
-        "maxitemcount" => Some("x-ms-max-item-count"),        # single line
-        "offerenableruperminutethroughput" => {               # wrapped for width
-            Some("x-ms-offer-is-ru-per-minute-throughput-enabled")
-        }
-
-    Both are collected. Arms that map to ``None`` (the ``x-ms-*`` / ``prefer``
-    passthrough) carry no rename and are absent from the result, which is
-    correct: the caller falls back to the key itself for those.
-    """
-    body = _extract_op_modifiers_body()
-    mapping = dict(re.findall(r'"([^"]+)"\s*=>\s*Some\("([^"]+)"\)', body))
-    for key, arm_body in re.findall(r'"([^"]+)"\s*=>\s*\{(.*?)\n\s*\}', body, re.S):
-        wire_name = re.search(r'Some\("([^"]+)"\)', arm_body)
-        if wire_name:
-            mapping.setdefault(key, wire_name.group(1))
-    return mapping
+    """The Python mapping is now the only header-name translation."""
+    return {key.lower(): value for key, value in OPTION_HEADER_NAMES.items()}
 
 
 class _StubConnectionPolicy:
@@ -171,17 +111,8 @@ def _legacy_option_headers(
 
 
 def _rust_option_headers(options: Mapping[str, Any]) -> Dict[str, Any]:
-    """Return the wire headers the rust path would send for ``options``.
-
-    Applies both halves of the split mapping: the Python prep, then the Rust
-    rename table. A key with no rename arm reaches the wire under its own
-    (lower-cased) name, mirroring ``HeaderName::from(lower)`` in the binding.
-    """
-    rename = _rust_option_key_to_wire_name()
-    return {
-        rename.get(key.lower(), key.lower()): value
-        for key, value in flatten_options_to_headers(options).items()
-    }
+    """Project normalized typed settings into service values for the legacy diff."""
+    return flatten_options_to_headers(options)
 
 
 def _assert_header_parity(options: Mapping[str, Any], *, resource_type: str = "docs") -> None:
@@ -198,8 +129,8 @@ def _assert_header_parity(options: Mapping[str, Any], *, resource_type: str = "d
     assert legacy_wire == rust_wire, (
         "The two engines disagree on the wire headers for options={!r}.\n"
         "  legacy (_base.GetHeaders): {}\n"
-        "  rust   (flatten_options_to_headers + extract_op_modifiers): {}\n"
-        "Fix the Python prep (azure/cosmos/_helpers/_request_headers.py) and/or the "
+        "  rust   (flatten_options_to_headers + extract_request_headers_and_options): {}\n"
+        "Fix the Python prep (azure/cosmos/_helpers/_request_settings.py) and/or the "
         "Rust table (azure_cosmos_rust/src/wire/request.rs) so both emit the same bytes."
     ).format(dict(options), legacy_wire, rust_wire)
 
@@ -399,15 +330,15 @@ def test_no_response_on_write_maps_to_prefer_on_legacy():
 def test_every_rust_handled_key_is_covered_or_explicitly_excluded():
     """No option-key can be added without landing in this file's coverage.
 
-    Without this, someone adds a knob to ``RUST_HANDLED_OPTION_KEYS`` and the
+    Without this, someone adds a knob to ``OPTION_FIELDS`` and the
     value-parity suite silently never exercises it. A new key must either get a
     case in ``_TRUTHY_CASES`` or be listed in ``_STRUCTURALLY_EXCLUDED_KEYS``
     with a reason.
     """
     covered = {key for key, _ in _TRUTHY_CASES}
-    uncovered = sorted(RUST_HANDLED_OPTION_KEYS - covered - _STRUCTURALLY_EXCLUDED_KEYS)
+    uncovered = sorted(OPTION_FIELDS.keys() - covered - _STRUCTURALLY_EXCLUDED_KEYS)
     assert not uncovered, (
-        "These option-keys are in RUST_HANDLED_OPTION_KEYS but this file never "
+        "These option-keys are in OPTION_FIELDS but this file never "
         f"diffs their header value: {uncovered}. Add a case to _TRUTHY_CASES "
         "(and a falsy one to _FALSY_CASES if the option is truthy-gated), or "
         "add the key to _STRUCTURALLY_EXCLUDED_KEYS with a reason."
@@ -420,28 +351,19 @@ def test_excluded_keys_are_still_real_keys():
     A stale entry here would quietly shrink the coverage the test above
     enforces, so a renamed or removed key has to be cleaned up.
     """
-    stale = sorted(_STRUCTURALLY_EXCLUDED_KEYS - RUST_HANDLED_OPTION_KEYS)
+    stale = sorted(_STRUCTURALLY_EXCLUDED_KEYS - (OPTION_FIELDS.keys() | {"initialHeaders"}))
     assert not stale, (
         f"_STRUCTURALLY_EXCLUDED_KEYS names keys that are no longer in "
-        f"RUST_HANDLED_OPTION_KEYS: {stale}. Remove them."
+        f"OPTION_FIELDS: {stale}. Remove them."
     )
 
 
-def test_rust_mapping_table_actually_parsed():
-    """A broken parse must fail loudly instead of making every diff vacuous.
-
-    If the regexes stop matching after a ``wire/request.rs`` refactor, every
-    option would appear to map to its own name and the comparisons could pass
-    for the wrong reason. Anchor on a few entries that must always be present.
-    """
+def test_header_inventory_contains_required_anchors():
+    """Keep the raw-header precedence inventory nonempty and complete."""
     mapping = _rust_option_key_to_wire_name()
-    assert len(mapping) > 20, (
-        f"only parsed {len(mapping)} mappings out of extract_op_modifiers; "
-        "the regexes in _rust_option_key_to_wire_name are probably broken"
-    )
+    assert len(mapping) > 20
     assert mapping["maxitemcount"] == "x-ms-max-item-count"
     assert mapping["pretriggerinclude"] == "x-ms-documentdb-pre-trigger-include"
-    # A wrapped multi-line arm, to prove that branch of the parser works.
     assert mapping["offerenableruperminutethroughput"] == (
         "x-ms-offer-is-ru-per-minute-throughput-enabled"
     )

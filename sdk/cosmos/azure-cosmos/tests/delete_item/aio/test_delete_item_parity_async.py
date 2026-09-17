@@ -54,12 +54,7 @@ import pytest
 from azure.core import MatchConditions
 
 from azure.cosmos import CosmosClient, PartitionKey
-from common._parity_helpers import (
-    BackendComparison,
-    run_on_both_backends_async,
-    skip_unless_emulator,
-    skip_unless_rust_binding,
-)
+from common._parity_helpers import BackendComparison, run_on_both_backends_async, skip_unless_emulator, skip_unless_rust_binding
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 

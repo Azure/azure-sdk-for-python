@@ -20,12 +20,7 @@ import pytest
 
 from azure.cosmos import CosmosClient, exceptions
 from azure.cosmos.partition_key import PartitionKey
-from common._parity_helpers import (
-    run_on_both_backends_async,
-    run_target_operation_async,
-    skip_unless_emulator,
-    skip_unless_rust_binding,
-)
+from common._parity_helpers import run_on_both_backends_async, run_target_operation_async, skip_unless_emulator, skip_unless_rust_binding
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding(), pytest.mark.asyncio]
 

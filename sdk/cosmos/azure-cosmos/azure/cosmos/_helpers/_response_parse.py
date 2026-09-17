@@ -1,54 +1,22 @@
-# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-# -------------------------------------------------------------------------
-"""Turn a ``BackendResponse`` into the ``CosmosDict`` customer code expects.
+# Licensed under the MIT License.
+"""Pure response decoding, explicit header publication and isolated success hooks."""
 
-- 2xx with JSON body: build ``CosmosDict(parsed, response_headers)``
-  and invoke ``response_hook(headers, parsed)`` exactly once.
-- 2xx with empty body (``no_response=True`` / 204): build an empty
-  ``CosmosDict({}, response_headers)`` so customer code keeps working.
-- **304 Not Modified** (conditional ``read_item`` whose
-  ``If-None-Match`` etag matched the current server version): treated
-  as non-error success. The body is empty; the response headers
-  carry the current etag (equal to what the customer sent in). The
-  SDK returns an empty ``CosmosDict({}, response_headers)`` so
-  customer code can check ``len(result)`` or compare
-  ``result.get_response_headers()["etag"]``.
-- Non-2xx (and non-304): raise the typed exception subclass for the
-  status code via ``map_backend_response_to_exception``.
-
-Item callers publish headers to a narrow client-owned response state. The
-legacy connection exposes the same state through ``last_response_headers``
-for compatibility; the parser needs no connection for items. Unmigrated
-families can still supply ``client_connection``. When the Rust backend provides
-diagnostics, they are surfaced through the synthetic header
-``x-ms-cosmos-sdk-diagnostics`` on the same header map.
-
-This module is used when a backend returns a real ``BackendResponse``
-(today: ``RustBackend``). The "core-python" path bypasses it entirely
-and goes straight to the legacy client-connection methods
-(``CreateItem`` / ``ReadItem`` / ``DeleteItem``).
-"""
 from __future__ import annotations
-
 import json
+from azure.core.utils import CaseInsensitiveDict
 from copy import deepcopy
 from typing import Any, Callable, Mapping, Optional
-
-from azure.core.utils import CaseInsensitiveDict
-
-from .._backend.contracts import BackendResponse
-from .._cosmos_responses import CosmosDict
-from ._item_context import ResponseHeaderState
 from ._exceptions import (
     extract_message_from_body,
     is_success_status,
     map_backend_response_to_exception,
 )
-from ._format_ru import format_ru_charge
-
+from ._item_context import ClientLastResponseHeaders
+from ._wire_encoding import format_ru_charge
+from .._backend.contracts import BackendResponse
+from .._cosmos_responses import CosmosDict
+from .._operation_deadline import remaining_timeout
 
 # Matches ``http_constants.HttpHeaders.RequestCharge``; inlined to avoid
 # an extra import for a single string.
@@ -66,46 +34,49 @@ def with_response_header_snapshot(
         return None
 
     def on_response(headers: Mapping[str, Any], body: Any) -> None:
-        response_hook(CaseInsensitiveDict(headers), deepcopy(body) if copy_body else body)
+        response_hook(
+            CaseInsensitiveDict(headers), deepcopy(body) if copy_body else body
+        )
 
     return on_response
 
 
-def parse_database_read_response(
+def process_database_read_response(
     response: BackendResponse,
     *,
     client_connection: Any,
     response_hook: Optional[Callable[[Mapping[str, Any], Any], None]] = None,
 ) -> CosmosDict:
     """Preserve the legacy database-read hook's None body on a 304 response."""
+
     def on_response(headers: Mapping[str, Any], body: Any) -> None:
         if response_hook is not None:
             response_hook(headers, None if response.status_code == 304 else body)
 
-    return parse_backend_response(
+    return process_backend_response(
         response,
         client_connection=client_connection,
         response_hook=on_response if response_hook is not None else None,
     )
 
 
-def parse_delete_response(
+def process_delete_response(
     response: BackendResponse,
     *,
     client_connection: Any,
     response_hook: Optional[Callable[[Mapping[str, Any], None], None]] = None,
 ) -> None:
     """Parse errors and headers while preserving the no-body deletion contract."""
-    result = parse_backend_response(response, client_connection=client_connection)
+    result = process_backend_response(response, client_connection=client_connection)
     if response_hook is not None:
         response_hook(result.get_response_headers(), None)
 
 
-def parse_backend_response(
+def process_backend_response(
     response: BackendResponse,
     *,
     client_connection: Optional[Any] = None,
-    response_state: Optional[ResponseHeaderState] = None,
+    response_state: Optional[ClientLastResponseHeaders] = None,
     response_hook: Optional[Callable[[Mapping[str, Any], Any], None]] = None,
 ) -> CosmosDict:
     """Translate a ``BackendResponse`` into a ``CosmosDict``.
@@ -120,7 +91,7 @@ def parse_backend_response(
     :type client_connection: Optional[Any]
     :param response_state: Narrow client-owned header state for connection-free
         item callers. The connection argument remains for unmigrated families.
-    :type response_state: Optional[ResponseHeaderState]
+    :type response_state: Optional[ClientLastResponseHeaders]
     :param response_hook: Optional callable invoked exactly once on
         success with ``(headers, parsed_body)``. Not invoked on failure.
     :type response_hook: Optional[Callable[[Mapping[str, Any], Any], None]]
@@ -131,15 +102,38 @@ def parse_backend_response(
     :raises CosmosHttpResponseError: For any non-2xx response. The
         typed subclass is chosen by ``map_backend_response_to_exception``.
     """
-    headers = _normalise_headers(response)
-    _normalise_request_charge_header(headers)
-    _attach_diagnostics_header(headers, response.diagnostics)
+    headers = _take_response_headers(response)
+    apply_request_charge_format(headers)
+    apply_response_diagnostics(headers, response.diagnostics)
 
     if client_connection is not None:
         client_connection.last_response_headers = headers
     if response_state is not None:
         response_state.last_response_headers = headers
 
+    parsed = parse_response_body(response)
+    cosmos_dict = CosmosDict(parsed, response_headers=headers)
+    if response_hook is not None:
+        response_hook(headers, parsed)
+    return cosmos_dict
+
+
+def build_response_headers(response: BackendResponse) -> CaseInsensitiveDict:
+    """Build normalized headers without mutating the response's header mapping."""
+    headers = CaseInsensitiveDict(response.headers or {})
+    apply_request_charge_format(headers)
+    apply_response_diagnostics(headers, response.diagnostics)
+    return headers
+
+
+def parse_backend_response(response: BackendResponse) -> CosmosDict:
+    """Decode a response without updating client state or invoking callbacks."""
+    headers = build_response_headers(response)
+    return CosmosDict(parse_response_body(response), response_headers=headers)
+
+
+def parse_response_body(response: BackendResponse) -> Any:
+    """Decode the success body or raise its mapped service/JSON error."""
     # 304 Not Modified is the conditional-GET success signal on
     # read_item (see module docstring). It is < 400 but not in the
     # 2xx range, so is_success_status rejects it; handle it as a
@@ -160,15 +154,10 @@ def parse_backend_response(
     else:
         parsed = json.loads(response.body)
 
-    cosmos_dict = CosmosDict(parsed, response_headers=headers)
-
-    if response_hook is not None:
-        response_hook(headers, parsed)
-
-    return cosmos_dict
+    return parsed
 
 
-def _normalise_headers(response: BackendResponse) -> CaseInsensitiveDict:
+def _take_response_headers(response: BackendResponse) -> CaseInsensitiveDict:
     """Return the response headers as a ``CaseInsensitiveDict``.
 
     The Rust backend already hands back a freshly-built
@@ -177,7 +166,7 @@ def _normalise_headers(response: BackendResponse) -> CaseInsensitiveDict:
     ``BackendResponse`` and is shared with nothing else. In that common
     hot-path case we reuse it directly instead of copying it into a
     *second* dict: the response is built and consumed in one place (the
-    backend ``execute`` -> ``parse_backend_response`` hand-off in
+    backend ``execute`` -> ``process_backend_response`` hand-off in
     ``item_helper``, sync and async), so the later in-place
     request-charge fix cannot leak anywhere observable. Skipping the
     second construction removes a full per-response header copy from
@@ -196,7 +185,7 @@ def _normalise_headers(response: BackendResponse) -> CaseInsensitiveDict:
     return CaseInsensitiveDict(headers)
 
 
-def _normalise_request_charge_header(headers: CaseInsensitiveDict) -> None:
+def apply_request_charge_format(headers: CaseInsensitiveDict) -> None:
     """Ensure the request-charge header is a string in the wire format.
 
     No-op when the header is absent or already a string. The Rust path
@@ -209,7 +198,7 @@ def _normalise_request_charge_header(headers: CaseInsensitiveDict) -> None:
     headers[_REQUEST_CHARGE_HEADER] = format_ru_charge(float(raw))
 
 
-def _attach_diagnostics_header(headers: CaseInsensitiveDict, diagnostics: Any) -> None:
+def apply_response_diagnostics(headers: CaseInsensitiveDict, diagnostics: Any) -> None:
     """Expose the SDK's additive diagnostic summary on every Rust response path."""
     if diagnostics is None:
         return
@@ -217,3 +206,20 @@ def _attach_diagnostics_header(headers: CaseInsensitiveDict, diagnostics: Any) -
         headers[_DIAGNOSTICS_HEADER] = diagnostics
         return
     headers[_DIAGNOSTICS_HEADER] = str(diagnostics)
+
+
+def complete_item_response(
+    result: CosmosDict,
+    response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]],
+    deadline: Optional[float],
+) -> CosmosDict:
+    """Invoke a success hook outside retries with independent nested snapshots."""
+    remaining_timeout(deadline)
+    if response_hook is not None:
+        headers = result.get_response_headers()
+        body = CosmosDict(
+            deepcopy(dict(result)) if len(result) else {},
+            response_headers=CaseInsensitiveDict(headers),
+        )
+        response_hook(CaseInsensitiveDict(headers), body)
+    return result

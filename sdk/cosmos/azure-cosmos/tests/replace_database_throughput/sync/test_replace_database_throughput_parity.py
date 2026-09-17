@@ -18,12 +18,7 @@ import uuid
 import pytest
 
 from azure.cosmos import CosmosClient, ThroughputProperties, exceptions
-from common._parity_helpers import (
-    _observed_backend_name,
-    run_on_both_backends,
-    skip_unless_emulator,
-    skip_unless_rust_binding,
-)
+from common._parity_helpers import _observed_backend_name, run_on_both_backends, skip_unless_emulator, skip_unless_rust_binding
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 

@@ -17,14 +17,17 @@ whether to run the legacy path -- that selection lives entirely behind
 These tests run in milliseconds: no network, no emulator, no compiled rust
 binding required.
 """
+
 from __future__ import annotations
+from azure.cosmos._backend.capabilities import OperationRouting
 
 import asyncio
 import unittest
+from types import SimpleNamespace
 from dataclasses import FrozenInstanceError
 
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
-from azure.cosmos._backend.contracts import LegacyOperation
+
 from azure.cosmos._backend.constants import BACKEND_NAME_CORE_PYTHON
 from azure.cosmos._backend.legacy import LEGACY_BACKEND, LegacyBackend
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
@@ -55,26 +58,26 @@ class TestLegacyBackendIsAnExplicitBackend(unittest.TestCase):
 
     def test_run_operation_always_invokes_the_legacy_operation(self):
         """``LegacyBackend.run_operation`` unconditionally runs
-        ``legacy_operation.invoke()`` -- it never calls ``prepare_request`` or
+        ``legacy_operation.invoke()`` -- it never calls ``build_request`` or
         ``execute``, and ignores ``rust_eligible`` entirely (there is no ``None``
         or backend-type branch here, only "always legacy")."""
         prepare_request_calls = []
         parse_response_calls = []
 
-        def prepare_request():
+        def build_request():
             prepare_request_calls.append(1)
-            raise AssertionError("prepare_request must not run on LegacyBackend")
+            raise AssertionError("build_request must not run on LegacyBackend")
 
-        def parse_response(_response):
+        def process_response(_response):
             parse_response_calls.append(1)
-            raise AssertionError("parse_response must not run on LegacyBackend")
+            raise AssertionError("process_response must not run on LegacyBackend")
 
         for rust_eligible in (True, False):
             result = LEGACY_BACKEND.run_operation(
-                prepare_request=prepare_request,
-                legacy_operation=LegacyOperation(op="read_item", invoke=lambda: "legacy-result"),
-                parse_response=parse_response,
-                rust_eligible=rust_eligible,
+                build_request=build_request,
+                routing=OperationRouting("read_item", rust_eligible),
+                legacy_call=lambda: "legacy-result",
+                process_response=process_response,
             )
             self.assertEqual(result, "legacy-result")
 
@@ -84,19 +87,18 @@ class TestLegacyBackendIsAnExplicitBackend(unittest.TestCase):
     def test_run_page_operation_always_invokes_the_legacy_operation(self):
         """Prove paged calls use the supplied Python operation."""
         result = LEGACY_BACKEND.run_page_operation(
-            prepare_request=lambda: self.fail("prepare_request must not run"),
-            legacy_operation=LegacyOperation(
-                op="query_items", invoke=lambda: "legacy-page"
+            build_request=lambda: self.fail("build_request must not run"),
+            routing=OperationRouting("query_items", True),
+            legacy_call=lambda: "legacy-page",
+            process_response=lambda _response: self.fail(
+                "process_response must not run"
             ),
-            parse_response=lambda _response: self.fail("parse_response must not run"),
-            rust_eligible=True,
         )
         self.assertEqual(result, "legacy-page")
 
-    def test_legacy_operation_is_a_typed_frozen_port_not_a_bare_callable(self):
-        """``LegacyOperation`` carries a named ``op`` alongside ``invoke``, and is
-        frozen like the other prepared/request dataclasses."""
-        op = LegacyOperation(op="create_item", invoke=lambda: None)
+    def test_operation_routing_is_frozen(self):
+        """Operation identity and compatibility cannot change during execution."""
+        op = OperationRouting(op="create_item")
         self.assertEqual(op.op, "create_item")
         with self.assertRaises(FrozenInstanceError):
             op.op = "delete_item"  # type: ignore[misc]
@@ -105,24 +107,24 @@ class TestLegacyBackendIsAnExplicitBackend(unittest.TestCase):
 class TestBackendCompatibilityFallback(unittest.TestCase):
     """The backend boundary owns temporary parity fallback."""
 
-    def test_backend_boundary_owns_explicit_compatibility_fallback(self):
-        """Prove a supported Rust rejection can run the Python operation."""
+    def test_backend_execution_errors_never_replay(self):
+        """Dispatch failure propagates, even for an operation allowing preflight fallback."""
 
         class _RejectingBackend(CosmosBackend):
             """Reject a prepared request to exercise explicit fallback."""
+
             name = "rust"
 
-            def execute(self, prepared):
+            def execute(self, prepared, *, deadline=None):
                 raise ValueError("unsupported input shape")
 
-        result = _RejectingBackend().run_operation(
-            prepare_request=lambda: object(),
-            legacy_operation=LegacyOperation(op="is_feed_range_subset", invoke=lambda: "legacy"),
-            parse_response=lambda _response: "rust",
-            fallback_exceptions=(ValueError,),
-        )
-
-        self.assertEqual(result, "legacy")
+        with self.assertRaisesRegex(ValueError, "unsupported input shape"):
+            _RejectingBackend().run_operation(
+                build_request=lambda: SimpleNamespace(op="is_feed_range_subset"),
+                routing=OperationRouting("is_feed_range_subset"),
+                legacy_call=lambda: self.fail("Execution must not replay"),
+                process_response=lambda _response: "rust",
+            )
 
 
 class TestAsyncLegacyBackendIsAnExplicitBackend(unittest.TestCase):
@@ -139,6 +141,7 @@ class TestAsyncLegacyBackendIsAnExplicitBackend(unittest.TestCase):
 
     def test_async_execute_is_not_prepared_request_driven(self):
         """Prove direct prepared-request execution is unsupported."""
+
         async def _run():
             with self.assertRaises(NotImplementedError):
                 await ASYNC_LEGACY_BACKEND.execute(None)
@@ -147,25 +150,28 @@ class TestAsyncLegacyBackendIsAnExplicitBackend(unittest.TestCase):
 
     def test_async_run_operation_always_invokes_the_legacy_operation(self):
         """Prove async calls use the supplied Python operation."""
+
         async def _run():
             prepare_request_calls = []
 
-            async def prepare_request():
+            def build_request():
                 prepare_request_calls.append(1)
-                raise AssertionError("prepare_request must not run on AsyncLegacyBackend")
+                raise AssertionError("build_request must not run on AsyncLegacyBackend")
 
-            def parse_response(_response):
-                raise AssertionError("parse_response must not run on AsyncLegacyBackend")
+            def process_response(_response):
+                raise AssertionError(
+                    "process_response must not run on AsyncLegacyBackend"
+                )
 
             async def invoke():
                 return "async-legacy-result"
 
             for rust_eligible in (True, False):
                 result = await ASYNC_LEGACY_BACKEND.run_operation(
-                    prepare_request=prepare_request,
-                    legacy_operation=LegacyOperation(op="read_item", invoke=invoke),
-                    parse_response=parse_response,
-                    rust_eligible=rust_eligible,
+                    build_request=build_request,
+                    routing=OperationRouting("read_item", rust_eligible),
+                    legacy_call=invoke,
+                    process_response=process_response,
                 )
                 self.assertEqual(result, "async-legacy-result")
 
@@ -175,49 +181,51 @@ class TestAsyncLegacyBackendIsAnExplicitBackend(unittest.TestCase):
 
     def test_async_run_page_operation_always_invokes_the_legacy_operation(self):
         """Prove async paged calls use the supplied Python operation."""
+
         async def _run():
-            async def prepare_request():
-                self.fail("prepare_request must not run")
+            def build_request():
+                self.fail("build_request must not run")
 
             async def invoke():
                 return "async-legacy-page"
 
             result = await ASYNC_LEGACY_BACKEND.run_page_operation(
-                prepare_request=prepare_request,
-                legacy_operation=LegacyOperation(op="query_items", invoke=invoke),
-                parse_response=lambda _response: self.fail("parse_response must not run"),
-                rust_eligible=True,
+                build_request=build_request,
+                routing=OperationRouting("query_items", True),
+                legacy_call=invoke,
+                process_response=lambda _response: self.fail(
+                    "process_response must not run"
+                ),
             )
             self.assertEqual(result, "async-legacy-page")
 
         asyncio.run(_run())
 
-    def test_async_backend_boundary_owns_explicit_compatibility_fallback(self):
-        """Prove an async Rust rejection can run the Python operation."""
+    def test_async_backend_execution_errors_never_replay(self):
+        """An async execution failure cannot switch transports."""
 
         async def _run():
             class _RejectingBackend(AsyncCosmosBackend):
                 """Reject an async prepared request to exercise fallback."""
+
                 name = "rust"
 
-                async def execute(self, prepared):
+                async def execute(self, prepared, *, deadline=None):
                     raise ValueError("unsupported input shape")
 
-            async def prepare_request():
-                return object()
+            def build_request():
+                return SimpleNamespace(op="is_feed_range_subset")
 
             async def run_legacy():
-                return "legacy"
+                self.fail("Execution must not replay")
 
-            result = await _RejectingBackend().run_operation(
-                prepare_request=prepare_request,
-                legacy_operation=LegacyOperation(
-                    op="is_feed_range_subset", invoke=run_legacy
-                ),
-                parse_response=lambda _response: "rust",
-                fallback_exceptions=(ValueError,),
-            )
-            self.assertEqual(result, "legacy")
+            with self.assertRaisesRegex(ValueError, "unsupported input shape"):
+                await _RejectingBackend().run_operation(
+                    build_request=build_request,
+                    routing=OperationRouting("is_feed_range_subset"),
+                    legacy_call=run_legacy,
+                    process_response=lambda _response: "rust",
+                )
 
         asyncio.run(_run())
 

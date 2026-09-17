@@ -16,11 +16,14 @@ The async version is covered in
 ``tests/create_item/aio/test_item_helper_async_unit.py``. Which backend a
 client uses is covered in ``tests/common/test_backend_wiring_unit.py``.
 """
+from common.request_preparation import call_create_item_helper
+from common.typed_requests import legacy_partition_key_from_request
 import logging
 import unittest
 from unittest.mock import MagicMock
 
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
+from azure.cosmos._backend.contracts import ContainerMetadata
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._constants import _Constants as Constants
@@ -66,10 +69,10 @@ def _capturing_backend(response):
         def __init__(self) -> None:
             self.prepared = None
 
-        def resolve_container_metadata(self, link):
-            return BackendResponse(200, 0, {}, b'{"_rid":"rid-cached"}', None)
+        def get_container_metadata(self, link):
+            return ContainerMetadata("rid-cached")
 
-        def execute(self, prepared):
+        def execute(self, prepared, *, deadline=None):
             self.prepared = prepared
             return response
 
@@ -97,7 +100,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(return_value="ok")
 
-        LegacyItemHelper(cc).create_item(
+        call_create_item_helper(LegacyItemHelper(cc),
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             enable_automatic_id_generation=False,
@@ -110,7 +113,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(return_value="ok")
 
-        LegacyItemHelper(cc).create_item(
+        call_create_item_helper(LegacyItemHelper(cc),
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             enable_automatic_id_generation=True,
@@ -123,7 +126,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(return_value="ok")
 
-        LegacyItemHelper(cc).create_item(
+        call_create_item_helper(LegacyItemHelper(cc),
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             indexing_directive=1,
@@ -137,7 +140,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         cc = _make_cc_with_cache_hit(rid="rid-from-cache")
         cc.CreateItem = MagicMock(return_value="ok")
 
-        LegacyItemHelper(cc).create_item(
+        call_create_item_helper(LegacyItemHelper(cc),
             container_link="dbs/db/colls/c",
             body={"id": "x"},
         )
@@ -160,7 +163,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         )
         cc.CreateItem = MagicMock(return_value="ok")
 
-        LegacyItemHelper(cc).create_item(
+        call_create_item_helper(LegacyItemHelper(cc),
             container_link="dbs/db/colls/c",
             body={"id": "x"},
         )
@@ -194,7 +197,7 @@ class TestItemHelperConfiguredBackend(unittest.TestCase):
             diagnostics=None,
         ))
 
-        ItemHelper(backend).create_item(
+        call_create_item_helper(ItemHelper(backend),
             container_link="dbs/db/colls/c",
             body={"id": "x"},
         )
@@ -220,7 +223,7 @@ class TestItemHelperConfiguredBackend(unittest.TestCase):
             diagnostics=None,
         ))
 
-        result = ItemHelper(backend).create_item(
+        result = call_create_item_helper(ItemHelper(backend),
             container_link="dbs/db/colls/c",
             body={"id": "x"},
         )
@@ -232,21 +235,16 @@ class TestItemHelperConfiguredBackend(unittest.TestCase):
         self.assertEqual(result["_etag"], '"v1"')
 
 
-class TestItemHelperRidResolutionLogging(unittest.TestCase):
-    """When the container resource id can't be found, the helper logs it.
+class TestItemHelperMetadataIndependence(unittest.TestCase):
+    """Python does not resolve metadata before dispatching an item."""
 
-    A real connection should always find the id. If it can't, the request
-    still goes out, but without the header that guards against a recreated
-    container. The helper logs a warning so this is not silent.
-    """
-
-    def test_unresolvable_rid_fails_without_sending_item(self):
-        """Missing backend metadata is not a successful unpartitioned lookup."""
-        backend = _capturing_backend(None)
-        backend.resolve_container_metadata = lambda link: None
-        with self.assertRaises(BackendProtocolError):
-            ItemHelper(backend).create_item(container_link="dbs/db/colls/c", body={"id": "x"})
-        self.assertIsNone(backend.prepared)
+    def test_item_does_not_call_python_metadata_getter(self):
+        backend = _capturing_backend(BackendResponse(201, 0, {}, b'{"id":"x"}'))
+        backend.get_container_metadata = MagicMock(side_effect=BackendProtocolError("Missing metadata"))
+        result = call_create_item_helper(ItemHelper(backend),container_link="dbs/db/colls/c", body={"id": "x"})
+        self.assertEqual(result["id"], "x")
+        self.assertIsNone(legacy_partition_key_from_request(backend.prepared))
+        backend.get_container_metadata.assert_not_called()
 
 
 if __name__ == "__main__":

@@ -3,14 +3,32 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Connection-free Rust point operations: options, metadata, build, execute, parse.
+"""Turning item calls into requests, and replies back into results.
 
-Legacy parity is selected before constructing this helper, in the container.
-No legacy operation, connection cache, or transport callback enters this path.
+This file covers the six single-item operations: create, read, replace,
+upsert, patch, and delete. Everything here is local work. Nothing in this
+file opens a connection or waits on a reply; sending is the backend's job.
+
+A call moves through four steps, in this order:
+
+1. Tidy up the caller's keyword arguments and split them into the values a
+   request needs and the options that shape it.
+2. Reject anything the Rust path cannot honor, naming what to remove.
+3. Build the request object for this particular operation.
+4. Hand it to the backend, then turn the reply into the caller's result.
+
+Which path a client uses was settled earlier, up in the container class.
+By the time this helper exists the choice is made, so nothing here inspects
+it, and there is no route back to the older Python code from this file.
+
+The async version in azure/cosmos/aio/_helpers/item_helper.py makes the
+same decisions in the same order, and imports steps 1 to 3 from here rather
+than repeating them.
 """
 from __future__ import annotations
 
 import warnings
+from copy import deepcopy
 from typing import Any, Dict, Optional
 
 from .._backend.cosmos_backend import CosmosBackend
@@ -20,30 +38,54 @@ from ..partition_key import (
     _return_undefined_or_empty_partition_key,
 )
 from . import _request_item
-from ._item_context import ItemClientDefaults, ResponseHeaderState
-from ._options import compose_item_options
-from ._metadata_provider import ContainerMetadataProvider
-from ._response_parse import parse_backend_response
-from ._request_headers import _timeout_is_representable, overrides_driver_owned_header
+from ._item_context import ItemClientDefaults, ClientLastResponseHeaders
+from ._request_settings import compose_item_options, _timeout_is_representable, overrides_driver_owned_header
+from ._item_prep import (
+    prepare_patch_item_kwargs,
+    serialize_patch_body,
+    apply_patch_item_options,
+)
+from ._document import build_create_document, serialize_document
+from ._response_parse import complete_item_response, process_backend_response
 
 
-def prepare_item_arguments(op: str, arguments: Dict[str, Any]) -> tuple[Dict[str, Any], Dict[str, Any]]:
-    """Normalize Rust arguments eagerly, without legacy option preparation.
+def normalize_item_arguments(
+    op: str, arguments: Dict[str, Any], *, compact_utf8: bool = False,
+    deadline: Optional[float] = None,
+) -> tuple[Dict[str, Any], Dict[str, Any]]:
+    """Split the caller's keyword arguments into request values and options.
 
-    Only local mappings are consumed. Metadata and wire request construction
-    remain lazy inside the backend's prepare_request callback.
+    Reads only what the caller passed in, so a container that has never been
+    used costs nothing here. Two things a reader might expect are left
+    undone on purpose: the container's internal id, and, for writes, the
+    partition key read out of the document. Both are worked out later during
+    the send, because both need information only the driver holds.
     """
     kwargs = dict(arguments)
+    # _item_self_link addresses an item the old way. The Rust path has no use
+    # for it, so drop it here rather than carry it further down.
+    kwargs.pop("_item_self_link", None)
+    if op == "patch_item":
+        prepare_patch_item_kwargs(kwargs)
+    body = kwargs.pop("body", None)
+    patch_operations = kwargs.pop("patch_operations", None)
+    generate_id = kwargs.pop("enable_automatic_id_generation", False)
+    inherited_deadline = kwargs.pop("_item_operation_deadline", deadline)
     args = {
         "container_link": kwargs.pop("container_link"),
-        "document_link": kwargs.pop("document_link", None),
         "item_id": kwargs.pop("item_id", None),
-        "body": kwargs.pop("body", None),
-        "patch_operations": kwargs.pop("patch_operations", None),
         "filter_predicate": kwargs.pop("filter_predicate", None),
         "indexing_directive": kwargs.pop("indexing_directive", None),
-        "enable_automatic_id_generation": kwargs.pop("enable_automatic_id_generation", False),
+        "deadline": deadline if op == "create_item" else inherited_deadline,
     }
+    if op in ("create_item", "upsert_item", "replace_item"):
+        if op == "create_item":
+            body = build_create_document(body, generate_id=generate_id)
+        elif isinstance(body, dict):
+            body = dict(body)
+        args["document"] = serialize_document(
+            body, operation=op, compact_utf8=compact_utf8,
+        )
     populate_query_metrics = kwargs.pop("populate_query_metrics", None)
     options = compose_item_options(kwargs)
     if (op == "create_item" and populate_query_metrics) or (
@@ -57,61 +99,79 @@ def prepare_item_arguments(op: str, arguments: Dict[str, Any]) -> tuple[Dict[str
         options["populateQueryMetrics"] = populate_query_metrics
     if op == "patch_item" and args["filter_predicate"] is not None:
         options["filterPredicate"] = args["filter_predicate"]
-    # The existing pure wire builders receive normalized options explicitly,
-    # rather than depending on legacy build_options mutating an aliased dict.
-    args["wire_kwargs"] = dict(kwargs, request_options=options)
+    if op == "patch_item":
+        options = deepcopy(options)
+        args["body_bytes"] = serialize_patch_body(
+            patch_operations, compact_utf8=compact_utf8
+        )
+        apply_patch_item_options(options)
     args["kwargs"] = kwargs
     return args, options
 
 
-def validate_rust_item_options(op: str, args: Dict[str, Any], options: Dict[str, Any]) -> None:
-    """Unsupported Rust semantics fail explicitly, never replaying on Python."""
-    if op == "patch_item" and ("filterPredicate" in options or "accessCondition" in options):
-        raise NotImplementedError("The Rust backend does not support filtered or conditional patches")
+def validate_rust_item_options(args: Dict[str, Any], options: Dict[str, Any]) -> None:
+    """Reject options this path cannot honor, before anything is sent.
+
+    Failing here is the point. The alternatives would be to send the request
+    with the option silently dropped, or to divert to the older Python code,
+    and both leave the caller believing something happened that did not. The
+    error names the option so it can be removed.
+    """
     for key in ("read_timeout", "connection_timeout", "retry_write", "raw_request_hook", "raw_response_hook"):
-        if args["wire_kwargs"].get(key) is not None or options.get(key) is not None:
+        if args["kwargs"].get(key) is not None or options.get(key) is not None:
             raise NotImplementedError(f"The Rust item backend does not support per-call {key}")
-    if not _timeout_is_representable(args["wire_kwargs"]):
+    if not _timeout_is_representable(args["kwargs"]):
         raise NotImplementedError("The Rust item backend cannot honor this timeout value")
     if overrides_driver_owned_header(options):
         raise NotImplementedError("The Rust item backend cannot override driver-owned initial headers")
 
 
-def normalize_item_partition_key(value: Any, properties: Dict[str, Any]) -> Any:
-    """Resolve sentinel keys with backend metadata, not ContainerProxy.is_system_key."""
+def normalize_item_partition_key(value: Any, system_key: bool) -> Any:
+    """Turn the two stand-in partition-key values into what the wire expects.
+
+    A caller can pass NonePartitionKeyValue or NullPartitionKeyValue in place
+    of a real key. What the first of those should become depends on whether
+    the container uses a system key, so that answer has to be handed in by
+    whoever already knows the container's definition.
+    """
     if value == NonePartitionKeyValue:
-        return _return_undefined_or_empty_partition_key(
-            properties.get("partitionKey", {}).get("systemKey", False)
-        )
+        return _return_undefined_or_empty_partition_key(system_key)
     if value == NullPartitionKeyValue:
         return None
     return value
 
 
-def execute_item_builder(
+def build_item_request(
     op: str, args: Dict[str, Any], options: Dict[str, Any],
-    partition_key: Any, rid: Optional[str], defaults: ItemClientDefaults,
+    defaults: ItemClientDefaults,
 ) -> PreparedRequest:
-    """Select and invoke an item builder using the operation's argument shape.
+    """Build the request object for one item operation.
 
-    Shared by sync and async preparation. Returns only the PreparedRequest,
-    unwrapping create's additional item id, without metadata or network calls.
+    Picks the builder that matches the operation and gives it what that
+    operation needs: a read needs an id, a create needs a document. Returns
+    the finished request and nothing else. No lookups, no sending.
+
+    Both the sync and async paths call this and get identical results.
     """
+    # Nothing here knows whether the container uses a system key, and finding
+    # out would mean a lookup before the request is even built. Pass False and
+    # keep the long-standing behaviour for the explicit stand-in values.
+    partition_key = normalize_item_partition_key(options.get("partitionKey", _Empty()), False)
     common = dict(
         container_link=args["container_link"],
         partition_key_value=partition_key,
-        container_rid=rid,
-        kwargs=args["wire_kwargs"],
+        container_rid=None,
+        request_options=options,
     )
+    if op in ("create_item", "upsert_item", "replace_item"):
+        common["extract_partition_key"] = "partitionKey" not in options
     if op == "create_item":
-        prepared, _ = _request_item.build_create_item_request(
-            body=args["body"],
+        return _request_item.build_create_item_request(
+            document=args["document"],
             indexing_directive=args["indexing_directive"],
-            enable_automatic_id_generation=args["enable_automatic_id_generation"],
             no_response_on_write_default=defaults.no_response_on_write,
             **common,
         )
-        return prepared
     if op in ("upsert_item", "replace_item"):
         if op == "replace_item":
             common["item_id"] = args["item_id"]
@@ -120,77 +180,105 @@ def execute_item_builder(
             else _request_item.build_replace_item_request
         )
         return builder(
-            body=args["body"], access_condition=options.get("accessCondition"),
+            document=args["document"],
             no_response_on_write_default=defaults.no_response_on_write, **common,
         )
     if op == "patch_item":
         return _request_item.build_patch_item_request(
-            item_id=args["item_id"], patch_operations=args["patch_operations"],
+            item_id=args["item_id"],
+            body_bytes=args["body_bytes"],
             no_response_on_write_default=defaults.no_response_on_write, **common,
         )
-    builder = _request_item.build_read_item_request if op == "read_item" else _request_item.build_delete_item_request
-    return builder(item_id=args["item_id"], **common)
+    if op == "read_item":
+        return _request_item.build_read_item_request(item_id=args["item_id"], **common)
+    return _request_item.build_delete_item_request(item_id=args["item_id"], **common)
 
 
 class ItemHelper:
-    """One Rust item operation, holding only backend, immutable defaults and headers."""
+    """Runs one item operation, from caller arguments to finished result.
+
+    Holds three things and nothing else: a backend to send through, the
+    client-wide defaults, and somewhere to record the headers from the most
+    recent reply. It does not hold the older Python connection, which is why
+    there is no way to reach the older path from here.
+    """
 
     def __init__(
         self, backend: CosmosBackend, defaults: Optional[ItemClientDefaults] = None,
-        response_state: Optional[ResponseHeaderState] = None,
+        response_state: Optional[ClientLastResponseHeaders] = None,
     ) -> None:
         if defaults is not None and not isinstance(defaults, ItemClientDefaults):
             raise TypeError("defaults must be ItemClientDefaults, not a client connection")
-        if response_state is not None and not isinstance(response_state, ResponseHeaderState):
-            raise TypeError("response_state must be ResponseHeaderState")
+        if response_state is not None and not isinstance(response_state, ClientLastResponseHeaders):
+            raise TypeError("response_state must be ClientLastResponseHeaders")
         self._backend = backend
         self._defaults = defaults if defaults is not None else ItemClientDefaults()
         self._response_state = response_state
 
-    def _parse(self, response: BackendResponse, op: str, response_hook: Any) -> Any:
-        parsed = parse_backend_response(response, response_state=self._response_state, response_hook=response_hook)
+    def _process_response(
+        self, response: BackendResponse, op: str, response_hook: Any, deadline: Optional[float] = None
+    ) -> Any:
+        """Turn a reply into the value the caller gets back.
+
+        Patch is the odd one out. The other five operations leave the
+        finishing work to the public method that called in, but patch
+        finishes here. That is why the caller's response hook ends up being
+        invoked from two different places depending on the operation.
+
+        Delete parses its reply so the headers are recorded, then returns
+        nothing.
+        """
+        if op == "patch_item":
+            parsed = process_backend_response(response, response_state=self._response_state)
+            return complete_item_response(parsed, response_hook, deadline)
+        parsed = process_backend_response(response, response_state=self._response_state, response_hook=response_hook)
         return None if op == "delete_item" else parsed
 
-    def _run(self, op: str, arguments: Dict[str, Any]) -> Any:
-        args, options = prepare_item_arguments(op, arguments)
-        validate_rust_item_options(op, args, options)
-        link = args["container_link"]
-        metadata = ContainerMetadataProvider(self._backend, self._response_state)
-
-        def prepare_request() -> PreparedRequest:
-            rid = metadata.container_rid(link, options)
-            if op in ("create_item", "upsert_item", "replace_item"):
-                key = metadata.extract_partition_key(link, args["body"], options)
-            else:
-                key = options.get("partitionKey", _Empty())
-            key = normalize_item_partition_key(key, metadata._container_properties(link, options))
-            return execute_item_builder(op, args, options, key, rid, self._defaults)
-
-        return self._backend.run_item_operation(
-            prepare_request=prepare_request,
-            parse_response=lambda response: self._parse(response, op, args["kwargs"].get("response_hook")),
+    def _run(
+        self, op: str, arguments: Dict[str, Any], *, deadline: Optional[float] = None
+    ) -> Any:
+        """Prepare, send, and interpret one operation."""
+        args, options = normalize_item_arguments(
+            op, arguments, compact_utf8=self._defaults.enable_compact_utf8_item_writes,
+            deadline=deadline,
+        )
+        validate_rust_item_options(args, options)
+        self._defaults.apply_to_options(options)
+        prepared = build_item_request(op, args, options, self._defaults)
+        response = self._backend.execute(prepared, deadline=args["deadline"])
+        return self._process_response(
+            response, op, args["kwargs"].get("response_hook"), args["deadline"]
         )
 
-    def create_item(self, **kwargs: Any) -> Any:
-        """Create an item through Rust only."""
-        return self._run("create_item", kwargs)
+    def create_item(self, *, deadline: Optional[float], **kwargs: Any) -> Any:
+        """Create an item, failing if the id already exists.
+
+        The time limit arrives as its own argument because the public method
+        started the clock before calling in, and that original start time is
+        what the limit is measured against.
+        """
+        return self._run("create_item", kwargs, deadline=deadline)
 
     def read_item(self, **kwargs: Any) -> Any:
-        """Read an item through Rust only."""
+        """Read one item by its id and partition key."""
         return self._run("read_item", kwargs)
 
     def delete_item(self, **kwargs: Any) -> Any:
-        """Delete an item through Rust, returning None after parsing headers."""
+        """Delete an item. Returns nothing; the reply is read for its headers."""
         return self._run("delete_item", kwargs)
 
     def upsert_item(self, **kwargs: Any) -> Any:
-        """Upsert an item through Rust only."""
+        """Create an item, or replace it if one with that id is already there."""
         return self._run("upsert_item", kwargs)
 
     def replace_item(self, **kwargs: Any) -> Any:
-        """Replace an item through Rust only."""
+        """Replace the item with this id, failing if it is not there."""
         return self._run("replace_item", kwargs)
 
     def patch_item(self, **kwargs: Any) -> Any:
-        """Patch an item through Rust; unsupported guards raise explicitly."""
+        """Apply a list of changes to one item.
+
+        Unlike the other five, this finishes the caller's result here rather
+        than leaving it to the public method.
+        """
         return self._run("patch_item", kwargs)

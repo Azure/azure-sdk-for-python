@@ -29,6 +29,11 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._query_builder import _QueryBuilder
 from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
 from azure.cosmos.aio._helpers.legacy_item_helper import AsyncLegacyItemHelper
+from azure.cosmos._helpers._read_items import (
+    ReadItemsHeaders, complete_read_items_response, index_query_results, index_requested_items,
+    normalize_read_items, partition_key_identity, validate_concurrency,
+)
+from azure.cosmos._operation_deadline import legacy_deadline_options, remaining_timeout, run_with_deadline
 from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition, PartitionKeyType
 from azure.cosmos import CosmosList
 
@@ -51,18 +56,20 @@ class ReadItemsHelperAsync:
             items: Sequence[Tuple[str, PartitionKeyType]],
             options: Optional[Mapping[str, Any]],
             partition_key_definition: dict[str, Any],
-            max_concurrency: int = 5,
+            max_concurrency: Optional[int] = None,
             **kwargs: Any
     ):
         self.client = client
         self._item_context = kwargs.pop("_item_context", None)
         self.collection_link = collection_link
-        self.items = items
+        validate_concurrency(max_concurrency)
+        self.items = normalize_read_items(items, partition_key_definition) if items else []
         self.options = dict(options) if options is not None else {}
         self.partition_key_definition = partition_key_definition
         self.kwargs = kwargs
-        self.max_concurrency = max_concurrency if max_concurrency and max_concurrency > 0 else 5
+        self.max_concurrency = 5 if max_concurrency is None else max_concurrency
         self.max_items_per_query = 1000
+        self.deadline = kwargs.get("_item_operation_deadline", self.options.get("_item_operation_deadline"))
 
     async def read_items(self) -> 'CosmosList':
         """Executes the read-many operation.
@@ -71,11 +78,13 @@ class ReadItemsHelperAsync:
         :rtype: ~azure.cosmos.CosmosList
         """
         if not self.items:
-            return CosmosList([], response_headers=CaseInsensitiveDict())
+            return complete_read_items_response(
+                CosmosList([], response_headers=CaseInsensitiveDict()), self.kwargs.get("response_hook"), self.deadline
+            )
 
-        items_by_partition = await self._partition_items_by_range()
+        items_by_partition = await run_with_deadline(self._partition_items_by_range, self.deadline)
         if not items_by_partition:
-            return CosmosList([], response_headers=CaseInsensitiveDict())
+            raise exceptions.CosmosHttpResponseError(message="read_items could not resolve partition routing.")
 
         query_chunks = self._create_query_chunks(items_by_partition)
 
@@ -85,10 +94,7 @@ class ReadItemsHelperAsync:
         all_results = [item[1] for item in indexed_results]
         cosmos_list = CosmosList(all_results, response_headers=combined_headers)
 
-        if 'response_hook' in self.kwargs:
-            self.kwargs['response_hook'](combined_headers, cosmos_list)
-
-        return cosmos_list
+        return complete_read_items_response(cosmos_list, self.kwargs.get("response_hook"), self.deadline)
 
     async def _partition_items_by_range(self) -> dict[str, list[Tuple[int, str, "PartitionKeyType"]]]:
         # pylint: disable=protected-access
@@ -105,17 +111,23 @@ class ReadItemsHelperAsync:
 
         items_by_pk_value: dict[Any, list[Tuple[int, str, "PartitionKeyType"]]] = {}
         for idx, (item_id, pk_value) in enumerate(self.items):
-            key = tuple(pk_value) if isinstance(pk_value, list) else pk_value
+            key = partition_key_identity(pk_value)
             if key not in items_by_pk_value:
                 items_by_pk_value[key] = []
             items_by_pk_value[key].append((idx, item_id, pk_value))
 
         for pk_items in items_by_pk_value.values():
+            remaining_timeout(self.deadline)
             pk_value = pk_items[0][2]
             epk_range = partition_key._get_epk_range_for_partition_key(pk_value)
             overlapping_ranges = await self.client._routing_map_provider.get_overlapping_ranges(
-                collection_rid, [epk_range], self.options
+                collection_rid, [epk_range], legacy_deadline_options(self.options, self.deadline)
             )
+            remaining_timeout(self.deadline)
+            if not overlapping_ranges or len(overlapping_ranges) != 1:
+                raise exceptions.CosmosHttpResponseError(
+                    message="read_items could not resolve a unique physical range for a full partition key."
+                )
             if overlapping_ranges:
                 range_id = overlapping_ranges[0]["id"]
                 if range_id not in items_by_partition:
@@ -167,17 +179,18 @@ class ReadItemsHelperAsync:
 
         async def execute_chunk_query(partition_id, chunk_partition_items):
             async with semaphore:
-                id_to_idx = {item[1]: item[0] for item in chunk_partition_items}
+                remaining_timeout(self.deadline)
+                identity_to_indices = index_requested_items(chunk_partition_items)
                 items_for_query = [(item[1], item[2]) for item in chunk_partition_items]
                 request_kwargs = self.kwargs.copy()
 
                 if len(items_for_query) == 1:
                     item_id, pk_value = items_for_query[0]
                     result, headers = await self._execute_point_read(item_id, pk_value, request_kwargs)
-                    chunk_results = [(id_to_idx[item_id], result)] if result else []
+                    chunk_results = [(chunk_partition_items[0][0], result)] if result is not None else []
                 else:
                     chunk_results, headers = await self._execute_query(
-                        partition_id, items_for_query, id_to_idx, request_kwargs)
+                        partition_id, items_for_query, identity_to_indices, request_kwargs)
 
                 request_charge = self._extract_request_charge(headers)
                 return chunk_results, request_charge, headers.get('x-ms-cosmos-sdk-diagnostics')
@@ -189,8 +202,8 @@ class ReadItemsHelperAsync:
         ]
 
         try:
-            all_chunk_results = await asyncio.gather(*tasks)
-        except Exception:
+            all_chunk_results = await run_with_deadline(lambda: asyncio.gather(*tasks), self.deadline)
+        except BaseException:
             for task in tasks:
                 if not task.done():
                     task.cancel()
@@ -244,7 +257,11 @@ class ReadItemsHelperAsync:
         :rtype: tuple[Optional[any], CaseInsensitiveDict]
         """
         doc_link = f"{self.collection_link}/docs/{item_id}"
-        point_read_options = self.options.copy()
+        remaining_timeout(self.deadline)
+        point_read_options = legacy_deadline_options(self.options, self.deadline)
+        point_read_options.pop("_item_operation_deadline", None)
+        if self.deadline is not None:
+            request_kwargs["_item_operation_deadline"] = self.deadline
         point_read_options["partitionKey"] = pk_value
         captured_headers = {}
 
@@ -294,7 +311,7 @@ class ReadItemsHelperAsync:
             self,
             partition_id: str,
             items_for_query: Sequence[Tuple[str, "PartitionKeyType"]],
-            id_to_idx: dict[str, int],
+            identity_to_indices: dict[tuple, list[int]],
             request_kwargs: dict[str, Any]
     ) -> Tuple[list[Tuple[int, Any]], CaseInsensitiveDict]:
         """
@@ -304,19 +321,18 @@ class ReadItemsHelperAsync:
         :type partition_id: str
         :param items_for_query: A list of tuples containing item IDs and partition key values to query.
         :type items_for_query: list[tuple[str, PartitionKeyType]]
-        :param id_to_idx: A mapping from item ID to its original index in the input sequence.
-        :type id_to_idx: dict[str, int]
+        :param identity_to_indices: Input positions for each typed ID/partition-key identity.
+        :type identity_to_indices: dict[tuple, list[int]]
         :param request_kwargs: Additional keyword arguments for the request.
         :type request_kwargs: dict[str, any]
         :return: A tuple containing a list of results with original indices and the response headers.
         :rtype: tuple[list[tuple[int, any]], CaseInsensitiveDict]
         """
-        captured_headers = {}
-
-        def local_response_hook(hook_headers, _):
-            captured_headers.update(hook_headers)
-
-        request_kwargs['response_hook'] = local_response_hook
+        captured_headers = ReadItemsHeaders()
+        request_kwargs['response_hook'] = captured_headers
+        request_kwargs.pop("_item_operation_deadline", None)
+        request_kwargs.pop("timeout", None)
+        request_kwargs.pop(Constants.OperationStartTime, None)
 
         if _QueryBuilder.is_id_partition_key_query(items_for_query, self.partition_key_definition):
             query_obj = _QueryBuilder.build_id_in_query(items_for_query)
@@ -327,23 +343,16 @@ class ReadItemsHelperAsync:
             query_obj = _QueryBuilder.build_parameterized_query_for_items(
                 partition_items_dict, self.partition_key_definition)
 
-        # Keep the batched "id IN (...)" chunk query on the legacy path: the rust
-        # query path cannot serve this internal read_items query shape yet (it
-        # panics resolving the partition topology). The point-read leg still uses
-        # rust. This marker is read by can_use_rust_backend_for_query_page and is
-        # scoped to this query call only (self.options is left untouched).
-        query_options = dict(self.options)
+        # Query migration is separate; preserve the existing legacy query leg.
+        query_options = legacy_deadline_options(self.options, self.deadline)
         query_options[Constants.ReadItemsQueryLeg] = True
         page_iterator = self.client.QueryItems(
             self.collection_link, query_obj, query_options, **request_kwargs).by_page()
 
-        chunk_indexed_results = []
+        results = []
         async for page in page_iterator:
+            remaining_timeout(self.deadline)
             async for item in page:
-                doc_id = item.get('id')
-                if doc_id in id_to_idx:
-                    chunk_indexed_results.append((id_to_idx[doc_id], item))
-                else:
-                    self.logger.warning("Received document with unexpected ID: %s", doc_id)
-
-        return chunk_indexed_results, CaseInsensitiveDict(captured_headers)
+                remaining_timeout(self.deadline)
+                results.append(item)
+        return index_query_results(results, identity_to_indices, self.partition_key_definition), captured_headers.headers

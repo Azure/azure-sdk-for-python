@@ -76,6 +76,9 @@ class QueryIterable(AsyncPageIterator):  # pylint: disable=too-many-instance-att
         self.retry_options = client.connection_policy.RetryOptions
         self._query = query
         self._options = options
+        if query is not None:
+            from .._helpers._query_items import reject_rust_bookmark
+            reject_rust_bookmark({"continuation": continuation_token or options.get("continuation")})
         if continuation_token:
             options['continuation'] = continuation_token
         self._fetch_function = fetch_function
@@ -90,9 +93,11 @@ class QueryIterable(AsyncPageIterator):  # pylint: disable=too-many-instance-att
 
     async def _unpack(self, block):
         continuation = None
-        if self._client.last_response_headers:
-            continuation = self._client.last_response_headers.get("x-ms-continuation") or \
-                           self._client.last_response_headers.get('etag')
+        headers = self._options.get("_read_all_response_headers", self._client.last_response_headers)
+        if headers:
+            continuation = headers.get("x-ms-continuation")
+            if "_read_all_response_headers" not in self._options:
+                continuation = continuation or headers.get('etag')
         if block:
             self._did_a_call_already = False
         return continuation, block

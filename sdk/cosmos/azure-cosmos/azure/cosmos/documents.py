@@ -30,6 +30,7 @@ from ._retry_options import RetryOptions
 
 if TYPE_CHECKING:
     from ._retry_utility import ConnectionRetryPolicy
+    from .aio._retry_utility_async import _ConnectionRetryPolicy
 
 
 class UserConsistencyPolicy(TypedDict, total=False):
@@ -368,7 +369,9 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.RetryOptions: RetryOptions = RetryOptions()
         self.DisableSSLVerification: bool = False
         self.UseMultipleWriteLocations: bool = False
-        self.ConnectionRetryConfiguration: Optional["ConnectionRetryPolicy"] = None
+        self.ConnectionRetryConfiguration: Optional[
+            Union["ConnectionRetryPolicy", "_ConnectionRetryPolicy"]
+        ] = None
         self.ResponsePayloadOnWriteDisabled: bool = False
         self.RetryNonIdempotentWrites: int = 0
 

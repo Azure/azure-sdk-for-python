@@ -25,7 +25,7 @@ pub(super) type ResponseTupleConverter<R> =
 /// The function releases the Python lock while it waits.
 pub(super) fn run_driver_operation_sync<'py, R, F, Fut>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     operation_name: &str,
     operation_future_factory: F,
     convert_response: ResponseTupleConverter<R>,
@@ -36,7 +36,7 @@ where
     R: Send,
 {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
+    let driver = lookup_driver(driver_handle)?;
     let runtime_ctx = require_runtime_context(operation_name)?;
     let response_result = py.allow_threads(|| {
         runtime_ctx
@@ -50,7 +50,7 @@ where
 /// Dropping the awaitable cancels the spawned task.
 pub(super) fn run_driver_operation_async<'py, R, F, Fut>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     operation_name: &str,
     operation_future_factory: F,
     convert_response: ResponseTupleConverter<R>,
@@ -61,7 +61,7 @@ where
     R: Send + 'static,
 {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
+    let driver = lookup_driver(driver_handle)?;
     let runtime_ctx = require_runtime_context(operation_name)?;
     let join = runtime_ctx.tokio_rt.spawn(operation_future_factory(driver));
     let abort_guard = AbortOnDrop(join.abort_handle());

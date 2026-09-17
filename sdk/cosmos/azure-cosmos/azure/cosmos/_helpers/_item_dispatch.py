@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 """Public item keyword merging and legacy-only request-option adapters.
 
-The merge_* utilities belong to the public wrapper and serve both engines.
+The merge_* utilities belong to the public wrapper and serve both backends.
 The build_*_request_options functions are used only by explicit legacy parity;
 they import legacy option preparation when invoked. Rust item helpers instead
 use _options.compose_item_options. Nothing here performs I/O.
@@ -36,9 +36,9 @@ def merge_create_item_explicit_kwargs(
     """Copy every non-None explicit ``create_item`` kwarg into ``kwargs``.
 
     Folds the ``if X is not None: kwargs['X'] = X`` boilerplate that both
-    ``Container.create_item`` methods would otherwise repeat inline. Both the
-    sync and async ``create_item`` declare ``response_hook`` as an
-    explicit keyword-only parameter and forward it here.
+    ``Container.create_item`` methods would otherwise repeat inline. Public
+    create response hooks run after the item helper returns, rather than being
+    forwarded into request execution.
     ``availability_strategy`` is passed through the hedging-strategy
     validator.
     """
@@ -64,7 +64,7 @@ def merge_create_item_explicit_kwargs(
         kwargs['response_hook'] = response_hook
 
 
-def pick_backend(client_connection: Any) -> Any:
+def get_selected_backend(client_connection: Any) -> Any:
     """Retrieve the already-selected backend from the client connection.
 
     Unmigrated connection-owned coordinators use this accessor. Public point
@@ -98,10 +98,9 @@ def build_create_item_request_options(
 ) -> Dict[str, Any]:
     """Build the request-options dict the legacy ``CreateItem`` consumes.
 
-    Pure function. ``populate_query_metrics`` is only meaningful on the
-    sync container method (the async sibling never exposed it); the
-    async caller passes ``None`` and the warning + option-key write are
-    skipped.
+    Pure compatibility function. Public create methods reject query metrics
+    before reaching this adapter; its metrics argument is retained only for
+    direct internal compatibility callers.
 
     :param kwargs: Per-call kwargs forwarded to ``build_options``;
         not mutated by this function.

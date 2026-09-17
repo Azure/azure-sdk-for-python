@@ -1,3 +1,4 @@
+from common.typed_requests import wire_headers, settings_options, legacy_settings
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
@@ -54,13 +55,13 @@ def listing_case(request):
     class Backend(_CapturingPagedBackend):
         name = "rust"
 
-        def execute_pages(self, prepared):
+        def execute_pages(self, prepared, *, deadline=None):
             yield response(prepared.continuation, prepared)
 
     class AsyncBackend(_CapturingAsyncPagedBackend):
         name = "rust"
 
-        async def execute_pages(self, prepared):
+        async def execute_pages(self, prepared, *, deadline=None):
             yield response(prepared.continuation, prepared)
 
     if rust:
@@ -194,8 +195,8 @@ def test_supported_timeout_and_application_headers(listing_case, timeout):
     assert len(_drain(case, pager)) == 2
     if case.rust:
         for prepared in case.requests:
-            assert prepared.headers["initialHeaders"]["x-company-trace"] == "listing"
-            budget = prepared.headers.get("__overall_timeout_seconds")
+            assert wire_headers(prepared)["x-company-trace"] == "listing"
+            budget = settings_options(prepared).get("timeout_seconds")
             if timeout is None:
                 assert budget is None
             else:

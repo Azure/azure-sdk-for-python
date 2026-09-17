@@ -8,10 +8,9 @@
 Consistent terms used throughout this file:
 
 * **client** -- the ``CosmosClient`` object a customer creates in their code.
-* **backend** -- which engine runs the database calls: ``core-python`` (the
-  original all-Python one) or ``rust`` (the new one that hands the work to a
-  rust driver).
-* **rust driver** -- the engine itself; it owns the network connection pool, the
+* **backend** -- the Python dispatch object: ``core-python`` uses the temporary
+  legacy pipeline; ``rust`` hands the work to a Rust driver.
+* **rust driver** -- the native ``CosmosDriver``; it owns the network connection pool, the
   auth (request signing), and region routing. The **binding** is the compiled
   ``azure.cosmos._rust`` layer Python calls into to reach it (the compiled file
   holds both). The binding keeps one rust driver per distinct ``(endpoint,
@@ -25,9 +24,9 @@ High-level view -- what this file does
 --------------------------------------
 
 When a customer writes ``CosmosClient(url, credential, _backend="rust")``,
-something has to (1) decide which engine that client will use, and (2) if it is
-the Rust engine, check that everything the customer passed is something the Rust
-engine can actually handle, and repackage it into the shape the driver expects.
+something has to (1) decide which backend that client will use, and (2) if it is
+the Rust backend, check that everything the customer passed is something the Rust
+driver can actually handle, and repackage it into the shape the driver expects.
 That is this file's whole job. The client calls :func:`make_backend` once, at
 construction, and stores the concrete backend it returns: a
 :class:`RustBackend` when Rust was chosen, or the shared
@@ -77,13 +76,13 @@ from .rust import RustBackend
 from .transport_settings import reject_unsupported_transport_settings
 
 def resolve_backend_name(explicit: Optional[str]) -> str:
-    """Decide the engine name from the ``_backend=`` argument, else the
+    """Select the backend name from the ``_backend=`` argument, else the
     ``COSMOS_BACKEND`` environment variable, else the ``core-python`` default,
     and return a name in ``VALID_BACKEND_NAMES``.
 
     Without it: a stray trailing newline or ``"RUST"`` in caps from a
     copy-pasted env var would be treated as a typo and rejected; and a real typo
-    would silently fall back to the wrong engine instead of telling the customer.
+    would silently fall back to the wrong backend instead of telling the customer.
     So surrounding whitespace and case are tolerated (``RUST``, `` rust`` all
     work), an empty or whitespace-only value counts as "not specified" and uses
     ``DEFAULT_BACKEND_NAME``, but a non-empty value that is not a known backend
@@ -119,7 +118,7 @@ def resolve_backend_name(explicit: Optional[str]) -> str:
 
 def resolve_strict_isolation(explicit: Optional[bool]) -> bool:
     """Read an on/off safety switch that controls whether the Rust backend uses
-    strict per-account engine isolation.
+    strict per-account driver isolation.
 
     Precedence (highest wins): an explicit factory toggle, then the
     ``COSMOS_RUST_STRICT_ISOLATION`` environment variable, then off. Without it:
@@ -133,8 +132,8 @@ def resolve_strict_isolation(explicit: Optional[bool]) -> bool:
 
     When on, a second ``CosmosClient`` to an account whose config differs from the
     first live client's raises
-    :class:`~azure.cosmos._backend._driver_registry.StrictEngineIsolationError` at
-    construction instead of silently building a second isolated engine.
+    :class:`~azure.cosmos._backend._driver_registry.StrictDriverIsolationError` at
+    construction instead of silently building a second isolated driver.
     """
     if explicit is not None:
         if not isinstance(explicit, bool):
@@ -208,7 +207,7 @@ def make_backend(
     combined into the client config the backend carries to the driver.
     ``strict_isolation`` (kwarg > the ``COSMOS_RUST_STRICT_ISOLATION`` env var >
     off) controls whether a second client to an account with a different config
-    raises instead of silently getting its own isolated engine. The transport/TLS
+    raises instead of silently getting its own isolated driver. The transport/TLS
     settings (``proxy_config`` / ``proxies`` / ``connection_verify`` /
     ``connection_cert`` / ``ssl_config`` / ``transport``) are not combined into the
     config -- the Rust path still can't honor explicit proxy/transport objects, so

@@ -86,17 +86,17 @@ def test_read_item_parity_with_token_credential(container_for):
 def test_engine_shared_for_one_credential_object():
     """Two clients sharing one credential object must reuse a single engine."""
     cred = make_sync_token_credential()
-    h1 = RustBackend(endpoint=os.environ["ACCOUNT_HOST"], token_credential=cred)._ensure_handle()
-    h2 = RustBackend(endpoint=os.environ["ACCOUNT_HOST"], token_credential=cred)._ensure_handle()
+    h1 = RustBackend(endpoint=os.environ["ACCOUNT_HOST"], token_credential=cred)._ensure_driver_handle()
+    h2 = RustBackend(endpoint=os.environ["ACCOUNT_HOST"], token_credential=cred)._ensure_driver_handle()
     assert h1 == h2, "same credential object must reuse one engine handle"
 
 
 def test_engine_multiplied_for_distinct_credential_objects():
     """A fresh credential object per client builds a separate engine."""
     h1 = RustBackend(endpoint=os.environ["ACCOUNT_HOST"],
-                     token_credential=make_sync_token_credential())._ensure_handle()
+                     token_credential=make_sync_token_credential())._ensure_driver_handle()
     h2 = RustBackend(endpoint=os.environ["ACCOUNT_HOST"],
-                     token_credential=make_sync_token_credential())._ensure_handle()
+                     token_credential=make_sync_token_credential())._ensure_driver_handle()
     assert h1 != h2, "distinct credential objects must build distinct engine handles"
 
 

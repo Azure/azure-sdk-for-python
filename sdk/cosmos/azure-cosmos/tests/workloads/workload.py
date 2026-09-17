@@ -141,16 +141,14 @@ def _wrap_backend_for_counting(client, is_async, client_logger):
 
     orig_execute = backend.execute
     if is_async:
-        async def _counting_execute(prepared):
-            response = await orig_execute(prepared)
-            if response is not None:
-                backend_counters.record_execute()
+        async def _counting_execute(prepared, *, deadline=None):
+            response = await orig_execute(prepared, deadline=deadline)
+            backend_counters.record_execute()
             return response
     else:
-        def _counting_execute(prepared):
-            response = orig_execute(prepared)
-            if response is not None:
-                backend_counters.record_execute()
+        def _counting_execute(prepared, *, deadline=None):
+            response = orig_execute(prepared, deadline=deadline)
+            backend_counters.record_execute()
             return response
     backend.execute = _counting_execute
 

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""In-process unit tests for ``_helpers/_format_ru.py`` — no network, no Cosmos emulator.
+"""In-process unit tests for ``_helpers/_wire_encoding.py`` — no network, no Cosmos emulator.
 
 Every Cosmos response carries an ``x-ms-request-charge`` header that
 tells the customer how many RUs (Request Units) the operation cost.
@@ -25,7 +25,7 @@ masks the original error during exception construction).
 """
 import unittest
 
-from azure.cosmos._helpers._format_ru import format_ru_charge
+from azure.cosmos._helpers._wire_encoding import format_ru_charge
 
 
 class TestFormatRuCharge(unittest.TestCase):

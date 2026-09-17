@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+use super::partition_key::PartitionKeyInput;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 
@@ -15,15 +16,15 @@ use azure_data_cosmos_driver::{
 };
 
 use super::diagnostics::BINDING_OP_COUNT;
-use super::request::{
-    build_operation_options, parse_container_link, parse_query_target_header, OpModifiers,
-};
+use super::request::{build_operation_options, parse_container_link, RequestHeadersAndOptions};
 use super::response::tuple_from_feed_result;
 use super::{lookup_driver, AbortOnDrop};
 use crate::runtime::require_runtime_context;
 
 const READ_ALL_ITEMS_QUERY_BODY: &[u8] = br#"{"query":"SELECT * FROM root r"}"#;
 
+// One-shot compatibility helpers. Public SQL queries and read-all feeds use
+// wire::item_feed's retained plan cursor rather than these execute_operation calls.
 // Query and read-all operations share the same feed-shaped response boundary.
 // The flow is: the Python wrapper hands us a
 // PreparedRequest, we work out scope (single logical partition vs full
@@ -31,7 +32,7 @@ const READ_ALL_ITEMS_QUERY_BODY: &[u8] = br#"{"query":"SELECT * FROM root r"}"#;
 // into the exact shape the Python feed parser expects.
 // ---------------------------------------------------------------------------
 
-/// The scope of the query, worked out from `PreparedRequest.partition_key_header`.
+/// The scope of the query, worked out from `PreparedRequest.partition_key`.
 /// This is how we know whether the customer asked for one partition or the whole
 /// container.
 pub(super) enum QueryTarget {
@@ -60,22 +61,22 @@ impl From<QueryTarget> for ReadAllItemsExecution {
 /// Entry point the binding calls to run one query page and wait for it. Finds the
 /// driver for this client, splits the container link into database + container
 /// names, works out the query scope, then runs the driver work below and converts
-/// the reply into the tuple the Python parser reads. Matches `run_item_operation`
+/// the reply into the tuple the Python parser reads. Matches `execute_item_operation_sync`
 /// but builds a `CosmosOperation::query_items` targeting either a logical partition
 /// (`["pk"]`) or the full container (`[]`).
 pub(crate) fn run_query_operation<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     container_link: &str,
-    partition_key_header: &str,
-    modifiers: OpModifiers,
+    partition_key_input: PartitionKeyInput,
+    modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     op_name: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
+    let driver = lookup_driver(driver_handle)?;
     let (database_name, container_name) = parse_container_link(container_link)?;
-    let query_target = parse_query_target_header(partition_key_header)?;
+    let query_target = partition_key_input.into_query_target()?;
     let runtime_ctx = require_runtime_context(op_name)?;
 
     let response_result: Result<Option<CosmosResponse>, CosmosError> = py.allow_threads(|| {
@@ -95,17 +96,17 @@ pub(crate) fn run_query_operation<'py>(
 /// Async sibling of `run_query_operation`.
 pub(crate) fn run_query_operation_async<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     container_link: &str,
-    partition_key_header: &str,
-    modifiers: OpModifiers,
+    partition_key_input: PartitionKeyInput,
+    modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     op_name: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
+    let driver = lookup_driver(driver_handle)?;
     let (database_name, container_name) = parse_container_link(container_link)?;
-    let query_target = parse_query_target_header(partition_key_header)?;
+    let query_target = partition_key_input.into_query_target()?;
     let runtime_ctx = require_runtime_context(op_name)?;
 
     let join = runtime_ctx.tokio_rt.spawn(run_query_future(
@@ -139,16 +140,16 @@ pub(crate) fn run_query_operation_async<'py>(
 ///   * non-empty array => logical-partition read (`read_all_items`)
 pub(crate) fn run_read_all_items_operation<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     container_link: &str,
-    partition_key_header: &str,
-    modifiers: OpModifiers,
+    partition_key_input: PartitionKeyInput,
+    modifiers: RequestHeadersAndOptions,
     op_name: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
+    let driver = lookup_driver(driver_handle)?;
     let (database_name, container_name) = parse_container_link(container_link)?;
-    let query_target = parse_query_target_header(partition_key_header)?;
+    let query_target = partition_key_input.into_query_target()?;
     let runtime_ctx = require_runtime_context(op_name)?;
 
     let response_result: Result<Option<CosmosResponse>, CosmosError> = py.allow_threads(|| {
@@ -167,16 +168,16 @@ pub(crate) fn run_read_all_items_operation<'py>(
 /// Async sibling of `run_read_all_items_operation`.
 pub(crate) fn run_read_all_items_operation_async<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     container_link: &str,
-    partition_key_header: &str,
-    modifiers: OpModifiers,
+    partition_key_input: PartitionKeyInput,
+    modifiers: RequestHeadersAndOptions,
     op_name: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
+    let driver = lookup_driver(driver_handle)?;
     let (database_name, container_name) = parse_container_link(container_link)?;
-    let query_target = parse_query_target_header(partition_key_header)?;
+    let query_target = partition_key_input.into_query_target()?;
     let runtime_ctx = require_runtime_context(op_name)?;
 
     let join = runtime_ctx.tokio_rt.spawn(run_read_all_items_future(
@@ -212,7 +213,7 @@ async fn run_query_future(
     database_name: String,
     container_name: String,
     query_target: QueryTarget,
-    modifiers: OpModifiers,
+    modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
 ) -> Result<Option<CosmosResponse>, CosmosError> {
     let container = driver
@@ -251,7 +252,7 @@ async fn run_read_all_items_future(
     database_name: String,
     container_name: String,
     query_target: QueryTarget,
-    modifiers: OpModifiers,
+    modifiers: RequestHeadersAndOptions,
 ) -> Result<Option<CosmosResponse>, CosmosError> {
     let container = driver
         .resolve_container(&database_name, &container_name, Default::default())

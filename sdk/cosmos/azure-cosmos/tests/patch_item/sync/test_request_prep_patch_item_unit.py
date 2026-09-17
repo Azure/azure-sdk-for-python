@@ -6,15 +6,14 @@
 """Unit tests for the ``patch_item`` request-prep path — no network, no emulator.
 
 These pin ``build_patch_operations_payload`` and
-``build_patch_item_request``.
+``prepare_patch_item_request``.
 
-Two things are checked: the body never carries a condition, and the prep
-never emits an ``If-Match`` / ``If-None-Match`` header (a patch with a
-filter or a version guard takes the legacy path). They also pin the one
-operation name that differs between the public spelling (``incr``) and
-the driver's spelling (``increment``).
+The body uses canonical ``incr`` instructions. Caller If-Match is forwarded;
+unsupported filters and If-None-Match are rejected without legacy replay.
 """
 from __future__ import annotations
+from common.typed_requests import legacy_partition_key_from_request
+from common.typed_requests import wire_headers, settings_options, legacy_settings
 
 import json
 import sys
@@ -30,7 +29,10 @@ from azure.cosmos._helpers._item_dispatch import (
     build_patch_item_request_options,
     merge_patch_item_explicit_kwargs,
 )
-from azure.cosmos._helpers._request_item import build_patch_item_request, build_patch_operations_payload
+from common.request_preparation import (
+    prepare_patch_item_request,
+)
+from azure.cosmos._helpers._item_prep import build_patch_operations_payload
 
 
 _SET_OP = {"op": "set", "path": "/status", "value": "shipped"}
@@ -48,12 +50,10 @@ def test_payload_wraps_operations_under_operations_key():
     assert payload == {"operations": [{"op": "set", "path": "/status", "value": "shipped"}]}
 
 
-def test_incr_op_code_is_translated_to_increment():
-    """The one operation name that differs: the public/REST ``incr`` becomes
-    the driver's ``increment`` so the driver understands it. The ``op`` key
-    stays first in the dict so the bytes on the wire stay stable."""
+def test_incr_op_code_uses_canonical_service_spelling():
     payload = build_patch_operations_payload([{"op": "incr", "path": "/n", "value": 1}])
-    assert payload == {"operations": [{"op": "increment", "path": "/n", "value": 1}]}
+    assert payload == {"operations": [{"op": "incr", "path": "/n", "value": 1}]}
+    assert build_patch_operations_payload([{"op": "increment", "path": "/n", "value": 1}]) == payload
 
 
 def test_other_op_codes_pass_through_unchanged():
@@ -71,9 +71,7 @@ def test_other_op_codes_pass_through_unchanged():
 
 
 def test_input_operations_are_not_mutated():
-    """Translating ``incr`` must not change the caller's list or dicts -- a
-    customer who reuses the same ``patch_operations`` across calls is
-    unaffected (the translated operation is a shallow copy)."""
+    """Preparing canonical instructions leaves the caller's list unchanged."""
     original = [{"op": "incr", "path": "/n", "value": 1}]
     snapshot = json.loads(json.dumps(original))
     build_patch_operations_payload(original)
@@ -84,14 +82,14 @@ def test_input_operations_are_not_mutated():
 def test_payload_never_carries_a_condition():
     """The payload builder takes only the operations; there is no way for a
     ``condition`` (a filter_predicate) to land in the body the driver reads
-    -- a patch with a filter is routed to the legacy path instead."""
+    -- filtered Rust patches are rejected before dispatch."""
     payload = build_patch_operations_payload([_SET_OP])
     assert "condition" not in payload
     assert set(payload.keys()) == {"operations"}
 
 
 # ---------------------------------------------------------------------------
-# build_patch_item_request -- baseline shape
+# prepare_patch_item_request -- baseline shape
 # ---------------------------------------------------------------------------
 
 
@@ -99,7 +97,7 @@ def test_baseline_is_operations_body_with_item_id():
     """A patch carries the operations payload (serialised to JSON bytes) and
     the id of the document to patch on ``item_id``. The op tag is
     ``OP_PATCH_ITEM``."""
-    prepared = build_patch_item_request(
+    prepared = prepare_patch_item_request(
         container_link="dbs/d/colls/orders",
         item_id="order-42",
         patch_operations=[
@@ -113,22 +111,22 @@ def test_baseline_is_operations_body_with_item_id():
     assert isinstance(prepared, PreparedRequest)
     assert prepared.op == OP_PATCH_ITEM
     assert prepared.container_link == "dbs/d/colls/orders"
-    # incr -> increment in the serialised body; op key stays first.
+    # Both the service and driver accept canonical incr.
     assert prepared.body_bytes == (
         b'{"operations":[{"op":"set","path":"/status","value":"shipped"},'
-        b'{"op":"increment","path":"/revision","value":1}]}'
+        b'{"op":"incr","path":"/revision","value":1}]}'
     )
     # The partition key comes from the explicit argument (like delete / read), not from a body.
-    assert prepared.partition_key_header == '["customerA"]'
+    assert legacy_partition_key_from_request(prepared) == '["customerA"]'
     # The id rides on item_id for the binding to put on the URL.
     assert prepared.item_id == "order-42"
     # Dropped-and-recreated container guard: the rid is stamped under the standard key.
-    assert prepared.headers[Constants.ContainerRID] == "RID=="
+    assert wire_headers(prepared)["x-ms-cosmos-intended-collection-rid"] == "RID=="
 
 
 def test_body_round_trips_to_patch_instructions_shape():
     """The serialised bytes parse back to ``{"operations": [...]}``."""
-    prepared = build_patch_item_request(
+    prepared = prepare_patch_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         patch_operations=[_SET_OP],
@@ -142,27 +140,22 @@ def test_body_round_trips_to_patch_instructions_shape():
 
 
 # ---------------------------------------------------------------------------
-# Never emit a precondition header from the prep
+# Carry caller If-Match through preparation
 # ---------------------------------------------------------------------------
 
 
-def test_prep_never_emits_if_match_or_if_none_match():
-    """Even if a stray ``accessCondition`` reached the option dict, the patch
-    prep must not emit ``If-Match`` / ``If-None-Match`` -- the driver rejects
-    a caller-set precondition on a patch. (In practice a guarded patch is
-    routed to the legacy path before this builder runs; this checks the
-    builder itself never sets a precondition.)"""
-    prepared = build_patch_item_request(
-        container_link="dbs/d/colls/c",
-        item_id="x",
-        patch_operations=[_SET_OP],
-        partition_key_value="a",
-        container_rid=None,
-        kwargs={"etag": "abc", "match_condition": MatchConditions.IfNotModified},
-    )
-    assert "If-Match" not in prepared.headers
-    assert "If-None-Match" not in prepared.headers
-    assert "accessCondition" not in prepared.headers
+def test_patch_preparation_accepts_if_match():
+    from azure.cosmos._helpers.item_helper import normalize_item_arguments, validate_rust_item_options
+
+    args, options = normalize_item_arguments("patch_item", {
+        "container_link": "dbs/d/colls/c",
+        "item_id": "x",
+        "patch_operations": [_SET_OP],
+        "etag": "abc",
+        "match_condition": MatchConditions.IfNotModified,
+    })
+    validate_rust_item_options(args, options)
+    assert options["accessCondition"] == {"type": "IfMatch", "condition": "abc"}
 
 
 # ---------------------------------------------------------------------------
@@ -173,7 +166,7 @@ def test_prep_never_emits_if_match_or_if_none_match():
 def test_initial_headers_are_flattened_into_outer_headers():
     """``initial_headers={'x-trace-id': 'abc'}`` is kept as a nested
     ``initialHeaders`` dict so the binding forwards each entry verbatim."""
-    prepared = build_patch_item_request(
+    prepared = prepare_patch_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         patch_operations=[_SET_OP],
@@ -181,15 +174,15 @@ def test_initial_headers_are_flattened_into_outer_headers():
         container_rid=None,
         kwargs={"initial_headers": {"x-trace-id": "abc-123"}},
     )
-    assert prepared.headers["initialHeaders"] == {"x-trace-id": "abc-123"}
-    assert "x-trace-id" not in prepared.headers
+    assert all(wire_headers(prepared).get(key.lower()) == str(value) for key, value in ({"x-trace-id": "abc-123"}).items())
+    assert wire_headers(prepared)["x-trace-id"] == "abc-123"
 
 
 def test_trigger_priority_bucket_no_response_land_as_option_keys():
     """The option set reaches the headers map under the internal option-key
     names. ``no_response`` is kept on patch (a patch returns the patched
     document, unlike delete / read)."""
-    prepared = build_patch_item_request(
+    prepared = prepare_patch_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         patch_operations=[_SET_OP],
@@ -203,18 +196,18 @@ def test_trigger_priority_bucket_no_response_land_as_option_keys():
             "no_response": True,
         },
     )
-    assert prepared.headers["preTriggerInclude"] == "validateOrder"
-    assert prepared.headers["postTriggerInclude"] == "auditOrder"
-    assert prepared.headers["priorityLevel"] == "High"
-    assert prepared.headers["throughputBucket"] == 1
-    assert prepared.headers["responsePayloadOnWriteDisabled"] is True
+    assert wire_headers(prepared)["x-ms-documentdb-pre-trigger-include"] == "validateOrder"
+    assert wire_headers(prepared)["x-ms-documentdb-post-trigger-include"] == "auditOrder"
+    assert wire_headers(prepared)["x-ms-cosmos-priority-level"] == "High"
+    assert wire_headers(prepared)["x-ms-cosmos-throughput-bucket"] == '1'
+    assert settings_options(prepared)["responsePayloadOnWriteDisabled"] is True
 
 
 def test_timeout_kwarg_is_forwarded_under_sentinel_header():
-    """``timeout=30`` is forwarded as ``__overall_timeout_seconds: 30`` so
+    """``timeout=30`` is forwarded as an operation option so
     the binding can lift it into the driver's own timeout setting -- the
     same mechanism as every other migrated operation."""
-    prepared = build_patch_item_request(
+    prepared = prepare_patch_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         patch_operations=[_SET_OP],
@@ -222,7 +215,7 @@ def test_timeout_kwarg_is_forwarded_under_sentinel_header():
         container_rid=None,
         kwargs={"timeout": 30},
     )
-    assert prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 30
+    assert settings_options(prepared)["timeout_seconds"] == 30
 
 
 def test_compose_consumes_recognised_kwargs():
@@ -230,7 +223,7 @@ def test_compose_consumes_recognised_kwargs():
     from the input dict, so the caller doesn't forward them again to the
     legacy path."""
     kwargs = {"pre_trigger_include": "validateOrder", "extra_unknown": "left-alone"}
-    build_patch_item_request(
+    prepare_patch_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
         patch_operations=[_SET_OP],
@@ -238,8 +231,8 @@ def test_compose_consumes_recognised_kwargs():
         container_rid=None,
         kwargs=kwargs,
     )
-    assert "pre_trigger_include" not in kwargs
-    assert kwargs == {"extra_unknown": "left-alone"}
+    assert kwargs["pre_trigger_include"] == "validateOrder"
+    assert kwargs == {"pre_trigger_include": "validateOrder", "extra_unknown": "left-alone"}
 
 
 # ---------------------------------------------------------------------------

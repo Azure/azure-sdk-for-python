@@ -22,31 +22,33 @@ that case explicitly (:func:`_require_offers`) and raise the public
 ``CosmosResourceNotFoundError`` with a message naming the database, rather than
 letting an empty result fail later as something more obscure.
 
-Engine selection is handled exactly as in the container module: the concrete
+Backend selection is handled exactly as in the container module: the concrete
 backend stored by the client drives the work through
 :meth:`~azure.cosmos._backend.cosmos_backend.CosmosBackend.run_operation`, so the public
-proxy method stays a thin delegate that names no engine.
+proxy method stays a thin delegate that names no backend.
 """
+
 from __future__ import annotations
+
+from azure.cosmos._backend.capabilities import OperationRouting, REPLACE_THROUGHPUT
 
 from typing import Any, Awaitable, Callable, Mapping, Optional, Union
 
-from .._backend.contracts import LegacyOperation
+
 from .._base import _deserialize_throughput, _replace_throughput
 from ..exceptions import CosmosResourceNotFoundError
 from ..http_constants import StatusCodes as _StatusCodes
 from .._offer_rust_routing import (
     can_use_rust_backend_for_read_offer,
     can_use_rust_backend_for_replace_throughput,
-    parse_read_offer_response,
-    parse_replace_offer_response,
-    prepare_read_offer_request,
-    prepare_read_offer_request_async,
-    prepare_replace_offer_request,
-    prepare_replace_offer_request_async,
+    process_read_offer_response,
+    process_replace_offer_response,
+    build_read_offer_from_connection,
+    build_replace_offer_from_connection,
 )
 from ..offer import ThroughputProperties
 from ._throughput_setup import gather_rust_call_inputs, offer_query
+
 
 def _require_offers(offers: list[dict[str, Any]], not_found_message: str) -> None:
     """Raise the public not-found error when a resource has no throughput offer."""
@@ -69,26 +71,28 @@ def get_database_throughput(
     """Return the provisioned throughput shared by a database's containers."""
     properties = get_properties()
     query_spec = offer_query(properties["_self"])
-    selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(client_connection, None, kwargs)
+    selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(
+        client_connection, None, kwargs
+    )
     backend = selected_backend
     offers = backend.run_operation(
-        prepare_request=lambda: prepare_read_offer_request(
+        build_request=lambda: build_read_offer_from_connection(
             client_connection=client_connection,
             container_link=database_link,
             offer_query=query_spec,
             options=rust_options,
         ),
-        legacy_operation=LegacyOperation(
-            op="read_offer",
-            invoke=lambda: list(client_connection.QueryOffers(query_spec, **kwargs)),
+        routing=OperationRouting(
+            "read_offer",
+            can_use_rust_backend_for_read_offer(
+                backend=selected_backend,
+                options=rust_options,
+                kwargs=rust_kwargs,
+            ),
         ),
-        parse_response=lambda response: parse_read_offer_response(
+        legacy_call=lambda: list(client_connection.QueryOffers(query_spec, **kwargs)),
+        process_response=lambda response: process_read_offer_response(
             response, client_connection=client_connection
-        ),
-        rust_eligible=can_use_rust_backend_for_read_offer(
-            backend=selected_backend,
-            options=rust_options,
-            kwargs=rust_kwargs,
         ),
     )
     _require_offers(offers, not_found_message)
@@ -111,7 +115,9 @@ async def get_database_throughput_async(
     # Import here to avoid a circular import between the sync and async packages.
     properties = await get_properties()
     query_spec = offer_query(properties["_self"])
-    selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(client_connection, None, kwargs)
+    selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(
+        client_connection, None, kwargs
+    )
     backend = selected_backend
 
     async def run_legacy_read() -> list[dict[str, Any]]:
@@ -126,20 +132,23 @@ async def get_database_throughput_async(
         ]
 
     offers = await backend.run_operation(
-        prepare_request=lambda: prepare_read_offer_request_async(
+        build_request=lambda: build_read_offer_from_connection(
             client_connection=client_connection,
             container_link=database_link,
             offer_query=query_spec,
             options=rust_options,
         ),
-        legacy_operation=LegacyOperation(op="read_offer", invoke=run_legacy_read),
-        parse_response=lambda response: parse_read_offer_response(
-            response, client_connection=client_connection
+        routing=OperationRouting(
+            "read_offer",
+            can_use_rust_backend_for_read_offer(
+                backend=selected_backend,
+                options=rust_options,
+                kwargs=rust_kwargs,
+            ),
         ),
-        rust_eligible=can_use_rust_backend_for_read_offer(
-            backend=selected_backend,
-            options=rust_options,
-            kwargs=rust_kwargs,
+        legacy_call=run_legacy_read,
+        process_response=lambda response: process_read_offer_response(
+            response, client_connection=client_connection
         ),
     )
     _require_offers(offers, not_found_message)
@@ -163,7 +172,9 @@ def replace_database_throughput(
     properties = get_properties()
     query_spec = offer_query(properties["_self"])
     legacy_read_kwargs = dict(kwargs if read_kwargs is None else read_kwargs)
-    selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(client_connection, None, kwargs)
+    selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(
+        client_connection, None, kwargs
+    )
     backend = selected_backend
     rust_eligible = can_use_rust_backend_for_replace_throughput(
         backend=selected_backend,
@@ -171,43 +182,43 @@ def replace_database_throughput(
         kwargs=rust_kwargs,
     )
     offers = backend.run_operation(
-        prepare_request=lambda: prepare_read_offer_request(
+        build_request=lambda: build_read_offer_from_connection(
             client_connection=client_connection,
             container_link=database_link,
             offer_query=query_spec,
             options=rust_options,
         ),
-        legacy_operation=LegacyOperation(
-            op="read_offer",
-            invoke=lambda: list(client_connection.QueryOffers(query_spec, **legacy_read_kwargs)),
+        routing=OperationRouting(
+            "read_offer", rust_eligible, capability=REPLACE_THROUGHPUT
         ),
-        parse_response=lambda response: parse_read_offer_response(
+        legacy_call=lambda: list(
+            client_connection.QueryOffers(query_spec, **legacy_read_kwargs)
+        ),
+        process_response=lambda response: process_read_offer_response(
             response, client_connection=client_connection
         ),
-        rust_eligible=rust_eligible,
     )
     _require_offers(offers, not_found_message)
     new_offer = offers[0].copy()
     _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
     updated_offer = backend.run_operation(
-        prepare_request=lambda: prepare_replace_offer_request(
+        build_request=lambda: build_replace_offer_from_connection(
             client_connection=client_connection,
             container_link=database_link,
             offer=new_offer,
             options=rust_options,
         ),
-        legacy_operation=LegacyOperation(
-            op="replace_offer",
-            invoke=lambda: client_connection.ReplaceOffer(
-                offer_link=new_offer["_self"],
-                offer=new_offer,
-                **kwargs,
-            ),
+        routing=OperationRouting(
+            "replace_offer", rust_eligible, capability=REPLACE_THROUGHPUT
         ),
-        parse_response=lambda response: parse_replace_offer_response(
+        legacy_call=lambda: client_connection.ReplaceOffer(
+            offer_link=new_offer["_self"],
+            offer=new_offer,
+            **kwargs,
+        ),
+        process_response=lambda response: process_replace_offer_response(
             response, client_connection=client_connection
         ),
-        rust_eligible=rust_eligible,
     )
     return ThroughputProperties(
         offer_throughput=updated_offer["content"]["offerThroughput"],
@@ -230,7 +241,9 @@ async def replace_database_throughput_async(
     # this module closes a cycle and breaks plain ``import azure.cosmos``.
     properties = await get_properties()
     query_spec = offer_query(properties["_self"])
-    selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(client_connection, None, kwargs)
+    selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(
+        client_connection, None, kwargs
+    )
     backend = selected_backend
     rust_eligible = can_use_rust_backend_for_replace_throughput(
         backend=selected_backend,
@@ -250,17 +263,19 @@ async def replace_database_throughput_async(
         ]
 
     offers = await backend.run_operation(
-        prepare_request=lambda: prepare_read_offer_request_async(
+        build_request=lambda: build_read_offer_from_connection(
             client_connection=client_connection,
             container_link=database_link,
             offer_query=query_spec,
             options=rust_options,
         ),
-        legacy_operation=LegacyOperation(op="read_offer", invoke=run_legacy_read),
-        parse_response=lambda response: parse_read_offer_response(
+        routing=OperationRouting(
+            "read_offer", rust_eligible, capability=REPLACE_THROUGHPUT
+        ),
+        legacy_call=run_legacy_read,
+        process_response=lambda response: process_read_offer_response(
             response, client_connection=client_connection
         ),
-        rust_eligible=rust_eligible,
     )
     _require_offers(offers, not_found_message)
     new_offer = offers[0].copy()
@@ -275,17 +290,19 @@ async def replace_database_throughput_async(
         )
 
     updated_offer = await backend.run_operation(
-        prepare_request=lambda: prepare_replace_offer_request_async(
+        build_request=lambda: build_replace_offer_from_connection(
             client_connection=client_connection,
             container_link=database_link,
             offer=new_offer,
             options=rust_options,
         ),
-        legacy_operation=LegacyOperation(op="replace_offer", invoke=run_legacy_replace),
-        parse_response=lambda response: parse_replace_offer_response(
+        routing=OperationRouting(
+            "replace_offer", rust_eligible, capability=REPLACE_THROUGHPUT
+        ),
+        legacy_call=run_legacy_replace,
+        process_response=lambda response: process_replace_offer_response(
             response, client_connection=client_connection
         ),
-        rust_eligible=rust_eligible,
     )
     return ThroughputProperties(
         offer_throughput=updated_offer["content"]["offerThroughput"],

@@ -28,7 +28,6 @@ from azure.core import MatchConditions
 
 import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos import PartitionKey
-from azure.cosmos._helpers._request_headers import flatten_options_to_headers
 from azure.cosmos._helpers._request_container import is_create_container_rust_eligible
 from azure.cosmos._helpers._request_database import is_delete_database_rust_eligible
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
@@ -110,18 +109,19 @@ class TestAccessConditionPassthroughUnit(unittest.TestCase):
             {"type": "IfMatch", "condition": "etag-value"},
         )
 
-    def test_access_condition_becomes_a_wire_header_on_the_rust_path(self):
-        """Rust has no legacy GetHeaders step, so the flattener must emit it."""
+    def test_access_condition_becomes_a_typed_setting_on_the_rust_path(self):
+        from azure.cosmos._helpers._request_settings import build_request_headers_and_settings
+
         self.assertEqual(
-            flatten_options_to_headers(
+            build_request_headers_and_settings(
                 {"accessCondition": {"type": "IfMatch", "condition": "etag-value"}}
-            )["If-Match"],
+            )[1].item.if_match,
             "etag-value",
         )
         self.assertEqual(
-            flatten_options_to_headers(
+            build_request_headers_and_settings(
                 {"accessCondition": {"type": "IfNoneMatch", "condition": "etag-value"}}
-            )["If-None-Match"],
+            )[1].item.if_none_match,
             "etag-value",
         )
 

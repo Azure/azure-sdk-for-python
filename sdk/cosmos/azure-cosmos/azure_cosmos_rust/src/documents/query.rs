@@ -7,16 +7,15 @@ use super::*;
 #[pyfunction]
 pub(crate) fn query_items<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    let (container_link, partition_key_header, modifiers, body_bytes) =
-        extract_query_inputs(prepared)?;
+    let (container_link, partition_key, modifiers, body_bytes) = extract_query_inputs(prepared)?;
     run_query_operation(
         py,
-        handle,
+        driver_handle,
         &container_link,
-        &partition_key_header,
+        partition_key,
         modifiers,
         body_bytes,
         "query_items",
@@ -28,15 +27,15 @@ pub(crate) fn query_items<'py>(
 #[pyfunction]
 pub(crate) fn read_all_items<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    let (container_link, partition_key_header, modifiers) = extract_read_all_inputs(prepared)?;
+    let (container_link, partition_key, modifiers) = extract_read_all_inputs(prepared)?;
     run_read_all_items_operation(
         py,
-        handle,
+        driver_handle,
         &container_link,
-        &partition_key_header,
+        partition_key,
         modifiers,
         "read_all_items",
     )
@@ -46,16 +45,15 @@ pub(crate) fn read_all_items<'py>(
 #[pyfunction]
 pub(crate) fn query_items_async<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let (container_link, partition_key_header, modifiers, body_bytes) =
-        extract_query_inputs(prepared)?;
+    let (container_link, partition_key, modifiers, body_bytes) = extract_query_inputs(prepared)?;
     run_query_operation_async(
         py,
-        handle,
+        driver_handle,
         &container_link,
-        &partition_key_header,
+        partition_key,
         modifiers,
         body_bytes,
         "query_items",
@@ -67,15 +65,15 @@ pub(crate) fn query_items_async<'py>(
 #[pyfunction]
 pub(crate) fn read_all_items_async<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let (container_link, partition_key_header, modifiers) = extract_read_all_inputs(prepared)?;
+    let (container_link, partition_key, modifiers) = extract_read_all_inputs(prepared)?;
     run_read_all_items_operation_async(
         py,
-        handle,
+        driver_handle,
         &container_link,
-        &partition_key_header,
+        partition_key,
         modifiers,
         "read_all_items",
     )

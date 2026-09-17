@@ -34,6 +34,7 @@ from . import exceptions, http_constants, _retry_utility
 from ._availability_strategy_config import CrossRegionHedgingStrategy
 from ._availability_strategy_handler import execute_with_hedging
 from ._constants import _Constants
+from ._helpers._wire_encoding import encode_json_to_utf8
 from ._response_decoding import decode_response_body_for_status
 from ._request_object import RequestObject
 from .documents import _OperationType
@@ -96,20 +97,7 @@ def _request_body_from_data(data, ensure_ascii=True):
         if ensure_ascii:
             return json.dumps(data, separators=(",", ":"))
         json_dumped = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
-        try:
-            # Encode once; callers derive Content-Length directly from these bytes.
-            encoded_body = json_dumped.encode("utf-8")
-        except UnicodeEncodeError:
-            # Rare path for text originating from UTF-16 APIs. Combine adjacent
-            # high/low surrogate pairs into their Unicode scalar while preserving
-            # unpaired surrogates, then escape only those remaining invalid code
-            # units as valid JSON \uXXXX sequences.
-            normalized_body = json_dumped.encode(
-                "utf-16-le", "surrogatepass"
-            ).decode("utf-16-le", "surrogatepass")
-            encoded_body = normalized_body.encode("utf-8", "backslashreplace")
-        # Send exactly these bytes, so no transport re-encodes them.
-        return encoded_body
+        return encode_json_to_utf8(json_dumped)
     return None
 
 

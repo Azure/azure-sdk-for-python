@@ -6,8 +6,8 @@
 """Async parity tests for ``Container.read_all_items``.
 
 These tests compare async read-all behavior across core-python and Rust backends
-for the same call shape, including the migration fallback path when unsupported
-request knobs are present.
+for the same call shape. Unsupported Rust settings now fail without fallback;
+explicitly selected core-python retains supported controls.
 
 Unlike the routing unit tests (which use a fake backend that always returns a
 canned success), these run against a real account, so they actually exercise the
@@ -24,12 +24,7 @@ import uuid
 import pytest
 
 from azure.cosmos import CosmosClient, PartitionKey
-from common._parity_helpers import (
-    run_on_both_backends_async,
-    run_target_operation_async,
-    skip_unless_emulator,
-    skip_unless_rust_binding,
-)
+from common._parity_helpers import run_on_both_backends_async, run_target_operation_async, skip_unless_emulator, skip_unless_rust_binding
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 
@@ -79,6 +74,7 @@ async def test_read_all_items_baseline_async(container_for):
             )
 
         observed_ids = await run_target_operation_async(client, _target)
+        assert observed_ids == expected_ids
         return {"expected_ids": expected_ids, "observed_ids": observed_ids}
 
     comparison = await run_on_both_backends_async(
@@ -109,6 +105,7 @@ async def test_read_all_items_respects_max_item_count_paging_async(container_for
             )
 
         observed_ids = await run_target_operation_async(client, _target)
+        assert observed_ids == expected_ids
         return {"expected_ids": expected_ids, "observed_ids": observed_ids}
 
     comparison = await run_on_both_backends_async(
@@ -121,16 +118,19 @@ async def test_read_all_items_respects_max_item_count_paging_async(container_for
 
 
 @pytest.mark.asyncio
-async def test_read_all_items_availability_strategy_fallback_async(container_for):
-    """Async read_all_items with availability_strategy=False stays equivalent."""
-    # availability_strategy is an unsupported knob for the Rust fast path, so
-    # the gate rejects it and this exercises the legacy fallback path on a
-    # Rust-backed client -- it must still match core-python.
+async def test_read_all_items_availability_strategy_backend_contract_async(container_for):
+    """Rust rejects the override; explicitly selected core-python keeps support."""
     run_id = "run-" + uuid.uuid4().hex
 
     async def _do(client):
         container = client.get_database_client("parity_db").get_container_client(container_for.id)
         expected_ids = await _seed_docs(container, run_id)
+        if container._item_context.backend.name == "rust":
+            async def rejected():
+                container.read_all_items(availability_strategy=False)
+            with pytest.raises(NotImplementedError, match="no legacy fallback"):
+                await run_target_operation_async(client, rejected, expect_rust=False)
+            return {"contract_satisfied": True}
         async def _target():
             return _collect_run_ids(
                 [
@@ -147,7 +147,8 @@ async def test_read_all_items_availability_strategy_fallback_async(container_for
             _target,
             expect_rust=False,
         )
-        return {"expected_ids": expected_ids, "observed_ids": observed_ids}
+        assert observed_ids == expected_ids
+        return {"contract_satisfied": True}
 
     comparison = await run_on_both_backends_async(
         _do,

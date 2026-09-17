@@ -3,30 +3,34 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""The abstract async Cosmos backend that every concrete async backend implements.
+"""Async backend dispatch. Two wire reply shapes: single responses and pages.
 
-Same as the sync :class:`~azure.cosmos._backend.cosmos_backend.CosmosBackend`, except
-``execute`` is a coroutine so async callers can await it without blocking the
-event-loop thread. ``execute_pages`` is implemented for the operations registered
-in ``QUERY_TO_BINDING_METHOD``; ``execute_batch`` is reserved and raises
-``NotImplementedError`` until transactional batch is migrated.
+Migrated point and retained-feed helpers execute directly. Remaining migration
+coordinators pass an OperationRouting, a lazy builder, a response processor and
+an optional legacy callable. Policy is centralized in capabilities.py; request
+compatibility remains request-dependent. Explicit legacy selection skips request
+building. Only allowed ineligibility/static preflight can route to legacy;
+execution, parsing and callback failures never replay.
 
-The request and reply objects this class takes and returns are not redefined
-here. They carry pure data with no I/O, so both engines share the single
-definition in :mod:`azure.cosmos._backend.contracts`, which async callers import
-directly from that module.
+Prepared records carry wire data, not invocation deadlines. Native item cursors
+are created lazily by their owning pagers through the backend factory. Client
+registration reservations and native driver references retain separate lifetimes.
 """
+
 from __future__ import annotations
 
 import abc
-from typing import Any, AsyncIterator, Awaitable, Callable, Optional
+from typing import TYPE_CHECKING, Awaitable, Any, AsyncIterator, Callable, Optional
 
-from azure.cosmos._backend.errors import BackendProtocolError
+from azure.cosmos._backend.capabilities import OperationRouting
+from azure.cosmos._backend.errors import (
+    BackendProtocolError,
+    PageNotSupportedByBackendError,
+)
+
 from azure.cosmos._backend.contracts import (
     BackendResponse,
-    BatchResponse,
-    LegacyOperation,
-    PreparedBatch,
+    ContainerMetadata,
     PreparedQuery,
     PreparedRequest,
     QueryPage,
@@ -36,16 +40,20 @@ from azure.cosmos._backend._fallback_metrics import record_rust_compatibility_fa
 __all__ = ["AsyncCosmosBackend"]
 
 
+if TYPE_CHECKING:
+    from azure.cosmos._rust import ItemFeedCursor
+
+
 class AsyncCosmosBackend(abc.ABC):
     """Abstract dispatch target for any Cosmos operation (async).
 
-    Migrated items use ``run_item_operation`` exclusively, with no legacy
-    callback. The other dispatch methods remain migration ports for other families.
+    Migrated item helpers call ``execute`` directly, with no legacy port.
+    The other dispatch methods remain migration ports for other families.
 
     A still-migrating async coordinator (``AsyncThroughputHelper``,
     ``AsyncFeedRangeHelper``) holds one of these by interface and drives its
     operations through :meth:`run_operation` or :meth:`run_page_operation`
-    without knowing which concrete backend it has. Engine selection and legacy
+    without knowing which concrete backend it has. Driver selection and legacy
     fallback happen behind this
     interface: a rust-backed client holds an :class:`AsyncRustBackend` and a
     core-python client holds an
@@ -72,198 +80,125 @@ class AsyncCosmosBackend(abc.ABC):
     name: str = "abstract"
 
     @abc.abstractmethod
-    async def execute(self, prepared: Optional[PreparedRequest]) -> Optional[BackendResponse]:
+    async def execute(
+        self, prepared: PreparedRequest, *, deadline: Optional[float] = None
+    ) -> BackendResponse:
         """Issue a single async Cosmos operation on the wire and return the raw reply.
 
         Dispatch on ``prepared.op`` and return a ``BackendResponse`` for the
-        caller to parse. This is the rust wire primitive; a backend that does
+        caller to parse, including for an empty successful body. A missing
+        request is invalid; a missing native reply is a protocol error.
+        ``deadline`` is the caller's existing absolute monotonic budget,
+        converted to remaining time at dispatch.
+        This is the rust wire primitive; a backend that does
         not send prepared requests (the core-python legacy backend) does not
         implement it.
         """
         ...
 
-    async def resolve_container_metadata(
-        self, container_link: str
-    ) -> Optional[BackendResponse]:
-        """Resolve container metadata through this backend when supported."""
-        return None
-
-    async def run_item_operation(
-        self,
-        *,
-        prepare_request: Callable[[], Awaitable[PreparedRequest]],
-        parse_response: Callable[[BackendResponse], Any],
-    ) -> Any:
-        """Build, execute, parse an item without a legacy callback or retry."""
-        response = await self.execute(await prepare_request())
-        if response is None:
-            raise BackendProtocolError("The backend returned no item response")
-        return parse_response(response)
+    async def get_container_metadata(
+        self, container_link: str, *, deadline: Optional[float] = None
+    ) -> ContainerMetadata:
+        """Get immutable routing facts; unsupported backends must fail explicitly."""
+        raise NotImplementedError("This backend does not provide container metadata")
 
     async def run_operation(
         self,
         *,
-        prepare_request: Callable[[], Awaitable[PreparedRequest]],
-        legacy_operation: LegacyOperation,
-        parse_response: Callable[[BackendResponse], Any],
-        rust_eligible: bool = True,
-        fallback_exceptions: tuple[type[BaseException], ...] = (),
-        allow_legacy_fallback: bool = True,
-        unsupported_message: Optional[str] = None,
+        routing: OperationRouting,
+        build_request: Callable[[], PreparedRequest],
+        process_response: Callable[[BackendResponse], Any],
+        legacy_call: Optional[Callable[[], Awaitable[Any]]] = None,
+        deadline: Optional[float] = None,
     ) -> Any:
-        """Run one engine-selected operation end to end and return the final result.
-
-        The async twin of
-        :meth:`azure.cosmos._backend.cosmos_backend.CosmosBackend.run_operation`: the
-        single entry point every async family coordinator uses so none of them
-        ever interpret ``None`` from selection or ``execute`` to decide the
-        legacy path.
-
-        The default is the engine (rust) flow: when the request is representable
-        by this engine (``rust_eligible``), await ``prepare_request`` to construct
-        the ``PreparedRequest`` lazily, await :meth:`execute`, then parse the
-        reply (``parse_response`` is synchronous, matching the legacy path);
-        otherwise await the supplied legacy operation. ``AsyncLegacyBackend``
-        overrides this to always await the legacy operation.
-
-        Falling back to the legacy path is usually the right answer: the request
-        still succeeds and the customer sees no difference. For a few requests it
-        is the wrong answer, because the fallback would change something the
-        customer asked for -- a per-call socket timeout honored on one request
-        and silently ignored on the next. For those,
-        ``allow_legacy_fallback=False`` turns the silent switch into an error the
-        customer can read and act on.
-
-        :keyword prepare_request: Awaitable builder for the rust ``PreparedRequest``
-            (invoked only on the rust path).
-        :keyword legacy_operation: Typed port to the legacy call; see
-            :class:`~azure.cosmos._backend.cosmos_backend.LegacyOperation`. Its ``invoke``
-            returns an awaitable of the final result.
-        :keyword parse_response: Synchronous parser from ``BackendResponse`` to
-            the final result.
-        :keyword rust_eligible: ``False`` when this specific request cannot be
-            represented on the rust path, which forces the legacy operation even on
-            a rust-backed client.
-        :keyword fallback_exceptions: Narrow, operation-specific compatibility
-            failures that should retry through the supplied legacy operation.
-        :keyword allow_legacy_fallback: When ``False``, an ineligible request
-            fails explicitly instead of crossing from a Rust-selected client to
-            the legacy transport.
-        :keyword unsupported_message: Customer-facing message used when an
-            ineligible request cannot fall back.
-        :returns: The final result the public method returns to the caller.
-        :rtype: Any
-        """
-        if not rust_eligible:
-            if not allow_legacy_fallback:
-                raise NotImplementedError(
-                    unsupported_message
-                    or "{} is not supported by the Rust backend for this request".format(
-                        legacy_operation.op
-                    )
+        """Apply migration policy before dispatch; never replay execution or parsing errors."""
+        if routing.uses_legacy():
+            if legacy_call is None:
+                raise BackendProtocolError(
+                    f"No legacy callable supplied for {routing.op!r}"
                 )
-            return await legacy_operation.invoke()
-        try:
-            prepared = await prepare_request()
-            response = await self.execute(prepared)
-            assert response is not None  # execute() only returns None for a None prepared request
-            return parse_response(response)
-        except fallback_exceptions:
-            if not allow_legacy_fallback:
-                raise
             record_rust_compatibility_fallback()
-            return await legacy_operation.invoke()
+            return await legacy_call()
+        prepared = build_request()
+        if prepared.op != routing.op:
+            raise BackendProtocolError(
+                f"Prepared operation {prepared.op!r} does not match {routing.op!r}"
+            )
+        response = await self.execute(prepared, deadline=deadline)
+        return process_response(response)
 
-    async def run_page_operation(  # pylint: disable=too-many-arguments
+    async def run_page_operation(
         self,
         *,
-        prepare_request: Callable[[], Awaitable[PreparedQuery]],
-        legacy_operation: LegacyOperation,
-        parse_response: Callable[[QueryPage], Any],
-        rust_eligible: bool = True,
-        fallback_exceptions: tuple[type[BaseException], ...] = (),
-        allow_legacy_fallback: bool = True,
-        unsupported_message: Optional[str] = None,
+        routing: OperationRouting,
+        build_request: Callable[[], PreparedQuery],
+        process_response: Callable[[QueryPage], Any],
+        legacy_call: Optional[Callable[[], Awaitable[Any]]] = None,
+        deadline: Optional[float] = None,
     ) -> Any:
-        """Run one backend-selected page without exposing fallback sentinels.
-
-        Async twin of
-        :meth:`azure.cosmos._backend.cosmos_backend.CosmosBackend.run_page_operation`.
-        An ineligible request or an explicit capability exception runs the
-        supplied legacy operation unless ``allow_legacy_fallback`` is false,
-        in which case it raises instead. An empty page iterator is a backend contract
-        violation and propagates as ``BackendProtocolError``; it never replays
-        the request through legacy.
-        """
-        if not rust_eligible:
-            if not allow_legacy_fallback:
-                raise NotImplementedError(
-                    unsupported_message
-                    or "{} is not supported by the Rust backend for this request".format(legacy_operation.op)
+        """Apply migration policy before dispatch; never replay execution or parsing errors."""
+        if routing.uses_legacy():
+            if legacy_call is None:
+                raise BackendProtocolError(
+                    f"No legacy callable supplied for {routing.op!r}"
                 )
-            return await legacy_operation.invoke()
-        page: Optional[QueryPage] = None
-        try:
-            pages = self.execute_pages(await prepare_request())
-            try:
-                # ``pages.__anext__()`` rather than the ``anext`` builtin: the
-                # package supports Python 3.9, where that builtin does not exist.
-                page = await pages.__anext__()
-            except StopAsyncIteration:
-                pass
-            finally:
-                # One page per call: the async generator is left suspended at its
-                # ``yield``. Unlike a sync generator, an abandoned async generator
-                # is not finalized by refcounting -- it is parked on the event
-                # loop's async-generator set until ``shutdown_asyncgens``, so a
-                # long-lived client paging a large feed accumulates them, and
-                # finalizing after the loop closes raises. Closing it here ends it
-                # at a deterministic point on the loop that created it. Guarded
-                # because ``execute_pages`` is documented to return an async
-                # iterator, which need not be an async generator.
-                aclose = getattr(pages, "aclose", None)
-                if aclose is not None:
-                    await aclose()
-        except fallback_exceptions:
-            if not allow_legacy_fallback:
-                raise
             record_rust_compatibility_fallback()
-            return await legacy_operation.invoke()
-        if page is None:
+            return await legacy_call()
+        prepared = build_request()
+        if prepared.op != routing.op:
             raise BackendProtocolError(
-                f"{type(self).__name__} returned no page for {legacy_operation.op!r}"
+                f"Prepared operation {prepared.op!r} does not match {routing.op!r}"
             )
-        return parse_response(page)
+        try:
+            self.validate_page_request(prepared)
+        except PageNotSupportedByBackendError as error:
+            if (
+                type(error) is not PageNotSupportedByBackendError
+                or not routing.policy.fallback_allowed
+                or prepared.continuation is not None
+            ):
+                raise
+            if legacy_call is None:
+                raise BackendProtocolError(
+                    f"No legacy callable supplied for {routing.op!r}"
+                )
+            record_rust_compatibility_fallback()
+            return await legacy_call()
+        pages = self.execute_pages(prepared, deadline=deadline)
+        try:
+            page = await pages.__anext__()
+        except StopAsyncIteration as error:
+            raise BackendProtocolError(
+                f"{type(self).__name__} returned no page for {routing.op!r}"
+            ) from error
+        finally:
+            close = getattr(pages, "aclose", None)
+            if close is not None:
+                await close()
+        return process_response(page)
 
-    # --- execute_pages is implemented by AsyncRustBackend; execute_batch is
-    # reserved for the not-yet-built batch operation ----------------------
-    #
-    # Concrete (not abstract) so today's async backends stay valid without
-    # implementing them. A backend adds query or batch support by overriding
-    # the method; this class does not change.
-
-    def execute_pages(self, prepared: PreparedQuery) -> AsyncIterator[QueryPage]:
+    def execute_pages(
+        self, prepared: PreparedQuery, *, deadline: Optional[float] = None
+    ) -> AsyncIterator[QueryPage]:
         """Return a paged query or read-feed result one ``QueryPage`` at a time.
 
         The default here raises; ``AsyncRustBackend`` overrides it (using
-        ``QUERY_TO_BINDING_METHOD``) as an async iterator of ``QueryPage`` that
+        ``STATELESS_QUERY_TO_BINDING_METHOD``) as an async iterator of ``QueryPage`` that
         dispatches ``query_items`` / ``read_all_items`` / ``list_databases``. A
         backend that does not implement this -- ``AsyncLegacyBackend`` never
         reaches it, since :meth:`run_page_operation` invokes the legacy call
         directly -- keeps this raising default.
-        """
-        raise NotImplementedError(
-            "execute_pages is not implemented by this backend."
-        )
 
-    async def execute_batch(self, prepared: PreparedBatch) -> BatchResponse:
-        """Run a transactional batch and return one result per operation.
-
-        Reserved: the batch operation is not implemented yet, so this raises.
-        A backend that supports it overrides it (using
-        ``BATCH_TO_BINDING_METHOD``).
+        ``deadline`` supplies the existing monotonic budget to supported native
+        cursor execution. Stateless feeds retain their driver request timeouts.
         """
+        raise NotImplementedError("execute_pages is not implemented by this backend.")
+
+    def validate_page_request(self, prepared: PreparedQuery) -> None:
+        """Validate static page capability before execution; no I/O or driver acquisition."""
+
+    def create_item_feed_cursor(self) -> ItemFeedCursor:
+        """Create local native cursor state, without acquiring a driver."""
         raise NotImplementedError(
-            "execute_batch is reserved for the transactional-batch operation "
-            "and is not implemented yet."
+            "This backend does not provide native item-feed cursors"
         )

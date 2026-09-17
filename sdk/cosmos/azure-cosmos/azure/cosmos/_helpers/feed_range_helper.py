@@ -16,23 +16,35 @@ range on its own. The functions here back the public ``ContainerProxy`` methods
 * ``is_feed_range_subset`` -- whether one feed range is fully inside another. This
   is a local calculation; it makes no service call.
 
-Why this module exists (public methods must not know which engine runs): without
+Why this module exists (public methods must not know which backend runs): without
 it, these calls would read ``client_connection._backend`` and branch -- try the
-rust engine, else run the legacy routing-map code -- inside the customer-facing
+rust backend, else run the legacy routing-map code -- inside the customer-facing
 proxy method. Instead each function uses the concrete backend stored by the
 client and drives the work through
 :meth:`~azure.cosmos._backend.cosmos_backend.CosmosBackend.run_operation`, so the proxy
-method is a thin delegate that names no engine. This mirrors
+method is a thin delegate that names no backend. This mirrors
 :class:`~azure.cosmos._helpers.item_helper.ItemHelper` and the throughput
 coordinator.
 """
+
 from __future__ import annotations
 
-from typing import Any, AsyncIterable, Awaitable, Callable, Dict, Iterable, Mapping, Optional
+from azure.cosmos._backend.capabilities import OperationRouting
+
+from typing import (
+    Any,
+    AsyncIterable,
+    Awaitable,
+    Callable,
+    Dict,
+    Iterable,
+    Mapping,
+    Optional,
+)
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 
-from .._backend.contracts import LegacyOperation
+from .._backend.contracts import PreparedRequest
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosItemPaged
 from .._feed_ranges_rust_routing import (
@@ -47,7 +59,7 @@ from .._feed_ranges_rust_routing import (
     parse_read_feed_ranges_payload,
 )
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
-from .._helpers._response_parse import parse_backend_response
+from .._helpers._response_parse import process_backend_response
 from .._routing.routing_range import Range
 
 
@@ -73,7 +85,7 @@ def read_feed_ranges(
     force_refresh: bool,
     kwargs: Mapping[str, Any],
 ) -> Iterable[dict[str, Any]]:
-    """Return feed ranges while keeping engine selection outside the public proxy."""
+    """Return feed ranges while keeping backend selection outside the public proxy."""
     selected_backend = client_connection._backend
     backend = selected_backend
     rust_eligible = can_use_rust_backend_for_read_feed_ranges(
@@ -81,7 +93,9 @@ def read_feed_ranges(
     )
     cached: Optional[list[dict[str, Any]]] = None
 
-    def get_next(continuation_token: str) -> list[dict[str, Any]]:  # pylint: disable=unused-argument
+    def get_next(
+        continuation_token: str,
+    ) -> list[dict[str, Any]]:  # pylint: disable=unused-argument
         nonlocal cached
         if cached is not None:
             return cached
@@ -91,33 +105,39 @@ def read_feed_ranges(
                 client_connection.refresh_routing_map_provider()
             properties = get_properties()
             feed_options: Dict[str, Any] = {
-                Constants.ContainerRID: _container_rid(client_connection, container_link, properties)
+                Constants.ContainerRID: _container_rid(
+                    client_connection, container_link, properties
+                )
             }
-            partition_key_ranges = client_connection._routing_map_provider.get_overlapping_ranges(
-                container_link,
-                [Range("", "FF", True, False)],
-                feed_options,
-                **kwargs,
+            partition_key_ranges = (
+                client_connection._routing_map_provider.get_overlapping_ranges(
+                    container_link,
+                    [Range("", "FF", True, False)],
+                    feed_options,
+                    **kwargs,
+                )
             )
             return [
-                FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partition_key_range)).to_dict()
+                FeedRangeInternalEpk(
+                    Range.PartitionKeyRangeToRange(partition_key_range)
+                ).to_dict()
                 for partition_key_range in partition_key_ranges
             ]
 
         cached = backend.run_operation(
-            prepare_request=lambda: build_read_feed_ranges_prepared_request(
+            build_request=lambda: build_read_feed_ranges_prepared_request(
                 container_link=container_link,
                 force_refresh=force_refresh,
             ),
-            legacy_operation=LegacyOperation(op="read_feed_ranges", invoke=run_legacy),
-            parse_response=lambda response: parse_read_feed_ranges_payload(
-                parse_backend_response(
+            routing=OperationRouting("read_feed_ranges", rust_eligible),
+            legacy_call=run_legacy,
+            process_response=lambda response: parse_read_feed_ranges_payload(
+                process_backend_response(
                     response,
                     client_connection=client_connection,
                     response_hook=None,
                 )
             ),
-            rust_eligible=rust_eligible,
         )
         return cached
 
@@ -134,29 +154,29 @@ def feed_range_from_partition_key(
     partition_key_value: Any,
     get_legacy_epk_range: Callable[[Any], Range],
 ) -> dict[str, Any]:
-    """Calculate one partition key's feed range through the selected engine."""
+    """Calculate one partition key's feed range through the selected backend."""
     selected_backend = client_connection._backend
     backend = selected_backend
     return backend.run_operation(
-        prepare_request=lambda: build_feed_range_from_partition_key_prepared_request(
+        build_request=lambda: build_feed_range_from_partition_key_prepared_request(
             container_link=container_link,
             partition_key_value=partition_key_value,
         ),
-        legacy_operation=LegacyOperation(
-            op="feed_range_from_partition_key",
-            invoke=lambda: FeedRangeInternalEpk(
-                get_legacy_epk_range(partition_key_value)
-            ).to_dict(),
+        routing=OperationRouting(
+            "feed_range_from_partition_key",
+            can_use_rust_backend_for_feed_range_from_partition_key(
+                backend=selected_backend
+            ),
         ),
-        parse_response=lambda response: parse_feed_range_from_partition_key_payload(
-            parse_backend_response(
+        legacy_call=lambda: FeedRangeInternalEpk(
+            get_legacy_epk_range(partition_key_value)
+        ).to_dict(),
+        process_response=lambda response: parse_feed_range_from_partition_key_payload(
+            process_backend_response(
                 response,
                 client_connection=client_connection,
                 response_hook=None,
             )
-        ),
-        rust_eligible=can_use_rust_backend_for_feed_range_from_partition_key(
-            backend=selected_backend
         ),
     )
 
@@ -167,7 +187,7 @@ def is_feed_range_subset(
     parent_feed_range: dict[str, Any],
     child_feed_range: dict[str, Any],
 ) -> bool:
-    """Compare feed ranges through the selected engine."""
+    """Compare feed ranges through the selected backend."""
     selected_backend = client_connection._backend
     backend = selected_backend
 
@@ -177,22 +197,26 @@ def is_feed_range_subset(
         return child.get_normalized_range().is_subset(parent.get_normalized_range())
 
     return backend.run_operation(
-        prepare_request=lambda: build_is_feed_range_subset_prepared_request(
+        build_request=lambda: build_is_feed_range_subset_prepared_request(
             parent_feed_range=parent_feed_range,
             child_feed_range=child_feed_range,
         ),
-        legacy_operation=LegacyOperation(op="is_feed_range_subset", invoke=run_legacy),
-        parse_response=lambda response: parse_is_feed_range_subset_payload(
-            parse_backend_response(
+        routing=OperationRouting(
+            "is_feed_range_subset",
+            can_use_rust_backend_for_is_feed_range_subset(
+                backend=selected_backend,
+                parent_feed_range=parent_feed_range,
+                child_feed_range=child_feed_range,
+            ),
+        ),
+        legacy_call=run_legacy,
+        process_response=lambda response: parse_is_feed_range_subset_payload(
+            process_backend_response(
                 response,
                 client_connection=None,
                 response_hook=None,
             )
         ),
-        rust_eligible=can_use_rust_backend_for_is_feed_range_subset(
-            backend=selected_backend
-        ),
-        fallback_exceptions=(ValueError,),
     )
 
 
@@ -212,11 +236,14 @@ def read_feed_ranges_async(
     )
     cached: Optional[list[dict[str, Any]]] = None
 
-    async def get_next(continuation_token: str) -> list[dict[str, Any]]:  # pylint: disable=unused-argument
+    async def get_next(
+        continuation_token: str,
+    ) -> list[dict[str, Any]]:  # pylint: disable=unused-argument
         nonlocal cached
         if cached is not None:
             return cached
-        async def prepare_request():
+
+        def build_request() -> PreparedRequest:
             return build_read_feed_ranges_prepared_request(
                 container_link=container_link,
                 force_refresh=force_refresh,
@@ -227,30 +254,36 @@ def read_feed_ranges_async(
                 await client_connection.refresh_routing_map_provider()
             properties = await get_properties()
             feed_options: Dict[str, Any] = {
-                Constants.ContainerRID: _container_rid(client_connection, container_link, properties)
+                Constants.ContainerRID: _container_rid(
+                    client_connection, container_link, properties
+                )
             }
-            partition_key_ranges = await client_connection._routing_map_provider.get_overlapping_ranges(
-                container_link,
-                [Range("", "FF", True, False)],
-                feed_options,
-                **kwargs,
+            partition_key_ranges = (
+                await client_connection._routing_map_provider.get_overlapping_ranges(
+                    container_link,
+                    [Range("", "FF", True, False)],
+                    feed_options,
+                    **kwargs,
+                )
             )
             return [
-                FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partition_key_range)).to_dict()
+                FeedRangeInternalEpk(
+                    Range.PartitionKeyRangeToRange(partition_key_range)
+                ).to_dict()
                 for partition_key_range in partition_key_ranges
             ]
 
         cached = await backend.run_operation(
-            prepare_request=prepare_request,
-            legacy_operation=LegacyOperation(op="read_feed_ranges", invoke=run_legacy),
-            parse_response=lambda response: parse_read_feed_ranges_payload(
-                parse_backend_response(
+            build_request=build_request,
+            routing=OperationRouting("read_feed_ranges", rust_eligible),
+            legacy_call=run_legacy,
+            process_response=lambda response: parse_read_feed_ranges_payload(
+                process_backend_response(
                     response,
                     client_connection=client_connection,
                     response_hook=None,
                 )
             ),
-            rust_eligible=rust_eligible,
         )
         return cached
 
@@ -271,7 +304,7 @@ async def feed_range_from_partition_key_async(
     selected_backend = client_connection._backend
     backend = selected_backend
 
-    async def prepare_request():
+    def build_request() -> PreparedRequest:
         return build_feed_range_from_partition_key_prepared_request(
             container_link=container_link,
             partition_key_value=partition_key_value,
@@ -283,19 +316,20 @@ async def feed_range_from_partition_key_async(
         ).to_dict()
 
     return await backend.run_operation(
-        prepare_request=prepare_request,
-        legacy_operation=LegacyOperation(
-            op="feed_range_from_partition_key", invoke=run_legacy
+        build_request=build_request,
+        routing=OperationRouting(
+            "feed_range_from_partition_key",
+            can_use_rust_backend_for_feed_range_from_partition_key(
+                backend=selected_backend
+            ),
         ),
-        parse_response=lambda response: parse_feed_range_from_partition_key_payload(
-            parse_backend_response(
+        legacy_call=run_legacy,
+        process_response=lambda response: parse_feed_range_from_partition_key_payload(
+            process_backend_response(
                 response,
                 client_connection=client_connection,
                 response_hook=None,
             )
-        ),
-        rust_eligible=can_use_rust_backend_for_feed_range_from_partition_key(
-            backend=selected_backend
         ),
     )
 
@@ -310,7 +344,7 @@ async def is_feed_range_subset_async(
     selected_backend = client_connection._backend
     backend = selected_backend
 
-    async def prepare_request():
+    def build_request() -> PreparedRequest:
         return build_is_feed_range_subset_prepared_request(
             parent_feed_range=parent_feed_range,
             child_feed_range=child_feed_range,
@@ -322,17 +356,21 @@ async def is_feed_range_subset_async(
         return child.get_normalized_range().is_subset(parent.get_normalized_range())
 
     return await backend.run_operation(
-        prepare_request=prepare_request,
-        legacy_operation=LegacyOperation(op="is_feed_range_subset", invoke=run_legacy),
-        parse_response=lambda response: parse_is_feed_range_subset_payload(
-            parse_backend_response(
+        build_request=build_request,
+        routing=OperationRouting(
+            "is_feed_range_subset",
+            can_use_rust_backend_for_is_feed_range_subset(
+                backend=selected_backend,
+                parent_feed_range=parent_feed_range,
+                child_feed_range=child_feed_range,
+            ),
+        ),
+        legacy_call=run_legacy,
+        process_response=lambda response: parse_is_feed_range_subset_payload(
+            process_backend_response(
                 response,
                 client_connection=None,
                 response_hook=None,
             )
         ),
-        rust_eligible=can_use_rust_backend_for_is_feed_range_subset(
-            backend=selected_backend
-        ),
-        fallback_exceptions=(ValueError,),
     )

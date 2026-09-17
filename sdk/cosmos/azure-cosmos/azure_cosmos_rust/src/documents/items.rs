@@ -2,27 +2,80 @@
 // Licensed under the MIT License.
 
 use super::*;
+use azure_core::http::headers::HeaderName;
+use azure_data_cosmos_driver::models::{ItemReference, Precondition};
+use pyo3::exceptions::{PyNotImplementedError, PyValueError};
+
+fn patch_precondition(
+    modifiers: &mut RequestHeadersAndOptions,
+    body: &[u8],
+) -> PyResult<Option<Precondition>> {
+    if modifiers
+        .custom_headers
+        .contains_key(&HeaderName::from_static("if-none-match"))
+    {
+        return Err(PyNotImplementedError::new_err(
+            "The Rust patch backend does not support If-None-Match.",
+        ));
+    }
+    if serde_json::from_slice::<serde_json::Value>(body)
+        .ok()
+        .is_some_and(|value| value.get("condition").is_some())
+    {
+        return Err(PyNotImplementedError::new_err(
+            "The Rust backend does not support filtered patches.",
+        ));
+    }
+    modifiers
+        .custom_headers
+        .remove(&HeaderName::from_static("if-match"))
+        .map(|value| {
+            if value.as_str().trim().is_empty() {
+                return Err(PyValueError::new_err(
+                    "patch_item If-Match must be a non-empty ETag string.",
+                ));
+            }
+            Ok(Precondition::if_match(value.as_str().to_owned()))
+        })
+        .transpose()
+}
+
+fn patch_operation(
+    item: ItemReference,
+    body: Vec<u8>,
+    precondition: Option<Precondition>,
+) -> CosmosOperation {
+    let operation = CosmosOperation::patch_item(item).with_body(body);
+    match precondition {
+        Some(precondition) => operation.with_precondition(precondition),
+        None => operation,
+    }
+}
 
 /// Insert a new item, rejecting an existing item with the same id and partition key.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn create_item<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    let (container_link, partition_key_header, modifiers, item_id, body_bytes) =
+    let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_create_body_inputs(prepared)?;
+    modifiers.item_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
-    run_item_operation(
+    execute_item_operation_sync(
         py,
-        handle,
+        driver_handle,
         &container_link,
-        &partition_key_header,
+        partition_key,
         modifiers,
         item_id,
+        body_bytes,
         "create_item",
         true,
-        move |item_ref| CosmosOperation::create_item(item_ref).with_body(body_bytes),
+        |item_ref, body| CosmosOperation::create_item(item_ref).with_body(body),
     )
 }
 
@@ -33,22 +86,23 @@ pub(crate) fn create_item<'py>(
 #[pyfunction]
 pub(crate) fn upsert_item<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    let (container_link, partition_key_header, modifiers, item_id, body_bytes) =
+    let (container_link, partition_key, modifiers, item_id, body_bytes) =
         extract_create_body_inputs(prepared)?;
 
-    run_item_operation(
+    execute_item_operation_sync(
         py,
-        handle,
+        driver_handle,
         &container_link,
-        &partition_key_header,
+        partition_key,
         modifiers,
         item_id,
+        body_bytes,
         "upsert_item",
         true,
-        move |item_ref| CosmosOperation::upsert_item(item_ref).with_body(body_bytes),
+        |item_ref, body| CosmosOperation::upsert_item(item_ref).with_body(body),
     )
 }
 
@@ -61,25 +115,26 @@ pub(crate) fn upsert_item<'py>(
 #[pyfunction]
 pub(crate) fn replace_item<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
     // The URL id (which document to overwrite) comes from item_id, not the
     // body -- deriving it from the body could overwrite the wrong document if
     // the body's id disagreed with `item`.
-    let (container_link, partition_key_header, modifiers, item_id, body_bytes) =
+    let (container_link, partition_key, modifiers, item_id, body_bytes) =
         extract_item_body_inputs(prepared, REPLACE_ITEM_ID_REQUIRED)?;
 
-    run_item_operation(
+    execute_item_operation_sync(
         py,
-        handle,
+        driver_handle,
         &container_link,
-        &partition_key_header,
+        partition_key,
         modifiers,
         item_id,
+        body_bytes,
         "replace_item",
         true,
-        move |item_ref| CosmosOperation::replace_item(item_ref).with_body(body_bytes),
+        |item_ref, body| CosmosOperation::replace_item(item_ref).with_body(body),
     )
 }
 
@@ -89,22 +144,23 @@ pub(crate) fn replace_item<'py>(
 #[pyfunction]
 pub(crate) fn delete_item<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    let (container_link, partition_key_header, modifiers, item_id) =
+    let (container_link, partition_key, modifiers, item_id) =
         extract_item_inputs(prepared, DELETE_ITEM_ID_REQUIRED)?;
 
-    run_item_operation(
+    execute_item_operation_sync(
         py,
-        handle,
+        driver_handle,
         &container_link,
-        &partition_key_header,
+        partition_key,
         modifiers,
         item_id,
+        Vec::new(),
         "delete_item",
         false,
-        CosmosOperation::delete_item,
+        |item_ref, _| CosmosOperation::delete_item(item_ref),
     )
 }
 
@@ -113,81 +169,91 @@ pub(crate) fn delete_item<'py>(
 /// the single most common operation -- the point read -- would not work on the
 /// rust backend.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn read_item<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    let (container_link, partition_key_header, modifiers, item_id) =
+    let (container_link, partition_key, mut modifiers, item_id) =
         extract_item_inputs(prepared, READ_ITEM_ID_REQUIRED)?;
+    modifiers.item_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
-    run_item_operation(
+    execute_item_operation_sync(
         py,
-        handle,
+        driver_handle,
         &container_link,
-        &partition_key_header,
+        partition_key,
         modifiers,
         item_id,
+        Vec::new(),
         "read_item",
         false,
-        CosmosOperation::read_item,
+        |item_ref, _| CosmosOperation::read_item(item_ref),
     )
 }
 
-/// patch_item: write-with-*operations*. The body is the `PatchInstructions`
-/// payload (`{"operations": [...]}`), not a document; the URL id comes from
-/// `PreparedRequest.item_id` (like delete / read / replace). Maps to
-/// `OperationType::Patch`: the rust driver reads the item, applies the ops, and
-/// writes it back with an If-Match-guarded Replace. `honor_content_response` is
-/// true, so `no_response` applies to that inner Replace. Without it, partial
-/// updates could not be sent to the rust driver at all.
-///
-/// The Python helper only routes the supported subset here; a `filter_predicate`
-/// or a caller-set precondition takes the legacy path, so neither is carried on this
-/// prepared request.
+/// Patch using the driver's Auto strategy, with a typed caller If-Match guard.
+/// Remove the guard from custom headers so it cannot leak to an internal read
+/// or override the fresh ETag protecting an internal replacement.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn patch_item<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    let (container_link, partition_key_header, modifiers, item_id, body_bytes) =
+    let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_item_body_inputs(prepared, PATCH_ITEM_ID_REQUIRED)?;
+    modifiers.item_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    let precondition = patch_precondition(&mut modifiers, &body_bytes)?;
+    if matches!(partition_key, PartitionKeyInput::Extract) {
+        return Err(PyValueError::new_err(
+            "patch_item requires an explicit partition key",
+        ));
+    }
 
-    run_item_operation(
+    execute_item_operation_sync(
         py,
-        handle,
+        driver_handle,
         &container_link,
-        &partition_key_header,
+        partition_key,
         modifiers,
         item_id,
+        body_bytes,
         "patch_item",
         true,
-        move |item_ref| CosmosOperation::patch_item(item_ref).with_body(body_bytes),
+        move |item_ref, body| patch_operation(item_ref, body, precondition),
     )
 }
 
 /// Async twin of `create_item`: identical inputs and driver work, returns a
 /// Python awaitable instead of a ready tuple.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn create_item_async<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let (container_link, partition_key_header, modifiers, item_id, body_bytes) =
+    let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_create_body_inputs(prepared)?;
+    modifiers.item_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
-    run_item_operation_async(
+    execute_item_operation_async(
         py,
-        handle,
+        driver_handle,
         &container_link,
-        &partition_key_header,
+        partition_key,
         modifiers,
         item_id,
+        body_bytes,
         "create_item",
         true,
-        move |item_ref| CosmosOperation::create_item(item_ref).with_body(body_bytes),
+        |item_ref, body| CosmosOperation::create_item(item_ref).with_body(body),
     )
 }
 
@@ -196,22 +262,23 @@ pub(crate) fn create_item_async<'py>(
 #[pyfunction]
 pub(crate) fn upsert_item_async<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let (container_link, partition_key_header, modifiers, item_id, body_bytes) =
+    let (container_link, partition_key, modifiers, item_id, body_bytes) =
         extract_create_body_inputs(prepared)?;
 
-    run_item_operation_async(
+    execute_item_operation_async(
         py,
-        handle,
+        driver_handle,
         &container_link,
-        &partition_key_header,
+        partition_key,
         modifiers,
         item_id,
+        body_bytes,
         "upsert_item",
         true,
-        move |item_ref| CosmosOperation::upsert_item(item_ref).with_body(body_bytes),
+        |item_ref, body| CosmosOperation::upsert_item(item_ref).with_body(body),
     )
 }
 
@@ -220,22 +287,23 @@ pub(crate) fn upsert_item_async<'py>(
 #[pyfunction]
 pub(crate) fn replace_item_async<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let (container_link, partition_key_header, modifiers, item_id, body_bytes) =
+    let (container_link, partition_key, modifiers, item_id, body_bytes) =
         extract_item_body_inputs(prepared, REPLACE_ITEM_ID_REQUIRED)?;
 
-    run_item_operation_async(
+    execute_item_operation_async(
         py,
-        handle,
+        driver_handle,
         &container_link,
-        &partition_key_header,
+        partition_key,
         modifiers,
         item_id,
+        body_bytes,
         "replace_item",
         true,
-        move |item_ref| CosmosOperation::replace_item(item_ref).with_body(body_bytes),
+        |item_ref, body| CosmosOperation::replace_item(item_ref).with_body(body),
     )
 }
 
@@ -244,46 +312,51 @@ pub(crate) fn replace_item_async<'py>(
 #[pyfunction]
 pub(crate) fn delete_item_async<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let (container_link, partition_key_header, modifiers, item_id) =
+    let (container_link, partition_key, modifiers, item_id) =
         extract_item_inputs(prepared, DELETE_ITEM_ID_REQUIRED)?;
 
-    run_item_operation_async(
+    execute_item_operation_async(
         py,
-        handle,
+        driver_handle,
         &container_link,
-        &partition_key_header,
+        partition_key,
         modifiers,
         item_id,
+        Vec::new(),
         "delete_item",
         false,
-        CosmosOperation::delete_item,
+        |item_ref, _| CosmosOperation::delete_item(item_ref),
     )
 }
 
 /// Async twin of `read_item`: identical inputs and driver work, returns a
 /// Python awaitable instead of a ready tuple.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn read_item_async<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let (container_link, partition_key_header, modifiers, item_id) =
+    let (container_link, partition_key, mut modifiers, item_id) =
         extract_item_inputs(prepared, READ_ITEM_ID_REQUIRED)?;
+    modifiers.item_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
-    run_item_operation_async(
+    execute_item_operation_async(
         py,
-        handle,
+        driver_handle,
         &container_link,
-        &partition_key_header,
+        partition_key,
         modifiers,
         item_id,
+        Vec::new(),
         "read_item",
         false,
-        CosmosOperation::read_item,
+        |item_ref, _| CosmosOperation::read_item(item_ref),
     )
 }
 
@@ -291,23 +364,240 @@ pub(crate) fn read_item_async<'py>(
 /// PatchInstructions payload, URL id from the request), returns a Python
 /// awaitable instead of a ready tuple.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn patch_item_async<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let (container_link, partition_key_header, modifiers, item_id, body_bytes) =
+    let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_item_body_inputs(prepared, PATCH_ITEM_ID_REQUIRED)?;
+    modifiers.item_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    let precondition = patch_precondition(&mut modifiers, &body_bytes)?;
+    if matches!(partition_key, PartitionKeyInput::Extract) {
+        return Err(PyValueError::new_err(
+            "patch_item requires an explicit partition key",
+        ));
+    }
 
-    run_item_operation_async(
+    execute_item_operation_async(
         py,
-        handle,
+        driver_handle,
         &container_link,
-        &partition_key_header,
+        partition_key,
         modifiers,
         item_id,
+        body_bytes,
         "patch_item",
         true,
-        move |item_ref| CosmosOperation::patch_item(item_ref).with_body(body_bytes),
+        move |item_ref, body| patch_operation(item_ref, body, precondition),
     )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use azure_core::http::headers::HeaderValue;
+    use azure_data_cosmos_driver::{
+        in_memory_emulator::{
+            ContainerConfig, InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion,
+        },
+        models::{AccountReference, PartitionKey, PartitionKeyDefinition},
+        options::{BinaryEncodingOptions, DriverOptions, OperationOptionsBuilder},
+    };
+    use pyo3::types::{PyBytes, PyDict};
+    use std::{borrow::Cow, sync::Arc};
+
+    fn modifiers(py: Python<'_>) -> RequestHeadersAndOptions {
+        let prepared = py
+            .import_bound("types")
+            .unwrap()
+            .getattr("SimpleNamespace")
+            .unwrap()
+            .call0()
+            .unwrap();
+        prepared
+            .setattr("container_link", "dbs/db/colls/c")
+            .unwrap();
+        prepared
+            .setattr(
+                "partition_key",
+                crate::wire::partition_key::test_partition_key(py, Some("[\"pk\"]")),
+            )
+            .unwrap();
+        prepared.setattr("headers", PyDict::new_bound(py)).unwrap();
+        prepared.setattr("protocol_version", 3).unwrap();
+        prepared
+            .setattr("settings", crate::wire::settings::test_settings(py))
+            .unwrap();
+        extract_common_prepared_inputs(&prepared).unwrap().2
+    }
+
+    #[test]
+    fn patch_guard_is_typed_and_removed_from_custom_headers() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            for etag in ["\"v1\"", "*"] {
+                let mut modifiers = modifiers(py);
+                modifiers
+                    .custom_headers
+                    .insert(HeaderName::from_static("if-match"), HeaderValue::from(etag));
+                let guard = patch_precondition(&mut modifiers, br#"{"operations":[]}"#).unwrap();
+                assert_eq!(guard, Some(Precondition::if_match(etag)));
+                assert!(!modifiers
+                    .custom_headers
+                    .contains_key(&HeaderName::from_static("if-match")));
+            }
+        });
+    }
+
+    #[test]
+    fn binding_rejects_unsupported_guards_before_driver_lookup() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let prepared = py
+                .import_bound("types")
+                .unwrap()
+                .getattr("SimpleNamespace")
+                .unwrap()
+                .call0()
+                .unwrap();
+            prepared
+                .setattr("container_link", "dbs/db/colls/c")
+                .unwrap();
+            prepared
+                .setattr(
+                    "partition_key",
+                    crate::wire::partition_key::test_partition_key(py, Some("[\"pk\"]")),
+                )
+                .unwrap();
+            prepared.setattr("item_id", "item").unwrap();
+            prepared.setattr("protocol_version", 3).unwrap();
+            prepared
+                .setattr("settings", crate::wire::settings::test_settings(py))
+                .unwrap();
+            for filtered in [false, true] {
+                let headers = PyDict::new_bound(py);
+                if !filtered {
+                    headers.set_item("IF-NONE-MATCH", "*").unwrap();
+                }
+                prepared.setattr("headers", headers).unwrap();
+                let body: &[u8] = if filtered {
+                    br#"{"condition":"FROM c","operations":[{"op":"set","path":"/n","value":2}]}"#
+                } else {
+                    br#"{"operations":[{"op":"set","path":"/n","value":2}]}"#
+                };
+                prepared
+                    .setattr("body_bytes", PyBytes::new_bound(py, body))
+                    .unwrap();
+                assert!(patch_item(py, "unused-handle", &prepared, None)
+                    .unwrap_err()
+                    .is_instance_of::<PyNotImplementedError>(py));
+                assert!(patch_item_async(py, "unused-handle", &prepared, None)
+                    .unwrap_err()
+                    .is_instance_of::<PyNotImplementedError>(py));
+            }
+        });
+    }
+
+    #[tokio::test]
+    async fn guarded_auto_patch_handles_server_and_client_side_mutations() {
+        pyo3::prepare_freethreaded_python();
+        let url = azure_core::http::Url::parse("https://patch.emulator.local").unwrap();
+        let config =
+            VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())]).unwrap();
+        let emulator = Arc::new(InMemoryEmulatorHttpClient::new(config));
+        emulator.store().create_database("db");
+        emulator.store().create_container_with_config(
+            "db",
+            "c",
+            PartitionKeyDefinition::new(vec![Cow::Borrowed("/pk")]),
+            ContainerConfig::new()
+                .with_partition_count(1)
+                .build()
+                .unwrap(),
+        );
+        let runtime = emulator.runtime_builder().build().await.unwrap();
+        let options = OperationOptionsBuilder::new()
+            .with_binary_encoding(BinaryEncodingOptions::new().with_enabled(false))
+            .build();
+        let driver = runtime
+            .create_driver(
+                DriverOptions::builder(AccountReference::with_master_key(url, "ZW11bGF0b3Ita2V5"))
+                    .with_operation_options(options)
+                    .build(),
+            )
+            .await
+            .unwrap();
+        let container = driver
+            .resolve_container("db", "c", Default::default())
+            .await
+            .unwrap();
+        let item = ItemReference::from_name(&container, PartitionKey::from("pk"), "item");
+        driver
+            .execute_singleton_operation(
+                CosmosOperation::create_item(item.clone())
+                    .with_body(br#"{"id":"item","pk":"pk","n":0}"#.to_vec()),
+                Default::default(),
+            )
+            .await
+            .unwrap();
+        for op in ["set", "incr"] {
+            let read = driver
+                .execute_singleton_operation(
+                    CosmosOperation::read_item(item.clone()),
+                    Default::default(),
+                )
+                .await
+                .unwrap();
+            let etag = read
+                .headers()
+                .to_raw_headers()
+                .iter()
+                .find(|(name, _)| name.as_str() == "etag")
+                .map(|(_, value)| value.as_str().to_owned())
+                .unwrap();
+            let body = serde_json::to_vec(&serde_json::json!({
+                "operations": [{"op": op, "path": "/n", "value": 2}]
+            }))
+            .unwrap();
+            let guard = Python::with_gil(|py| {
+                let mut modifiers = modifiers(py);
+                modifiers.custom_headers.insert(
+                    HeaderName::from_static("if-match"),
+                    HeaderValue::from(etag.clone()),
+                );
+                patch_precondition(&mut modifiers, &body).unwrap()
+            });
+            let success = driver
+                .execute_singleton_operation(
+                    patch_operation(item.clone(), body.clone(), guard.clone()),
+                    Default::default(),
+                )
+                .await
+                .unwrap();
+            assert_eq!(u16::from(success.status().status_code()), 200);
+            let rejected = driver
+                .execute_singleton_operation(
+                    patch_operation(item.clone(), body, guard),
+                    Default::default(),
+                )
+                .await
+                .unwrap_err();
+            assert_eq!(u16::from(rejected.status().status_code()), 412);
+        }
+        let final_read = driver
+            .execute_singleton_operation(CosmosOperation::read_item(item), Default::default())
+            .await
+            .unwrap();
+        let azure_data_cosmos_driver::models::ResponseBody::Bytes(bytes) = final_read.body() else {
+            panic!("expected JSON point response");
+        };
+        let body: serde_json::Value = serde_json::from_slice(bytes).unwrap();
+        assert_eq!(
+            body["n"], 4,
+            "rejected guards must never reapply a mutation"
+        );
+    }
 }

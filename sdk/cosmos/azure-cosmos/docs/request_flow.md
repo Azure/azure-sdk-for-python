@@ -1,10 +1,8 @@
-# V5 architect : one `create_item` call, layer by layer
+# V5 architecture: one `create_item` call, layer by layer
 
-
-This document follows one Cosmos DB item write from the customer's Python call to
-the Rust driver and back. 
-
----
+This is the concise implementation reference. The complete numbered walkthrough is
+in `V5/use-cases/01-sync-python-to-async-rust.md`. The Rust driver is treated as a
+black box; this document describes the Python SDK and binding contract.
 
 ## Table of contents
 
@@ -21,767 +19,598 @@ the Rust driver and back.
 - [8. Why the Rust driver is shared](#8-why-the-rust-driver-is-shared)
 - [9. The whole call in one list](#9-the-whole-call-in-one-list)
 - [10. Where to go next](#10-where-to-go-next)
-
----
+- [11. Related offer and feed preparation](#11-related-offer-and-feed-preparation)
+- [12. Typed partition-key boundary](#12-typed-partition-key-boundary)
+- [13. Write body snapshots and encoding](#13-write-body-snapshots-and-encoding)
+- [14. Names, effects and dispatch contracts](#14-names-effects-and-dispatch-contracts)
 
 ## 1. The call we will follow
 
-Contoso is an online store. When a shopper places an order, its application calls:
+Contoso uses a client configured with `_backend="rust"` and
+`no_response_on_write=False`. Its container address is `dbs/Contoso/colls/Orders`,
+with partition-key path `/customerId`:
 
 ```python
-container.create_item(
-    body={"id": "order-42", "pk": "customerA", "total": 99.5},
-    pre_trigger_include="validateOrder",  # run this service check before writing
-    no_response=True,                     # do not send the saved document back
-    response_hook=on_response,            # call this Python function after the response
-)
+order = {"id": "order-42", "customerId": "customer-17", "total": 125.50}
+result = container.create_item(order, no_response=True, response_hook=on_response)
 ```
 
-The container is named `orders` in database `contoso`. Its Python link is:
+| Term | Concrete meaning |
+|---|---|
+| Request body | The complete order being saved |
+| Request headers | Actual outgoing HTTP header names and string values |
+| Request options | Per-operation choices, including whether to omit the returned document |
+| Response headers | Received information such as request charge |
+| Response body | Returned document content, empty for this successful no-response example |
 
-```text
-dbs/contoso/colls/orders
-```
-
-The container was created with `/pk` as its partition-key path. Therefore
-`create_item` reads `"customerA"` from the body; the customer does not pass a
-separate `partition_key=` argument.
-
-Keep these values in mind; they stay fixed through the document:
-
-```text
-account endpoint    https://contoso.documents.azure.com
-database            contoso
-container           orders
-container link      dbs/contoso/colls/orders
-container RID       abc123==
-item id             order-42
-partition key       customerA
-body                {"id":"order-42","pk":"customerA","total":99.5}
-expected status     201 Created
-expected body       empty, because no_response=True
-```
-
-The call must solve four concrete problems:
-
-1. Keep the Python method compatible with existing customer code.
-2. Turn the customer's arguments into one complete request.
-3. Run that request through either the Rust driver or the existing Python code.
-4. Return the same Python result or exception whichever implementation ran.
-
-Those needs explain why the code is divided into the parts below.
-
----
+`on_response` is local Python behavior, not a request option or header.
+`no_response=True` does not remove the outgoing document.
 
 ## 2. The six parts involved
 
-Read this diagram from top to bottom. A solid arrow is a call. A dotted arrow is
-the returned value. The **family coordinator** remains responsible for this call
-while it asks the other parts to do focused pieces of work.
-
 ```mermaid
 sequenceDiagram
-    actor C as Customer code
-    participant L1 as 1 · Public Container method
-    participant L2 as 2 · Item coordinator
-    participant L3 as 3 · Request-building functions
-    participant L4 as 4 · Backend boundary
-    participant L5 as 5 · Binding + Rust driver
-    participant L6 as 6 · Response handling
+    actor App as Contoso
+    participant Public as ContainerProxy
+    participant Helper as ItemHelper
+    participant Builder as Item builders
+    participant Backend as Python RustBackend
+    participant Binding as Rust binding and driver
 
-    C->>L1: create_item(...)
-    L1->>L2: body + gathered settings
-    Note over L2: Hold the chosen backend for this call
-
-    L2->>L3: normalize settings
-    L3-->>L2: request-options dict
-    L2->>L3: build PreparedRequest
-    L3-->>L2: PreparedRequest
-
-    L2->>L4: run_operation(...)
-    alt Rust backend
-        L4->>L5: call binding, then driver
-        L5-->>L4: status + headers + body
-    else Legacy backend
-        Note over L4: Run existing Python operation
-    end
-    L4-->>L2: backend response or legacy result
-
-    L2->>L6: parse Rust response
-    L6-->>L2: CosmosDict or typed error
-    L2-->>L1: finished result
-    L1-->>C: return result or raise exception
+    App->>Public: 4. Receive create_item and retain on_response
+    Public->>Helper: 5. Hand off body, address and call arguments
+    Helper->>Helper: 5.1. Resolve ID and serialize one document snapshot before dispatch
+    Helper->>Builder: 5.2-5.3. ID, bytes, explicit key or extraction marker, options
+    Builder-->>Helper: 5.3. PreparedRequest
+    Helper->>Backend: 6. execute with PreparedRequest and separate deadline
+    Backend->>Binding: 6. Selected item operation
+    Binding->>Binding: Resolve container, select key, construct and execute item
+    Binding-->>Backend: 7. Status, response headers, response body and diagnostics
+    Backend-->>Helper: 7. BackendResponse
+    Helper->>Helper: 7. Process response and publish headers
+    Helper-->>Public: 7. Parsed CosmosDict
+    Public->>Public: 7. complete_item_response checks deadline and calls isolated hook
+    Public-->>App: 7. Original result
 ```
 
-| Part | Code | Why it exists |
-|---|---|---|
-| **1. Public method** | `Container` / `ContainerProxy` | Customers need the same Python method and arguments they already use. |
-| **2. Family coordinator** | `ItemHelper` / `AsyncItemHelper` | One place must gather inputs and keep sync and async item behavior aligned. |
-| **3. Request-building functions** | `_helpers/_item_dispatch.py` and the `_helpers/_request_*.py` modules | Request construction should be testable without a network call. |
-| **4. Backend boundary** | `RustBackend` / `LegacyBackend` | The coordinator needs one way to request work without Rust-versus-Python branches throughout its code. |
-| **5. Binding and driver** | `azure_cosmos_rust` plus `azure_data_cosmos_driver` | The binding converts Python values to Rust values; the driver signs, routes, retries, and sends. |
-| **6. Response handling** | backend response parsers | Customers must receive the same result types and exceptions from either implementation. |
-
-The numbered parts are an explanation aid, not separate installed packages. Several
-are ordinary Python modules inside `azure.cosmos`.
-
-The diagram is the route, not the explanation. The following sections stop at each
-arrow and show the actual value crossing it.
-
----
+| Part | Responsibility |
+|---|---|
+| Public `ContainerProxy` | Validate the public call and own the success hook |
+| `ItemHelper` / `AsyncItemHelper` | Coordinate preparation and execution using explicit dependencies |
+| Request utilities | Build the request without obtaining container metadata |
+| Python backend | Execute the supplied preparation, binding call and parser |
+| Compiled Rust binding | Resolve container, extract missing document keys, bridge sync/async execution |
+| Response handling | Preserve Python result, exception and response-header behavior |
 
 ## 3. Before the call: build the client
 
-Before Contoso writes an order, it creates one client and reuses it:
+Client construction creates the backend and an `ItemClientContext` containing
+the backend, immutable `ItemClientDefaults` and shared `ClientLastResponseHeaders`.
+Database and container proxies retain that context. The item helper does not
+recover its backend, defaults or metadata through a legacy connection.
 
-```python
-client = CosmosClient(url, credential, _backend="rust")
-```
-
-Client construction records:
-
-- the account endpoint;
-- the credential used to authenticate requests;
-- the customer settings; and
-- whether operations should use the Rust backend.
-
-For example, these two clients make different backend choices even though they use
-the same account and credential:
-
-```python
-rust_client = CosmosClient(url, credential, _backend="rust")
-python_client = CosmosClient(url, credential)  # current core-Python path
-```
-
-Calling `create_item` on `rust_client` reaches the compiled binding. Calling it on
-`python_client` runs the existing Python implementation. A network error does not
-cause the Rust client to switch to Python halfway through the call; backend choice is
-configuration, not an error-recovery rule.
-
-Why choose the backend here? If every operation decided independently, methods on
-the same client could accidentally use different implementations. Choosing once
-gives the client one consistent rule.
-
-Construction does **not** immediately open all network connections. Building the
-Rust driver can require account information and connection setup, and a client may
-never make a request. The SDK waits until the first operation needs the driver.
-Section 8 explains how that driver is then shared safely.
-
-The sequence for a newly constructed Rust client is therefore:
-
-```text
-T0  CosmosClient(...) returns; endpoint, credential, config are stored.
-T1  No item operation has run, so this client has no Rust driver handle yet.
-T2  The first create_item call asks the binding to create or reuse a driver.
-T3  Later calls reuse the returned handle and skip driver construction.
-```
-
-This matters for a command-line tool that constructs a client only to validate
-configuration and then exits: it does not pay for a driver it never uses.
-
----
+Driver configuration belongs to client construction, not `request_options`.
+The backend obtains its `_driver_handle` lazily through `_ensure_driver_handle`.
+The handle identifies a retained Rust driver; it is not the Python client,
+container RID or document ID.
 
 ## 4. Receive and gather the Python arguments
 
-The call first reaches the public `create_item` method on:
+`ContainerProxy.create_item` calls `prepare_create_item_kwargs`. Retired create
+arguments such as `etag` and `match_condition` are rejected by presence, including
+explicit `None`. A supplied timeout establishes one monotonic deadline covering
+preparation, metadata and execution.
+The wrapper is the only owner of create preparation. It passes `deadline=...`
+to the helper even when the value is `None`; no deadline marker is used to infer
+whether validation already occurred.
 
-- `Container` for synchronous code; or
-- `ContainerProxy` for asynchronous code.
-
-This method keeps the existing public signature so customer applications do not
-need to change when the implementation underneath changes.
-
-Before handing the call to the item coordinator, the public method does two jobs.
-
-### Warn about arguments that do not apply
-
-Older code may pass `etag` or `match_condition` to `create_item` through
-`**kwargs`. A create has no existing item version to compare with, so these values
-cannot affect the operation. The method warns instead of silently pretending to
-honour them or abruptly breaking existing applications.
-
-For example:
-
-```python
-container.create_item(
-    {"id": "order-42", "pk": "customerA"},
-    etag='"old-version"',
-)
-```
-
-There is no existing `order-42` version to compare during a create. The SDK emits a
-deprecation warning and ignores the etag before request execution. Without the
-warning, Contoso could incorrectly believe the service was enforcing a version
-condition that never existed.
-
-### Gather request settings into one dictionary
-
-The method combines the named request settings and `**kwargs` supplied by the
-customer into one **merged kwargs** dictionary:
-
-```text
-named settings + **kwargs  ->  merged kwargs
-```
-
-For Contoso, the relevant settings are:
-
-```python
-{
-    "pre_trigger_include": "validateOrder",
-    "no_response": True,
-    "response_hook": on_response,
-}
-```
-
-The body stays separate because it is the document being written, not a setting.
-`response_hook` **does enter this merged dictionary** so the public sync and async
-methods pass every optional argument to the coordinator in one shape. Later request
-preparation removes it from the service settings and keeps it as Python callback
-context; `on_response` never becomes an HTTP header.
-
-The merge function copies only values the customer supplied. If Contoso omitted
-`no_response`, that key would not appear and later code would use the client-level
-default instead.
-
-The public method gives the body and gathered settings to `ItemHelper` or
-`AsyncItemHelper`.
-
----
+The wrapper keeps `response_hook=on_response` locally. It gathers the remaining
+arguments with `merge_create_item_explicit_kwargs`, obtains the selected helper,
+and passes the body and container link onward. There is no hook in this public
+call's helper arguments or prepared request.
 
 ## 5. Prepare one request
 
-The item coordinator now gathers everything the operation needs:
-
-| Input | Value | Source |
-|---|---|---|
-| Operation | `create_item` | The method the customer called |
-| Body | `{"id": "order-42", "pk": "customerA", "total": 99.5}` | Customer argument |
-| Partition key | `"customerA"` | The body's `/pk` field |
-| Container link | `dbs/contoso/colls/orders` | The `Container` object |
-| Container RID | for example `abc123==` | Cached container information |
-| Request settings | trigger and no-response values | Merged kwargs |
-
-The next three steps turn these values into a request a backend can run.
-
-One `ItemHelper` object is created for this call. It is cheap: it holds references to
-the selected backend, the existing Python connection, and the metadata provider. It
-does not create a connection pool of its own.
+The helper owns the call and directly invokes its request builder before execution.
+There is no builder callback into the helper and no Python metadata retrieval.
+The container reuses its Rust helper while the immutable item context is unchanged.
 
 ### 5.1 Normalize the request settings
 
-Python uses names that follow Python conventions:
+`normalize_item_arguments` builds a shallow document copy. For create it calls
+`build_create_document` to validate and resolve the ID once. It then calls the
+pure `serialize_document` in `_helpers/_document.py`, which returns
+`SerializedDocument(body_id, body_bytes)` before backend dispatch.
+The helper retains no copied document tree alongside the encoded bytes:
 
 ```python
-{
-    "pre_trigger_include": "validateOrder",
-    "no_response": True,
-    "response_hook": on_response,
-}
+b'{"id":"order-42","customerId":"customer-17","total":125.5}'
 ```
 
-The Cosmos service expects different names. A module-level function in
-`_helpers/_item_dispatch.py` creates a new **request-options dictionary**:
+The same serialized bytes supply subsequent partition-key extraction inside Rust.
+Changing the customer's dictionary cannot change either the bytes or extracted
+key. Invalid body data fails before metadata or item I/O.
 
-```python
-{"preTriggerInclude": "validateOrder", "responsePayloadOnWriteDisabled": True}
-```
-
-The callback is deliberately absent from the second dictionary:
-
-```text
-pre_trigger_include  -> preTriggerInclude
-no_response          -> responsePayloadOnWriteDisabled
-response_hook        -> no service option; save it for response handling
-```
-
-The code calls these functions `build_*_request_options`; this operation uses
-`build_create_item_request_options`.
-
-Why create a second dictionary? Keeping the translation in one function prevents
-the synchronous and asynchronous paths from spelling the same service setting
-differently. It also leaves the original inputs available to compatibility code.
-
-This dictionary still contains ordinary Python values. It is not an HTTP request,
-and no network call happens here.
-
-There is one mutation detail worth making concrete. The legacy option-building code
-may consume recognized kwargs while processing them. The helper therefore makes a
-copy first:
-
-```text
-original merged kwargs
-    -> copy A for legacy option construction
-    -> copy B for Rust request preparation
-```
-
-Without the copy, whichever path read `pre_trigger_include` first could remove it
-before the other path saw it, and `validateOrder` would silently disappear.
+`compose_item_options` normalizes request options once, for example
+`no_response=True` becomes `responsePayloadOnWriteDisabled=True`.
+The helper rejects unsupported Rust options before metadata. It retains normalized
+options explicitly, rather than packaging and rescanning `wire_kwargs`.
 
 ### 5.2 Find the container's service-assigned id
 
-The human-readable name `orders` can be reused after a container is deleted and
-created again. Cosmos gives each created container a separate internal resource id,
-or **RID**. In this example it is:
+Python no longer finds the RID or obtains the partition-key definition for a point
+operation. `build_request` is entirely local. For create/upsert/replace without an
+explicit key, it sets `partition_key=PartitionKeyInput("extract")`.
+Explicit null is `PartitionKeyInput("components", (None,))`; read/delete/patch require a target key and
+never infer one from patch instructions.
 
-```text
-abc123==
-```
+Inside the single item binding call, `execute_item_on_driver` resolves the container
+through the driver's cache and uses that same definition for extraction and item
+construction. `extract_partition_key_from_body` reads the exact outgoing bytes,
+preserving key kind, path rules, and missing-level behavior. The driver owns routing
+identity and the corresponding transport headers. There is no preliminary metadata
+FFI call, returned Python metadata object, or additional Python metadata cache.
 
-The SDK includes the RID it believes it is addressing in the intended-container
-header. This lets the service detect that a client is using information for an old
-container instead of silently writing to a new container with the same name.
+Metadata failures still raise `DriverResponseError` separately from item responses.
+The backend maps their details to Cosmos exceptions without updating public response
+headers or calling the item hook. The native timeout covers resolution, extraction,
+and execution; an expired extraction budget is checked before constructing the item.
+Async cancellation retains ownership of the native task.
 
-Here is the failure this value prevents:
-
-```text
-09:00  Contoso reads container "orders"; its RID is abc123==.
-09:05  An administrator deletes that container.
-09:06  A new container is created with the same name "orders"; its RID is xyz789==.
-09:07  The old client sends containerRID=abc123==.
-```
-
-The name still says `orders`, but the RID shows that the client's cached information
-belongs to the deleted container. The service can reject the stale request instead of
-letting it reach `xyz789==` unnoticed.
-
-A `ContainerMetadataProvider` reads and caches the container information. The same
-information contains the partition-key definition (`/pk`) needed to extract
-`"customerA"` from the body.
-
-The partition-key definition also tells the SDK how to distinguish three bodies
-that look similar but route differently:
-
-| Body | Partition-key JSON text | Meaning |
-|---|---|---|
-| `{"pk": "customerA"}` | `["customerA"]` | Route to customer A's logical partition. |
-| `{"pk": null}` | `[null]` | Route to the logical partition for the explicit value `null`. |
-| no `pk` field | `[{}]` | Route to the special “partition-key path missing” value. |
-
-That is why request preparation needs the container's `/pk` definition rather than
-simply searching every body for a field named `pk`.
+The driver crate is unchanged. Its missing `systemKey` flag and partitionless-key
+limitations remain; Python/binding preserve the existing unknown/false fallback.
+Extraction is binding-owned, not a new driver capability, and is not automatically
+repeated if driver recovery later changes the partition-key definition. The typed
+`get_container_metadata` API remains available for explicit internal lookups, not
+as a point-operation prerequisite. One FFI item call does not imply one HTTP request.
 
 ### 5.3 Build the `PreparedRequest`
 
-A function in `_helpers/_request_item.py` combines the body, partition key,
-container identity, and normalized options:
+Both helpers use `build_item_request`. It selects the operation-specific builder
+and maps its inputs; it does not execute an item. Every builder receives normalized
+request options explicitly and returns only a `PreparedRequest`.
+
+`build_create_item_request` requires a `SerializedDocument` containing the
+resolved body ID and bytes. It receives no body dictionary, ID-generation
+instruction or serialization fallback. Create, upsert, replace and patch all
+delegate to the same bytes-only `_build_write_prepared` function.
+It normalizes an explicit key to typed components or emits the explicit extraction kind.
+The item helper supplies no container RID and performs no routing-header stamping.
+
+`build_request_headers_and_settings` normalizes compatibility option names into validated
+`RequestSettings`, with item, query and resource groups. Trigger sequences remain
+tuples until native header serialization. Conditional precedence and truthy-only
+gates still omit values such as bucket `0`; explicit false controls are retained.
 
 ```python
 PreparedRequest(
-    op="create_item",                         # which operation to run
-    container_link="dbs/contoso/colls/orders",
-    body_bytes=b'{"id":"order-42","pk":"customerA","total":99.5}',
-    partition_key_header='["customerA"]',
-    headers={
-        "preTriggerInclude": "validateOrder",
-        "responsePayloadOnWriteDisabled": True,
-        "containerRID": "abc123==",
-    },
+    op="create_item",
+    container_link="dbs/Contoso/colls/Orders",
+    body_bytes=b'{"id":"order-42","customerId":"customer-17","total":125.5}',
+    partition_key=PartitionKeyInput("extract"),
+    headers={},
+    settings=RequestSettings(no_response=True),
     item_id="order-42",
 )
 ```
 
-The request contains three forms of data:
+`headers` contains caller/default header overrides, not generated service controls.
+`settings` carries priority, session, no-response, exclusions, typed hedging and
+supported request-level `timeout_seconds`, plus operation-specific settings. `partitionKey` and
+`disableAutomaticIdGeneration` have already been consumed and do not cross the boundary.
+Compact UTF-8 is Python serialization configuration, not a request header.
 
-- a **Python object**, such as the original body dictionary;
-- **JSON text**, such as `'["customerA"]'`; and
-- **bytes**, such as `body_bytes`.
-
-Python serializes the body once because these exact JSON bytes are what the service
-must store. The Rust driver passes the body bytes to its HTTP client without
-encoding the document again. The driver builds the rest of the HTTP request:
-`op` determines the operation, the link and item id determine the URL, and the
-headers become HTTP header values.
-
-For this request, the work is divided like this:
-
-| Prepared value | Who finishes it | Result used for network execution |
-|---|---|---|
-| `body_bytes` | Already finished in Python | HTTP body bytes, unchanged by the driver |
-| `partition_key_header` | Driver writes the supplied JSON text as a header value | `x-ms-documentdb-partitionkey: ["customerA"]` |
-| `op="create_item"` | Driver | A create operation sent to the container's documents path |
-| `container_link` | Binding parses names; driver resolves the container | database `contoso`, container `orders` |
-| `item_id` | Driver operation | Identity `order-42` without reparsing the whole body |
-| `headers` | Binding and driver | Typed options plus final HTTP headers and authentication |
-
-There is no double body conversion. The HTTP client accepts a byte body and sends
-those bytes. It still encodes the URL, headers, and HTTP/TLS framing required around
-that body.
-
-Why put everything in one record? It gives both backends one complete description
-of the Rust-boundary request and lets request construction be unit tested without a
-connection. The legacy backend does **not** consume this record; it runs a typed
-`LegacyOperation` made from the original Python arguments. The record is built
-lazily only when the selected backend needs the Rust path.
-
-`PreparedRequest` is a frozen dataclass, so its fields cannot be reassigned. Its
-`headers` field is a normal dictionary and is treated as read-only by convention;
-the dataclass does not deeply freeze that dictionary.
-
-Concretely, `prepared.item_id = "order-99"` raises instead of changing the target
-after preparation. Code could still mutate `prepared.headers["x"]` because the
-dictionary itself is not frozen, so backends follow the rule that this mapping is
-read-only.
-
----
+The same separation applies to database/container requests, throughput requests,
+feed-range requests and `PreparedQuery` page adapters. The adapters preserve
+typed settings when constructing a binding `PreparedRequest`. Absolute deadlines
+belong to the invocation and are passed separately to execution, not stored on
+either prepared record.
+Batch contracts will be introduced with an actual native implementation; the
+existing public legacy batch API is independent of this boundary.
+Settings and their nested groups are frozen and validate values at construction.
+Tuple snapshots prevent caller mutation of trigger/exclusion lists. Header maps
+remain read-only by convention. Exclusions distinguish inheritance (`None`) from
+explicit clearing (`()`); hedging distinguishes inheritance, disabled and enabled.
 
 ## 6. Choose Rust or legacy Python and run the operation
 
-The item coordinator holds one concrete backend object:
+Backend choice precedes helper construction. A Rust item helper builds its
+`PreparedRequest`, calls `execute(prepared, deadline=deadline)` directly, and
+processes the response. There is no `run_item_operation`, builder callback,
+legacy operation or fallback callback in this path.
+Explicitly selected legacy clients use the separate `LegacyItemHelper`.
 
-- `RustBackend` when the client selected Rust; or
-- `LegacyBackend` / `AsyncLegacyBackend` for the existing Python implementation.
+`RustBackend.execute` resolves the binding function using
+`_get_binding_function`, then supplies the driver handle and prepared request.
+The `aio` backend has the same `_get_binding_function` name and looks up the
+native export with its `_async` suffix.
 
-For a single-response operation it calls:
+Rust's shared readers delegate to `wire/settings.rs`, which extracts named typed
+attributes and performs final service-header encoding or driver-type conversion.
+The internal `RequestHeadersAndOptions` result is not a Python option dictionary.
+Unknown normalized Rust options always raise `TypeError`; `COSMOS_WIRE_STRICT`
+no longer controls this behavior. Raw caller headers remain a separate input.
 
-```text
-backend.run_operation(...)
-```
+Private protocol version 3 requires typed settings and partition keys; rebuilding
+`_rust.pyd` is required. Python compares settings and `PartitionKeyInput` field
+inventories with the native reader's exported schema before acquiring a driver handle.
+Native readers also check the request-envelope version. A mismatch fails when Rust is selected,
+without blocking import or use of the legacy backend.
+There is no dual-protocol shim for older direct callers of the private extension.
+The binding's separate `timeout_seconds` argument still represents the remaining
+monotonic deadline, not a header or client transport configuration.
 
-The call supplies a lazy `PreparedRequest` builder, the existing Python operation,
-and the Rust response parser. This lets the coordinator describe the operation once
-without checking the backend type throughout its code.
-
-The two paths receive different forms on purpose:
-
-```text
-RustBackend   -> call prepare_request() -> send PreparedRequest -> parse BackendResponse
-LegacyBackend -> invoke LegacyOperation made from the original Python arguments
-```
-
-If Contoso uses the legacy client, `prepare_request()` is never called. The old
-implementation keeps receiving its historically shaped arguments, while the Rust
-path receives the new frozen record.
-
-### When the Rust backend runs
-
-`RustBackend` calls the compiled binding function for `create_item`. The binding
-converts Python values into the Rust types expected by the driver. For example,
-Python `bytes` becomes a Rust byte buffer.
-
-For Contoso, the boundary conversion looks like this:
-
-| Python value | Rust value used by the binding/driver |
-|---|---|
-| `"dbs/contoso/colls/orders"` | owned Rust strings `"contoso"` and `"orders"` |
-| `b'{"id":"order-42",...}'` | `Vec<u8>`, an owned byte buffer |
-| `'["customerA"]'` | driver's partition-key value for `customerA` |
-| `item_id="order-42"` | Rust `String` used to identify the item |
-| `responsePayloadOnWriteDisabled=True` | typed “do not return write content” option |
-| remaining header entries | typed driver options or HTTP header name/value pairs |
-
-PyO3 performs the Python-to-Rust extraction. No live Python dictionary is handed to
-the driver thread; the binding first copies out the Rust-owned strings, bytes, and
-options it needs.
-
-For a synchronous call, the binding releases Python's Global Interpreter Lock while
-waiting for Rust network work, allowing other Python threads to run. For an
-asynchronous call, it returns a Python awaitable while Tokio runs the Rust future.
-Tokio is the runtime that makes progress on asynchronous Rust work.
-
-For a synchronous call, the observable order is:
-
-```text
-T0  Python enters container.create_item(...).
-T1  The binding extracts Rust-owned inputs while holding the Python lock.
-T2  The binding releases that lock and waits for the Tokio future.
-T3  Other Python threads may run while the Cosmos request is in flight.
-T4  The driver completes; the binding takes the Python lock again to build the tuple.
-T5  Python response handling returns the CosmosDict.
-```
-
-For an asynchronous call, no Python worker thread waits for the network:
-
-```python
-result = await async_container.create_item(body=order)
-```
-
-The binding starts the same Rust driver future on the process-wide Tokio runtime and
-returns an awaitable to Python. Python's event loop can run other coroutines until the
-Rust future completes.
-
-The driver then:
-
-1. resolves the account, database, container, and partition;
-2. signs the request;
-3. chooses the service region and endpoint;
-4. sends the request;
-5. retries eligible temporary failures; and
-6. returns status, headers, body bytes, and diagnostics.
-
-Using the fixed example, those broad steps mean:
-
-```text
-resolve container  -> contoso / orders
-resolve item       -> partition customerA, id order-42
-sign request       -> use this driver's credential
-choose endpoint    -> a permitted region for contoso.documents.azure.com
-send body          -> b'{"id":"order-42","pk":"customerA","total":99.5}'
-receive result     -> 201, response headers, empty body, diagnostics
-```
-
-For Contoso the service returns `201 Created`. Because `no_response=True`, the
-body is empty. Without that setting, the body would contain the stored document
-and service fields such as `_etag`, `_rid`, and `_ts`.
-
-### When the legacy backend runs
-
-The legacy backend invokes the existing Python operation and returns its public
-result. The coordinator does not use `None` or a failed Rust attempt as a signal to
-switch implementations; the selected backend owns which operation runs.
-
-For example, if the Rust driver cannot connect to the service, the call raises a
-transport error. It does **not** retry the same write through legacy Python, because
-the first attempt might already have reached Cosmos and repeating it through another
-engine could create an ambiguous duplicate.
-
-Paged operations such as query use a separate `execute_pages` method because they
-return a page plus a continuation value. 
----
+The synchronous binding releases the GIL while waiting for asynchronous Rust work.
+The async binding returns an awaitable. Neither path reserializes the order or
+replays a failure through legacy Python.
 
 ## 7. Turn the response into the public Python result
 
-The Rust driver returns:
+The response boundary remains:
 
 ```text
-status + sub-status + headers + body bytes + diagnostics
+native (status, sub-status, response headers, response body bytes, diagnostics)
+    -> BackendResponse
+    -> CosmosDict or existing Cosmos exception
 ```
 
-An illustrative successful binding tuple for Contoso is:
+A **hypothetical item response**, not an observed service result, is
+`(201, 0, {"x-ms-request-charge": "5.0"}, b"", None)`.
+`process_backend_response` replaces latest response headers before evaluating status.
+An empty successful response becomes an empty `CosmosDict` retaining its own headers.
 
-```python
-(
-    201,
-    0,
-    {"x-ms-request-charge": "5.24", "etag": '"0000-abcd"'},
-    b"",
-    "<Rust driver diagnostics>",
-)
-```
+The public wrapper then calls `complete_item_response`. It checks the deadline
+before calling `on_response` once with independent response-header and nested-body
+snapshots. A falsey callable is still called. Mutating the hook inputs does not
+change the returned result or shared header state. A hook exception propagates
+without replaying the write.
 
-The exact request charge and etag come from the service; the values above only make
-the response shape visible.
-
-Customer code expects Python SDK types. Response handling performs that conversion.
-
-### Success
-
-For a successful create it:
-
-1. records the latest response headers on the client;
-2. parses a non-empty JSON body, if one was returned;
-3. wraps the result in the SDK's dictionary-like response type; and
-4. calls `response_hook` once.
-
-For Contoso, `no_response=True` means the result is empty but still carries
-response-header information.
-
-The transformation is:
-
-```text
-(201, headers, b"")
-    -> update client.last_response_headers
-    -> CosmosDict({}, response_headers=headers)
-    -> on_response(headers, {})
-    -> return the empty CosmosDict
-```
-
-If Contoso had omitted `no_response=True`, the service body could instead be:
-
-```json
-{
-  "id": "order-42",
-  "pk": "customerA",
-  "total": 99.5,
-  "_rid": "service-item-rid",
-  "_etag": "0000-abcd",
-  "_ts": 1784600000
-}
-```
-
-Response handling would parse those bytes and return a populated `CosmosDict`.
-
-### Service error
-
-When the service returns an HTTP status, the SDK maps important statuses to the
-same public exceptions as the legacy path:
-
-| Status | Python exception |
-|---|---|
-| `404` | `CosmosResourceNotFoundError` |
-| `409` | `CosmosResourceExistsError` |
-| `412` | `CosmosAccessConditionFailedError` |
-| Other failures | `CosmosHttpResponseError` |
-
-A duplicate `order-42` becomes `CosmosResourceExistsError`, not a generic Rust
-error.
-
-That failure still has a real service response:
-
-```text
-service returns 409 + headers + JSON error body
-driver returns those response parts
-binding preserves status 409
-Python maps 409 -> CosmosResourceExistsError
-```
-
-Contoso can catch the same exception class on both backends.
-
-### Failure before a service response exists
-
-A connection or client-validation failure may occur before the service returns a
-status, headers, or body. The binding reports a transport failure, and Python
-converts it to the corresponding Azure Core service error. It cannot create a
-status-specific Cosmos exception because no service status exists.
-
-For example, if DNS lookup for the account endpoint fails, there is no `404`, `409`,
-or `500` from Cosmos—there is no Cosmos response at all. Calling it
-`CosmosResourceNotFoundError` would falsely claim the service said the item was
-missing, so the SDK raises `ServiceResponseError` instead.
-
-The finished result or exception returns through the coordinator and public method
-to the customer's code.
-
----
+Preparation, metadata, execution and parsing errors skip the success hook.
+Service errors retain status-specific Python exceptions; response-less transport
+errors do not invent a Cosmos HTTP status.
 
 ## 8. Why the Rust driver is shared
 
-First, “shared” needs a precise boundary. It means **shared inside one running
-Python process**, not shared across every machine and not one driver for all
-accounts.
+The Rust registry retains drivers within the current process. Matching endpoint,
+credential identity and compatible client configuration can share an entry.
+Python retains its driver-handle string, not the driver object. `acquire_driver_handle`
+acquires a client reference; `release_driver_handle` releases it.
 
-If Contoso runs four web-worker processes on one server, each process has its own
-Rust runtime, driver cache, and drivers. Memory cannot be shared through this map
-across process boundaries. Inside one of those processes, matching clients can reuse
-one driver.
-
-Four scopes are involved:
-
-| Scope | What exists there |
-|---|---|
-| One Python process | One Tokio runtime, one driver runtime, and one driver-cache map |
-| One `(endpoint, credential, config)` key | One cached `CosmosDriver` and connection pool |
-| One `CosmosClient` | One backend object and, after first use, one handle naming its cached driver |
-| One operation | Its own prepared inputs, timeout, response, and diagnostics |
-
-The driver owns expensive, reusable state:
-
-- network connection pools;
-- account and partition information;
-- regional routing information; and
-- retry and diagnostics machinery.
-
-Building that state for every operation would repeatedly open connections and fetch
-the same information. The binding keeps one shared driver for each distinct
-combination of endpoint, credential, and relevant configuration.
-
-Consider three clients in the **same Python process**:
-
-| Client | Endpoint | Credential | Preferred region | Shares which driver? |
-|---|---|---|---|---|
-| A | Contoso account | key K1 | East US | Driver D1 |
-| B | Contoso account | key K1 | East US | Driver D1, shared with A |
-| C | Contoso account | key K2 | East US | Driver D2, because the credential differs |
-
-If client B instead preferred West Europe, it would also get a separate driver
-because the configuration differs. A driver stores its credential and routing
-settings; sharing across different values could sign B's request with A's key or
-silently use A's region settings.
-
-Python does not hold the Rust driver directly. It holds a short string called a
-**handle**. Every operation passes the handle to the binding, which uses it to find
-the shared driver in a Rust-side map.
-
-For clients A and B, both handles contain the same cache-key parts—endpoint plus
-safe credential/config fingerprints—so both look up D1. The actual master key is
-not placed in the handle.
-
-The binding counts how many clients use each driver:
-
-```text
-client A first uses D1       -> D1 count 1
-client B first uses D1       -> D1 count 2
-client C first uses D2       -> D2 count 1
-client A closes              -> D1 count 1; B still needs it
-client B closes              -> D1 count 0; remove D1 and its connections
-client C closes              -> D2 count 0; remove D2
-```
-
-Without the count, closing A could tear down D1 while B was still using it.
-
-The driver is built on the first operation rather than during client construction.
-If several asynchronous calls arrive during the first build, they wait for the same
-build instead of creating duplicates.
-
-For example, a cold Contoso service may start 50 order coroutines at once:
-
-```text
-coroutine 1 reaches _ensure_handle -> starts one background driver build
-coroutines 2–50                   -> await that same build future
-driver build completes            -> all 50 receive the same client handle
-operations begin                  -> all use the same connection pool
-```
-
-This is called *coalescing* only after the behavior is clear: many callers share
-one in-progress build. If client A closes while its build is still running, the
-newly returned handle is immediately closed and discarded rather than being stored
-on an already closed client.
-
-Cancellation also needs a concrete path. Suppose Contoso allows three seconds for
-checkout:
-
-```python
-await asyncio.wait_for(
-    async_container.create_item(body=order),
-    timeout=3,
-)
-```
-
-The sequence is:
-
-```text
-T0       Python awaits create_item; Tokio starts the driver task.
-T+3 s    wait_for times out and cancels the Python awaitable.
-T+3 s    cancelling drops the binding's bridging future.
-T+3 s    its AbortOnDrop guard calls abort() on the Tokio task.
-after    the task stops doing further client-side work instead of running detached.
-```
-
-Without the abort guard, dropping Tokio's task handle would detach the operation:
-it could keep a connection occupied and continue retrying or spending request units,
-then throw away the response because Python had stopped waiting.
-
-Cancellation has an important limit: it stops remaining client-side work; it cannot
-undo a write Cosmos already accepted. If Cosmos stored `order-42` just before the
-three-second timeout but the reply was delayed, Contoso may see a timeout even though
-the item exists. Application retry logic must still account for that normal ambiguity
-of cancelling a network write.
-
-
-
----
+Each item call uses the retained driver handle. Native container resolution and
+item execution share that driver; Python preparation no longer obtains metadata.
+The binding still performs the necessary handle lookup for each item entry.
 
 ## 9. The whole call in one list
 
-1. `Container.create_item` receives the customer's arguments.
-2. The public method warns about obsolete create arguments and gathers settings.
-3. `ItemHelper` or `AsyncItemHelper` coordinates the item operation.
-4. The coordinator holds the backend selected for this client.
-5. A request-options function normalizes the setting names.
-6. The metadata provider supplies the container RID and partition-key definition.
-7. Request preparation extracts `"customerA"`, serializes the body once, and creates
-   a `PreparedRequest`.
-8. The backend runs either the Rust binding/driver or the existing Python operation.
-9. A Rust success becomes the SDK's dictionary-like result.
-10. A Rust service status becomes the matching public Cosmos exception.
-11. The result or exception reaches the customer's call.
+1. Validate the public call and retain `on_response`.
+2. Validate a shallow document copy, resolve its ID and retain one serialized snapshot.
+3. Normalize and validate request options once.
+4. Enter the backend, which calls `build_request`.
+5. Select the explicit key or automatic-extraction marker.
+6. Build one request with actual headers and separate request options, without a resolved RID.
+7. Enter the selected item binding once; resolve the container and extract an omitted document key from the outgoing bytes.
+8. Execute through the driver, without legacy replay.
+9. Convert the native tuple to `BackendResponse`, then a result or exception.
+10. Check the deadline, call the isolated success hook once and return the result.
+
+## 10. Where to go next
+
+The complete 12-chunk explanation, with matching numbered sequence diagrams, is
+`V5/use-cases/01-sync-python-to-async-rust.md`. Use cases 02 and 03 remain placeholders.
+The binding's request protocol is also documented in `../azure_cosmos_rust/README.md`.
+
+## 11. Related offer and feed preparation
+
+Offers and compatibility feed pages now follow the same direct-preparation rule as
+items: prepare values for Rust, not a signed legacy request for a different transport.
 
 ```text
-Python public API and SDK behavior
-        -> backend boundary
-        -> binding converts Python values to Rust values
-        -> driver performs Cosmos network execution
-        -> response handling restores Python SDK result types
+normalized options + unsigned client defaults
+    -> pure request builder
+    -> PreparedRequest (offers) or PreparedQuery (feeds)
+    -> existing binding entry
+    -> driver-owned authentication, defaults and session management
 ```
 
----
+`_helpers/_request_offer.py` owns the two offer builders. The lookup retains the
+existing query for a database/container's offer; replacement extracts the offer RID
+from `_self` and sends the full updated body. Connection adapters only supply defaults;
+the async callbacks reuse synchronous preparation because it performs no I/O.
 
+`_query_rust_routing.py` directly prepares database/container list/query pages and
+compatible internal item query/read-feed pages. In both connection implementations,
+`GetHeaders`, `RequestObject` and legacy session preparation execute only on a
+legacy-selected path, including an allowed capability fallback. Public retained
+item query/read-all/change-feed pagers remain independent of these compatibility routes.
+
+Client defaults are overlaid by case-insensitive caller headers and then normalized
+service options. Explicit activity IDs and supported session headers are preserved,
+but Python does not generate a new activity ID or read its session cache for Rust.
+Master resources still ignore typed session-token options; raw caller headers retain
+their existing meaning. Response hooks, diagnostics and response-state finalization
+remain on their existing paths.
+
+For feed pages, page size and continuation have a single source of truth:
+non-`None` typed options win, otherwise raw headers are promoted to typed fields.
+The prepared header map has neither paging header; the binding adapter adds the wire
+values at dispatch. Invalid raw page-size text raises explicitly.
+
+The regeneration set and customer-override gate remain distinct. Master-resource
+feeds reject unsupported overrides without replay; offers retain their compatibility
+fallback, now including those overrides. This does not extend timeout/deadline support,
+change the sibling driver, or establish a measured latency improvement.
+
+## 12. Typed partition-key boundary
+
+`PreparedRequest`, `PreparedQuery` and the reserved batch record carry
+`partition_key: PartitionKeyInput`, not an HTTP header string.
+`_helpers/_partition_key.py` normalizes public inputs; `wire/partition_key.rs`
+extracts the tuple directly into driver components while holding the GIL.
+Only Rust-owned values enter asynchronous driver work.
+
+| Meaning | Kind | Values |
+|---|---|---|
+| Explicit key | `components` | `("customer-17",)` |
+| Explicit null | `components` | `(None,)` |
+| Missing property | `components` | `(UNDEFINED_PARTITION_KEY,)` |
+| Extract from outgoing document | `extract` | `()` |
+| Whole-container scope | `cross_partition` | `()` |
+| Legacy empty sentinel | `empty_sentinel` | `()` |
+| Explicit empty sequence | `empty_sequence` | `()` |
+
+The undefined marker is private, immutable and distinct from null. Public APIs
+do not accept Ellipsis as a key. Scalar booleans remain distinct from numbers,
+numeric conversion retains the driver's finite-f64 behavior, and component order
+is preserved. Point operations retain their existing restrictions; the two empty
+sources remain distinct for feed-range resolution. Nonpartitioned resources ignore
+the key field rather than treating it as a logical partition.
+
+Explicit string components combine valid UTF-16 surrogate pairs before native
+extraction, matching the former JSON transport and automatic extraction from
+document bytes. This applies to scalar and hierarchical keys, including query,
+change-feed and feed-range inputs. ASCII keys bypass normalization; unpaired
+surrogates remain unchanged and still fail native string extraction rather than
+being silently replaced. Persisted bookmark representations remain unchanged.
+
+Retained query/change-feed bodies no longer embed another JSON-encoded partition
+key. Query bookmark identities and change-feed bookmarks retain their existing
+persisted representation; JSON at that persistence boundary is intentional, not
+the native request transport. Explicit customer HTTP partition-key headers are
+decoded once at their input boundary.
+
+`legacy_partition_key_header` in `_helpers/_legacy_partition_key.py` remains only
+for legacy execution/parity. The corresponding native JSON parsers are test-only
+oracles. The driver still produces the actual service header. No driver capability,
+partitionless support, or public API signature changes are implied.
+
+## 13. Write body snapshots and encoding
+
+The final architecture retains the Python wrapper and binding. Serialization is
+a wrapper responsibility, not a dependency on the temporary legacy pipeline.
+
+`normalize_item_arguments` produces a frozen `SerializedDocument(body_id, body_bytes)`
+for create/upsert/replace. Patch serializes its canonical operations envelope in
+`_helpers/_patch_item.py`. All four snapshot before backend dispatch, including on
+async execution, and share `_build_write_prepared`. Builders receive no mutable
+document/operation list and have no serialization fallback. Reusing a prepared
+snapshot does not generate another ID or encode the payload again.
+
+| Operation | Preserved preparation rules |
+|---|---|
+| Create | Accept a mapping, validate the ID, optionally generate it in a shallow top-level copy, and reject non-finite numbers before dispatch. |
+| Upsert | Do not generate an ID; forward an available body ID without inventing a missing one. |
+| Replace | Preserve the explicit target ID independently of the payload ID; do not rewrite the body. |
+| Patch | Retain the explicit target ID/key, normalize `increment` to `incr`, and reject non-finite numbers before dispatch. |
+
+Upsert/replace retain their existing non-finite-number serialization policy;
+this does not promise acceptance by native parsing or the service. Create's body
+ID is resolved before native key extraction, including when the partition path is
+`/id`. Explicit keys still travel separately as `PartitionKeyInput`; automatic
+extraction reads the exact outgoing bytes using native container metadata.
+
+Encoding remains in `_helpers/_wire_encoding.py`: compact JSON separators, insertion
+order, numeric formatting, escaped non-ASCII by default, and opt-in compact UTF-8
+for singleton writes. `encode_json_to_utf8` retains the legacy behavior for UTF-16
+text: combine surrogate pairs into Unicode scalars and escape remaining unpaired
+code units. Body IDs likewise combine pairs so their native representation agrees
+with the JSON body. Metadata and query bodies retain their existing encoding
+defaults. Already-encoded replacement bodies retain their existing handling.
+
+**Native limitation:** escaped unpaired surrogates can be encoded by Python but
+are rejected by the full `serde_json::Value` parse used for automatic key
+extraction, even outside key fields. Encoding parity is not proof of end-to-end
+support for these documents. They are not silently rewritten or routed through
+legacy Python.
+
+The optimization removes the recursive create-body clone and its retained
+dictionary, not every allocation: JSON encoding still creates text and UTF-8 bytes,
+and a shallow top-level dictionary is used for document preparation. A completed
+snapshot is immutable; it does not guarantee an atomic snapshot against concurrent
+mutation while serialization itself is running.
+
+**Removable legacy code:** `legacy_item_helper._prepare_legacy_create_item_body`
+retains recursive copying and pre-I/O encoding validation only because the
+temporary legacy pipeline still accepts dictionaries. Delete it with that adapter,
+not the retained document serializer, ID policy or UTF-8 codec. No driver change
+or protocol-version bump is needed for this body-lifetime cleanup.
+
+## 14. Names, effects and dispatch contracts
+
+These conventions describe retained private wrapper/binding code, not public
+API renames or changes to external driver identifiers.
+
+| Name | Contract |
+|---|---|
+| `build`, `normalize` | Return new values without changing caller-owned input. Local copies may be changed. |
+| `serialize`, `parse` | Encode or decode values without allocating IDs, invoking hooks, or publishing client state. A serialized value object is a valid result. |
+| `validate` | Check without mutation; return `None` or raise. |
+| `apply`, `stamp` | Mutate the target argument and return `None`. |
+| `prepare` | In-place wrapper preparation of an owned argument mapping. |
+| `get` | Retrieve an existing selection/value; do not choose another backend. |
+| `resolve` | Construction-time credential/backend selection, not per-request function lookup. |
+| `read`, `write`, `execute`, `fetch` | Execution work, not a local request builder disguised as an execution step. |
+
+`build_item_request` constructs a request from normalized arguments.
+`_build_item_headers_and_settings` and `build_request_headers_and_settings`
+return new header/settings values. `apply_patch_item_options` performs explicit
+mutation on copied options during normalization; `validate_rust_item_options`
+does not modify those options.
+
+`parse_backend_response(response)` is pure, including copying the response's
+header mapping. `process_backend_response` is the effectful path: it consumes
+single-use response headers, publishes them before body decoding or mapped errors,
+and invokes the optional success callback only after successful decoding.
+`complete_item_response` retains deadline enforcement, isolated hook arguments
+and result return. Read/create/patch use that same helper without a read-specific
+alias. Changing names does not move callbacks into retries.
+
+The temporary migration ports on both backends accept
+`build_request: Callable[[], PreparedRequest]` and a synchronous `process_response`
+callback. Their page builders return `PreparedQuery` directly. Point helpers do
+not use these ports or callbacks. All current builders perform local work, so no
+awaitable builder contract or coroutine shim remains. Async point execution is
+`await backend.execute(prepared, deadline=deadline)`. Python classes/modules carry async
+context; native functions in the shared `_rust` namespace retain their `_async`
+suffix because both entrypoints coexist there.
+
+For paging, `STATELESS_QUERY_TO_BINDING_METHOD` and
+`CURSOR_QUERY_TO_BINDING_METHOD` represent different call signatures.
+`get_page_binding_method` selects once using the operation and
+`cursor is not None`. The pager creates its cursor lazily at its first fetch
+through the backend factory; dispatch never writes into a caller-owned dictionary.
+Retained read-all, query and change feeds use `ItemFeedCursor` and
+`fetch_page_with_cursor` / `fetch_page_with_cursor_async` from
+`wire/item_feed.rs`. Logging names the actual selected export. Missing required
+cursor exports raise a rebuild error before driver acquisition, not a stateless
+or legacy fallback. The old read-all-specific cursor exports and change-feed
+binding aliases are removed; public `query_items_change_feed` is unchanged.
+
+A **backend** is the Python dispatch object; a **driver** is the native
+`CosmosDriver` identified by a handle. The **runtime** owns process-wide settings
+and remains a distinct concept. `register_driver_client` / `release_driver_client`
+manage Python reservations, not native handle references. Their private identity
+helpers maintain counts; `StrictDriverIsolationError` reports strict isolation
+conflicts. Transaction rollback, provisional holds and frozen runtime policies
+are unchanged. Legitimate references to a service query engine are not renamed.
+
+Rebuild the extension with the Python wrapper after native export renames.
+The request data schema remains protocol 3. No driver-crate or public API change,
+new capability, or measured performance improvement is implied.
+
+## 15. Linear execution and cohesive helper modules
+
+Point helpers own build -> execute -> process directly. `execute` takes a
+non-optional `PreparedRequest` and returns a `BackendResponse` or raises; `None`
+is neither a no-op request nor a fallback response. Concrete Rust executors reject
+a missing native reply with `BackendProtocolError`. Empty successful bodies still
+produce response records with status and headers.
+
+`PreparedRequest` and `PreparedQuery` have no `deadline` field.
+`execute(..., deadline=...)` and `execute_pages(..., deadline=...)` take the
+existing absolute monotonic budget as a keyword-only argument. Conversion to the
+native remaining duration stays after lazy initialization and request adaptation.
+Cursor pages retain their outer native budget; stateless feeds retain their
+existing driver request-timeout path and binding signature. This refactor does
+not add deadline support to previously unsupported native entrypoints.
+
+One public page fetch keeps one budget across internal empty pages. The next
+public page fetch creates a fresh budget. Page preparation still caps the typed
+driver request duration against that budget. Wrapper completion checks and
+async cancellation draining are unchanged; patch execution and completion stay
+in the same cancellable task. Customer hook errors are not reclassified or replayed.
+
+| Retained module | Responsibility |
+|---|---|
+| `_wire_encoding.py` | JSON/UTF-8 body encoding and RU header-value formatting. |
+| `_document.py` | ID preparation and immutable document snapshots. |
+| `_item_prep.py` | Public create/read/patch argument rules, item budgets and patch snapshots. |
+| `_request_settings.py` | Option normalization, header ownership/defaults, RID stamping and typed settings construction. |
+| `_response_parse.py` | Pure decoding, response-state publication and isolated completion hooks. |
+
+Ten former helper modules are removed without forwarding shims; the directory
+now contains 31 Python files including `__init__.py`. Shared path parsing and
+resource validation remain outside item preparation. `_legacy_partition_key`
+remains isolated for eventual deletion. Backend `RequestSettings` type definitions
+remain separate from helper normalization.
+
+The temporary migration ports now accept plain legacy callables and a centralized
+routing decision (section 17). Frozen-record caveats, backend lifecycle sharing, credential lifetime
+management and the driver crate are unchanged. No native ABI change or additional
+extension rebuild is required by this execution/module cleanup; protocol 3 remains.
+
+## 16. Preparation ownership and remaining dependency reductions
+
+Public create wrappers call `prepare_create_item_kwargs` once, with or without
+a timeout. Rust and legacy helpers require an explicit `deadline` keyword,
+including `None`; they do not repeat public preparation or infer a budget from
+the presence of an internal marker. Read, patch and read-many retain their
+existing deadline propagation. Direct helper tests use the same preparation
+entrypoint rather than relying on implicit revalidation.
+
+`ContainerProxy._get_item_helper` lazily caches the Rust helper against the item
+context's identity. Repeated calls avoid helper construction and backend-name
+selection. Replacing the context invalidates that cache. Operation inputs remain
+local to each call; only immutable defaults and the intentionally shared latest
+response-header state are retained. Legacy adapters are not cached: their
+container-bound metadata callbacks would introduce a proxy/helper reference cycle.
+
+Read/delete/replace/patch no longer construct document-link strings in public
+wrappers. Legacy preparation builds those links from container and item IDs.
+`prepare_item_target` preserves mapping `_self` validation and snapshots that value
+for the legacy adapter; Rust discards this compatibility input and routes by
+container plus item ID. Mapping fields are not re-read by the adapter. Arbitrary
+keyword arguments cannot override the target. The old `_get_document_link` helper
+is removed, without relaxing the existing mapping-input requirement.
+
+`complete_item_response` checks the deadline even without a hook. With a hook,
+an empty result produces a fresh empty `CosmosDict` without `deepcopy`; a nonempty
+result still receives a deep body snapshot. Both hook header maps remain isolated
+from each other and from the returned result. No-hook calls copy neither body nor
+hook headers.
+
+These are source-level and regression-verified reductions, not latency benchmark
+claims. A warmed create uses one item-dispatch crossing and one document
+serialization; successful response JSON is decoded only for a nonempty body.
+
+## 17. Migration policy and pager-owned cursors
+
+There are two implemented wire shapes: single responses and pages. Migrated
+point and retained-feed helpers execute directly. Remaining compatibility
+coordinators pass `OperationRouting`, a lazy request builder, a synchronous
+response processor and an optional plain legacy callable. Async legacy
+callables must return awaitables. The named legacy-port record and speculative
+batch records, executor stubs and table are removed; public batch APIs remain.
+
+`_backend/capabilities.py` is the sole migration-policy table. It records allowed
+wire operations, fallback permission and unsupported-call diagnostics. Missing
+policy and mismatched operation identities fail closed. Request eligibility
+remains request-dependent: a supported operation does not imply that every
+timeout, header override or transport option is representable. Compound
+workflows retain their shared eligibility decision and contextual diagnostics.
+Explicit core-python selection bypasses Rust preparation and policy evaluation.
+
+Compatibility routing is permitted only before execution. Ineligible requests
+may use legacy when their policy allows it; static page preflight may detect a
+missing module/export before driver acquisition. Builder errors, driver/query
+planning failures, transport errors, empty reply contracts, iterator-finalization
+errors and response-hook failures never trigger replay. Legacy-only feed-range
+shapes are selected before dispatch rather than caught as `ValueError` afterwards.
+The compatibility counter includes both allowed pre-dispatch routes, not explicit
+core-python selection or failed/rejected Rust calls.
+
+`PreparedQuery.cursor` names a concretely typed `ItemFeedCursor`, declared in the
+extension stub. Runtime native imports remain confined to the backend boundary.
+The pager creates it lazily, keeps it across internal and public pages, and
+releases it on completion or invalidation after cancellation is drained.
+`None` means stateless dispatch; no mutable cursor-storage dictionary remains.
+Frozen `QueryScope` preserves the existing JSON field names, nulls and arrays,
+including the representation used to compute bookmark identity.
+
+The native protocol remains 3; this Python-only cleanup requires no additional
+extension rebuild. Python construction reservations and acquired native driver
+references retain their different lifetimes. Typed settings and unconditional
+schema checks remain in effect; cross-language mismatches are explicit runtime
+compatibility errors, not universally compile-time errors. Shared routing
+matrices supplement, rather than replace, public encoding, mutation, deadline,
+cancellation and hook regressions.
+Cold driver initialization and service latency must be measured separately.

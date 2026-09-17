@@ -49,6 +49,8 @@ All fakes, no Cosmos account.
 """
 
 from __future__ import annotations
+from common.typed_requests import legacy_partition_key_from_request
+from common.typed_requests import wire_headers, settings_options, legacy_settings
 
 import asyncio
 import inspect
@@ -142,13 +144,13 @@ def test_create_database_prepared_request_preserves_body_and_options():
 
     assert prepared.op == OP_CREATE_DATABASE
     assert prepared.container_link == ""
-    assert prepared.partition_key_header == "[]"
+    assert legacy_partition_key_from_request(prepared) == "[]"
     assert json.loads(prepared.body_bytes) == {"id": "db1"}
-    assert prepared.headers["offerThroughput"] == 400
-    assert prepared.headers["autoUpgradePolicy"] == autoscale
-    assert prepared.headers["throughputBucket"] == 7
-    assert prepared.headers["initialHeaders"] == {"x-custom": "value"}
-    assert prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 3.5
+    assert wire_headers(prepared)["x-ms-offer-throughput"] == '400'
+    assert wire_headers(prepared)["x-ms-cosmos-offer-autopilot-settings"] == autoscale
+    assert wire_headers(prepared)["x-ms-cosmos-throughput-bucket"] == '7'
+    assert all(wire_headers(prepared).get(key.lower()) == str(value) for key, value in ({"x-custom": "value"}).items())
+    assert settings_options(prepared)["timeout_seconds"] == 3.5
 
 
 def test_read_database_prepared_request_is_bodiless():
@@ -167,8 +169,8 @@ def test_read_database_prepared_request_is_bodiless():
     assert prepared.op == OP_READ_DATABASE
     assert prepared.body_bytes == b""
     assert prepared.item_id == "db1"
-    assert prepared.headers["throughputBucket"] == 7
-    assert prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 3.5
+    assert wire_headers(prepared)["x-ms-cosmos-throughput-bucket"] == '7'
+    assert settings_options(prepared)["timeout_seconds"] == 3.5
 
 
 def test_read_database_prepared_preserves_legacy_option_headers():
@@ -201,12 +203,13 @@ def test_read_database_prepared_preserves_legacy_option_headers():
 
     prepared = build_read_database_prepared("db1", options)
 
-    assert prepared.headers["initialHeaders"] == initial_headers
-    assert prepared.headers["initialHeaders"] is not initial_headers
+    assert all(wire_headers(prepared).get(key.lower()) == str(value) for key, value in (initial_headers).items())
+    assert wire_headers(prepared) is not initial_headers
+    from azure.cosmos._helpers._request_settings import OPTION_HEADER_NAMES
     for option_key, option_value in options.items():
         if option_key not in ("initialHeaders", "sessionToken"):
-            assert prepared.headers[option_key] == option_value
-    assert "sessionToken" not in prepared.headers
+            assert wire_headers(prepared)[OPTION_HEADER_NAMES[option_key]] == str(option_value)
+    assert "sessionToken" not in wire_headers(prepared)
 
 
 @pytest.mark.parametrize(
@@ -226,7 +229,7 @@ def test_read_database_prepared_omits_falsy_legacy_headers(option_key):
     """Prove empty Python-only options do not become request headers."""
     prepared = build_read_database_prepared("db1", {option_key: None})
 
-    assert option_key not in prepared.headers
+    assert option_key not in wire_headers(prepared)
 
 
 def test_read_database_prepared_preserves_legacy_id_stringification():
@@ -334,7 +337,7 @@ class _RustBackend(CosmosBackend):
         self.prepared = None
         self.prepared_requests = []
 
-    def execute(self, prepared):
+    def execute(self, prepared, *, deadline=None):
         """Record the prepared request and return the next canned reply from the queue."""
         self.prepared = prepared
         self.prepared_requests.append(prepared)
@@ -359,7 +362,7 @@ def test_sync_helper_routes_to_rust_and_parses_response():
 
     assert result["id"] == "db1"
     assert backend.prepared.op == OP_CREATE_DATABASE
-    assert backend.prepared.headers["offerThroughput"] == 400
+    assert wire_headers(backend.prepared)["x-ms-offer-throughput"] == '400'
     assert connection.last_response_headers["x-ms-request-charge"] == "5.25"
     assert hooks[0][1] == {"id": "db1", "_rid": "rid1"}
 
@@ -389,8 +392,8 @@ def test_sync_read_database_routes_to_rust_and_parses_response():
     assert result == {"id": "db1", "_rid": "existing"}
     assert backend.prepared.op == OP_READ_DATABASE
     assert backend.prepared.item_id == "db1"
-    assert backend.prepared.headers["throughputBucket"] == 7
-    assert backend.prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 3.5
+    assert wire_headers(backend.prepared)["x-ms-cosmos-throughput-bucket"] == '7'
+    assert settings_options(backend.prepared)["timeout_seconds"] == 3.5
     connection.ReadDatabase.assert_not_called()
     assert hook_calls == [
         ({"x-ms-request-charge": "1.0"}, {"id": "db1", "_rid": "existing"})
@@ -479,7 +482,7 @@ def test_sync_database_proxy_read_selects_rust_backend():
 
     assert result == {"id": "db1", "_rid": "existing"}
     assert backend.prepared.op == OP_READ_DATABASE
-    assert backend.prepared.headers["throughputBucket"] == 7
+    assert wire_headers(backend.prepared)["x-ms-cosmos-throughput-bucket"] == '7'
     connection.ReadDatabase.assert_not_called()
 
 
@@ -581,11 +584,11 @@ def test_database_read_preserves_supported_options_and_refreshes_properties(data
     assert prepared.op == OP_READ_DATABASE
     assert prepared.item_id == "db1"
     assert prepared.body_bytes == b""
-    assert prepared.headers["initialHeaders"] == {"x-my-app": "catalog"}
-    assert prepared.headers["throughputBucket"] == 7
-    assert prepared.headers.get(Constants.OVERALL_TIMEOUT_SECONDS) == timeout
+    assert all(wire_headers(prepared).get(key.lower()) == str(value) for key, value in ({"x-my-app": "catalog"}).items())
+    assert wire_headers(prepared)["x-ms-cosmos-throughput-bucket"] == '7'
+    assert settings_options(prepared).get("timeout_seconds") == timeout
     if timeout is None:
-        assert Constants.OVERALL_TIMEOUT_SECONDS not in prepared.headers
+        assert Constants.OVERALL_TIMEOUT_SECONDS not in wire_headers(prepared)
     _call_database_read(case)
     assert case.backend.execute.call_count == 2
     case.connection.ReadDatabase.assert_not_called()
@@ -683,7 +686,7 @@ def test_database_read_hook_snapshot_is_isolated_and_falsey_callable_runs(databa
     ],
 )
 def test_database_read_preserves_conditional_headers(database_read_case, use_legacy, kwargs, expected):
-    from azure.cosmos._helpers._request_headers import flatten_options_to_headers
+    from common.typed_requests import flatten_options_to_headers
 
     case = database_read_case
     if use_legacy:
@@ -698,9 +701,12 @@ def test_database_read_preserves_conditional_headers(database_read_case, use_leg
         assert "etag" not in call.kwargs
         case.backend.execute.assert_not_called()
     else:
-        headers = case.backend.prepared.headers
+        headers = wire_headers(case.backend.prepared)
         case.connection.ReadDatabase.assert_not_called()
-    assert {key: headers[key] for key in ("If-Match", "If-None-Match") if key in headers} == expected
+    assert {
+        key.lower(): value for key, value in headers.items()
+        if key.lower() in ("if-match", "if-none-match")
+    } == {key.lower(): value for key, value in expected.items()}
 
 
 @pytest.mark.parametrize("use_legacy", [False, True])
@@ -759,7 +765,7 @@ def test_database_read_service_errors_never_replay(database_read_case, status):
     assert raised.value.status_code == status
     if status == 404:
         assert isinstance(raised.value, CosmosResourceNotFoundError)
-    assert case.backend.prepared.headers["If-Match"] == "v1"
+    assert wire_headers(case.backend.prepared)["if-match"] == "v1"
     assert case.proxy._properties["_etag"] == "old"
     hook.assert_not_called()
     case.backend.execute.assert_called_once()
@@ -929,8 +935,8 @@ def test_sync_if_not_exists_rust_404_then_rust_create_without_legacy_calls():
         OP_CREATE_DATABASE,
     ]
     assert "offerThroughput" not in backend.prepared_requests[0].headers
-    assert backend.prepared_requests[0].headers["throughputBucket"] == 7
-    assert backend.prepared_requests[1].headers["offerThroughput"] == 400
+    assert backend.prepared_requests[0].settings.throughput_bucket == 7
+    assert backend.prepared_requests[1].settings.resource.offer_throughput == 400
     assert hook_calls == [
         (
             {"x-ms-request-charge": "5.25"},
@@ -1127,7 +1133,7 @@ class _AsyncRustBackend(AsyncCosmosBackend):
         self.prepared_requests = []
         self.responses = list(responses or [response or _created_response()])
 
-    async def execute(self, prepared):
+    async def execute(self, prepared, *, deadline=None):
         """Record the prepared request and return the next canned reply from the queue."""
         self.prepared = prepared
         self.prepared_requests.append(prepared)
@@ -1151,7 +1157,7 @@ def test_async_helper_routes_to_rust():
             response_hook=lambda headers, body: hook_calls.append((headers, body)),
         )
         assert result["id"] == "db1"
-        assert backend.prepared.headers["throughputBucket"] == 9
+        assert wire_headers(backend.prepared)["x-ms-cosmos-throughput-bucket"] == '9'
         assert hook_calls == [
             (
                 {"x-ms-request-charge": "5.25"},
@@ -1193,8 +1199,8 @@ def test_async_read_database_routes_to_rust():
         # wrapper that dropped an argument would otherwise go unnoticed.
         assert backend.prepared.item_id == "db1"
         assert backend.prepared.body_bytes == b""
-        assert backend.prepared.headers["throughputBucket"] == 9
-        assert backend.prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 3.5
+        assert wire_headers(backend.prepared)["x-ms-cosmos-throughput-bucket"] == '9'
+        assert settings_options(backend.prepared)["timeout_seconds"] == 3.5
         connection.ReadDatabase.assert_not_awaited()
         assert hook_calls == [
             ({"x-ms-request-charge": "1.0"}, {"id": "db1", "_rid": "existing"})
@@ -1472,7 +1478,7 @@ def test_async_database_proxy_read_selects_rust_backend():
 
         assert result == {"id": "db1", "_rid": "existing"}
         assert backend.prepared.op == OP_READ_DATABASE
-        assert backend.prepared.headers["throughputBucket"] == 9
+        assert wire_headers(backend.prepared)["x-ms-cosmos-throughput-bucket"] == '9'
         connection.ReadDatabase.assert_not_awaited()
 
     asyncio.run(run())
@@ -1672,7 +1678,7 @@ def test_sync_public_create_database_preserves_zero_autoscale_increment():
         ),
     )
 
-    policy = json.loads(backend.prepared.headers["autoUpgradePolicy"])
+    policy = json.loads(wire_headers(backend.prepared)["x-ms-cosmos-offer-autopilot-settings"])
     assert policy["maxThroughput"] == 4000
     assert policy["autoUpgradePolicy"]["throughputPolicy"]["incrementPercent"] == 0
 
@@ -1886,17 +1892,17 @@ def test_create_database_preserves_supported_settings(
         proxy = result
     assert isinstance(proxy, proxy_type)
     assert proxy.id == "db1"
-    headers = client._backend.prepared.headers
-    assert headers["initialHeaders"] == {"x-custom": "value"}
-    assert headers["throughputBucket"] == 9
-    assert headers[Constants.OVERALL_TIMEOUT_SECONDS] == 3.5
+    headers = wire_headers(client._backend.prepared)
+    assert all(headers.get(key.lower()) == str(value) for key, value in ({"x-custom": "value"}).items())
+    assert headers["x-ms-cosmos-throughput-bucket"] == '9'
+    assert settings_options(client._backend.prepared)["timeout_seconds"] == 3.5
     if throughput is None or workflow in ("existing", "race"):
         assert "offerThroughput" not in headers
         assert "autoUpgradePolicy" not in headers
     elif isinstance(throughput, int):
-        assert headers["offerThroughput"] == throughput
+        assert headers["x-ms-offer-throughput"] == str(throughput)
     else:
-        assert json.loads(headers["autoUpgradePolicy"])["maxThroughput"] == 4000
+        assert json.loads(headers["x-ms-cosmos-offer-autopilot-settings"])["maxThroughput"] == 4000
     hook.assert_called_once_with(
         {"x-ms-request-charge": "5.25"}, {"id": "db1", "_rid": "rid1"}
     )
@@ -1910,16 +1916,16 @@ def test_create_database_preserves_supported_settings(
     }
     assert [p.op for p in client._backend.prepared_requests] == expected_operations[workflow]
     if workflow != "create":
-        read_headers = client._backend.prepared_requests[0].headers
+        read_headers = wire_headers(client._backend.prepared_requests[0])
         assert "offerThroughput" not in read_headers
         assert "autoUpgradePolicy" not in read_headers
     if workflow == "race":
         assert headers == read_headers
-        create_headers = client._backend.prepared_requests[1].headers
+        create_headers = wire_headers(client._backend.prepared_requests[1])
         if isinstance(throughput, int):
-            assert create_headers["offerThroughput"] == throughput
+            assert create_headers["x-ms-offer-throughput"] == str(throughput)
         elif throughput is not None:
-            assert json.loads(create_headers["autoUpgradePolicy"])["maxThroughput"] == 4000
+            assert json.loads(create_headers["x-ms-cosmos-offer-autopilot-settings"])["maxThroughput"] == 4000
 
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
@@ -2126,8 +2132,8 @@ def test_async_if_not_exists_rust_404_then_rust_create_without_legacy_calls():
             OP_CREATE_DATABASE,
         ]
         assert "offerThroughput" not in backend.prepared_requests[0].headers
-        assert backend.prepared_requests[0].headers["throughputBucket"] == 7
-        assert backend.prepared_requests[1].headers["offerThroughput"] == 400
+        assert backend.prepared_requests[0].settings.throughput_bucket == 7
+        assert backend.prepared_requests[1].settings.resource.offer_throughput == 400
         assert hook_calls == [
             (
                 {"x-ms-request-charge": "5.25"},
@@ -2528,7 +2534,7 @@ def test_delete_database_service_error_never_fires_success_hook_or_replays(delet
             match_condition=MatchConditions.IfNotModified, response_hook=hook,
         )
     assert raised.value.status_code == status
-    assert client._backend.prepared.headers["If-Match"] == "known-etag"
+    assert wire_headers(client._backend.prepared)["if-match"] == "known-etag"
     assert client.client_connection.last_response_headers["x-ms-activity-id"] == "failed-delete"
     hook.assert_not_called()
     client._backend.execute.assert_called_once()
@@ -2571,12 +2577,12 @@ def test_delete_database_preserves_supported_deadlines_and_options(delete_databa
         initial_headers={"x-my-app": "catalog-service"},
     ) is None
     prepared = client._backend.prepared
-    assert prepared.headers["throughputBucket"] == 7
-    assert prepared.headers["initialHeaders"]["x-my-app"] == "catalog-service"
+    assert wire_headers(prepared)["x-ms-cosmos-throughput-bucket"] == '7'
+    assert wire_headers(prepared)["x-my-app"] == "catalog-service"
     if timeout is None:
-        assert Constants.OVERALL_TIMEOUT_SECONDS not in prepared.headers
+        assert Constants.OVERALL_TIMEOUT_SECONDS not in wire_headers(prepared)
     else:
-        assert prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == timeout
+        assert settings_options(prepared)["timeout_seconds"] == timeout
     client._backend.execute.assert_called_once()
     client.client_connection.DeleteDatabase.assert_not_called()
 
@@ -2611,14 +2617,17 @@ def test_delete_database_preserves_conditional_headers_on_both_backends(
         rust_backend.execute.assert_not_called()
         client.client_connection.DeleteDatabase.assert_called_once()
         call = client.client_connection.DeleteDatabase.call_args
-        from azure.cosmos._helpers._request_headers import flatten_options_to_headers
+        from common.typed_requests import flatten_options_to_headers
         headers = flatten_options_to_headers(call.kwargs["options"])
         assert "etag" not in call.kwargs
     else:
         client.client_connection.DeleteDatabase.assert_not_called()
         rust_backend.execute.assert_called_once()
-        headers = rust_backend.prepared.headers
-    assert {key: headers[key] for key in ("If-Match", "If-None-Match") if key in headers} == expected
+        headers = wire_headers(rust_backend.prepared)
+    assert {
+        key.lower(): value for key, value in headers.items()
+        if key.lower() in ("if-match", "if-none-match")
+    } == {key.lower(): value for key, value in expected.items()}
 
 
 @pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
@@ -2673,7 +2682,7 @@ def test_delete_database_prepared_derives_the_id_from_the_link(database_link, ex
     assert prepared.item_id == expected_id
     assert prepared.body_bytes == b""
     assert prepared.container_link == ""
-    assert prepared.partition_key_header == "[]"
+    assert legacy_partition_key_from_request(prepared) == "[]"
 
 
 @pytest.mark.parametrize("database_link", ["dbs/", "dbs", "/dbs/", ""])
@@ -2699,10 +2708,10 @@ def test_delete_database_prepared_drops_headers_the_legacy_path_suppresses():
         kwargs={"timeout": 3.5},
     )
 
-    assert "sessionToken" not in prepared.headers
-    assert Constants.ContainerRID not in prepared.headers
-    assert prepared.headers["throughputBucket"] == 7
-    assert prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 3.5
+    assert "sessionToken" not in wire_headers(prepared)
+    assert Constants.ContainerRID not in wire_headers(prepared)
+    assert wire_headers(prepared)["x-ms-cosmos-throughput-bucket"] == '7'
+    assert settings_options(prepared)["timeout_seconds"] == 3.5
 
 
 def test_sync_delete_database_routes_to_rust_and_never_calls_legacy():
@@ -2724,7 +2733,7 @@ def test_sync_delete_database_routes_to_rust_and_never_calls_legacy():
     assert result is None
     assert backend.prepared.op == OP_DELETE_DATABASE
     assert backend.prepared.item_id == "db1"
-    assert backend.prepared.headers["throughputBucket"] == 7
+    assert wire_headers(backend.prepared)["x-ms-cosmos-throughput-bucket"] == '7'
     assert connection.last_response_headers["x-ms-request-charge"] == "4.24"
     connection.DeleteDatabase.assert_not_called()
 
@@ -2892,9 +2901,9 @@ def test_sync_delete_database_preserves_access_conditions_without_warnings():
     prepared = backend.prepared
     assert prepared is not None
     assert prepared.item_id == "db1"
-    assert prepared.headers["If-Match"] == "etag"
-    assert "sessionToken" not in prepared.headers
-    assert "x-ms-session-token" not in prepared.headers
+    assert wire_headers(prepared)["if-match"] == "etag"
+    assert "sessionToken" not in wire_headers(prepared)
+    assert "x-ms-session-token" not in wire_headers(prepared)
 
 
 def test_sync_delete_database_preserves_wildcard_guard_without_fallback():
@@ -2916,7 +2925,7 @@ def test_sync_delete_database_preserves_wildcard_guard_without_fallback():
         )
 
     assert warnings_seen == []
-    assert backend.prepared.headers["If-Match"] == "*"
+    assert wire_headers(backend.prepared)["if-match"] == "*"
     client.client_connection.DeleteDatabase.assert_not_called()
 
 
@@ -2944,8 +2953,8 @@ def test_async_delete_database_preserves_access_conditions_without_warnings():
         prepared = backend.prepared
         assert prepared is not None
         assert prepared.item_id == "db1"
-        assert prepared.headers["If-Match"] == "etag"
-        assert "sessionToken" not in prepared.headers
-        assert "x-ms-session-token" not in prepared.headers
+        assert wire_headers(prepared)["if-match"] == "etag"
+        assert "sessionToken" not in wire_headers(prepared)
+        assert "x-ms-session-token" not in wire_headers(prepared)
 
     asyncio.run(run())

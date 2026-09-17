@@ -11,11 +11,7 @@ import uuid
 
 import pytest
 
-from common._parity_helpers import (
-    run_on_both_backends_async,
-    skip_unless_emulator,
-    skip_unless_rust_binding,
-)
+from common._parity_helpers import run_on_both_backends_async, skip_unless_emulator, skip_unless_rust_binding
 
 from azure.cosmos import ThroughputProperties
 from azure.cosmos.aio import CosmosClient

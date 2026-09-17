@@ -3,38 +3,37 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""The explicit core-python backend for migration coordinators.
+"""Explicit core-python selection for remaining migration coordinators.
 
-This stateless backend runs the ``LegacyOperation`` supplied by families still
-using migration dispatch. It does not execute wire-shaped prepared requests.
-The shared ``LEGACY_BACKEND`` also identifies explicit core-python selection.
+This stateless backend invokes the supplied plain callable without building or
+executing a prepared request. Point parity uses the separate legacy item helper."""
 
-Point operations select ``LegacyItemHelper`` separately for parity; their Rust
-``ItemHelper`` has no legacy operation or fallback port. The item adapter retains
-the original Python method signatures rather than reconstructing legacy calls
-from a ``PreparedRequest``. Other families' migration dispatch is unchanged.
-"""
 from __future__ import annotations
+
+from azure.cosmos._backend.capabilities import OperationRouting
+from azure.cosmos._backend.errors import BackendProtocolError
 
 from typing import Any, Callable, Optional
 
 from .cosmos_backend import CosmosBackend
-from .contracts import BackendResponse, LegacyOperation, PreparedQuery, PreparedRequest, QueryPage
+from .contracts import BackendResponse, PreparedQuery, PreparedRequest, QueryPage
 from .constants import BACKEND_NAME_CORE_PYTHON
 
 
 class LegacyBackend(CosmosBackend):
     """Core-python backend: runs the legacy ``client_connection`` call.
 
-    Stateless -- it only forwards to the :class:`~azure.cosmos._backend.cosmos_backend.LegacyOperation`
+    Stateless -- it only forwards to the legacy callable
     the coordinator supplies -- so :data:`LEGACY_BACKEND` is shared by every
     core-python client instead of one instance per client.
     """
 
     name = BACKEND_NAME_CORE_PYTHON
 
-    def execute(self, prepared: Optional[PreparedRequest]) -> Optional[BackendResponse]:
-        """Not supported: the legacy engine is not ``PreparedRequest``-driven.
+    def execute(
+        self, prepared: PreparedRequest, *, deadline: Optional[float] = None
+    ) -> BackendResponse:
+        """Not supported: the legacy backend is not ``PreparedRequest``-driven.
 
         ``execute`` is the rust wire primitive (send a prepared request, return
         the raw reply). The legacy path reconstructs its call from the original
@@ -53,44 +52,34 @@ class LegacyBackend(CosmosBackend):
     def run_operation(
         self,
         *,
-        prepare_request: Callable[[], PreparedRequest],
-        legacy_operation: LegacyOperation,
-        parse_response: Callable[[BackendResponse], Any],
-        rust_eligible: bool = True,
-        fallback_exceptions: tuple[type[BaseException], ...] = (),
-        allow_legacy_fallback: bool = True,
-        unsupported_message: Optional[str] = None,
+        routing: OperationRouting,
+        build_request: Callable[[], PreparedRequest],
+        process_response: Callable[[BackendResponse], Any],
+        legacy_call: Optional[Callable[[], Any]] = None,
+        deadline: Optional[float] = None,
     ) -> Any:
-        """Run the operation on the legacy core-python path.
+        """Run the explicitly selected legacy callable without building a Rust request."""
+        if legacy_call is None:
+            raise BackendProtocolError(
+                f"No legacy callable supplied for {routing.op!r}"
+            )
+        return legacy_call()
 
-        Always runs ``legacy_operation.invoke()`` and returns its already-parsed
-        result; ``prepare_request`` / ``parse_response`` / ``rust_eligible`` are
-        ignored because this backend never builds a wire request. Reading only
-        ``legacy_operation`` (never ``prepare_request`` / ``rust_eligible``) is
-        this backend's whole "always fall back to legacy" behavior -- no ``None``
-        or backend-type check anywhere in this method.
-        """
-        return legacy_operation.invoke()
-
-    def run_page_operation(  # pylint: disable=too-many-arguments
+    def run_page_operation(
         self,
         *,
-        prepare_request: Callable[[], PreparedQuery],
-        legacy_operation: LegacyOperation,
-        parse_response: Callable[[QueryPage], Any],
-        rust_eligible: bool = True,
-        fallback_exceptions: tuple[type[BaseException], ...] = (),
-        allow_legacy_fallback: bool = True,
-        unsupported_message: Optional[str] = None,
+        routing: OperationRouting,
+        build_request: Callable[[], PreparedQuery],
+        process_response: Callable[[QueryPage], Any],
+        legacy_call: Optional[Callable[[], Any]] = None,
+        deadline: Optional[float] = None,
     ) -> Any:
-        """Run the paged operation on the legacy core-python path.
-
-        Mirrors :meth:`run_operation` for feeds: ``prepare_request`` /
-        ``parse_response`` / ``rust_eligible`` / ``fallback_exceptions`` are
-        ignored because this backend never builds a wire request, so
-        ``execute_pages`` is never reached.
-        """
-        return legacy_operation.invoke()
+        """Run the explicitly selected legacy callable without building a Rust request."""
+        if legacy_call is None:
+            raise BackendProtocolError(
+                f"No legacy callable supplied for {routing.op!r}"
+            )
+        return legacy_call()
 
 
 #: Process-wide shared core-python backend. ``LegacyBackend`` holds no per-client

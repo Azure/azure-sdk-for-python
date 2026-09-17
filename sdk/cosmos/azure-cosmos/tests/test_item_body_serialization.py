@@ -21,6 +21,9 @@ from azure.cosmos import (
 
 from azure.cosmos.aio import _asynchronous_request, _cosmos_client
 from azure.cosmos.documents import _OperationType
+from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
+from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.http_constants import HttpHeaders
 
 
@@ -183,8 +186,9 @@ def _capture_sync_query_builder(query):
     # performs account discovery. These assignments are the minimal QueryFeed
     # fixture; add an attribute here if QueryFeed gains another dependency.
     connection = object.__new__(cosmos_client.CosmosClientConnection)
+    connection._backend = LEGACY_BACKEND
     connection.default_headers = {}
-    connection.last_response_headers = {}
+    connection._response_state = ClientLastResponseHeaders()
     connection._query_compatibility_mode = (
         cosmos_client.CosmosClientConnection._QueryCompatibilityMode.Default
     )
@@ -238,8 +242,9 @@ async def _capture_async_query_builder(query):
     # These assignments are the minimal QueryFeed fixture; add an attribute here
     # if QueryFeed gains another dependency.
     connection = object.__new__(_cosmos_client.CosmosClientConnection)
+    connection._backend = ASYNC_LEGACY_BACKEND
     connection.default_headers = {}
-    connection.last_response_headers = {}
+    connection._response_state = ClientLastResponseHeaders()
     connection._query_compatibility_mode = (
         _cosmos_client.CosmosClientConnection._QueryCompatibilityMode.Default
     )

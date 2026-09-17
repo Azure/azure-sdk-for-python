@@ -36,6 +36,7 @@ import sys
 import uuid
 
 from azure.cosmos import CosmosClient, PartitionKey
+from azure.cosmos._backend.partition_key import PartitionKeyInput
 
 ENDPOINT = os.environ.get("ACCOUNT_HOST")
 KEY = os.environ.get("ACCOUNT_KEY")
@@ -78,7 +79,7 @@ def main() -> int:
         op=OP_CREATE_ITEM,
         container_link=f"dbs/{DB}/colls/{COLL}",
         body_bytes=f'{{"id":"{item_id}","pk":"smokeA","value":42}}'.encode(),
-        partition_key_header='["smokeA"]',
+        partition_key=PartitionKeyInput("components", ("smokeA",)),
         headers={},
     )
 

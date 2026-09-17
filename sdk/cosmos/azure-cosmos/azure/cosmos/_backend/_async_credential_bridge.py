@@ -222,8 +222,8 @@ class AsyncTokenCredentialBridge:
 
         Dedups by ``id(async_credential)``: the same credential object reused
         across clients maps to one bridge. That one bridge is what the factory hands
-        the driver in place of the credential, and the driver keys its engines by
-        that token object's identity -- so those clients also share one driver engine
+        the driver in place of the credential, and the driver keys its drivers by
+        that token object's identity -- so those clients also share one driver driver
         and this bridge's single background thread. Each call adds one to the bridge's
         refcount; the matching close subtracts one and tears the loop down only at
         zero. The bridge holds a strong reference to the credential, so its ``id``

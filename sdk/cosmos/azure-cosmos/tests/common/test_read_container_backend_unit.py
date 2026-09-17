@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 """Container-read contracts and real backend dispatch with fake network responses."""
+from common.typed_requests import wire_headers, settings_options, legacy_settings
 
 import asyncio
 import ast
@@ -144,8 +145,13 @@ def test_metadata_flags_and_none_timeout_preserve_backend(read_case, quota, stat
         assert prepared.op == OP_READ_CONTAINER
         assert prepared.container_link == "dbs/db1/colls/c1"
         assert prepared.body_bytes == b""
-        options = prepared.headers
+        options = wire_headers(prepared)
     for name, value in [("populateQuotaInfo", quota), ("populatePartitionKeyRangeStatistics", statistics)]:
+        if not case.legacy:
+            name = {
+                "populateQuotaInfo": "x-ms-documentdb-populatequotainfo",
+                "populatePartitionKeyRangeStatistics": "x-ms-documentdb-populatepartitionstatistics",
+            }[name]
         if value is None or (not case.legacy and value is False):
             assert name not in options
         else:
@@ -197,8 +203,8 @@ def test_supported_timeout(read_case, timeout):
     case = read_case
     _read(case, timeout=timeout)
     if not case.legacy:
-        headers = case.backend.execute.call_args.args[0].headers
-        assert headers.get(Constants.OVERALL_TIMEOUT_SECONDS) == timeout
+        options = settings_options(case.backend.execute.call_args.args[0])
+        assert options.get("timeout_seconds") == timeout
         case.connection.ReadContainer.assert_not_called()
 
 

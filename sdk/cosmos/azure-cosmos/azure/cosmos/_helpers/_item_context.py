@@ -7,20 +7,40 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import TYPE_CHECKING, Any, Generic, Optional, TypeVar
 
 from azure.core.utils import CaseInsensitiveDict
+
+if TYPE_CHECKING:
+    from .._backend.cosmos_backend import CosmosBackend
+    from ..aio._backend.cosmos_backend import AsyncCosmosBackend
+
+_BackendT = TypeVar("_BackendT", "CosmosBackend", "AsyncCosmosBackend")
 
 
 @dataclass(frozen=True)
 class ItemClientDefaults:
-    """Immutable Python request defaults captured at client construction."""
+    """Immutable client defaults for item operations, not all CosmosClient options."""
 
     no_response_on_write: bool = False
+    enable_compact_utf8_item_writes: bool = False
+    priority: Optional[str] = None
+    throughput_bucket: Optional[int] = None
+
+    def apply_to_options(self, options: dict[str, Any]) -> None:
+        """Fill request defaults without overriding per-call options or headers."""
+        initial = options.get("initialHeaders") or {}
+        headers = {name.lower() for name in initial}
+        for key, header, value in (
+            ("priorityLevel", "x-ms-cosmos-priority-level", self.priority),
+            ("throughputBucket", "x-ms-cosmos-throughput-bucket", self.throughput_bucket),
+        ):
+            if value and not options.get(key) and header not in headers:
+                options[key] = value
 
 
 @dataclass
-class ResponseHeaderState:
+class ClientLastResponseHeaders:
     """Latest headers recorded for a client, replaced as responses are parsed.
 
     This is not a response history or per-operation storage. Concurrent calls
@@ -32,9 +52,12 @@ class ResponseHeaderState:
 
 
 @dataclass(frozen=True)
-class ItemClientContext:
-    """Passed directly from client to database to container, never via a connection."""
+class ItemClientContext(Generic[_BackendT]):
+    """Carry the sync or async backend type from client to database to container.
 
-    backend: Any
+    Dependencies are passed directly, never recovered through a connection.
+    """
+
+    backend: _BackendT
     defaults: ItemClientDefaults = field(default_factory=ItemClientDefaults)
-    response_state: ResponseHeaderState = field(default_factory=ResponseHeaderState)
+    response_state: ClientLastResponseHeaders = field(default_factory=ClientLastResponseHeaders)

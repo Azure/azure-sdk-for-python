@@ -20,8 +20,8 @@ Input value                                         On-wire header value
 ``["t1", _Empty()]`` (hierarchical, missing leaf)   ``["t1",null]``
 ==================================================  =================================
 
-Pure-function helper; produces the same byte output as the legacy
-header-build path so both backends ship identical headers.
+Legacy pipeline/parity oracle. Rust-bound preparation uses typed
+``PartitionKeyInput`` instead; this helper must not be used for native dispatch.
 """
 from __future__ import annotations
 
@@ -39,7 +39,7 @@ from ..partition_key import (
 _COMPACT_SEPARATORS = (",", ":")
 
 
-def serialize_partition_key_to_wire(pk_value: Any) -> str:
+def legacy_partition_key_header(pk_value: Any) -> str:
     """Return the exact string for the ``x-ms-documentdb-partitionkey`` header.
 
     :param pk_value: Partition-key value in any of the accepted shapes

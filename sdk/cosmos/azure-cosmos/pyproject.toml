@@ -1,11 +1,85 @@
 # Build system. Maturin reads `[tool.maturin]` below to decide what to
 # compile and where to put the result.
 [build-system]
-requires      = ["maturin>=1.4,<2.0"]
+requires      = ["maturin==1.15.0"]
 build-backend = "azure_cosmos_build_backend"
 backend-path = ["."]
 
+# Keep the version and shared metadata aligned with _version.py and setup.py.
+[project]
+name = "azure-cosmos"
+version = "4.17.1"
+description = "Microsoft Azure Cosmos Client Library for Python"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT License" }
+authors = [{ name = "Microsoft Corporation", email = "askdocdb@microsoft.com" }]
+maintainers = [{ name = "Microsoft", email = "askdocdb@microsoft.com" }]
+keywords = ["azure", "azure sdk"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: MIT License",
+]
+dependencies = [
+    "azure-core>=1.30.0",
+    "typing-extensions>=4.6.0",
+]
+
+[project.optional-dependencies]
+aio = ["azure-core[aio]>=1.30.0"]
+
+[project.urls]
+Homepage = "https://github.com/Azure/azure-sdk-for-python"
+Repository = "https://github.com/Azure/azure-sdk-for-python"
+
+# These are prototype targets, not the final release support policy.
+[tool.cibuildwheel]
+build = ["cp310-*"]
+skip = ["*-musllinux*"]
+test-command = "python -c \"from azure.cosmos import CosmosClient, _rust; assert _rust.create_database\""
+
+[tool.cibuildwheel.macos]
+archs = ["arm64"]
+environment = { PATH = "$HOME/.msrustup/multiplexers/bin:$PATH" }
+
+[tool.cibuildwheel.windows]
+archs = ["AMD64", "ARM64"]
+
+[tool.cibuildwheel.linux]
+archs = ["x86_64", "aarch64"]
+manylinux-x86_64-image = "manylinux_2_28"
+manylinux-aarch64-image = "manylinux_2_28"
+# Credentials are supplied by the pipeline, never stored in this file.
+environment-pass = [
+    "PIP_INDEX_URL",
+    "MSRUSTUP_ACCESS_TOKEN",
+    "MSRUSTUP_PAT",
+    "MSRUSTUP_FEED_URL",
+    "CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_INDEX",
+    "CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN",
+    "CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER",
+]
+environment = { MSRUSTUP_HOME = "/msrustup", CARGO_HOME = "/cargo", PATH = "/msrustup/multiplexers/bin:$PATH", CARGO_NET_GIT_FETCH_WITH_CLI = "true" }
+before-all = "dnf install -y jq && mkdir -p $MSRUSTUP_HOME/bootstrap && cd $MSRUSTUP_HOME/bootstrap && sh /project/scripts/install-msrustup.sh && cd /project && $MSRUSTUP_HOME/bootstrap/msrustup toolchain install && sh /project/scripts/configure-cargo-feed.sh"
+
+# Windows ARM64 is cross-compiled on x64 using the pipeline's ARM64 Python libs.
+[[tool.cibuildwheel.overrides]]
+select = "*-win_arm64"
+environment = { CARGO_BUILD_TARGET = "aarch64-pc-windows-msvc", PYO3_CROSS_LIB_DIR = "$PYTHON_ARM64_LIB_DIR" }
+
 [tool.maturin]
+locked = true
+
 # Path to the binding crate's Cargo.toml. Maturin invokes `cargo build`
 # from there, locates the produced cdylib, renames it to
 # _rust.{pyd,so} and drops it into azure/cosmos/.
@@ -26,8 +100,21 @@ features = ["pyo3/extension-module"]
 # The PEP 517 backend stages approved target-platform QueryPlanInterop files
 # here only while assembling a wheel. Source distributions never include them.
 include = [
+    { path = "azure/cosmos/_rust.pyi", format = "wheel" },
+    { path = "azure/cosmos/_rust.pyi", format = "sdist" },
     { path = "azure/cosmos/.libs/*", format = "wheel" },
     { path = "azure_cosmos_build_backend.py", format = "sdist" },
+    { path = "rust-toolchain.toml", format = "sdist" },
+    { path = "scripts/*.sh", format = "sdist" },
+]
+
+# Do not package extensions or bytecode left by a previous local build.
+exclude = [
+    "**/__pycache__/**",
+    "**/*.py[co]",
+    "azure/cosmos/_rust.*.so",
+    "azure/cosmos/_rust.*.pyd",
+    "azure/cosmos/_rust.*.dylib",
 ]
 
 [tool.azure-sdk-build]

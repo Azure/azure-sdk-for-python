@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""In-process unit tests for ``_helpers/_auto_id.py`` — no network, no Cosmos emulator.
+"""In-process unit tests for ``_helpers/_document.py`` — no network, no Cosmos emulator.
 
 When a customer calls ``container.create_item(body)`` without putting
 an ``"id"`` field on the body, the SDK has to invent one (a random
@@ -26,7 +26,7 @@ import unittest
 import uuid
 
 from azure.cosmos._base import GenerateGuidId
-from azure.cosmos._helpers._auto_id import ensure_item_id
+from azure.cosmos._helpers._document import ensure_item_id
 
 # Standard UUID4 string shape: 8-4-4-4-12 hex with the version nibble
 # fixed to 4 and the variant nibble in [8,9,a,b].

@@ -20,7 +20,7 @@ use azure_data_cosmos_driver::{
 };
 
 use super::driver_runner::{run_driver_operation_async, run_driver_operation_sync};
-use super::request::{build_operation_options, OpModifiers};
+use super::request::{build_operation_options, RequestHeadersAndOptions};
 use super::response::{
     tuple_from_container_feed_result, tuple_from_query_containers_result, tuple_from_result,
 };
@@ -28,15 +28,15 @@ use super::response::{
 /// Create a container and convert the response for synchronous Python code.
 pub(crate) fn run_create_container_operation<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     body_bytes: Vec<u8>,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
     run_driver_operation_sync(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_create_container_future(driver, modifiers, database_id, body_bytes),
         tuple_from_result,
@@ -46,15 +46,15 @@ pub(crate) fn run_create_container_operation<'py>(
 /// Create a container and return a Python awaitable.
 pub(crate) fn run_create_container_operation_async<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     body_bytes: Vec<u8>,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
     run_driver_operation_async(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_create_container_future(driver, modifiers, database_id, body_bytes),
         tuple_from_result,
@@ -64,15 +64,15 @@ pub(crate) fn run_create_container_operation_async<'py>(
 /// Read a container and convert the response for synchronous Python code.
 pub(crate) fn run_read_container_operation<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     container_id: String,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
     run_driver_operation_sync(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_read_container_future(driver, modifiers, database_id, container_id),
         tuple_from_result,
@@ -82,15 +82,15 @@ pub(crate) fn run_read_container_operation<'py>(
 /// Read a container and return a Python awaitable.
 pub(crate) fn run_read_container_operation_async<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     container_id: String,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
     run_driver_operation_async(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_read_container_future(driver, modifiers, database_id, container_id),
         tuple_from_result,
@@ -100,15 +100,15 @@ pub(crate) fn run_read_container_operation_async<'py>(
 /// Delete a container and convert the response for synchronous Python code.
 pub(crate) fn run_delete_container_operation<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     container_id: String,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
     run_driver_operation_sync(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_delete_container_future(driver, modifiers, database_id, container_id),
         tuple_from_result,
@@ -118,15 +118,15 @@ pub(crate) fn run_delete_container_operation<'py>(
 /// Delete a container and return a Python awaitable.
 pub(crate) fn run_delete_container_operation_async<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     container_id: String,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
     run_driver_operation_async(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_delete_container_future(driver, modifiers, database_id, container_id),
         tuple_from_result,
@@ -136,8 +136,8 @@ pub(crate) fn run_delete_container_operation_async<'py>(
 /// Replace a container and convert its response for synchronous Python code.
 pub(crate) fn run_replace_container_operation<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     container_id: String,
     body_bytes: Vec<u8>,
@@ -145,7 +145,7 @@ pub(crate) fn run_replace_container_operation<'py>(
 ) -> PyResult<Bound<'py, PyTuple>> {
     run_driver_operation_sync(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| {
             run_replace_container_future(driver, modifiers, database_id, container_id, body_bytes)
@@ -157,8 +157,8 @@ pub(crate) fn run_replace_container_operation<'py>(
 /// Replace a container and return a Python awaitable.
 pub(crate) fn run_replace_container_operation_async<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     container_id: String,
     body_bytes: Vec<u8>,
@@ -166,7 +166,7 @@ pub(crate) fn run_replace_container_operation_async<'py>(
 ) -> PyResult<Bound<'py, PyAny>> {
     run_driver_operation_async(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| {
             run_replace_container_future(driver, modifiers, database_id, container_id, body_bytes)
@@ -178,14 +178,14 @@ pub(crate) fn run_replace_container_operation_async<'py>(
 /// Read one page of containers and convert it for synchronous Python code.
 pub(crate) fn run_list_containers_operation<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
     run_driver_operation_sync(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_list_containers_future(driver, modifiers, database_id),
         tuple_from_container_feed_result,
@@ -195,14 +195,14 @@ pub(crate) fn run_list_containers_operation<'py>(
 /// Read one page of containers and return a Python awaitable.
 pub(crate) fn run_list_containers_operation_async<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
     run_driver_operation_async(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_list_containers_future(driver, modifiers, database_id),
         tuple_from_container_feed_result,
@@ -212,15 +212,15 @@ pub(crate) fn run_list_containers_operation_async<'py>(
 /// Run one page of a container query for synchronous Python code.
 pub(crate) fn run_query_containers_operation<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     body_bytes: Vec<u8>,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
     run_driver_operation_sync(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_query_containers_future(driver, modifiers, database_id, body_bytes),
         tuple_from_query_containers_result,
@@ -230,15 +230,15 @@ pub(crate) fn run_query_containers_operation<'py>(
 /// Run one page of a container query and return a Python awaitable.
 pub(crate) fn run_query_containers_operation_async<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     body_bytes: Vec<u8>,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
     run_driver_operation_async(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_query_containers_future(driver, modifiers, database_id, body_bytes),
         tuple_from_query_containers_result,
@@ -248,7 +248,7 @@ pub(crate) fn run_query_containers_operation_async<'py>(
 /// Add request ids and build the driver options for a container operation.
 fn prepare_container_operation(
     mut op: CosmosOperation,
-    modifiers: OpModifiers,
+    modifiers: RequestHeadersAndOptions,
     content_response: Option<ContentResponseOnWrite>,
 ) -> (CosmosOperation, OperationOptions) {
     if let Some(activity) = modifiers.activity_header {
@@ -270,7 +270,7 @@ fn prepare_container_operation(
 /// Send a create-container request and return the created container properties.
 async fn run_create_container_future(
     driver: Arc<CosmosDriver>,
-    modifiers: OpModifiers,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     body_bytes: Vec<u8>,
 ) -> Result<CosmosResponse, CosmosError> {
@@ -284,7 +284,7 @@ async fn run_create_container_future(
 /// Read a container directly by database and container name.
 async fn run_read_container_future(
     driver: Arc<CosmosDriver>,
-    modifiers: OpModifiers,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     container_id: String,
 ) -> Result<CosmosResponse, CosmosError> {
@@ -294,7 +294,7 @@ async fn run_read_container_future(
     driver.execute_singleton_operation(op, options).await
 }
 
-fn container_resolution_options(modifiers: &OpModifiers) -> OperationOptions {
+fn container_resolution_options(modifiers: &RequestHeadersAndOptions) -> OperationOptions {
     // Conditions and customer headers belong to the write, not its metadata GET.
     build_operation_options(
         None,
@@ -310,10 +310,7 @@ async fn with_container_timeout<T>(
     timeout_message: &'static str,
     operation: impl Future<Output = Result<T, CosmosError>>,
 ) -> Result<T, CosmosError> {
-    let Some(duration) = timeout else {
-        return operation.await;
-    };
-    tokio::time::timeout(duration, operation)
+    super::deadline::with_timeout(timeout, operation)
         .await
         .map_err(|error| {
             CosmosError::builder()
@@ -330,7 +327,7 @@ async fn with_container_timeout<T>(
 /// Rust resolves metadata; one explicit timeout covers both lookup and deletion.
 async fn run_delete_container_future(
     driver: Arc<CosmosDriver>,
-    modifiers: OpModifiers,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     container_id: String,
 ) -> Result<CosmosResponse, CosmosError> {
@@ -360,7 +357,7 @@ async fn run_delete_container_future(
 /// One timeout covers metadata lookup and PUT; only PUT receives the replacement conditions.
 async fn run_replace_container_future(
     driver: Arc<CosmosDriver>,
-    modifiers: OpModifiers,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     container_id: String,
     body_bytes: Vec<u8>,
@@ -392,7 +389,7 @@ async fn run_replace_container_future(
 /// `None` means the feed has no page to return.
 async fn run_container_feed_future(
     driver: Arc<CosmosDriver>,
-    modifiers: OpModifiers,
+    modifiers: RequestHeadersAndOptions,
     op: CosmosOperation,
 ) -> Result<Option<CosmosResponse>, CosmosError> {
     let (op, options) = prepare_container_operation(op, modifiers, None);
@@ -402,7 +399,7 @@ async fn run_container_feed_future(
 /// Read one page of all containers in a database.
 async fn run_list_containers_future(
     driver: Arc<CosmosDriver>,
-    modifiers: OpModifiers,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
 ) -> Result<Option<CosmosResponse>, CosmosError> {
     let database = DatabaseReference::from_name(driver.account().clone(), database_id);
@@ -413,7 +410,7 @@ async fn run_list_containers_future(
 /// Return one page of containers that match the query body.
 async fn run_query_containers_future(
     driver: Arc<CosmosDriver>,
-    modifiers: OpModifiers,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     body_bytes: Vec<u8>,
 ) -> Result<Option<CosmosResponse>, CosmosError> {
@@ -431,12 +428,13 @@ mod tests {
 
     #[test]
     fn resolution_does_not_inherit_write_conditions() {
-        let modifiers = OpModifiers {
+        let modifiers = RequestHeadersAndOptions {
             activity_header: None,
             session_header: None,
             content_response_on_write: ContentResponseOnWrite::Enabled,
             excluded_regions_value: None,
             end_to_end_timeout: Some(EndToEndOperationLatencyPolicy::new(Duration::from_secs(2))),
+            item_timeout: None,
             availability_strategy: None,
             custom_headers: [(
                 HeaderName::from_static("if-none-match"),

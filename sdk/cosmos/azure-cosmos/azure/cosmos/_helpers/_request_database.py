@@ -16,6 +16,8 @@ must fail rather than silently dropping a setting or falling back to legacy.
 """
 from __future__ import annotations
 
+from .._backend.partition_key import PartitionKeyInput
+
 from typing import Any, Dict, Mapping, Optional
 
 from .._backend.contracts import PreparedRequest
@@ -23,17 +25,17 @@ from .._backend.operations import OP_CREATE_DATABASE, OP_DELETE_DATABASE, OP_REA
 from .._base import _validate_resource
 from .._constants import _Constants as Constants
 
-from ._body_wire import serialize_body_to_bytes
-from ._request_headers import (
-    _account_level_headers,
+from ._request_settings import (
+    account_request_settings,
     _timeout_is_representable,
     is_supported_operation_timeout,
     overrides_driver_owned_header,
 )
+from ._wire_encoding import serialize_body_to_bytes
 
 
 # The only per-call keyword arguments a database read can carry onto the Rust
-# path. ``timeout`` becomes the ``__overall_timeout_seconds`` sentinel header;
+# path. ``timeout`` becomes the normalized ``timeout_seconds`` request option;
 # ``response_hook`` is invoked by the coordinator after the response is parsed,
 # so it never has to reach the binding. Anything else -- ``connection_timeout``,
 # ``raw_request_hook``, ``raw_response_hook`` -- is consumed by the legacy
@@ -54,12 +56,14 @@ def build_create_database_prepared(
 ) -> PreparedRequest:
     """Build the account-level create-database request consumed by the Rust backend."""
     _validate_resource(database)
+    headers, settings = account_request_settings(request_options, kwargs)
     return PreparedRequest(
         op=OP_CREATE_DATABASE,
         container_link="",
         body_bytes=serialize_body_to_bytes(database),
-        partition_key_header="[]",
-        headers=_account_level_headers(request_options, kwargs),
+        partition_key=PartitionKeyInput("cross_partition"),
+        headers=headers,
+        settings=settings,
         item_id=database["id"],
     )
 
@@ -90,12 +94,14 @@ def build_read_database_prepared(
         # Match the legacy link parser instead of sending an account-level
         # ``/dbs/`` request that fails later with a different service error.
         raise ValueError("Failed Parsing ResourceID from link: /dbs/")
+    headers, settings = account_request_settings(read_options, kwargs)
     return PreparedRequest(
         op=OP_READ_DATABASE,
         container_link="",
         body_bytes=b"",
-        partition_key_header="[]",
-        headers=_account_level_headers(read_options, kwargs),
+        partition_key=PartitionKeyInput("cross_partition"),
+        headers=headers,
+        settings=settings,
         # The legacy path routes the id through ``base.GetPathFromLink`` /
         # ``GetResourceIdOrFullNameFromLink``, which tolerate a trailing slash
         # ("dbs/mydb/" reads database "mydb"). The binding takes the bare name and
@@ -184,12 +190,14 @@ def build_delete_database_prepared(
     delete_options.pop("sessionToken", None)
     delete_options.pop(Constants.ContainerRID, None)
     database_id = _database_id_from_link(database_link)
+    headers, settings = account_request_settings(delete_options, kwargs)
     return PreparedRequest(
         op=OP_DELETE_DATABASE,
         container_link="",
         body_bytes=b"",
-        partition_key_header="[]",
-        headers=_account_level_headers(delete_options, kwargs),
+        partition_key=PartitionKeyInput("cross_partition"),
+        headers=headers,
+        settings=settings,
         item_id=database_id,
     )
 
@@ -216,31 +224,3 @@ def is_delete_database_rust_eligible(
     return _database_request_options_are_supported(request_options, operation_kwargs) and (
         _timeout_is_representable(operation_kwargs)
     )
-
-
-RUST_READ_DATABASE_UNSUPPORTED_MESSAGE = (
-    "DatabaseProxy.read cannot run on the Rust backend for this call because a "
-    "per-call setting, request hook, or header override cannot be honored. "
-    "Remove the unsupported option. The request will not be sent through legacy Python."
-)
-
-
-RUST_DELETE_DATABASE_UNSUPPORTED_MESSAGE = (
-    "delete_database cannot run on the Rust backend for this call because a "
-    "per-call setting, request hook, or header override cannot be honored. "
-    "Remove the unsupported option. The request will not be sent through legacy Python."
-)
-
-
-# Shown when a get-or-create cannot run on the Rust backend. The read and the
-# create are one workflow, so the coordinator refuses rather than running one
-# leg on Rust and the other on the legacy transport, which would honor a
-# different set of the caller's options on each leg.
-RUST_GET_OR_CREATE_DATABASE_UNSUPPORTED_MESSAGE = (
-    "create_database_if_not_exists cannot run on the Rust backend for this call: "
-    "it was given a per-call option the Rust path cannot honor (read_timeout, a "
-    "timeout the driver would interpret differently, an overridden standard "
-    "request header, or a transport keyword such as connection_timeout). "
-    "Remove the unsupported per-call option; configure connection and read timeouts "
-    "when constructing CosmosClient."
-)

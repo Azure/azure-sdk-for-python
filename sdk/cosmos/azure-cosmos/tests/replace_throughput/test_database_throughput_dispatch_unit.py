@@ -44,25 +44,25 @@ class _Backend:
         self.eligibility: List[bool] = []
         self.offers = [_offer()] if offers is None else offers
 
-    def run_operation(self, *, legacy_operation: Any, rust_eligible: bool, **_kwargs: Any) -> Any:
+    def run_operation(self, *, routing: Any, legacy_call: Any, **_kwargs: Any) -> Any:
         """Record the operation and route to the legacy path or canned offer list."""
-        self.calls.append(legacy_operation.op)
-        self.eligibility.append(rust_eligible)
-        if not rust_eligible:
-            return legacy_operation.invoke()
-        return self.offers if legacy_operation.op == "read_offer" else _offer(500)
+        self.calls.append(routing.op)
+        self.eligibility.append(routing.supported)
+        if not routing.supported:
+            return legacy_call()
+        return self.offers if routing.op == "read_offer" else _offer(500)
 
 
 class _AsyncBackend(_Backend):
     """Async variant of ``_Backend`` for exercising the ``await``-able code paths."""
 
-    async def run_operation(self, *, legacy_operation: Any, rust_eligible: bool, **_kwargs: Any) -> Any:
+    async def run_operation(self, *, routing: Any, legacy_call: Any, **_kwargs: Any) -> Any:
         """Record the operation and route to the legacy path or canned offer list."""
-        self.calls.append(legacy_operation.op)
-        self.eligibility.append(rust_eligible)
-        if not rust_eligible:
-            return await legacy_operation.invoke()
-        return self.offers if legacy_operation.op == "read_offer" else _offer(500)
+        self.calls.append(routing.op)
+        self.eligibility.append(routing.supported)
+        if not routing.supported:
+            return await legacy_call()
+        return self.offers if routing.op == "read_offer" else _offer(500)
 
 
 def _sync_database(backend: Any, **connection: Any) -> SyncDatabaseProxy:

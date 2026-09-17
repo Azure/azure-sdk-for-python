@@ -7,13 +7,13 @@ use super::*;
 #[pyfunction]
 pub(crate) fn read_feed_ranges<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
     let (container_link, force_refresh) = extract_read_feed_ranges_inputs(prepared)?;
     run_read_feed_ranges_operation(
         py,
-        handle,
+        driver_handle,
         &container_link,
         force_refresh,
         "read_feed_ranges",
@@ -24,16 +24,15 @@ pub(crate) fn read_feed_ranges<'py>(
 #[pyfunction]
 pub(crate) fn feed_range_from_partition_key<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    let (container_link, partition_key_header) =
-        extract_feed_range_from_partition_key_inputs(prepared)?;
+    let (container_link, partition_key) = extract_feed_range_from_partition_key_inputs(prepared)?;
     run_feed_range_from_partition_key_operation(
         py,
-        handle,
+        driver_handle,
         &container_link,
-        &partition_key_header,
+        partition_key,
         "feed_range_from_partition_key",
     )
 }
@@ -49,9 +48,11 @@ pub(crate) fn feed_range_from_partition_key<'py>(
 #[pyfunction]
 pub(crate) fn is_feed_range_subset<'py>(
     py: Python<'py>,
-    _handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    let _ = driver_handle;
+    crate::wire::settings::validate_request_protocol(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
     run_is_feed_range_subset_operation(py, body_bytes)
 }
@@ -60,13 +61,13 @@ pub(crate) fn is_feed_range_subset<'py>(
 #[pyfunction]
 pub(crate) fn read_feed_ranges_async<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
     let (container_link, force_refresh) = extract_read_feed_ranges_inputs(prepared)?;
     run_read_feed_ranges_operation_async(
         py,
-        handle,
+        driver_handle,
         &container_link,
         force_refresh,
         "read_feed_ranges",
@@ -77,16 +78,15 @@ pub(crate) fn read_feed_ranges_async<'py>(
 #[pyfunction]
 pub(crate) fn feed_range_from_partition_key_async<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let (container_link, partition_key_header) =
-        extract_feed_range_from_partition_key_inputs(prepared)?;
+    let (container_link, partition_key) = extract_feed_range_from_partition_key_inputs(prepared)?;
     run_feed_range_from_partition_key_operation_async(
         py,
-        handle,
+        driver_handle,
         &container_link,
-        &partition_key_header,
+        partition_key,
         "feed_range_from_partition_key",
     )
 }
@@ -95,9 +95,11 @@ pub(crate) fn feed_range_from_partition_key_async<'py>(
 #[pyfunction]
 pub(crate) fn is_feed_range_subset_async<'py>(
     py: Python<'py>,
-    _handle: &str,
+    driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    let _ = driver_handle;
+    crate::wire::settings::validate_request_protocol(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
     run_is_feed_range_subset_operation_async(py, body_bytes, "is_feed_range_subset")
 }

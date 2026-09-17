@@ -18,14 +18,13 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Shared page-routing helpers used by both sync and async client connections.
+"""Compatibility page-routing helpers used by sync and async client connections.
 
-This module is the single place that decides whether one page of ``query_items``,
-whole-container ``read_all_items``, or account-level ``list_databases`` can use
-the Rust backend instead of the Python HTTP path. It packages requests and
-responses so a Rust-served page looks exactly like a legacy one. Both the sync
-and async client connections import from here, so the two paths share one
-definition and cannot diverge.
+Public Rust ``query_items``, ``read_all_items`` and change feed use independent
+retained pagers, not the query/feed eligibility gates below. Those gates remain
+for legacy/internal connection paths; the master-resource feeds still use this
+module directly. Shared request/response adapters are also reused by the retained
+pagers.
 
 It has three jobs: decide whether a page is safe for Rust (the ``can_use_*``
 gates), build the page request (``build_query_items_prepared_query``,
@@ -38,7 +37,9 @@ that case is supported on Rust, and the gates go away once the Rust path reaches
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from ._backend.partition_key import PartitionKeyInput
+
+from dataclasses import dataclass, replace
 import time
 from typing import Any, Callable, Mapping, Optional, Union, cast
 
@@ -59,13 +60,13 @@ from ._backend.contracts import BackendResponse, PreparedQuery, QueryPage
 from ._constants import _Constants as Constants
 from ._cosmos_responses import CosmosDict
 from .exceptions import CosmosClientTimeoutError
-from ._helpers._pk_wire import serialize_partition_key_to_wire
-from ._helpers._request_headers import (
-    DRIVER_OWNED_REQUEST_HEADERS,
+from ._helpers._partition_key import normalize_partition_key, parse_customer_partition_key_header
+from ._helpers._request_settings import (
     is_supported_operation_timeout,
     overrides_driver_owned_header,
+    prepare_service_request_settings,
 )
-from ._helpers._response_parse import parse_backend_response
+from ._helpers._response_parse import process_backend_response
 from ._query_advisor import get_query_advice_info
 from .partition_key import _build_partition_key_from_properties
 
@@ -79,39 +80,13 @@ _DATABASE_FEED_ALLOWED_INTERNAL_KWARGS = _MASTER_FEED_ALLOWED_INTERNAL_KWARGS | 
     Constants.Kwargs.TIMEOUT,
 }
 
-RUST_LIST_DATABASES_UNSUPPORTED_MESSAGE = (
-    "list_databases cannot run on the Rust backend for this call: "
-    "per-call read_timeout, an unsupported timeout value, availability_strategy, driver-owned header "
-    "overrides, unsupported transport keywords/hooks, and non-list feed shapes "
-    "are not supported by this listing path. Remove the unsupported option; "
-    "configure connection and read timeouts when constructing CosmosClient. "
-    "The request will not be sent through legacy Python."
-)
 
-RUST_LIST_CONTAINERS_UNSUPPORTED_MESSAGE = (
-    "list_containers cannot run on the Rust backend for this call: "
-    "per-call read_timeout, an unsupported timeout value, availability_strategy, driver-owned header "
-    "overrides, unsupported transport keywords/hooks, and non-list feed shapes "
-    "are not supported by this listing path. Remove the unsupported option; "
-    "configure connection and read timeouts when constructing CosmosClient. "
-    "The request will not be sent through legacy Python."
-)
 
-RUST_QUERY_DATABASES_UNSUPPORTED_MESSAGE = (
-    "query_databases cannot run on the Rust backend for this call: "
-    "the query mode, timeout value, request-header override, or transport option "
-    "is not supported by this query path. Remove the unsupported option; "
-    "configure connection and read timeouts when constructing CosmosClient. "
-    "The request will not be sent through legacy Python."
-)
 
-RUST_QUERY_CONTAINERS_UNSUPPORTED_MESSAGE = (
-    "query_containers cannot run on the Rust backend for this call: "
-    "the query mode, timeout value, request-header override, or transport option "
-    "is not supported by this query path. Remove the unsupported option; "
-    "configure connection and read timeouts when constructing CosmosClient. "
-    "The request will not be sent through legacy Python."
-)
+
+
+
+
 
 
 def can_use_rust_backend_for_query_page(
@@ -125,7 +100,8 @@ def can_use_rust_backend_for_query_page(
 ) -> bool:
     """Return True when one query page can safely route through the Rust backend.
 
-    This is the request-shape gate for query_items. Backend selection is handled
+    This compatibility gate is not used by the public retained Rust query pager.
+    Backend selection for these legacy/internal calls is handled
     separately by ``run_page_operation``. It says no whenever anything does not
     fit: no query, the query-plan step, a non-document query, or the internal
     read_items query leg (a confirmed driver panic -- see the
@@ -176,14 +152,14 @@ def can_use_rust_backend_for_query_page(
 
     has_partition_key = "partitionKey" in options
     partition_key_value = options.get("partitionKey")
-    partition_key_wire = "[]"
+    partition_key_wire = PartitionKeyInput("cross_partition")
     if has_partition_key:
         try:
-            partition_key_wire = serialize_partition_key_to_wire(partition_key_value)
+            partition_key_wire = normalize_partition_key(partition_key_value)
         except (TypeError, ValueError):
             return False
 
-    if partition_key_wire == "[]":
+    if partition_key_wire.kind in ("cross_partition", "empty_sentinel"):
         # Honor explicit "cross partition disabled" requests by keeping them on
         # the legacy path, which raises the same BAD_REQUEST the service returns
         # today for unsupported cross-partition execution. This is a plain
@@ -405,58 +381,58 @@ def can_use_rust_backend_for_query_databases_page(
     )
 
 
-def _build_prepared_headers_for_rust_feed_dispatch(
+def _build_feed_request(
     *,
+    op: str,
+    container_link: str,
+    resource_type: str,
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
-) -> dict[str, Any]:
-    """Choose which of the already-built HTTP headers to hand to the Rust page.
-
-    Two kinds are dropped. The driver writes its own authorization, date, and
-    version headers, so ours would be ignored or conflict. Page size and
-    continuation are already carried as typed fields on ``PreparedQuery``, so
-    sending them as headers too would state the same thing twice. Excluded
-    locations and the overall timeout are added instead of dropped, because the
-    driver takes those as request options rather than as headers.
-
-    Shared by all three paged operations. Without it each would filter its own
-    headers and the three could drift apart.
-    """
-    typed_paging_headers = set()
-    if options.get("maxItemCount") is not None:
-        typed_paging_headers.add(http_constants.HttpHeaders.PageSize)
-    if options.get("continuation") is not None:
-        typed_paging_headers.add(http_constants.HttpHeaders.Continuation)
-    excluded_headers = DRIVER_OWNED_REQUEST_HEADERS.union(typed_paging_headers)
-    prepared_headers = {
-        name: value
-        for name, value in req_headers.items()
-        if not (
-            isinstance(name, str)
-            and name.lower() in excluded_headers
-        )
-    }
-    excluded_locations = options.get(Constants.Kwargs.EXCLUDED_LOCATIONS)
-    if excluded_locations is not None:
-        prepared_headers[Constants.Kwargs.EXCLUDED_LOCATIONS] = excluded_locations
-    timeout_value = options.get(Constants.Kwargs.TIMEOUT)
-    if timeout_value is not None:
-        prepared_headers[Constants.OVERALL_TIMEOUT_SECONDS] = timeout_value
-    return prepared_headers
-
-
-def _resolve_partition_key_header_for_feed_dispatch(
-    *,
-    options: Mapping[str, Any],
-    req_headers: Mapping[str, Any],
-) -> str:
-    """Return the serialized partition key used to scope the page."""
-    partition_key_header = req_headers.get(http_constants.HttpHeaders.PartitionKey)
-    if isinstance(partition_key_header, str):
-        return partition_key_header
-    if "partitionKey" in options:
-        return serialize_partition_key_to_wire(options.get("partitionKey"))
-    return "[]"
+    query_payload: Optional[Union[str, Mapping[str, Any]]] = None,
+) -> PreparedQuery:
+    """Build a page from unsigned defaults/options, with one paging authority."""
+    if resource_type in ("dbs", "colls"):
+        timeout = options.get(Constants.Kwargs.TIMEOUT)
+        started = options.get(Constants.OperationStartTime)
+        if timeout is not None and started is not None and time.time() - started >= timeout:
+            raise CosmosClientTimeoutError()
+    header_options = {key: value for key, value in options.items() if key not in ("maxItemCount", "continuation")}
+    headers, settings = prepare_service_request_settings(header_options, req_headers, resource_type=resource_type)
+    raw_count = headers.pop(http_constants.HttpHeaders.PageSize, None)
+    max_item_count = options.get("maxItemCount")
+    if max_item_count is None and raw_count is not None:
+        try:
+            max_item_count = int(raw_count)
+        except ValueError as error:
+            raise ValueError("x-ms-max-item-count must be an integer.") from error
+    raw_continuation = headers.pop(http_constants.HttpHeaders.Continuation, None)
+    continuation = options.get("continuation")
+    if continuation is None:
+        continuation = raw_continuation
+    raw_partition_key = headers.pop(http_constants.HttpHeaders.PartitionKey, None)
+    partition_key = PartitionKeyInput("cross_partition")
+    if resource_type == "docs" and "partitionKey" in options:
+        partition_key = normalize_partition_key(options["partitionKey"])
+        if partition_key.kind == "empty_sentinel":
+            partition_key = PartitionKeyInput("cross_partition")
+    elif resource_type == "docs" and raw_partition_key is not None:
+        partition_key = parse_customer_partition_key_header(raw_partition_key)
+    if query_payload is not None:
+        headers.pop(http_constants.HttpHeaders.IsQuery, None)
+        settings = replace(settings, query=replace(settings.query, is_query=True))
+    return PreparedQuery(
+        op=op,
+        container_link=container_link,
+        query=query_payload if isinstance(query_payload, str) else (
+            query_payload.get("query") if query_payload is not None else None
+        ),
+        parameters=tuple(query_payload.get("parameters") or ()) if isinstance(query_payload, Mapping) else (),
+        partition_key=partition_key if resource_type == "docs" else PartitionKeyInput("cross_partition"),
+        max_item_count=max_item_count,
+        continuation=continuation,
+        headers=headers,
+        settings=settings,
+    )
 
 
 def _extract_container_link_from_docs_path(path: str) -> str:
@@ -472,34 +448,14 @@ def build_query_items_prepared_query(
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
 ) -> PreparedQuery:
-    """Build the PreparedQuery for one query-items page dispatch.
-
-    Assembles the request object the binding reads: it copies the request headers,
-    carries the excluded-locations and timeout values, works out the container link
-    from the request path, turns the query JSON into bytes, and sets the
-    partition_key_header to ["pk"] for one partition or [] for the whole container.
-    That header string is exactly what the Rust side decodes to pick the query scope,
-    so both ends agree on it.
-    """
-    prepared_headers = _build_prepared_headers_for_rust_feed_dispatch(
-        options=options,
-        req_headers=req_headers,
-    )
-    partition_key_header = _resolve_partition_key_header_for_feed_dispatch(
-        options=options,
-        req_headers=req_headers,
-    )
-    query_text = query_payload if isinstance(query_payload, str) else query_payload.get("query")
-    parameters = () if isinstance(query_payload, str) else tuple(query_payload.get("parameters") or ())
-    return PreparedQuery(
+    """Build an item query directly from unsigned defaults and service options."""
+    return _build_feed_request(
         op=OP_QUERY_ITEMS,
         container_link=_extract_container_link_from_docs_path(path),
-        query=query_text,
-        parameters=parameters,
-        partition_key_header=partition_key_header,
-        max_item_count=options.get("maxItemCount"),
-        continuation=options.get("continuation"),
-        headers=prepared_headers,
+        resource_type="docs",
+        query_payload=query_payload,
+        options=options,
+        req_headers=req_headers,
     )
 
 
@@ -515,56 +471,13 @@ def build_read_all_items_prepared_query(
     native read-feed for a logical partition and the legacy-compatible internal
     query for a whole-container read.
     """
-    return PreparedQuery(
+    return _build_feed_request(
         op=OP_READ_ALL_ITEMS,
         container_link=_extract_container_link_from_docs_path(path),
-        partition_key_header=_resolve_partition_key_header_for_feed_dispatch(
-            options=options,
-            req_headers=req_headers,
-        ),
-        max_item_count=options.get("maxItemCount"),
-        continuation=options.get("continuation"),
-        headers=_build_prepared_headers_for_rust_feed_dispatch(
-            options=options,
-            req_headers=req_headers,
-        ),
-    )
-
-
-def _build_prepared_headers_for_database_feed_dispatch(
-    *,
-    options: Mapping[str, Any],
-    req_headers: Mapping[str, Any],
-) -> dict[str, Any]:
-    """Return headers for a database or container feed request."""
-    timeout = options.get(Constants.Kwargs.TIMEOUT)
-    started = options.get(Constants.OperationStartTime)
-    # Empty service pages can trigger another request within the same public
-    # page fetch. Do not restart a budget that has already expired.
-    if timeout is not None and started is not None and time.time() - started >= timeout:
-        raise CosmosClientTimeoutError()
-    prepared_headers = _build_prepared_headers_for_rust_feed_dispatch(
+        resource_type="docs",
         options=options,
         req_headers=req_headers,
     )
-    initial_headers = options.get("initialHeaders")
-    if isinstance(initial_headers, Mapping):
-        customer_headers_for_binding = {
-            name: value
-            for name, value in initial_headers.items()
-            if not (
-                isinstance(name, str)
-                and (
-                    name.lower().startswith("x-ms-")
-                    or name.lower() in {"if-match", "if-none-match", "prefer"}
-                )
-            )
-        }
-        if customer_headers_for_binding:
-            for name in customer_headers_for_binding:
-                prepared_headers.pop(name, None)
-            prepared_headers["initialHeaders"] = customer_headers_for_binding
-    return prepared_headers
 
 
 def build_list_databases_prepared_query(
@@ -573,36 +486,29 @@ def build_list_databases_prepared_query(
     req_headers: Mapping[str, Any],
 ) -> PreparedQuery:
     """Build the Rust request for one page of ``list_databases``."""
-    return PreparedQuery(
+    return _build_feed_request(
         op=OP_LIST_DATABASES,
         container_link="",
-        max_item_count=options.get("maxItemCount"),
-        continuation=options.get("continuation"),
-        headers=_build_prepared_headers_for_database_feed_dispatch(
-            options=options,
-            req_headers=req_headers,
-        ),
+        resource_type="dbs",
+        options=options,
+        req_headers=req_headers,
     )
 
 
 def build_query_databases_prepared_query(
     *,
-    query_payload: Mapping[str, Any],
+    query_payload: Union[str, Mapping[str, Any]],
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
 ) -> PreparedQuery:
     """Build the Rust request for one page of ``query_databases``."""
-    return PreparedQuery(
+    return _build_feed_request(
         op=OP_QUERY_DATABASES,
         container_link="",
-        query=query_payload.get("query"),
-        parameters=tuple(query_payload.get("parameters") or ()),
-        max_item_count=options.get("maxItemCount"),
-        continuation=options.get("continuation"),
-        headers=_build_prepared_headers_for_database_feed_dispatch(
-            options=options,
-            req_headers=req_headers,
-        ),
+        resource_type="dbs",
+        query_payload=query_payload,
+        options=options,
+        req_headers=req_headers,
     )
 
 
@@ -625,37 +531,30 @@ def build_list_containers_prepared_query(
     req_headers: Mapping[str, Any],
 ) -> PreparedQuery:
     """Build the Rust request for one page of ``list_containers``."""
-    return PreparedQuery(
+    return _build_feed_request(
         op=OP_LIST_CONTAINERS,
         container_link=_database_link_from_colls_path(path),
-        max_item_count=options.get("maxItemCount"),
-        continuation=options.get("continuation"),
-        headers=_build_prepared_headers_for_database_feed_dispatch(
-            options=options,
-            req_headers=req_headers,
-        ),
+        resource_type="colls",
+        options=options,
+        req_headers=req_headers,
     )
 
 
 def build_query_containers_prepared_query(
     *,
     path: str,
-    query_payload: Mapping[str, Any],
+    query_payload: Union[str, Mapping[str, Any]],
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
 ) -> PreparedQuery:
     """Build the Rust request for one page of ``query_containers``."""
-    return PreparedQuery(
+    return _build_feed_request(
         op=OP_QUERY_CONTAINERS,
         container_link=_database_link_from_colls_path(path),
-        query=query_payload.get("query"),
-        parameters=tuple(query_payload.get("parameters") or ()),
-        max_item_count=options.get("maxItemCount"),
-        continuation=options.get("continuation"),
-        headers=_build_prepared_headers_for_database_feed_dispatch(
-            options=options,
-            req_headers=req_headers,
-        ),
+        resource_type="colls",
+        query_payload=query_payload,
+        options=options,
+        req_headers=req_headers,
     )
 
 
@@ -720,7 +619,7 @@ def finalize_rust_page_response(
     return last_response_headers
 
 
-def parse_and_finalize_rust_page(  # pylint: disable=too-many-arguments
+def process_query_page(  # pylint: disable=too-many-arguments
     *,
     page: QueryPage,
     client_connection: Any,
@@ -732,7 +631,7 @@ def parse_and_finalize_rust_page(  # pylint: disable=too-many-arguments
     """Parse one backend page and apply legacy response side effects."""
     parsed_response = cast(
         CosmosDict,
-        parse_backend_response(
+        process_backend_response(
             page_to_backend_response(page),
             client_connection=None,
             response_hook=None,

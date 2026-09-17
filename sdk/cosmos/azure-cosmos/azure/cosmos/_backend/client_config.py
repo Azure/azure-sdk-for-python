@@ -14,8 +14,8 @@ arguments.
 :func:`build_client_config` is that gathering step. It validates each option
 against what the Rust path can actually carry, and returns one
 :class:`~azure.cosmos._backend.contracts.PreparedClientConfig` -- or ``None``
-when the customer tuned nothing at all, which keeps an untuned client on the
-simplest path, with the binding building the driver from its own defaults.
+when the customer tuned nothing at all. The binding applies Python's disabled
+hedging default even when this config is absent.
 
 The private helpers below it do the per-option validation: rejecting a bare
 string where a list of regions was meant, a consistency level with no driver
@@ -85,7 +85,7 @@ def _normalize_locations(
     and require a real sequence of region names (e.g. ``["West US"]``). An empty or
     absent value means "no preference" and carries nothing.
     """
-    if not value:
+    if value is None:
         return ()
     if isinstance(value, (str, bytes)):
         raise ValueError(
@@ -95,6 +95,10 @@ def _normalize_locations(
                 name=arg_name, val=value
             )
         )
+    if not isinstance(value, Sequence):
+        raise ValueError("{} must be a sequence of region-name strings.".format(arg_name))
+    if any(not isinstance(region, str) or not region.strip() for region in value):
+        raise ValueError("{} must contain non-empty region-name strings.".format(arg_name))
     return tuple(value)
 
 
@@ -118,22 +122,19 @@ def build_client_config(
     :class:`PreparedClientConfig`, and return ``None``
     when the customer tuned nothing.
 
-    Why the ``None`` matters: an untuned client takes the simplest path -- the
-    binding builds the driver with its defaults -- so a customer who asked for
-    no tuning gets no behavior change. Shared by the sync and async factories so
-    the kwarg-to-config mapping lives in exactly one place.
+    An untuned client takes the simplest path; the binding supplies Python's
+    disabled hedging default and keeps other driver defaults. Shared by the sync
+    and async factories so the kwarg-to-config mapping lives in exactly one place.
 
-    Most settings are carried only when the customer actually expressed them.
-    Every setting is carried only when the customer actually expressed it:
+    Settings are carried only when the customer actually expressed them:
 
     * ``preferred_locations`` / ``excluded_locations`` -- empty means "no
       preference / no exclusion".
     * throttling caps -- ``None`` means "untuned"; the driver keeps its own
       defaults (9 retries / 30 s), which match Python-core's.
-    * ``availability_strategy`` -- ``None`` (absent) and ``False`` carry
-      nothing, so the driver keeps its default; ``True`` or a dict carries the
-      hedging threshold. Carrying an explicit disable requires a separate
-      config field that does not exist yet.
+    * ``availability_strategy`` -- ``None`` (absent) and ``False`` carry no
+      threshold, which the binding maps to ``AvailabilityStrategy::Disabled``.
+      ``True`` or a dict carries the enabled hedging threshold.
     * ``user_agent_suffix`` -- ``None`` or an empty string carries nothing, so
       the driver keeps its default SDK User-Agent; any non-empty label is carried
       for the driver to stamp on every request's User-Agent.
@@ -162,6 +163,19 @@ def build_client_config(
         )
     preferred = _normalize_locations(preferred_locations, "preferred_locations")
     excluded = _normalize_locations(excluded_locations, "excluded_locations")
+    if throttling_max_retry_count is not None and (
+        isinstance(throttling_max_retry_count, bool)
+        or not isinstance(throttling_max_retry_count, int)
+        or not 0 <= throttling_max_retry_count <= 2**32 - 1
+    ):
+        raise ValueError("retry_throttle_total must be an integer between 0 and 2**32 - 1.")
+    if throttling_max_retry_wait_time_seconds is not None and (
+        isinstance(throttling_max_retry_wait_time_seconds, bool)
+        or not isinstance(throttling_max_retry_wait_time_seconds, Real)
+        or not 0 <= throttling_max_retry_wait_time_seconds < 2**64
+        or float(throttling_max_retry_wait_time_seconds) >= 2**64
+    ):
+        raise ValueError("retry_throttle_backoff_max must be finite nonnegative seconds below 2**64.")
     hedging_threshold_ms = _resolve_hedging(availability_strategy)
     # An empty string carries nothing, matching the "no preference" treatment of
     # the location tuples; only a non-empty label is worth carrying to the driver.
@@ -414,8 +428,10 @@ def _resolve_hedging(availability_strategy: Any) -> Optional[int]:
     ``True`` uses the default threshold and a dict uses its ``threshold_ms``
     (validated ``> 0``). ``None`` (absent) and ``False`` carry nothing -- matching
     Python-core, where the client default is "no strategy" -- so sync (kwarg) and
-    async (an explicit ``False``-default parameter) behave identically. Python's
-    ``threshold_steps_ms`` has no driver equivalent and is intentionally dropped.
+    async (an explicit ``False``-default parameter) behave identically.
+    The binding maps a missing threshold (including absent config) to the
+    driver's explicit Disabled strategy, not its default-enabled behavior.
+    Python's ``threshold_steps_ms`` has no driver equivalent and is intentionally dropped.
     """
     if availability_strategy is True:
         return DEFAULT_THRESHOLD_MS

@@ -22,6 +22,7 @@ points (insert-or-replace vs overwrite-only).
 
 Sibling of ``tests/upsert_item/test_backend_dispatches_upsert_unit.py``.
 """
+from common.typed_requests import key_from_legacy_header
 import asyncio
 import sys
 from unittest.mock import AsyncMock, MagicMock
@@ -40,7 +41,7 @@ def _replace_prepared() -> PreparedRequest:
         op=OP_REPLACE_ITEM,
         container_link="dbs/d/colls/c",
         body_bytes=b'{"id":"order-42","pk":"customerA","total":129.0}',
-        partition_key_header='["customerA"]',
+        partition_key=key_from_legacy_header('["customerA"]'),
         headers={},
         item_id="order-42",
     )
@@ -51,7 +52,7 @@ def test_sync_rust_backend_dispatches_replace_to_binding(monkeypatch):
     ``upsert_item`` and not ``create_item``) for a replace op and wraps the
     4-tuple it returns. A 200 here models the overwrite."""
     fake_module = MagicMock()
-    fake_module.init_client.return_value = "handle-1"
+    fake_module.acquire_driver_handle.return_value = "handle-1"
     fake_module.replace_item.return_value = (200, 0, {"etag": "v2"}, b'{"id":"order-42"}')
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
 
@@ -73,7 +74,7 @@ def test_sync_rust_backend_replace_surfaces_412(monkeypatch):
     4-tuple (not a raised binding error). The backend wraps it as a
     ``BackendResponse`` for the parser to map to the typed exception."""
     fake_module = MagicMock()
-    fake_module.init_client.return_value = "handle-1"
+    fake_module.acquire_driver_handle.return_value = "handle-1"
     fake_module.replace_item.return_value = (412, 0, {}, b'{"message":"precondition failed"}')
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
 
@@ -89,7 +90,7 @@ def test_async_rust_backend_dispatches_replace_to_binding(monkeypatch):
     ``replace_item_async`` function, never the sync ``replace_item`` and never a
     sibling write-with-body op."""
     fake_module = MagicMock()
-    fake_module.init_client.return_value = "handle-1"
+    fake_module.acquire_driver_handle.return_value = "handle-1"
     fake_module.replace_item_async = AsyncMock(
         return_value=(200, 0, {"etag": "v2"}, b'{"id":"order-42"}')
     )

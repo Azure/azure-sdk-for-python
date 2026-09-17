@@ -3,69 +3,46 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""The backend layer: the object that actually sends an operation on the wire.
+"""Backends that send Cosmos requests and hand back the raw reply.
 
-A backend is what a ``CosmosClient`` builds once and then hands every prepared
-operation to so it can go on the wire.
+A backend is the layer that actually talks to the service. There are two
+here: one that calls the Rust driver, and one that uses the older Python
+code. A factory picks between them once, when the client is built, and
+nothing above this package has to know which one it got.
 
-It has three dispatch methods, split by the shape of the reply rather than by
-which resource the operation touches: ``execute`` (one request, one reply -- a
-single resource, or nothing for a delete), ``execute_pages`` (one request, a
-feed that comes back a page at a time), and ``execute_batch`` (one request, a
-set of operations the service applies all-or-nothing). The operation kind is a
-value carried on the request, not a method of its own, so the three methods
-cover the whole public surface: every create/read/replace/delete of an item,
-database, container, user, permission, or script is a single-reply ``execute``;
-every ``list_*`` / ``query_*`` (and read-many) is an ``execute_pages`` feed; and
-a transactional batch is ``execute_batch``. Adding an operation is a new
-operation-kind value and a branch, not a new method.
+Callers pass in a request that is already finished and get back what came
+off the wire. Replies come in two shapes: a single reply, or a series of
+pages. Backends do not build requests and do not interpret replies; the
+helper package does both.
 
-``execute`` and ``execute_pages`` are wired according to the operation tables in
-``operations.py``. ``execute_batch`` is defined but raises
-``NotImplementedError`` until transactional batch is migrated.
+Operations that have finished moving to Rust go straight to the driver.
+Operations still being moved go through a wrapper that first works out
+which path to use. There are three possible answers: the Rust path can
+handle the request, so it does; the Rust path cannot, but the older Python
+path is allowed to step in for this kind of request, so it does; or neither
+can, and the call fails right away with a message naming the option to
+remove. That choice is made before anything is sent.
 
-Two backends exist, and both are concrete ``CosmosBackend`` objects that run
-through ``CosmosBackend.run_operation``. The rust backend forwards each operation
-to the compiled Rust driver. The core-python backend (``LegacyBackend``, see
-``azure.cosmos._backend.legacy``) runs the SDK's original in-place code and is
-still a selectable backend on the current branch. On a Rust-selected client it
-also provides temporary fallback for unmigrated request shapes. The intended
-final architecture keeps only the Rust execution path.
+Falling back is a decision, never a recovery. Once a request has been sent,
+its outcome stands: a failure while sending, while reading the reply, or
+inside the caller's own callback is reported as a failure. It is never
+quietly retried against the other path.
 
-The backend a client stores is always concrete: the factory returns a
-``RustBackend`` for rust or the shared ``LegacyBackend`` for core-python.
+A request holds the data to send but not the caller's time limit. The time
+limit travels separately, so a request can be built once and still be
+subject to how much time is actually left.
 
-The modules here are arranged so that a caller depends only on what it actually
-uses. In dependency order, lowest first:
+Two kinds of cleanup are tracked apart. Closing one client releases that
+client's own registration, while a Rust driver shared with other clients
+stays alive until the last of them is done with it.
 
-* ``operations`` -- the ``OP_*`` operation names and the binding lookups keyed by
-  them. Pure data, no imports, so a request builder or routing predicate can name
-  an operation without pulling in any backend machinery.
-* ``errors`` -- the errors this layer raises, and the guards that raise them.
-* ``contracts`` -- the frozen request and reply objects backends exchange with
-  the layer above. Shared by the sync and async backends, which is why they live
-  here rather than beside either one.
-* ``_binding_conversions`` -- conversions between the Rust binding's plain tuples
-  and dicts and those typed objects.
-* ``_fallback_metrics`` -- the process-wide count of Rust attempts that retried
-  on the legacy path.
-* ``base`` -- the ``CosmosBackend`` ABC itself.
-* ``credentials``, ``transport_settings``, ``client_config`` -- the three
-  argument-checking steps a client goes through before a Rust backend is built:
-  sorting the credential, rejecting network settings the driver cannot honor,
-  and gathering the tuning options into one config object. They are separate
-  from ``factory`` because the async factory reuses all three. ``credentials``
-  also exposes ``resolved_credential``, the context manager both factories build
-  inside so a construction that fails later cannot strand the background thread
-  that wrapping an async credential starts.
-* ``factory``, ``rust``, ``legacy``, ``_shared``, ``_driver_registry`` -- backend
-  selection and the two concrete implementations. ``_shared`` holds the state and
-  the open/close steps the sync and async Rust backends have in common, so a
-  lifecycle rule cannot end up enforced on only one of them.
+Having two backends is a stage, not the destination. The older Python
+backend exists only until every operation works on Rust. When that lands,
+it is deleted, and so is the wrapper that chooses between paths, because
+there will be nothing left to choose between. What remains is the shape
+the item path already has: public class, helper, one backend, driver.
 
-The async versions of all of this live in ``azure.cosmos.aio._backend``, which
-defines only what genuinely differs (the ``AsyncCosmosBackend`` ABC and the two
-async implementations) and imports ``operations``, ``errors``, ``contracts``,
-``_binding_conversions`` and ``_fallback_metrics`` from here, so the two engines
-cannot drift apart on the shared vocabulary.
+So treat anything legacy in here as code with an expiry date. Do not build
+on it, do not add operations to it, and do not design around the
+possibility of falling back to it.
 """

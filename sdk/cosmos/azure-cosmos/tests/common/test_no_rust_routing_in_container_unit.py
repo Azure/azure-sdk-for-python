@@ -130,7 +130,7 @@ class _NoRustRoutingInContainerBase:
         mentions "rust" (case-insensitive) -- unlike a whole-file scan, this
         does not false-positive on unrelated architecture comments elsewhere
         in the module (e.g. on the item-operation methods, which legitimately
-        route through ``ItemHelper`` / ``pick_backend``)."""
+        route through ``ItemHelper`` / ``get_selected_backend``)."""
         source = self._source()
         tree = ast.parse(source, filename=inspect.getfile(self.module))
         violations = []

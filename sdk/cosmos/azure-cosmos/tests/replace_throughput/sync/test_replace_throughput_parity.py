@@ -42,11 +42,7 @@ import uuid
 import pytest
 
 from azure.cosmos import CosmosClient, PartitionKey, ThroughputProperties
-from common._parity_helpers import (
-    run_on_both_backends,
-    skip_unless_emulator,
-    skip_unless_rust_binding,
-)
+from common._parity_helpers import run_on_both_backends, skip_unless_emulator, skip_unless_rust_binding
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 

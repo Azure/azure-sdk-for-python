@@ -9,30 +9,30 @@ This is the database counterpart to
 :class:`~azure.cosmos._helpers.item_helper.ItemHelper`. The public methods
 ``CosmosClient.create_database``, ``CosmosClient.create_database_if_not_exists``
 and ``DatabaseProxy.read`` gather their arguments and delegate here. This module
-runs each operation through the selected engine and returns the final database
+runs each operation through the selected backend and returns the final database
 properties.
 
 What a "database" is, in customer terms: the top-level container-of-containers a
 customer makes once per tenant or app. Creating one is an account-level write, so
 unlike an item write there is no container and no partition key involved.
 
-Why this module exists (public methods must not know which engine runs):
-without it, that engine branching would live in the public client methods. Here
+Why this module exists (public methods must not know which backend runs):
+without it, that backend branching would live in the public client methods. Here
 it uses the concrete backend stored by the client and drives the create through
 :meth:`~azure.cosmos._backend.cosmos_backend.CosmosBackend.run_operation`, so the public
-method is a thin delegate that names no engine. This mirrors ``ItemHelper`` and
+method is a thin delegate that names no backend. This mirrors ``ItemHelper`` and
 the throughput and feed-range coordinators.
 
 The whole of ``DatabaseProxy.read`` on the rust path, end to end
 -----------------------------------------------------------------
 A customer calls ``db.read()``. Five pieces were added or changed to let that
-call run on the rust engine, and each one exists because something concrete
+call run on the rust backend, and each one exists because something concrete
 breaks without it:
 
 1. ``DatabaseProxy.read`` (``database.py``) collects the caller's keyword
-   arguments and hands them here. It names no engine.
+   arguments and hands them here. It names no backend.
 2. :meth:`DatabaseHelper.read_database` (this module) asks
-   ``is_read_database_rust_eligible`` one question -- can the rust engine honor
+   ``is_read_database_rust_eligible`` one question -- can the rust backend honor
    everything this caller asked for? -- and hands both the rust request and the
    core-python call to ``run_operation``. Rust rejects unsupported settings;
    only explicit legacy selection runs the core-python call.
@@ -53,20 +53,24 @@ transport. Same result, but different retry behavior and different diagnostics
 from every other call on the same client -- which is the kind of difference that
 only shows up during an incident.
 """
+
 from __future__ import annotations
+
+from azure.cosmos._backend.capabilities import OperationRouting
 
 from typing import Any, Callable, Mapping, Optional
 
 from .. import exceptions
 from .._backend.cosmos_backend import CosmosBackend
-from .._backend.contracts import LegacyOperation
-from .._backend.operations import OP_CREATE_DATABASE, OP_DELETE_DATABASE, OP_READ_DATABASE
+
+from .._backend.operations import (
+    OP_CREATE_DATABASE,
+    OP_DELETE_DATABASE,
+    OP_READ_DATABASE,
+)
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict
 from .._helpers._request_database import (
-    RUST_DELETE_DATABASE_UNSUPPORTED_MESSAGE,
-    RUST_GET_OR_CREATE_DATABASE_UNSUPPORTED_MESSAGE,
-    RUST_READ_DATABASE_UNSUPPORTED_MESSAGE,
     build_create_database_prepared,
     build_delete_database_prepared,
     build_read_database_prepared,
@@ -74,8 +78,8 @@ from .._helpers._request_database import (
     is_read_database_rust_eligible,
 )
 from .._helpers._response_parse import (
-    parse_backend_response,
-    parse_database_read_response,
+    process_backend_response,
+    process_database_read_response,
     with_response_header_snapshot,
 )
 
@@ -96,7 +100,7 @@ class DatabaseHelper:
         response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
     ) -> CosmosDict:
-        """Create one database, without exposing engine selection to the public method.
+        """Create one database, without exposing backend selection to the public method.
 
         Builds the account-level create request and drives it through the selected
         backend. ``create_database`` does not support a per-call ``read_timeout``;
@@ -110,22 +114,22 @@ class DatabaseHelper:
             request_options.get(Constants.Kwargs.READ_TIMEOUT) is not None
             or operation_kwargs.get(Constants.Kwargs.READ_TIMEOUT) is not None
         ):
-            raise TypeError("create_database() does not support the 'read_timeout' keyword argument")
+            raise TypeError(
+                "create_database() does not support the 'read_timeout' keyword argument"
+            )
         result = self._backend.run_operation(
-            prepare_request=lambda: build_create_database_prepared(
+            build_request=lambda: build_create_database_prepared(
                 database,
                 request_options,
                 kwargs=operation_kwargs,
             ),
-            legacy_operation=LegacyOperation(
-                op=OP_CREATE_DATABASE,
-                invoke=lambda: self._client_connection.CreateDatabase(
-                    database=database,
-                    options=request_options,
-                    **operation_kwargs,
-                ),
+            routing=OperationRouting(OP_CREATE_DATABASE, True),
+            legacy_call=lambda: self._client_connection.CreateDatabase(
+                database=database,
+                options=request_options,
+                **operation_kwargs,
             ),
-            parse_response=lambda response: parse_backend_response(
+            process_response=lambda response: process_backend_response(
                 response,
                 client_connection=self._client_connection,
             ),
@@ -139,10 +143,12 @@ class DatabaseHelper:
         database_id: Any,
         request_options: Mapping[str, Any],
         *,
-        response_hook: Optional[Callable[[Mapping[str, Any], Optional[dict[str, Any]]], None]] = None,
+        response_hook: Optional[
+            Callable[[Mapping[str, Any], Optional[dict[str, Any]]], None]
+        ] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
     ) -> CosmosDict:
-        """Read one database's properties, without exposing engine selection.
+        """Read one database's properties, without exposing backend selection.
 
         Unsupported Rust calls fail rather than borrowing legacy transport.
         Explicit legacy selection remains available. The two-argument hook gets
@@ -154,30 +160,28 @@ class DatabaseHelper:
         if response_hook is not None:
             operation_kwargs["response_hook"] = response_hook
         result = self._backend.run_operation(
-            prepare_request=lambda: build_read_database_prepared(
+            build_request=lambda: build_read_database_prepared(
                 database_id,
                 request_options,
                 kwargs=operation_kwargs,
             ),
-            legacy_operation=LegacyOperation(
-                op=OP_READ_DATABASE,
-                invoke=lambda: self._client_connection.ReadDatabase(
-                    "dbs/{}".format(database_id),
-                    options=request_options,
-                    **operation_kwargs,
+            routing=OperationRouting(
+                OP_READ_DATABASE,
+                is_read_database_rust_eligible(
+                    request_options,
+                    operation_kwargs,
                 ),
             ),
-            parse_response=lambda response: parse_database_read_response(
+            legacy_call=lambda: self._client_connection.ReadDatabase(
+                "dbs/{}".format(database_id),
+                options=request_options,
+                **operation_kwargs,
+            ),
+            process_response=lambda response: process_database_read_response(
                 response,
                 client_connection=self._client_connection,
                 response_hook=response_hook,
             ),
-            rust_eligible=is_read_database_rust_eligible(
-                request_options,
-                operation_kwargs,
-            ),
-            allow_legacy_fallback=False,
-            unsupported_message=RUST_READ_DATABASE_UNSUPPORTED_MESSAGE,
         )
         return result
 
@@ -196,29 +200,27 @@ class DatabaseHelper:
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
         self._backend.run_operation(
-            prepare_request=lambda: build_delete_database_prepared(
+            build_request=lambda: build_delete_database_prepared(
                 database_link,
                 request_options,
                 kwargs=operation_kwargs,
             ),
-            legacy_operation=LegacyOperation(
-                op=OP_DELETE_DATABASE,
-                invoke=lambda: self._client_connection.DeleteDatabase(
-                    database_link,
-                    options=request_options,
-                    **operation_kwargs,
+            routing=OperationRouting(
+                OP_DELETE_DATABASE,
+                is_delete_database_rust_eligible(
+                    request_options,
+                    operation_kwargs,
                 ),
             ),
-            parse_response=lambda response: parse_backend_response(
+            legacy_call=lambda: self._client_connection.DeleteDatabase(
+                database_link,
+                options=request_options,
+                **operation_kwargs,
+            ),
+            process_response=lambda response: process_backend_response(
                 response,
                 client_connection=self._client_connection,
             ),
-            rust_eligible=is_delete_database_rust_eligible(
-                request_options,
-                operation_kwargs,
-            ),
-            allow_legacy_fallback=False,
-            unsupported_message=RUST_DELETE_DATABASE_UNSUPPORTED_MESSAGE,
         )
 
     def create_database_if_not_exists(
@@ -260,32 +262,31 @@ class DatabaseHelper:
         # One definition of "Rust can honor this read", shared with
         # DatabaseProxy.read, so the same call never runs on Rust here and on
         # legacy Python there. Both legs use it: reaching the create means the
-        # read already ran on Rust, and the workflow must not switch engines
+        # read already ran on Rust, and the workflow must not switch backends
         # halfway through.
         rust_eligible = is_read_database_rust_eligible(read_options, operation_kwargs)
 
         def read_database() -> CosmosDict:
             return self._backend.run_operation(
-                prepare_request=lambda: build_read_database_prepared(
+                build_request=lambda: build_read_database_prepared(
                     database["id"],
                     read_options,
                     kwargs=operation_kwargs,
                 ),
-                legacy_operation=LegacyOperation(
-                    op=OP_READ_DATABASE,
-                    invoke=lambda: self._client_connection.ReadDatabase(
-                        "dbs/{}".format(database["id"]),
-                        options=read_options,
-                        **operation_kwargs,
-                    ),
+                routing=OperationRouting(
+                    OP_READ_DATABASE,
+                    rust_eligible,
+                    capability="create_database_if_not_exists",
                 ),
-                parse_response=lambda response: parse_backend_response(
+                legacy_call=lambda: self._client_connection.ReadDatabase(
+                    "dbs/{}".format(database["id"]),
+                    options=read_options,
+                    **operation_kwargs,
+                ),
+                process_response=lambda response: process_backend_response(
                     response,
                     client_connection=self._client_connection,
                 ),
-                rust_eligible=rust_eligible,
-                allow_legacy_fallback=False,
-                unsupported_message=RUST_GET_OR_CREATE_DATABASE_UNSUPPORTED_MESSAGE,
             )
 
         try:
@@ -293,26 +294,25 @@ class DatabaseHelper:
         except exceptions.CosmosResourceNotFoundError:
             try:
                 result = self._backend.run_operation(
-                    prepare_request=lambda: build_create_database_prepared(
+                    build_request=lambda: build_create_database_prepared(
                         database,
                         request_options,
                         kwargs=operation_kwargs,
                     ),
-                    legacy_operation=LegacyOperation(
-                        op=OP_CREATE_DATABASE,
-                        invoke=lambda: self._client_connection.CreateDatabase(
-                            database=database,
-                            options=request_options,
-                            **operation_kwargs,
-                        ),
+                    routing=OperationRouting(
+                        OP_CREATE_DATABASE,
+                        rust_eligible,
+                        capability="create_database_if_not_exists",
                     ),
-                    parse_response=lambda response: parse_backend_response(
+                    legacy_call=lambda: self._client_connection.CreateDatabase(
+                        database=database,
+                        options=request_options,
+                        **operation_kwargs,
+                    ),
+                    process_response=lambda response: process_backend_response(
                         response,
                         client_connection=self._client_connection,
                     ),
-                    rust_eligible=rust_eligible,
-                    allow_legacy_fallback=False,
-                    unsupported_message=RUST_GET_OR_CREATE_DATABASE_UNSUPPORTED_MESSAGE,
                 )
             except exceptions.CosmosResourceExistsError:
                 result = read_database()

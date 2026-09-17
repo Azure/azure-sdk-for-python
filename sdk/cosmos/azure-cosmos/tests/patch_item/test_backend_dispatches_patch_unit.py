@@ -14,6 +14,7 @@ account or a built ``_rust.pyd``. The key assertion is that an
 ``OP_PATCH_ITEM`` request routes to ``patch_item`` and never to
 ``replace_item``.
 """
+from common.typed_requests import key_from_legacy_header
 import asyncio
 import sys
 from unittest.mock import AsyncMock, MagicMock
@@ -33,7 +34,7 @@ def _patch_prepared() -> PreparedRequest:
         container_link="dbs/d/colls/c",
         # The body is the driver's PatchInstructions payload, not a document.
         body_bytes=b'{"operations":[{"op":"set","path":"/status","value":"shipped"}]}',
-        partition_key_header='["customerA"]',
+        partition_key=key_from_legacy_header('["customerA"]'),
         headers={},
         item_id="order-42",
     )
@@ -45,7 +46,7 @@ def test_sync_rust_backend_dispatches_patch_to_binding(monkeypatch):
     4-tuple it returns. A 200 here models the patched document coming
     back."""
     fake_module = MagicMock()
-    fake_module.init_client.return_value = "handle-1"
+    fake_module.acquire_driver_handle.return_value = "handle-1"
     fake_module.patch_item.return_value = (200, 0, {"etag": "v2"}, b'{"id":"order-42","status":"shipped"}')
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
 
@@ -69,7 +70,7 @@ def test_sync_rust_backend_patch_surfaces_404(monkeypatch):
     it as a ``BackendResponse`` for the parser to map to the typed
     ``CosmosResourceNotFoundError``."""
     fake_module = MagicMock()
-    fake_module.init_client.return_value = "handle-1"
+    fake_module.acquire_driver_handle.return_value = "handle-1"
     fake_module.patch_item.return_value = (404, 0, {}, b'{"message":"not found"}')
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
 
@@ -85,7 +86,7 @@ def test_async_rust_backend_dispatches_patch_to_binding(monkeypatch):
     ``patch_item_async`` function, never the sync ``patch_item`` and never
     ``replace_item_async``."""
     fake_module = MagicMock()
-    fake_module.init_client.return_value = "handle-1"
+    fake_module.acquire_driver_handle.return_value = "handle-1"
     fake_module.patch_item_async = AsyncMock(
         return_value=(200, 0, {"etag": "v2"}, b'{"id":"order-42","status":"shipped"}')
     )

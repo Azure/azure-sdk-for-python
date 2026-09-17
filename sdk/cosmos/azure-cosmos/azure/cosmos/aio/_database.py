@@ -22,7 +22,9 @@
 """Interact with databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Mapping, Optional, Union, Callable, overload, Literal
+from azure.cosmos._backend.capabilities import OperationRouting
+
+from typing import TYPE_CHECKING, Any, Mapping, Optional, Union, Callable, overload, Literal
 
 import warnings
 from azure.core.async_paging import AsyncItemPaged
@@ -38,11 +40,10 @@ from ._user import UserProxy
 from ..documents import IndexingMode
 from ..partition_key import PartitionKey
 from .._cosmos_responses import CosmosDict
-from .._helpers._item_dispatch import pick_backend
+from .._helpers._item_dispatch import get_selected_backend
 from .._helpers._page_response_hook import wrap_page_response_hook
 from ._helpers.container_helper import AsyncContainerHelper
 from .._helpers._request_container import (
-    RUST_GET_OR_CREATE_CONTAINER_UNSUPPORTED_MESSAGE,
     parse_container_create_args,
     prepare_container_get_or_create_read,
     validate_container_create_kwargs,
@@ -54,6 +55,9 @@ from .._helpers.database_throughput_helper import (
 )
 from .._global_secondary_index import GlobalSecondaryIndexDefinition, _normalize_gsi_container_properties
 
+if TYPE_CHECKING:
+    from .._helpers._item_context import ItemClientContext
+    from ._backend.cosmos_backend import AsyncCosmosBackend
 
 __all__ = ("DatabaseProxy",)
 
@@ -105,7 +109,7 @@ class DatabaseProxy(object):
         id: str,
         properties: Optional[dict[str, Any]] = None,
         *,
-        _item_context: Any = None,
+        _item_context: "Optional[ItemClientContext[AsyncCosmosBackend]]" = None,
     ) -> None:
         """
         :param client_connection: Client from which this database was retrieved.
@@ -186,7 +190,7 @@ class DatabaseProxy(object):
 
         self._properties = await AsyncDatabaseHelper(
             self.client_connection,
-            pick_backend(self.client_connection),
+            get_selected_backend(self.client_connection),
         ).read_database(
             self.id,
             request_options,
@@ -499,7 +503,7 @@ class DatabaseProxy(object):
 
         data = await AsyncContainerHelper(
             self.client_connection,
-            pick_backend(self.client_connection),
+            get_selected_backend(self.client_connection),
         ).create_container(
             self.database_link,
             definition,
@@ -765,14 +769,16 @@ class DatabaseProxy(object):
         container_proxy = self.get_container_client(id)
         try:
             properties = await AsyncContainerHelper(
-                self.client_connection, pick_backend(self.client_connection)
+                self.client_connection, get_selected_backend(self.client_connection)
             ).read_container(
                 container_proxy.container_link,
                 read_options,
                 kwargs=read_kwargs,
-                rust_eligible=rust_eligible,
-                allow_legacy_fallback=False,
-                unsupported_message=RUST_GET_OR_CREATE_CONTAINER_UNSUPPORTED_MESSAGE,
+                routing=OperationRouting(
+                    "read_container",
+                    rust_eligible,
+                    capability="create_container_if_not_exists",
+                ),
             )
         except CosmosResourceNotFoundError:
             return await self.create_container(
@@ -1224,7 +1230,7 @@ class DatabaseProxy(object):
             parameters["materializedViewDefinition"] = gsi_dict
 
         container_properties = await AsyncContainerHelper(
-            self.client_connection, pick_backend(self.client_connection),
+            self.client_connection, get_selected_backend(self.client_connection),
         ).replace_container(
             container_link, parameters, request_options, response_hook=response_hook, kwargs=kwargs,
         )
@@ -1276,7 +1282,7 @@ class DatabaseProxy(object):
         request_options = _build_options(kwargs)
         kwargs.pop("etag", None)
         collection_link = self._get_container_link(container)
-        await AsyncContainerHelper(self.client_connection, pick_backend(self.client_connection)).delete_container(
+        await AsyncContainerHelper(self.client_connection, get_selected_backend(self.client_connection)).delete_container(
             collection_link, request_options, response_hook=response_hook, kwargs=kwargs,
         )
 

@@ -33,6 +33,7 @@ from azure.cosmos._routing.feed_range_continuation import (
     _hash_query_spec,
 )
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
+from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
 
 # tracemalloc is not available in PyPy, so we import conditionally
 try:
@@ -122,6 +123,7 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
     @staticmethod
     def _create_minimal_connection() -> CosmosClientConnection:
         client = CosmosClientConnection.__new__(CosmosClientConnection)
+        client._response_state = ClientLastResponseHeaders()
         client.default_headers = {}
         client.last_response_headers = {}
         client._UpdateSessionIfRequired = lambda *args, **kwargs: None
@@ -1161,6 +1163,7 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         # Build the connection without running __init__; only the attributes
         # used by the no-query (read-feed) branch of __QueryFeed are needed.
         conn = object.__new__(CosmosClientConnection)
+        conn._response_state = ClientLastResponseHeaders()
         conn.default_headers = {}
         conn.last_response_headers = {}
         conn.availability_strategy = None

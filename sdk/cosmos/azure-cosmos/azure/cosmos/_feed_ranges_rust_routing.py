@@ -10,18 +10,24 @@ the same requests and return the exact same feed-range values. Without it, each 
 its own copy of the can-use / build / parse logic; the two could diverge, and the Rust path
 could return feed-range values that differ from the legacy path -- which breaks customers
 who reuse a feed-range value in a later call."""
+
 from __future__ import annotations
 
-from typing import Any, Mapping, Optional, cast
+from ._backend.partition_key import PartitionKeyInput
+
+from typing import Any, Mapping
 
 from . import _base as base
 from ._backend.constants import is_rust_backend
-from ._backend.operations import OP_FEED_RANGE_FROM_PARTITION_KEY, OP_IS_FEED_RANGE_SUBSET, OP_READ_FEED_RANGES
+from ._backend.operations import (
+    OP_FEED_RANGE_FROM_PARTITION_KEY,
+    OP_IS_FEED_RANGE_SUBSET,
+    OP_READ_FEED_RANGES,
+)
 from ._backend.contracts import PreparedRequest
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
-from ._helpers._body_wire import serialize_body_to_bytes
-from ._helpers._pk_wire import serialize_partition_key_to_wire
-from ._helpers._response_parse import parse_backend_response
+from ._helpers._wire_encoding import serialize_body_to_bytes
+from ._helpers._partition_key import normalize_partition_key
 from ._routing.routing_range import Range
 
 
@@ -52,7 +58,7 @@ def build_read_feed_ranges_prepared_request(
         op=OP_READ_FEED_RANGES,
         container_link=normalized_container_link,
         body_bytes=body_bytes,
-        partition_key_header="[]",
+        partition_key=PartitionKeyInput("cross_partition"),
         headers={},
         item_id=None,
     )
@@ -70,7 +76,9 @@ def parse_read_feed_ranges_payload(payload: Mapping[str, Any]) -> list[dict[str,
     for index, partition_key_range in enumerate(raw_ranges):
         if not isinstance(partition_key_range, Mapping):
             raise ValueError(
-                "read_feed_ranges Rust payload entry at index {} must be an object.".format(index)
+                "read_feed_ranges Rust payload entry at index {} must be an object.".format(
+                    index
+                )
             )
         min_inclusive = partition_key_range.get("minInclusive")
         max_exclusive = partition_key_range.get("maxExclusive")
@@ -107,18 +115,20 @@ def build_feed_range_from_partition_key_prepared_request(
 ) -> PreparedRequest:
     """Build the PreparedRequest consumed by the binding's feed_range_from_partition_key entry point."""
     normalized_container_link = base.TrimBeginningAndEndingSlashes(container_link)
-    partition_key_header = serialize_partition_key_to_wire(partition_key_value)
+    partition_key = normalize_partition_key(partition_key_value)
     return PreparedRequest(
         op=OP_FEED_RANGE_FROM_PARTITION_KEY,
         container_link=normalized_container_link,
         body_bytes=b"",
-        partition_key_header=partition_key_header,
+        partition_key=partition_key,
         headers={},
         item_id=None,
     )
 
 
-def parse_feed_range_from_partition_key_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
+def parse_feed_range_from_partition_key_payload(
+    payload: Mapping[str, Any],
+) -> dict[str, Any]:
     """Convert the Rust payload ``{"Range": {...}}`` to the public feed-range dict."""
     raw_range = payload.get("Range")
     if not isinstance(raw_range, Mapping):
@@ -168,9 +178,40 @@ def parse_feed_range_from_partition_key_payload(payload: Mapping[str, Any]) -> d
 def can_use_rust_backend_for_is_feed_range_subset(
     *,
     backend: Any,
+    parent_feed_range: dict[str, Any],
+    child_feed_range: dict[str, Any],
 ) -> bool:
-    """Return True when ``is_feed_range_subset`` can use the Rust backend."""
-    return is_rust_backend(backend)
+    """Select legacy-only opaque shapes before dispatch, never after a failure."""
+    if not is_rust_backend(backend):
+        return False
+    for value in (parent_feed_range, child_feed_range):
+        if not isinstance(value, dict) or set(value) != {"Range"}:
+            return False
+        interval = value.get("Range") if isinstance(value, dict) else None
+        if not isinstance(interval, dict) or set(interval) != {
+            "min",
+            "max",
+            "isMinInclusive",
+            "isMaxInclusive",
+        }:
+            return False
+        if any(
+            not isinstance(interval.get(key), bool)
+            for key in ("isMinInclusive", "isMaxInclusive")
+        ):
+            return False
+        for key in ("min", "max"):
+            bound = interval.get(key)
+            if (
+                not isinstance(bound, str)
+                or len(bound) % 2
+                or any(char not in "0123456789abcdefABCDEF" for char in bound)
+            ):
+                return False
+        normalized = Range.ParseFromDict(interval).to_normalized_range()
+        if normalized.min > normalized.max:
+            return False
+    return True
 
 
 def build_is_feed_range_subset_prepared_request(
@@ -191,7 +232,7 @@ def build_is_feed_range_subset_prepared_request(
         op=OP_IS_FEED_RANGE_SUBSET,
         container_link="",
         body_bytes=body_bytes,
-        partition_key_header="[]",
+        partition_key=PartitionKeyInput("cross_partition"),
         headers={},
         item_id=None,
     )
@@ -205,172 +246,3 @@ def parse_is_feed_range_subset_payload(payload: Mapping[str, Any]) -> bool:
             "is_feed_range_subset Rust payload must include a boolean field 'IsSubset'."
         )
     return is_subset
-
-
-def try_read_feed_ranges_with_rust_backend(
-    *,
-    client_connection: Any,
-    container_link: str,
-    force_refresh: bool,
-) -> Optional[list[dict[str, Any]]]:
-    """Execute ``read_feed_ranges`` through Rust, or return None to use legacy fallback."""
-    backend = client_connection._backend
-    if not is_rust_backend(backend):
-        return None
-    prepared = build_read_feed_ranges_prepared_request(
-        container_link=container_link,
-        force_refresh=force_refresh,
-    )
-    backend_response = backend.execute(prepared)
-    if backend_response is None:
-        return None
-    parsed = parse_backend_response(
-        backend_response,
-        client_connection=client_connection,
-        response_hook=None,
-    )
-    return parse_read_feed_ranges_payload(cast(dict[str, Any], parsed))
-
-
-def try_feed_range_from_partition_key_with_rust_backend(
-    *,
-    client_connection: Any,
-    container_link: str,
-    partition_key_value: Any,
-) -> Optional[dict[str, Any]]:
-    """Execute ``feed_range_from_partition_key`` through Rust, or return None to use legacy fallback."""
-    backend = client_connection._backend
-    if not is_rust_backend(backend):
-        return None
-    prepared = build_feed_range_from_partition_key_prepared_request(
-        container_link=container_link,
-        partition_key_value=partition_key_value,
-    )
-    backend_response = backend.execute(prepared)
-    if backend_response is None:
-        return None
-    parsed = parse_backend_response(
-        backend_response,
-        client_connection=client_connection,
-        response_hook=None,
-    )
-    return parse_feed_range_from_partition_key_payload(cast(dict[str, Any], parsed))
-
-
-def try_is_feed_range_subset_with_rust_backend(
-    *,
-    client_connection: Any,
-    parent_feed_range: dict[str, Any],
-    child_feed_range: dict[str, Any],
-) -> Optional[bool]:
-    """Execute ``is_feed_range_subset`` through Rust, or return None to use legacy fallback."""
-    backend = client_connection._backend
-    if not is_rust_backend(backend):
-        return None
-    prepared = build_is_feed_range_subset_prepared_request(
-        parent_feed_range=parent_feed_range,
-        child_feed_range=child_feed_range,
-    )
-    try:
-        backend_response = backend.execute(prepared)
-    except ValueError:
-        # Rust rejected the feed-range inputs (a malformed dict, inverted bounds
-        # where min > max, or a non-hex EPK). The legacy compare is more permissive
-        # on these nonsensical opaque values -- it never validates min <= max -- so
-        # fall back to it for exact parity instead of raising a Rust-only error.
-        return None
-    if backend_response is None:
-        return None
-    # Pass client_connection=None so parse_backend_response does NOT write
-    # last_response_headers. The legacy is_feed_range_subset is a pure client-side
-    # computation that never touches last_response_headers, so the Rust path must
-    # not either -- otherwise it would overwrite the headers left by the caller's
-    # previous real operation with this call's empty (no-wire) header set.
-    parsed = parse_backend_response(
-        backend_response,
-        client_connection=None,
-        response_hook=None,
-    )
-    return parse_is_feed_range_subset_payload(cast(dict[str, Any], parsed))
-
-
-async def try_read_feed_ranges_with_rust_backend_async(
-    *,
-    client_connection: Any,
-    container_link: str,
-    force_refresh: bool,
-) -> Optional[list[dict[str, Any]]]:
-    """Async sibling of ``try_read_feed_ranges_with_rust_backend``."""
-    backend = client_connection._backend
-    if not is_rust_backend(backend):
-        return None
-    prepared = build_read_feed_ranges_prepared_request(
-        container_link=container_link,
-        force_refresh=force_refresh,
-    )
-    backend_response = await backend.execute(prepared)
-    if backend_response is None:
-        return None
-    parsed = parse_backend_response(
-        backend_response,
-        client_connection=client_connection,
-        response_hook=None,
-    )
-    return parse_read_feed_ranges_payload(cast(dict[str, Any], parsed))
-
-
-async def try_feed_range_from_partition_key_with_rust_backend_async(
-    *,
-    client_connection: Any,
-    container_link: str,
-    partition_key_value: Any,
-) -> Optional[dict[str, Any]]:
-    """Async sibling of ``try_feed_range_from_partition_key_with_rust_backend``."""
-    backend = client_connection._backend
-    if not is_rust_backend(backend):
-        return None
-    prepared = build_feed_range_from_partition_key_prepared_request(
-        container_link=container_link,
-        partition_key_value=partition_key_value,
-    )
-    backend_response = await backend.execute(prepared)
-    if backend_response is None:
-        return None
-    parsed = parse_backend_response(
-        backend_response,
-        client_connection=client_connection,
-        response_hook=None,
-    )
-    return parse_feed_range_from_partition_key_payload(cast(dict[str, Any], parsed))
-
-
-async def try_is_feed_range_subset_with_rust_backend_async(
-    *,
-    client_connection: Any,
-    parent_feed_range: dict[str, Any],
-    child_feed_range: dict[str, Any],
-) -> Optional[bool]:
-    """Async sibling of ``try_is_feed_range_subset_with_rust_backend``."""
-    backend = client_connection._backend
-    if not is_rust_backend(backend):
-        return None
-    prepared = build_is_feed_range_subset_prepared_request(
-        parent_feed_range=parent_feed_range,
-        child_feed_range=child_feed_range,
-    )
-    try:
-        backend_response = await backend.execute(prepared)
-    except ValueError:
-        # See the sync twin: Rust rejects inverted / malformed feed ranges that the
-        # more permissive legacy compare accepts, so fall back for exact parity.
-        return None
-    if backend_response is None:
-        return None
-    # See the sync twin: client_connection=None so the Rust path leaves
-    # last_response_headers untouched, matching the legacy pure-computation path.
-    parsed = parse_backend_response(
-        backend_response,
-        client_connection=None,
-        response_hook=None,
-    )
-    return parse_is_feed_range_subset_payload(cast(dict[str, Any], parsed))

@@ -32,7 +32,7 @@ from .._constants import _Constants as Constants
 
 def offer_query(resource_self_link: str) -> dict[str, Any]:
     """Build the query that finds a resource's throughput offer."""
-    # The filter both engines send to find this container's single offer record:
+    # The filter both backends send to find this container's single offer record:
     # the account's offers feed keyed by the resource's self-link.
     return {
         "query": "SELECT * FROM root r WHERE r.resource=@link",

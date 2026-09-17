@@ -9,11 +9,7 @@ from __future__ import annotations
 import os
 import uuid
 
-from common._parity_helpers import (
-    run_on_both_backends,
-    skip_unless_emulator,
-    skip_unless_rust_binding,
-)
+from common._parity_helpers import run_on_both_backends, skip_unless_emulator, skip_unless_rust_binding
 
 from azure.cosmos import CosmosClient, ThroughputProperties
 

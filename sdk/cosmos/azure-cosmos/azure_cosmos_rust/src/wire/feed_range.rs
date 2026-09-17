@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+use super::partition_key::PartitionKeyInput;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 
@@ -17,7 +18,7 @@ use azure_data_cosmos_driver::{
 };
 
 use super::diagnostics::BINDING_OP_COUNT;
-use super::request::{parse_container_link, parse_feed_range_partition_key_header};
+use super::request::parse_container_link;
 use super::response::{
     tuple_from_feed_range_from_partition_key_result, tuple_from_is_feed_range_subset_result,
     tuple_from_partition_key_ranges_result,
@@ -99,13 +100,13 @@ pub(super) fn maybe_handle_feed_range_partition_key_special_case(
 /// on the Rust path (sync version).
 pub(crate) fn run_read_feed_ranges_operation<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     container_link: &str,
     force_refresh: bool,
     op_name: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
+    let driver = lookup_driver(driver_handle)?;
     let (database_name, container_name) = parse_container_link(container_link)?;
     let runtime_ctx = require_runtime_context(op_name)?;
 
@@ -124,13 +125,13 @@ pub(crate) fn run_read_feed_ranges_operation<'py>(
 /// Async sibling of `run_read_feed_ranges_operation`.
 pub(crate) fn run_read_feed_ranges_operation_async<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     container_link: &str,
     force_refresh: bool,
     op_name: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
+    let driver = lookup_driver(driver_handle)?;
     let (database_name, container_name) = parse_container_link(container_link)?;
     let runtime_ctx = require_runtime_context(op_name)?;
 
@@ -161,15 +162,15 @@ pub(crate) fn run_read_feed_ranges_operation_async<'py>(
 /// Entry point that computes the feed range one partition key falls into.
 pub(crate) fn run_feed_range_from_partition_key_operation<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     container_link: &str,
-    partition_key_header: &str,
+    partition_key_input: PartitionKeyInput,
     op_name: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
+    let driver = lookup_driver(driver_handle)?;
     let (database_name, container_name) = parse_container_link(container_link)?;
-    let partition_key_input = parse_feed_range_partition_key_header(partition_key_header)?;
+    let partition_key_input = partition_key_input.into_feed_range_key()?;
     let runtime_ctx = require_runtime_context(op_name)?;
 
     let response_result = py.allow_threads(|| {
@@ -189,15 +190,15 @@ pub(crate) fn run_feed_range_from_partition_key_operation<'py>(
 /// Async sibling of `run_feed_range_from_partition_key_operation`.
 pub(crate) fn run_feed_range_from_partition_key_operation_async<'py>(
     py: Python<'py>,
-    handle: &str,
+    driver_handle: &str,
     container_link: &str,
-    partition_key_header: &str,
+    partition_key_input: PartitionKeyInput,
     op_name: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
+    let driver = lookup_driver(driver_handle)?;
     let (database_name, container_name) = parse_container_link(container_link)?;
-    let partition_key_input = parse_feed_range_partition_key_header(partition_key_header)?;
+    let partition_key_input = partition_key_input.into_feed_range_key()?;
     let runtime_ctx = require_runtime_context(op_name)?;
 
     let join = runtime_ctx

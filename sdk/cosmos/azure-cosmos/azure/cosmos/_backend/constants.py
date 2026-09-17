@@ -36,11 +36,11 @@ def is_rust_backend(backend: Any) -> bool:
     return getattr(backend, "name", None) == BACKEND_NAME_RUST
 
 
-#: Env var that opts into strict per-account engine isolation on the Rust backend.
+#: Env var that opts into strict per-account driver isolation on the Rust backend.
 #: When truthy, building a second ``CosmosClient`` to an account whose
 #: client-construction config differs from the first live client's raises
-#: ``StrictEngineIsolationError`` instead of silently building a second isolated
-#: engine. Off by default (silent isolation). Precedence: factory toggle > env var >
+#: ``StrictDriverIsolationError`` instead of silently building a second isolated
+#: driver. Off by default (silent isolation). Precedence: factory toggle > env var >
 #: off. On/off values are in ``STRICT_ISOLATION_TRUE_VALUES`` /
 #: ``STRICT_ISOLATION_FALSE_VALUES``; an unrecognized value raises ``ValueError``
 #: rather than silently disabling the toggle.

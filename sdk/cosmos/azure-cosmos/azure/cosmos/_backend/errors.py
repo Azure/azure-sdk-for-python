@@ -8,9 +8,10 @@
 These types separate the three ways a backend can decline to produce a normal
 reply, which would otherwise be indistinguishable to the caller:
 
-* :class:`PageNotSupportedByBackendError` and its query-specific subclass mean
-  "this backend cannot run this operation, hand it to legacy". That is a routing
-  signal, not a failure.
+* :class:`PageNotSupportedByBackendError` can allow compatibility routing only
+  during static preflight, when the operation policy permits it.
+* :class:`QueryNotSupportedByBackendError` is a query-planning failure. Like
+  all execution failures, it propagates without legacy replay.
 * :class:`BackendProtocolError` means a backend broke its own reply-shape
   contract. That is a bug on our side, so it is never retried and never falls
   back.
@@ -28,10 +29,8 @@ from .constants import is_rust_backend
 class PageNotSupportedByBackendError(RuntimeError):
     """Raised before dispatch when a backend cannot execute a paged operation.
 
-    The signal that means "hand this page to legacy instead", as opposed to a
-    real failure. Without a distinct type, a backend refusing a page and a
-    backend hitting a genuine error would look the same, and one of the two
-    would be handled wrongly.
+    Only a static preflight refusal is eligible for migration fallback.
+    An error of this type raised during execution or processing is not replayed.
     """
 
 

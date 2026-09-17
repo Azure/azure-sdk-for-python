@@ -15,6 +15,9 @@ represent still fall back to legacy except for database listing and querying,
 which reject unsupported calls without replay. All fakes, no network.
 """
 from __future__ import annotations
+from azure.cosmos._backend.capabilities import OperationRouting
+from common.typed_requests import legacy_partition_key_from_request
+from common.typed_requests import wire_headers, settings_options, legacy_settings
 
 import asyncio
 import base64
@@ -37,16 +40,16 @@ from azure.cosmos._backend.errors import (
     QueryNotSupportedByBackendError,
 )
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
-from azure.cosmos._backend.contracts import BackendResponse, LegacyOperation, PreparedQuery, QueryPage
+from azure.cosmos._backend.contracts import BackendResponse, PreparedQuery, QueryPage
 from azure.cosmos._backend.operations import (
     OP_LIST_CONTAINERS, OP_LIST_DATABASES, OP_QUERY_CONTAINERS,
     OP_QUERY_DATABASES, OP_QUERY_ITEMS, OP_READ_ALL_ITEMS,
 )
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
-from azure.cosmos._backend.rust import _binding_request_from_page as _sync_binding_request_from_page
+from azure.cosmos._backend.rust import build_binding_request_from_page as _sync_binding_request_from_page
 from azure.cosmos.aio._backend.rust import (
-    _binding_request_from_page as _async_binding_request_from_page,
+    build_binding_request_from_page as _async_binding_request_from_page,
 )
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos._constants import _Constants as Constants, TimeoutScope
@@ -54,10 +57,10 @@ from azure.cosmos._cosmos_client_connection import CosmosClientConnection as Syn
 from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection as AsyncConnection
 from azure.cosmos.documents import ConnectionPolicy
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
-from azure.cosmos._helpers._item_context import ResponseHeaderState
+from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
 from azure.cosmos.partition_key import _Empty
 from azure.cosmos._query_rust_routing import (
-    _build_prepared_headers_for_rust_feed_dispatch,
+    build_list_databases_prepared_query,
     can_use_rust_backend_for_list_databases_page,
     can_use_rust_backend_for_query_databases_page,
     can_use_rust_backend_for_list_containers_page,
@@ -81,7 +84,7 @@ class _CapturingSyncBackend(CosmosBackend):
         self._response = response
         self.prepared = None
 
-    def execute_pages(self, prepared):
+    def execute_pages(self, prepared, *, deadline=None):
         self.prepared = prepared
         yield QueryPage(
             status_code=self._response.status_code,
@@ -96,7 +99,7 @@ class _CapturingSyncBackend(CosmosBackend):
             diagnostics=self._response.diagnostics,
         )
 
-    def execute(self, prepared):
+    def execute(self, prepared, *, deadline=None):
         raise AssertionError("single-response execution is not expected")
 
 
@@ -107,7 +110,7 @@ class _CapturingAsyncBackend(AsyncCosmosBackend):
         self._response = response
         self.prepared = None
 
-    async def execute_pages(self, prepared):
+    async def execute_pages(self, prepared, *, deadline=None):
         self.prepared = prepared
         yield QueryPage(
             status_code=self._response.status_code,
@@ -122,7 +125,7 @@ class _CapturingAsyncBackend(AsyncCosmosBackend):
             diagnostics=self._response.diagnostics,
         )
 
-    async def execute(self, prepared):
+    async def execute(self, prepared, *, deadline=None):
         raise AssertionError("single-response execution is not expected")
 
 
@@ -140,7 +143,7 @@ class _SequencedSyncBackend(CosmosBackend):
     def __init__(self) -> None:
         self.prepared = []
 
-    def execute_pages(self, prepared):
+    def execute_pages(self, prepared, *, deadline=None):
         self.prepared.append(prepared)
         if prepared.continuation is None:
             yield QueryPage(
@@ -157,7 +160,7 @@ class _SequencedSyncBackend(CosmosBackend):
                 body=b'{"Databases":[{"id":"db-2"}]}',
             )
 
-    def execute(self, prepared):
+    def execute(self, prepared, *, deadline=None):
         raise AssertionError("single-response execution is not expected")
 
 
@@ -167,7 +170,7 @@ class _SequencedAsyncBackend(AsyncCosmosBackend):
     def __init__(self) -> None:
         self.prepared = []
 
-    async def execute_pages(self, prepared):
+    async def execute_pages(self, prepared, *, deadline=None):
         self.prepared.append(prepared)
         if prepared.continuation is None:
             yield QueryPage(
@@ -184,7 +187,7 @@ class _SequencedAsyncBackend(AsyncCosmosBackend):
                 body=b'{"Databases":[{"id":"db-2"}]}',
             )
 
-    async def execute(self, prepared):
+    async def execute(self, prepared, *, deadline=None):
         raise AssertionError("single-response execution is not expected")
 
 
@@ -268,14 +271,14 @@ async def test_database_feed_public_hook_is_lazy_per_page_and_replayable(listing
     assert hooks[0]["x-ms-request-charge"] == "2"
     assert hooks[0]["x-ms-cosmos-sdk-diagnostics"] == "activity=page-one requests=1"
     assert backend.prepared.max_item_count == 2
-    assert backend.prepared.headers["initialHeaders"]["x-custom-listing"] == "value"
-    assert backend.prepared.headers["x-ms-cosmos-throughput-bucket"] == 1
+    assert wire_headers(backend.prepared)["x-custom-listing"] == "value"
+    assert wire_headers(backend.prepared)["x-ms-cosmos-throughput-bucket"] == '1'
     to_binding_request = _async_binding_request_from_page if is_async else _sync_binding_request_from_page
     binding_request = to_binding_request(backend.prepared)
     if timeout is None:
-        assert Constants.OVERALL_TIMEOUT_SECONDS not in binding_request.headers
+        assert Constants.OVERALL_TIMEOUT_SECONDS not in wire_headers(binding_request)
     else:
-        assert binding_request.headers[Constants.OVERALL_TIMEOUT_SECONDS] == timeout
+        assert settings_options(binding_request)["timeout_seconds"] == timeout
     first_headers = dict(hooks[0])
 
     backend._response = BackendResponse(
@@ -286,7 +289,7 @@ async def test_database_feed_public_hook_is_lazy_per_page_and_replayable(listing
     )
     assert await _next_listing_page(pager, is_async) == [{"id": "db-3"}]
     assert backend.prepared.continuation == continuation
-    assert backend.prepared.headers.get(Constants.OVERALL_TIMEOUT_SECONDS) == timeout
+    assert settings_options(backend.prepared).get("timeout_seconds") == timeout
     assert len(hooks) == 2
     assert hooks[1]["x-ms-activity-id"] == "page-two"
     assert hooks[1]["x-ms-request-charge"] == "3"
@@ -294,7 +297,7 @@ async def test_database_feed_public_hook_is_lazy_per_page_and_replayable(listing
     assert hooks[0] == first_headers
     assert await _next_listing_page(iterable.by_page(continuation), is_async) == [{"id": "db-3"}]
     assert len(hooks) == 3
-    assert backend.prepared.headers.get(Constants.OVERALL_TIMEOUT_SECONDS) == timeout
+    assert settings_options(backend.prepared).get("timeout_seconds") == timeout
     assert backend.execute_pages.call_count == 3
     conn._CosmosClientConnection__Get.assert_not_called()
     conn._CosmosClientConnection__Post.assert_not_called()
@@ -560,7 +563,7 @@ async def test_database_feed_timeout_resets_per_page_and_replay(
         assert conn._CosmosClientConnection__Get.call_count + conn._CosmosClientConnection__Post.call_count == 3
     else:
         assert backend.execute_pages.call_count == 3
-        assert backend.prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 3.5
+        assert settings_options(backend.prepared)["timeout_seconds"] == 3.5
         conn._CosmosClientConnection__Get.assert_not_called()
         conn._CosmosClientConnection__Post.assert_not_called()
 
@@ -607,9 +610,9 @@ async def test_database_feed_empty_pages_do_not_restart_expired_budget(listing_c
     )
     execute = type(backend).execute_pages
 
-    def slow_page(prepared):
+    def slow_page(prepared, *, deadline=None):
         clock[0] += 4
-        return execute(backend, prepared)
+        return execute(backend, prepared, deadline=deadline)
 
     backend.execute_pages.side_effect = slow_page
     before = rust_compatibility_fallback_count()
@@ -628,7 +631,7 @@ async def test_database_feed_driver_timeout_propagates_without_replay(listing_cl
     monkeypatch.setattr(time, "time", lambda: clock[0])
     error = CosmosClientTimeoutError()
 
-    def timed_out(_prepared):
+    def timed_out(_prepared, *, deadline=None):
         clock[0] += 4
         raise error
 
@@ -774,7 +777,7 @@ def test_query_databases_rejects_cross_partition_option_before_iteration(
     ],
 )
 async def test_all_rust_feed_operations_expose_diagnostics(
-    is_async, resource_type, path, body_key, query, op
+    monkeypatch, is_async, resource_type, path, body_key, query, op
 ):
     conn = _new_async_connection() if is_async else _new_sync_connection()
     backend_type = _CapturingAsyncBackend if is_async else _CapturingSyncBackend
@@ -786,6 +789,10 @@ async def test_all_rust_feed_operations_expose_diagnostics(
         diagnostics=diagnostics,
     ))
     conn._backend = backend
+    forbidden = MagicMock(side_effect=AssertionError("Rust feed must not prepare legacy headers"))
+    for name in ("GetHeaders", "set_session_token_header", "set_session_token_header_async",
+                 "_get_authorization_header", "GenerateGuidId"):
+        monkeypatch.setattr(base_helpers, name, forbidden)
     public_headers = CaseInsensitiveDict()
     internal_headers = {}
     hook = MagicMock()
@@ -797,6 +804,8 @@ async def test_all_rust_feed_operations_expose_diagnostics(
     if is_async:
         await result
     assert backend.prepared.op == op
+    forbidden.assert_not_called()
+    assert "x-ms-activity-id" not in wire_headers(backend.prepared)
     for headers in (conn.last_response_headers, public_headers, internal_headers):
         assert headers["x-ms-cosmos-sdk-diagnostics"] == diagnostics
     hook.assert_called_once()
@@ -806,7 +815,7 @@ async def test_all_rust_feed_operations_expose_diagnostics(
 def _new_sync_connection() -> SyncConnection:
     """Create a synchronous connection for routing tests."""
     conn = SyncConnection.__new__(SyncConnection)
-    conn._response_state = ResponseHeaderState()
+    conn._response_state = ClientLastResponseHeaders()
     conn._backend = LEGACY_BACKEND
     conn._query_compatibility_mode = SyncConnection._QueryCompatibilityMode.Query
     conn.default_headers = {}
@@ -830,7 +839,7 @@ def _new_sync_connection() -> SyncConnection:
 def _new_async_connection() -> AsyncConnection:
     """Create an asynchronous connection for routing tests."""
     conn = AsyncConnection.__new__(AsyncConnection)
-    conn._response_state = ResponseHeaderState()
+    conn._response_state = ClientLastResponseHeaders()
     conn._backend = ASYNC_LEGACY_BACKEND
     conn._query_compatibility_mode = AsyncConnection._QueryCompatibilityMode.Query
     conn.default_headers = {}
@@ -979,21 +988,13 @@ def test_rust_page_adapter_preserves_zero_max_item_count(adapter):
 
     request = adapter(prepared)
 
-    assert request.headers["x-ms-continuation"] == "typed-continuation"
-    assert request.headers["x-ms-max-item-count"] == "0"
+    assert wire_headers(request)["x-ms-continuation"] == "typed-continuation"
+    assert wire_headers(request)["x-ms-max-item-count"] == "0"
 
 
-def test_rust_feed_prep_strips_only_driver_owned_generated_headers():
-    """Only headers the driver writes itself are removed; everything else is kept.
-
-    Shared by all three paged operations. The first case drops the six headers
-    the driver generates, plus page size and continuation because those are
-    already carried as typed fields -- keeping a customer header and an
-    operation header. The second case shows the paging headers are only dropped
-    when the typed fields actually hold those values; with no options set, the
-    headers are the only copy and must survive.
-    """
-    prepared_headers = _build_prepared_headers_for_rust_feed_dispatch(
+def test_rust_feed_prep_has_one_paging_authority():
+    """Typed options win; raw-header-only paging is promoted rather than lost."""
+    prepared = build_list_databases_prepared_query(
         options={
             "continuation": "typed-continuation",
             "maxItemCount": 0,
@@ -1012,20 +1013,96 @@ def test_rust_feed_prep_strips_only_driver_owned_generated_headers():
         },
     )
 
-    assert prepared_headers == {
+    assert wire_headers(prepared) == {
         "x-ms-documentdb-isquery": "true",
         "x-customer-header": "preserved",
     }
-    assert _build_prepared_headers_for_rust_feed_dispatch(
+    assert prepared.continuation == "typed-continuation"
+    assert prepared.max_item_count == 0
+    prepared = build_list_databases_prepared_query(
         options={},
         req_headers={
             "x-ms-continuation": "customer-continuation",
             "x-ms-max-item-count": "7",
         },
-    ) == {
-        "x-ms-continuation": "customer-continuation",
-        "x-ms-max-item-count": "7",
+    )
+    assert prepared.continuation == "customer-continuation"
+    assert prepared.max_item_count == 7
+    assert wire_headers(prepared) == {}
+
+
+@pytest.mark.parametrize("count", ["", "not-an-integer", "2.5"])
+def test_rust_feed_rejects_invalid_raw_page_size(count):
+    with pytest.raises(ValueError, match="x-ms-max-item-count must be an integer"):
+        build_list_databases_prepared_query(
+            options={"initialHeaders": {"X-MS-MAX-ITEM-COUNT": count}}, req_headers={},
+        )
+
+
+@pytest.mark.parametrize("typed", [False, True])
+def test_rust_feed_header_and_paging_precedence_is_case_insensitive(typed):
+    options = {
+        "initialHeaders": {
+            "X-MS-CONTINUATION": "caller-token", "X-MS-MAX-ITEM-COUNT": "7",
+            "X-APP": "caller", "X-MS-COSMOS-THROUGHPUT-BUCKET": "2",
+            "X-MS-ACTIVITY-ID": "caller-activity", "X-MS-SESSION-TOKEN": "raw-session",
+        },
+        "throughputBucket": 3,
+        "containerRID": "not-a-database-header",
+        "sessionToken": "not-a-master-resource-token",
     }
+    if typed:
+        options.update(maxItemCount=0, continuation="typed-token")
+    defaults = {
+        "x-ms-continuation": "default-token", "x-ms-max-item-count": "3",
+        "x-app": "default", "x-ms-consistency-level": "Session",
+    }
+    prepared = build_list_databases_prepared_query(options=options, req_headers=defaults)
+    assert prepared.max_item_count == (0 if typed else 7)
+    assert prepared.continuation == ("typed-token" if typed else "caller-token")
+    assert wire_headers(prepared) == {
+        "x-app": "caller", "x-ms-cosmos-throughput-bucket": "3",
+        "x-ms-activity-id": "caller-activity", "x-ms-session-token": "raw-session",
+        "x-ms-consistency-level": "Session",
+    }
+    assert defaults["x-app"] == "default"
+    assert options["initialHeaders"]["X-MS-MAX-ITEM-COUNT"] == "7"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("is_async", [False, True])
+@pytest.mark.parametrize("route", ["legacy", "capability-fallback", "ineligible", "query-plan"])
+async def test_query_legacy_preparation_is_lazy_but_preserved(monkeypatch, is_async, route):
+    conn = _new_async_connection() if is_async else _new_sync_connection()
+    backend_type = _CapturingAsyncBackend if is_async else _CapturingSyncBackend
+    backend = backend_type(BackendResponse(status_code=200, body=b'{"Documents":[]}'))
+    if route != "legacy":
+        conn._backend = backend
+    if route == "capability-fallback":
+        backend.validate_page_request = MagicMock(side_effect=PageNotSupportedByBackendError("unsupported test shape"))
+    headers_spy = MagicMock(wraps=base_helpers.GetHeaders)
+    monkeypatch.setattr(base_helpers, "GetHeaders", headers_spy)
+    session_spy = AsyncMock() if is_async else MagicMock()
+    monkeypatch.setattr(
+        base_helpers, "set_session_token_header_async" if is_async else "set_session_token_header", session_spy,
+    )
+    post = (AsyncMock if is_async else MagicMock)(
+        return_value=({"Documents": [{"id": "legacy-result"}]}, CaseInsensitiveDict()),
+    )
+    conn._CosmosClientConnection__Post = post
+    options = {"initialHeaders": {"x-application": "caller"}}
+    if route == "ineligible":
+        options["read_timeout"] = 2
+    call = _run_async_query_feed if is_async else _run_sync_query_feed
+    result = call(
+        conn, query={"query": "SELECT * FROM c"}, options=options, is_query_plan=route == "query-plan",
+    )
+    rows = await result if is_async else result[0]
+    assert rows == [{"id": "legacy-result"}]
+    headers_spy.assert_called_once()
+    assert session_spy.call_count == (0 if route == "query-plan" else 1)
+    assert post.call_args.args[3]["x-application"] == "caller"
+    assert "x-ms-activity-id" in post.call_args.args[3]
 
 
 @pytest.mark.parametrize(
@@ -1245,11 +1322,11 @@ def test_sync_query_backend_page_builds_prepared_request_and_updates_headers():
     assert prepared is not None
     assert prepared.op == OP_QUERY_ITEMS
     assert prepared.container_link == "dbs/db/colls/c"
-    assert prepared.partition_key_header == '["tenant-a"]'
+    assert legacy_partition_key_from_request(prepared) == '["tenant-a"]'
     assert prepared.continuation == "ct-in"
     assert prepared.max_item_count == 25
-    assert prepared.headers[Constants.Kwargs.EXCLUDED_LOCATIONS] == ["West US"]
-    assert prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 9
+    assert settings_options(prepared)["excludedLocations"] == ["West US"]
+    assert settings_options(prepared)["timeout_seconds"] == 9
 
 
 def test_sync_query_backend_page_defaults_partition_header_to_cross_partition_for_query_items():
@@ -1278,7 +1355,7 @@ def test_sync_query_backend_page_defaults_partition_header_to_cross_partition_fo
     assert result[0]["id"] == "x"
     prepared = backend.prepared
     assert prepared is not None
-    assert prepared.partition_key_header == "[]"
+    assert legacy_partition_key_from_request(prepared) == "[]"
 
 
 def test_async_query_backend_page_builds_prepared_request_and_updates_headers():
@@ -1335,9 +1412,9 @@ def test_async_query_backend_page_builds_prepared_request_and_updates_headers():
         assert prepared is not None
         assert prepared.op == OP_QUERY_ITEMS
         assert prepared.container_link == "dbs/db/colls/c"
-        assert prepared.partition_key_header == '["tenant-a"]'
-        assert prepared.headers[Constants.Kwargs.EXCLUDED_LOCATIONS] == ["East US"]
-        assert prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 11
+        assert legacy_partition_key_from_request(prepared) == '["tenant-a"]'
+        assert settings_options(prepared)["excludedLocations"] == ["East US"]
+        assert settings_options(prepared)["timeout_seconds"] == 11
 
     asyncio.run(_run())
 
@@ -1546,9 +1623,9 @@ def test_sync_read_all_backend_delegates_cross_partition_scope(monkeypatch):
     assert prepared is not None
     assert prepared.op == OP_READ_ALL_ITEMS
     assert prepared.container_link == "dbs/db/colls/c"
-    assert prepared.partition_key_header == "[]"
-    assert http_constants.HttpHeaders.PartitionKey not in prepared.headers
-    assert prepared.headers[Constants.Kwargs.EXCLUDED_LOCATIONS] == ["West US"]
+    assert legacy_partition_key_from_request(prepared) == "[]"
+    assert http_constants.HttpHeaders.PartitionKey not in wire_headers(prepared)
+    assert settings_options(prepared)["excludedLocations"] == ["West US"]
     assert prepared.query is None
 
 
@@ -1592,9 +1669,9 @@ def test_async_read_all_backend_delegates_cross_partition_scope(monkeypatch):
         assert prepared is not None
         assert prepared.op == OP_READ_ALL_ITEMS
         assert prepared.container_link == "dbs/db/colls/c"
-        assert prepared.partition_key_header == "[]"
-        assert http_constants.HttpHeaders.PartitionKey not in prepared.headers
-        assert prepared.headers[Constants.Kwargs.EXCLUDED_LOCATIONS] == ["East US"]
+        assert legacy_partition_key_from_request(prepared) == "[]"
+        assert http_constants.HttpHeaders.PartitionKey not in wire_headers(prepared)
+        assert settings_options(prepared)["excludedLocations"] == ["East US"]
         assert prepared.query is None
 
     asyncio.run(_run())
@@ -1666,12 +1743,12 @@ def test_sync_list_databases_backend_delegates_account_feed(monkeypatch):
     assert headers["x-ms-continuation"] == "db-ct"
     assert backend.prepared.op == OP_LIST_DATABASES
     assert backend.prepared.container_link == ""
-    assert backend.prepared.partition_key_header is None
+    assert backend.prepared.partition_key.kind == "cross_partition"
     assert backend.prepared.max_item_count == 1
     assert backend.prepared.continuation == "start"
-    assert backend.prepared.headers["x-ms-cosmos-throughput-bucket"] == "7"
-    assert "x-test-header" not in backend.prepared.headers
-    assert backend.prepared.headers["initialHeaders"] == {"x-test-header": "yes"}
+    assert wire_headers(backend.prepared)["x-ms-cosmos-throughput-bucket"] == "7"
+    assert wire_headers(backend.prepared)["x-test-header"] == "yes"
+    assert all(wire_headers(backend.prepared).get(key.lower()) == str(value) for key, value in ({"x-test-header": "yes"}).items())
 
 
 def test_list_databases_prepared_request_drops_driver_owned_headers(monkeypatch):
@@ -1687,18 +1764,18 @@ def test_list_databases_prepared_request_drops_driver_owned_headers(monkeypatch)
         BackendResponse(status_code=200, body=b'{"Databases":[]}')
     )
     conn._backend = backend
+    conn.default_headers = {
+        "authorization": "SDK default",
+        "x-ms-date": "SDK default",
+        "Accept": "application/json",
+        "Cache-Control": "no-cache",
+        "User-Agent": "python-agent",
+        "x-ms-version": "2020-07-15",
+        "x-ms-cosmos-throughput-bucket": "7",
+    }
     monkeypatch.setattr(
-        base_helpers,
-        "GetHeaders",
-        lambda *args, **kwargs: {
-            "authorization": "python-signature",
-            "x-ms-date": "python-date",
-            "Accept": "application/json",
-            "Cache-Control": "no-cache",
-            "User-Agent": "python-agent",
-            "x-ms-version": "2020-07-15",
-            "x-ms-cosmos-throughput-bucket": "7",
-        },
+        base_helpers, "GetHeaders",
+        MagicMock(side_effect=AssertionError("legacy preparation must not run")),
     )
 
     result, _ = _run_sync_read_feed(
@@ -1708,7 +1785,7 @@ def test_list_databases_prepared_request_drops_driver_owned_headers(monkeypatch)
     )
 
     assert result == []
-    assert backend.prepared.headers == {"x-ms-cosmos-throughput-bucket": "7"}
+    assert wire_headers(backend.prepared) == {"x-ms-cosmos-throughput-bucket": "7"}
 
 
 def test_async_list_databases_backend_delegates_account_feed(monkeypatch):
@@ -1763,7 +1840,7 @@ def test_list_databases_backend_uses_default_headers_without_initial_headers(mon
     )
 
     assert result == []
-    assert backend.prepared.headers["x-default-header"] == "yes"
+    assert wire_headers(backend.prepared)["x-default-header"] == "yes"
 
 
 def test_async_list_databases_backend_uses_default_headers_without_initial_headers(monkeypatch):
@@ -1784,7 +1861,7 @@ def test_async_list_databases_backend_uses_default_headers_without_initial_heade
         )
 
         assert result == []
-        assert backend.prepared.headers["x-default-header"] == "yes"
+        assert wire_headers(backend.prepared)["x-default-header"] == "yes"
 
     asyncio.run(_run())
 
@@ -2037,7 +2114,8 @@ def test_public_list_databases_accepts_unset_read_timeout(client_type):
 @pytest.mark.parametrize("fail_on_page", [1, 2])
 def test_sync_list_databases_capability_error_never_replays_legacy(monkeypatch, fail_on_page):
     class FailingBackend(_SequencedSyncBackend):
-        def execute_pages(self, prepared):
+
+        def execute_pages(self, prepared, *, deadline=None):
             if len(self.prepared) + 1 == fail_on_page:
                 self.prepared.append(prepared)
                 raise PageNotSupportedByBackendError("unsupported database page")
@@ -2066,7 +2144,8 @@ def test_sync_list_databases_capability_error_never_replays_legacy(monkeypatch, 
 @pytest.mark.parametrize("fail_on_page", [1, 2])
 def test_async_list_databases_capability_error_never_replays_legacy(monkeypatch, fail_on_page):
     class FailingBackend(_SequencedAsyncBackend):
-        async def execute_pages(self, prepared):
+
+        async def execute_pages(self, prepared, *, deadline=None):
             if len(self.prepared) + 1 == fail_on_page:
                 self.prepared.append(prepared)
                 raise PageNotSupportedByBackendError("unsupported database page")
@@ -2264,7 +2343,7 @@ def test_sync_read_all_backend_page_with_partition_key_uses_native_read_feed(mon
     prepared = backend.prepared
     assert prepared is not None
     assert prepared.op == OP_READ_ALL_ITEMS
-    assert prepared.partition_key_header == '["tenant-a"]'
+    assert legacy_partition_key_from_request(prepared) == '["tenant-a"]'
     assert prepared.query is None
 
 
@@ -2299,7 +2378,7 @@ def test_async_read_all_backend_page_with_partition_key_uses_native_read_feed(mo
         prepared = backend.prepared
         assert prepared is not None
         assert prepared.op == OP_READ_ALL_ITEMS
-        assert prepared.partition_key_header == '["tenant-a"]'
+        assert legacy_partition_key_from_request(prepared) == '["tenant-a"]'
         assert prepared.query is None
 
     asyncio.run(_run())
@@ -2384,13 +2463,14 @@ def test_async_read_all_backend_page_empty_container(monkeypatch):
     asyncio.run(_run())
 
 
-def test_sync_driver_unsupported_query_falls_back():
-    """Typed page capability failures are handled by the backend boundary."""
+def test_sync_driver_unsupported_query_never_replays():
+    """Query planning is execution, not a static preflight capability check."""
+
     class _UnsupportedBackend(CosmosBackend):
-        def execute(self, prepared):
+        def execute(self, prepared, *, deadline=None):
             raise AssertionError("single-response execution is not expected")
 
-        def execute_pages(self, prepared):
+        def execute_pages(self, prepared, *, deadline=None):
             del prepared
             raise QueryNotSupportedByBackendError("unsupported query plan")
             yield  # pragma: no cover
@@ -2402,23 +2482,26 @@ def test_sync_driver_unsupported_query_falls_back():
     )
 
     fallback_count_before = rust_compatibility_fallback_count()
-    result = _UnsupportedBackend().run_page_operation(
-        prepare_request=lambda: prepared,
-        legacy_operation=LegacyOperation(op=OP_QUERY_ITEMS, invoke=lambda: "legacy"),
-        parse_response=lambda _page: "rust",
-        fallback_exceptions=(PageNotSupportedByBackendError,),
-    )
-    assert result == "legacy"
-    assert rust_compatibility_fallback_count() == fallback_count_before + 1
+    legacy = MagicMock(side_effect=AssertionError("legacy replay"))
+    with pytest.raises(QueryNotSupportedByBackendError, match="unsupported query plan"):
+        _UnsupportedBackend().run_page_operation(
+            build_request=lambda: prepared,
+            routing=OperationRouting(OP_QUERY_ITEMS),
+            legacy_call=legacy,
+            process_response=lambda _page: "rust",
+        )
+    legacy.assert_not_called()
+    assert rust_compatibility_fallback_count() == fallback_count_before
 
 
-def test_async_driver_unsupported_query_falls_back():
-    """Async typed page capability failures are handled by the backend boundary."""
+def test_async_driver_unsupported_query_never_replays():
+    """Async execution failures cannot switch transports."""
+
     class _UnsupportedBackend(AsyncCosmosBackend):
-        async def execute(self, prepared):
+        async def execute(self, prepared, *, deadline=None):
             raise AssertionError("single-response execution is not expected")
 
-        async def execute_pages(self, prepared):
+        async def execute_pages(self, prepared, *, deadline=None):
             del prepared
             raise QueryNotSupportedByBackendError("unsupported query plan")
             yield  # pragma: no cover
@@ -2429,21 +2512,24 @@ def test_async_driver_unsupported_query_falls_back():
             container_link="dbs/db/colls/c",
             query="SELECT * FROM c ORDER BY c.ts",
         )
-        async def _prepare_request():
+
+        def _prepare_request():
             return prepared
 
-        async def _run_legacy():
-            return "legacy"
+        legacy = AsyncMock(side_effect=AssertionError("legacy replay"))
 
         fallback_count_before = rust_compatibility_fallback_count()
-        result = await _UnsupportedBackend().run_page_operation(
-            prepare_request=_prepare_request,
-            legacy_operation=LegacyOperation(op=OP_QUERY_ITEMS, invoke=_run_legacy),
-            parse_response=lambda _page: "rust",
-            fallback_exceptions=(PageNotSupportedByBackendError,),
-        )
-        assert result == "legacy"
-        assert rust_compatibility_fallback_count() == fallback_count_before + 1
+        with pytest.raises(
+            QueryNotSupportedByBackendError, match="unsupported query plan"
+        ):
+            await _UnsupportedBackend().run_page_operation(
+                build_request=_prepare_request,
+                routing=OperationRouting(OP_QUERY_ITEMS),
+                legacy_call=legacy,
+                process_response=lambda _page: "rust",
+            )
+        legacy.assert_not_called()
+        assert rust_compatibility_fallback_count() == fallback_count_before
 
     asyncio.run(_run())
 
@@ -2451,10 +2537,10 @@ def test_async_driver_unsupported_query_falls_back():
 def test_sync_unrelated_not_implemented_error_is_not_replayed():
     """Unexpected backend errors propagate instead of triggering a second request."""
     class _BrokenBackend(CosmosBackend):
-        def execute(self, prepared):
+        def execute(self, prepared, *, deadline=None):
             raise AssertionError("single-response execution is not expected")
 
-        def execute_pages(self, prepared):
+        def execute_pages(self, prepared, *, deadline=None):
             del prepared
             raise NotImplementedError("unexpected parser failure")
             yield  # pragma: no cover
@@ -2468,10 +2554,10 @@ def test_sync_unrelated_not_implemented_error_is_not_replayed():
 
     with pytest.raises(NotImplementedError, match="unexpected parser failure"):
         _BrokenBackend().run_page_operation(
-            prepare_request=lambda: prepared,
-            legacy_operation=LegacyOperation(op=OP_QUERY_ITEMS, invoke=lambda: "legacy"),
-            parse_response=lambda _page: "rust",
-            fallback_exceptions=(PageNotSupportedByBackendError,),
+            build_request=lambda: prepared,
+            routing=OperationRouting(OP_QUERY_ITEMS, True),
+            legacy_call=lambda: "legacy",
+            process_response=lambda _page: "rust",
         )
 
     assert rust_compatibility_fallback_count() == fallback_count_before
@@ -2480,10 +2566,10 @@ def test_sync_unrelated_not_implemented_error_is_not_replayed():
 def test_async_unrelated_not_implemented_error_is_not_replayed():
     """Async unexpected backend errors also propagate without fallback."""
     class _BrokenBackend(AsyncCosmosBackend):
-        async def execute(self, prepared):
+        async def execute(self, prepared, *, deadline=None):
             raise AssertionError("single-response execution is not expected")
 
-        async def execute_pages(self, prepared):
+        async def execute_pages(self, prepared, *, deadline=None):
             del prepared
             raise NotImplementedError("unexpected async parser failure")
             yield  # pragma: no cover
@@ -2494,7 +2580,7 @@ def test_async_unrelated_not_implemented_error_is_not_replayed():
             container_link="dbs/db/colls/c",
             query="SELECT * FROM c",
         )
-        async def _prepare_request():
+        def _prepare_request():
             return prepared
 
         async def _run_legacy():
@@ -2504,10 +2590,10 @@ def test_async_unrelated_not_implemented_error_is_not_replayed():
 
         with pytest.raises(NotImplementedError, match="unexpected async parser failure"):
             await _BrokenBackend().run_page_operation(
-                prepare_request=_prepare_request,
-                legacy_operation=LegacyOperation(op=OP_QUERY_ITEMS, invoke=_run_legacy),
-                parse_response=lambda _page: "rust",
-                fallback_exceptions=(PageNotSupportedByBackendError,),
+                build_request=_prepare_request,
+                routing=OperationRouting(OP_QUERY_ITEMS, True),
+                legacy_call=_run_legacy,
+                process_response=lambda _page: "rust",
             )
 
         assert rust_compatibility_fallback_count() == fallback_count_before
@@ -2518,23 +2604,22 @@ def test_async_unrelated_not_implemented_error_is_not_replayed():
 def test_sync_empty_page_iterator_is_not_replayed():
     """A missing Rust page raises one public error and does not repeat the call."""
     class _EmptyBackend(CosmosBackend):
-        def execute(self, prepared):
+        def execute(self, prepared, *, deadline=None):
             raise AssertionError("single-response execution is not expected")
 
-        def execute_pages(self, prepared):
+        def execute_pages(self, prepared, *, deadline=None):
             del prepared
             return iter(())
 
     legacy_calls = []
     with pytest.raises(BackendProtocolError, match="returned no page"):
         _EmptyBackend().run_page_operation(
-            prepare_request=lambda: PreparedQuery(op=OP_QUERY_ITEMS, container_link="dbs/db/colls/c"),
-            legacy_operation=LegacyOperation(
-                op=OP_QUERY_ITEMS,
-                invoke=lambda: legacy_calls.append(1),
+            build_request=lambda: PreparedQuery(
+                op=OP_QUERY_ITEMS, container_link="dbs/db/colls/c"
             ),
-            parse_response=lambda _page: "rust",
-            fallback_exceptions=(RuntimeError,),
+            routing=OperationRouting(OP_QUERY_ITEMS, True),
+            legacy_call=lambda: legacy_calls.append(1),
+            process_response=lambda _page: "rust",
         )
     assert legacy_calls == []
 
@@ -2542,10 +2627,10 @@ def test_sync_empty_page_iterator_is_not_replayed():
 def test_async_empty_page_iterator_is_not_replayed():
     """A missing async Rust page raises one public error and is not repeated."""
     class _EmptyBackend(AsyncCosmosBackend):
-        async def execute(self, prepared):
+        async def execute(self, prepared, *, deadline=None):
             raise AssertionError("single-response execution is not expected")
 
-        async def execute_pages(self, prepared):
+        async def execute_pages(self, prepared, *, deadline=None):
             del prepared
             if False:
                 yield QueryPage(status_code=200)
@@ -2553,7 +2638,7 @@ def test_async_empty_page_iterator_is_not_replayed():
     async def _run():
         legacy_calls = []
 
-        async def _prepare_request():
+        def _prepare_request():
             return PreparedQuery(op=OP_QUERY_ITEMS, container_link="dbs/db/colls/c")
 
         async def _run_legacy():
@@ -2561,10 +2646,10 @@ def test_async_empty_page_iterator_is_not_replayed():
 
         with pytest.raises(BackendProtocolError, match="returned no page"):
             await _EmptyBackend().run_page_operation(
-                prepare_request=_prepare_request,
-                legacy_operation=LegacyOperation(op=OP_QUERY_ITEMS, invoke=_run_legacy),
-                parse_response=lambda _page: "rust",
-                fallback_exceptions=(RuntimeError,),
+                build_request=_prepare_request,
+                routing=OperationRouting(OP_QUERY_ITEMS, True),
+                legacy_call=_run_legacy,
+                process_response=lambda _page: "rust",
             )
         assert legacy_calls == []
 
@@ -2817,13 +2902,13 @@ def test_sync_query_databases_backend_delegates_account_query(monkeypatch):
     assert headers["x-ms-continuation"] == "db-ct"
     assert backend.prepared.op == OP_QUERY_DATABASES
     assert backend.prepared.container_link == ""
-    assert backend.prepared.partition_key_header is None
+    assert backend.prepared.partition_key.kind == "cross_partition"
     assert backend.prepared.query == "SELECT * FROM root r WHERE r.id = @id"
     assert backend.prepared.parameters == ({"name": "@id", "value": "db-1"},)
     assert backend.prepared.max_item_count == 1
     assert backend.prepared.continuation == "start"
-    assert backend.prepared.headers["x-ms-cosmos-throughput-bucket"] == "7"
-    assert backend.prepared.headers["initialHeaders"] == {"x-test-header": "yes"}
+    assert wire_headers(backend.prepared)["x-ms-cosmos-throughput-bucket"] == "7"
+    assert all(wire_headers(backend.prepared).get(key.lower()) == str(value) for key, value in ({"x-test-header": "yes"}).items())
 
 
 def test_query_databases_binding_request_carries_the_query_body():
@@ -2846,8 +2931,8 @@ def test_query_databases_binding_request_carries_the_query_body():
         "query": "SELECT * FROM root r WHERE r.id = @id",
         "parameters": [{"name": "@id", "value": "db-1"}],
     }
-    assert binding_request.headers["x-ms-max-item-count"] == "2"
-    assert binding_request.headers["x-ms-continuation"] == "token"
+    assert wire_headers(binding_request)["x-ms-max-item-count"] == "2"
+    assert wire_headers(binding_request)["x-ms-continuation"] == "token"
 
 
 @pytest.mark.parametrize(
@@ -2938,7 +3023,7 @@ def test_async_query_databases_backend_delegates_account_query(monkeypatch):
         assert result == [{"id": "db-1"}]
         assert backend.prepared.op == OP_QUERY_DATABASES
         assert backend.prepared.container_link == ""
-        assert backend.prepared.partition_key_header is None
+        assert backend.prepared.partition_key.kind == "cross_partition"
         assert backend.prepared.query == "SELECT * FROM root r WHERE r.id = @id"
         assert backend.prepared.parameters == ({"name": "@id", "value": "db-1"},)
         assert backend.prepared.max_item_count == 1

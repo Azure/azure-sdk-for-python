@@ -126,6 +126,7 @@ class ChangeFeedStateV1(ChangeFeedState):
         self._change_feed_start_from = change_feed_start_from
         self._partition_key_range_id = partition_key_range_id
         self._partition_key = partition_key
+        self._has_partition_key = partition_key is not None
         self._continuation = continuation
         super(ChangeFeedStateV1, self).__init__(ChangeFeedStateVersion.V1)
 
@@ -139,7 +140,7 @@ class ChangeFeedStateV1(ChangeFeedState):
             container_link: str,
             container_rid: str,
             change_feed_state_context: dict[str, Any]) -> 'ChangeFeedStateV1':
-        return cls(
+        state = cls(
             container_link,
             container_rid,
             ChangeFeedStartFromInternal.from_start_time(change_feed_state_context.get("startTime")),
@@ -147,6 +148,8 @@ class ChangeFeedStateV1(ChangeFeedState):
             change_feed_state_context.get("partitionKey"),
             change_feed_state_context.get("continuationPkRangeId")
         )
+        state._has_partition_key = "partitionKey" in change_feed_state_context
+        return state
 
     def populate_request_headers(
             self,
@@ -174,7 +177,7 @@ class ChangeFeedStateV1(ChangeFeedState):
     def populate_feed_options(self, feed_options: dict[str, Any]) -> None:
         if self._partition_key_range_id is not None:
             feed_options["partitionKeyRangeId"] = self._partition_key_range_id
-        if self._partition_key is not None:
+        if self._has_partition_key:
             feed_options["partitionKey"] = self._partition_key
 
     def apply_server_response_continuation(self, continuation: str, has_modified_response) -> None:
@@ -401,7 +404,7 @@ class ChangeFeedStateV2(ChangeFeedState):
         feed_range: Optional[FeedRangeInternal] = None
         if change_feed_state_context.get("feedRange"):
             feed_range = FeedRangeInternalEpk.from_json(change_feed_state_context["feedRange"])
-        elif change_feed_state_context.get("partitionKey"):
+        elif "partitionKey" in change_feed_state_context:
             if change_feed_state_context.get("partitionKeyFeedRange"):
                 feed_range =\
                     FeedRangeInternalPartitionKey(

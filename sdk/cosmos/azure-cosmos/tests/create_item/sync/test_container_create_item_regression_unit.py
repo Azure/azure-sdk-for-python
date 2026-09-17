@@ -142,7 +142,8 @@ class TestContainerCreateItemPreservesLegacyCacheBehaviour(unittest.TestCase):
 
         proxy.read.assert_called_once()
         read_kwargs = proxy.read.call_args.kwargs
-        self.assertEqual(read_kwargs.get(Constants.Kwargs.TIMEOUT), 10)
+        self.assertGreater(read_kwargs[Constants.Kwargs.TIMEOUT], 0)
+        self.assertLessEqual(read_kwargs[Constants.Kwargs.TIMEOUT], 10)
         self.assertEqual(read_kwargs.get(Constants.Kwargs.READ_TIMEOUT), 5)
 
     def test_cache_populate_step_takes_container_cache_lock(self):

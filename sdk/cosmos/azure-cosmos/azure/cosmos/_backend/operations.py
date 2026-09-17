@@ -3,24 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Operation names, and the binding-function lookups keyed by them.
+"""Operation discriminators and native binding dispatch tables.
 
-Every operation the SDK can dispatch has one ``OP_*`` discriminator string. It
-travels on ``PreparedRequest.op`` / ``PreparedQuery.op`` and tells a backend
-which operation it is being asked to run.
+Single replies use OP_TO_BINDING_METHOD. Pages use either the stateless or
+cursor table according to their call signature. Names and data are independent
+of migration fallback policy; adding a migrated operation does not require a
+new executor method."""
 
-The three lookup tables map those names to the Rust binding function that
-performs the operation. They are split by reply shape so an operation can only
-be reached through the dispatch method built for it: single-reply operations in
-``OP_TO_BINDING_METHOD``, paged feeds in ``QUERY_TO_BINDING_METHOD``, and the
-reserved transactional batch in ``BATCH_TO_BINDING_METHOD``.
-
-This module holds names and data only, and imports nothing from the rest of the
-package. A request builder or routing predicate that needs an operation name
-therefore does not pull in the backend machinery to get one.
-"""
 from __future__ import annotations
-
 
 # Operation discriminator values for ``PreparedRequest.op``.
 OP_CREATE_DATABASE = "create_database"
@@ -41,6 +31,7 @@ OP_QUERY_DATABASES = "query_databases"
 OP_LIST_CONTAINERS = "list_containers"
 OP_QUERY_CONTAINERS = "query_containers"
 OP_READ_ALL_ITEMS = "read_all_items"
+OP_QUERY_CHANGE_FEED = "query_items_change_feed"
 OP_LIST_DATABASES = "list_databases"
 OP_READ_FEED_RANGES = "read_feed_ranges"
 OP_FEED_RANGE_FROM_PARTITION_KEY = "feed_range_from_partition_key"
@@ -54,7 +45,7 @@ OP_REPLACE_OFFER = "replace_offer"
 #
 # ``query_items`` / ``read_all_items`` / ``list_databases`` are deliberately NOT
 # here: they are multi-page feeds, not single-reply operations, so they are
-# registered in ``QUERY_TO_BINDING_METHOD`` below and dispatched through
+# registered in ``STATELESS_QUERY_TO_BINDING_METHOD`` below and dispatched through
 # ``execute_pages``, never through ``execute``.
 OP_TO_BINDING_METHOD = {
     OP_CREATE_DATABASE: "create_database",
@@ -87,7 +78,7 @@ OP_TO_BINDING_METHOD = {
 # backend's ``execute_pages`` reads this (never ``OP_TO_BINDING_METHOD``) so a
 # paged op can never be reached through the single-reply ``execute`` path by
 # accident.
-QUERY_TO_BINDING_METHOD = {
+STATELESS_QUERY_TO_BINDING_METHOD = {
     OP_QUERY_ITEMS: "query_items",
     OP_READ_ALL_ITEMS: "read_all_items",
     OP_LIST_DATABASES: "list_databases",
@@ -95,7 +86,19 @@ QUERY_TO_BINDING_METHOD = {
     OP_LIST_CONTAINERS: "list_containers",
     OP_QUERY_CONTAINERS: "query_containers",
 }
-# Reserved lookup for the batch operation, matching ``OP_TO_BINDING_METHOD``.
-# Empty until that operation is added; adding a row does not change the
-# dispatch code.
-BATCH_TO_BINDING_METHOD: dict[str, str] = {}
+
+CURSOR_QUERY_TO_BINDING_METHOD = {
+    OP_READ_ALL_ITEMS: "fetch_page_with_cursor",
+    OP_QUERY_ITEMS: "fetch_page_with_cursor",
+    OP_QUERY_CHANGE_FEED: "fetch_page_with_cursor",
+}
+
+
+def get_page_binding_method(op: str, *, uses_cursor: bool) -> str | None:
+    """Select the binding name for one stateless or retained-cursor request."""
+    methods = (
+        CURSOR_QUERY_TO_BINDING_METHOD
+        if uses_cursor
+        else STATELESS_QUERY_TO_BINDING_METHOD
+    )
+    return methods.get(op)

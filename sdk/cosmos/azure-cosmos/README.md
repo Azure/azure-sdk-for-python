@@ -1214,8 +1214,8 @@ or `_rust.so` (Linux/macOS). It lands in `azure/cosmos/` next to the
 **One thing to know first:** if an old `_rust.pyd` is sitting in
 `azure/cosmos/` from a previous build, Python will load *that* and
 ignore your new code. Symptom is usually
-`AttributeError: module 'azure.cosmos._rust' has no attribute 'init_client'`
-at runtime, even though `init_client` is right there in the source.
+`AttributeError: module 'azure.cosmos._rust' has no attribute 'acquire_driver_handle'`
+at runtime, even though `acquire_driver_handle` is right there in the source.
 So clean before you build:
 
 ```powershell
@@ -1236,7 +1236,7 @@ exposes:
 
 ```powershell
 python -c "from azure.cosmos import _rust; print(sorted(a for a in dir(_rust) if not a.startswith('_')))"
-# Expected: ['create_item', 'init_client']
+# Expected: ['create_item', 'acquire_driver_handle']
 ```
 
 If you see anything other than those two names, you have a stale `.pyd`

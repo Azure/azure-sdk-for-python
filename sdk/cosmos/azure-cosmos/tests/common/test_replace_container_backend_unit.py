@@ -1,3 +1,5 @@
+from common.typed_requests import legacy_partition_key_from_request
+from common.typed_requests import wire_headers, settings_options, legacy_settings
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
@@ -100,7 +102,7 @@ def test_target_ownership_returns_and_rust_dispatch(replace_case, kind, return_p
         prepared = case.backend.execute.call_args.args[0]
         assert prepared.op == OP_REPLACE_CONTAINER
         assert prepared.container_link == "dbs/db1/colls/c1"
-        assert prepared.partition_key_header == "[]" and prepared.item_id is None
+        assert legacy_partition_key_from_request(prepared) == "[]" and prepared.item_id is None
         body = json.loads(prepared.body_bytes)
     assert body == {"id": "c1", "partitionKey": PK, "defaultTtl": 3600}
 
@@ -180,8 +182,8 @@ def test_supported_timeouts_and_application_headers(replace_case, timeout):
     _replace(case, "c1", PK, timeout=timeout, initial_headers={"x-company-trace": "replace"})
     if not case.legacy:
         headers = case.backend.execute.call_args.args[0].headers
-        assert headers["initialHeaders"] == {"x-company-trace": "replace"}
-        assert headers.get("__overall_timeout_seconds") == timeout
+        assert all(headers.get(key.lower()) == str(value) for key, value in ({"x-company-trace": "replace"}).items())
+        assert settings_options(case.backend.execute.call_args.args[0]).get("timeout_seconds") == timeout
     case.connection.ReadContainer.assert_not_called()
 
 
@@ -294,4 +296,4 @@ def test_builder_registration_and_invalid_links():
     options = {"sessionToken": "ignored", "initialHeaders": {"x-company-trace": "replace"}}
     prepared = build_replace_container_prepared("/dbs/db1/colls/c1/", {"id": "c1", "partitionKey": PK}, options)
     assert prepared.container_link == "dbs/db1/colls/c1"
-    assert "sessionToken" not in prepared.headers and options["sessionToken"] == "ignored"
+    assert "sessionToken" not in wire_headers(prepared) and options["sessionToken"] == "ignored"

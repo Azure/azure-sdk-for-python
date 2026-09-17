@@ -1,6 +1,9 @@
 from ci_tools.parsing import parse_require, ParsedSetup
+from ci_tools.parsing.parse_functions import has_cibuildwheel_config
 from packaging.specifiers import SpecifierSet
 import os
+import runpy
+import shutil
 from unittest.mock import patch
 
 import pytest
@@ -333,3 +336,44 @@ def test_namespace_discovery_with_substantial_content():
         assert result == "test.module"
     finally:
         os.unlink(temp_file)
+
+
+def test_cibuildwheel_config_detected_without_ext_modules(tmp_path):
+    """
+    A [tool.cibuildwheel] table marks a package as compiled even when it declares no
+    setuptools Extension. Backends such as maturin/PyO3 build native code but expose
+    no ext_modules, so ext_modules alone would misclassify them as pure Python.
+    """
+    # baseline: an ordinary pyproject package opts into neither
+    assert has_cibuildwheel_config(pyproject_scenario) == False
+    assert ParsedSetup.from_path(pyproject_scenario).uses_cibuildwheel == False
+
+    pkg = tmp_path / "maturin_style_pkg"
+    shutil.copytree(pyproject_scenario, pkg)
+    with open(pkg / "pyproject.toml", "a") as f:
+        f.write('\n[tool.cibuildwheel]\nbuild = "cp310-*"\n')
+
+    assert has_cibuildwheel_config(str(pkg)) == True
+
+    parsed = ParsedSetup.from_path(str(pkg))
+    assert parsed.ext_modules == []
+    assert parsed.uses_cibuildwheel == True
+
+
+def test_cibuildwheel_config_absent_when_no_pyproject():
+    # setup.py-only packages have no pyproject.toml to read
+    assert has_cibuildwheel_config(setup_project_scenario) == False
+    assert ParsedSetup.from_path(setup_project_scenario).uses_cibuildwheel == False
+
+
+def test_cosmos_package_uses_cibuildwheel_with_matching_metadata():
+    repo_root = os.path.abspath(os.path.join(package_root, "..", "..", ".."))
+    cosmos_package = os.path.join(repo_root, "sdk", "cosmos", "azure-cosmos")
+    parsed = ParsedSetup.from_path(cosmos_package)
+    version = runpy.run_path(os.path.join(cosmos_package, "azure", "cosmos", "_version.py"))["VERSION"]
+
+    assert parsed.name == "azure-cosmos"
+    assert parsed.version == version
+    assert parsed.python_requires == ">=3.10"
+    assert parsed.is_pyproject is True
+    assert parsed.uses_cibuildwheel is True

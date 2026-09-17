@@ -20,7 +20,7 @@
 //!
 //! Terminology (consistent with `factory.py`, `rust.py`, `credential.rs`,
 //! `documents/`, `runtime.rs`): binding = this compiled `_rust` extension; rust
-//! driver = the `CosmosDriver` engine; shared Tokio runtime = the one process-wide
+//! driver = the `CosmosDriver` driver; shared Tokio runtime = the one process-wide
 //! Tokio thread pool that runs the driver's work; driver handle = the string
 //! naming which rust driver a client uses.
 
@@ -35,6 +35,7 @@ use crate::runtime::drivers;
 
 // ── Extracted sub-modules ────────────────────────────────────────────────────
 mod container_metadata;
+pub(crate) mod deadline;
 mod diagnostics;
 mod driver_runner;
 mod errors;
@@ -42,10 +43,10 @@ mod request;
 mod response;
 
 // ── Public-facing exception re-exports (lib.rs registers these) ──────────────
-pub use errors::{DriverTransportError, UnsupportedQueryFeatureError};
+pub use errors::{DriverResponseError, DriverTransportError, UnsupportedQueryFeatureError};
 
 // ── Diagnostics counter re-exports (pub(crate) so lib.rs can register them) ──
-pub(crate) use container_metadata::{resolve_container_metadata, resolve_container_metadata_async};
+pub(crate) use container_metadata::{get_container_metadata, get_container_metadata_async};
 pub(crate) use diagnostics::{attempt_count, operation_count, retry_count};
 
 // ── Request-side re-exports ───────────────────────────────────────────────────
@@ -54,7 +55,7 @@ pub(crate) use request::{
     extract_account_prepared_modifiers, extract_body_bytes, extract_common_prepared_inputs,
     extract_container_feed_prepared_inputs, extract_container_point_prepared_inputs,
     extract_create_item_id, extract_database_prepared_inputs,
-    extract_read_feed_ranges_force_refresh, extract_required_item_id, OpModifiers,
+    extract_read_feed_ranges_force_refresh, extract_required_item_id, RequestHeadersAndOptions,
 };
 // ---------------------------------------------------------------------------
 // Shared singleton-operation runner (sync + async)
@@ -69,16 +70,16 @@ impl Drop for AbortOnDrop {
     }
 }
 
-/// Look up the cached driver for a client handle, or raise if `init_client`
+/// Look up the cached driver for a client handle, or raise if `acquire_driver_handle`
 /// has not run yet (or the client was already closed).
-fn lookup_driver(handle: &str) -> PyResult<Arc<CosmosDriver>> {
+fn lookup_driver(driver_handle: &str) -> PyResult<Arc<CosmosDriver>> {
     drivers()
         .read()
-        .get(handle)
+        .get(driver_handle)
         .map(|entry| Arc::clone(&entry.driver))
         .ok_or_else(|| {
             PyRuntimeError::new_err(format!(
-                "no driver registered for handle {handle:?}; call init_client first"
+                "no driver registered for handle {driver_handle:?}; call acquire_driver_handle first"
             ))
         })
 }
@@ -87,17 +88,19 @@ fn lookup_driver(handle: &str) -> PyResult<Arc<CosmosDriver>> {
 mod containers;
 mod databases;
 mod feed_range;
+pub(crate) mod item_feed;
 mod items;
 mod offers;
 mod query;
+pub(crate) mod settings;
 
 pub(crate) use containers::{
     run_create_container_operation, run_create_container_operation_async,
     run_delete_container_operation, run_delete_container_operation_async,
-    run_replace_container_operation, run_replace_container_operation_async,
     run_list_containers_operation, run_list_containers_operation_async,
     run_query_containers_operation, run_query_containers_operation_async,
     run_read_container_operation, run_read_container_operation_async,
+    run_replace_container_operation, run_replace_container_operation_async,
 };
 pub(crate) use databases::{
     run_create_database_operation, run_create_database_operation_async,
@@ -111,7 +114,7 @@ pub(crate) use feed_range::{
     run_is_feed_range_subset_operation, run_is_feed_range_subset_operation_async,
     run_read_feed_ranges_operation, run_read_feed_ranges_operation_async,
 };
-pub(crate) use items::{run_item_operation, run_item_operation_async};
+pub(crate) use items::{execute_item_operation_async, execute_item_operation_sync};
 pub(crate) use offers::{
     run_read_offer_operation, run_read_offer_operation_async, run_replace_offer_operation,
     run_replace_offer_operation_async,
@@ -236,3 +239,7 @@ mod tests {
         assert!(!completed.load(Ordering::SeqCst));
     }
 }
+
+#[cfg(test)]
+mod legacy_partition_key;
+pub(crate) mod partition_key;

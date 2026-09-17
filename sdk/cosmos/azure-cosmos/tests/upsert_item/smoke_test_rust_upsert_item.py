@@ -42,6 +42,7 @@ import uuid
 from azure.cosmos import CosmosClient, PartitionKey
 from azure.cosmos._backend.operations import OP_UPSERT_ITEM
 from azure.cosmos._backend.contracts import PreparedRequest
+from azure.cosmos._backend.partition_key import PartitionKeyInput
 from azure.cosmos._backend.rust import RustBackend
 
 ENDPOINT = os.environ.get("ACCOUNT_HOST")
@@ -50,7 +51,7 @@ DB = os.environ.get("COSMOS_DB", "parity_db")
 COLL = os.environ.get("COSMOS_COLL", "smoke_upsert")
 
 CONTAINER_LINK = f"dbs/{DB}/colls/{COLL}"
-PK_HEADER = '["smokeA"]'
+PARTITION_KEY = PartitionKeyInput("components", ("smokeA",))
 
 
 def _ensure_db_and_container() -> None:
@@ -67,7 +68,7 @@ def _upsert(backend, item_id, value, headers=None):
         op=OP_UPSERT_ITEM,
         container_link=CONTAINER_LINK,
         body_bytes=body,
-        partition_key_header=PK_HEADER,
+        partition_key=PARTITION_KEY,
         headers=headers or {},
     )
     return backend.execute(prepared)
@@ -176,4 +177,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

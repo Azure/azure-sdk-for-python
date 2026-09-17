@@ -4,8 +4,7 @@
 #   - azure_cosmos_rust/   the PyO3 binding compiled into _rust.pyd
 #
 # The driver crate (azure_data_cosmos_driver) is no longer in-tree. It is
-# pulled in as a path dependency from a sibling clone of azure-sdk-for-rust;
-# see azure_cosmos_rust/Cargo.toml for the exact path. `maturin develop`
+# pulled from a pinned azure-sdk-for-rust revision declared below. `maturin develop`
 # (run from this directory) compiles the binding plus the external driver
 # into one cdylib that gets dropped into azure/cosmos/ next to the .py files.
 
@@ -37,14 +36,15 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(test_category, values("emu
 # driver uses, otherwise azure_core-native types (e.g. `TokenCredential`,
 # `AccessToken`, `azure_core::Error`) are different Rust types. The binding
 # inherits this published crates.io version so it can unify with the driver.
-# azure_identity is only needed by the driver's own dev-tests, not the binding,
-# so it stays a path dep.
+# The binding does not need azure_identity from the driver's own dev-tests.
 # -----------------------------------------------------------------------------
 [workspace.dependencies]
 # --- azure-sdk-for-rust crates ---
 # azure_core aligned with the driver's published version so the two unify.
 azure_core     = "1.1.0"
-azure_identity = { path = "../../../../azure-sdk-for-rust/sdk/identity/azure_identity" }
+# Preserve the driver revision used by this checkout rather than downgrading
+# to the older EngSys prototype. Normal and test dependencies share this source.
+azure_data_cosmos_driver = { git = "https://github.com/Azure/azure-sdk-for-rust", rev = "075917d6cb987055dfa93e31296b261574456b66" }
 
 # --- crates.io deps the binding uses ---
 async-lock   = "3"

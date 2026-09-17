@@ -148,6 +148,7 @@ dependencies = [
 [[package]]
 name = "azure_data_cosmos_driver"
 version = "0.8.0"
+source = "git+https://github.com/Azure/azure-sdk-for-rust?rev=075917d6cb987055dfa93e31296b261574456b66#075917d6cb987055dfa93e31296b261574456b66"
 dependencies = [
  "arc-swap",
  "async-lock",
@@ -161,6 +162,7 @@ dependencies = [
  "futures",
  "getrandom 0.4.3",
  "h2",
+ "percent-encoding",
  "rand 0.10.1",
  "reqwest",
  "rustc_version",
@@ -1207,6 +1209,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b14b5775b5ff446dd1056212d778012cbe8a0fbffd368029fd9e25b514479c38"
 dependencies = [
  "once_cell",
+ "python3-dll-a",
  "target-lexicon",
 ]
 
@@ -1243,6 +1246,15 @@ dependencies = [
  "pyo3-build-config",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "python3-dll-a"
+version = "0.2.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d80ba7540edb18890d444c5aa8e1f1f99b1bdf26fb26ae383135325f4a36042b"
+dependencies = [
+ "cc",
 ]
 
 [[package]]

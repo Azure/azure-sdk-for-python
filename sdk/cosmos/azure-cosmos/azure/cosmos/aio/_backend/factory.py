@@ -8,7 +8,7 @@
 The async counterpart of ``azure.cosmos._backend.factory``. Same terms:
 **client** = the ``CosmosClient`` the customer makes; **backend** =
 ``core-python`` (original all-Python) or ``rust`` (hands work to a rust driver);
-**rust driver** = the engine the binding builds (connection pool, request
+**rust driver** = the driver the binding builds (connection pool, request
 signing, region routing), one per ``(endpoint, credential, config)`` and shared
 across same-settings clients; **binding** = the compiled ``azure.cosmos._rust``
 layer Python calls into.

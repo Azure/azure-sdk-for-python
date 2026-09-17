@@ -4,6 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 """Point operations must work without constructing or receiving a legacy connection."""
+from common.typed_requests import key_from_legacy_header, legacy_partition_key_from_request
+from common.typed_requests import wire_headers, settings_options, legacy_settings
 import asyncio
 import inspect
 import json
@@ -21,17 +23,18 @@ from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
-from azure.cosmos._backend.contracts import BackendResponse, PreparedRequest
+from azure.cosmos._backend.contracts import BackendResponse, ContainerMetadata, PreparedRequest
 from azure.cosmos._backend.errors import BackendProtocolError
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
-from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults, ResponseHeaderState
+from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults, ClientLastResponseHeaders
 from azure.cosmos._helpers import _request_item
-from azure.cosmos._helpers.item_helper import ItemHelper, execute_item_builder, prepare_item_arguments
+from azure.cosmos._helpers.item_helper import ItemHelper, build_item_request, normalize_item_arguments
+from common.request_preparation import call_item_helper
 from azure.cosmos._helpers._paths import parse_paths
 from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
-from azure.cosmos.aio._helpers.item_helper import execute_item_builder as async_execute_item_builder
+from azure.cosmos.aio._helpers.item_helper import build_item_request as async_execute_item_builder
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
 from azure.cosmos.partition_key import NonePartitionKeyValue, NullPartitionKeyValue
 from azure.cosmos._read_items_helper import ReadItemsHelperSync
@@ -50,17 +53,19 @@ class Backend(CosmosBackend):
 
     def __init__(self):
         self.events = []
-        self.metadata = response({"_rid": "rid", "partitionKey": {"paths": ["/pk"], "kind": "Hash"}})
+        self.metadata = ContainerMetadata("rid", ("/pk",), "Hash")
         self.reply = response({"id": "x"}, headers={"x-ms-request-charge": 2.5})
 
-    def resolve_container_metadata(self, link):
+    def get_container_metadata(self, link):
         self.events.append("metadata")
         if isinstance(self.metadata, Exception):
             raise self.metadata
         return self.metadata
 
-    def execute(self, prepared):
+    def execute(self, prepared, *, deadline=None):
         self.events.append(prepared)
+        if isinstance(self.metadata, Exception):
+            raise self.metadata
         return self.reply
 
     def run_operation(self, **kwargs):
@@ -68,11 +73,11 @@ class Backend(CosmosBackend):
 
 
 class AsyncBackend(AsyncCosmosBackend, Backend):
-    async def resolve_container_metadata(self, link):
-        return Backend.resolve_container_metadata(self, link)
+    async def get_container_metadata(self, link):
+        return Backend.get_container_metadata(self, link)
 
-    async def execute(self, prepared):
-        return Backend.execute(self, prepared)
+    async def execute(self, prepared, *, deadline=None):
+        return Backend.execute(self, prepared, deadline=deadline)
 
 
 def invoke(helper, op, **kwargs):
@@ -80,54 +85,77 @@ def invoke(helper, op, **kwargs):
     if op in ("create_item", "upsert_item", "replace_item"):
         arguments["body"] = {"id": "x", "pk": "p"}
     if op not in ("create_item", "upsert_item"):
-        arguments.update(document_link="dbs/d/colls/c/docs/x", item_id="x")
+        arguments.update(item_id="x")
     if op in ("read_item", "delete_item", "patch_item"):
         arguments["request_options"] = {"partitionKey": "p"}
     if op == "patch_item":
         arguments["patch_operations"] = [{"op": "add", "path": "/a", "value": 1}]
     arguments.update(kwargs)
-    result = getattr(helper, op)(**arguments)
+    result = call_item_helper(helper, op, **arguments)
     return asyncio.run(result) if inspect.isawaitable(result) else result
+
+
+@pytest.mark.parametrize("async_mode", [False, True])
+@pytest.mark.parametrize("op", ["create_item", "read_item", "delete_item", "upsert_item", "replace_item", "patch_item"])
+@pytest.mark.parametrize("kwargs,priority,bucket", [
+    ({}, "Low", 3),
+    ({"priority": "High", "throughput_bucket": 5}, "High", 5),
+    ({"priority": None, "throughput_bucket": 0}, "Low", 3),
+    ({"initial_headers": {"x-ms-cosmos-priority-level": "High",
+                         "x-ms-cosmos-throughput-bucket": "7"}}, "High", "7"),
+])
+def test_independent_items_inherit_client_defaults(async_mode, op, kwargs, priority, bucket):
+    backend = AsyncBackend() if async_mode else Backend()
+    helper = (AsyncItemHelper if async_mode else ItemHelper)(
+        backend, ItemClientDefaults(priority="Low", throughput_bucket=3)
+    )
+    invoke(helper, op, **kwargs)
+    request = backend.events[-1]
+    headers = wire_headers(request)
+    initial = headers.get("initialHeaders", headers)
+    assert headers.get("x-ms-cosmos-priority-level", initial.get("x-ms-cosmos-priority-level")) == priority
+    assert headers.get("x-ms-cosmos-throughput-bucket", initial.get("x-ms-cosmos-throughput-bucket")) == str(bucket)
 
 
 @pytest.mark.parametrize("op", [
     "create_item", "read_item", "delete_item", "upsert_item", "replace_item", "patch_item",
 ])
 def test_execute_item_builder_maps_arguments_and_returns_only_request(monkeypatch, op):
-    assert async_execute_item_builder is execute_item_builder
+    assert async_execute_item_builder is build_item_request
     body = {"id": "order-42", "customerId": "customer-17", "total": 125.50}
-    args, options = prepare_item_arguments(op, {
+    args, options = normalize_item_arguments(op, {
         "container_link": "dbs/Contoso/colls/Orders",
         "body": body,
         "item_id": "order-42",
         "patch_operations": [{"op": "replace", "path": "/total", "value": 150}],
         "no_response": True,
         "enable_automatic_id_generation": True,
+        "request_options": {"partitionKey": "customer-17"},
     })
-    prepared = PreparedRequest(op, args["container_link"], b"", '["customer-17"]')
-    builder = MagicMock(return_value=(prepared, "order-42") if op == "create_item" else prepared)
+    prepared = PreparedRequest(op, args["container_link"], b"", key_from_legacy_header('["customer-17"]'))
+    builder = MagicMock(return_value=prepared)
     monkeypatch.setattr(_request_item, f"build_{op}_request", builder)
 
-    result = execute_item_builder(op, args, options, "customer-17", "illustrative-rid", ItemClientDefaults(False))
+    result = build_item_request(op, args, options, ItemClientDefaults(False))
 
     expected = {
         "container_link": args["container_link"],
         "partition_key_value": "customer-17",
-        "container_rid": "illustrative-rid",
-        "kwargs": args["wire_kwargs"],
+        "container_rid": None,
+        "request_options": options,
     }
     if op in ("create_item", "upsert_item", "replace_item"):
-        expected["body"] = body
+        expected["extract_partition_key"] = False
+    if op in ("create_item", "upsert_item", "replace_item"):
+        expected["document"] = args["document"]
     if op in ("create_item", "upsert_item", "replace_item", "patch_item"):
         expected["no_response_on_write_default"] = False
     if op not in ("create_item", "upsert_item"):
         expected["item_id"] = "order-42"
     if op == "create_item":
-        expected.update(indexing_directive=None, enable_automatic_id_generation=True)
-    if op in ("upsert_item", "replace_item"):
-        expected["access_condition"] = None
+        expected.update(indexing_directive=None)
     if op == "patch_item":
-        expected["patch_operations"] = args["patch_operations"]
+        expected.update(body_bytes=args["body_bytes"])
     builder.assert_called_once_with(**expected)
     assert result is prepared
 
@@ -136,16 +164,15 @@ def test_execute_item_builder_maps_arguments_and_returns_only_request(monkeypatc
 @pytest.mark.parametrize("op", ["create_item", "read_item", "delete_item", "upsert_item", "replace_item", "patch_item"])
 def test_standalone_item_execution(async_mode, op):
     backend = AsyncBackend() if async_mode else Backend()
-    state = ResponseHeaderState()
+    state = ClientLastResponseHeaders()
     hook = MagicMock()
     helper = (AsyncItemHelper if async_mode else ItemHelper)(backend, ItemClientDefaults(True), state)
     result = invoke(helper, op, response_hook=hook)
-    assert len(backend.events) == 2
-    assert backend.events[0] == "metadata"
-    request = backend.events[1]
+    assert len(backend.events) == 1
+    request = backend.events[0]
     assert request.op == op
-    assert request.partition_key_header == '["p"]'
-    assert request.headers[Constants.ContainerRID] == "rid"
+    assert legacy_partition_key_from_request(request) == (None if op in ("create_item", "upsert_item", "replace_item") else '["p"]')
+    assert "x-ms-cosmos-intended-collection-rid" not in wire_headers(request)
     hook.assert_called_once()
     assert state.last_response_headers["x-ms-request-charge"] == "2.5"
     if op == "delete_item":
@@ -154,40 +181,43 @@ def test_standalone_item_execution(async_mode, op):
         assert isinstance(result, CosmosDict)
         assert result.get_response_headers() == state.last_response_headers
     if op in ("create_item", "upsert_item", "replace_item", "patch_item"):
-        assert request.headers["responsePayloadOnWriteDisabled"] is True
+        assert settings_options(request)["responsePayloadOnWriteDisabled"] is True
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-@pytest.mark.parametrize("metadata", [None, response({}), response({"_rid": "rid", "partitionKey": {}}),
-                                     response({"message": "missing"}, 404), AttributeError("lookup failed")])
-def test_metadata_failure_never_executes_item(async_mode, metadata):
+@pytest.mark.parametrize("metadata", [
+    BackendProtocolError("missing metadata"), BackendProtocolError("invalid rid"),
+    BackendProtocolError("invalid partition key"),
+    CosmosResourceNotFoundError(status_code=404, message="missing"), AttributeError("lookup failed"),
+])
+def test_native_preparation_failure_propagates_without_a_python_metadata_call(async_mode, metadata):
     backend = AsyncBackend() if async_mode else Backend()
     backend.metadata = metadata
     helper = (AsyncItemHelper if async_mode else ItemHelper)(backend)
     with pytest.raises((BackendProtocolError, CosmosResourceNotFoundError, AttributeError)):
         invoke(helper, "create_item")
-    assert backend.events == ["metadata"]
+    assert len(backend.events) == 1
+    assert backend.events[0].op == "create_item"
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
 def test_options_defaults_errors_and_hooks(async_mode):
     backend = AsyncBackend() if async_mode else Backend()
     helper_type = AsyncItemHelper if async_mode else ItemHelper
-    state = ResponseHeaderState()
+    state = ClientLastResponseHeaders()
     helper = helper_type(backend, ItemClientDefaults(True), state)
     invoke(helper, "create_item", no_response=False)
-    assert backend.events[-1].headers["responsePayloadOnWriteDisabled"] is False
+    assert settings_options(backend.events[-1])["responsePayloadOnWriteDisabled"] is False
     backend.events.clear()
     for kwargs in ({"filter_predicate": "FROM c WHERE c.x = 1"}, {"read_timeout": 2},
                    {"retry_write": 1}, {"raw_request_hook": MagicMock()}, {"raw_response_hook": MagicMock()},
-                   {"timeout": 0.5}, {"initial_headers": {"User-Agent": "caller"}},
-                   {"access_condition": {"type": "IfMatch", "condition": '"e"'}}):
+                   {"initial_headers": {"User-Agent": "caller"}},
+                   {"access_condition": {"type": "IfNoneMatch", "condition": '"e"'}}):
         with pytest.raises(NotImplementedError):
             invoke(helper, "patch_item", **kwargs)
+    with pytest.raises(ValueError, match="timeout"):
+        invoke(helper, "patch_item", timeout=0.5)
     assert not backend.events
-    backend.reply = None
-    with pytest.raises(BackendProtocolError):
-        invoke(helper_type(backend), "read_item")
     backend.reply = response({"message": "gone"}, 404, {"etag": "error"})
     hook = MagicMock()
     with pytest.raises(CosmosResourceNotFoundError):
@@ -211,7 +241,7 @@ def test_public_item_sentinels_do_not_read_connection(async_mode, key):
     if async_mode:
         result = asyncio.run(result)
     assert result["id"] == "x"
-    assert len(backend.events) == 2
+    assert len(backend.events) == 1
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
@@ -256,29 +286,38 @@ def test_all_public_point_methods_work_with_no_connection(async_mode, op):
     finally:
         sys.setprofile(previous_profile)
     assert legacy_calls == []
-    assert backend.events[1].op == op
-    assert backend.events[1].headers[Constants.ContainerRID] == "rid"
+    assert len(backend.events) == 1
+    assert backend.events[0].op == op
+    assert "x-ms-cosmos-intended-collection-rid" not in backend.events[0].headers
     assert result is None if op == "delete_item" else result["id"] == "x"
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_per_call_metadata_reuse_and_error_headers(async_mode):
+def test_no_python_metadata_calls_and_preparation_error_preserves_headers(async_mode):
     backend = AsyncBackend() if async_mode else Backend()
-    state = ResponseHeaderState()
+    state = ClientLastResponseHeaders()
     helper = (AsyncItemHelper if async_mode else ItemHelper)(backend, response_state=state)
     invoke(helper, "create_item")
     invoke(helper, "upsert_item")
-    assert backend.events.count("metadata") == 2
-    backend.metadata = response({"message": "missing"}, 404, {"etag": "metadata-error"})
+    assert backend.events.count("metadata") == 0
+    assert len(backend.events) == 2
+    previous = state.last_response_headers
+    backend.metadata = CosmosResourceNotFoundError(status_code=404, message="missing")
     with pytest.raises(CosmosResourceNotFoundError):
         invoke(helper, "read_item")
-    assert state.last_response_headers["etag"] == "metadata-error"
+    assert state.last_response_headers is previous
 
 
 @pytest.mark.parametrize("helper_type,backend_type", [(ItemHelper, Backend), (AsyncItemHelper, AsyncBackend)])
 def test_rust_helper_rejects_old_connection_argument(helper_type, backend_type):
     with pytest.raises(TypeError, match="ItemClientDefaults"):
         helper_type(backend_type(), object())
+
+
+@pytest.mark.parametrize("helper_type,backend_type", [(ItemHelper, Backend), (AsyncItemHelper, AsyncBackend)])
+def test_rust_helper_rejects_invalid_response_state(helper_type, backend_type):
+    with pytest.raises(TypeError, match="response_state must be ClientLastResponseHeaders"):
+        helper_type(backend_type(), response_state=object())
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
@@ -293,7 +332,7 @@ def test_rust_owned_condition_options_reach_wire(async_mode, op, condition, etag
     backend = AsyncBackend() if async_mode else Backend()
     helper = (AsyncItemHelper if async_mode else ItemHelper)(backend)
     invoke(helper, op, match_condition=condition, etag=etag)
-    assert backend.events[-1].headers[header] == value
+    assert getattr(backend.events[-1].settings.item, header.lower().replace("-", "_")) == value
 
 
 @pytest.mark.parametrize("kwargs,error,message", [
@@ -326,14 +365,14 @@ def test_rust_option_prep_owns_copies_without_pipeline_bookkeeping():
         "timeout": 2,
     }
     original = deepcopy(arguments)
-    args, options = prepare_item_arguments("read_item", arguments)
+    args, options = normalize_item_arguments("read_item", arguments)
     assert arguments == original
     assert options is not arguments["request_options"]
     assert options["priorityLevel"] == "High"
     assert options["accessCondition"] == {"type": "IfNoneMatch", "condition": "winner"}
     assert Constants.OperationStartTime not in options
-    assert args["wire_kwargs"]["request_options"] is options
-    assert args["wire_kwargs"]["timeout"] == 2
+    assert "wire_kwargs" not in args
+    assert args["kwargs"]["timeout"] == 2
 
 
 @pytest.mark.parametrize("path,expected", [
@@ -355,7 +394,8 @@ def test_shared_path_tokenization_rejects_invalid_paths(path):
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_public_context_and_compatibility_bridge(monkeypatch, async_mode):
+@pytest.mark.parametrize("compact_utf8", [False, True])
+def test_public_context_and_compatibility_bridge(monkeypatch, async_mode, compact_utf8):
     backend = AsyncBackend() if async_mode else Backend()
     module = "azure.cosmos.aio._cosmos_client" if async_mode else "azure.cosmos.cosmos_client"
     monkeypatch.setattr(module + (".make_async_backend" if async_mode else ".make_backend"), lambda *a, **kw: backend)
@@ -377,12 +417,15 @@ def test_public_context_and_compatibility_bridge(monkeypatch, async_mode):
         assert len(created_contexts) == 1
         assert created_contexts[0].backend is backend
         assert created_contexts[0].defaults.no_response_on_write is True
+        assert created_contexts[0].defaults.enable_compact_utf8_item_writes is compact_utf8
+        assert kwargs["enable_compact_utf8_item_writes"] is compact_utf8
         assert kwargs["_response_state"] is created_contexts[0].response_state
         connection._response_state = kwargs["_response_state"]
 
     monkeypatch.setattr(connection_type, "__init__", initialize)
     client = (AsyncCosmosClient if async_mode else CosmosClient)(
-        "https://example.documents.azure.com", "key", no_response_on_write=True
+        "https://example.documents.azure.com", "key", no_response_on_write=True,
+        enable_compact_utf8_item_writes=compact_utf8,
     )
     database = client.get_database_client("d")
     container = database.get_container_client("c")
@@ -401,7 +444,7 @@ def test_public_context_and_compatibility_bridge(monkeypatch, async_mode):
     if async_mode:
         result = asyncio.run(result)
     assert result["id"] == "x"
-    assert backend.events[-2].headers["responsePayloadOnWriteDisabled"] is True
+    assert settings_options(backend.events[-2])["responsePayloadOnWriteDisabled"] is True
     assert backend.events[-1] == "hook"
     assert connection.last_response_headers is client._item_context.response_state.last_response_headers
     connection.last_response_headers = {"legacy": "headers"}
@@ -482,7 +525,7 @@ def test_explicit_parity_adapter_keeps_legacy_call(async_mode, op, method):
     setattr(connection, method, call)
     context = ItemClientContext(ASYNC_LEGACY_BACKEND if async_mode else LEGACY_BACKEND)
     proxy = (AsyncContainerProxy if async_mode else ContainerProxy)(connection, "dbs/d", "c", _item_context=context)
-    helper = proxy._create_item_helper()
+    helper = proxy._get_item_helper()
     result = invoke(helper, op, **({"filter_predicate": "FROM c"} if op == "patch_item" else {}))
     assert result == {"legacy": True}
     assert call.call_args.kwargs["options"][Constants.ContainerRID] == "legacy-rid"

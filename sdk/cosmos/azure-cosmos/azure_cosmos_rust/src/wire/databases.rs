@@ -14,7 +14,7 @@ use azure_data_cosmos_driver::{
 };
 
 use super::driver_runner::{run_driver_operation_async, run_driver_operation_sync};
-use super::request::{build_operation_options, OpModifiers};
+use super::request::{build_operation_options, RequestHeadersAndOptions};
 use super::response::{
     tuple_from_database_feed_result, tuple_from_query_databases_result, tuple_from_result,
 };
@@ -22,14 +22,14 @@ use super::response::{
 /// Create a database and convert the response for synchronous Python code.
 pub(crate) fn run_create_database_operation<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
     run_driver_operation_sync(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_create_database_future(driver, modifiers, body_bytes),
         tuple_from_result,
@@ -39,14 +39,14 @@ pub(crate) fn run_create_database_operation<'py>(
 /// Create a database and return a Python awaitable.
 pub(crate) fn run_create_database_operation_async<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
     run_driver_operation_async(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_create_database_future(driver, modifiers, body_bytes),
         tuple_from_result,
@@ -56,14 +56,14 @@ pub(crate) fn run_create_database_operation_async<'py>(
 /// Read a database and convert the response for synchronous Python code.
 pub(crate) fn run_read_database_operation<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
     run_driver_operation_sync(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_read_database_future(driver, modifiers, database_id),
         tuple_from_result,
@@ -73,14 +73,14 @@ pub(crate) fn run_read_database_operation<'py>(
 /// Read a database and return a Python awaitable.
 pub(crate) fn run_read_database_operation_async<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
     run_driver_operation_async(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_read_database_future(driver, modifiers, database_id),
         tuple_from_result,
@@ -90,14 +90,14 @@ pub(crate) fn run_read_database_operation_async<'py>(
 /// Delete a database and convert the response for synchronous Python code.
 pub(crate) fn run_delete_database_operation<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
     run_driver_operation_sync(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_delete_database_future(driver, modifiers, database_id),
         tuple_from_result,
@@ -107,14 +107,14 @@ pub(crate) fn run_delete_database_operation<'py>(
 /// Delete a database and return a Python awaitable.
 pub(crate) fn run_delete_database_operation_async<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
     run_driver_operation_async(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_delete_database_future(driver, modifiers, database_id),
         tuple_from_result,
@@ -124,13 +124,13 @@ pub(crate) fn run_delete_database_operation_async<'py>(
 /// Read one page of databases and convert it for synchronous Python code.
 pub(crate) fn run_list_databases_operation<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
     run_driver_operation_sync(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_list_databases_future(driver, modifiers),
         tuple_from_database_feed_result,
@@ -142,13 +142,13 @@ pub(crate) fn run_list_databases_operation<'py>(
 /// page is in flight.
 pub(crate) fn run_list_databases_operation_async<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
     run_driver_operation_async(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_list_databases_future(driver, modifiers),
         tuple_from_database_feed_result,
@@ -158,14 +158,14 @@ pub(crate) fn run_list_databases_operation_async<'py>(
 /// Run one page of a database query for synchronous Python code.
 pub(crate) fn run_query_databases_operation<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
     run_driver_operation_sync(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_query_databases_future(driver, modifiers, body_bytes),
         tuple_from_query_databases_result,
@@ -175,14 +175,14 @@ pub(crate) fn run_query_databases_operation<'py>(
 /// Run one page of a database query and return a Python awaitable.
 pub(crate) fn run_query_databases_operation_async<'py>(
     py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
+    driver_handle: &str,
+    modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     operation_name: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
     run_driver_operation_async(
         py,
-        handle,
+        driver_handle,
         operation_name,
         move |driver| run_query_databases_future(driver, modifiers, body_bytes),
         tuple_from_query_databases_result,
@@ -192,7 +192,7 @@ pub(crate) fn run_query_databases_operation_async<'py>(
 /// Add request ids and build the driver options for a database operation.
 fn prepare_database_operation(
     mut op: CosmosOperation,
-    modifiers: OpModifiers,
+    modifiers: RequestHeadersAndOptions,
     content_response: Option<ContentResponseOnWrite>,
 ) -> (CosmosOperation, OperationOptions) {
     if let Some(activity) = modifiers.activity_header {
@@ -214,7 +214,7 @@ fn prepare_database_operation(
 /// Send a create-database request and return the created database properties.
 async fn run_create_database_future(
     driver: Arc<CosmosDriver>,
-    modifiers: OpModifiers,
+    modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
 ) -> Result<CosmosResponse, CosmosError> {
     let op = CosmosOperation::create_database(driver.account().clone()).with_body(body_bytes);
@@ -226,7 +226,7 @@ async fn run_create_database_future(
 /// Read a database by name.
 async fn run_read_database_future(
     driver: Arc<CosmosDriver>,
-    modifiers: OpModifiers,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
 ) -> Result<CosmosResponse, CosmosError> {
     let database = DatabaseReference::from_name(driver.account().clone(), database_id);
@@ -238,7 +238,7 @@ async fn run_read_database_future(
 /// Delete a database by name.
 async fn run_delete_database_future(
     driver: Arc<CosmosDriver>,
-    modifiers: OpModifiers,
+    modifiers: RequestHeadersAndOptions,
     database_id: String,
 ) -> Result<CosmosResponse, CosmosError> {
     let database = DatabaseReference::from_name(driver.account().clone(), database_id);
@@ -251,7 +251,7 @@ async fn run_delete_database_future(
 /// `None` means the feed has no page to return.
 async fn run_database_feed_future(
     driver: Arc<CosmosDriver>,
-    modifiers: OpModifiers,
+    modifiers: RequestHeadersAndOptions,
     op: CosmosOperation,
 ) -> Result<Option<CosmosResponse>, CosmosError> {
     let (op, options) = prepare_database_operation(op, modifiers, None);
@@ -261,7 +261,7 @@ async fn run_database_feed_future(
 /// Read one page of all databases in the account.
 async fn run_list_databases_future(
     driver: Arc<CosmosDriver>,
-    modifiers: OpModifiers,
+    modifiers: RequestHeadersAndOptions,
 ) -> Result<Option<CosmosResponse>, CosmosError> {
     let op = CosmosOperation::read_all_databases(driver.account().clone());
     run_database_feed_future(driver, modifiers, op).await
@@ -270,7 +270,7 @@ async fn run_list_databases_future(
 /// Return one page of databases that match the query body.
 async fn run_query_databases_future(
     driver: Arc<CosmosDriver>,
-    modifiers: OpModifiers,
+    modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
 ) -> Result<Option<CosmosResponse>, CosmosError> {
     let op = CosmosOperation::query_databases(driver.account().clone()).with_body(body_bytes);

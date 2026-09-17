@@ -11,6 +11,7 @@ only the parts that are awaited on the async side: the call to the
 existing client, and the cache refresh when the container is not cached
 yet. The explicit ``AsyncLegacyBackend`` routes through the existing client.
 """
+from common.request_preparation import call_create_item_helper
 import asyncio
 import unittest
 from unittest.mock import MagicMock, AsyncMock
@@ -40,7 +41,7 @@ class TestAsyncItemHelper(unittest.TestCase):
         cc.CreateItem = AsyncMock(return_value="async-result")
 
         async def _run():
-            return await AsyncLegacyItemHelper(cc).create_item(
+            return await call_create_item_helper(AsyncLegacyItemHelper(cc),
                 container_link="dbs/db/colls/c",
                 body={"id": "x"},
             )
@@ -66,7 +67,7 @@ class TestAsyncItemHelper(unittest.TestCase):
         cc.CreateItem = AsyncMock(return_value="ok")
 
         async def _run():
-            await AsyncLegacyItemHelper(cc).create_item(
+            await call_create_item_helper(AsyncLegacyItemHelper(cc),
                 container_link="dbs/db/colls/c",
                 body={"id": "x"},
             )

@@ -16,7 +16,7 @@
 //!
 //! Terminology used here (consistent with the rest of the backend):
 //!   * binding      -- this compiled `_rust` extension Python calls into.
-//!   * rust driver  -- the `CosmosDriver` engine that does the real Cosmos work.
+//!   * rust driver  -- the `CosmosDriver` driver that does the real Cosmos work.
 //!   * driver handle -- the string naming which pooled rust driver a client uses.
 //!   * shared Tokio runtime -- the one process-wide Tokio thread pool (in the
 //!     binding) that runs the driver's async work; see `runtime.rs`. It is NOT
@@ -26,7 +26,7 @@
 //! What is shared, what is not, and why (all grounded in `runtime.rs`):
 //!   * SHARED, one per process: the Tokio runtime (`RuntimeContext.tokio_rt`)
 //!     and the driver runtime (`CosmosDriverRuntime`, which owns the connection
-//!     pool). Both are built once, lazily, on the first `init_client` and live
+//!     pool). Both are built once, lazily, on the first `acquire_driver_handle` and live
 //!     until the process exits. One thread pool and one connection pool for the
 //!     whole process means fewer threads and reused sockets, and -- on the async
 //!     path -- no worker thread pinned per in-flight call.
@@ -41,26 +41,26 @@
 //!     another. The functions here hold no state -- they look the shared driver
 //!     up by handle and run one operation on the shared runtime.
 
-use pyo3::prelude::*;
+use crate::wire::partition_key::{extract_partition_key, PartitionKeyInput};
 use pyo3::types::PyTuple;
+use pyo3::{exceptions::PyValueError, prelude::*};
 
 use azure_data_cosmos_driver::models::CosmosOperation;
 
 use crate::wire::{
-    extract_account_prepared_modifiers, extract_body_bytes, extract_common_prepared_inputs,
-    extract_create_item_id, extract_database_prepared_inputs,
-    extract_read_feed_ranges_force_refresh, extract_required_item_id,
-    run_create_database_operation, run_create_database_operation_async,
+    execute_item_operation_async, execute_item_operation_sync, extract_account_prepared_modifiers,
+    extract_body_bytes, extract_common_prepared_inputs, extract_create_item_id,
+    extract_database_prepared_inputs, extract_read_feed_ranges_force_refresh,
+    extract_required_item_id, run_create_database_operation, run_create_database_operation_async,
     run_delete_database_operation, run_delete_database_operation_async,
     run_feed_range_from_partition_key_operation, run_feed_range_from_partition_key_operation_async,
     run_is_feed_range_subset_operation, run_is_feed_range_subset_operation_async,
-    run_item_operation, run_item_operation_async, run_list_databases_operation,
-    run_list_databases_operation_async, run_query_databases_operation,
-    run_query_databases_operation_async, run_query_operation, run_query_operation_async,
-    run_read_all_items_operation, run_read_all_items_operation_async, run_read_database_operation,
-    run_read_database_operation_async, run_read_feed_ranges_operation,
+    run_list_databases_operation, run_list_databases_operation_async,
+    run_query_databases_operation, run_query_databases_operation_async, run_query_operation,
+    run_query_operation_async, run_read_all_items_operation, run_read_all_items_operation_async,
+    run_read_database_operation, run_read_database_operation_async, run_read_feed_ranges_operation,
     run_read_feed_ranges_operation_async, run_read_offer_operation, run_read_offer_operation_async,
-    run_replace_offer_operation, run_replace_offer_operation_async, OpModifiers,
+    run_replace_offer_operation, run_replace_offer_operation_async, RequestHeadersAndOptions,
 };
 
 const REPLACE_ITEM_ID_REQUIRED: &str = "replace_item: PreparedRequest.item_id is required (the id of the document to overwrite, resolved from the `item` argument)";
@@ -73,14 +73,20 @@ const READ_ITEM_ID_REQUIRED: &str =
     "read_item: PreparedRequest.item_id is required for read operations";
 const PATCH_ITEM_ID_REQUIRED: &str = "patch_item: PreparedRequest.item_id is required (the id of the document to patch, resolved from the `item` argument)";
 
-type CommonInputs = (String, String, OpModifiers);
-type ItemInputs = (String, String, OpModifiers, String);
-type ItemBodyInputs = (String, String, OpModifiers, String, Vec<u8>);
-type QueryInputs = (String, String, OpModifiers, Vec<u8>);
-type OfferReplaceInputs = (OpModifiers, String, Vec<u8>);
-type ReadAllInputs = (String, String, OpModifiers);
+type CommonInputs = (String, PartitionKeyInput, RequestHeadersAndOptions);
+type ItemInputs = (String, PartitionKeyInput, RequestHeadersAndOptions, String);
+type ItemBodyInputs = (
+    String,
+    PartitionKeyInput,
+    RequestHeadersAndOptions,
+    String,
+    Vec<u8>,
+);
+type QueryInputs = (String, PartitionKeyInput, RequestHeadersAndOptions, Vec<u8>);
+type OfferReplaceInputs = (RequestHeadersAndOptions, String, Vec<u8>);
+type ReadAllInputs = (String, PartitionKeyInput, RequestHeadersAndOptions);
 type ReadFeedRangesInputs = (String, bool);
-type FeedRangeFromPartitionKeyInputs = (String, String);
+type FeedRangeFromPartitionKeyInputs = (String, PartitionKeyInput);
 
 /// Pull the common fields (container link, partition-key header, per-request
 /// modifiers) plus a *required* item id off the PreparedRequest. Used by the
@@ -91,10 +97,15 @@ fn extract_item_inputs(
     prepared: &Bound<'_, PyAny>,
     error_message: &'static str,
 ) -> PyResult<ItemInputs> {
-    let (container_link, partition_key_header, modifiers): CommonInputs =
+    let (container_link, partition_key, modifiers): CommonInputs =
         extract_common_prepared_inputs(prepared)?;
+    if matches!(partition_key, PartitionKeyInput::Extract) {
+        return Err(PyValueError::new_err(
+            "A bodiless item operation requires an explicit partition key",
+        ));
+    }
     let item_id = extract_required_item_id(prepared, error_message)?;
-    Ok((container_link, partition_key_header, modifiers, item_id))
+    Ok((container_link, partition_key, modifiers, item_id))
 }
 
 /// Common fields plus the document body, then use the item id Python already
@@ -103,13 +114,14 @@ fn extract_item_inputs(
 /// Without this shared extractor, create and upsert could disagree on that
 /// preference and fallback behavior.
 fn extract_create_body_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<ItemBodyInputs> {
-    let (container_link, partition_key_header, modifiers): CommonInputs =
-        extract_common_prepared_inputs(prepared)?;
+    let container_link = prepared.getattr("container_link")?.extract()?;
+    let partition_key = extract_partition_key(prepared)?;
+    let modifiers = extract_account_prepared_modifiers(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
     let item_id = extract_create_item_id(prepared, &body_bytes)?;
     Ok((
         container_link,
-        partition_key_header,
+        partition_key,
         modifiers,
         item_id,
         body_bytes,
@@ -124,13 +136,14 @@ fn extract_item_body_inputs(
     prepared: &Bound<'_, PyAny>,
     error_message: &'static str,
 ) -> PyResult<ItemBodyInputs> {
-    let (container_link, partition_key_header, modifiers): CommonInputs =
-        extract_common_prepared_inputs(prepared)?;
+    let container_link = prepared.getattr("container_link")?.extract()?;
+    let partition_key = extract_partition_key(prepared)?;
+    let modifiers = extract_account_prepared_modifiers(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
     let item_id = extract_required_item_id(prepared, error_message)?;
     Ok((
         container_link,
-        partition_key_header,
+        partition_key,
         modifiers,
         item_id,
         body_bytes,
@@ -139,10 +152,10 @@ fn extract_item_body_inputs(
 
 /// Common fields plus a required query body. Used by query_items (sync/async).
 fn extract_query_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<QueryInputs> {
-    let (container_link, partition_key_header, modifiers): CommonInputs =
+    let (container_link, partition_key, modifiers): CommonInputs =
         extract_common_prepared_inputs(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
-    Ok((container_link, partition_key_header, modifiers, body_bytes))
+    Ok((container_link, partition_key, modifiers, body_bytes))
 }
 
 /// Inputs for `replace_offer`: per-request modifiers, the offer RID (required, from
@@ -150,7 +163,7 @@ fn extract_query_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<QueryInputs> {
 /// account-level, non-partitioned resource, so the container link and partition-key
 /// header on the PreparedRequest are unused here (matches `read_offer`).
 fn extract_replace_offer_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<OfferReplaceInputs> {
-    let (_container_link, _partition_key_header, modifiers): CommonInputs =
+    let (_container_link, _partition_key, modifiers): CommonInputs =
         extract_common_prepared_inputs(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
     let offer_id = extract_required_item_id(prepared, REPLACE_OFFER_ID_REQUIRED)?;
@@ -165,6 +178,7 @@ fn extract_read_all_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<ReadAllInput
 
 /// Fields for `read_feed_ranges` (container link + force-refresh flag).
 fn extract_read_feed_ranges_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<ReadFeedRangesInputs> {
+    crate::wire::settings::validate_request_protocol(prepared)?;
     let container_link: String = prepared.getattr("container_link")?.extract()?;
     let force_refresh = extract_read_feed_ranges_force_refresh(prepared)?;
     Ok((container_link, force_refresh))
@@ -175,8 +189,8 @@ fn extract_feed_range_from_partition_key_inputs(
     prepared: &Bound<'_, PyAny>,
 ) -> PyResult<FeedRangeFromPartitionKeyInputs> {
     let container_link: String = prepared.getattr("container_link")?.extract()?;
-    let partition_key_header: String = prepared.getattr("partition_key_header")?.extract()?;
-    Ok((container_link, partition_key_header))
+    let partition_key = extract_partition_key(prepared)?;
+    Ok((container_link, partition_key))
 }
 
 // ---------------------------------------------------------------------------
@@ -185,7 +199,7 @@ fn extract_feed_range_from_partition_key_inputs(
 //
 // One `*_item_async` per operation, matching the sync six above. Input
 // extraction is byte-for-byte identical; the ONLY difference is the runner
-// (`run_item_operation_async` instead of `run_item_operation`) and the return
+// (`execute_item_operation_async` instead of `execute_item_operation_sync`) and the return
 // type: a Python awaitable instead of a ready tuple.
 //
 // What "async" means here, precisely (grounded in `wire/`):
@@ -225,11 +239,10 @@ mod offers;
 mod query;
 
 pub(crate) use containers::{
-    create_container, create_container_async, list_containers, list_containers_async,
-    delete_container, delete_container_async,
-    replace_container, replace_container_async,
+    create_container, create_container_async, delete_container, delete_container_async,
+    get_container_metadata, get_container_metadata_async, list_containers, list_containers_async,
     query_containers, query_containers_async, read_container, read_container_async,
-    resolve_container_metadata, resolve_container_metadata_async,
+    replace_container, replace_container_async,
 };
 pub(crate) use databases::{
     create_database, create_database_async, delete_database, delete_database_async, list_databases,

@@ -4,12 +4,11 @@
 use pyo3::exceptions::{PyAttributeError, PyRuntimeError, PyTypeError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyDict, PyTuple};
-
 use serde::Serialize;
 
 use azure_data_cosmos_driver::{
     error::{CosmosError, CosmosStatus},
-    models::{ContainerReference, CosmosResponse, ResponseBody},
+    models::{CosmosResponse, ResponseBody},
 };
 
 use super::diagnostics::record_diagnostics;
@@ -19,9 +18,9 @@ use super::feed_range::{FeedRangeFromPartitionKeyError, FeedRangeFromPartitionKe
 /// Turn the driver's `Result<CosmosResponse, CosmosError>` into the
 /// `BackendResponse` tuple. A CosmosError carrying a wire response (404 / 409
 /// / 412 / ...) becomes the same tuple shape as success so the Python parser raises
-/// the right typed exception; only a response-less error (transport failure,
-/// client-side validation) becomes a `DriverTransportError`, which the Python
-/// backend maps to azure-core's `ServiceResponseError`.
+/// the right typed exception. Local request-validation and precondition failures
+/// retain their Cosmos status; response-less transport failures remain
+/// `DriverTransportError` (azure-core's `ServiceResponseError`).
 pub(super) fn tuple_from_result<'py>(
     py: Python<'py>,
     response_result: Result<CosmosResponse, CosmosError>,
@@ -33,6 +32,32 @@ pub(super) fn tuple_from_result<'py>(
                 backend_response_tuple_from_cosmos_error(py, &cosmos_error)?
             {
                 Ok(raw_http_error)
+            } else if matches!(u16::from(cosmos_error.status().status_code()), 400 | 412) {
+                let (status, sub_status) = status_code_and_sub_status(cosmos_error.status());
+                let headers = PyDict::new_bound(py);
+                if sub_status != 0 {
+                    headers.set_item("x-ms-substatus", sub_status.to_string())?;
+                }
+                let diagnostics = if let Some(diagnostics) = cosmos_error.diagnostics() {
+                    headers.set_item(
+                        "x-ms-request-charge",
+                        diagnostics.total_request_charge().to_string(),
+                    )?;
+                    Some(record_diagnostics(diagnostics))
+                } else {
+                    None
+                };
+                let body =
+                    serde_json::to_vec(&serde_json::json!({"message": cosmos_error.to_string()}))
+                        .map_err(|error| PyValueError::new_err(error.to_string()))?;
+                backend_response_tuple(
+                    py,
+                    status,
+                    sub_status,
+                    headers,
+                    &body,
+                    diagnostics.as_deref(),
+                )
             } else {
                 // No wire response: combine any attached diagnostics into the
                 // process-wide attempt counters so timeouts and transport
@@ -43,45 +68,6 @@ pub(super) fn tuple_from_result<'py>(
                 // ServiceResponseError, rather than a bare RuntimeError.
                 Err(DriverTransportError::new_err(format!(
                     "driver execute_singleton_operation failed: {cosmos_error}"
-                )))
-            }
-        }
-    }
-}
-
-#[derive(Serialize)]
-struct ContainerMetadataPayload<'a> {
-    #[serde(rename = "_rid")]
-    rid: &'a str,
-    #[serde(rename = "partitionKey")]
-    partition_key: &'a azure_data_cosmos_driver::models::PartitionKeyDefinition,
-}
-
-/// Return cached container metadata through the same response tuple contract as
-/// normal operations, so Python preserves its existing typed HTTP-error mapping.
-pub(super) fn tuple_from_container_metadata_result<'py>(
-    py: Python<'py>,
-    result: Result<ContainerReference, CosmosError>,
-) -> PyResult<Bound<'py, PyTuple>> {
-    match result {
-        Ok(container) => {
-            let payload = ContainerMetadataPayload {
-                rid: container.rid(),
-                partition_key: container.partition_key_definition(),
-            };
-            let body = serde_json::to_vec(&payload)
-                .map_err(|error| PyRuntimeError::new_err(error.to_string()))?;
-            backend_response_tuple(py, 200, 0, PyDict::new_bound(py), &body, None)
-        }
-        Err(cosmos_error) => {
-            if let Some(raw_http_error) =
-                backend_response_tuple_from_cosmos_error(py, &cosmos_error)?
-            {
-                Ok(raw_http_error)
-            } else {
-                record_diagnostics_for_responseless(&cosmos_error);
-                Err(DriverTransportError::new_err(format!(
-                    "driver resolve_container failed: {cosmos_error}"
                 )))
             }
         }
@@ -638,11 +624,7 @@ fn record_diagnostics_for_responseless(error: &CosmosError) {
     }
 }
 
-/// Entry point that computes is_feed_range_subset (sync). This is a pure local
-/// computation, so unlike the network operations it needs no driver handle and
-/// does not touch the Tokio runtime.
-/// failures, client validation, timeouts before any HTTP round-trip).
-/// The caller falls back to a generic `PyRuntimeError` in that case.
+/// Preserve a real wire response, or let the caller classify a local error.
 fn backend_response_tuple_from_cosmos_error<'py>(
     py: Python<'py>,
     error: &CosmosError,
@@ -1054,6 +1036,43 @@ mod tests {
                 py_error.is_instance_of::<DriverTransportError>(py),
                 "response-less CosmosError must raise DriverTransportError"
             );
+        });
+    }
+
+    #[test]
+    fn local_validation_and_precondition_errors_retain_status_and_message() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            for status in [
+                CosmosStatus::CLIENT_BAD_REQUEST,
+                CosmosStatus::SERIALIZATION_REQUEST_BODY_INVALID,
+                CosmosStatus::new(azure_core::http::StatusCode::PreconditionFailed),
+            ] {
+                let error = CosmosError::builder()
+                    .with_status(status)
+                    .with_message("local patch rejected")
+                    .build();
+                let tuple = tuple_from_result(py, Err(error)).unwrap();
+                assert_eq!(
+                    tuple.get_item(0).unwrap().extract::<u16>().unwrap(),
+                    u16::from(status.status_code())
+                );
+                assert_eq!(
+                    tuple.get_item(1).unwrap().extract::<u16>().unwrap(),
+                    status.sub_status().map(|s| s.value()).unwrap_or(0)
+                );
+                let bytes = tuple.get_item(3).unwrap().extract::<Vec<u8>>().unwrap();
+                let body: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+                assert!(body["message"]
+                    .as_str()
+                    .unwrap()
+                    .contains("local patch rejected"));
+                let headers = tuple.get_item(2).unwrap();
+                let headers = headers.downcast::<PyDict>().unwrap();
+                assert!(!headers.contains("etag").unwrap());
+                assert!(!headers.contains("x-ms-request-charge").unwrap());
+                assert!(!headers.contains("x-ms-activity-id").unwrap());
+            }
         });
     }
 

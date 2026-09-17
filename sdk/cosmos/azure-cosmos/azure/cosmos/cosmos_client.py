@@ -24,6 +24,7 @@
 
 import warnings
 import logging
+from copy import copy
 from typing import Any, Iterable, Mapping, Optional, Union, cast, Callable, overload, Literal, TYPE_CHECKING
 
 from azure.core.credentials import TokenCredential
@@ -34,11 +35,14 @@ from azure.core.utils import CaseInsensitiveDict
 
 from ._backend.cosmos_backend import CosmosBackend
 from ._helpers._item_context import ItemClientContext, ItemClientDefaults
+from ._utils import _validate_enable_compact_utf8_item_writes
 from ._backend.errors import raise_account_read_unsupported
 from ._backend.factory import make_backend
 from ._backend.transport_settings import resolve_client_transport_timeouts
 from ._base import build_options, _set_throughput_options
 from ._constants import _Constants as Constants
+from ._client_lifecycle import unwind_client_construction
+from ._connection_policy import copy_connection_policy, resolve_connection_policy_kwargs, resolve_retry_option
 from ._cosmos_client_connection import CosmosClientConnection, CredentialDict
 from ._cosmos_responses import CosmosDict
 from ._retry_utility import ConnectionRetryPolicy
@@ -94,7 +98,7 @@ def _build_auth(credential: CredentialType) -> CredentialDict:
 
 def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
     # pylint: disable=protected-access
-    policy = kwargs.pop('connection_policy', ConnectionPolicy())
+    policy = copy_connection_policy(kwargs.pop('connection_policy', None))
 
     # Connection config
     # `request_timeout` is supported as a legacy parameter later replaced by `connection_timeout`
@@ -106,19 +110,19 @@ def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
     policy.ReadTimeout = kwargs.pop(Constants.Kwargs.READ_TIMEOUT, policy.ReadTimeout)
 
     policy.ConnectionMode = kwargs.pop('connection_mode', policy.ConnectionMode)
-    policy.ProxyConfiguration = kwargs.pop('proxy_config', policy.ProxyConfiguration)
+    policy.ProxyConfiguration = copy(kwargs.pop('proxy_config', policy.ProxyConfiguration))
     policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', policy.EnableEndpointDiscovery)
-    policy.PreferredLocations = kwargs.pop('preferred_locations', policy.PreferredLocations)
+    policy.PreferredLocations = copy(kwargs.pop('preferred_locations', policy.PreferredLocations))
     # TODO: Consider storing callback method instead, such as 'Supplier' in JAVA SDK
-    excluded_locations = kwargs.pop('excluded_locations', policy.ExcludedLocations)
-    if excluded_locations:
-        policy.ExcludedLocations = excluded_locations
+    policy.ExcludedLocations = copy(kwargs.pop('excluded_locations', policy.ExcludedLocations))
     policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', policy.UseMultipleWriteLocations)
 
     # SSL config
     verify = kwargs.pop('connection_verify', None)
-    policy.DisableSSLVerification = not bool(verify if verify is not None else True)
-    ssl = kwargs.pop('ssl_config', policy.SSLConfiguration)
+    if verify is not None:
+        policy.DisableSSLVerification = not bool(verify)
+    ssl = copy(kwargs.pop('ssl_config', policy.SSLConfiguration))
+    policy.SSLConfiguration = ssl
     if ssl:
         ssl.SSLCertFile = kwargs.pop('connection_cert', ssl.SSLCertFile)
         ssl.SSLCaCerts = verify or ssl.SSLCaCerts
@@ -132,16 +136,20 @@ def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
             DeprecationWarning
         )
     retry_options = policy.RetryOptions
+    throttle_count = resolve_retry_option(
+        kwargs, 'retry_throttle_total', 'retry_total', retry_options.MaxRetryAttemptCount
+    )
+    throttle_wait = resolve_retry_option(
+        kwargs, 'retry_throttle_backoff_max', 'retry_backoff_max', retry_options.MaxWaitTimeInSeconds
+    )
     total_retries = kwargs.pop('retry_total', None)
-    total_throttle_retries = kwargs.pop('retry_throttle_total', None)
-    retry_options._max_retry_attempt_count = \
-        total_throttle_retries or total_retries or retry_options._max_retry_attempt_count
+    kwargs.pop('retry_throttle_total', None)
+    retry_options._max_retry_attempt_count = throttle_count
     retry_options._fixed_retry_interval_in_milliseconds = kwargs.pop('retry_fixed_interval', None) or \
         retry_options._fixed_retry_interval_in_milliseconds
     max_backoff = kwargs.pop('retry_backoff_max', None)
-    max_throttle_backoff = kwargs.pop('retry_throttle_backoff_max', None)
-    retry_options._max_wait_time_in_seconds = \
-        max_throttle_backoff or max_backoff or retry_options._max_wait_time_in_seconds
+    kwargs.pop('retry_throttle_backoff_max', None)
+    retry_options._max_wait_time_in_seconds = throttle_wait
     policy.RetryOptions = retry_options
     connection_retry = kwargs.pop('connection_retry_policy', None)
     if connection_retry is not None:
@@ -208,6 +216,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         tolerate such risks or has logic to safely detect and handle duplicate operations.
     :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
         geo-replicated database accounts. (Default: True)
+    :keyword ~azure.cosmos.documents.ConnectionPolicy connection_policy:
+        Grouped client connection settings. Supported preferred/excluded regions,
+        throttle retry limits, and timeouts also apply to the Rust backend.
+        Individual keyword settings override grouped values; zero retry limits
+        are honored. The supplied policy is not modified. Unsupported Rust
+        proxy/TLS settings are rejected even when supplied inside this object.
     :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
     :keyword list[str] excluded_locations: The excluded locations to be skipped from preferred locations. The locations
         in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -242,6 +256,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             :caption: Create a new instance of the Cosmos DB client:
     """
 
+    @unwind_client_construction
     def __init__(
         self,
         url: str,
@@ -251,6 +266,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     ) -> None:
         """Instantiate a new CosmosClient.
         """
+        kwargs = resolve_connection_policy_kwargs(kwargs)
         # Pick the backend for this client (precedence: ``_backend=``
         # kwarg > COSMOS_BACKEND env var > ``core-python``). The factory
         # returns a concrete ``RustBackend`` or ``LegacyBackend``.
@@ -260,10 +276,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         connection_timeout, read_timeout = resolve_client_transport_timeouts(kwargs)
         # Read (don't pop) the startup settings the Rust backend can carry to the
         # driver; the legacy connection policy still receives them via **kwargs
-        # below. The retry dials mirror _build_connection_policy's precedence
-        # (retry_throttle_* wins over the generic retry_* knob via `or`), and map
-        # to the driver's throttle-retry caps. ``availability_strategy`` is read
-        # as-is: ``None`` (absent) carries nothing, ``False`` disables hedging,
+        # below. Shared normalization resolves policy/keyword precedence, including
+        # explicit zero throttle limits. ``availability_strategy`` is read
+        # as-is: ``None`` (absent) and ``False`` select the binding's disabled default,
         # ``True``/dict carry the hedge threshold. ``consistency_level`` is the
         # named constructor arg, carried so the chosen level reaches the driver
         # instead of every read falling back to the account default.
@@ -273,12 +288,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             credential=credential,
             preferred_locations=kwargs.get("preferred_locations"),
             excluded_locations=kwargs.get("excluded_locations"),
-            throttling_max_retry_count=(
-                kwargs.get("retry_throttle_total") or kwargs.get("retry_total")
-            ),
-            throttling_max_retry_wait_time_seconds=(
-                kwargs.get("retry_throttle_backoff_max") or kwargs.get("retry_backoff_max")
-            ),
+            throttling_max_retry_count=kwargs.get("retry_throttle_total"),
+            throttling_max_retry_wait_time_seconds=kwargs.get("retry_throttle_backoff_max"),
             availability_strategy=kwargs.get("availability_strategy"),
             user_agent_suffix=kwargs.get("user_agent_suffix"),
             consistency_level=consistency_level,
@@ -297,8 +308,15 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             transport=kwargs.get("transport"),
         )
         self._backend: CosmosBackend = chosen
-        self._item_context = ItemClientContext(
-            chosen, ItemClientDefaults(no_response_on_write=bool(kwargs.get("no_response_on_write", False)))
+        self._item_context: ItemClientContext[CosmosBackend] = ItemClientContext(
+            chosen, ItemClientDefaults(
+                priority=kwargs.get("priority"),
+                throughput_bucket=kwargs.get("throughput_bucket"),
+                no_response_on_write=bool(kwargs.get("no_response_on_write", False)),
+                enable_compact_utf8_item_writes=_validate_enable_compact_utf8_item_writes(
+                    kwargs.get("enable_compact_utf8_item_writes", False)
+                ),
+            )
         )
         logging.getLogger(__name__).info(
             "Cosmos client constructed with default backend=%s",
@@ -327,7 +345,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]
 
     def __enter__(self):
-        self.client_connection.pipeline_client.__enter__()
+        try:
+            self.client_connection.pipeline_client.__enter__()
+        except BaseException:
+            try:
+                self.close()
+            except Exception:
+                logging.getLogger(__name__).warning("Failed cleanup after client entry", exc_info=True)
+            raise
         return self
 
     def __exit__(self, *args):
@@ -340,11 +365,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 if callable(close_backend):
                     close_backend()
             except Exception:  # pylint: disable=broad-except
-                pass
+                logging.getLogger(__name__).warning("Failed closing client backend", exc_info=True)
             try:
                 self.client_connection._routing_map_provider.release()  # pylint: disable=protected-access
             except Exception:  # pylint: disable=broad-except
-                pass
+                logging.getLogger(__name__).warning("Failed releasing client routing state", exc_info=True)
 
     def close(self) -> None:
         """Close this instance of CosmosClient.

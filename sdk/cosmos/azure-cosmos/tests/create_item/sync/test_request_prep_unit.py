@@ -3,9 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Unit tests for ``build_create_item_request`` — no network, no emulator.
+"""Unit tests for ``prepare_create_item_request`` — no network, no emulator.
 
-``build_create_item_request`` takes a customer ``create_item`` call and
+``prepare_create_item_request`` takes a customer ``create_item`` call and
 builds everything the backend needs to send the request. It does five
 small things in order:
 
@@ -26,6 +26,8 @@ say) comes out the same in the body, the bytes, and the return value.
 
 Pure in-process; runs in milliseconds.
 """
+from common.typed_requests import legacy_partition_key_from_request
+from common.typed_requests import wire_headers, settings_options, legacy_settings
 import json
 import re
 import unittest
@@ -33,8 +35,10 @@ import uuid
 
 from azure.cosmos._backend.contracts import PreparedRequest
 from azure.cosmos._constants import _Constants as Constants
-from azure.cosmos._helpers._request_item import build_create_item_request
-from azure.cosmos._helpers._request_headers import flatten_options_to_headers
+from common.request_preparation import (
+    prepare_create_item_request,
+)
+from common.typed_requests import flatten_options_to_headers
 from azure.cosmos.partition_key import _Empty, _Undefined
 
 _UUID4_PATTERN = re.compile(
@@ -54,13 +58,14 @@ class TestHappyPathComposition(unittest.TestCase):
 
     def test_returns_prepared_request_and_id(self):
         """A normal call returns a ``PreparedRequest`` with every field filled in."""
-        prepared, item_id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/orders",
             body={"id": "order-42", "pk": "customerA", "total": 99.5},
             partition_key_value="customerA",
             container_rid="rid-orders-1",
             kwargs={"pre_trigger_include": "validateOrder"},
         )
+        item_id = prepared.item_id
 
         # The returned object is the backend-facing PreparedRequest.
         self.assertIsInstance(prepared, PreparedRequest)
@@ -77,11 +82,11 @@ class TestHappyPathComposition(unittest.TestCase):
             b'{"id":"order-42","pk":"customerA","total":99.5}',
         )
         # The partition-key header holds the single string value.
-        self.assertEqual(prepared.partition_key_header, '["customerA"]')
+        self.assertEqual(legacy_partition_key_from_request(prepared), '["customerA"]')
         # The keyword shortcut landed under its internal option-key name.
-        self.assertEqual(prepared.headers["preTriggerInclude"], "validateOrder")
+        self.assertEqual(wire_headers(prepared)["x-ms-documentdb-pre-trigger-include"], "validateOrder")
         # The rid is stamped into the headers under the key the SDK reads.
-        self.assertEqual(prepared.headers[Constants.ContainerRID], "rid-orders-1")
+        self.assertEqual(wire_headers(prepared)["x-ms-cosmos-intended-collection-rid"], "rid-orders-1")
 
     def test_kwargs_dict_is_consumed_by_compose_step(self):
         """The prep removes every recognised keyword argument from the input
@@ -91,30 +96,32 @@ class TestHappyPathComposition(unittest.TestCase):
             "priority": "High",
             "extra_unknown": "left-alone",
         }
-        build_create_item_request(
+        prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
             container_rid="rid",
             kwargs=kwargs,
         )
-        self.assertNotIn("pre_trigger_include", kwargs)
-        self.assertNotIn("priority", kwargs)
+        self.assertEqual(kwargs["pre_trigger_include"], "validateOrder")
+        self.assertEqual(kwargs["priority"], "High")
         # Keyword arguments the prep doesn't recognise stay put.
-        self.assertEqual(kwargs, {"extra_unknown": "left-alone"})
+        self.assertEqual(kwargs["extra_unknown"], "left-alone")
 
     def test_body_bytes_are_json_round_trippable(self):
         """The serialised body bytes parse back into the dict the body now
         carries (after the id is minted)."""
         body = {"v": 1}  # No id, so one is minted.
-        prepared, item_id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body=body,
             partition_key_value="pk",
             container_rid="rid",
         )
+        item_id = prepared.item_id
         round_tripped = json.loads(prepared.body_bytes)
-        self.assertEqual(round_tripped, body)
+        self.assertEqual(round_tripped, {**body, "id": item_id})
+        self.assertNotIn("id", body)
         self.assertEqual(round_tripped["id"], item_id)
 
 
@@ -130,59 +137,56 @@ class TestAutoIdGeneration(unittest.TestCase):
         """When the body has no id, the prep mints one, writes it into the
         body, returns it, and includes it in the bytes."""
         body = {"total": 99.5}
-        prepared, item_id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body=body,
             partition_key_value="pk",
             container_rid="rid",
         )
+        item_id = prepared.item_id
         self.assertRegex(item_id, _UUID4_PATTERN)
-        self.assertEqual(body["id"], item_id)
+        self.assertNotIn("id", body)
+        self.assertEqual(json.loads(prepared.body_bytes)["id"], item_id)
         self.assertIn(f'"id":"{item_id}"', prepared.body_bytes.decode())
         # The minted id is forwarded on item_id (fast-path: no body re-parse).
         self.assertEqual(prepared.item_id, item_id)
 
-    def test_disabled_id_generation_leaves_body_without_id(self):
-        """With ``enable_automatic_id_generation=False`` no id is minted: the
-        body stays as it was and ``item_id`` comes back as an empty string."""
+    def test_disabled_id_generation_rejects_missing_id_before_metadata(self):
         body = {"total": 99.5}
-        prepared, item_id = build_create_item_request(
-            container_link="dbs/db/colls/c",
-            body=body,
-            partition_key_value="pk",
-            container_rid="rid",
-            enable_automatic_id_generation=False,
-        )
-        self.assertEqual(item_id, "")
-        self.assertNotIn("id", body)
-        self.assertNotIn(b'"id"', prepared.body_bytes)
-        # No real id, so the fast-path hint stays unset and the binding falls
-        # back to parsing the body (which reproduces the missing-id error).
-        self.assertIsNone(prepared.item_id)
+        with self.assertRaisesRegex(ValueError, "non-empty 'id'"):
+            prepare_create_item_request(
+                container_link="dbs/db/colls/c", body=body, partition_key_value="pk",
+                container_rid="rid", enable_automatic_id_generation=False,
+            )
+        self.assertEqual(body, {"total": 99.5})
 
     def test_disable_flag_lands_in_options(self):
         """``enable_automatic_id_generation=False`` sets the
         ``disableAutomaticIdGeneration`` header to True, as the legacy path did."""
-        prepared, _id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
             container_rid="rid",
             enable_automatic_id_generation=False,
         )
-        self.assertTrue(prepared.headers["disableAutomaticIdGeneration"])
+        _id = prepared.item_id
+        self.assertNotIn("disableAutomaticIdGeneration", wire_headers(prepared))
+        self.assertNotIn("disableAutomaticIdGeneration", settings_options(prepared))
 
     def test_enabled_flag_lands_in_options(self):
         """``enable_automatic_id_generation=True`` sets the
         ``disableAutomaticIdGeneration`` header to False."""
-        prepared, _id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
             container_rid="rid",
             enable_automatic_id_generation=True,
         )
-        self.assertFalse(prepared.headers["disableAutomaticIdGeneration"])
+        _id = prepared.item_id
+        self.assertNotIn("disableAutomaticIdGeneration", wire_headers(prepared))
+        self.assertNotIn("disableAutomaticIdGeneration", settings_options(prepared))
 
 
 class TestPartitionKeyShapes(unittest.TestCase):
@@ -196,44 +200,48 @@ class TestPartitionKeyShapes(unittest.TestCase):
 
     def test_scalar_pk_renders_as_one_element_array(self):
         """A scalar integer partition key becomes ``"[42]"`` in the partition-key header."""
-        prepared, _id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value=42,
             container_rid="rid",
         )
-        self.assertEqual(prepared.partition_key_header, "[42]")
+        _id = prepared.item_id
+        self.assertEqual(legacy_partition_key_from_request(prepared), "[42]")
 
     def test_hierarchical_pk_renders_in_order(self):
         """A hierarchical partition-key list becomes a JSON array in the order given."""
-        prepared, _id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value=["t1", "r1"],
             container_rid="rid",
         )
-        self.assertEqual(prepared.partition_key_header, '["t1","r1"]')
+        _id = prepared.item_id
+        self.assertEqual(legacy_partition_key_from_request(prepared), '["t1","r1"]')
 
     def test_undefined_pk_renders_reserved_shape(self):
         """An ``_Undefined`` partition key becomes the reserved ``"[{}]"`` shape."""
-        prepared, _id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value=_Undefined(),
             container_rid="rid",
         )
-        self.assertEqual(prepared.partition_key_header, "[{}]")
+        _id = prepared.item_id
+        self.assertEqual(legacy_partition_key_from_request(prepared), "[{}]")
 
     def test_empty_pk_renders_reserved_shape(self):
         """An ``_Empty`` partition key becomes the reserved ``"[]"`` shape (a
         partitionless container from the early SDK days)."""
-        prepared, _id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value=_Empty(),
             container_rid="rid",
         )
-        self.assertEqual(prepared.partition_key_header, "[]")
+        _id = prepared.item_id
+        self.assertEqual(legacy_partition_key_from_request(prepared), "[]")
 
 
 class TestContainerRidOptional(unittest.TestCase):
@@ -247,23 +255,25 @@ class TestContainerRidOptional(unittest.TestCase):
 
     def test_none_rid_skips_stamping(self):
         """With ``container_rid=None`` the headers carry no ``Constants.ContainerRID`` entry."""
-        prepared, _id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
             container_rid=None,
         )
-        self.assertNotIn(Constants.ContainerRID, prepared.headers)
+        _id = prepared.item_id
+        self.assertNotIn(Constants.ContainerRID, wire_headers(prepared))
 
     def test_supplied_rid_lands_in_headers_under_constant_key(self):
         """A supplied rid lands in the headers under ``Constants.ContainerRID``."""
-        prepared, _id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
             container_rid="rid-abc",
         )
-        self.assertEqual(prepared.headers[Constants.ContainerRID], "rid-abc")
+        _id = prepared.item_id
+        self.assertEqual(wire_headers(prepared)["x-ms-cosmos-intended-collection-rid"], "rid-abc")
 
 
 class TestIndexingDirective(unittest.TestCase):
@@ -277,24 +287,26 @@ class TestIndexingDirective(unittest.TestCase):
 
     def test_indexing_directive_lands_when_supplied(self):
         """A supplied ``indexing_directive=N`` lands in the headers as ``"indexingDirective"``."""
-        prepared, _id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
             container_rid="rid",
             indexing_directive=1,
         )
-        self.assertEqual(prepared.headers["indexingDirective"], 1)
+        _id = prepared.item_id
+        self.assertEqual(wire_headers(prepared)["x-ms-indexing-directive"], '1')
 
     def test_indexing_directive_omitted_when_not_supplied(self):
         """Left at the default (``None``), there is no ``"indexingDirective"`` key in the headers."""
-        prepared, _id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
             container_rid="rid",
         )
-        self.assertNotIn("indexingDirective", prepared.headers)
+        _id = prepared.item_id
+        self.assertNotIn("indexingDirective", wire_headers(prepared))
 
     def test_indexing_directive_default_zero_omitted(self):
         """``indexing_directive=0`` (``IndexingDirective.Default``) emits no header.
@@ -305,14 +317,15 @@ class TestIndexingDirective(unittest.TestCase):
         (This guards a regression where an earlier build emitted
         ``x-ms-indexing-directive: 0``.)
         """
-        prepared, _id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
             container_rid="rid",
             indexing_directive=0,
         )
-        self.assertNotIn("indexingDirective", prepared.headers)
+        _id = prepared.item_id
+        self.assertNotIn("indexingDirective", wire_headers(prepared))
 
 
 class TestThroughputBucketGate(unittest.TestCase):
@@ -327,25 +340,27 @@ class TestThroughputBucketGate(unittest.TestCase):
 
     def test_throughput_bucket_zero_omitted(self):
         """``throughput_bucket=0`` emits no ``"throughputBucket"`` header (``0`` is falsy)."""
-        prepared, _id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
             container_rid="rid",
             kwargs={"throughput_bucket": 0},
         )
-        self.assertNotIn("throughputBucket", prepared.headers)
+        _id = prepared.item_id
+        self.assertNotIn("throughputBucket", wire_headers(prepared))
 
     def test_throughput_bucket_nonzero_emitted(self):
         """A real bucket value (``3``) lands in the headers under ``"throughputBucket"``."""
-        prepared, _id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
             container_rid="rid",
             kwargs={"throughput_bucket": 3},
         )
-        self.assertEqual(prepared.headers["throughputBucket"], 3)
+        _id = prepared.item_id
+        self.assertEqual(wire_headers(prepared)["x-ms-cosmos-throughput-bucket"], '3')
 
 
 class TestPreparedRequestImmutability(unittest.TestCase):
@@ -353,12 +368,13 @@ class TestPreparedRequestImmutability(unittest.TestCase):
 
     def test_assigning_to_field_raises(self):
         """Assigning to any field on the returned ``PreparedRequest`` raises (it is frozen)."""
-        prepared, _id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
             container_rid="rid",
         )
+        _id = prepared.item_id
         with self.assertRaises(Exception):  # FrozenInstanceError
             prepared.container_link = "dbs/db/colls/other"  # type: ignore[misc]
 
@@ -375,14 +391,16 @@ class TestRoundTripWithMintedId(unittest.TestCase):
     def test_minted_id_appears_identically_in_three_places(self):
         """A minted id is the same string in the body dict, the serialised bytes, and the return value."""
         body = {"pk": "customerA", "total": 99.5}
-        prepared, item_id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body=body,
             partition_key_value="customerA",
             container_rid="rid",
         )
+        item_id = prepared.item_id
         self.assertIsInstance(item_id, str)
-        self.assertEqual(body["id"], item_id)
+        self.assertNotIn("id", body)
+        self.assertEqual(json.loads(prepared.body_bytes)["id"], item_id)
         decoded = json.loads(prepared.body_bytes)
         self.assertEqual(decoded["id"], item_id)
         self.assertEqual(uuid.UUID(item_id).version, 4)
@@ -401,47 +419,51 @@ class TestTriggerIncludeSerialization(unittest.TestCase):
 
     def test_single_string_pre_trigger_passes_through(self):
         """A plain-string ``pre_trigger_include`` is emitted unchanged."""
-        prepared, _id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
             container_rid="rid",
             kwargs={"pre_trigger_include": "validateOrder"},
         )
-        self.assertEqual(prepared.headers["preTriggerInclude"], "validateOrder")
+        _id = prepared.item_id
+        self.assertEqual(wire_headers(prepared)["x-ms-documentdb-pre-trigger-include"], "validateOrder")
 
     def test_list_pre_trigger_is_comma_joined(self):
         """A list ``pre_trigger_include`` is comma-joined — not turned into a Python repr."""
-        prepared, _id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
             container_rid="rid",
             kwargs={"pre_trigger_include": ["t1", "t2"]},
         )
-        self.assertEqual(prepared.headers["preTriggerInclude"], "t1,t2")
+        _id = prepared.item_id
+        self.assertEqual(wire_headers(prepared)["x-ms-documentdb-pre-trigger-include"], "t1,t2")
 
     def test_tuple_post_trigger_is_comma_joined(self):
         """A tuple ``post_trigger_include`` is comma-joined the same way."""
-        prepared, _id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
             container_rid="rid",
             kwargs={"post_trigger_include": ("a", "b", "c")},
         )
-        self.assertEqual(prepared.headers["postTriggerInclude"], "a,b,c")
+        _id = prepared.item_id
+        self.assertEqual(wire_headers(prepared)["x-ms-documentdb-post-trigger-include"], "a,b,c")
 
     def test_single_element_list_has_no_brackets_or_comma(self):
         """A one-element list is just the bare id — no brackets, no trailing comma."""
-        prepared, _id = build_create_item_request(
+        prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             partition_key_value="pk",
             container_rid="rid",
             kwargs={"pre_trigger_include": ["only"]},
         )
-        self.assertEqual(prepared.headers["preTriggerInclude"], "only")
+        _id = prepared.item_id
+        self.assertEqual(wire_headers(prepared)["x-ms-documentdb-pre-trigger-include"], "only")
 
 
 class TestFlattenOptionsToHeaders(unittest.TestCase):
@@ -456,25 +478,23 @@ class TestFlattenOptionsToHeaders(unittest.TestCase):
         headers = flatten_options_to_headers(
             {"preTriggerInclude": ["t1", "t2"], "postTriggerInclude": ["p1"]}
         )
-        self.assertEqual(headers["preTriggerInclude"], "t1,t2")
-        self.assertEqual(headers["postTriggerInclude"], "p1")
+        self.assertEqual(headers["x-ms-documentdb-pre-trigger-include"], "t1,t2")
+        self.assertEqual(headers["x-ms-documentdb-post-trigger-include"], "p1")
 
-    def test_initial_headers_kept_nested(self):
-        """``initialHeaders`` is kept as a nested dict so the binding forwards each
-        entry verbatim; it is not flattened into individual top-level entries."""
+    def test_initial_headers_are_real_headers(self):
+        """Customer headers are actual top-level HTTP headers, never nested options."""
         headers = flatten_options_to_headers(
             {"initialHeaders": {"x-ms-foo": "bar", "x-ms-baz": "qux"}}
         )
-        self.assertEqual(headers["initialHeaders"], {"x-ms-foo": "bar", "x-ms-baz": "qux"})
-        self.assertNotIn("x-ms-foo", headers)
-        self.assertNotIn("x-ms-baz", headers)
+        self.assertEqual(headers, {"x-ms-foo": "bar", "x-ms-baz": "qux"})
+        self.assertNotIn("initialHeaders", headers)
 
     def test_access_condition_becomes_if_match(self):
         """``accessCondition`` IfMatch becomes an ``If-Match`` header; the raw key is dropped."""
         headers = flatten_options_to_headers(
             {"accessCondition": {"type": "IfMatch", "condition": '"abc"'}}
         )
-        self.assertEqual(headers["If-Match"], '"abc"')
+        self.assertEqual(headers["if-match"], '"abc"')
         self.assertNotIn("accessCondition", headers)
 
     def test_access_condition_becomes_if_none_match(self):
@@ -482,7 +502,7 @@ class TestFlattenOptionsToHeaders(unittest.TestCase):
         headers = flatten_options_to_headers(
             {"accessCondition": {"type": "IfNoneMatch", "condition": '"abc"'}}
         )
-        self.assertEqual(headers["If-None-Match"], '"abc"')
+        self.assertEqual(headers["if-none-match"], '"abc"')
 
     def test_cache_staleness_truthy_emits_wire_header(self):
         """A truthy ``maxIntegratedCacheStaleness`` becomes ``x-ms-dedicatedgateway-max-age``."""
@@ -500,8 +520,8 @@ class TestFlattenOptionsToHeaders(unittest.TestCase):
 
     def test_indexing_directive_nonzero_emitted(self):
         """A non-zero ``indexingDirective`` (Exclude=1 / Include=2) is emitted."""
-        self.assertEqual(flatten_options_to_headers({"indexingDirective": 1})["indexingDirective"], 1)
-        self.assertEqual(flatten_options_to_headers({"indexingDirective": 2})["indexingDirective"], 2)
+        self.assertEqual(flatten_options_to_headers({"indexingDirective": 1})["x-ms-indexing-directive"], "1")
+        self.assertEqual(flatten_options_to_headers({"indexingDirective": 2})["x-ms-indexing-directive"], "2")
 
     def test_throughput_bucket_zero_omitted(self):
         """``throughputBucket=0`` is dropped — no header."""
@@ -509,12 +529,12 @@ class TestFlattenOptionsToHeaders(unittest.TestCase):
 
     def test_throughput_bucket_nonzero_emitted(self):
         """A real ``throughputBucket`` value is emitted unchanged."""
-        self.assertEqual(flatten_options_to_headers({"throughputBucket": 3})["throughputBucket"], 3)
+        self.assertEqual(flatten_options_to_headers({"throughputBucket": 3})["x-ms-cosmos-throughput-bucket"], "3")
 
     def test_unknown_option_copied_through(self):
         """An option key with no special handling is copied through unchanged."""
         headers = flatten_options_to_headers({"priorityLevel": "High"})
-        self.assertEqual(headers["priorityLevel"], "High")
+        self.assertEqual(headers["x-ms-cosmos-priority-level"], "High")
 
 
 if __name__ == "__main__":

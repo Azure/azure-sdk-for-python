@@ -15,6 +15,8 @@ account-level headers.
 """
 from __future__ import annotations
 
+from .._backend.partition_key import PartitionKeyInput
+
 from typing import Any, Mapping, Optional, Union
 
 from .._backend.contracts import PreparedRequest
@@ -23,41 +25,20 @@ from .._base import _validate_resource, build_options, _set_throughput_options
 from .._constants import _Constants as Constants
 from ..offer import ThroughputProperties
 
-from ._body_wire import serialize_body_to_bytes
+from ._request_settings import account_request_settings
+from ._wire_encoding import serialize_body_to_bytes
 from ._request_database import _database_id_from_link, is_read_database_rust_eligible
-from ._request_headers import _account_level_headers
 
 
-RUST_CREATE_CONTAINER_UNSUPPORTED_MESSAGE = (
-    "create_container cannot run on the Rust backend for this call because a "
-    "per-call setting, request hook, or header override cannot be honored. "
-    "Remove the unsupported option. The request will not be sent through legacy Python."
-)
 
-RUST_GET_OR_CREATE_CONTAINER_UNSUPPORTED_MESSAGE = (
-    "create_container_if_not_exists cannot run on the Rust backend because a "
-    "per-call setting, request hook, or header override cannot be honored by both "
-    "the read and create steps. Remove the unsupported option. "
-    "The request will not be sent through legacy Python."
-)
 
-RUST_DELETE_CONTAINER_UNSUPPORTED_MESSAGE = (
-    "delete_container cannot run on the Rust backend for this call because a "
-    "per-call setting, request hook, or header override cannot be honored. "
-    "Remove the unsupported option. The request will not be sent through legacy Python."
-)
 
-RUST_REPLACE_CONTAINER_UNSUPPORTED_MESSAGE = (
-    "replace_container cannot run on the Rust backend for this call because a "
-    "per-call setting, request hook, or header override cannot be honored. "
-    "Remove the unsupported option. The request will not be sent through legacy Python."
-)
 
-RUST_READ_CONTAINER_UNSUPPORTED_MESSAGE = (
-    "ContainerProxy.read cannot run on the Rust backend for this call because a "
-    "per-call setting, request hook, or header override cannot be honored. "
-    "Remove the unsupported option. The request will not be sent through legacy Python."
-)
+
+
+
+
+
 
 
 def parse_container_create_args(
@@ -148,12 +129,14 @@ def build_create_container_prepared(
     _validate_resource(container_definition)
     create_options = dict(request_options)
     create_options.pop("sessionToken", None)
+    headers, settings = account_request_settings(create_options, kwargs)
     return PreparedRequest(
         op=OP_CREATE_CONTAINER,
         container_link="",
         body_bytes=serialize_body_to_bytes(container_definition),
-        partition_key_header="[]",
-        headers=_account_level_headers(create_options, kwargs),
+        partition_key=PartitionKeyInput("cross_partition"),
+        headers=headers,
+        settings=settings,
         item_id=_database_id_from_link(database_link),
     )
 
@@ -177,12 +160,14 @@ def build_read_container_prepared(
     """Build the Rust request that reads a container."""
     read_options = dict(request_options)
     read_options.pop("sessionToken", None)
+    headers, settings = account_request_settings(read_options, kwargs)
     return PreparedRequest(
         op=OP_READ_CONTAINER,
         container_link=_normalized_container_link(container_link),
         body_bytes=b"",
-        partition_key_header="[]",
-        headers=_account_level_headers(read_options, kwargs),
+        partition_key=PartitionKeyInput("cross_partition"),
+        headers=headers,
+        settings=settings,
     )
 
 
@@ -214,12 +199,14 @@ def build_delete_container_prepared(
     """Pass names to Rust; metadata resolution stays inside the driver."""
     delete_options = dict(request_options)
     delete_options.pop("sessionToken", None)
+    headers, settings = account_request_settings(delete_options, kwargs)
     return PreparedRequest(
         op=OP_DELETE_CONTAINER,
         container_link=_normalized_container_link(container_link),
         body_bytes=b"",
-        partition_key_header="[]",
-        headers=_account_level_headers(delete_options, kwargs),
+        partition_key=PartitionKeyInput("cross_partition"),
+        headers=headers,
+        settings=settings,
     )
 
 
@@ -242,10 +229,12 @@ def build_replace_container_prepared(
     _validate_resource(container_definition)
     replace_options = dict(request_options)
     replace_options.pop("sessionToken", None)
+    headers, settings = account_request_settings(replace_options, kwargs)
     return PreparedRequest(
         op=OP_REPLACE_CONTAINER,
         container_link=_normalized_container_link(container_link),
         body_bytes=serialize_body_to_bytes(container_definition),
-        partition_key_header="[]",
-        headers=_account_level_headers(replace_options, kwargs),
+        partition_key=PartitionKeyInput("cross_partition"),
+        headers=headers,
+        settings=settings,
     )

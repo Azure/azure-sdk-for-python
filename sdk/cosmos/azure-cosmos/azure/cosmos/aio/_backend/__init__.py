@@ -3,51 +3,46 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""The backend layer for the async client -- the async twin of ``azure.cosmos._backend``.
+"""Async backends that send Cosmos requests and hand back the raw reply.
 
-A backend is what an async ``CosmosClient`` builds once and then hands every
-prepared operation to so it can go on the wire.
+A backend is the layer that actually talks to the service. There are two
+here: one that calls the Rust driver, and one that uses the older Python
+code. A factory picks between them once, when the client is built, and
+nothing above this package has to know which one it got.
 
-It has three dispatch methods, split by the shape of the reply rather than by
-which resource the operation touches: ``execute`` (one request, one reply -- a
-single resource, or nothing for a delete), ``execute_pages`` (one request, a
-feed that comes back a page at a time), and ``execute_batch`` (one request, a
-set of operations the service applies all-or-nothing). The operation kind is a
-value carried on the request, not a method of its own, so the three methods
-cover the whole public surface: every create/read/replace/delete of an item,
-database, container, user, permission, or script is a single-reply ``execute``;
-every ``list_*`` / ``query_*`` (and read-many) is an ``execute_pages`` feed; and
-a transactional batch is ``execute_batch``. Adding an operation is a new
-operation-kind value and a branch, not a new method.
+Callers pass in a request that is already finished and get back what came
+off the wire. Replies come in two shapes: a single reply, or a series of
+pages. Backends do not build requests and do not interpret replies; the
+helper package does both.
 
-``execute`` and ``execute_pages`` are wired according to the shared operation
-tables in ``azure.cosmos._backend.operations``. ``execute_batch`` is defined but
-raises ``NotImplementedError`` until transactional batch is migrated.
+Operations that have finished moving to Rust go straight to the driver.
+Operations still being moved go through a wrapper that first works out
+which path to use. There are three possible answers: the Rust path can
+handle the request, so it does; the Rust path cannot, but the older Python
+path is allowed to step in for this kind of request, so it does; or neither
+can, and the call fails right away with a message naming the option to
+remove. That choice is made before anything is sent.
 
-Two backends exist, and both are concrete ``AsyncCosmosBackend`` objects that run
-through ``AsyncCosmosBackend.run_operation``. The rust backend forwards each
-operation to the compiled Rust driver. Normal operations run as Rust futures on
-the binding's Tokio runtime and return Python awaitables, so they do not occupy a
-Python worker thread while waiting; only lazy driver initialization is moved to
-a background worker. The core-python backend (``AsyncLegacyBackend``, see
-``azure.cosmos.aio._backend.legacy``) awaits the SDK's original in-place code and
-is still selectable on the current branch. On a Rust-selected client it also
-provides temporary fallback for unmigrated request shapes. The intended final
-architecture keeps only the Rust execution path.
+Falling back is a decision, never a recovery. Once a request has been sent,
+its outcome stands: a failure while sending, while reading the reply, or
+inside the caller's own callback is reported as a failure. It is never
+quietly retried against the other path.
 
-The backend a client stores is always concrete: the factory returns an async
-rust backend for rust or the shared ``AsyncLegacyBackend`` for core-python.
+A request holds the data to send but not the caller's time limit. The time
+limit travels separately, so a request can be built once and still be
+subject to how much time is actually left.
 
-The package is split by job. ``base`` holds the ``AsyncCosmosBackend`` abstract
-class every async backend implements. ``execute`` handles single-response
-operations, ``AsyncRustBackend.execute_pages`` handles the migrated feed and
-query operations, and ``execute_batch`` remains reserved until transactional
-batch is migrated. The shared request and response contracts live in
-``azure.cosmos._backend.contracts``.
-``factory`` picks the backend once when a client is built, and ``rust`` is the
-async Rust backend itself.
+Two kinds of cleanup are tracked apart. Closing one client releases that
+client's own registration, while a Rust driver shared with other clients
+stays alive until the last of them is done with it.
 
-The operation-kind constants, the backend names, and the selection rules are
-shared with the sync package ``azure.cosmos._backend`` and imported from it;
-this package only adds the async-specific pieces.
+Having two backends is a stage, not the destination. The older Python
+backend exists only until every operation works on Rust. When that lands,
+it is deleted, and so is the wrapper that chooses between paths, because
+there will be nothing left to choose between. What remains is the shape
+the item path already has: public class, helper, one backend, driver.
+
+So treat anything legacy in here as code with an expiry date. Do not build
+on it, do not add operations to it, and do not design around the
+possibility of falling back to it.
 """
