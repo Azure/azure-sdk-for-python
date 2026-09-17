@@ -519,7 +519,11 @@ namespace azure.ai.projects.aio.operations
 
     class azure.ai.projects.aio.operations.AsyncBetaRealtime:
 
-        def __init__(self, client: _ConfigProvider) -> None: ...
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
 
         def connect(
                 self, 
@@ -18067,7 +18071,11 @@ namespace azure.ai.projects.operations
 
     class azure.ai.projects.operations.BetaRealtime:
 
-        def __init__(self, client: _ConfigProvider) -> None: ...
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
 
         def connect(
                 self, 

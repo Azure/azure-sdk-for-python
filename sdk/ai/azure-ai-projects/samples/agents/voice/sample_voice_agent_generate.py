@@ -7,8 +7,8 @@
 """
 DESCRIPTION:
     This sample demonstrates guided authoring: generating and creating a voice
-    agent through `create_from_prompt` with `kind="voice"`. 
-    The service creates a voice agent with a service-selected starter definition, 
+    agent through `create_from_prompt` with `kind="voice"`.
+    The service creates a voice agent with a service-selected starter definition,
     which is fully editable afterward through the standard create_version/update flow.
 
 USAGE:

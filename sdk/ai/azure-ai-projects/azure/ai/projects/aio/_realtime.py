@@ -859,7 +859,9 @@ class AsyncBetaRealtime:  # pylint: disable=too-few-public-methods
     :type client: ~azure.ai.projects.aio.operations.BetaVoiceAgentsOperations
     """
 
-    def __init__(self, client: "_ConfigProvider") -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        input_args = list(args)
+        client: "_ConfigProvider" = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = client._config  # pylint: disable=protected-access
 
     def connect(  # pylint: disable=too-many-arguments
