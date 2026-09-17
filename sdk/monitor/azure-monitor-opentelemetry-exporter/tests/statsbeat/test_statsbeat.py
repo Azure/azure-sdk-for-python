@@ -10,6 +10,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
 )
 from azure.monitor.opentelemetry.exporter.statsbeat import StatsbeatConfig, _statsbeat
 from azure.monitor.opentelemetry.exporter.statsbeat._manager import StatsbeatManager
+from azure.monitor.opentelemetry.exporter.statsbeat._utils import _get_connection_string_for_region_from_config
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import _StatsbeatFeature, _StatsbeatMetrics
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _STATSBEAT_STATE,
@@ -55,6 +56,39 @@ class TestStatsbeat(unittest.TestCase):
         # Reset singleton state - only clear StatsbeatManager instances
         if StatsbeatManager in StatsbeatManager._instances:
             del StatsbeatManager._instances[StatsbeatManager]
+
+    def test_one_settings_endpoint_overrides_connection_string_endpoint(self):
+        settings = {
+            "SUPPORTED_DATA_BOUNDARIES": '["EU"]',
+            "EU_REGIONS": '["westeurope"]',
+            "EU_STATS_CONNECTION_STRING": (
+                "InstrumentationKey=11111111-1111-1111-1111-111111111111;"
+                "IngestionEndpoint=https://eu.stats.example.com/"
+            ),
+            "EU_SDK_STATS_ENDPOINT": "https://eu.collector.example.com/",
+        }
+
+        result = _get_connection_string_for_region_from_config("westeurope", settings)
+
+        self.assertEqual(
+            result,
+            "InstrumentationKey=11111111-1111-1111-1111-111111111111;"
+            "IngestionEndpoint=https://eu.collector.example.com/",
+        )
+
+    def test_invalid_one_settings_endpoint_preserves_connection_string_endpoint(self):
+        connection_string = (
+            "InstrumentationKey=11111111-1111-1111-1111-111111111111;"
+            "IngestionEndpoint=https://default.stats.example.com/"
+        )
+        settings = {
+            "DEFAULT_STATS_CONNECTION_STRING": connection_string,
+            "DEFAULT_SDK_STATS_ENDPOINT": "not-a-url",
+        }
+
+        result = _get_connection_string_for_region_from_config("westus", settings)
+
+        self.assertEqual(result, connection_string)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
