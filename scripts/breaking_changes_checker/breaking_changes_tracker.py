@@ -31,6 +31,7 @@ class BreakingChangeType(str, Enum):
     REMOVED_OR_RENAMED_MODULE = "RemovedOrRenamedModule"
     REMOVED_FUNCTION_KWARGS = "RemovedFunctionKwargs"
     REMOVED_OR_RENAMED_OPERATION_GROUP = "RemovedOrRenamedOperationGroup"
+    REQUIRED_PROPERTY = "RequiredProperty"
 
 
 class BreakingChangesTracker:
@@ -90,6 +91,7 @@ class BreakingChangesTracker:
         "Function `{}` changed from accepting keyword arguments to not accepting them"
     REMOVED_OR_RENAMED_OPERATION_GROUP_MSG = \
         "Deleted or renamed client operation group `{}.{}`"
+    REQUIRED_PROPERTY_MSG = "`{}.{}` is now required."
 
     def __init__(self, stable: Dict, current: Dict, package_name: str, **kwargs: Any) -> None:
         self.stable = stable
@@ -259,6 +261,7 @@ class BreakingChangesTracker:
             if class_deleted:
                 continue  # class was deleted, abort other checks
             self.check_class_instance_attribute_removed_or_renamed(class_components)
+            self.check_property_required(class_components)
 
             for method_name, method_components in class_components.get("methods", {}).items():
                 self._function_name = method_name
@@ -657,6 +660,24 @@ class BreakingChangesTracker:
                     self._module_name, self._class_name, property
                 )
             if bc:
+                self.breaking_changes.append(bc)
+
+    def check_property_required(self, components: Dict) -> None:
+        for key, value in components.get("properties", {}).items():
+            stable_type = self.stable[self._module_name]["class_nodes"][self._class_name]["properties"][key]["attr_type"]
+            current_type = value["attr_type"]
+
+            if (
+                stable_type.startswith("Optional[")
+                and not current_type.startswith("Optional[")
+            ):
+                bc = (
+                    self.REQUIRED_PROPERTY_MSG,
+                    BreakingChangeType.REQUIRED_PROPERTY,
+                    self._module_name,
+                    self._class_name,
+                    key,
+                )
                 self.breaking_changes.append(bc)
 
     def check_class_removed_or_renamed(self, class_components: Dict) -> Union[bool, None]:

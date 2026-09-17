@@ -1137,3 +1137,106 @@ def test_added_keyword_only_param_to_model_method_still_reported_as_class():
     assert msg == ChangelogTracker.ADDED_CLASS_METHOD_PARAMETER_MSG
     assert args == ["azure.contoso", "ContosoModel", "extra", "do_something"]
 
+def test_added_update_method_for_operation_group():
+    stable = {
+        "azure.mgmt.contoso.operations": {
+            "class_nodes": {
+                "ContosoOperations": {
+                    "type": None,
+                    "methods": {
+                        "list": {
+                            "parameters": {
+                                "self": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": False
+                        }
+                    },
+                    "properties": {}
+                }
+            }
+        }
+    }
+    current = {
+        "azure.mgmt.contoso.operations": {
+            "class_nodes": {
+                "ContosoOperations": {
+                    "type": None,
+                    "methods": {
+                        "list": {
+                            "parameters": {
+                                "self": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": False
+                        },
+                        "update": {
+                            "parameters": {
+                                "self": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
+                            "is_async": False
+                        }
+                    },
+                    "properties": {}
+                }
+            }
+        }
+    }
+    IGNORE = {
+        "azure-mgmt-contoso": [
+            ("AddedClassMethod", "*", "*", "update")
+        ]
+    }
+    bc = ChangelogTracker(stable, current, "azure-mgmt-contoso", ignore=IGNORE)
+    bc.run_checks()
+
+    assert len(bc.features_added) == 1
+    msg, _, *args = bc.features_added[0]
+    assert msg == ChangelogTracker.ADDED_CLASS_METHOD_MSG
+    assert args == ["azure.mgmt.contoso.operations", "ContosoOperations", "update"]
+
+def test_class_property_is_required():
+    stable = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {
+                        "foo": {
+                            "attr_type": "Optional[Foo]"
+                        }
+                    }
+                }
+            }
+        }
+    }
+    current = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {
+                        "foo": {
+                            "attr_type": "Foo"
+                        }
+                    }
+                }
+            }
+        }
+    }
+    bc = ChangelogTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+
+    assert len(bc.breaking_changes) == 1
+    msg, _, *args = bc.breaking_changes[0]
+    assert msg == BreakingChangesTracker.REQUIRED_PROPERTY_MSG
+    assert args == ["azure.contoso.models", "ContosoModel", "foo"]
