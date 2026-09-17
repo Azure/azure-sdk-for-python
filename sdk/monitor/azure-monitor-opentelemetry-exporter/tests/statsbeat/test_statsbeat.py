@@ -253,6 +253,33 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.evaluate_feature")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.StatsbeatConfig")
+    def test_get_statsbeat_configuration_callback_missing_feature_uses_default(
+        self, mock_statsbeat_config_cls, mock_get_manager, mock_evaluate_feature
+    ):
+        """Test that missing feature configuration preserves SDKStats and applies endpoint settings."""
+        mock_manager_instance = mock.Mock()
+        mock_get_manager.return_value = mock_manager_instance
+        current_config = mock.Mock()
+        mock_manager_instance.get_current_config.return_value = current_config
+        updated_config = mock.Mock()
+        mock_statsbeat_config_cls.from_config.return_value = updated_config
+        mock_evaluate_feature.return_value = None
+        settings = {
+            "DEFAULT_STATS_CONNECTION_STRING": (
+                "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;"
+                "IngestionEndpoint=https://stats.example.com/"
+            )
+        }
+
+        _statsbeat.get_statsbeat_configuration_callback(settings)
+
+        mock_statsbeat_config_cls.from_config.assert_called_once_with(current_config, settings)
+        mock_manager_instance.initialize.assert_called_once_with(updated_config)
+        mock_manager_instance.shutdown.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.evaluate_feature")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.StatsbeatConfig")
     def test_get_statsbeat_configuration_callback_not_initialized(
         self, mock_statsbeat_config_cls, mock_get_manager, mock_evaluate_feature
     ):
