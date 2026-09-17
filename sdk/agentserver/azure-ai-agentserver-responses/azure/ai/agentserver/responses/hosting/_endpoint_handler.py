@@ -839,6 +839,16 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         reset_request_context(stream_ctx_token)
                         if disconnect_task and not disconnect_task.done():
                             disconnect_task.cancel()
+                        # The outer ``handle_create`` ``finally`` flushed spans
+                        # when this coroutine returned the ``StreamingResponse`` —
+                        # i.e. before Starlette consumed this body — so spans
+                        # emitted while streaming were not yet exported. Flush
+                        # again now that the stream is fully drained so the
+                        # streaming spans are not left until the next request's
+                        # flush (mode-selected; non-blocking by default).
+                        await _flush_spans_for_mode(
+                            os.environ.get(_FLUSH_MODE_ENV, _DEFAULT_FLUSH_MODE)
+                        )
 
                 sse_response = StreamingResponse(
                     with_keep_alive(
