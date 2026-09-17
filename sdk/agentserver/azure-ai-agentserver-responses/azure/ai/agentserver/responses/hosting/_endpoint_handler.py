@@ -1827,9 +1827,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             pending = [
                 record
                 for record in records
-                if record.mode_flags.background
-                and record.execution_task is not None
-                and record.status in {"queued", "in_progress"}
+                if record.execution_task is not None
+                and not record.execution_task.done()
             ]
             if not pending:
                 break
