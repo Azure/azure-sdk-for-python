@@ -285,6 +285,56 @@ class TestAsyncTerminalPersist:
         assert persisted_status == "completed"
 
     @pytest.mark.asyncio
+    async def test_replacement_record_retains_execution_task_during_deferral(self) -> None:
+        """The Path-B record that replaces the one carrying ``execution_task``
+        must keep that task while the deferred terminal write is in flight, so
+        ``handle_shutdown`` drains the write instead of completing shutdown
+        with ``execution_task is None`` and cancelling it."""
+        release = asyncio.Event()
+        provider = _ControllableProvider(InMemoryResponseProvider(), release=release)
+        app = _make_app(provider)
+        client = _AsyncAsgiClient(app)
+
+        post_resp = await client.post(
+            "/responses",
+            json_body={
+                "model": "test-model",
+                "input": [{"role": "user", "content": "hi"}],
+                "stream": True,
+                "store": True,
+            },
+        )
+        assert post_resp.status_code == 200
+        events = _parse_sse_bytes(post_resp.body)
+        assert "response.completed" in [e["type"] for e in events]
+        response_id = _extract_response_id(events)
+        assert response_id is not None
+
+        # Deferred write is in flight but gated.
+        for _ in range(100):
+            if provider.update_started.is_set():
+                break
+            await asyncio.sleep(0.01)
+        assert provider.update_started.is_set()
+        assert provider.update_completed is False
+
+        # The record now live in runtime_state is the Path-B replacement. It must
+        # still carry the in-flight execution task (not None, not done) so that
+        # graceful shutdown waits for the deferred provider write.
+        orchestrator = app._endpoint._orchestrator  # pylint: disable=protected-access
+        record = await orchestrator._runtime_state.get(response_id)  # pylint: disable=protected-access
+        assert record is not None
+        assert record.execution_task is not None, "replacement record dropped execution_task"
+        assert not record.execution_task.done()
+
+        release.set()
+        for _ in range(200):
+            if provider.update_completed:
+                break
+            await asyncio.sleep(0.01)
+        assert provider.update_completed is True
+
+    @pytest.mark.asyncio
     async def test_deferred_update_failure_surfaces_via_get(self) -> None:
         """A deferred terminal-write failure surfaces on a later GET; the
         record is not evicted, and the client still saw ``response.completed``."""

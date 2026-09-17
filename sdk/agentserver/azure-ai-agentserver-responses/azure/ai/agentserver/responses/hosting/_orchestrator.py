@@ -2979,6 +2979,14 @@ class _ResponseOrchestrator:
         if state.bg_record is not None:
             execution.persistence_failed = state.bg_record.persistence_failed
             execution.persistence_exception = state.bg_record.persistence_exception
+        # Preserve the in-flight execution task onto the replacement record.
+        # This add() overwrites the record that carried ``state.execution_task``
+        # (foreground store=True Path B, and the in-process fallback whose
+        # ``finally`` funnels here). Without copying it, ``handle_shutdown``
+        # would see ``execution_task is None`` and could complete shutdown while
+        # the deferred terminal provider write is still running.
+        if state.execution_task is not None:
+            execution.execution_task = state.execution_task
         await self._runtime_state.add(execution)
 
         ctx.span.end(state.captured_error)
