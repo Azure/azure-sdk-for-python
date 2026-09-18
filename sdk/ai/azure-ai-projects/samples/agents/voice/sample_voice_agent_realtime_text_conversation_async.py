@@ -21,12 +21,12 @@ DESCRIPTION:
 
     Reply audio is PCM16, mono, 24 kHz and plays through the speakers when
     ``pyaudio`` is installed; runs headless otherwise. For a hands-free mic
-    conversation with barge-in, see sample_voice_agent_live_audio_conversation_async.py.
+    conversation with barge-in, see sample_voice_agent_realtime_audio_conversation_async.py.
 
       pip install "azure-ai-projects[voice]>=2.7.0" azure-identity pyaudio
 
 USAGE:
-    python sample_voice_agent_live_text_conversation_async.py
+    python sample_voice_agent_realtime_text_conversation_async.py
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - Foundry project endpoint:
@@ -34,7 +34,7 @@ USAGE:
     2) FOUNDRY_VOICE_MODEL - Optional. The realtime model deployment name.
        Defaults to "gpt-realtime".
     3) FOUNDRY_VOICE_AGENT_NAME - Optional. Name for the agent created by this
-       sample. Defaults to "sample-live-text-conversation-agent-async".
+       sample. Defaults to "sample-realtime-text-conversation-agent-async".
 
     Authenticates with DefaultAzureCredential, so sign in first (e.g. `az login`).
 """
@@ -357,7 +357,7 @@ async def _read_conversation(client: AIProjectClient, agent_name: str, conversat
 async def text_conversation() -> None:
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
     model = os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
-    agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or "sample-live-text-conversation-agent-async"
+    agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or "sample-realtime-text-conversation-agent-async"
 
     async with (
         DefaultAzureCredential() as credential,

@@ -16,7 +16,7 @@ DESCRIPTION:
        `response.create` so the agent can finish its reply using the tool output.
 
 USAGE:
-    python sample_voice_agent_live_function_tool.py
+    python sample_voice_agent_realtime_function_tool.py
 
     Before running the sample:
 

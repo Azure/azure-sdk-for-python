@@ -31,9 +31,9 @@ Breaking changes in beta classes:
 
 * Added `sample_voice_agent_basic.py` under `samples/agents/voice/`, demonstrating the Voice Agent management lifecycle.
 * Added `sample_voice_agent_generate.py`, demonstrating guided Voice Agent authoring with `.beta.agents.create_from_prompt()`.
-* Added `sample_voice_agent_live_text_conversation.py`, demonstrating a persisted, typed realtime Voice Agent conversation.
-* Added `sample_voice_agent_live_audio_conversation_async.py`, demonstrating a hands-free realtime audio conversation with barge-in.
-* Added `sample_voice_agent_live_function_tool.py`, demonstrating client-side function execution during a realtime Voice Agent session.
+* Added `sample_voice_agent_realtime_text_conversation.py`, demonstrating a persisted, typed realtime Voice Agent conversation.
+* Added `sample_voice_agent_realtime_audio_conversation_async.py`, demonstrating a hands-free realtime audio conversation with barge-in.
+* Added `sample_voice_agent_realtime_function_tool.py`, demonstrating client-side function execution during a realtime Voice Agent session.
 * Added `sample_voice_agent_read_conversation.py`, demonstrating how to read a persisted Voice Agent conversation and transcript.
 * Added `sample_voice_agent_read_conversation_audio.py`, demonstrating how to retrieve merged conversation audio and individual audio segments.
 * Added `sample_voice_agent_versions.py`, demonstrating Voice Agent version and draft management.

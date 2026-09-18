@@ -10,7 +10,7 @@ Recorded tests covering the read-only voice-agent conversation REST API surface 
 ``project_client.beta.voice_agents.conversations``.
 
 Conversations, their responses/items, and audio are written by the realtime WebSocket subsystem
-during a live session (see ``test_voice_agent_realtime_live.py``) and can only be *read* here --
+during a live session (see ``test_voice_agent_realtime_livetest.py``) and can only be *read* here --
 there is no REST way to create one. A real ``conversation_id`` can therefore only be obtained by
 actually running a live session, which is not itself something the test proxy can capture or
 replay (it is a raw WebSocket connection, not an HTTP call through the SDK pipeline).

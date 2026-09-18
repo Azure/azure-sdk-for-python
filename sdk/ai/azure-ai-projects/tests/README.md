@@ -21,6 +21,25 @@ The instructions below are for running tests locally, on a Windows machine, agai
 az login
 ```
 
+## Set up test resources
+
+Most tests target a manually-configured Foundry project. The Voice Agents realtime live tests
+(`tests\agents\test_voice_agent_realtime_livetest*.py`, and `test_voice_agent_*.py` under
+`tests\agents\`) can instead have their Foundry account/project provisioned automatically using
+`test-resources.json` (located in the above folder) and the
+[test resource scripts](https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources),
+e.g.:
+
+```powershell
+../../eng/common/TestResources/New-TestResources.ps1 -ServiceDirectory ai
+```
+
+This provisions a Cognitive Services `AIServices` account with a default project and grants the
+test principal the built-in *Foundry User* role, then prints `FOUNDRY_PROJECT_ENDPOINT` and
+`FOUNDRY_PROJECT_API_KEY` values to add to your `.env` file. A realtime-capable voice model (for
+example `gpt-realtime`) still needs to be deployed to the project manually -- its deployment name
+goes in `FOUNDRY_VOICE_MODEL_NAME` -- since model deployment isn't automated by this template.
+
 ## Setup up environment variables
 
 Copy the file `.env.template` (located in the above folder), and save it as file named `.env`.

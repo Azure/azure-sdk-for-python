@@ -40,7 +40,7 @@ USAGE:
        conversation owned by FOUNDRY_VOICE_AGENT_NAME. If unset, this sample
        holds one short realtime text turn to produce one; see
        voice_sample_util.py in this folder and
-       sample_voice_agent_live_text_conversation.py for a full interactive
+       sample_voice_agent_realtime_text_conversation.py for a full interactive
        version.
     4) FOUNDRY_VOICE_MODEL - Optional. The realtime model deployment name,
        used only when creating the temporary agent. Defaults to "gpt-realtime".
