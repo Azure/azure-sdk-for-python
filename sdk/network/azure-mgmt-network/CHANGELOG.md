@@ -86,6 +86,7 @@
 
   - Deleted or renamed model `EnableOnlyIpv6PeeringState`
   - Deleted or renamed method `BastionHostsOperations.begin_update_tags`
+  - Model `HubVirtualNetworkConnectionProperties` changed type of property `enable_only_ipv6_peering` from enum to boolean
 
 ## 32.0.0 (2026-08-14)
 
