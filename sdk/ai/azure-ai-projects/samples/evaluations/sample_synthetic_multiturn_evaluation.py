@@ -91,9 +91,13 @@ def main() -> None:
         )
         print(f"Agent created (name: {agent.name}, version: {agent.version})")
 
-        # max_samples must be in [15, 1000]. The agent source lets the service
-        # derive seed scenarios from the agent's instructions and metadata.
-        print(f"\nGenerating {SEED_COUNT} seed scenarios (this takes a few minutes)...")
+        # The model constructor does not expose max_samples, but the service
+        # requires it for simulation seed generation.
+        print("\nGenerating seed scenarios (this takes a few minutes)...")
+        generation_options = SimulationSeedDataGenerationJobOptions(
+            model_options=DataGenerationModelOptions(model=model_deployment_name),
+        )
+        generation_options["max_samples"] = SEED_COUNT
         poller = project_client.beta.datasets.begin_create_generation_job(
             job=DataGenerationJob(
                 inputs=DataGenerationJobInputs(
@@ -106,10 +110,7 @@ def main() -> None:
                             agent_version=agent.version,
                         ),
                     ],
-                    options=SimulationSeedDataGenerationJobOptions(
-                        max_samples=SEED_COUNT,
-                        model_options=DataGenerationModelOptions(model=model_deployment_name),
-                    ),
+                    options=generation_options,
                     output_options=DataGenerationJobOutputOptions(name=f"{agent_name}-simulation-seeds"),
                 ),
             ),

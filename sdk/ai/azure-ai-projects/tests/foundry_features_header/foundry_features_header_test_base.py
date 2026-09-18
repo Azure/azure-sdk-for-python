@@ -45,8 +45,9 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "routines": "Routines=V2Preview",
     "schedules": "Schedules=V1Preview",
     "skills": "Skills=V1Preview",
+    "voice_agents": "VoiceAgents=V1Preview",
     "datasets": "DataGenerationJobs=V1Preview",
-    "agents": "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+    "agents": "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,VoiceAgents=V1Preview,DigitalWorker=V1Preview,GitHubCopilot=V1Preview,Skills=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
 }
 
 # Methods on .beta sub-clients that are NOT simple one-HTTP-call wrappers and
@@ -72,6 +73,18 @@ EXCLUDED_BETA_METHODS: dict[str, frozenset] = {
     ),  # multi-step helper: validate -> pending_upload -> azcopy -> pending_create_version -> poll get
 }
 
+# Public `.beta` attributes that are NOT generated REST operations classes and therefore
+# cannot be exercised by the generic header-injection test at all (unlike EXCLUDED_BETA_METHODS,
+# which excludes specific methods on an otherwise-testable sub-client).
+#
+# `realtime` is a hand-written WebSocket entry point (azure/ai/projects/_realtime.py):
+# `BetaRealtime.connect(...)` synchronously builds and returns a BetaRealtimeConnectionManager without
+# performing any I/O -- the actual WebSocket handshake (which carries its own dedicated
+# Foundry-Features header) only happens later, on `__enter__`/`__aenter__`. So it never triggers
+# CapturingTransport, and doesn't have an EXPECTED_FOUNDRY_FEATURES entry. Its header behavior is
+# verified independently in test_realtime_client.py / test_realtime_client_async.py.
+NON_OPERATION_BETA_ATTRIBUTES: frozenset = frozenset({"realtime"})
+
 # Shared test cases for non-beta methods that optionally send the Foundry-Features header.
 # Used by both test_foundry_features_header_optional.py (sync) and
 # test_foundry_features_header_optional_async.py (async).
@@ -84,7 +97,7 @@ _NON_BETA_OPTIONAL_TEST_CASES = [
     #   The test id is derived automatically from method_name.
     pytest.param(
         "agents.create_version",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,VoiceAgents=V1Preview,DigitalWorker=V1Preview,GitHubCopilot=V1Preview,Skills=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
     ),
     pytest.param(
         "evaluation_rules.create_or_update",
