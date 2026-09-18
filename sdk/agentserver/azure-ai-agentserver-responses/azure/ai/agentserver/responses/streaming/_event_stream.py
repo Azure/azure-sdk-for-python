@@ -76,7 +76,13 @@ def _require_wire_dict(obj: Any, field_name: str) -> dict[str, Any]:
 
 
 def _merge_response_metadata(response: dict[str, Any], metadata: Mapping[str, str]) -> None:
-    """Merge validated public metadata into a response envelope."""
+    """Merge validated public metadata into a response envelope.
+
+    :param response: Mutable response envelope receiving the metadata.
+    :type response: dict[str, ~typing.Any]
+    :param metadata: Public metadata values to validate and merge.
+    :type metadata: ~collections.abc.Mapping[str, str]
+    """
     current = response.get("metadata")
     if current is None:
         merged: dict[str, str] = {}
