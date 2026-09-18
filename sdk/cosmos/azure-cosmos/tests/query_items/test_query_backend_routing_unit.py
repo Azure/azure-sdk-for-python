@@ -57,7 +57,7 @@ from azure.cosmos._cosmos_client_connection import CosmosClientConnection as Syn
 from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection as AsyncConnection
 from azure.cosmos.documents import ConnectionPolicy
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
-from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
+from azure.cosmos._helpers._item_context import ClientLastResponseHeaders, ItemClientContext
 from azure.cosmos.partition_key import _Empty
 from azure.cosmos._query_rust_routing import (
     build_list_databases_prepared_query,
@@ -213,6 +213,8 @@ def listing_client(request):
     backend = backend_type(response)
     backend.execute_pages = MagicMock(wraps=backend.execute_pages)
     conn._backend = backend
+    client._backend = backend
+    client._item_context = ItemClientContext(backend, response_state=conn._response_state)
     conn.last_response_headers = CaseInsensitiveDict({"x-ms-activity-id": "stale"})
     legacy_get = AsyncMock if is_async else MagicMock
     conn._CosmosClientConnection__Get = legacy_get(side_effect=AssertionError("legacy replay"))
@@ -278,7 +280,7 @@ async def test_database_feed_public_hook_is_lazy_per_page_and_replayable(listing
     if timeout is None:
         assert Constants.OVERALL_TIMEOUT_SECONDS not in wire_headers(binding_request)
     else:
-        assert settings_options(binding_request)["timeout_seconds"] == timeout
+        assert 0 < settings_options(binding_request)["timeout_seconds"] <= timeout
     first_headers = dict(hooks[0])
 
     backend._response = BackendResponse(
@@ -289,7 +291,8 @@ async def test_database_feed_public_hook_is_lazy_per_page_and_replayable(listing
     )
     assert await _next_listing_page(pager, is_async) == [{"id": "db-3"}]
     assert backend.prepared.continuation == continuation
-    assert settings_options(backend.prepared).get("timeout_seconds") == timeout
+    remaining = settings_options(backend.prepared).get("timeout_seconds")
+    assert remaining is None if timeout is None else 0 < remaining <= timeout
     assert len(hooks) == 2
     assert hooks[1]["x-ms-activity-id"] == "page-two"
     assert hooks[1]["x-ms-request-charge"] == "3"
@@ -297,7 +300,8 @@ async def test_database_feed_public_hook_is_lazy_per_page_and_replayable(listing
     assert hooks[0] == first_headers
     assert await _next_listing_page(iterable.by_page(continuation), is_async) == [{"id": "db-3"}]
     assert len(hooks) == 3
-    assert settings_options(backend.prepared).get("timeout_seconds") == timeout
+    remaining = settings_options(backend.prepared).get("timeout_seconds")
+    assert remaining is None if timeout is None else 0 < remaining <= timeout
     assert backend.execute_pages.call_count == 3
     conn._CosmosClientConnection__Get.assert_not_called()
     conn._CosmosClientConnection__Post.assert_not_called()
@@ -547,8 +551,10 @@ async def test_database_feed_timeout_resets_per_page_and_replay(
     _, conn, backend, is_async = listing_client
     if use_legacy:
         _configure_legacy_database_feed(conn, is_async)
+        listing_client[0]._backend = conn._backend
     clock = [100.0]
     monkeypatch.setattr(time, "time", lambda: clock[0])
+    monkeypatch.setattr(time, "monotonic", lambda: clock[0])
     iterable = database_feed(timeout=3.5)
     clock[0] += 100  # Constructing the lazy pager does not start its default page budget.
     pager = iterable.by_page()
@@ -577,8 +583,10 @@ async def test_database_feed_retains_existing_operation_scope_checks(
     _, conn, backend, is_async = listing_client
     if use_legacy:
         _configure_legacy_database_feed(conn, is_async)
+        listing_client[0]._backend = conn._backend
     clock = [100.0]
     monkeypatch.setattr(time, "time", lambda: clock[0])
+    monkeypatch.setattr(time, "monotonic", lambda: clock[0])
     pager = database_feed(
         timeout=3.5, request_options={Constants.TimeoutScope: TimeoutScope.OPERATION}
     ).by_page()
@@ -603,6 +611,7 @@ async def test_database_feed_empty_pages_do_not_restart_expired_budget(listing_c
     _, conn, backend, is_async = listing_client
     clock = [100.0]
     monkeypatch.setattr(time, "time", lambda: clock[0])
+    monkeypatch.setattr(time, "monotonic", lambda: clock[0])
     backend._response = BackendResponse(
         status_code=200,
         headers=CaseInsensitiveDict({"x-ms-continuation": "next-db-page"}),
@@ -666,6 +675,11 @@ async def test_database_feed_unsupported_public_options_never_fall_back(
     _, conn, backend, is_async = listing_client
     hook = MagicMock()
     fallback_before = rust_compatibility_fallback_count()
+    if database_feed.__name__ == "list_databases" and "timeout" in kwargs:
+        with pytest.raises(ValueError, match="timeout"):
+            database_feed(response_hook=hook, **kwargs)
+        backend.execute_pages.assert_not_called()
+        return
     iterable = database_feed(response_hook=hook, **kwargs)
     hook.assert_not_called()
     with pytest.raises(NotImplementedError, match="legacy Python"):
@@ -2102,13 +2116,11 @@ def test_public_list_databases_rejects_per_call_read_timeout(client_type, read_t
     hook.assert_not_called()
 
 
-@pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
-def test_public_list_databases_accepts_unset_read_timeout(client_type):
-    client = object.__new__(client_type)
-    client.client_connection = MagicMock()
+def test_public_list_databases_accepts_unset_read_timeout(listing_client):
+    client, _, backend, _ = listing_client
     result = client.list_databases(max_item_count=1, read_timeout=None)
-    assert result is client.client_connection.ReadDatabases.return_value
-    assert client.client_connection.ReadDatabases.call_args.kwargs["options"]["maxItemCount"] == 1
+    assert result.by_page().state.config.options["maxItemCount"] == 1
+    backend.execute_pages.assert_not_called()
 
 
 @pytest.mark.parametrize("fail_on_page", [1, 2])
@@ -2125,6 +2137,8 @@ def test_sync_list_databases_capability_error_never_replays_legacy(monkeypatch, 
     conn._backend = FailingBackend()
     client = object.__new__(CosmosClient)
     client.client_connection = conn
+    client._backend = conn._backend
+    client._item_context = ItemClientContext(conn._backend, response_state=conn._response_state)
     monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
     legacy_get = MagicMock(side_effect=AssertionError("legacy replay"))
     monkeypatch.setattr(conn, "_CosmosClientConnection__Get", legacy_get)
@@ -2157,6 +2171,8 @@ def test_async_list_databases_capability_error_never_replays_legacy(monkeypatch,
         conn._backend = FailingBackend()
         client = object.__new__(AsyncCosmosClient)
         client.client_connection = conn
+        client._backend = conn._backend
+        client._item_context = ItemClientContext(conn._backend, response_state=conn._response_state)
         monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
         legacy_get = AsyncMock(side_effect=AssertionError("legacy replay"))
         monkeypatch.setattr(conn, "_CosmosClientConnection__Get", legacy_get)

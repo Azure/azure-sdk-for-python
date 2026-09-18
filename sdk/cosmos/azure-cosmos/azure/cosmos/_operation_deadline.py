@@ -48,6 +48,16 @@ def legacy_deadline_options(options: Any, deadline: Optional[float]) -> dict[str
     return result
 
 
+def legacy_deadline_kwargs(kwargs: Any, deadline: Optional[float]) -> dict[str, Any]:
+    """Pass the remaining budget where legacy point-request retries consume it."""
+    result = dict(kwargs or {})
+    remaining = remaining_timeout(deadline)
+    if remaining is not None:
+        result["timeout"] = remaining
+        result[_Constants.OperationStartTime] = time.time()
+    return result
+
+
 async def run_with_deadline(operation: Callable[[], Awaitable[_T]], deadline: Optional[float]) -> _T:
     """Bound async work and drain its cancellation before returning a timeout."""
     timeout = remaining_timeout(deadline)

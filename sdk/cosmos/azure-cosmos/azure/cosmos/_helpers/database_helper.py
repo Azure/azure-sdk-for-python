@@ -28,12 +28,13 @@ from .._backend.operations import (
 )
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict
-from .._operation_deadline import legacy_deadline_options, remaining_timeout
+from .._operation_deadline import legacy_deadline_kwargs, legacy_deadline_options, remaining_timeout
 from ._item_context import ClientLastResponseHeaders
 from .._helpers._request_database import (
     build_create_database_prepared,
     build_delete_database_prepared,
     build_read_database_prepared,
+    database_existence_read_options,
     is_delete_database_rust_eligible,
     is_read_database_rust_eligible,
     is_create_database_rust_eligible,
@@ -103,7 +104,7 @@ class DatabaseHelper:
             legacy_call=lambda: self._client_connection.CreateDatabase(
                 database=database,
                 options=legacy_deadline_options(request_options, deadline),
-                **operation_kwargs,
+                **legacy_deadline_kwargs(operation_kwargs, deadline),
             ),
             process_response=lambda response: process_backend_response(
                 response,
@@ -209,6 +210,7 @@ class DatabaseHelper:
         *,
         response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
+        deadline: Optional[float] = None,
     ) -> CosmosDict:
         """Return the database, creating it only if it isn't already there.
 
@@ -219,33 +221,28 @@ class DatabaseHelper:
         options (``offerThroughput``, ``autoUpgradePolicy``) are dropped from
         the read so they ride only the create -- the existence check must not
         try to set throughput. The Python coordinator owns this compound
-        workflow because the public Rust driver exposes the individual
-        primitives, but not a database get-or-create primitive. Each primitive
-        still runs through the selected backend, so Rust-backed clients do not
-        invoke the legacy transport. Both legs share one eligibility answer
-        (``is_read_database_rust_eligible``): a per-call option the Rust path
-        cannot honor fails the whole call with a readable message instead of
-        being silently dropped or routed through legacy Python halfway.
-        ``response_hook`` is invoked once on success with the response headers
-        and the resulting database. If creation conflicts with another caller,
+        workflow because the driver exposes separate read and create operations.
+        Both steps must support the supplied options before the first request.
+        One deadline covers the workflow, without changing backends midway.
+        ``response_hook`` receives isolated copies of the final response outside
+        recovery and timeout handling. If creation conflicts with another caller,
         read the database once more. A failed follow-up read propagates without
         another creation attempt.
         """
+        if response_hook is not None and not callable(response_hook):
+            raise TypeError("create_database_if_not_exists response_hook must be callable or None.")
+        hook = with_response_header_snapshot(response_hook, copy_body=True)
+        request_options = dict(request_options)
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
-        # Strip provisioning options from the existence read so throughput is
-        # applied only when the database is actually created.
-        read_options = dict(request_options)
-        read_options.pop("offerThroughput", None)
-        read_options.pop("autoUpgradePolicy", None)
-        # One definition of "Rust can honor this read", shared with
-        # DatabaseProxy.read, so the same call never runs on Rust here and on
-        # legacy Python there. Both legs use it: reaching the create means the
-        # read already ran on Rust, and the workflow must not switch backends
-        # halfway through.
-        rust_eligible = is_read_database_rust_eligible(read_options, operation_kwargs)
+        read_options = database_existence_read_options(request_options, operation_kwargs)
+        rust_eligible = (
+            is_read_database_rust_eligible(read_options, operation_kwargs)
+            and is_create_database_rust_eligible(request_options, operation_kwargs)
+        )
 
         def read_database() -> CosmosDict:
+            remaining_timeout(deadline)
             return self._backend.run_operation(
                 build_request=lambda: build_read_database_prepared(
                     database["id"],
@@ -259,19 +256,22 @@ class DatabaseHelper:
                 ),
                 legacy_call=lambda: self._client_connection.ReadDatabase(
                     "dbs/{}".format(database["id"]),
-                    options=read_options,
-                    **operation_kwargs,
+                    options=legacy_deadline_options(read_options, deadline),
+                    **legacy_deadline_kwargs(operation_kwargs, deadline),
                 ),
                 process_response=lambda response: process_backend_response(
                     response,
-                    client_connection=self._client_connection,
+                    client_connection=self._client_connection if self._response_state is None else None,
+                    response_state=self._response_state,
                 ),
+                deadline=deadline,
             )
 
         try:
             result = read_database()
         except exceptions.CosmosResourceNotFoundError:
             try:
+                remaining_timeout(deadline)
                 result = self._backend.run_operation(
                     build_request=lambda: build_create_database_prepared(
                         database,
@@ -285,16 +285,19 @@ class DatabaseHelper:
                     ),
                     legacy_call=lambda: self._client_connection.CreateDatabase(
                         database=database,
-                        options=request_options,
-                        **operation_kwargs,
+                        options=legacy_deadline_options(request_options, deadline),
+                        **legacy_deadline_kwargs(operation_kwargs, deadline),
                     ),
                     process_response=lambda response: process_backend_response(
                         response,
-                        client_connection=self._client_connection,
+                        client_connection=self._client_connection if self._response_state is None else None,
+                        response_state=self._response_state,
                     ),
+                    deadline=deadline,
                 )
             except exceptions.CosmosResourceExistsError:
                 result = read_database()
-        if response_hook is not None:
-            response_hook(self._client_connection.last_response_headers, result)
+        remaining_timeout(deadline)
+        if hook is not None:
+            hook(result.get_response_headers(), result)
         return result

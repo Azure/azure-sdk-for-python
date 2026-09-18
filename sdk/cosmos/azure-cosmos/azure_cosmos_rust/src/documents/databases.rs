@@ -49,26 +49,30 @@ pub(crate) fn create_database_async<'py>(
 /// transport -- different retry behavior and different diagnostics from every
 /// other call on the same client.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn read_database<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
     let (database_id, modifiers) =
         extract_database_prepared_inputs(prepared, "read_database requires a database id")?;
-    run_read_database_operation(py, driver_handle, modifiers, database_id, "read_database")
+    run_read_database_operation(py, driver_handle, modifiers, database_id, "read_database", timeout_seconds)
 }
 
 /// Async counterpart of [`read_database`].
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn read_database_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
     let (database_id, modifiers) =
         extract_database_prepared_inputs(prepared, "read_database requires a database id")?;
-    run_read_database_operation_async(py, driver_handle, modifiers, database_id, "read_database_async")
+    run_read_database_operation_async(py, driver_handle, modifiers, database_id, "read_database_async", timeout_seconds)
 }
 
 /// Delete a database and return the service response.
@@ -104,24 +108,28 @@ pub(crate) fn delete_database_async<'py>(
 /// container-scoped operations use, because at account scope there is no
 /// container link or partition key to read.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn list_databases<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
     let modifiers = extract_account_prepared_modifiers(prepared)?;
-    run_list_databases_operation(py, driver_handle, modifiers, "list_databases")
+    run_list_databases_operation(py, driver_handle, modifiers, "list_databases", timeout_seconds)
 }
 
 /// Async counterpart of [`list_databases`].
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn list_databases_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
     let modifiers = extract_account_prepared_modifiers(prepared)?;
-    run_list_databases_operation_async(py, driver_handle, modifiers, "list_databases_async")
+    run_list_databases_operation_async(py, driver_handle, modifiers, "list_databases_async", timeout_seconds)
 }
 
 /// Run a database query and return one page of matching databases.

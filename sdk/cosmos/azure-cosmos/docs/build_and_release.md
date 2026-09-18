@@ -2,33 +2,32 @@
 
 ## Table of contents
 
-- [Scope and current configuration](#scope-and-current-configuration)
-- [Where the Python and Rust code lives](#where-the-python-and-rust-code-lives)
-- [Files and ownership](#files-and-ownership)
-- [Why both setup.py and pyproject.toml exist](#why-both-setuppy-and-pyprojecttoml-exist)
-- [Files that control the Rust build](#files-that-control-the-rust-build)
-- [How Cargo builds the Rust extension](#how-cargo-builds-the-rust-extension)
-- [Local development build](#local-development-build)
-- [Building and checking a wheel locally](#building-and-checking-a-wheel-locally)
-- [What a completed wheel contains](#what-a-completed-wheel-contains)
-- [Why one release needs several wheels](#why-one-release-needs-several-wheels)
-- [How QueryPlanInterop is packaged and loaded](#how-queryplaninterop-is-packaged-and-loaded)
-- [Decide whether v5 publishes a source distribution](#decide-whether-v5-publishes-a-source-distribution)
-- [How the Cosmos pipeline produces the release files](#how-the-cosmos-pipeline-produces-the-release-files)
-- [What customers install](#what-customers-install)
-- [Release readiness and remaining decisions](#release-readiness-and-remaining-decisions)
-- [Sources for packaging behavior](#sources-for-packaging-behavior)
+1. [Scope and current configuration](#1-scope-and-current-configuration)
+2. [Where the Python and Rust code lives](#2-where-the-python-and-rust-code-lives)
+3. [Files and ownership](#3-files-and-ownership)
+4. [Why both setup.py and pyproject.toml exist](#4-why-both-setuppy-and-pyprojecttoml-exist)
+5. [Files that control the Rust build](#5-files-that-control-the-rust-build)
+6. [How Cargo builds the Rust extension](#6-how-cargo-builds-the-rust-extension)
+7. [Local development build](#7-local-development-build)
+8. [Building and checking a wheel locally](#8-building-and-checking-a-wheel-locally)
+9. [What a completed wheel contains](#9-what-a-completed-wheel-contains)
+10. [Why one release needs several wheels](#10-why-one-release-needs-several-wheels)
+11. [How QueryPlanInterop is packaged and loaded](#11-how-queryplaninterop-is-packaged-and-loaded)
+12. [Decide whether v5 publishes a source distribution](#12-decide-whether-v5-publishes-a-source-distribution)
+13. [How the Cosmos pipeline produces the release files](#13-how-the-cosmos-pipeline-produces-the-release-files)
+14. [What customers install](#14-what-customers-install)
+15. [Release readiness and remaining decisions](#15-release-readiness-and-remaining-decisions)
 
-## Scope and current configuration
+## 1. Scope and current configuration
 
 This guide explains the Rust build, wheel contents, customer installation,
 and remaining release work. It describes the current prototype configuration,
 not an approved public release. A **prototype** is a configuration being tried
 before release.
 
-For pipeline foundations, stages and jobs, registration, branch selection,
-permissions, and the legacy wheel/sdist installation flow, use
-[the legacy pipeline guide](V5/build-pipeline-legacy.md).
+Pipeline foundations, stages and jobs, registration, branch selection,
+permissions, and the legacy wheel/sdist installation flow are outside the
+scope of this guide.
 
 A **wheel** is a `.whl` archive prepared for installation. A **platform wheel**
 contains compiled code for a particular operating system and processor,
@@ -62,14 +61,14 @@ Python SDK files + Rust binding source + Rust driver source
 **QueryPlanInterop packaging is deferred, not abandoned, and is not an
 immediate prototype-wheel blocker.** The current driver also has a built-in
 Rust query planner and Gateway fallback; the distinction is explained in
-[the QueryPlanInterop section](#how-queryplaninterop-is-packaged-and-loaded).
+[the QueryPlanInterop section](#11-how-queryplaninterop-is-packaged-and-loaded).
 
 Configured targets and a successful local build do not establish release
 readiness. All-target pipeline execution, functional tests, signing, and
 publication still need the evidence and approvals listed in
-[release readiness](#release-readiness-and-remaining-decisions).
+[release readiness](#15-release-readiness-and-remaining-decisions).
 
-## Where the Python and Rust code lives
+## 2. Where the Python and Rust code lives
 
 A **Rust crate** is a Rust source project that Cargo, Rust's build tool, can
 compile. This SDK uses two crates with different responsibilities:
@@ -113,7 +112,7 @@ a wheel do not install the driver crate separately. Generated files such as
 `target\` and locally compiled `_rust` extensions are build outputs, not source
 to commit.
 
-## Files and ownership
+## 3. Files and ownership
 
 The **Cosmos SDK team** owns `sdk\cosmos`. The **Central team** owns the shared
 `eng` build and release infrastructure. Shared engineering maintains
@@ -163,7 +162,7 @@ environments, runs the shared process, collects outputs, and manages approved
 signing and publication. Toolchain and feed credentials belong to that
 infrastructure, not package source.
 
-## Why both setup.py and pyproject.toml exist
+## 4. Why both setup.py and pyproject.toml exist
 
 `setup.py` is executable Python packaging configuration using setuptools,
 the packaging library it imports. `pyproject.toml` is a configuration file;
@@ -211,7 +210,7 @@ If a release retains a `setup.py` packaging path, it must read the authoritative
 metadata rather than maintain an independent copy, and its output must be
 validated separately.
 
-## Files that control the Rust build
+## 5. Files that control the Rust build
 
 ### The two Cargo configuration files
 
@@ -299,7 +298,7 @@ Validate or update that minimum when selecting the release driver. If customer
 source builds are supported, also test the promised minimum and provide a
 customer-accessible toolchain path.
 
-## How Cargo builds the Rust extension
+## 6. How Cargo builds the Rust extension
 
 The binding's `Cargo.toml` requests this library:
 
@@ -348,7 +347,7 @@ The resulting extension is `_rust.pyd` on Windows or `_rust.abi3.so` on Linux
 and macOS. Each contains compiled binding and driver code for its target.
 The Python `.py` files remain readable Python source.
 
-## Local development build
+## 7. Local development build
 
 Use an editable installation when changing and testing SDK source.
 **Editable** means the Python files continue to come from the checkout;
@@ -381,7 +380,7 @@ This is not the distributable-wheel workflow. Calling Maturin directly bypasses
 QueryPlanInterop staging. An editable installation also does not prove that a
 release wheel contains all required files.
 
-## Building and checking a wheel locally
+## 8. Building and checking a wheel locally
 
 ### Build tools and the backend
 
@@ -438,7 +437,7 @@ correct Python build tools.
 
 The wrapper forwards source-distribution, editable-build, and metadata
 requests to Maturin. Its additional wheel behavior is explained once in
-[QueryPlanInterop packaging](#how-queryplaninterop-is-packaged-and-loaded).
+[QueryPlanInterop packaging](#11-how-queryplaninterop-is-packaged-and-loaded).
 Calling `maturin build` directly bypasses that wrapper.
 
 ### Inspect and install the exact wheel
@@ -469,7 +468,7 @@ installed wheel; the printed path must belong to `.wheel-test`.
 Neither check proves SDK operations work. Functional tests must also run
 against the installed wheel without falling back to the checkout.
 
-## What a completed wheel contains
+## 9. What a completed wheel contains
 
 A wheel is a ZIP archive. The following is the intended Windows wheel layout;
 `.libs` is the planned QueryPlanInterop addition, not a guarantee of current
@@ -514,7 +513,7 @@ extensions, duplicate entries, and Python bytecode left by local builds.
 An importable wheel with incorrect metadata or missing package data is not a
 complete deliverable.
 
-## Why one release needs several wheels
+## 10. Why one release needs several wheels
 
 Windows x64 machine code cannot serve Linux or ARM64. The prototype therefore
 configures five target builds. Expected filename shapes are:
@@ -592,7 +591,7 @@ replacement for the complete file. Declaring targets does not create build
 machines or prove runtime support. The pipeline must build them and execute
 the required tests.
 
-## How QueryPlanInterop is packaged and loaded
+## 11. How QueryPlanInterop is packaged and loaded
 
 ### Three query-planning providers
 
@@ -699,13 +698,11 @@ The producing team and approved distribution location still need confirmation.
 A compiled wheel, archive inclusion check, or import alone does not close this
 work.
 
-## Decide whether v5 publishes a source distribution
+## 12. Decide whether v5 publishes a source distribution
 
 A **source distribution**, or **sdist**, is a `.tar.gz` archive containing source
 and build instructions rather than an already-compiled extension. The release
 must choose between wheels only and wheels plus a supported sdist.
-See the [legacy installation explanation](V5/build-pipeline-legacy.md#legacy-release-files-and-customer-installation)
-for the pure-Python comparison.
 
 ### Sdist tracking note: customer source installation
 
@@ -799,7 +796,7 @@ every required wheel. For that release version, a customer without a compatible
 wheel has no source-install fallback; do not imply unsupported targets can
 install it.
 
-## How the Cosmos pipeline produces the release files
+## 13. How the Cosmos pipeline produces the release files
 
 The SDK entry point delegates to shared Central templates:
 
@@ -865,8 +862,8 @@ Full installed-wheel tests remain necessary.
 
 Path coverage under `sdk\cosmos` includes the Rust source and configuration,
 but it does not guarantee that every branch push triggers a run. Registration,
-manual queuing, identities, and permissions belong in the
-[legacy pipeline foundations](V5/build-pipeline-legacy.md#concept-1-from-github-code-to-an-azure-devops-pipeline-run).
+manual queuing, identities, and permissions are outside the scope of this
+guide.
 
 ### Approved release processing
 
@@ -884,7 +881,7 @@ Publish only the complete approved output set after final-wheel checks and
 release approval. Neither an editable install nor tests of a pre-signing
 intermediate wheel establish that the published files work.
 
-## What customers install
+## 14. What customers install
 
 For an approved Rust-backed release, a Contoso Bank developer normally runs:
 
@@ -911,7 +908,7 @@ If no compatible wheel exists, behavior depends on the
 the customer's machine is a different installation path, not a requirement
 for customers who install compatible wheels.
 
-## Release readiness and remaining decisions
+## 15. Release readiness and remaining decisions
 
 These are release requirements and unresolved decisions, not claims that the
 prototype has completed them. The **release approver** is the authorized person

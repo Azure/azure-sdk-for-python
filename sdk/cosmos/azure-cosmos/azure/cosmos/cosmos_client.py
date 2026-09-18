@@ -39,8 +39,9 @@ from ._utils import _validate_enable_compact_utf8_item_writes
 from ._backend.errors import raise_account_read_unsupported
 from ._backend.factory import make_backend
 from ._backend.transport_settings import resolve_client_transport_timeouts
-from ._base import build_options, _set_throughput_options
+from ._base import build_options
 from ._helpers._request_database import prepare_create_database_options
+from ._helpers._list_databases import list_databases as _list_databases
 from ._constants import _Constants as Constants
 from ._client_lifecycle import unwind_client_construction
 from ._connection_policy import copy_connection_policy, resolve_connection_policy_kwargs, resolve_retry_option
@@ -638,6 +639,19 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         """
         ...
 
+    @overload
+    def create_database_if_not_exists(
+        self,
+        id: str,
+        *,
+        offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
+        initial_headers: Optional[dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
+        throughput_bucket: Optional[int] = None,
+        return_properties: bool,
+        **kwargs: Any,
+    ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]: ...
+
     @distributed_trace
     def create_database_if_not_exists(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
         self,
@@ -675,22 +689,32 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         If another caller creates the database between the read and creation
         attempt, read it once more and return it without changing its settings.
         Any error from that follow-up read is propagated.
-        """
-        for option in ("populate_query_metrics", "session_token", "etag", "match_condition"):
-            if option in kwargs:
-                raise TypeError(f"create_database_if_not_exists() does not support the '{option}' keyword argument")
 
+        An explicit ``timeout`` is one budget across preparation, driver setup,
+        read, creation, and conflict recovery. Synchronous setup cannot be
+        interrupted, but its elapsed time is deducted before sending a request.
+        Creation settings are validated before the existence read, even when
+        the database already exists. Conditional headers are not supported.
+        The success hook receives independent copies of the final response's
+        headers and properties, outside the request timeout and retry handling.
+        """
         return_properties = kwargs.pop("return_properties", False)
 
         response_hook = kwargs.pop("response_hook", None)
-        request_options = build_options(kwargs)
-        _set_throughput_options(offer=offer_throughput, request_options=request_options)
+        request_options, deadline = prepare_create_database_options(
+            kwargs, offer_throughput,
+            operation_name="create_database_if_not_exists", allow_read_timeout=True,
+        )
         database = {"id": id}
-        result = DatabaseHelper(self.client_connection, self._backend).create_database_if_not_exists(
+        result = DatabaseHelper(
+            self.client_connection, self._backend,
+            response_state=self._item_context.response_state,
+        ).create_database_if_not_exists(
             database,
             request_options,
             response_hook=response_hook,
             kwargs=kwargs,
+            deadline=deadline,
         )
         database_proxy = DatabaseProxy(self.client_connection, id=result["id"], properties=result,
                                        _item_context=self._item_context)
@@ -734,6 +758,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         """List the databases in a Cosmos DB SQL database account.
 
         :keyword int max_item_count: Maximum number of databases requested per page, not a total result limit.
+            Use a positive integer below ``2**63``, ``-1`` to let the service choose, or ``None`` to leave unset.
         :keyword float timeout: Timeout budget in seconds per page fetch by default, not for
             draining the whole iterator. Rust supports finite numeric durations of at least
             one second within its duration range; ``None`` leaves the override unset.
@@ -750,25 +775,24 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         the legacy transport. All settings are keyword-only. ``session_token``,
         ``populate_query_metrics``, and ``availability_strategy`` do not apply
         to database listing and are rejected, including explicit ``None`` or ``False``.
+        Settings are copied when this method is called. Each pager owns its bookmark.
+        A page-fetch budget includes driver setup and any empty service pages, but
+        not application processing between delivered pages. Synchronous setup and
+        callbacks cannot be forcibly interrupted; cancellation cleanup can take longer.
+        Hook failures never retry a page. After a failed or cancelled fetch, use a new
+        pager from the last successfully processed page's bookmark.
+        Invalid timeouts/page sizes raise ``ValueError`` at listing construction;
+        a non-callable hook raises ``TypeError``. Hook iteration-stop exceptions
+        become ``RuntimeError`` rather than ending the listing silently.
         """
-        if kwargs.pop("read_timeout", None) is not None:
-            raise TypeError(
-                "list_databases() does not support the 'read_timeout' keyword argument; "
-                "configure it when constructing CosmosClient."
-            )
-        for option in ("session_token", "populate_query_metrics", "availability_strategy"):
-            if option in kwargs:
-                raise TypeError(f"list_databases() does not support the '{option}' keyword argument")
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
-        feed_options = build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-        if response_hook is not None:
-            kwargs["response_hook"] = lambda headers, _body: response_hook(dict(headers))
-        return self.client_connection.ReadDatabases(options=feed_options, **kwargs)
+            kwargs["max_item_count"] = max_item_count
+        kwargs["response_hook"] = response_hook
+        return _list_databases(self, kwargs)
 
     @distributed_trace
     def query_databases(  # pylint:disable=docstring-missing-param

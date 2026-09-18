@@ -529,6 +529,10 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
                     prepared.cursor,
                     timeout_seconds=remaining_timeout(deadline),
                 )
+            elif prepared.op == OP_LIST_DATABASES and deadline is not None:
+                result = await dispatch(
+                    driver_handle, binding_request, timeout_seconds=remaining_timeout(deadline),
+                )
             else:
                 result = await dispatch(driver_handle, binding_request)
             response = build_backend_response(*result)

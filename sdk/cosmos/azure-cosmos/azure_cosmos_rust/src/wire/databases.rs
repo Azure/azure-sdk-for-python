@@ -78,13 +78,21 @@ pub(crate) fn run_read_database_operation<'py>(
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     operation_name: &str,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_sync(
         py,
         driver_handle,
         operation_name,
-        move |driver| run_read_database_future(driver, modifiers, database_id),
-        tuple_from_result,
+        move |driver| {
+            with_timeout(timeout, run_read_database_future(driver, modifiers, database_id))
+        },
+        |py, result| {
+            tuple_from_result(py, result.map_err(|error| {
+                PyTimeoutError::new_err(format!("Database read timed out: {error}"))
+            })?)
+        },
     )
 }
 
@@ -95,13 +103,21 @@ pub(crate) fn run_read_database_operation_async<'py>(
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     operation_name: &str,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_async(
         py,
         driver_handle,
         operation_name,
-        move |driver| run_read_database_future(driver, modifiers, database_id),
-        tuple_from_result,
+        move |driver| {
+            with_timeout(timeout, run_read_database_future(driver, modifiers, database_id))
+        },
+        |py, result| {
+            tuple_from_result(py, result.map_err(|error| {
+                PyTimeoutError::new_err(format!("Database read timed out: {error}"))
+            })?)
+        },
     )
 }
 
@@ -145,13 +161,19 @@ pub(crate) fn run_list_databases_operation<'py>(
     driver_handle: &str,
     modifiers: RequestHeadersAndOptions,
     operation_name: &str,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_sync(
         py,
         driver_handle,
         operation_name,
-        move |driver| run_list_databases_future(driver, modifiers),
-        tuple_from_database_feed_result,
+        move |driver| with_timeout(timeout, run_list_databases_future(driver, modifiers)),
+        |py, result| {
+            tuple_from_database_feed_result(py, result.map_err(|error| {
+                PyTimeoutError::new_err(format!("Database listing timed out: {error}"))
+            })?)
+        },
     )
 }
 
@@ -163,13 +185,19 @@ pub(crate) fn run_list_databases_operation_async<'py>(
     driver_handle: &str,
     modifiers: RequestHeadersAndOptions,
     operation_name: &str,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_async(
         py,
         driver_handle,
         operation_name,
-        move |driver| run_list_databases_future(driver, modifiers),
-        tuple_from_database_feed_result,
+        move |driver| with_timeout(timeout, run_list_databases_future(driver, modifiers)),
+        |py, result| {
+            tuple_from_database_feed_result(py, result.map_err(|error| {
+                PyTimeoutError::new_err(format!("Database listing timed out: {error}"))
+            })?)
+        },
     )
 }
 

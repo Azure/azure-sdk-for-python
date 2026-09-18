@@ -72,22 +72,26 @@ _CREATE_DATABASE_INAPPLICABLE_HEADERS = frozenset(
 
 def prepare_create_database_options(
     kwargs: dict[str, Any], offer: Optional[int | ThroughputProperties],
+    *, operation_name: str = "create_database", allow_read_timeout: bool = False,
 ) -> tuple[dict[str, Any], Optional[float]]:
     """Snapshot creation inputs and establish one budget before driver setup."""
     started = time.monotonic()
     for name in ("populate_query_metrics", "session_token", "etag", "match_condition"):
         if name in kwargs:
-            raise TypeError(f"create_database() does not support the '{name}' keyword argument")
+            raise TypeError(f"{operation_name}() does not support the '{name}' keyword argument")
     feed_options = kwargs.pop("feed_options", {})
     if "request_options" not in kwargs:
         kwargs["request_options"] = feed_options
     options = deepcopy(compose_options_from_kwargs(kwargs))
-    for source in (kwargs, options):
-        if source.pop("read_timeout", None) is not None:
-            raise TypeError("create_database() does not support the 'read_timeout' keyword argument")
+    # Get-or-create retains this option for explicitly selected legacy transport.
+    # Its Rust eligibility check rejects it before the existence read.
+    if not allow_read_timeout:
+        for source in (kwargs, options):
+            if source.pop("read_timeout", None) is not None:
+                raise TypeError(f"{operation_name}() does not support the 'read_timeout' keyword argument")
     timeout = kwargs.get("timeout", options.pop("timeout", None))
     if not is_supported_operation_timeout(timeout):
-        raise ValueError("create_database timeout must be None or a finite number of seconds >= 1 and < 2**64.")
+        raise ValueError(f"{operation_name} timeout must be None or a finite number of seconds >= 1 and < 2**64.")
     if timeout is not None or "timeout" in kwargs:
         kwargs["timeout"] = timeout
     if offer is not None:
@@ -125,6 +129,28 @@ def prepare_create_database_options(
     if has_manual and has_autoscale:
         raise ValueError("Specify manual throughput or autoscale, not both.")
     return options, None if timeout is None else started + float(timeout)
+
+
+def database_existence_read_options(
+    request_options: Mapping[str, Any], operation_kwargs: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Keep creation settings off existence reads and reject conditional results."""
+    headers = build_customer_headers(request_options.get("initialHeaders"))
+    if (
+        "accessCondition" in request_options
+        or {"if_match", "if_none_match"}.intersection(operation_kwargs)
+        or {"if-match", "if-none-match"}.intersection(headers)
+    ):
+        raise TypeError("create_database_if_not_exists() does not support conditional headers or access conditions")
+    read_options = dict(request_options)
+    read_options.pop("offerThroughput", None)
+    read_options.pop("autoUpgradePolicy", None)
+    if "initialHeaders" in read_options:
+        read_options["initialHeaders"] = {
+            name: value for name, value in headers.items()
+            if name not in {"x-ms-offer-throughput", "x-ms-cosmos-offer-autopilot-settings"}
+        }
+    return read_options
 
 
 def is_create_database_rust_eligible(

@@ -1,7 +1,7 @@
 # V5 architecture: one `create_item` call, layer by layer
 
 This is the concise implementation reference. The complete numbered walkthrough is
-in `V5/use-cases/01-sync-python-to-async-rust.md`. The Rust driver is treated as a
+in `V5/use-cases/02-synchronous-flow.md`. The Rust driver is treated as a
 black box; this document describes the Python SDK and binding contract.
 
 ## Table of contents
@@ -296,7 +296,7 @@ The binding still performs the necessary handle lookup for each item entry.
 ## 10. Where to go next
 
 The complete 12-chunk explanation, with matching numbered sequence diagrams, is
-`V5/use-cases/01-sync-python-to-async-rust.md`. Use cases 02 and 03 remain placeholders.
+`V5/use-cases/02-synchronous-flow.md`. Use cases 02 and 03 remain placeholders.
 The binding's request protocol is also documented in `../azure_cosmos_rust/README.md`.
 
 ## 11. Related offer and feed preparation
