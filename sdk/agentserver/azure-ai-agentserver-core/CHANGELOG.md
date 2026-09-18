@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed Windows file-backed replay streams remaining locked after abrupt process termination by using an OS-managed lock.
+
 ### Other Changes
 
 ## 2.2.0b1 (2026-09-03)
