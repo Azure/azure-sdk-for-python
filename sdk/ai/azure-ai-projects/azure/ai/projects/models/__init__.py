@@ -282,6 +282,7 @@ from ._models import (  # type: ignore
     Microsoft365PublishDefaults,
     Microsoft365PublishResult,
     MicrosoftFabricPreviewTool,
+    MisalignmentErrorDetailsResource,
     ModelCredentialRequest,
     ModelDeployment,
     ModelDeploymentSku,
@@ -625,6 +626,7 @@ from ._models import (  # type: ignore
     WorkIQPreviewTool,
     WorkIQPreviewToolboxTool,
     WorkflowAgentDefinition,
+    _MisalignmentSteer,
 )
 
 from ._enums import (  # type: ignore
@@ -788,6 +790,7 @@ from ._enums import (  # type: ignore
     VoiceModelType,
     VoiceOutputModality,
     VoiceType,
+    _MisalignmentErrorType,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -1061,6 +1064,7 @@ __all__ = [
     "Microsoft365PublishDefaults",
     "Microsoft365PublishResult",
     "MicrosoftFabricPreviewTool",
+    "MisalignmentErrorDetailsResource",
     "ModelCredentialRequest",
     "ModelDeployment",
     "ModelDeploymentSku",
@@ -1404,6 +1408,7 @@ __all__ = [
     "WorkIQPreviewTool",
     "WorkIQPreviewToolboxTool",
     "WorkflowAgentDefinition",
+    "_MisalignmentSteer",
     "A2AProtocolVersion",
     "ActivityProtocolAccessBoundary",
     "AgentBlueprintReferenceType",
@@ -1564,6 +1569,7 @@ __all__ = [
     "VoiceModelType",
     "VoiceOutputModality",
     "VoiceType",
+    "_MisalignmentErrorType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

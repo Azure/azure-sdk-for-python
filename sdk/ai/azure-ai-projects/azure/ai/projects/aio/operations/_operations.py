@@ -19,6 +19,7 @@ from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
+    ResourceModifiedError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
     StreamClosedError,
@@ -2158,23 +2159,29 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         Each SSE frame contains:
 
         * `event`: always `"log"`
-        * `data`: a plain-text log line (currently JSON-formatted, but the schema is not contractual and may include additional keys or change format over time; clients should treat it as an opaque string)
+        * `data`: a plain-text log line (currently JSON-formatted, but the schema
+        is not contractual and may include additional keys or change format
+        over time — clients should treat it as an opaque string)
 
         Example SSE frames:
 
         .. code-block::
 
            event: log
-           data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting FoundryCBAgent server on port 8088"}
+           data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting
+        FoundryCBAgent server on port 8088"}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:33:17.130Z","stream":"stderr","message":"INFO: Application startup complete."}
+           data: {"timestamp":"2026-03-10T09:33:17.130Z","stream":"stderr","message":"INFO: Application
+        startup complete."}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
+           data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+        connected to container"}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:35:52.714Z","stream":"status","message":"No logs since last 60 seconds"}
+           data: {"timestamp":"2026-03-10T09:35:52.714Z","stream":"status","message":"No logs since
+        last 60 seconds"}
 
         The stream remains open until the client disconnects or the server
         terminates the connection. Clients should handle reconnection as needed.
@@ -2216,7 +2223,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -6415,10 +6422,9 @@ class BetaAgentsOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
         _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_agents_create_from_prompt_request(
@@ -18518,6 +18524,12 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -18609,6 +18621,12 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -19143,9 +19161,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         self,
         agent_name: str,
         *,
+        transfer_targets: List[_models.TelephonyTransferTarget],
         etag: str,
         match_condition: MatchConditions,
-        transfer_targets: List[_models.TelephonyTransferTarget],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
@@ -19155,13 +19173,13 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         :param agent_name: The name of the voice agent whose transfer targets are replaced. Required.
         :type agent_name: str
+        :keyword transfer_targets: The complete set of destinations to which the voice agent may
+         transfer calls. An empty array clears all targets when replacing the configuration. Required.
+        :paramtype transfer_targets: list[~azure.ai.projects.models.TelephonyTransferTarget]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword transfer_targets: The complete set of destinations to which the voice agent may
-         transfer calls. An empty array clears all targets when replacing the configuration. Required.
-        :paramtype transfer_targets: list[~azure.ai.projects.models.TelephonyTransferTarget]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19177,8 +19195,8 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         agent_name: str,
         body: JSON,
         *,
-        etag: str,
-        match_condition: MatchConditions,
+        etag: List[_models.TelephonyTransferTarget],
+        match_condition: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
@@ -19191,9 +19209,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :param body: Required.
         :type body: JSON
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
-        :paramtype etag: str
+        :paramtype etag: list[~azure.ai.projects.models.TelephonyTransferTarget]
         :keyword match_condition: The match condition to use upon the etag. Required.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19209,8 +19227,8 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         agent_name: str,
         body: IO[bytes],
         *,
-        etag: str,
-        match_condition: MatchConditions,
+        etag: List[_models.TelephonyTransferTarget],
+        match_condition: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
@@ -19223,9 +19241,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :param body: Required.
         :type body: IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
-        :paramtype etag: str
+        :paramtype etag: list[~azure.ai.projects.models.TelephonyTransferTarget]
         :keyword match_condition: The match condition to use upon the etag. Required.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19241,9 +19259,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         agent_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
+        transfer_targets: List[_models.TelephonyTransferTarget] = _Unset,
         etag: str,
         match_condition: MatchConditions,
-        transfer_targets: List[_models.TelephonyTransferTarget] = _Unset,
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
         """Replace agent telephony transfer targets.
@@ -19254,13 +19272,13 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type agent_name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
+        :keyword transfer_targets: The complete set of destinations to which the voice agent may
+         transfer calls. An empty array clears all targets when replacing the configuration. Required.
+        :paramtype transfer_targets: list[~azure.ai.projects.models.TelephonyTransferTarget]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword transfer_targets: The complete set of destinations to which the voice agent may
-         transfer calls. An empty array clears all targets when replacing the configuration. Required.
-        :paramtype transfer_targets: list[~azure.ai.projects.models.TelephonyTransferTarget]
         :return: TelephonyTransferTargets. The TelephonyTransferTargets is compatible with
          MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyTransferTargets
@@ -19272,6 +19290,12 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -19627,6 +19651,12 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}

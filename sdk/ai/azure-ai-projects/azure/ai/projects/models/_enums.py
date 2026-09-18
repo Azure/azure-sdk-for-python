@@ -59,6 +59,19 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MODEL_ROUTER_CONTROLS_V1_PREVIEW."""
 
 
+class _MisalignmentErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of _MisalignmentErrorType."""
+
+    POTENTIALLY_UNINTENDED_DATA_TRANSFER = "potentially_unintended_data_transfer"
+    """POTENTIALLY_UNINTENDED_DATA_TRANSFER."""
+    POTENTIALLY_UNINTENDED_DATA_ACCESS = "potentially_unintended_data_access"
+    """POTENTIALLY_UNINTENDED_DATA_ACCESS."""
+    POTENTIALLY_UNINTENDED_DESTRUCTIVE_ACTIVITY = "potentially_unintended_destructive_activity"
+    """POTENTIALLY_UNINTENDED_DESTRUCTIVE_ACTIVITY."""
+    OTHER = "other"
+    """OTHER."""
+
+
 class A2AProtocolVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported A2A protocol versions."""
 
@@ -2443,10 +2456,13 @@ class VoiceAudioRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class VoiceConversationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The lifecycle status of a persisted voice conversation:
 
-    * `in_progress`: the live session is active, or post-session persistence finalization is pending.
-    * `completed`: finalization succeeded after normal or client close, `end_conversation`, a max-duration `1001` close,
-      or a client or network disconnect that the service can still finalize.
-    * `failed`: a terminal service, bridge, storage, or unrecoverable transport failure prevented finalization.
+    * `in_progress`: the live session is active, or post-session persistence finalization is
+    pending.
+    * `completed`: finalization succeeded after normal or client close, `end_conversation`, a
+    max-duration `1001`
+    close, or a client or network disconnect that the service can still finalize.
+    * `failed`: a terminal service, bridge, storage, or unrecoverable transport failure prevented
+    finalization.
     """
 
     IN_PROGRESS = "in_progress"

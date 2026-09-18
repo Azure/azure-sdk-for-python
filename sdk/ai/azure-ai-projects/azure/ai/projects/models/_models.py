@@ -164,6 +164,34 @@ class _CreateAgentVersionFromCodeMetadata(_Model):  # pylint: disable=docstring-
         super().__init__(*args, **kwargs)
 
 
+class _MisalignmentSteer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """_MisalignmentSteer.
+
+    :ivar message: The public continuation instruction. Required.
+    :vartype message: str
+    """
+
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The public continuation instruction. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A tool that can be used to generate a response.
 
@@ -3301,6 +3329,8 @@ class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
     :vartype param: str
     :ivar type:
     :vartype type: str
+    :ivar misalignment:
+    :vartype misalignment: ~azure.ai.projects.models.MisalignmentErrorDetailsResource
     :ivar details:
     :vartype details: list[~azure.ai.projects.models.ApiError]
     :ivar additional_info:
@@ -3315,6 +3345,9 @@ class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
     """Required."""
     param: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    misalignment: Optional["_models.MisalignmentErrorDetailsResource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     details: Optional[list["_models.ApiError"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     additional_info: Optional[dict[str, Any]] = rest_field(
         name="additionalInfo", visibility=["read", "create", "update", "delete", "query"]
@@ -3331,6 +3364,7 @@ class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
         message: str,
         param: Optional[str] = None,
         type: Optional[str] = None,
+        misalignment: Optional["_models.MisalignmentErrorDetailsResource"] = None,
         details: Optional[list["_models.ApiError"]] = None,
         additional_info: Optional[dict[str, Any]] = None,
         debug_info: Optional[dict[str, Any]] = None,
@@ -5425,7 +5459,6 @@ class ComparisonFilter(_Model):  # pylint: disable=docstring-keyword-should-matc
      * `in`: in
      * `nin`: not in. Required. Is one of the following types: Literal["eq"], Literal["ne"],
        Literal["gt"], Literal["gte"], Literal["lt"], Literal["lte"], Literal["in"], Literal["nin"]
-
     :vartype type: str or str or str or str or str or str or str or str
     :ivar key: The key to compare against the value. Required.
     :vartype key: str
@@ -6716,6 +6749,9 @@ class CustomToolParam(Tool, discriminator="custom"):  # pylint: disable=docstrin
     :vartype type: str or ~azure.ai.projects.models.CUSTOM
     :ivar name: The name of the custom tool, used to identify it in tool calls. Required.
     :vartype name: str
+    :ivar async_property: Whether the tool response can be returned asynchronously versus
+     immediately returned on next response creation.
+    :vartype async_property: bool
     :ivar description: Optional description of the custom tool, used to provide more context.
     :vartype description: str
     :ivar format: The input format for the custom tool. Default is unconstrained text.
@@ -6730,6 +6766,11 @@ class CustomToolParam(Tool, discriminator="custom"):  # pylint: disable=docstrin
     """The type of the custom tool. Always ``custom``. Required. CUSTOM."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the custom tool, used to identify it in tool calls. Required."""
+    async_property: Optional[bool] = rest_field(
+        name="async", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the tool response can be returned asynchronously versus immediately returned on next
+     response creation."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional description of the custom tool, used to provide more context."""
     format: Optional["_models.CustomToolParamFormat"] = rest_field(
@@ -6747,6 +6788,7 @@ class CustomToolParam(Tool, discriminator="custom"):  # pylint: disable=docstrin
         self,
         *,
         name: str,
+        async_property: Optional[bool] = None,
         description: Optional[str] = None,
         format: Optional["_models.CustomToolParamFormat"] = None,
         defer_loading: Optional[bool] = None,
@@ -9951,6 +9993,8 @@ class FunctionTool(Tool, discriminator="function"):  # pylint: disable=docstring
     :vartype type: str or ~azure.ai.projects.models.FUNCTION
     :ivar name: The name of the function to call. Required.
     :vartype name: str
+    :ivar async_property:
+    :vartype async_property: bool
     :ivar description:
     :vartype description: str
     :ivar parameters: Required.
@@ -9969,6 +10013,9 @@ class FunctionTool(Tool, discriminator="function"):  # pylint: disable=docstring
     """The type of the function tool. Always ``function``. Required. FUNCTION."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function to call. Required."""
+    async_property: Optional[bool] = rest_field(
+        name="async", visibility=["read", "create", "update", "delete", "query"]
+    )
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     parameters: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
@@ -9988,6 +10035,7 @@ class FunctionTool(Tool, discriminator="function"):  # pylint: disable=docstring
         name: str,
         parameters: dict[str, Any],
         strict: bool,
+        async_property: Optional[bool] = None,
         description: Optional[str] = None,
         output_schema: Optional[dict[str, Any]] = None,
         defer_loading: Optional[bool] = None,
@@ -10019,6 +10067,9 @@ class FunctionToolParam(_Model):  # pylint: disable=docstring-keyword-should-mat
     :vartype strict: bool
     :ivar type: Required. Default value is "function".
     :vartype type: str
+    :ivar async_property: Whether the tool response can be returned asynchronously versus
+     immediately returned on next response creation.
+    :vartype async_property: bool
     :ivar output_schema:
     :vartype output_schema: dict[str, any]
     :ivar defer_loading: Whether this function should be deferred and discovered via tool search.
@@ -10036,6 +10087,11 @@ class FunctionToolParam(_Model):  # pylint: disable=docstring-keyword-should-mat
     strict: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     type: Literal["function"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required. Default value is \"function\"."""
+    async_property: Optional[bool] = rest_field(
+        name="async", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the tool response can be returned asynchronously versus immediately returned on next
+     response creation."""
     output_schema: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     defer_loading: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether this function should be deferred and discovered via tool search."""
@@ -10051,6 +10107,7 @@ class FunctionToolParam(_Model):  # pylint: disable=docstring-keyword-should-mat
         description: Optional[str] = None,
         parameters: Optional["_models.EmptyModelParam"] = None,
         strict: Optional[bool] = None,
+        async_property: Optional[bool] = None,
         output_schema: Optional[dict[str, Any]] = None,
         defer_loading: Optional[bool] = None,
         allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = None,
@@ -10640,8 +10697,9 @@ class ImageGenTool(
      IMAGE_GENERATION.
     :vartype type: str or ~azure.ai.projects.models.IMAGE_GENERATION
     :ivar model: Is one of the following types: Literal["gpt-image-1"],
-     Literal["gpt-image-1-mini"], Literal["gpt-image-1.5"], str
-    :vartype model: str or str or str or str
+     Literal["gpt-image-1-mini"], Literal["gpt-image-1.5"], Literal["gpt-image-2"],
+     Literal["gpt-image-2-2026-04-21"], str
+    :vartype model: str or str or str or str or str or str
     :ivar quality: The quality of the generated image. One of ``low``, ``medium``, ``high``, or
      ``auto``. Default: ``auto``. Is one of the following types: Literal["low"], Literal["medium"],
      Literal["high"], Literal["auto"]
@@ -10667,9 +10725,11 @@ class ImageGenTool(
     :ivar moderation: Moderation level for the generated image. Default: ``auto``. Is either a
      Literal["auto"] type or a Literal["low"] type.
     :vartype moderation: str or str
-    :ivar background: Background type for the generated image. One of ``transparent``, ``opaque``,
-     or ``auto``. Default: ``auto``. Is one of the following types: Literal["transparent"],
-     Literal["opaque"], Literal["auto"]
+    :ivar background: Set the background of the generated image. One of ``transparent``,
+     ``opaque``, or ``auto``. Transparent backgrounds are available for supported GPT Image models.
+     For ``gpt-image-2`` and ``gpt-image-2-2026-04-21``, this support is in preview. When using
+     ``transparent``, set the output format to ``png`` or ``webp``. Default: ``auto``. Is one of the
+     following types: Literal["transparent"], Literal["opaque"], Literal["auto"]
     :vartype background: str or str or str
     :ivar input_fidelity: Known values are: "high" and "low".
     :vartype input_fidelity: str or ~azure.ai.projects.models.InputFidelity
@@ -10694,11 +10754,18 @@ class ImageGenTool(
 
     type: Literal[ToolType.IMAGE_GENERATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the image generation tool. Always ``image_generation``. Required. IMAGE_GENERATION."""
-    model: Optional[Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-1.5"], str]] = (
-        rest_field(visibility=["read", "create", "update", "delete", "query"])
-    )
+    model: Optional[
+        Union[
+            Literal["gpt-image-1"],
+            Literal["gpt-image-1-mini"],
+            Literal["gpt-image-1.5"],
+            Literal["gpt-image-2"],
+            Literal["gpt-image-2-2026-04-21"],
+            str,
+        ]
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Is one of the following types: Literal[\"gpt-image-1\"], Literal[\"gpt-image-1-mini\"],
-     Literal[\"gpt-image-1.5\"], str"""
+     Literal[\"gpt-image-1.5\"], Literal[\"gpt-image-2\"], Literal[\"gpt-image-2-2026-04-21\"], str"""
     quality: Optional[Literal["low", "medium", "high", "auto"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10733,9 +10800,11 @@ class ImageGenTool(
     background: Optional[Literal["transparent", "opaque", "auto"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Background type for the generated image. One of ``transparent``, ``opaque``, or ``auto``.
-     Default: ``auto``. Is one of the following types: Literal[\"transparent\"],
-     Literal[\"opaque\"], Literal[\"auto\"]"""
+    """Set the background of the generated image. One of ``transparent``, ``opaque``, or ``auto``.
+     Transparent backgrounds are available for supported GPT Image models. For ``gpt-image-2`` and
+     ``gpt-image-2-2026-04-21``, this support is in preview. When using ``transparent``, set the
+     output format to ``png`` or ``webp``. Default: ``auto``. Is one of the following types:
+     Literal[\"transparent\"], Literal[\"opaque\"], Literal[\"auto\"]"""
     input_fidelity: Optional[Union[str, "_models.InputFidelity"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10766,7 +10835,14 @@ class ImageGenTool(
         self,
         *,
         model: Optional[
-            Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-1.5"], str]
+            Union[
+                Literal["gpt-image-1"],
+                Literal["gpt-image-1-mini"],
+                Literal["gpt-image-1.5"],
+                Literal["gpt-image-2"],
+                Literal["gpt-image-2-2026-04-21"],
+                str,
+            ]
         ] = None,
         quality: Optional[Literal["low", "medium", "high", "auto"]] = None,
         size: Optional[
@@ -11798,7 +11874,6 @@ class MCPTool(Tool, discriminator="mcp"):  # pylint: disable=docstring-keyword-s
        Literal["connector_googledrive"], Literal["connector_microsoftteams"],
        Literal["connector_outlookcalendar"], Literal["connector_outlookemail"],
        Literal["connector_sharepoint"]
-
     :vartype connector_id: str or str or str or str or str or str or str or str
     :ivar tunnel_id: The Secure MCP Tunnel ID to use instead of a direct server URL. One of
      ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided.
@@ -11972,7 +12047,6 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):  # pylint: disable=docst
        Literal["connector_googledrive"], Literal["connector_microsoftteams"],
        Literal["connector_outlookcalendar"], Literal["connector_outlookemail"],
        Literal["connector_sharepoint"]
-
     :vartype connector_id: str or str or str or str or str or str or str or str
     :ivar tunnel_id: The Secure MCP Tunnel ID to use instead of a direct server URL. One of
      ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided.
@@ -13017,6 +13091,52 @@ class MicrosoftFabricPreviewTool(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolType.FABRIC_DATAAGENT_PREVIEW  # type: ignore
+
+
+class MisalignmentErrorDetailsResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """MisalignmentErrorDetailsResource.
+
+    :ivar error_type: An optional classification; clients must accept additional values. Known
+     values are: "potentially_unintended_data_transfer", "potentially_unintended_data_access",
+     "potentially_unintended_destructive_activity", and "other".
+    :vartype error_type: str or ~azure.ai.projects.models._MisalignmentErrorType
+    :ivar detailed_explanation: The public explanation for this block.
+    :vartype detailed_explanation: str
+    :ivar steer: An optional public continuation instruction.
+    :vartype steer: ~azure.ai.projects.models._MisalignmentSteer
+    """
+
+    error_type: Optional[Union[str, "_models._MisalignmentErrorType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An optional classification; clients must accept additional values. Known values are:
+     \"potentially_unintended_data_transfer\", \"potentially_unintended_data_access\",
+     \"potentially_unintended_destructive_activity\", and \"other\"."""
+    detailed_explanation: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The public explanation for this block."""
+    steer: Optional["_models._MisalignmentSteer"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An optional public continuation instruction."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error_type: Optional[Union[str, "_models._MisalignmentErrorType"]] = None,
+        detailed_explanation: Optional[str] = None,
+        steer: Optional["_models._MisalignmentSteer"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ModelCredentialRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -17028,12 +17148,14 @@ class RealtimeServerEventConversationItemAdded(
     several cases:
 
     * When the client sends a `conversation.item.create` event.
-    * When the input audio buffer is committed. In this case the item will be a user message containing the audio from
-      the buffer.
-    * When the model is generating a Response. In this case the `conversation.item.added` event will be sent when the
-      model starts generating a specific Item, and thus it will not yet have any content (and `status` will be
-      `in_progress`). The event will include the full content of the Item (except when model is generating a Response)
-      except for audio data, which can be retrieved separately with a `conversation.item.retrieve` event if necessary.
+    * When the input audio buffer is committed. In this case the item will be a user message
+    containing the audio from the buffer.
+    * When the model is generating a Response. In this case the `conversation.item.added` event
+    will be sent when the model starts generating a specific Item, and thus it will not yet have
+    any content (and `status` will be `in_progress`).
+    The event will include the full content of the Item (except when model is generating a
+    Response) except for audio data, which can be retrieved separately with a
+    `conversation.item.retrieve` event if necessary.
 
     :ivar event_id: The unique ID of the server event. Required.
     :vartype event_id: str
@@ -17081,11 +17203,14 @@ class RealtimeServerEventConversationItemCreated(
     """Returned when a conversation item is created. There are several scenarios that produce this
     event:
 
-    * The server is generating a Response, which if successful will produce either one or two Items, which will be of
-      type `message` (role `assistant`) or type `function_call`.
-    * The input audio buffer has been committed, either by the client or the server (in `server_vad` mode). The server
-      will take the content of the input audio buffer and add it to a new user message Item.
-    * The client has sent a `conversation.item.create` event to add a new Item to the Conversation.
+    * The server is generating a Response, which if successful will produce
+    either one or two Items, which will be of type `message`
+    (role `assistant`) or type `function_call`.
+    * The input audio buffer has been committed, either by the client or the
+    server (in `server_vad` mode). The server will take the content of the
+    input audio buffer and add it to a new user message Item.
+    * The client has sent a `conversation.item.create` event to add a new Item
+    to the Conversation.
 
     :ivar event_id: The unique ID of the server event. Required.
     :vartype event_id: str
@@ -20574,10 +20699,12 @@ class SessionLogEvent(_Model):  # pylint: disable=docstring-keyword-should-match
     .. code-block::
 
        event: log
-       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server on port 18080"}
+       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server
+    on port 18080"}
 
        event: log
-       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
+       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+    connected to container"}
 
     :ivar event: The SSE event type. Currently ``log``, but additional event types may be added in
      the future. Clients should ignore unrecognized event types. Required. "log"
@@ -25045,14 +25172,15 @@ class VoiceAgentAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-
     Provider-specific fields are selected by ``voice_type``:
 
     * `openai`: `voice` and `speed`.
-    * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`, `custom_lexicon_url`,
-      `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
+    * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`,
+    `custom_lexicon_url`,
+    `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
     * `azure-custom`: all `azure-standard` fields except `style`, plus `custom_voice_endpoint_id`.
     * `azure-personal`: all `azure-standard` fields except `style`, plus `personal_voice_model`.
-    * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus `personal_voice_model`; the
-      voice name is derived from the avatar.
-    * `azure-realtime-native`: `voice` and `speed`. `format` and `output_audio_timestamp_types` apply to every voice
-      type.
+    * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus
+    `personal_voice_model`; the voice name is derived from the avatar.
+    * `azure-realtime-native`: `voice` and `speed`.
+    `format` and `output_audio_timestamp_types` apply to every voice type.
 
     :ivar format: The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz
      PCM.
