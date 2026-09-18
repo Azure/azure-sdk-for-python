@@ -1,0 +1,98 @@
+[
+  {
+    "name": "simple_filter",
+    "query": "SELECT * FROM c WHERE c.partitionKey = @pk",
+    "parameters": [{"name": "@pk", "value": "p1"}],
+    "expected_sql": "SELECT * FROM [dbo].[normal-bulk] AS c WHERE c.partitionKey = ?",
+    "expected_params": ["p1"],
+    "select_value": false
+  },
+  {
+    "name": "order_by_single",
+    "query": "SELECT TOP 5 * FROM c ORDER BY c.id",
+    "parameters": [],
+    "expected_sql": "SELECT TOP 5 * FROM [dbo].[normal-bulk] AS c ORDER BY c.id",
+    "expected_params": [],
+    "select_value": false
+  },
+  {
+    "name": "order_by_desc",
+    "query": "SELECT TOP 10 * FROM c ORDER BY c.timestamp DESC",
+    "parameters": [],
+    "expected_sql": "SELECT TOP 10 * FROM [dbo].[normal-bulk] AS c ORDER BY c.timestamp DESC",
+    "expected_params": [],
+    "select_value": false
+  },
+  {
+    "name": "count_all",
+    "query": "SELECT VALUE COUNT(1) FROM c",
+    "parameters": [],
+    "expected_sql": "SELECT COUNT(1) FROM [dbo].[normal-bulk] AS c",
+    "expected_params": [],
+    "select_value": true
+  },
+  {
+    "name": "count_with_filter",
+    "query": "SELECT VALUE COUNT(1) FROM c WHERE c.partitionKey = @pk",
+    "parameters": [{"name": "@pk", "value": "p2"}],
+    "expected_sql": "SELECT COUNT(1) FROM [dbo].[normal-bulk] AS c WHERE c.partitionKey = ?",
+    "expected_params": ["p2"],
+    "select_value": true
+  },
+  {
+    "name": "sum_aggregation",
+    "query": "SELECT VALUE SUM(c.value) FROM c WHERE c.partitionKey = @pk",
+    "parameters": [{"name": "@pk", "value": "partition1"}],
+    "expected_sql": "SELECT SUM(c.value) FROM [dbo].[normal-bulk] AS c WHERE c.partitionKey = ?",
+    "expected_params": ["partition1"],
+    "select_value": true
+  },
+  {
+    "name": "paged_with_offset_limit",
+    "query": "SELECT * FROM c WHERE c.partitionKey = @pk ORDER BY c.id OFFSET 0 LIMIT 10",
+    "parameters": [{"name": "@pk", "value": "p2"}],
+    "expected_sql": "SELECT * FROM [dbo].[normal-bulk] AS c WHERE c.partitionKey = ? ORDER BY c.id OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY",
+    "expected_params": ["p2"],
+    "select_value": false
+  },
+  {
+    "name": "paged_with_offset_limit_larger",
+    "query": "SELECT * FROM c WHERE c.partitionKey = @pk ORDER BY c.id OFFSET 100 LIMIT 50",
+    "parameters": [{"name": "@pk", "value": "p3"}],
+    "expected_sql": "SELECT * FROM [dbo].[normal-bulk] AS c WHERE c.partitionKey = ? ORDER BY c.id OFFSET 100 ROWS FETCH NEXT 50 ROWS ONLY",
+    "expected_params": ["p3"],
+    "select_value": false
+  },
+  {
+    "name": "multi_param",
+    "query": "SELECT * FROM c WHERE c.partitionKey = @pk AND c.status = @status",
+    "parameters": [{"name": "@pk", "value": "partition1"}, {"name": "@status", "value": "active"}],
+    "expected_sql": "SELECT * FROM [dbo].[normal-bulk] AS c WHERE c.partitionKey = ? AND c.status = ?",
+    "expected_params": ["partition1", "active"],
+    "select_value": false
+  },
+  {
+    "name": "projection",
+    "query": "SELECT c.id, c.partitionKey FROM c WHERE c.partitionKey = @pk",
+    "parameters": [{"name": "@pk", "value": "p1"}],
+    "expected_sql": "SELECT c.id, c.partitionKey FROM [dbo].[normal-bulk] AS c WHERE c.partitionKey = ?",
+    "expected_params": ["p1"],
+    "select_value": false
+  },
+  {
+    "name": "max_aggregation",
+    "query": "SELECT VALUE MAX(c.value) FROM c",
+    "parameters": [],
+    "expected_sql": "SELECT MAX(c.value) FROM [dbo].[normal-bulk] AS c",
+    "expected_params": [],
+    "select_value": true
+  },
+  {
+    "name": "avg_aggregation",
+    "query": "SELECT VALUE AVG(c.value) FROM c WHERE c.partitionKey = @pk",
+    "parameters": [{"name": "@pk", "value": "p1"}],
+    "expected_sql": "SELECT AVG(c.value) FROM [dbo].[normal-bulk] AS c WHERE c.partitionKey = ?",
+    "expected_params": ["p1"],
+    "select_value": true
+  }
+]
