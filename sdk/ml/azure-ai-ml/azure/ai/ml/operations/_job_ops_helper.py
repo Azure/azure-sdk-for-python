@@ -15,10 +15,9 @@ from typing import Any, Dict, Iterable, List, Optional, TextIO, Union
 from urllib.parse import parse_qs
 
 from azure.ai.ml._artifacts._artifact_utilities import get_datastore_info, list_logs_in_datastore
-from azure.ai.ml._restclient.runhistory.models import Run, RunDetails, TypedAssetReference
-from azure.ai.ml._restclient.arm_ml_service.models import DataType
+from azure.ai.ml._restclient.arm_ml_service.models import DataType, JobBase
 from azure.ai.ml._restclient.arm_ml_service.models import JobType as RestJobType
-from azure.ai.ml._restclient.arm_ml_service.models import JobBase
+from azure.ai.ml._restclient.runhistory.models import Run, RunDetails, TypedAssetReference
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._storage_utils import AzureMLDatastorePathUri
 from azure.ai.ml._utils.utils import create_requests_pipeline_with_retry, download_text_from_url

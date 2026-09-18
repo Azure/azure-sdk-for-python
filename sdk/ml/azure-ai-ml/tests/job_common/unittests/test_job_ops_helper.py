@@ -20,9 +20,9 @@ from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.operations._job_ops_helper import (
     _get_sorted_filtered_logs,
+    _incremental_print,
     get_job_output_uris_from_dataplane,
     has_pat_token,
-    _incremental_print,
     list_logs,
     stream_logs_until_completion,
 )
