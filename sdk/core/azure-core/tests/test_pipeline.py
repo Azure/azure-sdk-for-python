@@ -656,19 +656,21 @@ def test_sensitive_headers_stripped_on_cross_domain_redirect():
     t_b.start()
 
     try:
-        pipeline = Pipeline(
-            transport=RequestsTransport(connection_verify=False),
-            policies=[RedirectPolicy(), SensitiveHeaderCleanupPolicy()],
-        )
         req = HttpRequest("GET", f"http://127.0.0.1:{server_a.server_address[1]}/start")
         req.headers["api-key"] = "fake-api-key"
         req.headers["Ocp-Apim-Subscription-Key"] = "fake-sub-key"
         req.headers["Authorization"] = "Bearer fake-token"
-        pipeline.run(req)
+        with Pipeline(
+            transport=RequestsTransport(connection_verify=False),
+            policies=[RedirectPolicy(), SensitiveHeaderCleanupPolicy()],
+        ) as pipeline:
+            pipeline.run(req)
 
         assert "api-key" not in captured.get("headers", {})
         assert "ocp-apim-subscription-key" not in captured.get("headers", {})
         assert "authorization" not in captured.get("headers", {})
     finally:
         server_a.shutdown()
+        server_a.server_close()
         server_b.shutdown()
+        server_b.server_close()
