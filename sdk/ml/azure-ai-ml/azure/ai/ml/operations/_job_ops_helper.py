@@ -12,6 +12,7 @@ import subprocess
 import sys
 import time
 from typing import Any, Dict, Iterable, List, Optional, TextIO, Union
+from urllib.parse import parse_qs
 
 from azure.ai.ml._artifacts._artifact_utilities import get_datastore_info, list_logs_in_datastore
 from azure.ai.ml._restclient.runhistory.models import Run, RunDetails, TypedAssetReference
@@ -19,6 +20,7 @@ from azure.ai.ml._restclient.arm_ml_service.models import DataType
 from azure.ai.ml._restclient.arm_ml_service.models import JobType as RestJobType
 from azure.ai.ml._restclient.arm_ml_service.models import JobBase
 from azure.ai.ml._utils._http_utils import HttpPipeline
+from azure.ai.ml._utils._storage_utils import AzureMLDatastorePathUri
 from azure.ai.ml._utils.utils import create_requests_pipeline_with_retry, download_text_from_url
 from azure.ai.ml.constants._common import GitProperties
 from azure.ai.ml.constants._job.job import JobLogPattern, JobType
@@ -50,8 +52,7 @@ def _normalize_asset_type(asset_type: Optional[str]) -> str:
 
 
 _DATA_ASSET_TYPES = {
-    _normalize_asset_type(data_type)
-    for data_type in (DataType.URI_FILE, DataType.URI_FOLDER, DataType.MLTABLE)
+    _normalize_asset_type(data_type) for data_type in (DataType.URI_FILE, DataType.URI_FOLDER, DataType.MLTABLE)
 }
 _MODEL_ASSET_TYPES = {_normalize_asset_type(t) for t in ("CustomModel", "MLFlowModel", "TritonModel")}
 
@@ -269,18 +270,19 @@ def stream_logs_until_completion(
         )
         is_uri_folder = default_output and default_output.job_output_type == DataType.URI_FOLDER
         if is_uri_folder:
-            output_uri = default_output.uri  # type: ignore
-            # Parse the uri format
-            output_uri = output_uri.split("datastores/")[1]
-            datastore_name, prefix = output_uri.split("/", 1)
+            output_uri = AzureMLDatastorePathUri(default_output.uri)  # type: ignore
+            datastore_name = output_uri.datastore
+            prefix = output_uri.path
             ds_properties = get_datastore_info(datastore_operations, datastore_name)
-            # Reading logs straight from the datastore requires signing a short-lived SAS, which is only
-            # possible with an account key or an existing SAS token (both plain strings). Identity-based
-            # datastores resolve to a TokenCredential instead, which cannot sign a SAS. In that case fall
-            # back to the RunHistory log files, which are already SAS-scoped by the service.
-            if not isinstance(ds_properties.get("credential"), str):
+            credential = ds_properties.get("credential")
+            # A SAS token authorizes access but cannot sign another SAS.
+            if (
+                not isinstance(credential, str)
+                or not credential
+                or "sig" in parse_qs(credential.lstrip("?"), keep_blank_values=True)
+            ):
                 module_logger.debug(
-                    "Datastore '%s' has no signable key or SAS token; streaming logs from RunHistory instead.",
+                    "Datastore '%s' has no account key; streaming logs from RunHistory instead.",
                     datastore_name,
                 )
                 ds_properties = None
