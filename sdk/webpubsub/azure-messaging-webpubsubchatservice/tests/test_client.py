@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
+import runpy
 import time
+from pathlib import Path
 from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
@@ -120,18 +122,22 @@ def test_updating_key_credential_changes_subsequent_request_tokens():
         client.close()
 
 
-def test_reverse_proxy_preserves_path_query_and_original_key_audience():
+@pytest.mark.parametrize("endpoint_suffix", ["", "/"])
+@pytest.mark.parametrize("proxy_suffix", ["", "/"])
+def test_reverse_proxy_preserves_path_query_and_original_key_audience(endpoint_suffix, proxy_suffix):
     proxy_endpoint = "https://proxy.contoso.com"
+    with WebPubSubChatServiceClient(ENDPOINT, HUB, AzureKeyCredential(ACCESS_KEY)) as direct_client:
+        original_url = _capture_list_roles_request(direct_client).url
     client = WebPubSubChatServiceClient(
-        ENDPOINT,
+        ENDPOINT + endpoint_suffix,
         HUB,
         AzureKeyCredential(ACCESS_KEY),
-        reverse_proxy_endpoint=proxy_endpoint,
+        reverse_proxy_endpoint=proxy_endpoint + proxy_suffix,
     )
     try:
         request = _capture_list_roles_request(client)
+        assert request.url == original_url.replace(ENDPOINT, proxy_endpoint, 1)
         token = request.headers["Authorization"].removeprefix("Bearer ")
-        original_url = request.url.replace(proxy_endpoint, ENDPOINT, 1)
         claims = jwt.decode(token, ACCESS_KEY, algorithms=["HS256"], audience=original_url)
 
         assert urlparse(request.url).netloc == "proxy.contoso.com"
@@ -142,15 +148,21 @@ def test_reverse_proxy_preserves_path_query_and_original_key_audience():
         client.close()
 
 
-def test_reverse_proxy_with_entra_credential_keeps_bearer_token():
+@pytest.mark.parametrize("endpoint_suffix", ["", "/"])
+@pytest.mark.parametrize("proxy_suffix", ["", "/"])
+def test_reverse_proxy_with_entra_credential_keeps_bearer_token(endpoint_suffix, proxy_suffix):
+    proxy_endpoint = "https://proxy.contoso.com"
+    with WebPubSubChatServiceClient(ENDPOINT, HUB, FakeTokenCredential()) as direct_client:
+        original_url = _capture_list_roles_request(direct_client).url
     client = WebPubSubChatServiceClient(
-        ENDPOINT,
+        ENDPOINT + endpoint_suffix,
         HUB,
         FakeTokenCredential(),
-        reverse_proxy_endpoint="https://proxy.contoso.com",
+        reverse_proxy_endpoint=proxy_endpoint + proxy_suffix,
     )
     try:
         request = _capture_list_roles_request(client)
+        assert request.url == original_url.replace(ENDPOINT, proxy_endpoint, 1)
         assert urlparse(request.url).netloc == "proxy.contoso.com"
         assert request.headers["Authorization"] == "Bearer entra-token"
     finally:
@@ -219,6 +231,20 @@ def test_client_access_token_rejects_unsupported_endpoint(endpoint, use_key):
             with pytest.raises(ValueError, match="HTTP or HTTPS"):
                 client.get_client_access_token()
         generate.assert_not_called()
+
+
+def test_client_access_sample_does_not_log_token(monkeypatch, capsys):
+    monkeypatch.setenv("WPS_CHAT_CONNECTION_STRING", f"Endpoint={ENDPOINT};AccessKey={ACCESS_KEY}")
+    base_url = f"wss://example.webpubsub.azure.com/client/hubs/{HUB}"
+    access = {"baseUrl": base_url, "token": "secret-token", "url": f"{base_url}?access_token=secret-token"}
+    sample_path = Path(__file__).resolve().parents[1] / "samples" / "sample_client_access.py"
+
+    with patch.object(WebPubSubChatServiceClient, "get_client_access_token", return_value=access):
+        runpy.run_path(str(sample_path), run_name="__main__")
+
+    captured = capsys.readouterr()
+    assert captured.out == f"{base_url}\n"
+    assert captured.err == ""
 
 
 def test_builtin_roles_and_generated_permissions():

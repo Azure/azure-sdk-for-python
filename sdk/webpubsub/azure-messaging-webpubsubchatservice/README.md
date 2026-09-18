@@ -162,7 +162,9 @@ with WebPubSubChatServiceClient.from_connection_string(
     os.environ.get("WPS_CHAT_HUB", "test_hub"),
 ) as client:
     access = client.get_client_access_token(user_id="sample-user")
-    print(access["url"])
+    # Give access["url"] to the intended client to connect; it includes the access token.
+    # Print only the token-free base URL here. Do not log access["url"].
+    print(access["baseUrl"])
 ```
 
 <!-- END SNIPPET -->
@@ -336,7 +338,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [entra_authorization]: https://learn.microsoft.com/azure/azure-web-pubsub/concept-azure-ad-authorization
 [python_logging]: https://docs.python.org/3/library/logging.html
 [azure_sdk_logging]: https://learn.microsoft.com/azure/developer/python/sdk/azure-sdk-logging
-[rest_api]: https://learn.microsoft.com/rest/api/webpubsub/dataplane/webpubsubchat/web-pub-sub-chat-service
+[rest_api]: https://learn.microsoft.com/rest/api/webpubsub/dataplane/webpubsubchat/web-pub-sub-chat-service-client
 [design_guidelines]: https://azure.github.io/azure-sdk/python_design.html
 [contributing]: https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

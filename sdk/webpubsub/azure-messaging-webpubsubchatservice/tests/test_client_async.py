@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
+import runpy
 import time
+from pathlib import Path
 from unittest.mock import AsyncMock, Mock, patch
 from urllib.parse import urlparse
 
@@ -59,17 +61,21 @@ async def test_async_connection_string_and_key_request_match_sync_behavior():
 
 
 @pytest.mark.asyncio
-async def test_async_reverse_proxy_with_key_uses_original_audience():
+@pytest.mark.parametrize("endpoint_suffix", ["", "/"])
+@pytest.mark.parametrize("proxy_suffix", ["", "/"])
+async def test_async_reverse_proxy_with_key_uses_original_audience(endpoint_suffix, proxy_suffix):
     proxy_endpoint = "https://proxy.contoso.com"
+    async with WebPubSubChatServiceClient(ENDPOINT, HUB, AzureKeyCredential(ACCESS_KEY)) as direct_client:
+        original_url = (await _capture_list_roles_request(direct_client)).url
     client = WebPubSubChatServiceClient(
-        ENDPOINT,
+        ENDPOINT + endpoint_suffix,
         HUB,
         AzureKeyCredential(ACCESS_KEY),
-        reverse_proxy_endpoint=proxy_endpoint,
+        reverse_proxy_endpoint=proxy_endpoint + proxy_suffix,
     )
     try:
         request = await _capture_list_roles_request(client)
-        original_url = request.url.replace(proxy_endpoint, ENDPOINT, 1)
+        assert request.url == original_url.replace(ENDPOINT, proxy_endpoint, 1)
         token = request.headers["Authorization"].removeprefix("Bearer ")
         claims = jwt.decode(token, ACCESS_KEY, algorithms=["HS256"], audience=original_url)
 
@@ -80,15 +86,21 @@ async def test_async_reverse_proxy_with_key_uses_original_audience():
 
 
 @pytest.mark.asyncio
-async def test_async_reverse_proxy_with_entra_credential_keeps_bearer_token():
+@pytest.mark.parametrize("endpoint_suffix", ["", "/"])
+@pytest.mark.parametrize("proxy_suffix", ["", "/"])
+async def test_async_reverse_proxy_with_entra_credential_keeps_bearer_token(endpoint_suffix, proxy_suffix):
+    proxy_endpoint = "https://proxy.contoso.com"
+    async with WebPubSubChatServiceClient(ENDPOINT, HUB, FakeAsyncTokenCredential()) as direct_client:
+        original_url = (await _capture_list_roles_request(direct_client)).url
     client = WebPubSubChatServiceClient(
-        ENDPOINT,
+        ENDPOINT + endpoint_suffix,
         HUB,
         FakeAsyncTokenCredential(),
-        reverse_proxy_endpoint="https://proxy.contoso.com",
+        reverse_proxy_endpoint=proxy_endpoint + proxy_suffix,
     )
     try:
         request = await _capture_list_roles_request(client)
+        assert request.url == original_url.replace(ENDPOINT, proxy_endpoint, 1)
         assert urlparse(request.url).netloc == "proxy.contoso.com"
         assert request.headers["Authorization"] == "Bearer entra-token"
     finally:
@@ -112,6 +124,22 @@ async def test_async_token_credential_client_access_token_uses_generated_operati
         generate.assert_awaited_once_with(user_id="alice", role=CHAT_ROLES, minutes_to_expire=60)
     finally:
         await client.close()
+
+
+@pytest.mark.asyncio
+async def test_async_client_access_sample_does_not_log_token(monkeypatch, capsys):
+    monkeypatch.setenv("WPS_CHAT_CONNECTION_STRING", f"Endpoint={ENDPOINT};AccessKey={ACCESS_KEY}")
+    base_url = f"wss://example.webpubsub.azure.com/client/hubs/{HUB}"
+    access = {"baseUrl": base_url, "token": "secret-token", "url": f"{base_url}?access_token=secret-token"}
+    sample_path = Path(__file__).resolve().parents[1] / "samples" / "sample_client_access_async.py"
+    sample = runpy.run_path(str(sample_path))
+
+    with patch.object(WebPubSubChatServiceClient, "get_client_access_token", return_value=access):
+        await sample["main"]()
+
+    captured = capsys.readouterr()
+    assert captured.out == f"{base_url}\n"
+    assert captured.err == ""
 
 
 @pytest.mark.asyncio

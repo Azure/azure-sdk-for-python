@@ -16,7 +16,9 @@ def client_access():
         os.environ.get("WPS_CHAT_HUB", "test_hub"),
     ) as client:
         access = client.get_client_access_token(user_id="sample-user")
-        print(access["url"])
+        # Give access["url"] to the intended client to connect; it includes the access token.
+        # Print only the token-free base URL here. Do not log access["url"].
+        print(access["baseUrl"])
     # [END client_access]
 
 

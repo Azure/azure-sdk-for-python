@@ -20,7 +20,9 @@ async def main():
     )
     try:
         access = await client.get_client_access_token(user_id="sample-user")
-        print(access["url"])
+        # Give access["url"] to the intended client to connect; it includes the access token.
+        # Print only the token-free base URL here. Do not log access["url"].
+        print(access["baseUrl"])
     finally:
         await client.close()
 

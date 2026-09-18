@@ -55,9 +55,12 @@ class WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated):
             raise ValueError("Parameter 'hub' must not be empty.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
+        endpoint = endpoint.rstrip("/")
         port = kwargs.pop("port", None)
         if port:
-            endpoint = f"{endpoint.rstrip('/')}:{port}"
+            endpoint = f"{endpoint}:{port}"
+        if kwargs.get("reverse_proxy_endpoint"):
+            kwargs["reverse_proxy_endpoint"] = kwargs["reverse_proxy_endpoint"].rstrip("/")
         kwargs["origin_endpoint"] = endpoint
         if isinstance(credential, AzureKeyCredential):
             kwargs["authentication_policy"] = JwtCredentialPolicy(
