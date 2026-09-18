@@ -13,6 +13,11 @@ from .. import models as response_models
 
 
 from .._id_generator import IdGenerator
+from .._metadata_constraints import (
+    MAX_METADATA_KEYS,
+    MAX_METADATA_KEY_LENGTH,
+    MAX_METADATA_VALUE_LENGTH,
+)
 from . import _internals
 from ._builders import (
     OutputItemBuilder,
@@ -96,14 +101,19 @@ def _merge_response_metadata(response: dict[str, Any], metadata: Mapping[str, st
             raise TypeError(f"metadata keys must be str, got {type(key).__name__}")
         if not isinstance(value, str):
             raise TypeError(f"metadata values must be str, got {type(value).__name__}")
-        if len(key) > 64:
-            raise ValueError(f"metadata key exceeds the 64-character limit: {key[:64]}...")
-        if len(value) > 512:
-            raise ValueError(f"metadata value for key '{key}' exceeds the 512-character limit")
+        if len(key) > MAX_METADATA_KEY_LENGTH:
+            raise ValueError(
+                f"metadata key exceeds the {MAX_METADATA_KEY_LENGTH}-character limit: "
+                f"{key[:MAX_METADATA_KEY_LENGTH]}..."
+            )
+        if len(value) > MAX_METADATA_VALUE_LENGTH:
+            raise ValueError(
+                f"metadata value for key '{key}' exceeds the {MAX_METADATA_VALUE_LENGTH}-character limit"
+            )
         merged[key] = value
 
-    if len(merged) > 16:
-        raise ValueError("response metadata must have at most 16 key-value pairs")
+    if len(merged) > MAX_METADATA_KEYS:
+        raise ValueError(f"response metadata must have at most {MAX_METADATA_KEYS} key-value pairs")
     response["metadata"] = merged
 
 
