@@ -51,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-06-01-preview/SandboxGroupsCreateOrUpdate.json
+# x-ms-original-file: 2026-07-01/SandboxGroupsCreateOrUpdate.json
 if __name__ == "__main__":
     main()

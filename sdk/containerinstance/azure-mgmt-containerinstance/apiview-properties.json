@@ -210,5 +210,5 @@
         "azure.mgmt.containerinstance.operations.SubnetServiceAssociationLinkOperations.begin_delete": "Microsoft.ContainerInstance.SubnetServiceAssociationLinkOperationGroup.delete",
         "azure.mgmt.containerinstance.aio.operations.SubnetServiceAssociationLinkOperations.begin_delete": "Microsoft.ContainerInstance.SubnetServiceAssociationLinkOperationGroup.delete"
     },
-    "CrossLanguageVersion": "833191393460"
+    "CrossLanguageVersion": "8754c1d1e0c1"
 }
