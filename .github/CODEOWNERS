@@ -35,14 +35,14 @@
 /sdk/agrifood/azure-agrifood-farming/    @bhargav-kansagara
 
 # PRLabel: %AI
-/sdk/ai/    @dargilco @luigiw @needuv @singankit @howieleung
+/sdk/ai/    @dargilco @luigiw @needuv @singankit @howieleung @Azure/ai-foundry-devex
 
 # ServiceLabel: %AI
 # ServiceOwners: @luigiw @needuv @singankit
 
 # ServiceLabel: %AI Agents %Service Attention
 # PRLabel: %AI Agents
-/sdk/ai/azure-ai-agents/    @dargilco @glharper @howieleung @nick863 @trangevi
+/sdk/ai/azure-ai-agents/    @dargilco @glharper @howieleung @nick863 @trangevi @Azure/ai-foundry-devex
 
 # ServiceLabel: %AI Model Inference %Service Attention
 # PRLabel: %AI Model Inference
@@ -50,7 +50,7 @@
 
 # ServiceLabel: %AI Projects %Service Attention
 # PRLabel: %AI Projects
-/sdk/ai/azure-ai-projects/    @dargilco @glharper @howieleung @kingernupur @nick863 @trangevi @bobogogo1990
+/sdk/ai/azure-ai-projects/    @dargilco @glharper @howieleung @kingernupur @nick863 @trangevi @bobogogo1990 @Azure/ai-foundry-devex
 
 # PRLabel: %App Configuration
 /sdk/appconfiguration/    @avanigupta @jimmyca15 @mrm9084 @yuanqu72
