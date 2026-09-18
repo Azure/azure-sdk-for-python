@@ -1,0 +1,3 @@
+# Pins for the azpysdk `breaking` change check. Single source of truth (see README.md).
+# The breaking-change checker itself is installed from a local path (`-e`) in code.
+jsondiff==1.2.0

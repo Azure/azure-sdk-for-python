@@ -1,0 +1,99 @@
+# Daily job that keeps the Central Feed Services (CFS) feed warm.
+#
+# CFS is an upstream pull-through cache for PyPI. Authenticated requests for a
+# not-yet-cached package version pull it through from PyPI and cache it forever;
+# unauthenticated pipelines (e.g. fork PR CI) can only read what is already
+# cached. This job runs authenticated on a daily schedule and `pip download`s the
+# full transitive closure of every dependency declared in the repo (including the
+# azpysdk static-analysis tool pins in eng/tool_requirements/), so the latest
+# transitive versions are cached before an unauthenticated CI run needs them.
+#
+# See eng/scripts/warm_cfs_feed.py for the scanning/download logic.
+
+trigger: none
+pr: none
+
+schedules:
+  - cron: "0 8 * * *"
+    displayName: Daily CFS feed warm-up (08:00 UTC)
+    branches:
+      include:
+        - main
+    always: true
+
+parameters:
+  - name: dryRun
+    displayName: Dry Run (discover dependencies without downloading)
+    type: boolean
+    default: false
+  - name: failOnError
+    displayName: Fail the job if any dependency could not be warmed
+    type: boolean
+    default: false
+
+extends:
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
+  parameters:
+    stages:
+      - stage: WarmCfsFeed
+        displayName: Warm CFS Feed
+
+        jobs:
+          - job: WarmCfsFeedJob
+            timeoutInMinutes: 180
+            displayName: Scan dependencies and warm CFS feed
+            variables:
+              - template: /eng/pipelines/templates/variables/globals.yml
+              - name: dryRunArg
+                ${{ if eq(parameters.dryRun, true) }}:
+                  value: '--dry-run'
+                ${{ else }}:
+                  value: ''
+              - name: failOnErrorArg
+                ${{ if eq(parameters.failOnError, true) }}:
+                  value: '--fail-on-error'
+                ${{ else }}:
+                  value: ''
+
+            pool:
+              name: azsdk-pool
+              image: ubuntu-24.04
+              os: linux
+
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: '$(Build.ArtifactStagingDirectory)/cfs-warm-report'
+                  artifactName: 'cfs-warm-report'
+                  condition: succeededOrFailed()
+                  sbomEnabled: false
+
+            steps:
+              - checkout: self
+
+              - template: /eng/pipelines/templates/steps/use-python-version.yml
+                parameters:
+                  versionSpec: '3.11'
+
+              # Authenticate to the feed so pip download can pull-through from PyPI upstream.
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                parameters:
+                  EnableTwineAuth: false
+                  EnableUvAuth: false
+
+              - script: |
+                  python -m pip install --upgrade pip
+                  python -m pip install "eng/tools/azure-sdk-tools"
+                displayName: 'Prep Environment'
+
+              - script: |
+                  mkdir -p "$(Build.ArtifactStagingDirectory)/cfs-warm-report"
+                  python eng/scripts/warm_cfs_feed.py \
+                    $(dryRunArg) \
+                    $(failOnErrorArg) \
+                    --report "$(Build.ArtifactStagingDirectory)/cfs-warm-report/report.json"
+                displayName: 'Warm CFS feed'
+                env:
+                  # PIP_INDEX_URL is set (with embedded credentials) by the auth step above;
+                  # warm_cfs_feed.py defaults --index-url to it.
+                  PIP_INDEX_URL: $(PIP_INDEX_URL)

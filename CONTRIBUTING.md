@@ -174,6 +174,29 @@ export PIP_INDEX_URL="https://your-azure-username:your-pat-token@pkgs.dev.azure.
 uv pip install <package> --index-url https://pypi.org/simple/
 ```
 
+#### Keeping the CFS feed warm
+
+Because CFS only serves versions it has already cached (and unauthenticated CI
+runs cannot trigger an upstream pull-through), a scheduled pipeline keeps the feed
+warm. `eng/scripts/warm_cfs_feed.py` scans every declared dependency in the repo —
+all `dev_requirements.txt` files, every `pyproject.toml`, the shared `eng/*.txt`
+requirement files, and the `azpysdk` tool pins in `eng/tool_requirements/` — and
+runs `pip download` (including transitive dependencies) against CFS so the latest
+versions are cached before an unauthenticated build needs them.
+
+Because our CI runs a matrix of Python versions across Linux, Windows and macOS,
+the script also does a cross-target pass: for every resolved package that ships
+compiled, platform-specific wheels (for example `cryptography`, `aiohttp`,
+`mypy`), it fetches the wheels for each configured `(python version, platform)`
+target so those are cached too. Pure-Python (`py3-none-any`) packages are covered
+by their single universal wheel. Use `--no-platform-matrix`, `--python-versions`
+and `--platforms` to control this pass.
+
+The static-analysis tools that `azpysdk` installs at runtime (mypy, pylint,
+pyright, sphinx, black, bandit, ...) are pinned in `eng/tool_requirements/*.txt`.
+That is the single source of truth for those versions; bump a tool by editing the
+relevant file there rather than hardcoding a version in the check modules.
+
 ### Dev Feed
 Daily dev build version of Azure sdk packages for python are available and are uploaded to Azure devops feed daily. Below is the link to Azure devops feed.
 [`https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python`](https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python)
