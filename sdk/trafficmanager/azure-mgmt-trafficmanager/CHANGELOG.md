@@ -1,5 +1,64 @@
 # Release History
 
+## 2.0.0 (2026-09-16)
+
+### Features Added
+
+  - Client `TrafficManagerManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `TrafficManagerManagementClient` added method `send_request`
+  - Model `Endpoint` added property `properties`
+  - Model `HeatMapModel` added property `properties`
+  - Model `Profile` added property `properties`
+  - Model `TrafficManagerGeographicHierarchy` added property `properties`
+  - Model `UserMetricsModel` added property `properties`
+  - Added model `CloudError`
+  - Added model `EndpointProperties`
+  - Added model `GeographicHierarchyProperties`
+  - Added model `HeatMapProperties`
+  - Added enum `HeatMapType`
+  - Added model `ProfileProperties`
+  - Added enum `RecordType`
+  - Added model `UserMetricsProperties`
+
+### Breaking Changes
+
+  - Model `Endpoint` deleted or renamed its instance variable `always_serve`
+  - Model `Endpoint` deleted or renamed its instance variable `custom_headers`
+  - Model `Endpoint` deleted or renamed its instance variable `endpoint_location`
+  - Model `Endpoint` deleted or renamed its instance variable `endpoint_monitor_status`
+  - Model `Endpoint` deleted or renamed its instance variable `endpoint_status`
+  - Model `Endpoint` deleted or renamed its instance variable `geo_mapping`
+  - Model `Endpoint` deleted or renamed its instance variable `min_child_endpoints`
+  - Model `Endpoint` deleted or renamed its instance variable `min_child_endpoints_i_pv4`
+  - Model `Endpoint` deleted or renamed its instance variable `min_child_endpoints_i_pv6`
+  - Model `Endpoint` deleted or renamed its instance variable `priority`
+  - Model `Endpoint` deleted or renamed its instance variable `subnets`
+  - Model `Endpoint` deleted or renamed its instance variable `target`
+  - Model `Endpoint` deleted or renamed its instance variable `target_resource_id`
+  - Model `Endpoint` deleted or renamed its instance variable `weight`
+  - Model `HeatMapModel` deleted or renamed its instance variable `end_time`
+  - Model `HeatMapModel` deleted or renamed its instance variable `endpoints`
+  - Model `HeatMapModel` deleted or renamed its instance variable `start_time`
+  - Model `HeatMapModel` deleted or renamed its instance variable `traffic_flows`
+  - Model `Profile` deleted or renamed its instance variable `allowed_endpoint_record_types`
+  - Model `Profile` deleted or renamed its instance variable `dns_config`
+  - Model `Profile` deleted or renamed its instance variable `endpoints`
+  - Model `Profile` deleted or renamed its instance variable `max_return`
+  - Model `Profile` deleted or renamed its instance variable `monitor_config`
+  - Model `Profile` deleted or renamed its instance variable `profile_status`
+  - Model `Profile` deleted or renamed its instance variable `traffic_routing_method`
+  - Model `Profile` deleted or renamed its instance variable `traffic_view_enrollment_status`
+  - Model `TrafficManagerGeographicHierarchy` deleted or renamed its instance variable `geographic_hierarchy`
+  - Model `UserMetricsModel` deleted or renamed its instance variable `key`
+  - Deleted or renamed model `ProfileListResult`
+  - Method `HeatMapOperations.get` changed type of its parameter `bot_right` from `List[float]` to `list[float]`
+  - Method `HeatMapOperations.get` changed its parameter `bot_right` from `positional_or_keyword` to `keyword_only`
+  - Method `HeatMapOperations.get` changed type of its parameter `heat_map_type` from `str` to `Union[str, HeatMapType]`
+  - Method `HeatMapOperations.get` removed default value `None` from its parameter `heat_map_type`
+  - Method `HeatMapOperations.get` changed its parameter `heat_map_type` from `keyword_only` to `positional_or_keyword`
+  - Method `HeatMapOperations.get` changed type of its parameter `top_left` from `List[float]` to `list[float]`
+  - Method `HeatMapOperations.get` changed its parameter `top_left` from `positional_or_keyword` to `keyword_only`
+
 ## 2.0.0b1 (2026-05-08)
 
 ### Features Added
