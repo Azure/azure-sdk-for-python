@@ -1,6 +1,3 @@
-Replace the **Update emitter package dependencies** task with the following. It resolves default and named catalogs, pins both upstream files to the same commit, and fails explicitly on missing or unsupported references. Keep the other steps unchanged, including authentication, npm lock-file generation, and draft-PR creation.
-
-```yaml
               - task: PowerShell@2
                 displayName: Update emitter package dependencies
                 inputs:
@@ -112,4 +109,3 @@ Replace the **Update emitter package dependencies** task with the following. It 
                     }
 
                     $packageJson | ConvertTo-Json -Depth 100 | Set-Content $packageJsonPath
-```
