@@ -4,6 +4,7 @@
 # ------------------------------------
 import functools
 import os
+import warnings
 from typing import Dict, Optional, Any
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
@@ -25,8 +26,49 @@ class ServiceFabricCredential(MsalManagedIdentityClient):
     def get_unavailable_message(self, desc: str = "") -> str:
         return f"Service Fabric managed identity configuration not found in environment. {desc}"
 
+    def _create_http_client(self, **kwargs: Any) -> Any:
+        from azure.core.pipeline.transport import RequestsTransport
+
+        transport = kwargs.get("transport")
+        requests_transport = transport if isinstance(transport, RequestsTransport) else RequestsTransport(**kwargs)
+        assert requests_transport is not None
+        self._transport = requests_transport
+        requests_transport.open()
+
+        ignored_options = [
+            name
+            for name in (
+                "transport",
+                "raw_request_hook",
+                "raw_response_hook",
+                "retry_policy",
+                "proxy_policy",
+            )
+            if kwargs.get(name) is not None and not (name == "transport" and isinstance(transport, RequestsTransport))
+        ]
+        if ignored_options:
+            warnings.warn(
+                "The following arguments are ignored for synchronous Service Fabric managed identity credential "
+                "because MSAL sends the request through a derived requests.Session instead of the Azure Core "
+                "pipeline: {}.".format(", ".join(ignored_options)),
+                UserWarning,
+                stacklevel=3,
+            )
+        return requests_transport.session
+
+    def __enter__(self) -> "ServiceFabricCredential":
+        self._transport.__enter__()
+        return self
+
+    def __exit__(self, *args: Any) -> None:
+        self._transport.__exit__(*args)
+
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        **kwargs: Any,
     ) -> AccessToken:
         if self._settings.get("client_id") or self._settings.get("identity_config"):
             raise ClientAuthenticationError(message=SERVICE_FABRIC_ERROR_MESSAGE)
@@ -56,5 +98,7 @@ def _get_client_args(**kwargs: Any) -> Optional[Dict]:
 
 def _get_request(url: str, scope: str, identity_config: Dict) -> HttpRequest:
     return HttpRequest(
-        "GET", url, params=dict({"api-version": "2019-07-01-preview", "resource": scope}, **identity_config)
+        "GET",
+        url,
+        params=dict({"api-version": "2019-07-01-preview", "resource": scope}, **identity_config),
     )
