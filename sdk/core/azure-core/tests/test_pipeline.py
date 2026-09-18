@@ -548,3 +548,70 @@ def test_cleanup_kwargs():
     cleanup_kwargs_for_transport(kwargs)
     assert "insecure_domain_change" not in kwargs
     assert "enable_cae" not in kwargs
+
+
+def test_sensitive_headers_stripped_on_cross_domain_redirect():
+    """Test that api-key and Ocp-Apim-Subscription-Key are stripped on cross-origin redirect."""
+    import threading
+    import http.server
+    import socketserver
+    import socket
+    from contextlib import closing
+    from azure.core.pipeline import Pipeline
+    from azure.core.pipeline.transport import RequestsTransport, HttpRequest
+    from azure.core.pipeline.policies import RedirectPolicy, SensitiveHeaderCleanupPolicy
+
+    captured = {}
+
+    def free_port():
+        with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
+            s.bind(("127.0.0.1", 0))
+            return s.getsockname()[1]
+
+    port_a = free_port()
+    port_b = free_port()
+
+    class OriginA(http.server.BaseHTTPRequestHandler):
+        def log_message(self, *a): pass
+        def do_GET(self):
+            self.send_response(302)
+            self.send_header("Location", f"http://127.0.0.1:{port_b}/land")
+            self.end_headers()
+
+    class OriginB(http.server.BaseHTTPRequestHandler):
+        def log_message(self, *a): pass
+        def do_GET(self):
+            captured["headers"] = {k.lower(): v for k, v in self.headers.items()}
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"{}")
+
+    server_a = socketserver.TCPServer(("127.0.0.1", port_a), OriginA)
+    server_b = socketserver.TCPServer(("127.0.0.1", port_b), OriginB)
+
+    t_a = threading.Thread(target=server_a.serve_forever, daemon=True)
+    t_b = threading.Thread(target=server_b.serve_forever, daemon=True)
+    t_a.start()
+    t_b.start()
+
+    try:
+        pipeline = Pipeline(
+            transport=RequestsTransport(connection_verify=False),
+            policies=[RedirectPolicy(), SensitiveHeaderCleanupPolicy()]
+        )
+        req = HttpRequest("GET", f"http://127.0.0.1:{port_a}/start")
+        req.headers["api-key"] = "fake-api-key"
+        req.headers["Ocp-Apim-Subscription-Key"] = "fake-sub-key"
+        req.headers["Authorization"] = "Bearer fake-token"
+        pipeline.run(req)
+
+        # After cross-origin redirect, sensitive headers must be stripped
+        assert "api-key" not in captured.get("headers", {}), \
+            "api-key should be stripped on cross-origin redirect"
+        assert "ocp-apim-subscription-key" not in captured.get("headers", {}), \
+            "Ocp-Apim-Subscription-Key should be stripped on cross-origin redirect"
+        assert "authorization" not in captured.get("headers", {}), \
+            "Authorization should be stripped on cross-origin redirect"
+    finally:
+        server_a.shutdown()
+        server_b.shutdown()
