@@ -1348,14 +1348,17 @@ class InvocationManager:
                 entry.cv.notify()
             return True
 
-    def discard(self, invocation_id: str) -> None:
+    def discard(self, invocation_id: str, expected_entry: Optional[_InvocationEntry] = None) -> None:
         """Discard a pending invocation without resolving or rejecting it.
 
         :param invocation_id: The invocation id to discard.
         :type invocation_id: str
+        :param expected_entry: Only discard if the registered entry is this object, when provided.
+        :type expected_entry: _InvocationEntry
         """
         with self._lock:
-            self._entries.pop(invocation_id, None)
+            if expected_entry is None or self._entries.get(invocation_id) is expected_entry:
+                self._entries.pop(invocation_id, None)
 
     def reject_all(self, create_error: Callable[[str], Exception]) -> None:
         """Reject all pending invocations with errors.
@@ -1438,13 +1441,16 @@ class InvocationManagerAsync:
         entry.event.set()
         return True
 
-    def discard(self, invocation_id: str) -> None:
+    def discard(self, invocation_id: str, expected_entry: Optional[_InvocationEntryAsync] = None) -> None:
         """Discard a pending invocation without resolving or rejecting it.
 
         :param invocation_id: The invocation id to discard.
         :type invocation_id: str
+        :param expected_entry: Only discard if the registered entry is this object, when provided.
+        :type expected_entry: _InvocationEntryAsync
         """
-        self._entries.pop(invocation_id, None)
+        if expected_entry is None or self._entries.get(invocation_id) is expected_entry:
+            self._entries.pop(invocation_id, None)
 
     def reject_all(self, create_error: Callable[[str], Exception]) -> None:
         """Reject all pending invocations with errors.

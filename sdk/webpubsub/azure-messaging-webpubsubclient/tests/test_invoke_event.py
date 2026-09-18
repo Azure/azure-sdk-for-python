@@ -9,12 +9,14 @@ correlation, timeout, error mapping and disconnect rejection.
 """
 
 import threading
+from unittest.mock import patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 
 from azure.messaging.webpubsubclient import WebPubSubClient
 from azure.messaging.webpubsubclient.models import WebPubSubDataType
 from azure.messaging.webpubsubclient.models._models import (
+    InvokeMessage,
     InvokeResponseMessage,
     InvokeResponseError,
     InvocationError,
@@ -31,6 +33,41 @@ def _make_client() -> WebPubSubClient:
 
 class TestInvokeEventSync:
     """Client-level sync invoke_event tests with mocked websocket."""
+
+    @pytest.mark.parametrize("outcome", ["success", "error", "send_failure"])
+    def test_cleanup_preserves_reused_invocation_id(self, outcome):
+        client = _make_client()
+        replacement_entries = []
+
+        def fake_send(message, **kwargs):
+            client._invocation_map.resolve(
+                InvokeResponseMessage(
+                    invocation_id=message.invocation_id,
+                    success=outcome != "error",
+                    data_type=WebPubSubDataType.TEXT,
+                    data="first response",
+                )
+            )
+            _, replacement = client._invocation_map.register(message.invocation_id)
+            replacement_entries.append(replacement)
+            if outcome == "send_failure":
+                raise RuntimeError("send failed")
+
+        with patch.object(client, "_send_message", side_effect=fake_send):
+            if outcome == "success":
+                result = client.invoke_event("echo", "first", WebPubSubDataType.TEXT, invocation_id="reused")
+                assert result.data == "first response"
+            else:
+                with pytest.raises(InvocationError, match="Invocation failed|send failed"):
+                    client.invoke_event("echo", "first", WebPubSubDataType.TEXT, invocation_id="reused")
+
+        assert len(replacement_entries) == 1
+        replacement = replacement_entries[0]
+        assert client._invocation_map._entries.get("reused") is replacement
+        response = InvokeResponseMessage(invocation_id="reused", success=True, data="second response")
+        assert client._invocation_map.resolve(response) is True
+        assert replacement.result is response
+        assert replacement.error is None
 
     def test_request_response_correlation_text(self):
         """invoke_event returns the correct InvokeEventResult for a successful text response."""
@@ -94,9 +131,7 @@ class TestInvokeEventSync:
             threading.Thread(target=reply, daemon=True).start()
 
         with patch.object(client, "_send_message", side_effect=fake_send):
-            result = client.invoke_event(
-                "processOrder", {"orderId": 1}, WebPubSubDataType.JSON
-            )
+            result = client.invoke_event("processOrder", {"orderId": 1}, WebPubSubDataType.JSON)
 
         assert result.data == {"result": "ok"}
         assert result.data_type == WebPubSubDataType.JSON
@@ -121,9 +156,7 @@ class TestInvokeEventSync:
             threading.Thread(target=reply, daemon=True).start()
 
         with patch.object(client, "_send_message", side_effect=fake_send):
-            result = client.invoke_event(
-                "echo", "hi", WebPubSubDataType.TEXT, invocation_id="my-custom-id"
-            )
+            result = client.invoke_event("echo", "hi", WebPubSubDataType.TEXT, invocation_id="my-custom-id")
 
         assert result.invocation_id == "my-custom-id"
 
@@ -134,9 +167,7 @@ class TestInvokeEventSync:
         # _send_message succeeds but no invokeResponse arrives
         with patch.object(client, "_send_message"):
             with pytest.raises(InvocationError) as exc_info:
-                client.invoke_event(
-                    "slowEvent", "data", WebPubSubDataType.TEXT, timeout=0.1
-                )
+                client.invoke_event("slowEvent", "data", WebPubSubDataType.TEXT, timeout=0.1)
 
         assert "Timeout" in str(exc_info.value)
 
@@ -150,9 +181,7 @@ class TestInvokeEventSync:
                     InvokeResponseMessage(
                         invocation_id=message.invocation_id,
                         success=False,
-                        error=InvokeResponseError(
-                            name="BadRequest", message="Invalid payload"
-                        ),
+                        error=InvokeResponseError(name="BadRequest", message="Invalid payload"),
                     )
                 )
 
@@ -191,20 +220,19 @@ class TestInvokeEventSync:
 
     def test_send_failure_raises_invocation_error(self):
         """invoke_event raises InvocationError when _send_message fails."""
-        client = _make_client()
+        client = WebPubSubClient("wss://fake.webpubsub.azure.com", message_retry_total=3)
 
-        with patch.object(
-            client, "_send_message", side_effect=Exception("connection lost")
-        ):
+        with patch.object(client, "_send_message", side_effect=Exception("connection lost")) as send:
             with pytest.raises(InvocationError) as exc_info:
                 client.invoke_event("event", "data", WebPubSubDataType.TEXT)
 
         assert "connection lost" in str(exc_info.value)
+        assert sum(isinstance(call.args[0], InvokeMessage) for call in send.call_args_list) == 1
+        assert client._invocation_map._entries == {}
 
     def test_disconnect_rejects_pending_invocation(self):
         """Pending invocations are rejected when reject_all is called (simulating disconnect)."""
         client = _make_client()
-        errors_received = []
 
         def fake_send(message, **kwargs):
             # Simulate the connection dropping after the message is sent
@@ -257,9 +285,7 @@ class TestInvokeEventSync:
                     InvokeResponseMessage(
                         invocation_id=message.invocation_id,
                         success=False,
-                        error=InvokeResponseError(
-                            name="Error", message="fail"
-                        ),
+                        error=InvokeResponseError(name="Error", message="fail"),
                     )
                 )
 

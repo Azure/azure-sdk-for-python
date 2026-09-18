@@ -9,12 +9,15 @@ correlation, timeout, error mapping and disconnect rejection.
 """
 
 import asyncio
+from unittest.mock import patch
+
 import pytest
-from unittest.mock import patch, AsyncMock
 
 from azure.messaging.webpubsubclient.aio import WebPubSubClient as WebPubSubClientAsync
 from azure.messaging.webpubsubclient.models import WebPubSubDataType
 from azure.messaging.webpubsubclient.models._models import (
+    CancelInvocationMessage,
+    InvokeMessage,
     InvokeResponseMessage,
     InvokeResponseError,
     InvocationError,
@@ -32,6 +35,105 @@ def _make_client() -> WebPubSubClientAsync:
 @pytest.mark.asyncio
 class TestInvokeEventAsync:
     """Client-level async invoke_event tests with mocked websocket."""
+
+    @pytest.mark.parametrize("outcome", ["success", "error", "send_failure"])
+    async def test_cleanup_preserves_reused_invocation_id(self, outcome):
+        client = _make_client()
+        replacement_entries = []
+
+        async def fake_send(message, **kwargs):
+            client._invocation_map.resolve(
+                InvokeResponseMessage(
+                    invocation_id=message.invocation_id,
+                    success=outcome != "error",
+                    data_type=WebPubSubDataType.TEXT,
+                    data="first response",
+                )
+            )
+            _, replacement = client._invocation_map.register(message.invocation_id)
+            replacement_entries.append(replacement)
+            if outcome == "send_failure":
+                raise RuntimeError("send failed")
+
+        with patch.object(client, "_send_message", side_effect=fake_send):
+            if outcome == "success":
+                result = await client.invoke_event("echo", "first", WebPubSubDataType.TEXT, invocation_id="reused")
+                assert result.data == "first response"
+            else:
+                with pytest.raises(InvocationError, match="Invocation failed|send failed"):
+                    await client.invoke_event("echo", "first", WebPubSubDataType.TEXT, invocation_id="reused")
+
+        assert len(replacement_entries) == 1
+        replacement = replacement_entries[0]
+        assert client._invocation_map._entries.get("reused") is replacement
+        response = InvokeResponseMessage(invocation_id="reused", success=True, data="second response")
+        assert client._invocation_map.resolve(response) is True
+        assert replacement.result is response
+        assert replacement.error is None
+        assert replacement.event.is_set()
+
+    @pytest.mark.parametrize("during_send, cancel_send_fails", [(True, False), (False, False), (False, True)])
+    async def test_task_cancellation_cleans_up_invocation(self, during_send, cancel_send_fails):
+        client = _make_client()
+        send_started = asyncio.Event()
+        sent_messages = []
+
+        async def fake_send(message, **kwargs):
+            sent_messages.append(message)
+            if isinstance(message, InvokeMessage):
+                send_started.set()
+                if during_send:
+                    await asyncio.Event().wait()
+            elif cancel_send_fails:
+                raise RuntimeError("cancel send failed")
+
+        with patch.object(client, "_send_message", side_effect=fake_send):
+            task = asyncio.create_task(
+                client.invoke_event("echo", "ping", WebPubSubDataType.TEXT, invocation_id="cancelled")
+            )
+            try:
+                await asyncio.wait_for(send_started.wait(), timeout=1)
+            finally:
+                task.cancel()
+                with pytest.raises(asyncio.CancelledError):
+                    await task
+
+        assert client._invocation_map._entries == {}
+        assert [(type(message), message.invocation_id) for message in sent_messages] == (
+            [(InvokeMessage, "cancelled")]
+            if during_send
+            else [(InvokeMessage, "cancelled"), (CancelInvocationMessage, "cancelled")]
+        )
+        invocation_id, _ = client._invocation_map.register("cancelled")
+        assert invocation_id == "cancelled"
+
+    async def test_external_timeout_sends_cancel_invocation(self):
+        client = _make_client()
+        send_started = asyncio.Event()
+        sent_messages = []
+
+        async def fake_send(message, **kwargs):
+            sent_messages.append(message)
+            send_started.set()
+
+        with patch.object(client, "_send_message", side_effect=fake_send):
+            task = asyncio.create_task(
+                client.invoke_event("echo", "ping", WebPubSubDataType.TEXT, invocation_id="external-timeout")
+            )
+            try:
+                await asyncio.wait_for(send_started.wait(), timeout=1)
+                with pytest.raises(asyncio.TimeoutError):
+                    await asyncio.wait_for(task, timeout=0.01)
+            finally:
+                task.cancel()
+                with pytest.raises(asyncio.CancelledError):
+                    await task
+
+        assert [(type(message), message.invocation_id) for message in sent_messages] == [
+            (InvokeMessage, "external-timeout"),
+            (CancelInvocationMessage, "external-timeout"),
+        ]
+        assert client._invocation_map._entries == {}
 
     async def test_request_response_correlation_text(self):
         """invoke_event returns the correct InvokeEventResult for a successful text response."""
@@ -76,9 +178,7 @@ class TestInvokeEventAsync:
             asyncio.get_event_loop().call_soon(lambda: asyncio.ensure_future(reply()))
 
         with patch.object(client, "_send_message", side_effect=fake_send):
-            result = await client.invoke_event(
-                "processOrder", {"orderId": 1}, WebPubSubDataType.JSON
-            )
+            result = await client.invoke_event("processOrder", {"orderId": 1}, WebPubSubDataType.JSON)
 
         assert result.data == {"result": "ok"}
         assert result.data_type == WebPubSubDataType.JSON
@@ -103,9 +203,7 @@ class TestInvokeEventAsync:
             asyncio.get_event_loop().call_soon(lambda: asyncio.ensure_future(reply()))
 
         with patch.object(client, "_send_message", side_effect=fake_send):
-            result = await client.invoke_event(
-                "echo", "hi", WebPubSubDataType.TEXT, invocation_id="my-custom-id"
-            )
+            result = await client.invoke_event("echo", "hi", WebPubSubDataType.TEXT, invocation_id="my-custom-id")
 
         assert result.invocation_id == "my-custom-id"
 
@@ -118,9 +216,7 @@ class TestInvokeEventAsync:
 
         with patch.object(client, "_send_message", side_effect=fake_send):
             with pytest.raises(InvocationError) as exc_info:
-                await client.invoke_event(
-                    "slowEvent", "data", WebPubSubDataType.TEXT, timeout=0.1
-                )
+                await client.invoke_event("slowEvent", "data", WebPubSubDataType.TEXT, timeout=0.1)
 
         assert "Timeout" in str(exc_info.value)
 
@@ -141,9 +237,7 @@ class TestInvokeEventAsync:
         with patch.object(client, "_send_message", side_effect=fake_send):
             with patch.object(client, "_send_cancel_invocation", side_effect=track_cancel):
                 with pytest.raises(InvocationError):
-                    await client.invoke_event(
-                        "slowEvent", "data", WebPubSubDataType.TEXT, timeout=0.1
-                    )
+                    await client.invoke_event("slowEvent", "data", WebPubSubDataType.TEXT, timeout=0.1)
 
         assert len(cancel_ids) == 1
 
@@ -157,9 +251,7 @@ class TestInvokeEventAsync:
                     InvokeResponseMessage(
                         invocation_id=message.invocation_id,
                         success=False,
-                        error=InvokeResponseError(
-                            name="BadRequest", message="Invalid payload"
-                        ),
+                        error=InvokeResponseError(name="BadRequest", message="Invalid payload"),
                     )
                 )
 
@@ -198,16 +290,18 @@ class TestInvokeEventAsync:
 
     async def test_send_failure_raises_invocation_error(self):
         """invoke_event raises InvocationError when _send_message fails."""
-        client = _make_client()
+        client = WebPubSubClientAsync("wss://fake.webpubsub.azure.com", message_retry_total=3)
 
         async def fake_send(message, **kwargs):
             raise Exception("connection lost")
 
-        with patch.object(client, "_send_message", side_effect=fake_send):
+        with patch.object(client, "_send_message", side_effect=fake_send) as send:
             with pytest.raises(InvocationError) as exc_info:
                 await client.invoke_event("event", "data", WebPubSubDataType.TEXT)
 
         assert "connection lost" in str(exc_info.value)
+        send.assert_awaited_once()
+        assert client._invocation_map._entries == {}
 
     async def test_disconnect_rejects_pending_invocation(self):
         """Pending invocations are rejected when reject_all is called (simulating disconnect)."""
@@ -263,9 +357,7 @@ class TestInvokeEventAsync:
                     InvokeResponseMessage(
                         invocation_id=message.invocation_id,
                         success=False,
-                        error=InvokeResponseError(
-                            name="Error", message="fail"
-                        ),
+                        error=InvokeResponseError(name="Error", message="fail"),
                     )
                 )
 

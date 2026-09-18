@@ -81,6 +81,8 @@ client.send_to_group(group_name, "hello world", WebPubSubDataType.TEXT);
 
 `invoke_event` sends an `invoke` request to the service, awaits the correlated `invokeResponse`, and returns the payload.
 
+Invocations are not automatically retried, including when sending fails. The `message_retry_total` setting does not apply to `invoke_event`.
+
 ```python
 from azure.messaging.webpubsubclient import WebPubSubClient
 from azure.messaging.webpubsubclient.models import WebPubSubDataType
@@ -92,6 +94,8 @@ with client:
 ```
 
 You can pass a `timeout` (in seconds) to limit how long the client waits for the response. An `InvocationError` is raised if the timeout elapses.
+
+If the response wait times out, or the async invocation task is cancelled after sending, the client attempts to send a `cancelInvocation` request to stop upstream work. Task cancellation still raises `asyncio.CancelledError`.
 
 ```python
 from azure.messaging.webpubsubclient import WebPubSubClient

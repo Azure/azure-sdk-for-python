@@ -789,10 +789,7 @@ class WebPubSubClient(
         :rtype: ~azure.messaging.webpubsubclient.models.InvokeEventResult
         """
 
-        def invoke_event_attempt() -> InvokeEventResult:
-            return self._invoke_event_core(event_name, content, data_type, **kwargs)
-
-        return self._retry_with_result(invoke_event_attempt)
+        return self._invoke_event_core(event_name, content, data_type, **kwargs)
 
     def _invoke_event_core(
         self,
@@ -825,7 +822,6 @@ class WebPubSubClient(
                         invocation_id=invocation_id,
                     )
                 )
-                self._invocation_map.reject(invocation_id, invocation_error)
                 raise invocation_error from e
 
             with entry.cv:
@@ -839,22 +835,18 @@ class WebPubSubClient(
 
             if entry.result is None:
                 raise InvocationError(
-                    "Timeout while waiting for invoke response."
-                    if not completed
-                    else "No invoke response received.",
+                    "Timeout while waiting for invoke response." if not completed else "No invoke response received.",
                     invocation_id=invocation_id,
                 )
 
             return self._map_invoke_response(entry.result)
         except Exception as e:  # pylint: disable=broad-except
-            should_cancel = (
-                entry.result is None and isinstance(e, InvocationError) and e.error_detail is None
-            )
+            should_cancel = entry.result is None and isinstance(e, InvocationError) and e.error_detail is None
             if should_cancel:
                 self._send_cancel_invocation(invocation_id)
             raise
         finally:
-            self._invocation_map.discard(invocation_id)
+            self._invocation_map.discard(invocation_id, entry)
 
     def _map_invoke_response(self, message: InvokeResponseMessage) -> InvokeEventResult:
         if message.success is not True:
@@ -880,25 +872,6 @@ class WebPubSubClient(
             self._send_message(CancelInvocationMessage(invocation_id=invocation_id))
         except Exception as e:  # pylint: disable=broad-except
             _LOGGER.debug("Failed to send cancelInvocation for %s: %s", invocation_id, e)
-
-    def _retry_with_result(self, func: Callable[[], InvokeEventResult]) -> InvokeEventResult:
-        retry_attempt = 0
-        while True:
-            try:
-                return func()
-            except InvocationError:
-                raise
-            except Exception as e:  # pylint: disable=broad-except
-                retry_attempt = retry_attempt + 1
-                delay_seconds = self._message_retry_policy.next_retry_delay(retry_attempt)
-                if delay_seconds is None:
-                    raise e
-                _LOGGER.debug(
-                    "will retry %sth times after %s seconds",
-                    retry_attempt,
-                    delay_seconds,
-                )
-                time.sleep(delay_seconds)
 
     def _retry(self, func: Callable[[], None]):
         retry_attempt = 0
