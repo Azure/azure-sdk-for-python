@@ -25,7 +25,7 @@ tracing exporters, and span operations:
 **Span operations:**
 
 - :class:`TraceContextMiddleware` — ASGI middleware that extracts W3C trace
-  context and baggage from incoming headers
+  context and baggage from incoming request headers
 - :func:`end_span` / :func:`record_error` — span lifecycle helpers
 - :func:`trace_stream` — wrap streaming responses with span lifecycle
 - :func:`set_current_span` / :func:`detach_context` — explicit context management
@@ -491,10 +491,11 @@ class TraceContextMiddleware:
     """Pure-ASGI middleware that propagates W3C trace context and baggage.
 
     Extracts ``traceparent``, ``tracestate``, and ``baggage`` headers from
-    incoming HTTP requests using the standard W3C propagators and attaches
-    the resulting context for the duration of the request.  This ensures
-    that any spans created downstream (e.g. by agent-framework / MAF) are
-    automatically children of the caller's trace.
+    incoming HTTP requests and WebSocket connections using the standard W3C
+    propagators and attaches the resulting context for the duration of the
+    request or connection.  This ensures that any spans created downstream
+    (e.g. by agent-framework / MAF) are automatically children of the
+    caller's trace.
 
     This middleware does **not** create its own span — it only propagates
     the incoming context so that downstream instrumentation inherits it.
@@ -507,29 +508,47 @@ class TraceContextMiddleware:
         self.app = app
 
     async def __call__(self, scope: Any, receive: Any, send: Any) -> None:
-        if scope["type"] != "http":
+        if scope["type"] not in ("http", "websocket"):
             await self.app(scope, receive, send)
             return
 
-        # Build a simple dict of headers for the propagators
+        # Preserve split W3C list headers while retaining the existing
+        # last-value behavior for single-value headers.
         raw_headers: list[tuple[bytes, bytes]] = scope.get("headers", [])
-        headers = {k.decode("latin-1"): v.decode("latin-1") for k, v in raw_headers}
+        headers: dict[str, str] = {}
+        duplicate_traceparent = False
+        for raw_name, raw_value in raw_headers:
+            name = raw_name.decode("latin-1").lower()
+            value = raw_value.decode("latin-1")
+            if name in headers:
+                if name == "traceparent":
+                    duplicate_traceparent = True
+                elif name in ("baggage", "tracestate"):
+                    headers[name] = f"{headers[name]},{value}"
+                else:
+                    headers[name] = value
+            else:
+                headers[name] = value
+        if duplicate_traceparent:
+            headers.pop("traceparent", None)
 
-        # Use the global propagator to extract trace context + baggage
-        from opentelemetry.propagate import extract  # pylint: disable=import-outside-toplevel
+        try:
+            # Use the global propagator to extract trace context + baggage
+            from opentelemetry.propagate import extract  # pylint: disable=import-outside-toplevel
+            ctx = extract(carrier=headers)
 
-        ctx = extract(carrier=headers)
+            # Add x-request-id as baggage for downstream propagation
+            x_request_id = headers.get("x-request-id")
+            if x_request_id:
+                ctx = _otel_baggage.set_baggage(
+                    "x_request_id", x_request_id, context=ctx,
+                )
 
-        # Add x-request-id as baggage for downstream propagation
-        x_request_id = headers.get("x-request-id")
-        if x_request_id:
-            ctx = _otel_baggage.set_baggage(
-                "x_request_id",
-                x_request_id,
-                context=ctx,
-            )
+            token = _otel_context.attach(ctx)
+        except Exception:  # pylint: disable=broad-exception-caught
+            await self.app(scope, receive, send)
+            return
 
-        token = _otel_context.attach(ctx)
         try:
             await self.app(scope, receive, send)
         finally:

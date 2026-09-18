@@ -66,6 +66,10 @@ def test_voice_sdk_close_code_matches_structured_telemetry(caplog, frame_kind, f
     records = _records_with_ws_extras(caplog.records)
     assert records
     assert getattr(records[-1], "azure.ai.agentserver.invocations_ws.close_code") == expected_code
+    assert getattr(records[-1], "azure.ai.agentserver.session_id") == getattr(
+        records[-1],
+        "azure.ai.agentserver.invocations_ws.session_id",
+    )
 
 
 def test_proactive_admission_timeout_enforces_protocol_maximum():
