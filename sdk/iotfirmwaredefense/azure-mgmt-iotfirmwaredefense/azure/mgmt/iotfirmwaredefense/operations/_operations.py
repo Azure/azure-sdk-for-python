@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -32,15 +32,15 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import IoTFirmwareDefenseMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._validation import api_version_validation
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -50,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +71,7 @@ def build_firmwares_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,7 +101,7 @@ def build_firmwares_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -133,7 +133,7 @@ def build_firmwares_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -163,7 +163,7 @@ def build_firmwares_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTFirmwareDefense/workspaces/{workspaceName}/firmwares/{firmwareId}"
     path_format_arguments = {
@@ -187,7 +187,7 @@ def build_firmwares_list_by_workspace_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -215,7 +215,7 @@ def build_workspaces_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -244,7 +244,7 @@ def build_workspaces_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -275,7 +275,7 @@ def build_workspaces_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -304,7 +304,7 @@ def build_workspaces_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTFirmwareDefense/workspaces/{workspaceName}"
     path_format_arguments = {
@@ -327,7 +327,7 @@ def build_workspaces_list_by_resource_group_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -354,7 +354,7 @@ def build_workspaces_list_by_subscription_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -381,7 +381,7 @@ def build_workspaces_generate_upload_url_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -411,7 +411,7 @@ def build_binary_hardening_list_by_firmware_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -440,7 +440,7 @@ def build_crypto_certificates_list_by_firmware_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -469,7 +469,7 @@ def build_crypto_keys_list_by_firmware_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -498,7 +498,7 @@ def build_cves_list_by_firmware_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -527,7 +527,7 @@ def build_password_hashes_list_by_firmware_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -556,7 +556,7 @@ def build_sbom_components_list_by_firmware_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -590,7 +590,7 @@ def build_summaries_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -620,7 +620,7 @@ def build_summaries_list_by_firmware_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -649,7 +649,7 @@ def build_usage_metrics_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -678,7 +678,7 @@ def build_usage_metrics_list_by_workspace_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -700,7 +700,36 @@ def build_usage_metrics_list_by_workspace_request(  # pylint: disable=name-too-l
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+def build_unsafe_function_calls_list_by_firmware_request(  # pylint: disable=name-too-long
+    resource_group_name: str, workspace_name: str, firmware_id: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTFirmwareDefense/workspaces/{workspaceName}/firmwares/{firmwareId}/unsafeFunctionCalls"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, "str"),
+        "firmwareId": _SERIALIZER.url("firmware_id", firmware_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -766,7 +795,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -779,7 +811,10 @@ class Operations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -795,7 +830,10 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -803,7 +841,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class FirmwaresOperations:
+class FirmwaresOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -864,6 +902,7 @@ class FirmwaresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -878,11 +917,14 @@ class FirmwaresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Firmware, response.json())
 
@@ -927,7 +969,7 @@ class FirmwaresOperations:
         resource_group_name: str,
         workspace_name: str,
         firmware_id: str,
-        resource: JSON,
+        resource: _types.Firmware,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -942,7 +984,7 @@ class FirmwaresOperations:
         :param firmware_id: The id of the firmware. Required.
         :type firmware_id: str
         :param resource: Details of the firmware being created or updated. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.iotfirmwaredefense.types.Firmware
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -987,7 +1029,7 @@ class FirmwaresOperations:
         resource_group_name: str,
         workspace_name: str,
         firmware_id: str,
-        resource: Union[_models.Firmware, JSON, IO[bytes]],
+        resource: Union[_models.Firmware, _types.Firmware, IO[bytes]],
         **kwargs: Any
     ) -> _models.Firmware:
         """The operation to create a firmware.
@@ -999,9 +1041,10 @@ class FirmwaresOperations:
         :type workspace_name: str
         :param firmware_id: The id of the firmware. Required.
         :type firmware_id: str
-        :param resource: Details of the firmware being created or updated. Is one of the following
-         types: Firmware, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.iotfirmwaredefense.models.Firmware or JSON or IO[bytes]
+        :param resource: Details of the firmware being created or updated. Is either a Firmware type or
+         a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.iotfirmwaredefense.models.Firmware or
+         ~azure.mgmt.iotfirmwaredefense.types.Firmware or IO[bytes]
         :return: Firmware. The Firmware is compatible with MutableMapping
         :rtype: ~azure.mgmt.iotfirmwaredefense.models.Firmware
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1043,6 +1086,7 @@ class FirmwaresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1057,11 +1101,14 @@ class FirmwaresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Firmware, response.json())
 
@@ -1106,7 +1153,7 @@ class FirmwaresOperations:
         resource_group_name: str,
         workspace_name: str,
         firmware_id: str,
-        properties: JSON,
+        properties: _types.FirmwareUpdateDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1121,7 +1168,7 @@ class FirmwaresOperations:
         :param firmware_id: The id of the firmware. Required.
         :type firmware_id: str
         :param properties: Details of the firmware being created or updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.iotfirmwaredefense.types.FirmwareUpdateDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1166,7 +1213,7 @@ class FirmwaresOperations:
         resource_group_name: str,
         workspace_name: str,
         firmware_id: str,
-        properties: Union[_models.FirmwareUpdateDefinition, JSON, IO[bytes]],
+        properties: Union[_models.FirmwareUpdateDefinition, _types.FirmwareUpdateDefinition, IO[bytes]],
         **kwargs: Any
     ) -> _models.Firmware:
         """The operation to update firmware.
@@ -1178,10 +1225,10 @@ class FirmwaresOperations:
         :type workspace_name: str
         :param firmware_id: The id of the firmware. Required.
         :type firmware_id: str
-        :param properties: Details of the firmware being created or updated. Is one of the following
-         types: FirmwareUpdateDefinition, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.iotfirmwaredefense.models.FirmwareUpdateDefinition or JSON or
-         IO[bytes]
+        :param properties: Details of the firmware being created or updated. Is either a
+         FirmwareUpdateDefinition type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.iotfirmwaredefense.models.FirmwareUpdateDefinition or
+         ~azure.mgmt.iotfirmwaredefense.types.FirmwareUpdateDefinition or IO[bytes]
         :return: Firmware. The Firmware is compatible with MutableMapping
         :rtype: ~azure.mgmt.iotfirmwaredefense.models.Firmware
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1223,6 +1270,7 @@ class FirmwaresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1237,11 +1285,14 @@ class FirmwaresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Firmware, response.json())
 
@@ -1303,7 +1354,10 @@ class FirmwaresOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1366,7 +1420,10 @@ class FirmwaresOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1379,7 +1436,10 @@ class FirmwaresOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Firmware], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Firmware],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1395,7 +1455,10 @@ class FirmwaresOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1403,7 +1466,7 @@ class FirmwaresOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspacesOperations:
+class WorkspacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1461,6 +1524,7 @@ class WorkspacesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1475,11 +1539,14 @@ class WorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Workspace, response.json())
 
@@ -1520,7 +1587,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        resource: JSON,
+        resource: _types.Workspace,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1533,7 +1600,7 @@ class WorkspacesOperations:
         :param workspace_name: The name of the firmware analysis workspace. Required.
         :type workspace_name: str
         :param resource: Parameters when creating a firmware analysis workspace. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.iotfirmwaredefense.types.Workspace
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1574,7 +1641,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        resource: Union[_models.Workspace, JSON, IO[bytes]],
+        resource: Union[_models.Workspace, _types.Workspace, IO[bytes]],
         **kwargs: Any
     ) -> _models.Workspace:
         """The operation to create or update a firmware analysis workspace.
@@ -1584,9 +1651,10 @@ class WorkspacesOperations:
         :type resource_group_name: str
         :param workspace_name: The name of the firmware analysis workspace. Required.
         :type workspace_name: str
-        :param resource: Parameters when creating a firmware analysis workspace. Is one of the
-         following types: Workspace, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.iotfirmwaredefense.models.Workspace or JSON or IO[bytes]
+        :param resource: Parameters when creating a firmware analysis workspace. Is either a Workspace
+         type or a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.iotfirmwaredefense.models.Workspace or
+         ~azure.mgmt.iotfirmwaredefense.types.Workspace or IO[bytes]
         :return: Workspace. The Workspace is compatible with MutableMapping
         :rtype: ~azure.mgmt.iotfirmwaredefense.models.Workspace
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1627,6 +1695,7 @@ class WorkspacesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1641,11 +1710,14 @@ class WorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Workspace, response.json())
 
@@ -1686,7 +1758,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        properties: JSON,
+        properties: _types.WorkspaceUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1699,7 +1771,7 @@ class WorkspacesOperations:
         :param workspace_name: The name of the firmware analysis workspace. Required.
         :type workspace_name: str
         :param properties: Parameters when updating a firmware analysis workspace. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.iotfirmwaredefense.types.WorkspaceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1740,7 +1812,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        properties: Union[_models.WorkspaceUpdate, JSON, IO[bytes]],
+        properties: Union[_models.WorkspaceUpdate, _types.WorkspaceUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.Workspace:
         """The operation to update a firmware analysis workspaces.
@@ -1750,9 +1822,10 @@ class WorkspacesOperations:
         :type resource_group_name: str
         :param workspace_name: The name of the firmware analysis workspace. Required.
         :type workspace_name: str
-        :param properties: Parameters when updating a firmware analysis workspace. Is one of the
-         following types: WorkspaceUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.iotfirmwaredefense.models.WorkspaceUpdate or JSON or IO[bytes]
+        :param properties: Parameters when updating a firmware analysis workspace. Is either a
+         WorkspaceUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.iotfirmwaredefense.models.WorkspaceUpdate or
+         ~azure.mgmt.iotfirmwaredefense.types.WorkspaceUpdate or IO[bytes]
         :return: Workspace. The Workspace is compatible with MutableMapping
         :rtype: ~azure.mgmt.iotfirmwaredefense.models.Workspace
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1793,6 +1866,7 @@ class WorkspacesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1807,11 +1881,14 @@ class WorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Workspace, response.json())
 
@@ -1823,7 +1900,7 @@ class WorkspacesOperations:
     @api_version_validation(
         method_added_on="2025-08-02",
         params_added_on={"2025-08-02": ["api_version", "subscription_id", "resource_group_name", "workspace_name"]},
-        api_versions_list=["2025-08-02"],
+        api_versions_list=["2025-08-02", "2025-12-01-preview", "2026-06-01-preview"],
     )
     def _delete_initial(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1852,6 +1929,7 @@ class WorkspacesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1865,7 +1943,10 @@ class WorkspacesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1873,7 +1954,7 @@ class WorkspacesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1884,7 +1965,7 @@ class WorkspacesOperations:
     @api_version_validation(
         method_added_on="2025-08-02",
         params_added_on={"2025-08-02": ["api_version", "subscription_id", "resource_group_name", "workspace_name"]},
-        api_versions_list=["2025-08-02"],
+        api_versions_list=["2025-08-02", "2025-12-01-preview", "2026-06-01-preview"],
     )
     def begin_delete(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> LROPoller[None]:
         """The operation to delete a firmware analysis workspace.
@@ -1994,7 +2075,10 @@ class WorkspacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2007,7 +2091,10 @@ class WorkspacesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Workspace], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Workspace],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2023,7 +2110,10 @@ class WorkspacesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2078,7 +2168,10 @@ class WorkspacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2091,7 +2184,10 @@ class WorkspacesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Workspace], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Workspace],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2107,7 +2203,10 @@ class WorkspacesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2146,7 +2245,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        body: JSON,
+        body: _types.GenerateUploadUrlRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2159,7 +2258,7 @@ class WorkspacesOperations:
         :param workspace_name: The name of the firmware analysis workspace. Required.
         :type workspace_name: str
         :param body: Parameters when requesting a URL to upload firmware. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.iotfirmwaredefense.types.GenerateUploadUrlRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2200,7 +2299,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        body: Union[_models.GenerateUploadUrlRequest, JSON, IO[bytes]],
+        body: Union[_models.GenerateUploadUrlRequest, _types.GenerateUploadUrlRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.UrlToken:
         """Generate a URL for uploading a firmware image.
@@ -2210,9 +2309,10 @@ class WorkspacesOperations:
         :type resource_group_name: str
         :param workspace_name: The name of the firmware analysis workspace. Required.
         :type workspace_name: str
-        :param body: Parameters when requesting a URL to upload firmware. Is one of the following
-         types: GenerateUploadUrlRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.iotfirmwaredefense.models.GenerateUploadUrlRequest or JSON or IO[bytes]
+        :param body: Parameters when requesting a URL to upload firmware. Is either a
+         GenerateUploadUrlRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.iotfirmwaredefense.models.GenerateUploadUrlRequest or
+         ~azure.mgmt.iotfirmwaredefense.types.GenerateUploadUrlRequest or IO[bytes]
         :return: UrlToken. The UrlToken is compatible with MutableMapping
         :rtype: ~azure.mgmt.iotfirmwaredefense.models.UrlToken
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2253,6 +2353,7 @@ class WorkspacesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2267,11 +2368,14 @@ class WorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.UrlToken, response.json())
 
@@ -2281,7 +2385,7 @@ class WorkspacesOperations:
         return deserialized  # type: ignore
 
 
-class BinaryHardeningOperations:
+class BinaryHardeningOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2361,7 +2465,10 @@ class BinaryHardeningOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2374,7 +2481,10 @@ class BinaryHardeningOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BinaryHardeningResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.BinaryHardeningResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2390,7 +2500,10 @@ class BinaryHardeningOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2398,7 +2511,7 @@ class BinaryHardeningOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class CryptoCertificatesOperations:
+class CryptoCertificatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2478,7 +2591,10 @@ class CryptoCertificatesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2491,7 +2607,10 @@ class CryptoCertificatesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.CryptoCertificateResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.CryptoCertificateResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2507,7 +2626,10 @@ class CryptoCertificatesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2515,7 +2637,7 @@ class CryptoCertificatesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class CryptoKeysOperations:
+class CryptoKeysOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2594,7 +2716,10 @@ class CryptoKeysOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2607,7 +2732,10 @@ class CryptoKeysOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.CryptoKeyResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.CryptoKeyResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2623,7 +2751,10 @@ class CryptoKeysOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2631,7 +2762,7 @@ class CryptoKeysOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class CvesOperations:
+class CvesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2663,7 +2794,7 @@ class CvesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-02"],
+        api_versions_list=["2025-08-02", "2025-12-01-preview", "2026-06-01-preview"],
     )
     def list_by_firmware(
         self, resource_group_name: str, workspace_name: str, firmware_id: str, **kwargs: Any
@@ -2724,7 +2855,10 @@ class CvesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2737,7 +2871,10 @@ class CvesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.CveResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.CveResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2753,7 +2890,10 @@ class CvesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2761,7 +2901,7 @@ class CvesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PasswordHashesOperations:
+class PasswordHashesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2841,7 +2981,10 @@ class PasswordHashesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2854,7 +2997,10 @@ class PasswordHashesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PasswordHashResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.PasswordHashResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2870,7 +3016,10 @@ class PasswordHashesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2878,7 +3027,7 @@ class PasswordHashesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SbomComponentsOperations:
+class SbomComponentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2958,7 +3107,10 @@ class SbomComponentsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2971,7 +3123,10 @@ class SbomComponentsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SbomComponentResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SbomComponentResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2987,7 +3142,10 @@ class SbomComponentsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2995,7 +3153,7 @@ class SbomComponentsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SummariesOperations:
+class SummariesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3034,7 +3192,8 @@ class SummariesOperations:
         :type firmware_id: str
         :param summary_type: The Firmware analysis summary name describing the type of summary. Known
          values are: "Firmware", "CommonVulnerabilitiesAndExposures", "BinaryHardening",
-         "CryptoCertificate", and "CryptoKey". Required.
+         "CryptoCertificate", "CryptoKey", "CVE", "SBOM", "PasswordHash", and "UnsafeFunctionCalls".
+         Required.
         :type summary_type: str or ~azure.mgmt.iotfirmwaredefense.models.SummaryType
         :return: SummaryResource. The SummaryResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.iotfirmwaredefense.models.SummaryResource
@@ -3068,6 +3227,7 @@ class SummariesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3082,11 +3242,14 @@ class SummariesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SummaryResource, response.json())
 
@@ -3156,7 +3319,10 @@ class SummariesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3169,7 +3335,10 @@ class SummariesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SummaryResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SummaryResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3185,7 +3354,10 @@ class SummariesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3193,7 +3365,7 @@ class SummariesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class UsageMetricsOperations:
+class UsageMetricsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3254,6 +3426,7 @@ class UsageMetricsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3268,11 +3441,14 @@ class UsageMetricsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.UsageMetric, response.json())
 
@@ -3338,7 +3514,10 @@ class UsageMetricsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3351,7 +3530,10 @@ class UsageMetricsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.UsageMetric], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.UsageMetric],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3367,7 +3549,150 @@ class UsageMetricsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class UnsafeFunctionCallsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.iotfirmwaredefense.IoTFirmwareDefenseMgmtClient`'s
+        :attr:`unsafe_function_calls` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: IoTFirmwareDefenseMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-01-preview",
+        params_added_on={
+            "2026-06-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "firmware_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-01-preview"],
+    )
+    def list_by_firmware(
+        self, resource_group_name: str, workspace_name: str, firmware_id: str, **kwargs: Any
+    ) -> ItemPaged["_models.UnsafeFunctionCallsResource"]:
+        """Lists unsafe function call analysis results of a firmware.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: The name of the firmware analysis workspace. Required.
+        :type workspace_name: str
+        :param firmware_id: The id of the firmware. Required.
+        :type firmware_id: str
+        :return: An iterator like instance of UnsafeFunctionCallsResource
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.iotfirmwaredefense.models.UnsafeFunctionCallsResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.UnsafeFunctionCallsResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_unsafe_function_calls_list_by_firmware_request(
+                    resource_group_name=resource_group_name,
+                    workspace_name=workspace_name,
+                    firmware_id=firmware_id,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.UnsafeFunctionCallsResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

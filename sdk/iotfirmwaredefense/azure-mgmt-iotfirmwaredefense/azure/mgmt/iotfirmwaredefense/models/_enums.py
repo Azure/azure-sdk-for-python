@@ -23,39 +23,39 @@ class CertificateUsage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Activities for which the cryptographic certificate can be used."""
 
     DIGITAL_SIGNATURE = "digitalSignature"
-    """This certificate can be used to add a signature to a message"""
+    """This certificate can be used to add a signature to a message."""
     NON_REPUDIATION = "nonRepudiation"
     """This certificates provides a non-repudiation service that protects against false denial of a
-    message"""
+    message."""
     CONTENT_COMMITMENT = "contentCommitment"
-    """A synonym for NonRepudiation used in newer x509 certificates"""
+    """A synonym for NonRepudiation used in newer x509 certificates."""
     KEY_ENCIPHERMENT = "keyEncipherment"
-    """This certificate can be used to encrypt a private or secret key"""
+    """This certificate can be used to encrypt a private or secret key."""
     DATA_ENCIPHERMENT = "dataEncipherment"
-    """This certificate can be used to decrypt a private or secret key"""
+    """This certificate can be used to decrypt a private or secret key."""
     KEY_AGREEMENT = "keyAgreement"
     """This certificate can be used to perform a key agreement, such as with a Diffie-Hellman key
-    exchange"""
+    exchange."""
     KEY_CERT_SIGN = "keyCertSign"
-    """This certificate can be used to verify a other public keys"""
+    """This certificate can be used to verify a other public keys."""
     CRL_SIGN = "crlSign"
-    """This certificate can be used to verify a certificate revocation list"""
+    """This certificate can be used to verify a certificate revocation list."""
     ENCIPHER_ONLY = "encipherOnly"
-    """This certificate can be only be used to encrypt data"""
+    """This certificate can be only be used to encrypt data."""
     DECIPHER_ONLY = "decipherOnly"
-    """This certificate can only be used to decrypt data"""
+    """This certificate can only be used to decrypt data."""
     SERVER_AUTHENTICATION = "serverAuth"
-    """This certificate can be used to authenticate a server in a TLS/SSL connection"""
+    """This certificate can be used to authenticate a server in a TLS/SSL connection."""
     CLIENT_AUTHENTICATION = "clientAuth"
-    """This certificate can be used to authenticate a client in a TLS/SSL connection"""
+    """This certificate can be used to authenticate a client in a TLS/SSL connection."""
     CODE_SIGNING = "codeSigning"
-    """This certificate can be used to authenticate a code object"""
+    """This certificate can be used to authenticate a code object."""
     EMAIL_PROTECTION = "emailProtection"
-    """This certificate can be used to authenticate an email address"""
+    """This certificate can be used to authenticate an email address."""
     TIME_STAMPING = "timeStamping"
-    """This certificate binds the hash of an object to a time"""
+    """This certificate binds the hash of an object to a time."""
     OCSP_SIGNING = "ocspSigning"
-    """This certificate can be used to sign OCSP responses"""
+    """This certificate can be used to sign OCSP responses."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -89,6 +89,29 @@ class ExecutableClass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The binary is 64-bit."""
 
 
+class ExploitMaturityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """String to indicate the exploit maturity of a CVE for the given CVSS score."""
+
+    NOT_DEFINED = "NOT_DEFINED"
+    """Reliable threat intelligence is not available to determine Exploit Maturity characteristics.
+    This is the default value and is equivalent to Attacked (A) for the purposes of the calculation
+    of the score by assuming the worst case."""
+    ATTACKED = "ATTACKED"
+    """Based on available threat intelligence either of the following must apply: attacks targeting
+    this vulnerability (attempted or successful) have been reported, or solutions to simplify
+    attempts to exploit the vulnerability are publicly or privately available."""
+    PROOF_OF_CONCEPT = "PROOF_OF_CONCEPT"
+    """Based on available threat intelligence each of the following must apply: proof-of-concept
+    exploit code is publicly available, no knowledge of reported attempts to exploit this
+    vulnerability, and no knowledge of publicly available solutions used to simplify attempts to
+    exploit the vulnerability."""
+    UNREPORTED = "UNREPORTED"
+    """Based on available threat intelligence each of the following must apply: no knowledge of
+    publicly available proof-of-concept exploit code, no knowledge of reported attempts to exploit
+    this vulnerability, and no knowledge of publicly available solutions used to simplify attempts
+    to exploit the vulnerability."""
+
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system".
@@ -112,11 +135,22 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
     """The request was canceled."""
     PENDING = "Pending"
-    """The request is queued and awaiting execution"""
+    """The request is queued and awaiting execution."""
     EXTRACTING = "Extracting"
     """The Firmware is currently being extracted."""
     ANALYZING = "Analyzing"
-    """Analysis is being run on the firmware"""
+    """Analysis is being run on the firmware."""
+
+
+class RansomwareCampaignUse(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """String to indicate if a vulnerability is known to have been leveraged as part of a ransomware
+    campaign.
+    """
+
+    KNOWN = "Known"
+    """CISA knows the vulnerability to have been leveraged in a ransomware campaign."""
+    UNKNOWN = "Unknown"
+    """CISA lacks confirmation the vulnerability has been utilized for ransomware."""
 
 
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -138,28 +172,36 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of a firmware analysis job."""
 
     PENDING = "Pending"
-    """The analysis job is queued"""
+    """The analysis job is queued."""
     EXTRACTING = "Extracting"
-    """The firmware is currently being extracted"""
+    """The firmware is currently being extracted."""
     ANALYZING = "Analyzing"
-    """Analysis is being run on the firmware"""
+    """Analysis is being run on the firmware."""
     READY = "Ready"
-    """Analysis job results are ready"""
+    """Analysis job results are ready."""
     ERROR = "Error"
-    """An error occurred while running firmware analysis"""
+    """An error occurred while running firmware analysis."""
 
 
 class SummaryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes the type of summary."""
 
     FIRMWARE = "Firmware"
-    """The summary contains information about the submitted firmware"""
+    """The summary contains information about the submitted firmware."""
     COMMON_VULNERABILITIES_AND_EXPOSURES = "CommonVulnerabilitiesAndExposures"
-    """The summary contains information about the Common Vulnerabilities and Exposures analysis
-    results"""
+    """The summary contains information about the CVE (Common Vulnerabilities and Exposures) analysis
+    results (deprecated)."""
     BINARY_HARDENING = "BinaryHardening"
-    """The summary contains information about the binary hardening analysis results"""
+    """The summary contains information about the binary hardening analysis results."""
     CRYPTO_CERTIFICATE = "CryptoCertificate"
-    """The summary contains information about the cryptographic certificate analysis results"""
+    """The summary contains information about the cryptographic certificate analysis results."""
     CRYPTO_KEY = "CryptoKey"
-    """The summary contains information about the cryptographic key analysis results"""
+    """The summary contains information about the cryptographic key analysis results."""
+    CVE = "CVE"
+    """The summary contains information about the CVE analysis results."""
+    SBOM = "SBOM"
+    """The summary contains information about the SBOM (Software Bill of Materials) analysis results."""
+    PASSWORD_HASH = "PasswordHash"
+    """The summary contains information about the password hash analysis results."""
+    UNSAFE_FUNCTION_CALLS = "UnsafeFunctionCalls"
+    """The summary contains information about the unsafe function call analysis results."""
