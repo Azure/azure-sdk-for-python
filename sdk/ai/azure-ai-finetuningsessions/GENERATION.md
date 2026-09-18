@@ -15,6 +15,27 @@ The feature branches incorporate their September 17 target revisions through
 ordinary merge commits, without rebasing or rewriting existing history. PR
 reopening and review remain separate from pushing the feature branches.
 
+## Package identity
+
+The distribution and SDK package directory are named
+`azure-ai-finetuningsessions`. Wheels and source archives use the normalized
+distribution stem `azure_ai_finetuningsessions`. The Python namespace stays
+`azure.ai.finetuning_sessions`; model/client names and REST routes are unchanged.
+See [installation and migration guidance](README.md#install-the-package) before
+switching an environment that contains the earlier preview distribution.
+
+The TypeSpec client project is
+`specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions`.
+Its emitter configuration sets both `package-name` and `emitter-output-dir` to
+the renamed package, while explicitly retaining the existing Python namespace.
+Regeneration also sets the sync/async SDK user-agent moniker to
+`ai-finetuningsessions`; wire-contract tests assert that name on real outbound
+requests through the offline transports.
+
+This rename is limited to the public TypeSpec and Python SDK feature branches.
+The separate Loom SDK copy, cookbook dependencies, and bundled-wheel workflows
+must be migrated together in a later change; they are not changed by this PR.
+
 ## Sources
 
 - Public spec repository: `Azure/azure-rest-api-specs`, branch
@@ -22,7 +43,7 @@ reopening and review remain separate from pushing the feature branches.
 - SDK branch: `feature/finetuning-sessions-sdk`, targeting `main`.
 - The generation source is described by [tsp-location.yaml](tsp-location.yaml).
   It pins the immutable public TypeSpec commit
-  `ec9d1a9f1f6dcef1eb16e5f9f243995daf083c50`.
+  `4ea1ecd5b4dfec03bfc5a5cd67d164869db95014`, including the distribution rename.
 - The TypeSpec target incorporated is
   `6d8e681878ddcfad7749a69e48dea167755dde6b`; the SDK main target incorporated is
   `031b28b8b36efd78bc326de802ef03c1c53af7d4`.
@@ -132,20 +153,28 @@ dependencies because of feed authentication/TLS errors. These full repository
 checks require a working authenticated package-feed environment and remain
 distinct from the offline tests and successful emission comparisons.
 
-### Local results
+### Local results after the distribution rename
 
-- **485 tests passed** against both the updated source package and its unpacked wheel.
+- **485 tests passed** against both source and the wheel installed by the new
+  distribution name into an isolated target directory. The installed sync/async
+  clients and models retain the `azure.ai.finetuning_sessions` imports.
 - **22 generated files** matched two independent pinned emissions; handwritten
   files and TypeSpec source were unchanged during verification.
-- Full public OpenAPI contained **13 canonical paths / 15 methods**, matching
-  HTTP 200 submissions and raw request-status envelopes.
-- Full Foundry compilation and SDK authoring validation succeeded. Full-service
+- The renamed TypeSpec input fingerprint is
+  `132f0aa7cc4ff9e91f772ca1af26591eda9ca687c58aef68e5ae181c710f0a77`.
+- The preceding public OpenAPI validation contained **13 canonical paths / 15
+  methods**, matching HTTP 200 submissions and raw request-status envelopes.
+  The distribution rename does not change those contracts.
+- Full Foundry compilation and Python emission were rerun successfully. Full-service
   compilation retained 29 warnings; Python emission retained 66 warnings.
-- Consecutive wheel builds were checked after limiting package discovery to
-  `azure.ai.finetuning_sessions*`; build directories and tests must not be
-  packaged as additional modules.
-- The post-merge wheel contains **27 Python modules** matching source. Its
-  SHA-256 is `e47f0a9627fd081005718451a9dfba1ccd0f5336e01a59534cbd832674bf7c65`.
+- The renamed wheel and source archive contain the new distribution name in
+  their filenames and metadata. The wheel contains **27 Python modules** matching
+  source, includes `py.typed`, and excludes build directories and tests.
+- A wheel rebuilt from the source archive has exactly the same file contents
+  and metadata as the directly built wheel. The reviewed direct wheel SHA-256 is
+  `21e11da1e8d2aa800c0ee45f550c3badbd88838aaebfa6303973de8db85bef47`.
+- The repository's `ParsedSetup.from_path` recognizes the new distribution,
+  unchanged import namespace, and `1.0.0b1` version without extra build settings.
 
 The original unrelated shared client-tool lockfile difference was removed during
 merge resolution, and the old wheel was removed from Git tracking (its local

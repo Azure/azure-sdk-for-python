@@ -1,9 +1,0 @@
-directory: specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuning-sessions
-# Public TypeSpec commit including the current Foundry release merge.
-commit: ec9d1a9f1f6dcef1eb16e5f9f243995daf083c50
-repo: Azure/azure-rest-api-specs
-entrypointFile: client.tsp
-emitterPackageJsonPath: sdk/ai/azure-ai-finetuning-sessions/emitter-package.json
-additionalDirectories:
-- specification/ai-foundry/data-plane/Foundry/src/session-finetuning
-- specification/ai-foundry/data-plane/Foundry/src/common

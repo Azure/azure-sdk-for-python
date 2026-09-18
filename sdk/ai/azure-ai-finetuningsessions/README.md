@@ -9,8 +9,24 @@ and save checkpoints with synchronous or asynchronous Python clients.
 ### Install the package
 
 ```bash
-python -m pip install azure-ai-finetuning-sessions
+python -m pip install azure-ai-finetuningsessions
 ```
+
+The distribution name is `azure-ai-finetuningsessions`. Python imports remain
+`azure.ai.finetuning_sessions`, including the asynchronous `aio` namespace.
+
+If an earlier preview was installed as `azure-ai-finetuning-sessions`, uninstall
+that distribution **before** installing this one:
+
+```bash
+python -m pip uninstall azure-ai-finetuning-sessions
+python -m pip install azure-ai-finetuningsessions
+```
+
+These are distinct names to package installers, but both distributions provide
+the same Python namespace. Do not install them together: uninstalling either
+one afterwards could remove files needed by the other. Update dependency files
+and lockfiles to use `azure-ai-finetuningsessions` as well.
 
 #### Prerequisites
 
@@ -102,6 +118,13 @@ Older services returning legacy inference codes remain supported by the same
 mechanism. `invalid_request` and `internal_error` remain terminal.
 
 ## Local development
+
+From the Azure SDK for Python repository root, install this package in editable
+mode (after removing any older-named preview as described above):
+
+```bash
+python -m pip install --editable ./sdk/ai/azure-ai-finetuningsessions
+```
 
 Run the package's tests with `pytest`; the package configuration enables asyncio
 tests. [verify_generation.py](verify_generation.py) emits the TypeSpec twice into

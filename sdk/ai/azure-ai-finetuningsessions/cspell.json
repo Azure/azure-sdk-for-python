@@ -1,6 +1,6 @@
 {
   "ignoreWords": [
-    "finetuning", "logprobs", "lora", "LoRA", "multimodal", "sampler",
+    "finetuning", "finetuningsessions", "logprobs", "lora", "LoRA", "multimodal", "sampler",
     "CISPO", "SAPO", "GRPO", "qwen", "deadbeef", "resubmit", "dedup",
     "prefill", "isodate", "rtype", "vartype", "paramtype", "deserialized"
   ],

@@ -10,7 +10,7 @@ requires = ["setuptools>=77.0.3", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "azure-ai-finetuning-sessions"
+name = "azure-ai-finetuningsessions"
 authors = [
   { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
@@ -41,7 +41,7 @@ dynamic = [
 ]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-finetuning-sessions"
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-finetuningsessions"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.ai.finetuning_sessions._version.VERSION"}

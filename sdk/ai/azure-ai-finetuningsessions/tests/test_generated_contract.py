@@ -17,6 +17,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse, AsyncHttpTransport
 from azure.ai import finetuning_sessions as sdk
 from azure.ai.finetuning_sessions import aio
 from azure.ai.finetuning_sessions._utils.model_base import SdkJSONEncoder, _deserialize
+from azure.ai.finetuning_sessions._version import VERSION
 from azure.ai.finetuning_sessions.models import FoundryFeaturesOptInKeys, _models as raw
 from azure.ai.finetuning_sessions.operations import _operations as builders
 from conftest import FakeCredential, FakeTransport
@@ -69,6 +70,11 @@ def _assert_surface(module: Any, client: Any) -> None:
         "sampling",
         "operations",
     }
+
+
+def _assert_user_agent(request: Any) -> None:
+    assert f"azsdk-python-ai-finetuningsessions/{VERSION}" in request.headers["User-Agent"]
+    assert "ai-finetuning-sessions/" not in request.headers["User-Agent"]
 
 
 def _assert_poll(result: Any, payload: dict, model: type) -> None:
@@ -140,6 +146,7 @@ def test_sync_raw_create_200_without_operation_location(client, transport: FakeT
     assert "operation-location" not in {key.lower() for key in responses[0].http_response.headers}
     [request] = transport.requests  # No automatic LRO polling or ID normalization.
     _assert_request(request, "POST", "https://fake" + _ROOT)
+    _assert_user_agent(request)
     assert request.headers["Content-Type"] == "application/json"
     assert request.headers["Authorization"] == "Bearer fake_token" and "api-key" not in request.headers
     assert json.loads(request.content) == expected
@@ -329,6 +336,7 @@ async def test_async_raw_create_and_poll_through_authenticated_pipeline(use_key,
     assert json.loads(create_request.content) == _CREATE_BODY
     _assert_request(poll_request, "GET", endpoint + _ROOT + "/raw_id/request/request_test")
     for request in transport.requests:
+        _assert_user_agent(request)
         if use_key:
             assert request.headers["api-key"] == "offline-key" and "Authorization" not in request.headers
         else:

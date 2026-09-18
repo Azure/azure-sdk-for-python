@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------
-# Shared fixtures for azure-ai-finetuning-sessions unit tests.
+# Shared fixtures for azure-ai-finetuningsessions unit tests.
 # ---------------------------------------------------------------------------
 import time
 

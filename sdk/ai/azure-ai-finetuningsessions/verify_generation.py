@@ -21,7 +21,7 @@ import tempfile
 
 PACKAGE = Path(__file__).resolve().parent
 MODULE = Path("azure/ai/finetuning_sessions")
-PROJECT = Path("specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuning-sessions")
+PROJECT = Path("specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions")
 TOOL_VERSIONS = json.loads((PACKAGE / "emitter-package.json").read_text(encoding="utf-8"))["dependencies"]
 HANDWRITTEN_MODULES = {"_client_options.py", "_exceptions.py", "_logging_setup.py"}
 
@@ -50,7 +50,7 @@ def generated_files(package: Path) -> dict[str, bytes]:
 
 def source_hashes(spec_repo: Path) -> dict[str, str]:
     root = spec_repo / PROJECT.parent
-    paths = [root / "sdk-python-azure-ai-finetuning-sessions", root / "session-finetuning", root / "common"]
+    paths = [root / PROJECT.name, root / "session-finetuning", root / "common"]
     return {
         path.relative_to(spec_repo).as_posix(): hashlib.sha256(normalized_bytes(path)).hexdigest()
         for directory in paths

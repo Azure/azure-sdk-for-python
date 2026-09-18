@@ -11,6 +11,7 @@
 
 ### Breaking Changes
 
+- The distribution is named `azure-ai-finetuningsessions`. Uninstall the older `azure-ai-finetuning-sessions` preview before installing it; Python imports remain `azure.ai.finetuning_sessions`.
 - Public requests use `/fine_tuning_sessions`. The gateway must support the canonical route family.
 - Generated operations use the actual HTTP 200 submission and request-status protocol instead of Azure LRO polling.
 - Generated create responses expose a string `session_id` and `request_id`; raw request statuses are `pending`, `completed`, and `failed`.
