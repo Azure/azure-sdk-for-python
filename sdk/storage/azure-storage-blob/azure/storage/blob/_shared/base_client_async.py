@@ -46,9 +46,11 @@ from .policies_async import (
     AsyncStorageBearerTokenCredentialPolicy,
     AsyncContentValidationPolicy,
     AsyncStorageResponseHook,
+    AsyncStorageSessionPolicy,
 )
 from .response_handlers import PartialBatchErrorException, process_storage_error
 from .._shared_access_signature import _is_credential_sastoken
+from .session_async import AsyncContainerSessionProvider
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest, HttpResponse  # pylint: disable=C4756
@@ -101,13 +103,11 @@ class AsyncStorageAccountHostsMixin(object):
         self._credential_policy: Optional[
             Union[AsyncStorageBearerTokenCredentialPolicy, SharedKeyCredentialPolicy, AzureSasCredentialPolicy]
         ] = None
+        audience = kwargs.pop("audience", None)
         if hasattr(credential, "get_token"):
-            if kwargs.get("audience"):
-                audience = str(kwargs.pop("audience")).rstrip("/") + DEFAULT_OAUTH_SCOPE
-            else:
-                audience = STORAGE_OAUTH_SCOPE
+            scope = str(audience).rstrip("/") + DEFAULT_OAUTH_SCOPE if audience else STORAGE_OAUTH_SCOPE
             self._credential_policy = AsyncStorageBearerTokenCredentialPolicy(
-                cast(AsyncTokenCredential, credential), audience
+                cast(AsyncTokenCredential, credential), scope
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
@@ -144,12 +144,38 @@ class AsyncStorageAccountHostsMixin(object):
             config.headers_policy,
             StorageRequestHook(**kwargs),
             self._credential_policy,
-            config.logging_policy,
-            AsyncStorageResponseHook(**kwargs),
-            DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
             StorageSensitiveHeaderCleanupPolicy(**kwargs),
         ]
+        use_session = bool(kwargs.pop("use_session", False))
+        session_provider = kwargs.pop("session_provider", None)
+        session_account_name = kwargs.pop("session_account_name", None)
+        if use_session:
+            if session_provider is None:
+                sub_kwargs = dict(kwargs)
+                sub_kwargs.pop("_configuration", None)
+                sub_kwargs.pop("pipeline", None)
+                sub_kwargs.pop("sdk_moniker", None)
+                sub_kwargs["transport"] = transport
+                session_provider = AsyncContainerSessionProvider(
+                    f"{self.scheme}://{self.primary_hostname}",
+                    cast(AsyncTokenCredential, credential),
+                    audience=audience,
+                    **sub_kwargs,
+                )
+            policies.append(
+                AsyncStorageSessionPolicy(
+                    account_name=session_account_name or self.account_name,
+                    session_provider=session_provider,
+                )
+            )
+        policies.extend(
+            [
+                config.logging_policy,
+                AsyncStorageResponseHook(**kwargs),
+                DistributedTracingPolicy(**kwargs),
+                HttpLoggingPolicy(**kwargs),
+            ]
+        )
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")  # type: ignore
         config.transport = transport  # type: ignore
