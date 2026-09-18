@@ -1,6 +1,10 @@
 # Release History
 
-## 1.1.1 (2024-XX-XX)
+## 1.2.0 (Unreleased)
+
+### Features Added
+
+- Add preview API `invoke_event`
 
 ### Other Changes
 
