@@ -98,9 +98,7 @@ class _SdkTimestampFilter(_logging.Filter):
 
     def filter(self, record: _logging.LogRecord) -> bool:
         if not _has_any_handler(record.name):
-            ts = _datetime.fromtimestamp(
-                record.created, _timezone.utc
-            ).isoformat(timespec="milliseconds")
+            ts = _datetime.fromtimestamp(record.created, _timezone.utc).isoformat(timespec="milliseconds")
             record.msg = f"[{ts}] {record.msg}"
         return True
 

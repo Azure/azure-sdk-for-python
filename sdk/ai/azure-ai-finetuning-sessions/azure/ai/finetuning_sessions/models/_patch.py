@@ -8,52 +8,94 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Mapping, Optional, overload
+from typing import Any, Literal, Mapping, overload
 
-from .._utils.model_base import Model as _Model, rest_field
+from . import _models
+
+MAX_IMAGE_BYTES = 10_000_000
+MAX_IMAGES_PER_EXAMPLE = 64
+_IMAGE_MAGIC_MATCHERS = {
+    "jpeg": lambda data: data.startswith(b"\xff\xd8\xff"),
+    "png": lambda data: data.startswith(b"\x89PNG\r\n\x1a\n"),
+    "webp": lambda data: (len(data) >= 12 and data.startswith(b"RIFF") and data[8:12] == b"WEBP"),
+}
 
 
-class FromCheckpoint(_Model):
+class FromCheckpoint(_models.FromCheckpoint):
     """Identifies a saved training checkpoint to bootstrap a new session from.
 
     When passed to :meth:`~azure.ai.finetuning_sessions.FineTuningSession.create`,
     the new session's LoRA weights, optimizer state, and scheduler step are all
     initialised from the referenced checkpoint (continual fine-tuning).
 
-    :ivar source_session_id: The ``model_<session_id>`` of the session that saved
+    :ivar source_session_id: The ``session_<session_id>`` of the session that saved
         the checkpoint.
     :vartype source_session_id: str
     :ivar checkpoint_id: Name of the checkpoint within the source session.
     :vartype checkpoint_id: str
     """
 
-    source_session_id: str = rest_field()
-    """The ``model_<session_id>`` of the session that saved the checkpoint."""
+class ImageChunk(_models.ImageChunk):
+    """Raw image bytes embedded in a model input.
 
-    checkpoint_id: str = rest_field()
-    """Name of the checkpoint within the source session."""
+    :ivar data: Encoded image bytes. Required.
+    :vartype data: bytes
+    :ivar format: Image encoding, such as ``jpeg`` or ``png``. Required.
+    :vartype format: str
+    :ivar expected_tokens: Number of image placeholder tokens. Required.
+    :vartype expected_tokens: int
+    """
 
     @overload
     def __init__(
         self,
         *,
-        source_session_id: str,
-        checkpoint_id: str,
+        data: bytes,
+        format: str,
+        expected_tokens: int,
+        type: Literal["image"] = "image",
     ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
+    def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        kwargs.setdefault("type", "image")
+        super().__init__(*args, **kwargs)
+        if not isinstance(self.data, bytes):
+            raise TypeError("image data must be bytes")
+        if len(self.data) > MAX_IMAGE_BYTES:
+            raise ValueError(f"image data exceeds the {MAX_IMAGE_BYTES}-byte limit")
+        if self.format not in _IMAGE_MAGIC_MATCHERS:
+            raise ValueError("image format must be jpeg, png, or webp")
+        if not _IMAGE_MAGIC_MATCHERS[self.format](self.data):
+            image_format = getattr(self.format, "value", self.format)
+            raise ValueError(f"declared image format {image_format!r} does not match the image signature")
+        if self.expected_tokens < 1:
+            raise ValueError("expected_tokens must be positive")
+
+    @property
+    def length(self) -> int:
+        return self.expected_tokens
+
+
+class ModelInput(_models.ModelInput):
+    """Ordered text and image chunks for one model input."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+        image_count = sum(
+            isinstance(chunk, ImageChunk) or (isinstance(chunk, Mapping) and chunk.get("type") == "image")
+            for chunk in self.chunks
+        )
+        if image_count > MAX_IMAGES_PER_EXAMPLE:
+            raise ValueError(f"model input supports at most {MAX_IMAGES_PER_EXAMPLE} images")
 
 
 __all__: list[str] = [
     "FromCheckpoint",
+    "ImageChunk",
+    "ModelInput",
 ]
 
 

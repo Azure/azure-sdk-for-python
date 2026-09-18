@@ -19,7 +19,7 @@ class TestFineTuningSessionInstantiation:
 
     def test_session_id_stored(self, client):
         s = FineTuningSession(client, session_id="abc123")
-        assert s.session_id == "abc123"
+        assert s.session_id == "session_abc123"
 
     def test_client_stored(self, client):
         s = FineTuningSession(client, session_id="abc123")
@@ -46,10 +46,10 @@ class TestForwardBackward:
         assert body["forward_backward_input"]["loss_fn"] == "cross_entropy"
 
     def test_custom_loss_fn(self, session, batch, transport):
-        session.forward_backward(batch, loss_fn="dpo")
+        session.forward_backward(batch, loss_fn="ppo")
         req = transport.requests[0]
         body = json.loads(req.body)
-        assert body["forward_backward_input"]["loss_fn"] == "dpo"
+        assert body["forward_backward_input"]["loss_fn"] == "ppo"
 
     def test_request_targets_correct_session(self, session, batch, transport):
         session.forward_backward(batch)
@@ -114,6 +114,7 @@ class TestSample:
         result = session.sample(
             prompt_tokens=[1, 2, 3],
             sampling_params=SamplingParams(max_tokens=16, temperature=1.0, top_p=1.0, top_k=-1),
+            checkpoint_id="sampler-checkpoint",
             num_samples=2,
         )
         assert isinstance(result, OperationResult)
@@ -122,6 +123,7 @@ class TestSample:
         session.sample(
             prompt_tokens=[1, 2, 3],
             sampling_params=SamplingParams(max_tokens=16, temperature=1.0, top_p=1.0, top_k=-1),
+            checkpoint_id="sampler-checkpoint",
             num_samples=4,
         )
         body = json.loads(transport.requests[0].body)
@@ -131,6 +133,7 @@ class TestSample:
         session.sample(
             prompt_tokens=[10, 20, 30],
             sampling_params=SamplingParams(max_tokens=16, temperature=1.0, top_p=1.0, top_k=-1),
+            checkpoint_id="sampler-checkpoint",
         )
         body = json.loads(transport.requests[0].body)
         tokens = body["prompt"]["chunks"][0]["tokens"]
@@ -140,9 +143,10 @@ class TestSample:
         session.sample(
             prompt_tokens=[1, 2],
             sampling_params=SamplingParams(max_tokens=8, temperature=1.0, top_p=1.0, top_k=-1),
+            checkpoint_id="sampler-checkpoint",
         )
         body = json.loads(transport.requests[0].body)
-        assert body.get("promptLogprobs", False) is False
+        assert body["prompt_logprobs"] is False
 
 
 class TestHeartbeat:

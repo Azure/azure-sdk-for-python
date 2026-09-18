@@ -1,5 +1,8 @@
-# Azure Finetuning Sessions client library for Python
-<!-- write necessary description of service -->
+# Azure AI Fine-Tuning Sessions client library for Python
+
+Preview client library for interactive supervised and reinforcement fine-tuning
+in Microsoft Foundry. Create a session, submit training or sampling requests,
+and save checkpoints with synchronous or asynchronous Python clients.
 
 ## Getting started
 
@@ -9,14 +12,15 @@
 python -m pip install azure-ai-finetuning-sessions
 ```
 
-#### Prequisites
+#### Prerequisites
 
 - Python 3.9 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
-- An existing Azure Finetuning Sessions instance.
+- A Foundry project with access to fine-tuning sessions and compatible model capacity.
+- A gateway supporting the canonical `/fine_tuning_sessions` routes.
 
-#### Create with an Azure Active Directory Credential
-To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
+#### Authenticate with Microsoft Entra ID
+To use a [token credential][authenticate_with_token],
 provide an instance of the desired credential type obtained from the
 [azure-identity][azure_identity_credentials] library.
 
@@ -25,31 +29,76 @@ To authenticate with AAD, you must first [pip][pip] install [`azure-identity`][a
 After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
 As an example, [DefaultAzureCredential][default_azure_credential] can be used to authenticate the client:
 
-Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`
-
 Use the returned token credential to authenticate the client:
 
 ```python
->>> from azure.ai.finetuning_sessions import FineTuningSessionClient
->>> from azure.identity import DefaultAzureCredential
->>> client = FineTuningSessionClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+from azure.ai.finetuning_sessions import FineTuningSessionClient
+from azure.identity import DefaultAzureCredential
+
+client = FineTuningSessionClient(
+    endpoint="https://<account>.services.ai.azure.com/api/projects/<project>",
+    credential=DefaultAzureCredential(),
+)
 ```
 
-## Examples
+`AzureKeyCredential` is also supported when API-key authentication is enabled for
+the endpoint. Credential selection is preserved in handwritten client hooks so
+it survives regeneration. HTTPS is the default. The `allow_insecure_http` option
+does not disable bearer-token HTTPS enforcement for remote endpoints; its HTTP
+exception is restricted to loopback development servers.
+
+## Create a session
 
 ```python
->>> from azure.ai.finetuning_sessions import FineTuningSessionClient
->>> from azure.identity import DefaultAzureCredential
->>> from azure.core.exceptions import HttpResponseError
+from azure.ai.finetuning_sessions import FineTuningSession
+from azure.ai.finetuning_sessions.models import LoRAConfig
 
->>> client = FineTuningSessionClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
->>> try:
-        <!-- write test code here -->
-    except HttpResponseError as e:
-        print('service responds error: {}'.format(e.response.json()))
-
+session = FineTuningSession.create(
+        client,
+        base_model="<supported-base-model>",
+        lora_config=LoRAConfig(rank=16),
+        user_metadata={"experiment": "example", "enabled": True},
+        training_type="GlobalStandard",
+)
+try:
+        # Submit forward_backward, optim_step, sample, and checkpoint requests here.
+        pass
+finally:
+        session.close()
+        client.close()
 ```
+
+The asynchronous entry point is `azure.ai.finetuning_sessions.aio.FineTuningSessionClient`.
+Its `create_session` method returns a session ID after initialization; training,
+sampling, checkpoint, and deletion methods accept that ID. Creation supports
+`from_checkpoint`, JSON-valued `user_metadata`, and `training_type`. The service
+requires a LoRA configuration with a rank; use values supported by the selected
+model rather than assuming a client-side default.
+
+## Generated operations versus convenience methods
+
+- Generated `sessions.create`, `training.forward`, `training.forward_backward`,
+    `training.optimizer_step`, checkpoint, and sampling methods expose the REST
+    submission response. HTTP 200 does **not** mean the GPU work has finished.
+- Poll `operations.get` with the returned `request_id`. The raw status is
+    `pending`, `completed`, or `failed`. Completed envelopes contain `result`;
+    failed envelopes can include retry and diagnostic hints.
+- Convenience methods handle this protocol and return normalized
+    `OperationResult` objects. They preserve the established `optim_step` name,
+    retries, chunking, heartbeat, session-ID handling, and typed errors.
+- Session list results retain `data` and the explicit `cursor`; advance `offset`
+    and `limit` yourself. Checkpoint lists return their complete envelope.
+- All public requests use `/fine_tuning_sessions`. The gateway must rewrite this
+    to the existing backend route when needed; no backend migration is performed
+    by installing this package.
+
+## Local development
+
+Run the package's tests with `pytest`; the package configuration enables asyncio
+tests. [verify_generation.py](verify_generation.py) emits the TypeSpec twice into
+temporary directories and compares generated files against this package without
+rewriting either source tree. See [GENERATION.md](GENERATION.md) for the pinned
+toolchain, review differences, and the precommit source-pointer requirement.
 
 ## Contributing
 

@@ -20,6 +20,7 @@ from azure.ai.finetuning_sessions.models import (
 
 # ── Fake credential ──────────────────────────────────────────────────────────
 
+
 class FakeCredential:
     def get_token(self, *scopes, **kwargs):
         return AccessToken("fake_token", int(time.time()) + 3600)
@@ -30,6 +31,7 @@ class FakeCredential:
 
 # ── Fake HTTP transport ───────────────────────────────────────────────────────
 
+
 class FakeHttpResponse(_TransportHttpResponse):
     """Returns 200 OK with smart request/result bodies for POST vs GET."""
 
@@ -37,8 +39,8 @@ class FakeHttpResponse(_TransportHttpResponse):
         super().__init__(request, None)
         self.status_code = status_code
         if body is None:
-            if getattr(request, 'method', 'POST') == "GET":
-                body = b'{"type": "forward_backward", "operation_id": "req1", "status": "succeeded"}'
+            if getattr(request, "method", "POST") == "GET":
+                body = b'{"status": "completed", "result": {}}'
             else:
                 body = b'{"request_id": "req1", "session_id": "session_test", "status": "pending"}'
         self.headers = {"content-type": "application/json"}
@@ -66,6 +68,7 @@ class FakeHttpResponse(_TransportHttpResponse):
 
     def json(self):
         import json
+
         return json.loads(self._body)
 
     def close(self):
@@ -87,13 +90,21 @@ class FakeTransport(HttpTransport):
         self.requests.append(request)
         return FakeHttpResponse(request, self._response_body, self._status_code)
 
-    def open(self): pass
-    def close(self): pass
-    def __enter__(self): return self
-    def __exit__(self, *args): self.close()
+    def open(self):
+        pass
+
+    def close(self):
+        pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.close()
 
 
 # ── Pytest fixtures ───────────────────────────────────────────────────────────
+
 
 @pytest.fixture
 def transport():
@@ -102,16 +113,18 @@ def transport():
 
 @pytest.fixture
 def client(transport):
-    return FineTuningSessionClient(
+    with FineTuningSessionClient(
         endpoint="https://fake",
         credential=FakeCredential(),
         transport=transport,
-    )
+    ) as sdk_client:
+        yield sdk_client
 
 
 @pytest.fixture
-def session(client):
-    return FineTuningSession(client, session_id="session_test")
+def session(client, monkeypatch):
+    monkeypatch.setattr(FineTuningSession, "_start_heartbeat", lambda self: None)
+    yield FineTuningSession(client, session_id="session_test")
 
 
 @pytest.fixture

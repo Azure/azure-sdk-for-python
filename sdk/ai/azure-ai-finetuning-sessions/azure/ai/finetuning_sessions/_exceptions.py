@@ -11,6 +11,7 @@ Customers should branch on exception type rather than grepping message strings:
         BatchTooLargeError,
         NoCapacityError,
         TrainingEngineError,
+        OperationResultUnavailableError,
         ContentionError,
         RequestValidationError,
     )
@@ -97,6 +98,17 @@ class NoCapacityError(FineTuningSessionsError):
         self.reason = reason
 
 
+class RateLimitedError(NoCapacityError):
+    """The request was throttled with HTTP 429 (rate limit / budget exhausted).
+
+    A subclass of :class:`NoCapacityError` so existing ``except NoCapacityError``
+    handlers still catch it. Raised by the SDK when a sample submission stays
+    throttled past the client throttle timeout.
+
+    Action: wait ``retry_after_sec`` seconds and retry, or reduce concurrency.
+    """
+
+
 class TrainingEngineError(FineTuningSessionsError):
     """The engine serving this session has died.
 
@@ -126,6 +138,37 @@ class TrainingEngineError(FineTuningSessionsError):
         self.debug_ref = debug_ref
 
 
+class OperationResultUnavailableError(FineTuningSessionsError):
+    """A terminal operation's result payload can no longer be returned.
+
+    This error is always non-retryable. When ``operation_completed`` is true,
+    the operation's side effects may already have been applied, so submitting
+    it again could duplicate a training update. When it is false, the operation
+    failed but its original error details are no longer available.
+
+    Attributes:
+        operation_completed: Whether the server durably recorded the operation
+            as completed before its result payload became unavailable.
+        error_code: Server error code identifying the payload-loss outcome.
+        debug_ref: Opaque reference for support tickets.
+    """
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        operation_completed: bool,
+        error_code: Optional[str] = None,
+        debug_ref: Optional[str] = None,
+        response: Any = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(message, response=response, **kwargs)
+        self.operation_completed = operation_completed
+        self.error_code = error_code
+        self.debug_ref = debug_ref
+
+
 class ContentionError(FineTuningSessionsError):
     """The engine is temporarily contended (busy with other tenants).
 
@@ -148,6 +191,45 @@ class ContentionError(FineTuningSessionsError):
         super().__init__(message, response=response, **kwargs)
         self.retry_after_sec = retry_after_sec
         self.reason = reason
+
+
+class RequestRetryableError(FineTuningSessionsError):
+    """A request failed transiently and the server marked it safe to retry.
+
+    Generic, operation-agnostic retry signal: whenever a failed request
+    envelope carries ``should_retry: true``, the server is telling the client
+    that this failure is not the caller's fault and a fresh attempt (a NEW
+    request id) can succeed. Current producers include sampling failures such
+    as a drained/restarted serving pod, an orphan-sweep reclaim, or an upstream
+    read timeout — but any operation may opt in to this contract by setting the
+    flag; the SDK does not gate on specific error codes.
+
+    The SDK's ``_post_and_poll`` catches this and resubmits automatically
+    (bounded retries). It is only surfaced to the caller once retries are
+    exhausted.
+
+    Attributes:
+        error_code: Server error code, if provided (e.g. ``"request_orphaned"``,
+            ``"request_read_timeout"``). Informational only — retry is driven by
+            ``should_retry``, not the code.
+        retry_after_sec: Suggested wait before resubmitting, if provided.
+        debug_ref: Opaque reference for support tickets.
+    """
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        error_code: Optional[str] = None,
+        retry_after_sec: Optional[float] = None,
+        debug_ref: Optional[str] = None,
+        response: Any = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(message, response=response, **kwargs)
+        self.error_code = error_code
+        self.retry_after_sec = retry_after_sec
+        self.debug_ref = debug_ref
 
 
 class RequestValidationError(FineTuningSessionsError):
@@ -194,13 +276,16 @@ def _classify_http_error(
 
     # --- HTTP 413: Batch too large ---
     if status_code == 413:
-        msg = body.get("message") or body.get("detail") or "Batch too large"
-        field = body.get("field")
+        detail = body.get("detail") if isinstance(body.get("detail"), dict) else None
+        effective = detail or body
+        msg = effective.get("message") or body.get("detail") or "Batch too large"
+        field = effective.get("field")
         # Try to extract numbers from the message
         max_size = None
         actual_size = None
         if isinstance(msg, str):
             import re
+
             # "Batch size (N) exceeds the maximum allowed (M)"
             m = re.search(r"Batch size \((\d+)\) exceeds the maximum allowed \((\d+)\)", msg)
             if m:
@@ -214,9 +299,7 @@ def _classify_http_error(
                 response=response,
             )
         # 413 for metadata is not a batch error — return None to let generic handling take over
-        return BatchTooLargeError(
-            msg, max_batch_size=max_size, actual_batch_size=actual_size, response=response
-        )
+        return BatchTooLargeError(msg, max_batch_size=max_size, actual_batch_size=actual_size, response=response)
 
     # --- HTTP 503: No capacity / contention ---
     if status_code == 503:
@@ -228,17 +311,11 @@ def _classify_http_error(
 
         # If the body is a plain string (legacy format), extract from detail
         if isinstance(msg, str) and ("capacity" in msg.lower() or "no engine" in msg.lower()):
-            return NoCapacityError(
-                msg, retry_after_sec=retry_after, reason=reason or "engine_busy", response=response
-            )
+            return NoCapacityError(msg, retry_after_sec=retry_after, reason=reason or "engine_busy", response=response)
         if reason == "engine_busy":
-            return NoCapacityError(
-                msg, retry_after_sec=retry_after, reason=reason, response=response
-            )
+            return NoCapacityError(msg, retry_after_sec=retry_after, reason=reason, response=response)
         # Generic 503 — treat as contention
-        return ContentionError(
-            msg, retry_after_sec=retry_after, reason=reason or None, response=response
-        )
+        return ContentionError(msg, retry_after_sec=retry_after, reason=reason or None, response=response)
 
     # --- HTTP 500: Engine dead / worker crashed / capacity exhaustion ---
     if status_code == 500:
@@ -276,9 +353,7 @@ def _classify_http_error(
                 response=response,
             )
         # Check message heuristics for legacy plain-string responses
-        if isinstance(msg, str) and any(
-            kw in msg.lower() for kw in ("engine", "dead", "crashed", "died")
-        ):
+        if isinstance(msg, str) and any(kw in msg.lower() for kw in ("engine", "dead", "crashed", "died")):
             return TrainingEngineError(
                 msg,
                 session_id=session_id,
@@ -288,13 +363,71 @@ def _classify_http_error(
             )
         return None  # Unknown 500 — don't classify
 
+    # --- HTTP 409: Terminal engine-dead conflict (non-retryable) ---
+    # The server returns 409 (not 500) for a permanently engine-dead model so
+    # the azure-core transport RetryPolicy does NOT retry it (409 is not in the
+    # default retry-status set). The body mirrors the structured shape used
+    # elsewhere: {reason, message, error_code, ...}, possibly nested under
+    # "detail". We still surface it as the terminal TrainingEngineError so
+    # callers branch on type exactly as they did for the legacy 500.
+    if status_code == 409:
+        detail = body.get("detail") if isinstance(body.get("detail"), dict) else None
+        effective = detail or body
+        reason = effective.get("reason", "")
+        msg = (
+            effective.get("message")
+            or (body.get("detail") if isinstance(body.get("detail"), str) else None)
+            or effective.get("error")
+            or "The model's engine has died"
+        )
+        error_code = effective.get("error_code") or effective.get("code")
+        debug_ref = effective.get("debug_ref")
+        if (
+            reason == "engine_dead"
+            or error_code == "engine_dead"
+            or (isinstance(msg, str) and any(kw in msg.lower() for kw in ("engine", "dead", "died", "crashed")))
+        ):
+            return TrainingEngineError(
+                msg,
+                session_id=session_id,
+                error_code=error_code or "engine_dead",
+                debug_ref=debug_ref,
+                response=response,
+            )
+        return None  # Unknown 409 — don't classify
+
+    # --- HTTP 429: Rate limited / budget exhausted ---
+    if status_code == 429:
+        reason = body.get("reason") or "rate_limited"
+        msg = body.get("message") or body.get("detail") or "Rate limited"
+        retry_after: Optional[float] = None
+        if body.get("retry_after_sec") is not None:
+            try:
+                retry_after = float(body["retry_after_sec"])
+            except (ValueError, TypeError):
+                retry_after = None
+        if retry_after is None and response is not None:
+            raw = None
+            try:
+                raw = response.headers.get("Retry-After")
+            except Exception:
+                raw = None
+            if raw is not None:
+                try:
+                    retry_after = float(raw)
+                except (ValueError, TypeError):
+                    retry_after = None
+        return RateLimitedError(msg, retry_after_sec=retry_after, reason=reason, response=response)
+
     # --- HTTP 400/422: Malformed datum / invalid request ---
     if status_code in (400, 422):
-        error_type = body.get("type", "")
-        msg = body.get("message") or body.get("detail") or "Invalid request"
-        field = body.get("field")
-        error_code = body.get("error_code") or body.get("code")
-        debug_ref = body.get("debug_ref")
+        detail = body.get("detail") if isinstance(body.get("detail"), dict) else None
+        effective = detail or body
+        error_type = effective.get("type", "")
+        msg = effective.get("message") or body.get("detail") or "Invalid request"
+        field = effective.get("field")
+        error_code = effective.get("error_code") or effective.get("code")
+        debug_ref = effective.get("debug_ref")
 
         if error_type == "validation_error" or error_code == "invalid_request":
             return RequestValidationError(
@@ -324,6 +457,39 @@ def _classify_poll_failure(
     error_code = envelope.get("error_code") or envelope.get("code")
     error_msg = envelope.get("error") or "Operation failed"
     debug_ref = envelope.get("debug_ref")
+
+    # Payload-loss outcomes are terminal even if a malformed response also
+    # carries should_retry=true. In particular, resubmitting a completed
+    # forward_backward request could apply its gradients twice.
+    if error_code in (
+        "operation_completed_result_unavailable",
+        "operation_failed_result_unavailable",
+    ):
+        return OperationResultUnavailableError(
+            error_msg,
+            operation_completed=(error_code == "operation_completed_result_unavailable"),
+            error_code=error_code,
+            debug_ref=debug_ref,
+        )
+
+    # Retryable-by-design failures. A generic, code-agnostic mechanism: when
+    # the server sets ``should_retry: true`` on a failed request it is telling
+    # the client this failure is safe to recover from by resubmitting a fresh
+    # request. We deliberately do NOT gate on specific error codes — any
+    # operation may opt in to this contract by setting the flag. ``_post_and_poll``
+    # catches the resulting exception and resubmits (bounded).
+    if envelope.get("should_retry") is True:
+        retry_after = envelope.get("retry_after_sec")
+        try:
+            retry_after = float(retry_after) if retry_after is not None else None
+        except (TypeError, ValueError):
+            retry_after = None
+        return RequestRetryableError(
+            error_msg,
+            error_code=error_code,
+            retry_after_sec=retry_after,
+            debug_ref=debug_ref,
+        )
 
     if error_code == "engine_oom":
         return BatchTooLargeError(
@@ -365,8 +531,10 @@ __all__ = [
     "FineTuningSessionsError",
     "BatchTooLargeError",
     "NoCapacityError",
+    "RateLimitedError",
     "TrainingEngineError",
     "EngineDeadError",
+    "OperationResultUnavailableError",
     "ContentionError",
     "RequestValidationError",
     "MalformedDatumError",

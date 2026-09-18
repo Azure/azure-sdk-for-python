@@ -26,6 +26,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 requires-python = ">=3.9"
 keywords = ["azure", "azure sdk"]
@@ -40,13 +41,14 @@ dynamic = [
 ]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python"
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-finetuning-sessions"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.ai.finetuning_sessions._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
+include = ["azure.ai.finetuning_sessions*"]
 exclude = [
     "tests*",
     "generated_tests*",
@@ -59,3 +61,7 @@ exclude = [
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

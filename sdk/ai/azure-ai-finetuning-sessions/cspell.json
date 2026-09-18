@@ -1,0 +1,8 @@
+{
+  "ignoreWords": [
+    "finetuning", "logprobs", "lora", "LoRA", "multimodal", "sampler",
+    "CISPO", "SAPO", "GRPO", "qwen", "deadbeef", "resubmit", "dedup",
+    "prefill", "isodate", "rtype", "vartype", "paramtype", "deserialized"
+  ],
+  "ignorePaths": ["tests/**", "*.json"]
+}

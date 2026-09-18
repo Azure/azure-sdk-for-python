@@ -8,22 +8,12 @@
 
 from typing import Any, TYPE_CHECKING
 
-from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 
 from ._version import VERSION
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-
-
-class _InsecureBearerTokenCredentialPolicy(policies.BearerTokenCredentialPolicy):
-    """BearerTokenCredentialPolicy that skips HTTPS enforcement (for local/http:// dev)."""
-
-    def on_request(self, request: Any) -> None:
-        request.context.options["enforce_https"] = False
-        super().on_request(request)
 
 
 class FineTuningSessionClientConfiguration:  # pylint: disable=too-many-instance-attributes
@@ -40,9 +30,15 @@ class FineTuningSessionClientConfiguration:  # pylint: disable=too-many-instance
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
+    :keyword api_version: The API version to use for this operation. Known values are "v1" and
+     None. Default value is None. If not set, the operation's default API version will be used. Note
+     that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "TokenCredential", *, allow_insecure_http: bool = False, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
+        api_version: str = kwargs.pop("api_version", "v1")
+
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credential is None:
@@ -50,10 +46,9 @@ class FineTuningSessionClientConfiguration:  # pylint: disable=too-many-instance
 
         self.endpoint = endpoint
         self.credential = credential
-        self.allow_insecure_http = allow_insecure_http
-        self.api_version = kwargs.pop("api_version", "v1")
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://ai.azure.com/.default"])
-        kwargs.setdefault("sdk_moniker", "finetuning-sessions/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "ai-finetuning-sessions/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
@@ -68,12 +63,6 @@ class FineTuningSessionClientConfiguration:  # pylint: disable=too-many-instance
         self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            if isinstance(self.credential, AzureKeyCredential):
-                # API key auth: sends "api-key: <key>" header on every request.
-                self.authentication_policy = AzureKeyCredentialPolicy(self.credential, name="api-key")
-            else:
-                # Token (OAuth2) auth — enforce HTTPS unless running against http://.
-                policy_cls = _InsecureBearerTokenCredentialPolicy if self.allow_insecure_http else policies.BearerTokenCredentialPolicy
-                self.authentication_policy = policy_cls(
-                    self.credential, *self.credential_scopes, **kwargs
-                )
+            self.authentication_policy = policies.BearerTokenCredentialPolicy(
+                self.credential, *self.credential_scopes, **kwargs
+            )

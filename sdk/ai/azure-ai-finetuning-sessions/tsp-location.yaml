@@ -1,6 +1,11 @@
 directory: specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuning-sessions
-commit: e8a4289ad7a07c4887d5cb4a4a967e61dbaeb365
-repo: Azure/azure-rest-api-specs-pr
-additionalDirectories: 
+# Local review uses the public TypeSpec working tree. After committing/pushing
+# that branch, replace this branch reference with its full 40-character SHA.
+# The remote branch does not contain the uncommitted changes yet.
+commit: haarunkumar/finetuning-sessions-spec
+repo: Azure/azure-rest-api-specs
+entrypointFile: client.tsp
+emitterPackageJsonPath: sdk/ai/azure-ai-finetuning-sessions/emitter-package.json
+additionalDirectories:
 - specification/ai-foundry/data-plane/Foundry/src/session-finetuning
 - specification/ai-foundry/data-plane/Foundry/src/common

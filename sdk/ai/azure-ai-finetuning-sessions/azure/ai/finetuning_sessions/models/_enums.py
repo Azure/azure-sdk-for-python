@@ -32,8 +32,31 @@ class FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """INSIGHTS_V1_PREVIEW."""
     MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
     """MEMORY_STORES_V1_PREVIEW."""
+    ROUTINES_V1_PREVIEW = "Routines=V1Preview"
+    """ROUTINES_V1_PREVIEW."""
+    TOOLBOXES_V1_PREVIEW = "Toolboxes=V1Preview"
+    """TOOLBOXES_V1_PREVIEW."""
+    SKILLS_V1_PREVIEW = "Skills=V1Preview"
+    """SKILLS_V1_PREVIEW."""
+    DATA_GENERATION_JOBS_V1_PREVIEW = "DataGenerationJobs=V1Preview"
+    """DATA_GENERATION_JOBS_V1_PREVIEW."""
+    MODELS_V1_PREVIEW = "Models=V1Preview"
+    """MODELS_V1_PREVIEW."""
+    AGENTS_OPTIMIZATION_V2_PREVIEW = "AgentsOptimization=V2Preview"
+    """AGENTS_OPTIMIZATION_V2_PREVIEW."""
     FINETUNING_SESSIONS_V1_PREVIEW = "FineTuningSessions=V1Preview"
     """FINETUNING_SESSIONS_V1_PREVIEW."""
+
+
+class ImageFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported encodings for an image supplied as model input."""
+
+    JPEG = "jpeg"
+    """JPEG image encoding."""
+    PNG = "png"
+    """PNG image encoding."""
+    WEBP = "webp"
+    """WebP image encoding."""
 
 
 class LossFn(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -48,33 +71,33 @@ class LossFn(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CISPO = "cispo"
     """Clipped Importance-Sampled Policy Optimization (CISPO) loss."""
     SAPO = "sapo"
-    """Soft-Advantage Policy Optimization (SAPO) loss."""
+    """Soft Adaptive Policy Optimization (SAPO) loss."""
 
 
 class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Lifecycle status of an async fine-tuning operation — standard Azure LRO values."""
+    """Normalized state of an SDK convenience operation."""
 
     RUNNING = "running"
-    """Operation is in progress."""
+    """Work is in progress."""
     SUCCEEDED = "succeeded"
-    """Operation completed successfully."""
+    """Work completed successfully."""
     FAILED = "failed"
-    """Operation failed."""
+    """Work failed."""
 
 
 class OperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Discriminator values for async fine-tuning operation results."""
+    """Discriminator for normalized SDK convenience results."""
 
     FORWARD_BACKWARD = "forward_backward"
-    """A forward-backward pass operation."""
+    """A forward or forward-backward result."""
     OPTIM_STEP = "optim_step"
-    """An optimizer step operation."""
+    """An optimizer-step result."""
     SAMPLE = "sample"
-    """A sampling operation."""
+    """A sampling result."""
     SAVE_CHECKPOINT = "save_checkpoint"
-    """A training checkpoint save operation."""
+    """A saved training checkpoint."""
     SAVE_SAMPLER_WEIGHTS = "save_sampler_weights"
-    """A sampler-weights save operation."""
+    """Saved sampler weights."""
 
 
 class SessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -91,8 +114,8 @@ class SessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUCCEEDED = "succeeded"
     """Session completed successfully."""
     FAILED = "failed"
-    """Session ended in a non-success terminal state (engine death, expiry,
-    or unrecoverable failure). Any in-memory weights are lost."""
+    """Session ended in a non-success terminal state (engine death, expiry, or unrecoverable failure).
+    Any in-memory weights are lost."""
 
 
 class SessionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -100,3 +123,14 @@ class SessionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TRAINING = "training"
     """A training session for fine-tuning a model."""
+
+
+class TrainingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Training tiers available for fine-tuning sessions."""
+
+    GLOBAL_STANDARD = "GlobalStandard"
+    """Standard training using globally available capacity."""
+    DATAZONE_STANDARD = "DatazoneStandard"
+    """Standard training constrained to the applicable data zone."""
+    DEVELOPER_TIER = "DeveloperTier"
+    """Developer-tier training, subject to service eligibility."""
