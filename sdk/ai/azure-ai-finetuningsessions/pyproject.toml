@@ -44,11 +44,11 @@ dynamic = [
 repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-finetuningsessions"
 
 [tool.setuptools.dynamic]
-version = {attr = "azure.ai.finetuning_sessions._version.VERSION"}
+version = {attr = "azure.ai.finetuningsessions._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
-include = ["azure.ai.finetuning_sessions*"]
+include = ["azure.ai.finetuningsessions*"]
 exclude = [
     "tests*",
     "generated_tests*",

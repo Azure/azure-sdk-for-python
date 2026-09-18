@@ -14,12 +14,12 @@ import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.transport import AsyncHttpResponse, AsyncHttpTransport
 
-from azure.ai import finetuning_sessions as sdk
-from azure.ai.finetuning_sessions import aio
-from azure.ai.finetuning_sessions._utils.model_base import SdkJSONEncoder, _deserialize
-from azure.ai.finetuning_sessions._version import VERSION
-from azure.ai.finetuning_sessions.models import FoundryFeaturesOptInKeys, _models as raw
-from azure.ai.finetuning_sessions.operations import _operations as builders
+from azure.ai import finetuningsessions as sdk
+from azure.ai.finetuningsessions import aio
+from azure.ai.finetuningsessions._utils.model_base import SdkJSONEncoder, _deserialize
+from azure.ai.finetuningsessions._version import VERSION
+from azure.ai.finetuningsessions.models import FoundryFeaturesOptInKeys, _models as raw
+from azure.ai.finetuningsessions.operations import _operations as builders
 from conftest import FakeCredential, FakeTransport
 
 _PREVIEW = FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW

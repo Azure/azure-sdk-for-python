@@ -8,8 +8,8 @@ from azure.core.credentials import AccessToken
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.pipeline.transport import HttpResponse as _TransportHttpResponse
 
-from azure.ai.finetuning_sessions import FineTuningSessionClient, FineTuningSession
-from azure.ai.finetuning_sessions.models import (
+from azure.ai.finetuningsessions import FineTuningSessionClient, FineTuningSession
+from azure.ai.finetuningsessions.models import (
     Datum,
     ModelInput,
     ModelInputChunk,

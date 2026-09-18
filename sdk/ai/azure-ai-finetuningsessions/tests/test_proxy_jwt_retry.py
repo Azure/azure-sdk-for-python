@@ -17,8 +17,8 @@ from unittest.mock import Mock
 import pytest
 from azure.core.exceptions import HttpResponseError
 
-from azure.ai.finetuning_sessions import _patch as sync
-from azure.ai.finetuning_sessions.aio import _patch as aio
+from azure.ai.finetuningsessions import _patch as sync
+from azure.ai.finetuningsessions.aio import _patch as aio
 
 _SESSION_ID = "session_deadbeef"
 _ACCEPTED = {"request_id": "req-accepted", "session_id": _SESSION_ID}

@@ -20,10 +20,10 @@ import subprocess
 import tempfile
 
 PACKAGE = Path(__file__).resolve().parent
-MODULE = Path("azure/ai/finetuning_sessions")
+MODULE = Path("azure/ai/finetuningsessions")
 PROJECT = Path("specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions")
 TOOL_VERSIONS = json.loads((PACKAGE / "emitter-package.json").read_text(encoding="utf-8"))["dependencies"]
-HANDWRITTEN_MODULES = {"_client_options.py", "_exceptions.py", "_logging_setup.py"}
+HANDWRITTEN_MODULES = {"_client_options.py", "_compat.py", "_exceptions.py", "_legacy_polling.py", "_logging_setup.py"}
 
 
 def normalized_bytes(path: Path) -> bytes:

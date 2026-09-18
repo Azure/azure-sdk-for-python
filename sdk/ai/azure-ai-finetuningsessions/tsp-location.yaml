@@ -1,6 +1,6 @@
 directory: specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions
-# Public TypeSpec commit including the distribution rename and Foundry release merge.
-commit: 4ea1ecd5b4dfec03bfc5a5cd67d164869db95014
+# TypeSpec commit containing the namespace migration and preview error models.
+commit: 12851ab6cc56378c9137e7971ac69172f2aa411b
 repo: Azure/azure-rest-api-specs
 entrypointFile: client.tsp
 emitterPackageJsonPath: sdk/ai/azure-ai-finetuningsessions/emitter-package.json

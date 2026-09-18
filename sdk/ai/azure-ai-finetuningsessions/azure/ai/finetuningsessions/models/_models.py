@@ -18,6 +18,34 @@ if TYPE_CHECKING:
     from .. import _unions, models as _models
 
 
+class _MisalignmentSteer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """_MisalignmentSteer.
+
+    :ivar message: The public continuation instruction. Required.
+    :vartype message: str
+    """
+
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The public continuation instruction. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ActionOperation(_Model):  # pylint: disable=docstring-missing-param
     """Identifies an accepted training request and its fine-tuning session.
 
@@ -93,6 +121,97 @@ class AdamParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
+class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """ApiError.
+
+    :ivar code: Required.
+    :vartype code: str
+    :ivar message: Required.
+    :vartype message: str
+    :ivar param:
+    :vartype param: str
+    :ivar type:
+    :vartype type: str
+    :ivar misalignment:
+    :vartype misalignment: ~azure.ai.finetuningsessions.models.MisalignmentErrorDetailsResource
+    :ivar details:
+    :vartype details: list[~azure.ai.finetuningsessions.models.ApiError]
+    :ivar additional_info:
+    :vartype additional_info: dict[str, any]
+    :ivar debug_info:
+    :vartype debug_info: dict[str, any]
+    """
+
+    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    param: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    misalignment: Optional["_models.MisalignmentErrorDetailsResource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    details: Optional[list["_models.ApiError"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    additional_info: Optional[dict[str, Any]] = rest_field(
+        name="additionalInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    debug_info: Optional[dict[str, Any]] = rest_field(
+        name="debugInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: str,
+        param: Optional[str] = None,
+        type: Optional[str] = None,
+        misalignment: Optional["_models.MisalignmentErrorDetailsResource"] = None,
+        details: Optional[list["_models.ApiError"]] = None,
+        additional_info: Optional[dict[str, Any]] = None,
+        debug_info: Optional[dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApiErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Error response for API failures.
+
+    :ivar error: Required.
+    :vartype error: ~azure.ai.finetuningsessions.models.ApiError
+    """
+
+    error: "_models.ApiError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error: "_models.ApiError",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Checkpoint(_Model):
     """A checkpoint item returned in GET /fine_tuning_sessions/{sessionId}/checkpoints.
 
@@ -100,7 +219,7 @@ class Checkpoint(_Model):
     :vartype checkpoint_id: str
     :ivar checkpoint_type: Whether the checkpoint contains training state or sampler weights.
      Required. Known values are: "training" and "sampler".
-    :vartype checkpoint_type: str or ~azure.ai.finetuning_sessions.models.CheckpointType
+    :vartype checkpoint_type: str or ~azure.ai.finetuningsessions.models.CheckpointType
     :ivar time: Timestamp when the checkpoint was saved. Required.
     :vartype time: ~datetime.datetime
     :ivar step_number: Training step associated with the checkpoint, when recorded.
@@ -165,7 +284,7 @@ class CheckpointList(_Model):  # pylint: disable=docstring-keyword-should-match-
 
     :ivar checkpoints: All training and sampler checkpoints for the session, returned in one page.
      Required.
-    :vartype checkpoints: list[~azure.ai.finetuning_sessions.models.Checkpoint]
+    :vartype checkpoints: list[~azure.ai.finetuningsessions.models.Checkpoint]
     """
 
     checkpoints: list["_models.Checkpoint"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -297,20 +416,20 @@ class CreateSessionRequest(_Model):  # pylint: disable=docstring-keyword-should-
     """Request body for POST /fine_tuning_sessions.
 
     :ivar type: The session type. Required. "training"
-    :vartype type: str or ~azure.ai.finetuning_sessions.models.SessionType
+    :vartype type: str or ~azure.ai.finetuningsessions.models.SessionType
     :ivar base_model: Base model to use for the new training session. Required.
     :vartype base_model: str
     :ivar lora_config: Required LoRA adapter configuration, including the adapter rank. Required.
-    :vartype lora_config: ~azure.ai.finetuning_sessions.models.LoRAConfig
+    :vartype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig
     :ivar user_metadata: Caller-provided metadata whose values can be any JSON value.
     :vartype user_metadata: dict[str, any]
     :ivar from_checkpoint: Training checkpoint to load while initializing the session, when
      provided.
-    :vartype from_checkpoint: ~azure.ai.finetuning_sessions.models.FromCheckpoint
+    :vartype from_checkpoint: ~azure.ai.finetuningsessions.models.FromCheckpoint
     :ivar training_type: Training tier. When omitted, the service defaults to GlobalStandard unless
      the legacy user_metadata.DeveloperTier setting selects DeveloperTier. Known values are:
      "GlobalStandard", "DatazoneStandard", and "DeveloperTier".
-    :vartype training_type: str or ~azure.ai.finetuning_sessions.models.TrainingType
+    :vartype training_type: str or ~azure.ai.finetuningsessions.models.TrainingType
     """
 
     type: Union[str, "_models.SessionType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -366,10 +485,10 @@ class CreateSessionResponse(_Model):  # pylint: disable=docstring-keyword-should
     :ivar base_model: Base model used by the session. Required.
     :vartype base_model: str
     :ivar lora_config: LoRA adapter configuration selected for the session. Required.
-    :vartype lora_config: ~azure.ai.finetuning_sessions.models.LoRAConfig
+    :vartype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig
     :ivar status: Current lifecycle status, which can initially be created or queued. Required.
      Known values are: "queued", "running", "succeeded", and "failed".
-    :vartype status: str or ~azure.ai.finetuning_sessions.models.SessionStatus
+    :vartype status: str or ~azure.ai.finetuningsessions.models.SessionStatus
     :ivar request_id: Request identifier used to poll for session initialization. Required.
     :vartype request_id: str
     :ivar info_message: Informational message associated with session creation, when available.
@@ -468,9 +587,9 @@ class Datum(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-o
     """A single training example.
 
     :ivar model_input: Token-ID and optional image input to the model. Required.
-    :vartype model_input: ~azure.ai.finetuning_sessions.models.ModelInput
+    :vartype model_input: ~azure.ai.finetuningsessions.models.ModelInput
     :ivar loss_fn_inputs: Loss-function targets, aligned with model_input tokens. Required.
-    :vartype loss_fn_inputs: ~azure.ai.finetuning_sessions.models.LossFnInputs
+    :vartype loss_fn_inputs: ~azure.ai.finetuningsessions.models.LossFnInputs
     """
 
     model_input: "_models.ModelInput" = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -596,12 +715,12 @@ class ForwardBackwardInput(_Model):  # pylint: disable=docstring-keyword-should-
     """Inner payload for a forward-backward request.
 
     :ivar data: Training examples to process in this batch. Required.
-    :vartype data: list[~azure.ai.finetuning_sessions.models.Datum]
+    :vartype data: list[~azure.ai.finetuningsessions.models.Datum]
     :ivar loss_fn: Loss function to evaluate for the batch. Required. Known values are:
      "cross_entropy", "importance_sampling", "ppo", "cispo", and "sapo".
-    :vartype loss_fn: str or ~azure.ai.finetuning_sessions.models.LossFn
+    :vartype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
     :ivar loss_fn_config: Optional hyper-parameters for the selected loss function.
-    :vartype loss_fn_config: ~azure.ai.finetuning_sessions.models.LossFnConfig
+    :vartype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig
     """
 
     data: list["_models.Datum"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -643,12 +762,12 @@ class OperationResult(_Model):  # pylint: disable=docstring-keyword-should-match
 
     :ivar type: Kind of operation whose result was normalized. Required. Known values are:
      "forward_backward", "optim_step", "sample", "save_checkpoint", and "save_sampler_weights".
-    :vartype type: str or ~azure.ai.finetuning_sessions.models.OperationType
+    :vartype type: str or ~azure.ai.finetuningsessions.models.OperationType
     :ivar operation_id: Request identifier associated with this convenience result. Required.
     :vartype operation_id: str
     :ivar status: Normalized operation state. Required. Known values are: "running", "succeeded",
      and "failed".
-    :vartype status: str or ~azure.ai.finetuning_sessions.models.OperationStatus
+    :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -689,10 +808,10 @@ class ForwardBackwardOperationResult(
     :vartype operation_id: str
     :ivar status: Normalized operation state. Required. Known values are: "running", "succeeded",
      and "failed".
-    :vartype status: str or ~azure.ai.finetuning_sessions.models.OperationStatus
+    :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
     :ivar type: Identifies the forward-result shape. Required. A forward or forward-backward
      result.
-    :vartype type: str or ~azure.ai.finetuning_sessions.models.FORWARD_BACKWARD
+    :vartype type: str or ~azure.ai.finetuningsessions.models.FORWARD_BACKWARD
     :ivar total_loss: Aggregate loss, absent for forward-only results that do not report it.
     :vartype total_loss: float
     :ivar loss_fn_output_type: Shape identifier of each loss output.
@@ -700,7 +819,7 @@ class ForwardBackwardOperationResult(
     :ivar loss_fn_outputs: Per-datum outputs, including token log-probabilities.
     :vartype loss_fn_outputs: list[dict[str, any]]
     :ivar per_datum_logprobs: Legacy per-datum log-probability tensors, when reported.
-    :vartype per_datum_logprobs: list[~azure.ai.finetuning_sessions.models.TensorData]
+    :vartype per_datum_logprobs: list[~azure.ai.finetuningsessions.models.TensorData]
     :ivar metrics: Metrics reported by the service, retaining arbitrary JSON values.
     :vartype metrics: dict[str, any]
     """
@@ -750,7 +869,7 @@ class ForwardBackwardRequest(_Model):  # pylint: disable=docstring-keyword-shoul
 
     :ivar forward_backward_input: Batch inputs for the combined forward and backward pass.
      Required.
-    :vartype forward_backward_input: ~azure.ai.finetuning_sessions.models.ForwardBackwardInput
+    :vartype forward_backward_input: ~azure.ai.finetuningsessions.models.ForwardBackwardInput
     """
 
     forward_backward_input: "_models.ForwardBackwardInput" = rest_field(
@@ -781,12 +900,12 @@ class ForwardInput(_Model):  # pylint: disable=docstring-keyword-should-match-ke
     configuration as a forward-backward pass.
 
     :ivar data: Training examples to process in this batch. Required.
-    :vartype data: list[~azure.ai.finetuning_sessions.models.Datum]
+    :vartype data: list[~azure.ai.finetuningsessions.models.Datum]
     :ivar loss_fn: Loss function to evaluate for the batch. Required. Known values are:
      "cross_entropy", "importance_sampling", "ppo", "cispo", and "sapo".
-    :vartype loss_fn: str or ~azure.ai.finetuning_sessions.models.LossFn
+    :vartype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
     :ivar loss_fn_config: Optional hyper-parameters for the selected loss function.
-    :vartype loss_fn_config: ~azure.ai.finetuning_sessions.models.LossFnConfig
+    :vartype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig
     """
 
     data: list["_models.Datum"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -823,7 +942,7 @@ class ForwardRequest(_Model):  # pylint: disable=docstring-keyword-should-match-
     """Request body for POST /fine_tuning_sessions/{sessionId}/forward.
 
     :ivar forward_input: Batch inputs for the forward-only pass. Required.
-    :vartype forward_input: ~azure.ai.finetuning_sessions.models.ForwardInput
+    :vartype forward_input: ~azure.ai.finetuningsessions.models.ForwardInput
     """
 
     forward_input: "_models.ForwardInput" = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -928,7 +1047,7 @@ class ImageChunk(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
     :vartype data: bytes
     :ivar format: Encoding of the supplied image bytes. Required. Known values are: "jpeg", "png",
      and "webp".
-    :vartype format: str or ~azure.ai.finetuning_sessions.models.ImageFormat
+    :vartype format: str or ~azure.ai.finetuningsessions.models.ImageFormat
     :ivar expected_tokens: Number of model tokens expected to represent this image. Required.
     :vartype expected_tokens: int
     """
@@ -1070,17 +1189,17 @@ class LossFnInputs(_Model):  # pylint: disable=docstring-keyword-should-match-ke
     """Per-datum loss function inputs used in forward-backward.
 
     :ivar target_tokens: Target token ids (shifted by 1 relative to model input). Required.
-    :vartype target_tokens: ~azure.ai.finetuning_sessions.models.TensorData
+    :vartype target_tokens: ~azure.ai.finetuningsessions.models.TensorData
     :ivar weights: Per-token weights (0.0 = masked, 1.0 = counted). Omission uses a weight of one
      for each target.
-    :vartype weights: ~azure.ai.finetuning_sessions.models.TensorData
+    :vartype weights: ~azure.ai.finetuningsessions.models.TensorData
     :ivar advantages: Per-token advantage estimates (required for REINFORCE/PPO (Proximal Policy
      Optimization)/CISPO (Clipped Importance-Sampled Policy Optimization)/SAPO (Soft Adaptive Policy
      Optimization)). Omit or pass empty array for cross-entropy.
-    :vartype advantages: ~azure.ai.finetuning_sessions.models.TensorData
+    :vartype advantages: ~azure.ai.finetuningsessions.models.TensorData
     :ivar logprobs: Per-token reference log-probabilities for KL-divergence regularisation. Omit or
      pass empty array to skip KL.
-    :vartype logprobs: ~azure.ai.finetuning_sessions.models.TensorData
+    :vartype logprobs: ~azure.ai.finetuningsessions.models.TensorData
     """
 
     target_tokens: "_models.TensorData" = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1116,13 +1235,59 @@ class LossFnInputs(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         super().__init__(*args, **kwargs)
 
 
+class MisalignmentErrorDetailsResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """MisalignmentErrorDetailsResource.
+
+    :ivar error_type: An optional classification; clients must accept additional values. Known
+     values are: "potentially_unintended_data_transfer", "potentially_unintended_data_access",
+     "potentially_unintended_destructive_activity", and "other".
+    :vartype error_type: str or ~azure.ai.finetuningsessions.models._MisalignmentErrorType
+    :ivar detailed_explanation: The public explanation for this block.
+    :vartype detailed_explanation: str
+    :ivar steer: An optional public continuation instruction.
+    :vartype steer: ~azure.ai.finetuningsessions.models._MisalignmentSteer
+    """
+
+    error_type: Optional[Union[str, "_models._MisalignmentErrorType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An optional classification; clients must accept additional values. Known values are:
+     \"potentially_unintended_data_transfer\", \"potentially_unintended_data_access\",
+     \"potentially_unintended_destructive_activity\", and \"other\"."""
+    detailed_explanation: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The public explanation for this block."""
+    steer: Optional["_models._MisalignmentSteer"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An optional public continuation instruction."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error_type: Optional[Union[str, "_models._MisalignmentErrorType"]] = None,
+        detailed_explanation: Optional[str] = None,
+        steer: Optional["_models._MisalignmentSteer"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ModelInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Full model input as an ordered sequence of token-ID and image chunks.
 
     :ivar chunks: Chunks forming the complete model input. At most 64 image chunks are allowed per
      example; the service enforces this limit at runtime. Required.
-    :vartype chunks: list[~azure.ai.finetuning_sessions.models.ModelInputChunk or
-     ~azure.ai.finetuning_sessions.models.ImageChunk]
+    :vartype chunks: list[~azure.ai.finetuningsessions.models.ModelInputChunk or
+     ~azure.ai.finetuningsessions.models.ImageChunk]
     """
 
     chunks: list["_unions.FineTuningInputChunk"] = rest_field(
@@ -1186,9 +1351,9 @@ class OptimStepOperationResult(
     :vartype operation_id: str
     :ivar status: Normalized operation state. Required. Known values are: "running", "succeeded",
      and "failed".
-    :vartype status: str or ~azure.ai.finetuning_sessions.models.OperationStatus
+    :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
     :ivar type: Identifies an optimizer-step result. Required. An optimizer-step result.
-    :vartype type: str or ~azure.ai.finetuning_sessions.models.OPTIM_STEP
+    :vartype type: str or ~azure.ai.finetuningsessions.models.OPTIM_STEP
     :ivar grad_norm: Gradient norm, when reported.
     :vartype grad_norm: float
     :ivar step_count: Optimizer step count, when reported.
@@ -1231,7 +1396,7 @@ class OptimStepRequest(_Model):  # pylint: disable=docstring-keyword-should-matc
     """Request body for POST /fine_tuning_sessions/{sessionId}/optim_step.
 
     :ivar adam_params: Adam optimizer parameters used to apply accumulated gradients. Required.
-    :vartype adam_params: ~azure.ai.finetuning_sessions.models.AdamParams
+    :vartype adam_params: ~azure.ai.finetuningsessions.models.AdamParams
     """
 
     adam_params: "_models.AdamParams" = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1359,11 +1524,11 @@ class SampleOperationResult(
     :vartype operation_id: str
     :ivar status: Normalized operation state. Required. Known values are: "running", "succeeded",
      and "failed".
-    :vartype status: str or ~azure.ai.finetuning_sessions.models.OperationStatus
+    :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
     :ivar type: Identifies a sampling result. Required. A sampling result.
-    :vartype type: str or ~azure.ai.finetuning_sessions.models.SAMPLE
+    :vartype type: str or ~azure.ai.finetuningsessions.models.SAMPLE
     :ivar sequences: Generated sequences. Required.
-    :vartype sequences: list[~azure.ai.finetuning_sessions.models.SampledSequence]
+    :vartype sequences: list[~azure.ai.finetuningsessions.models.SampledSequence]
     :ivar prompt_logprobs: Prompt-token log-probabilities; null marks a token without a computed
      value.
     :vartype prompt_logprobs: list[float]
@@ -1415,9 +1580,9 @@ class SampleRequest(_Model):  # pylint: disable=docstring-keyword-should-match-k
     :ivar num_samples: Number of independent completions to generate. Default 1.
     :vartype num_samples: int
     :ivar prompt: Tokenised input prompt. Required.
-    :vartype prompt: ~azure.ai.finetuning_sessions.models.ModelInput
+    :vartype prompt: ~azure.ai.finetuningsessions.models.ModelInput
     :ivar sampling_params: Parameters controlling token generation. Required.
-    :vartype sampling_params: ~azure.ai.finetuning_sessions.models.SamplingParams
+    :vartype sampling_params: ~azure.ai.finetuningsessions.models.SamplingParams
     :ivar sampling_session_id: Sampling session identifier from a prior sampler-weights save
      request.
     :vartype sampling_session_id: str
@@ -1537,9 +1702,9 @@ class SaveCheckpointOperationResult(
     :vartype operation_id: str
     :ivar status: Normalized operation state. Required. Known values are: "running", "succeeded",
      and "failed".
-    :vartype status: str or ~azure.ai.finetuning_sessions.models.OperationStatus
+    :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
     :ivar type: Identifies a training checkpoint result. Required. A saved training checkpoint.
-    :vartype type: str or ~azure.ai.finetuning_sessions.models.SAVE_CHECKPOINT
+    :vartype type: str or ~azure.ai.finetuningsessions.models.SAVE_CHECKPOINT
     :ivar checkpoint_id: Checkpoint identifier within its source session. Required.
     :vartype checkpoint_id: str
     :ivar path: Portable path identifying the checkpoint. Required.
@@ -1622,9 +1787,9 @@ class SaveSamplerWeightsOperationResult(
     :vartype operation_id: str
     :ivar status: Normalized operation state. Required. Known values are: "running", "succeeded",
      and "failed".
-    :vartype status: str or ~azure.ai.finetuning_sessions.models.OperationStatus
+    :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
     :ivar type: Identifies a sampler-checkpoint result. Required. Saved sampler weights.
-    :vartype type: str or ~azure.ai.finetuning_sessions.models.SAVE_SAMPLER_WEIGHTS
+    :vartype type: str or ~azure.ai.finetuningsessions.models.SAVE_SAMPLER_WEIGHTS
     :ivar checkpoint_id: Checkpoint identifier within its source session. Required.
     :vartype checkpoint_id: str
     :ivar sampling_session_id: Sampling-session identifier, when reported.
@@ -1716,12 +1881,12 @@ class Session(_Model):  # pylint: disable=docstring-keyword-should-match-keyword
     :ivar session_id: Unique identifier for this fine-tuning session. Required.
     :vartype session_id: str
     :ivar type: The session type. Required. "training"
-    :vartype type: str or ~azure.ai.finetuning_sessions.models.SessionType
+    :vartype type: str or ~azure.ai.finetuningsessions.models.SessionType
     :ivar status: Current lifecycle status of the session. Required. Known values are: "queued",
      "running", "succeeded", and "failed".
-    :vartype status: str or ~azure.ai.finetuning_sessions.models.SessionStatus
+    :vartype status: str or ~azure.ai.finetuningsessions.models.SessionStatus
     :ivar model_data: Model and adapter configuration associated with this session. Required.
-    :vartype model_data: ~azure.ai.finetuning_sessions.models.SessionModelData
+    :vartype model_data: ~azure.ai.finetuningsessions.models.SessionModelData
     """
 
     session_id: str = rest_field(visibility=["read"])
@@ -1757,9 +1922,9 @@ class SessionList(_Model):  # pylint: disable=docstring-keyword-should-match-key
     """Paginated list of fine-tuning sessions.
 
     :ivar data: Sessions returned in the current page. Required.
-    :vartype data: list[~azure.ai.finetuning_sessions.models.SessionSummary]
+    :vartype data: list[~azure.ai.finetuningsessions.models.SessionSummary]
     :ivar cursor: Offset, limit, and total count for the requested page. Required.
-    :vartype cursor: ~azure.ai.finetuning_sessions.models.Cursor
+    :vartype cursor: ~azure.ai.finetuningsessions.models.Cursor
     """
 
     data: list["_models.SessionSummary"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1792,7 +1957,7 @@ class SessionModelData(_Model):  # pylint: disable=docstring-keyword-should-matc
     :ivar base_model: Base model used by the session. Required.
     :vartype base_model: str
     :ivar lora_config: LoRA adapter configuration, when the model uses an adapter.
-    :vartype lora_config: ~azure.ai.finetuning_sessions.models.LoRAConfig
+    :vartype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig
     :ivar model_name: Name of the model associated with the session, when available.
     :vartype model_name: str
     """
@@ -1833,7 +1998,7 @@ class SessionSummary(_Model):  # pylint: disable=docstring-keyword-should-match-
     :vartype base_model: str
     :ivar status: Current lifecycle status of the session. Required. Known values are: "queued",
      "running", "succeeded", and "failed".
-    :vartype status: str or ~azure.ai.finetuning_sessions.models.SessionStatus
+    :vartype status: str or ~azure.ai.finetuningsessions.models.SessionStatus
     :ivar is_lora: Whether the session uses a LoRA adapter. Required.
     :vartype is_lora: bool
     :ivar lora_rank: LoRA rank, if applicable.

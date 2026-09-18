@@ -8,8 +8,8 @@ import time
 
 import pytest
 
-from azure.ai.finetuning_sessions.aio import _patch as _aio_mod
-from azure.ai.finetuning_sessions.models import (
+from azure.ai.finetuningsessions.aio import _patch as _aio_mod
+from azure.ai.finetuningsessions.models import (
     Datum,
     ForwardBackwardOperationResult,
     ModelInput,

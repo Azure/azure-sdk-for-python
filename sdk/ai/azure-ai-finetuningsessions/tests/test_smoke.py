@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 """Offline training-loop smoke test; no credentials or endpoint required."""
 
-from azure.ai.finetuning_sessions.models import AdamParams, OperationResult, SamplingParams
+from azure.ai.finetuningsessions.models import AdamParams, OperationResult, SamplingParams
 
 
 def test_training_and_sampling_loop(session, batch, transport):

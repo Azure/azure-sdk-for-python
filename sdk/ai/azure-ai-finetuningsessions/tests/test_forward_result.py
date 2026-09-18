@@ -1,11 +1,11 @@
-from azure.ai.finetuning_sessions._patch import (
+from azure.ai.finetuningsessions._patch import (
     _combine_fwd_bwd_results,
     _LOOM_SUBPATH_TO_OP_TYPE,
     _normalize_loom_result,
 )
-from azure.ai.finetuning_sessions.aio import _patch as _aio_patch
-from azure.ai.finetuning_sessions._utils.model_base import _deserialize
-from azure.ai.finetuning_sessions.models import (
+from azure.ai.finetuningsessions.aio import _patch as _aio_patch
+from azure.ai.finetuningsessions._utils.model_base import _deserialize
+from azure.ai.finetuningsessions.models import (
     ForwardBackwardOperationResult,
     OperationResult,
     SampleOperationResult,

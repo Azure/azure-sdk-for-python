@@ -36,8 +36,8 @@ class TestAsyncPostRetryCap:
     @pytest.mark.asyncio
     async def test_max_retries_is_2(self, mock_client):
         """After 2 consecutive same-status failures, the error surfaces immediately."""
-        from azure.ai.finetuning_sessions.aio._patch import _post
-        from azure.ai.finetuning_sessions._exceptions import NoCapacityError
+        from azure.ai.finetuningsessions.aio._patch import _post
+        from azure.ai.finetuningsessions._exceptions import NoCapacityError
 
         # Mock response: always return 503 with capacity message
         mock_resp = MagicMock()
@@ -59,7 +59,7 @@ class TestAsyncPostRetryCap:
     @pytest.mark.asyncio
     async def test_honors_retry_after_header(self, mock_client):
         """When Retry-After header is present, SDK uses that wait time."""
-        from azure.ai.finetuning_sessions.aio._patch import _post
+        from azure.ai.finetuningsessions.aio._patch import _post
 
         # First call: 503 with Retry-After; second call: 200
         resp_503 = MagicMock()
@@ -77,7 +77,7 @@ class TestAsyncPostRetryCap:
 
         mock_client.send_request = AsyncMock(side_effect=[resp_503, resp_200])
 
-        with patch("azure.ai.finetuning_sessions.aio._patch.asyncio.sleep", new_callable=AsyncMock) as mock_sleep:
+        with patch("azure.ai.finetuningsessions.aio._patch.asyncio.sleep", new_callable=AsyncMock) as mock_sleep:
             request_id, op_type = await _post(
                 mock_client, "/fine_tuning_sessions/session_deadbeef/forward_backward", {}
             )
@@ -92,8 +92,8 @@ class TestAsyncPostRetryCap:
     @pytest.mark.asyncio
     async def test_consecutive_same_status_raises_typed(self, mock_client):
         """After 2 consecutive same-status failures, a typed exception is raised."""
-        from azure.ai.finetuning_sessions.aio._patch import _post
-        from azure.ai.finetuning_sessions._exceptions import NoCapacityError
+        from azure.ai.finetuningsessions.aio._patch import _post
+        from azure.ai.finetuningsessions._exceptions import NoCapacityError
 
         mock_resp = MagicMock()
         mock_resp.status_code = 503
@@ -114,8 +114,8 @@ class TestAsyncPostRetryCap:
     @pytest.mark.asyncio
     async def test_non_retryable_raises_immediately(self, mock_client):
         """400/413/422 are not retried — immediate typed exception."""
-        from azure.ai.finetuning_sessions.aio._patch import _post
-        from azure.ai.finetuning_sessions._exceptions import BatchTooLargeError
+        from azure.ai.finetuningsessions.aio._patch import _post
+        from azure.ai.finetuningsessions._exceptions import BatchTooLargeError
 
         mock_resp = MagicMock()
         mock_resp.status_code = 413
@@ -135,13 +135,13 @@ class TestAsyncPostRetryCap:
     @pytest.mark.asyncio
     async def test_timeout_escalates_on_network_error(self, mock_client):
         """connection_timeout increases on each retry attempt."""
-        from azure.ai.finetuning_sessions.aio._patch import _post
+        from azure.ai.finetuningsessions.aio._patch import _post
         from azure.core.exceptions import ServiceResponseError
 
         # All attempts raise network error to exercise the retry path fully.
         mock_client.send_request = AsyncMock(side_effect=ServiceResponseError("read timeout"))
 
-        with patch("azure.ai.finetuning_sessions.aio._patch.asyncio.sleep", new_callable=AsyncMock):
+        with patch("azure.ai.finetuningsessions.aio._patch.asyncio.sleep", new_callable=AsyncMock):
             with pytest.raises(ServiceResponseError):
                 await _post(mock_client, "/fine_tuning_sessions/session_deadbeef/forward_backward", {})
 
@@ -197,13 +197,13 @@ class TestAsyncEngineDead409NonRetryable:
     @pytest.mark.asyncio
     async def test_post_engine_dead_409_single_call(self, mock_client):
         """_post: terminal 409 raises TrainingEngineError after exactly one send."""
-        from azure.ai.finetuning_sessions.aio._patch import _post
-        from azure.ai.finetuning_sessions._exceptions import TrainingEngineError
+        from azure.ai.finetuningsessions.aio._patch import _post
+        from azure.ai.finetuningsessions._exceptions import TrainingEngineError
 
         mock_client.send_request = AsyncMock(return_value=self._engine_dead_409())
 
         with patch(
-            "azure.ai.finetuning_sessions.aio._patch.asyncio.sleep",
+            "azure.ai.finetuningsessions.aio._patch.asyncio.sleep",
             new_callable=AsyncMock,
         ) as mock_sleep:
             with pytest.raises(TrainingEngineError) as exc_info:
@@ -220,13 +220,13 @@ class TestAsyncEngineDead409NonRetryable:
     @pytest.mark.asyncio
     async def test_post_sample_engine_dead_409_single_call(self, mock_client):
         """_post_sample: terminal 409 raises after exactly one send (no fault retry)."""
-        from azure.ai.finetuning_sessions.aio._patch import _post_sample
-        from azure.ai.finetuning_sessions._exceptions import TrainingEngineError
+        from azure.ai.finetuningsessions.aio._patch import _post_sample
+        from azure.ai.finetuningsessions._exceptions import TrainingEngineError
 
         mock_client.send_request = AsyncMock(return_value=self._engine_dead_409())
 
         with patch(
-            "azure.ai.finetuning_sessions.aio._patch.asyncio.sleep",
+            "azure.ai.finetuningsessions.aio._patch.asyncio.sleep",
             new_callable=AsyncMock,
         ) as mock_sleep:
             with pytest.raises(TrainingEngineError) as exc_info:
@@ -243,7 +243,7 @@ class TestAsyncEngineDead409NonRetryable:
     @pytest.mark.asyncio
     async def test_post_unclassified_409_still_retries(self, mock_client):
         """An unclassified 409 keeps its existing retry behavior (not made terminal)."""
-        from azure.ai.finetuning_sessions.aio._patch import _post
+        from azure.ai.finetuningsessions.aio._patch import _post
 
         resp = MagicMock()
         resp.status_code = 409
@@ -253,7 +253,7 @@ class TestAsyncEngineDead409NonRetryable:
         mock_client.send_request = AsyncMock(return_value=resp)
 
         with patch(
-            "azure.ai.finetuning_sessions.aio._patch.asyncio.sleep",
+            "azure.ai.finetuningsessions.aio._patch.asyncio.sleep",
             new_callable=AsyncMock,
         ):
             with pytest.raises(Exception):

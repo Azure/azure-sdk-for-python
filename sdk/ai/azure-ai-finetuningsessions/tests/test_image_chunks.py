@@ -2,8 +2,8 @@ import json
 
 import pytest
 
-from azure.ai.finetuning_sessions._patch import _SdkJSONEncoder, _estimate_bytes_count
-from azure.ai.finetuning_sessions.models import (
+from azure.ai.finetuningsessions._patch import _SdkJSONEncoder, _estimate_bytes_count
+from azure.ai.finetuningsessions.models import (
     Datum,
     ImageChunk,
     LossFnInputs,
@@ -13,7 +13,7 @@ from azure.ai.finetuning_sessions.models import (
     SamplingParams,
     TensorData,
 )
-from azure.ai.finetuning_sessions.models import _patch as model_patch
+from azure.ai.finetuningsessions.models import _patch as model_patch
 
 
 def test_image_chunk_serializes_in_model_input() -> None:

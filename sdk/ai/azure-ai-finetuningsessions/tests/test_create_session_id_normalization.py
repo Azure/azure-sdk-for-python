@@ -12,9 +12,9 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from azure.ai.finetuning_sessions import _patch as _sync_patch
-from azure.ai.finetuning_sessions.aio import _patch as _aio_patch
-from azure.ai.finetuning_sessions.models import FromCheckpoint
+from azure.ai.finetuningsessions import _patch as _sync_patch
+from azure.ai.finetuningsessions.aio import _patch as _aio_patch
+from azure.ai.finetuningsessions.models import FromCheckpoint
 
 
 class _FakeResponse:

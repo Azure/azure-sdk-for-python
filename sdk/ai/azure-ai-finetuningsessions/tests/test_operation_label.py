@@ -4,7 +4,7 @@ import asyncio
 
 import pytest
 
-from azure.ai.finetuning_sessions.aio import _patch as p
+from azure.ai.finetuningsessions.aio import _patch as p
 
 
 def test_label_suffix_empty_by_default():

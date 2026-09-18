@@ -18,7 +18,7 @@ import pytest
 
 from azure.core.exceptions import HttpResponseError
 
-from azure.ai.finetuning_sessions._exceptions import (
+from azure.ai.finetuningsessions._exceptions import (
     BatchTooLargeError,
     ContentionError,
     FineTuningSessionsError,

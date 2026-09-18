@@ -8,8 +8,8 @@
 Scope: enriches the SDK's intentional, hand-written telemetry (HTTP
 traces, session lifecycle, heartbeat, crash warnings) on these loggers:
 
-* ``azure.ai.finetuning_sessions._patch``
-* ``azure.ai.finetuning_sessions.aio._patch``
+* ``azure.ai.finetuningsessions._patch``
+* ``azure.ai.finetuningsessions.aio._patch``
 
 Autorest / code-generator helpers under ``_utils/`` are deliberately
 excluded -- their logs are plumbing noise that operators do not correlate.
@@ -48,7 +48,7 @@ from datetime import datetime as _datetime
 from datetime import timezone as _timezone
 from typing import Optional, Tuple
 
-_SDK_ROOT = "azure.ai.finetuning_sessions"
+_SDK_ROOT = "azure.ai.finetuningsessions"
 
 # Environment variable that lets operators opt OUT of the timestamp
 # filter without touching code. Default is enabled. Recognized "falsey"

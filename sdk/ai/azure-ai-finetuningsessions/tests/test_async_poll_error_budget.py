@@ -21,8 +21,8 @@ import pytest
 
 from azure.core.exceptions import ServiceResponseError
 
-from azure.ai.finetuning_sessions import _patch as _patch_mod
-from azure.ai.finetuning_sessions.aio import _patch as _aio_mod
+from azure.ai.finetuningsessions import _patch as _patch_mod
+from azure.ai.finetuningsessions.aio import _patch as _aio_mod
 
 _COMPLETED = {"status": "completed", "result": {}}
 _PENDING = {"status": "pending"}
@@ -307,7 +307,7 @@ async def test_disabled_budget_retries_through_errors(clock):
 async def test_poll_raises_retryable_on_should_retry(clock):
     # A failed envelope flagged should_retry surfaces as RequestRetryableError
     # so the async _post_and_poll wrapper can resubmit with a new request id.
-    from azure.ai.finetuning_sessions import RequestRetryableError
+    from azure.ai.finetuningsessions import RequestRetryableError
 
     envelope = {
         "status": "failed",
@@ -321,7 +321,7 @@ async def test_poll_raises_retryable_on_should_retry(clock):
 
 
 async def test_poll_raises_completed_result_unavailable_without_retry(clock):
-    from azure.ai.finetuning_sessions import OperationResultUnavailableError
+    from azure.ai.finetuningsessions import OperationResultUnavailableError
 
     envelope = {
         "status": "failed",
@@ -346,7 +346,7 @@ async def test_poll_raises_completed_result_unavailable_without_retry(clock):
 
 def _patch_poll_post(monkeypatch, *, poll_side_effects):
     """Stub _aio_mod._poll (scripted) and _aio_mod._post (records resubmits)."""
-    from azure.ai.finetuning_sessions import RequestRetryableError
+    from azure.ai.finetuningsessions import RequestRetryableError
 
     poll_calls: list[str] = []
     effects = iter(poll_side_effects)
@@ -380,7 +380,7 @@ def _patch_poll_post(monkeypatch, *, poll_side_effects):
 
 
 async def test_pending_requests_resubmits_then_completes(clock, monkeypatch):
-    from azure.ai.finetuning_sessions import RequestRetryableError as _RRE
+    from azure.ai.finetuningsessions import RequestRetryableError as _RRE
 
     poll_calls, post_calls, _ = _patch_poll_post(
         monkeypatch,
@@ -402,7 +402,7 @@ async def test_pending_requests_resubmits_then_completes(clock, monkeypatch):
 
 
 async def test_pending_requests_resubmit_exhausts_and_raises(clock, monkeypatch):
-    from azure.ai.finetuning_sessions import RequestRetryableError as _RRE
+    from azure.ai.finetuningsessions import RequestRetryableError as _RRE
 
     always_retryable = [
         _RRE("gone", error_code="request_orphaned", retry_after_sec=1.0)

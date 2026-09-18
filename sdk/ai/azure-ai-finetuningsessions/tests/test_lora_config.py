@@ -1,4 +1,4 @@
-from azure.ai.finetuning_sessions.models import LoRAConfig
+from azure.ai.finetuningsessions.models import LoRAConfig
 
 
 def test_multimodal_lora_placement_serializes():

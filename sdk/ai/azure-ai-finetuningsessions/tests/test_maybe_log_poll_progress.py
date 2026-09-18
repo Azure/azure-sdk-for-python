@@ -10,14 +10,14 @@ import re
 
 import pytest
 
-from azure.ai.finetuning_sessions import _patch as _patch_mod
-from azure.ai.finetuning_sessions._patch import (
+from azure.ai.finetuningsessions import _patch as _patch_mod
+from azure.ai.finetuningsessions._patch import (
     _POLL_LOG_DEDUP_SEC,
     _clear_poll_log_state,
     _maybe_log_poll_progress,
 )
 
-_LOGGER_NAME = "azure.ai.finetuning_sessions._patch"
+_LOGGER_NAME = "azure.ai.finetuningsessions._patch"
 _RESUMING = {"status": "pending", "phase": "resuming_session"}
 _GENERIC_PENDING = {"status": "pending"}
 

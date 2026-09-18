@@ -12,8 +12,9 @@ and save checkpoints with synchronous or asynchronous Python clients.
 python -m pip install azure-ai-finetuningsessions
 ```
 
-The distribution name is `azure-ai-finetuningsessions`. Python imports remain
-`azure.ai.finetuning_sessions`, including the asynchronous `aio` namespace.
+The distribution name is `azure-ai-finetuningsessions`. Python imports are now
+`azure.ai.finetuningsessions`, including the asynchronous `aio` namespace.
+Update earlier `azure.ai.finetuning_sessions` imports to the new spelling.
 
 If an earlier preview was installed as `azure-ai-finetuning-sessions`, uninstall
 that distribution **before** installing this one:
@@ -23,17 +24,19 @@ python -m pip uninstall azure-ai-finetuning-sessions
 python -m pip install azure-ai-finetuningsessions
 ```
 
-These are distinct names to package installers, but both distributions provide
-the same Python namespace. Do not install them together: uninstalling either
-one afterwards could remove files needed by the other. Update dependency files
-and lockfiles to use `azure-ai-finetuningsessions` as well.
+Update dependency files and lockfiles to use `azure-ai-finetuningsessions` as
+well. A distribution-only preview used this same distribution name with the old
+Python namespace and the same version number. If upgrading from that snapshot,
+uninstall it before installing the new build so pip does not leave stale modules
+or skip the reinstall. Do not rely on both preview distributions being installed.
 
 #### Prerequisites
 
 - Python 3.9 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - A Foundry project with access to fine-tuning sessions and compatible model capacity.
-- A gateway supporting the canonical `/fine_tuning_sessions` routes.
+- A gateway supporting `/fine_tuning_sessions`, or explicit legacy-route
+    configuration for an existing Loom endpoint as described below.
 
 #### Authenticate with Microsoft Entra ID
 To use a [token credential][authenticate_with_token],
@@ -48,7 +51,7 @@ As an example, [DefaultAzureCredential][default_azure_credential] can be used to
 Use the returned token credential to authenticate the client:
 
 ```python
-from azure.ai.finetuning_sessions import FineTuningSessionClient
+from azure.ai.finetuningsessions import FineTuningSessionClient
 from azure.identity import DefaultAzureCredential
 
 client = FineTuningSessionClient(
@@ -66,8 +69,8 @@ exception is restricted to loopback development servers.
 ## Create a session
 
 ```python
-from azure.ai.finetuning_sessions import FineTuningSession
-from azure.ai.finetuning_sessions.models import LoRAConfig
+from azure.ai.finetuningsessions import FineTuningSession
+from azure.ai.finetuningsessions.models import LoRAConfig
 
 session = FineTuningSession.create(
         client,
@@ -84,7 +87,7 @@ finally:
         client.close()
 ```
 
-The asynchronous entry point is `azure.ai.finetuning_sessions.aio.FineTuningSessionClient`.
+The asynchronous entry point is `azure.ai.finetuningsessions.aio.FineTuningSessionClient`.
 Its `create_session` method returns a session ID after initialization; training,
 sampling, checkpoint, and deletion methods accept that ID. Creation supports
 `from_checkpoint`, JSON-valued `user_metadata`, and `training_type`. The service
@@ -104,9 +107,48 @@ model rather than assuming a client-side default.
     retries, chunking, heartbeat, session-ID handling, and typed errors.
 - Session list results retain `data` and the explicit `cursor`; advance `offset`
     and `limit` yourself. Checkpoint lists return their complete envelope.
-- All public requests use `/fine_tuning_sessions`. The gateway must rewrite this
-    to the existing backend route when needed; no backend migration is performed
-    by installing this package.
+- Public requests use `/fine_tuning_sessions` by default. Installing this package
+    does not deploy gateway rewrites or change an existing backend.
+
+## Compatibility with earlier previews
+
+The renamed import is an intentional migration. The established convenience
+methods, typed exceptions, retries, chunking, session-ID handling, checkpoint
+helpers, and environment-variable names remain available. In particular,
+omitting `lora_config` still omits it from the convenience request; a service
+that requires an explicit rank can reject that request as before.
+
+For an existing endpoint that serves `/fine_tuning/sessions`, pass
+`use_legacy_routes=True` to the synchronous or asynchronous
+`FineTuningSessionClient`. This explicitly rewrites the route **before** sending
+generated or convenience requests, including poll requests. The client never
+probes a second route or resubmits a POST merely because a route failed. The
+option cannot be combined with a prebuilt custom pipeline.
+
+Earlier operation keywords `body`, `operation_id`, and per-call `api_version`
+are accepted by handwritten adapters. Per-call API versions do not mutate the
+shared client or leak into transport options. `ApiError` and `ApiErrorResponse`
+remain importable from `models`.
+
+The legacy `sessions.begin_create`, `sessions.begin_unload`,
+`training.begin_forward_backward`, `training.begin_optim_step`,
+`checkpoints.begin_save`, `checkpoints.begin_save_sampler_weights`, and
+`sampling.begin_sample` names return Azure Core pollers over the real HTTP 200
+request-ID protocol. They submit once and poll the request; they do not invent
+an HTTP 202 or `Operation-Location` response. Sampling still needs a real
+`checkpoint_id`. `polling=False` returns the submitted handle without polling.
+Continuation tokens, custom polling strategies, and streamed responses are not
+supported by these adapters and are rejected before submission. Retryable
+terminal failures are surfaced, not automatically resubmitted by these pollers;
+the convenience methods retain their bounded resubmission behavior.
+
+This is **not** a claim that the older generated surface is identical:
+`operations.get` returns the real `pending/completed/failed` envelope, not the
+older normalized `OperationResult` projection. Use its `result` on completion,
+or use the convenience methods/pollers for normalized results. The generated
+create result is a typed, mapping-compatible `CreateSessionResponse` rather
+than a plain dictionary. See [GENERATION.md](GENERATION.md) for the exact
+side-by-side validation scope and remaining review boundaries.
 
 ## Inference error codes
 

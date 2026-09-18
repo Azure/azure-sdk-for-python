@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from azure.ai.finetuning_sessions import _patch as sync_patch
-from azure.ai.finetuning_sessions.aio import _patch as async_patch
-from azure.ai.finetuning_sessions.models import SaveCheckpointOperationResult
+from azure.ai.finetuningsessions import _patch as sync_patch
+from azure.ai.finetuningsessions.aio import _patch as async_patch
+from azure.ai.finetuningsessions.models import SaveCheckpointOperationResult
 
 _CHECKPOINT_NAME = "checkpoint_name"
 _COMPLETED = {

@@ -11,10 +11,10 @@ import pytest
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
-from azure.ai.finetuning_sessions import FineTuningSessionClient
-from azure.ai.finetuning_sessions import _patch as p
-from azure.ai.finetuning_sessions._client_options import _is_local_endpoint
-from azure.ai.finetuning_sessions.aio import FineTuningSessionClient as AsyncFineTuningSessionClient
+from azure.ai.finetuningsessions import FineTuningSessionClient
+from azure.ai.finetuningsessions import _patch as p
+from azure.ai.finetuningsessions._client_options import _is_local_endpoint
+from azure.ai.finetuningsessions.aio import FineTuningSessionClient as AsyncFineTuningSessionClient
 
 # Every env var _base_headers consults, cleared before each test so a real
 # developer environment cannot leak into assertions.

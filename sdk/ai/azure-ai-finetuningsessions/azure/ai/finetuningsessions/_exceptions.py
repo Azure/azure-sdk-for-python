@@ -7,7 +7,7 @@
 
 Customers should branch on exception type rather than grepping message strings:
 
-    from azure.ai.finetuning_sessions import (
+    from azure.ai.finetuningsessions import (
         BatchTooLargeError,
         NoCapacityError,
         TrainingEngineError,

@@ -22,8 +22,8 @@ import asyncio
 import json
 from typing import Any
 
-from azure.ai.finetuning_sessions.aio import _patch as _aio_mod
-from azure.ai.finetuning_sessions.models._models import CreateSessionRequest
+from azure.ai.finetuningsessions.aio import _patch as _aio_mod
+from azure.ai.finetuningsessions.models._models import CreateSessionRequest
 
 
 def test_model_preserves_boolean_user_metadata():

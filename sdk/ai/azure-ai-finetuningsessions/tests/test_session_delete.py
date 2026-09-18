@@ -23,7 +23,7 @@ import pytest
 
 from azure.core.exceptions import HttpResponseError
 
-from azure.ai.finetuning_sessions._patch import FineTuningSession
+from azure.ai.finetuningsessions._patch import FineTuningSession
 
 
 # ---------------------------------------------------------------------------
@@ -192,7 +192,7 @@ class TestAsyncDeleteSession:
     """The async path lives as a free function patched onto the client."""
 
     def _import(self) -> Any:
-        from azure.ai.finetuning_sessions.aio import _patch as aio_patch
+        from azure.ai.finetuningsessions.aio import _patch as aio_patch
 
         return aio_patch
 
@@ -250,7 +250,7 @@ class TestAsyncDeleteSession:
     def test_registered_in_patch_sdk(self) -> None:
         # patch_sdk attaches delete_session onto the public patched client.
         aio_patch = self._import()
-        from azure.ai.finetuning_sessions.aio import (
+        from azure.ai.finetuningsessions.aio import (
             FineTuningSessionClient as Gen,
         )
 

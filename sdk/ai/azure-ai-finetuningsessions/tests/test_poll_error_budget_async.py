@@ -26,9 +26,9 @@ import pytest
 
 from azure.core.exceptions import ServiceResponseError
 
-from azure.ai.finetuning_sessions import _patch as _patch_mod
-from azure.ai.finetuning_sessions.aio import _patch as _aio_mod
-from azure.ai.finetuning_sessions.aio._patch import _poll
+from azure.ai.finetuningsessions import _patch as _patch_mod
+from azure.ai.finetuningsessions.aio import _patch as _aio_mod
+from azure.ai.finetuningsessions.aio._patch import _poll
 
 _SESSION_ID = "session_deadbeef"
 _REQUEST_ID = "req-1"

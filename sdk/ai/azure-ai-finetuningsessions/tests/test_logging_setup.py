@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
-"""Tests for ``azure.ai.finetuning_sessions._logging_setup``.
+"""Tests for ``azure.ai.finetuningsessions._logging_setup``.
 
 Verifies the no-handler timestamp filter the SDK installs on its emitting
 loggers at package import time. The filter prepends an ISO-8601 UTC
@@ -19,8 +19,8 @@ from typing import Iterator
 
 import pytest
 
-import azure.ai.finetuning_sessions  # noqa: F401 -- triggers install_default_logging()
-from azure.ai.finetuning_sessions._logging_setup import (
+import azure.ai.finetuningsessions  # noqa: F401 -- triggers install_default_logging()
+from azure.ai.finetuningsessions._logging_setup import (
     _ENV_VAR,
     _SDK_EMITTING_LOGGERS,
     _SdkTimestampFilter,
@@ -91,7 +91,7 @@ class TestInstallation:
             assert count == 1, f"{name!r} has {count} filters, expected 1"
 
     def test_no_handler_installed_by_sdk(self) -> None:
-        for name in ("azure.ai.finetuning_sessions", *_SDK_EMITTING_LOGGERS):
+        for name in ("azure.ai.finetuningsessions", *_SDK_EMITTING_LOGGERS):
             assert logging.getLogger(name).handlers == [], f"SDK unexpectedly attached a handler to {name!r}"
 
     def test_propagation_unchanged(self) -> None:
@@ -284,7 +284,7 @@ class TestEndToEndSessionCrash:
 # ---------------------------------------------------------------------------
 class TestPublicSurface:
     def test_only_install_default_logging_is_public(self) -> None:
-        from azure.ai.finetuning_sessions import _logging_setup as m
+        from azure.ai.finetuningsessions import _logging_setup as m
 
         assert m.__all__ == ["install_default_logging"]
 

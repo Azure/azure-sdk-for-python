@@ -23,14 +23,14 @@ from types import SimpleNamespace
 
 import pytest
 
-from azure.ai.finetuning_sessions._exceptions import (
+from azure.ai.finetuningsessions._exceptions import (
     _classify_http_error,
     NoCapacityError,
     RateLimitedError,
 )
-from azure.ai.finetuning_sessions import _patch as _patch_mod
-from azure.ai.finetuning_sessions.aio import _patch as _aio_mod
-from azure.ai.finetuning_sessions.aio._patch import _post, _post_sample, sample
+from azure.ai.finetuningsessions import _patch as _patch_mod
+from azure.ai.finetuningsessions.aio import _patch as _aio_mod
+from azure.ai.finetuningsessions.aio._patch import _post, _post_sample, sample
 
 # ---------------------------------------------------------------------------
 # Exception typing / classification
@@ -313,7 +313,7 @@ async def test_sample_posts_to_sample_endpoint(monkeypatch):
 @pytest.mark.asyncio
 async def test_sample_resubmits_through_throttled_post_path(clock, monkeypatch):
     """A retryable sample failure reuses _post_sample under one semaphore permit."""
-    from azure.ai.finetuning_sessions import RequestRetryableError
+    from azure.ai.finetuningsessions import RequestRetryableError
 
     monkeypatch.setattr(_aio_mod, "_MAX_CONCURRENT_SAMPLES", 1)
     post_calls = []
@@ -376,7 +376,7 @@ async def test_sample_resubmits_through_throttled_post_path(clock, monkeypatch):
 
 def test_sync_sample_posts_to_sample_endpoint():
     """Sync FineTuningSession.sample() routes to the ``/sample`` endpoint."""
-    from azure.ai.finetuning_sessions._patch import FineTuningSession
+    from azure.ai.finetuningsessions._patch import FineTuningSession
 
     # Bypass __init__ (heartbeat thread / network) — exercise sample() directly.
     session = object.__new__(FineTuningSession)
@@ -400,8 +400,8 @@ def test_sync_sample_posts_to_sample_endpoint():
 
 def test_sync_sample_preserves_structured_prompt():
     """Sync sampling forwards multimodal ModelInput chunks unchanged."""
-    from azure.ai.finetuning_sessions._patch import FineTuningSession
-    from azure.ai.finetuning_sessions.models import ImageChunk, ModelInput, ModelInputChunk
+    from azure.ai.finetuningsessions._patch import FineTuningSession
+    from azure.ai.finetuningsessions.models import ImageChunk, ModelInput, ModelInputChunk
 
     session = object.__new__(FineTuningSession)
     session.session_id = "model_s1"

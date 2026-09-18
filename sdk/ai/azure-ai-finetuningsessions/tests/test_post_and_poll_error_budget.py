@@ -24,8 +24,8 @@ import pytest
 
 from azure.core.exceptions import ServiceResponseError
 
-from azure.ai.finetuning_sessions import _patch as _patch_mod
-from azure.ai.finetuning_sessions._patch import FineTuningSession, _ErrorBudget
+from azure.ai.finetuningsessions import _patch as _patch_mod
+from azure.ai.finetuningsessions._patch import FineTuningSession, _ErrorBudget
 
 _SUBPATH = "/fine_tuning_sessions/session_deadbeef/optim_step"
 _COMPLETED = {"status": "completed", "result": {}}
@@ -327,7 +327,7 @@ def test_retryable_resubmit_preserves_operation_timeline(clock, caplog, monkeypa
 
 
 def test_retryable_failure_exhausts_and_raises(clock):
-    from azure.ai.finetuning_sessions import RequestRetryableError
+    from azure.ai.finetuningsessions import RequestRetryableError
 
     sess = _make_session(itertools.repeat(_FakeResponse(200, _FAILED_RETRYABLE)))
 
@@ -348,7 +348,7 @@ def test_non_retryable_failure_is_not_resubmitted(clock):
 
 
 def test_completed_result_unavailable_is_not_resubmitted(clock):
-    from azure.ai.finetuning_sessions import OperationResultUnavailableError
+    from azure.ai.finetuningsessions import OperationResultUnavailableError
 
     responses = [
         _FakeResponse(
@@ -374,7 +374,7 @@ def test_completed_result_unavailable_is_not_resubmitted(clock):
 
 def test_classify_poll_failure_flags_should_retry():
     # Retry is driven purely by should_retry; retry_after_sec is passed through.
-    from azure.ai.finetuning_sessions._exceptions import (
+    from azure.ai.finetuningsessions._exceptions import (
         _classify_poll_failure,
         RequestRetryableError,
     )
@@ -389,7 +389,7 @@ def test_classify_poll_failure_flags_should_retry():
 def test_classify_no_retry_without_flag():
     # Decoupled from any code allow-list: even a code that historically implied
     # retry does NOT trigger a retry unless the server sets should_retry.
-    from azure.ai.finetuning_sessions._exceptions import (
+    from azure.ai.finetuningsessions._exceptions import (
         _classify_poll_failure,
         RequestRetryableError,
     )

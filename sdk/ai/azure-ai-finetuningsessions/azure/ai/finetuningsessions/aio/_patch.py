@@ -23,7 +23,7 @@ Concurrency:
 
 Usage::
 
-    from azure.ai.finetuning_sessions.aio import FineTuningSessionClient
+    from azure.ai.finetuningsessions.aio import FineTuningSessionClient
 
     async with FineTuningSessionClient(endpoint, credential) as client:
         session_id = await client.create_session(base_model="Llama-3.1-8B")
@@ -966,7 +966,7 @@ async def create_session(
             CreateSessionRequest(
                 type=type,
                 base_model=base_model,
-                lora_config=lora_config if lora_config is not None else LoRAConfig(),
+                lora_config=lora_config,
                 user_metadata=user_metadata,
                 training_type=training_type,
             ),
@@ -2120,9 +2120,22 @@ async def delete_session(
 class FineTuningSessionClient(_GeneratedFineTuningSessionClient):
     """Async session client with regeneration-safe credential configuration."""
 
-    def __init__(self, endpoint: str, credential: Any, *, allow_insecure_http: bool = False, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Any,
+        *,
+        allow_insecure_http: bool = False,
+        use_legacy_routes: bool = False,
+        **kwargs: Any,
+    ) -> None:
         options = prepare_client_options(
-            endpoint, credential, allow_insecure_http=allow_insecure_http, asynchronous=True, **kwargs
+            endpoint,
+            credential,
+            allow_insecure_http=allow_insecure_http,
+            asynchronous=True,
+            use_legacy_routes=use_legacy_routes,
+            **kwargs,
         )
         super().__init__(endpoint=endpoint, credential=credential, **options)
         self._config.allow_insecure_http = allow_insecure_http

@@ -24,7 +24,7 @@ _IMAGE_MAGIC_MATCHERS = {
 class FromCheckpoint(_models.FromCheckpoint):
     """Identifies a saved training checkpoint to bootstrap a new session from.
 
-    When passed to :meth:`~azure.ai.finetuning_sessions.FineTuningSession.create`,
+    When passed to :meth:`~azure.ai.finetuningsessions.FineTuningSession.create`,
     the new session's LoRA weights, optimizer state, and scheduler step are all
     initialised from the referenced checkpoint (continual fine-tuning).
 

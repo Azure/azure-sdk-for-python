@@ -5,8 +5,8 @@ import json
 
 import pytest
 
-from azure.ai.finetuning_sessions import FineTuningSession
-from azure.ai.finetuning_sessions.models import (
+from azure.ai.finetuningsessions import FineTuningSession
+from azure.ai.finetuningsessions.models import (
     AdamParams,
     LoRAConfig,
     CreateSessionRequest,

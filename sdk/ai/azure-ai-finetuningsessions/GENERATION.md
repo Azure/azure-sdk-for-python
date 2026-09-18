@@ -11,6 +11,13 @@ The follow-up inference-error documentation and retry tests from
 `8710e209831248a986393c2df0ee47e333d51dfa` are included as well; that follow-up
 does not change the SDK runtime or raw response schema.
 
+The namespace migration uses Loom master
+`f6033f7a4137339c40da63525df12c4cfcb599cb` as its behavioral baseline. There
+were no additional SDK changes between the follow-up above and that revision.
+Loom's local `haarunkumar/finetuningsessions-namespace` branch renames its SDK
+and in-repository consumers while preserving its legacy service routes. Those
+Loom changes remain uncommitted and are not part of the public SDK/spec commits.
+
 The feature branches incorporate their September 17 target revisions through
 ordinary merge commits, without rebasing or rewriting existing history. PR
 reopening and review remain separate from pushing the feature branches.
@@ -19,22 +26,24 @@ reopening and review remain separate from pushing the feature branches.
 
 The distribution and SDK package directory are named
 `azure-ai-finetuningsessions`. Wheels and source archives use the normalized
-distribution stem `azure_ai_finetuningsessions`. The Python namespace stays
-`azure.ai.finetuning_sessions`; model/client names and REST routes are unchanged.
+distribution stem `azure_ai_finetuningsessions`. The Python namespace is now
+`azure.ai.finetuningsessions`; model/client names and REST routes are unchanged.
 See [installation and migration guidance](README.md#install-the-package) before
 switching an environment that contains the earlier preview distribution.
 
 The TypeSpec client project is
 `specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions`.
 Its emitter configuration sets both `package-name` and `emitter-output-dir` to
-the renamed package, while explicitly retaining the existing Python namespace.
+the renamed package. Both the emitter namespace and all relevant Python
+`clientNamespace` mappings select `azure.ai.finetuningsessions`.
 Regeneration also sets the sync/async SDK user-agent moniker to
 `ai-finetuningsessions`; wire-contract tests assert that name on real outbound
 requests through the offline transports.
 
-This rename is limited to the public TypeSpec and Python SDK feature branches.
-The separate Loom SDK copy, cookbook dependencies, and bundled-wheel workflows
-must be migrated together in a later change; they are not changed by this PR.
+The local migration also updates the Loom SDK copy, in-repository cookbook and
+job/benchmark imports, dependency names, lockfile references, build paths, and
+notebooks. The separate public cookbook repository is not updated by these
+changes and still needs its own coordinated source/wheel migration.
 
 ## Sources
 
@@ -42,8 +51,10 @@ must be migrated together in a later change; they are not changed by this PR.
   `haarunkumar/finetuning-sessions-spec`, targeting `feature/foundry-release`.
 - SDK branch: `feature/finetuning-sessions-sdk`, targeting `main`.
 - The generation source is described by [tsp-location.yaml](tsp-location.yaml).
-  It pins the immutable public TypeSpec commit
-  `4ea1ecd5b4dfec03bfc5a5cd67d164869db95014`, including the distribution rename.
+  It pins the immutable TypeSpec commit
+  `12851ab6cc56378c9137e7971ac69172f2aa411b`, containing the namespace migration
+  and preserved preview error-model exports. Generation was verified against
+  that commit's exact source content; the fingerprint below identifies it.
 - The TypeSpec target incorporated is
   `6d8e681878ddcfad7749a69e48dea167755dde6b`; the SDK main target incorporated is
   `031b28b8b36efd78bc326de802ef03c1c53af7d4`.
@@ -106,17 +117,21 @@ patch files, but its formatter may normalize handwritten Python formatting.
 
 ## Intentional differences from the source snapshot
 
-- Canonical public `/fine_tuning_sessions` paths replace the legacy route family.
-  Gateway/RP compatibility must be deployed before exercising these clients
-  against an environment that previously accepted only the legacy path.
+- Canonical public `/fine_tuning_sessions` paths are the default. Set
+  `use_legacy_routes=True` explicitly for an existing `/fine_tuning/sessions`
+  endpoint. That handwritten policy rewrites requests before sending, never as
+  a fallback after a failed POST; it does not deploy gateway changes.
 - Raw generated responses now match HTTP 200 submissions, string `session_id`,
   `request_id`, and `pending/completed/failed` request envelopes. Generated
-  `begin_*` Azure-LRO methods are replaced by the corresponding ordinary
-  submission methods; no invented `Operation-Location` response is required.
+  operations use ordinary submission methods; no invented `Operation-Location`
+  response is required. The seven older `begin_*` names are preserved by
+  [handwritten request pollers](azure/ai/finetuningsessions/_legacy_polling.py),
+  with the limits described in [README.md](README.md#compatibility-with-earlier-previews).
 - The generated optimizer operation is `training.optimizer_step`; the
   convenience `optim_step` API remains unchanged.
 - The raw service requires LoRA configuration and rank. Optional convenience
-  arguments are retained for compatibility; examples supply a valid rank.
+  arguments and omission behavior are retained for compatibility; examples
+  supply a valid rank. No empty LoRA object is injected when the caller omits it.
 - `user_metadata` retains arbitrary JSON values. Omitted `training_type` remains
   omitted so the service's legacy metadata selector is not overridden by an
   injected client default.
@@ -129,12 +144,43 @@ patch files, but its formatter may normalize handwritten Python formatting.
 - SDK-only normalized result types are declared in the Python customization
   entry point, not presented as the service's raw polling schema.
 - Authentication/HTTPS policy selection, exception exports, and logging wiring
-  are preserved in [the handwritten options module](azure/ai/finetuning_sessions/_client_options.py)
+  are preserved in [the handwritten options module](azure/ai/finetuningsessions/_client_options.py)
   and patch modules instead of manual edits to generated configuration/initializer
   files. Guard tests exercise the supported public clients.
+- Earlier `body`, `operation_id`, and per-call `api_version` keywords are handled
+  by [handwritten adapters](azure/ai/finetuningsessions/_compat.py). Per-call
+  configuration is copied instead of mutating shared client state. The
+  convenience heartbeat retains Loom's `v1` default. Earlier `ApiError` and
+  `ApiErrorResponse` exports are forced through TypeSpec usage metadata.
 - Session lists return explicit page/cursor responses. The REST specification
   uses offset pagination decorators; Python disables incomplete automatic paging
   rather than silently returning only one page or inventing a `nextLink`.
+
+## Loom comparison, not a whole-source identity claim
+
+[verify_loom_compatibility.py](verify_loom_compatibility.py) takes `--loom-repo`
+and imports each SDK in a separate subprocess. Network access and filesystem
+writes are blocked in each worker. Twenty paired cases compare actual outgoing
+URLs, headers, JSON bodies, model attributes, exceptions, exported symbols,
+selected signatures, and session/resource-ID mappings. The public SDK uses
+the explicit legacy-route option; the verifier does not normalize route paths
+after requests are sent. Background heartbeats are disabled in this workload.
+
+Only header casing, validated random request UUIDs, the exact runtime suffix
+of the user agent, and JSON object ordering are normalized. Added generated
+models/shared preview flags and explicit constructor keyword additions are
+listed separately. The workload is not proof of source equality or every
+service behavior: raw `operations.get` still returns the correct
+`pending/completed/failed` envelope rather than the earlier normalized model
+projection. Generated create responses are mapping-compatible typed models,
+not plain dictionaries. The old generated LRO methods are tested separately
+against the real HTTP-200 protocol, not treated as a correct baseline.
+
+The legacy poller adapters submit once, preserve ordinary result callbacks and
+polling intervals, and surface typed terminal failures. They do not support
+continuation tokens, arbitrary polling strategies, streaming, or automatic
+resubmission. These are explicit compatibility boundaries, not passing parity
+claims. The existing convenience APIs retain their own bounded resubmissions.
 
 ## Validation boundaries
 
@@ -153,31 +199,38 @@ dependencies because of feed authentication/TLS errors. These full repository
 checks require a working authenticated package-feed environment and remain
 distinct from the offline tests and successful emission comparisons.
 
-### Local results after the distribution rename
+### Local results after namespace migration and compatibility fixes
 
-- **485 tests passed** against both source and the wheel installed by the new
-  distribution name into an isolated target directory. The installed sync/async
-  clients and models retain the `azure.ai.finetuning_sessions` imports.
+- **697 public SDK tests passed** against both source and its installed wheel.
+- **428 Loom SDK tests passed** before/after the mechanical rename and against
+  its installed renamed wheel. Both wheels contain only the new Python namespace.
+- **20/20 paired cases passed**, with **134 requests and 2,246 checks per SDK**.
 - **22 generated files** matched two independent pinned emissions; handwritten
   files and TypeSpec source were unchanged during verification.
 - The renamed TypeSpec input fingerprint is
-  `132f0aa7cc4ff9e91f772ca1af26591eda9ca687c58aef68e5ae181c710f0a77`.
+  `b48d921523cd591c98dc98fa133951aa4d17a3930a4307ef40c56b5eb0fc2efa`.
 - The preceding public OpenAPI validation contained **13 canonical paths / 15
   methods**, matching HTTP 200 submissions and raw request-status envelopes.
   The distribution rename does not change those contracts.
 - Full Foundry compilation and Python emission were rerun successfully. Full-service
   compilation retained 29 warnings; Python emission retained 66 warnings.
-- The renamed wheel and source archive contain the new distribution name in
-  their filenames and metadata. The wheel contains **27 Python modules** matching
-  source, includes `py.typed`, and excludes build directories and tests.
-- A wheel rebuilt from the source archive has exactly the same file contents
-  and metadata as the directly built wheel. The reviewed direct wheel SHA-256 is
-  `21e11da1e8d2aa800c0ee45f550c3badbd88838aaebfa6303973de8db85bef47`.
-- The repository's `ParsedSetup.from_path` recognizes the new distribution,
-  unchanged import namespace, and `1.0.0b1` version without extra build settings.
+- Both wheels and source archives build with the new distribution name. Public
+  wheel: **29 Python modules**; Loom wheel: **26 Python modules**. Wheel modules
+  match their respective sources, include `py.typed`, and contain no stale
+  old-namespace modules, build trees, or tests.
+- Reviewed public wheel SHA-256:
+  `fd5e16ba343ef9a2ff7e8d89dc3590bcae070ebb412bd74d1200f5dc6a6dac6f`.
+  Reviewed Loom wheel SHA-256:
+  `30bfd7bdbd941c33215fea80886d21439e9a094918482882083c80c2327aafb3`.
+- Six changed PowerShell build scripts parse successfully; the renamed Loom
+  SDK lockfile passes `uv lock --check --offline`. Full consumer lock resolution
+  is blocked by uncached dependencies (including the private ECS package).
+  Heavy cookbook/service test environments and live GPU tests were not run.
+  Loom's pre-existing missing changelog packaging warning remains unchanged.
 
 The original unrelated shared client-tool lockfile difference was removed during
 merge resolution, and the old wheel was removed from Git tracking (its local
 copy was preserved). A wheel belongs in a distribution/cookbook workflow, not in
 this SDK source PR. Package registration in shared SDK CI remains a review item;
-no pipeline definitions were changed as part of this synchronization.
+public SDK pipeline definitions were not changed. Loom pipeline changes are
+limited to the renamed package paths and labels.

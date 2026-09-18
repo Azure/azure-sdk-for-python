@@ -814,15 +814,15 @@ class FineTuningSessionClient(FineTuningSessionClientGenerated):  # pylint: disa
     """FineTuningSessionClient.
 
     :ivar sessions: SessionsOperations operations
-    :vartype sessions: azure.ai.finetuning_sessions.operations.SessionsOperations
+    :vartype sessions: azure.ai.finetuningsessions.operations.SessionsOperations
     :ivar training: TrainingOperations operations
-    :vartype training: azure.ai.finetuning_sessions.operations.TrainingOperations
+    :vartype training: azure.ai.finetuningsessions.operations.TrainingOperations
     :ivar checkpoints: CheckpointsOperations operations
-    :vartype checkpoints: azure.ai.finetuning_sessions.operations.CheckpointsOperations
+    :vartype checkpoints: azure.ai.finetuningsessions.operations.CheckpointsOperations
     :ivar sampling: SamplingOperations operations
-    :vartype sampling: azure.ai.finetuning_sessions.operations.SamplingOperations
+    :vartype sampling: azure.ai.finetuningsessions.operations.SamplingOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.ai.finetuning_sessions.operations.Operations
+    :vartype operations: azure.ai.finetuningsessions.operations.Operations
     :param endpoint: Foundry Project endpoint in the form
      "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
      only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
@@ -836,9 +836,17 @@ class FineTuningSessionClient(FineTuningSessionClientGenerated):  # pylint: disa
     """
 
     def __init__(
-        self, endpoint: str, credential: "TokenCredential", *, allow_insecure_http: bool = False, **kwargs: Any
+        self,
+        endpoint: str,
+        credential: "TokenCredential",
+        *,
+        allow_insecure_http: bool = False,
+        use_legacy_routes: bool = False,
+        **kwargs: Any,
     ) -> None:
-        kwargs = prepare_client_options(endpoint, credential, allow_insecure_http=allow_insecure_http, **kwargs)
+        kwargs = prepare_client_options(
+            endpoint, credential, allow_insecure_http=allow_insecure_http, use_legacy_routes=use_legacy_routes, **kwargs
+        )
         provided_policies = kwargs.get("policies")
         original_kwargs = dict(kwargs)
         super().__init__(endpoint=endpoint, credential=credential, **original_kwargs)
@@ -936,7 +944,7 @@ class FineTuningSession:
         on the server) with polling of the returned ``request_id`` until the load
         completes, then returns a ready-to-use :class:`FineTuningSession`.
 
-        :param client: The :class:`~azure.ai.finetuning_sessions.FineTuningSessionClient`.
+        :param client: The :class:`~azure.ai.finetuningsessions.FineTuningSessionClient`.
         :param base_model: Name of the base model to load (e.g. ``"Llama-3.1-8B"``).
         :param lora_config: Optional LoRA adapter config. Server default is used if omitted.
         :param type: Session type string. Defaults to ``"training"``.
@@ -955,7 +963,7 @@ class FineTuningSession:
         create_request = CreateSessionRequest(
             type=type,
             base_model=base_model,
-            lora_config=lora_config if lora_config is not None else LoRAConfig(),
+            lora_config=lora_config,
             user_metadata=user_metadata,
             training_type=training_type,
         )
@@ -1155,7 +1163,7 @@ class FineTuningSession:
         all bootstrapped from the checkpoint — equivalent to calling ``create``
         with ``from_checkpoint=FromCheckpoint(source_session_id=..., checkpoint_id=...)``.
 
-        :param client: The :class:`~azure.ai.finetuning_sessions.FineTuningSessionClient`.
+        :param client: The :class:`~azure.ai.finetuningsessions.FineTuningSessionClient`.
         :param checkpoint_path: Reference to a saved training checkpoint.
             Accepted formats:
               - ``"<source_session_id>/<checkpoint_name>"``
@@ -1581,10 +1589,10 @@ class FineTuningSession:
 
         Spec: ``fb_result = session.forward_backward(batch, loss_fn="cross_entropy")``
 
-        :param batch: List of :class:`~azure.ai.finetuning_sessions.models.Datum`.
+        :param batch: List of :class:`~azure.ai.finetuningsessions.models.Datum`.
         :param loss_fn: Loss function name. Defaults to ``"cross_entropy"``.
         :param loss_fn_config: Optional per-loss hyper-parameters.
-        :return: :class:`~azure.ai.finetuning_sessions.models.OperationResult`.
+        :return: :class:`~azure.ai.finetuningsessions.models.OperationResult`.
         """
         chunks = _chunk_data(batch)
         if len(chunks) <= 1:
@@ -1669,10 +1677,10 @@ class FineTuningSession:
         estimated payload size, the batch is automatically split into chunks.
         Chunks are submitted in parallel and results are combined.
 
-        :param batch: List of :class:`~azure.ai.finetuning_sessions.models.Datum`.
+        :param batch: List of :class:`~azure.ai.finetuningsessions.models.Datum`.
         :param loss_fn: Loss function name. Defaults to ``"cross_entropy"``.
         :param loss_fn_config: Optional per-loss hyper-parameters.
-        :return: :class:`~azure.ai.finetuning_sessions.models.ForwardBackwardOperationResult`.
+        :return: :class:`~azure.ai.finetuningsessions.models.ForwardBackwardOperationResult`.
         """
         # Server expects a ForwardRequest with `forward_input` wrapping the
         # shared ForwardBackwardInput payload.
@@ -1831,6 +1839,7 @@ class FineTuningSession:
 
     def heartbeat(self, **kwargs: Any) -> Any:
         """Refresh an active session to prevent idle expiry."""
+        kwargs.setdefault("api_version", _API_VERSION)
         return self._client.sessions.heartbeat(
             session_id=self._resource_session_id,
             foundry_features=_PREVIEW,
