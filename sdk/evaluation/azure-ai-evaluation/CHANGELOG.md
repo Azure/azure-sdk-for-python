@@ -1,14 +1,15 @@
 # Release History
 
-## 1.18.6 (Unreleased)
+## 1.18.6 (2026-09-17)
 
 ### Features Added
 
-### Breaking Changes
+- Added the `aoai_output_items_page_size` keyword argument to `evaluate` to configure the number of native Azure OpenAI grader output items requested per page. Accepts integers from 1 to 100 and defaults to 100; all result pages are still retrieved.
 
 ### Bugs Fixed
 
-### Other Changes
+- Improved native Azure OpenAI grader result retrieval by retrying output-item requests with a smaller page size after timeouts or retryable HTTP 408 and 504 responses.
+  [#49034](https://github.com/Azure/azure-sdk-for-python/pull/49034)
 
 ## 1.18.5 (2026-09-02)
 
