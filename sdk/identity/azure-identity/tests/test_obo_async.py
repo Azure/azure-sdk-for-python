@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 from unittest.mock import Mock, patch
 from test_certificate_credential import PEM_CERT_PATH
 
+import msal
 from devtools_testutils import is_live
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
@@ -140,7 +141,7 @@ async def test_multitenant_authentication(get_token_method):
         tenant = parsed.path.split("/")[1]
         assert tenant in (first_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
         token = first_token if tenant == first_tenant else second_token
-        return mock_response(json_payload=build_aad_response(access_token=token))
+        return mock_response(json_payload=build_aad_response(access_token=token, uid="uid", utid="utid"))
 
     transport = Mock(send=Mock(wraps=send))
     credential = OnBehalfOfCredential(
@@ -266,7 +267,9 @@ async def test_refresh_token(get_token_method, enable_cae):
         if requests == 1:
             assert "refresh_token" not in request.body
             return mock_response(
-                json_payload=build_aad_response(access_token=first_token, refresh_token=refresh_token, expires_in=0)
+                json_payload=build_aad_response(
+                    access_token=first_token, refresh_token=refresh_token, expires_in=0, uid="uid", utid="utid"
+                )
             )
         if requests == 2:
             assert request.body["refresh_token"] == refresh_token
@@ -287,6 +290,53 @@ async def test_refresh_token(get_token_method, enable_cae):
     assert token.token == second_token
 
     assert requests == 2
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_no_cross_user_token_from_shared_cache(get_token_method):
+    """A credential must not return another account's cached token before exchanging its own user assertion.
+
+    Regression test for AZSDK-H03: when multiple OnBehalfOfCredential instances share a token cache, a credential
+    constructed with user B's assertion must exchange that assertion and return B's token rather than a token
+    already cached for a different account (user A) from a prior exchange.
+    """
+    shared_cache = msal.TokenCache()
+
+    def make_send(user, access_token, exchanges):
+        async def send(request, **kwargs):
+            if request.body.get("grant_type") == "urn:ietf:params:oauth:grant-type:jwt-bearer":
+                exchanges.append(user)
+            return mock_response(json_payload=build_aad_response(access_token=access_token, uid=user, utid="utid"))
+
+        return send
+
+    a_exchanges = []
+    credential_a = OnBehalfOfCredential(
+        "tenant-id",
+        "client-id",
+        client_secret="secret",
+        user_assertion="assertion-a",
+        transport=Mock(send=make_send("a", "ACCESS-TOKEN-A", a_exchanges)),
+        cache=shared_cache,
+    )
+    token_a = await getattr(credential_a, get_token_method)("scope")
+    assert token_a.token == "ACCESS-TOKEN-A"
+    assert a_exchanges == ["a"]
+
+    b_exchanges = []
+    credential_b = OnBehalfOfCredential(
+        "tenant-id",
+        "client-id",
+        client_secret="secret",
+        user_assertion="assertion-b",
+        transport=Mock(send=make_send("b", "ACCESS-TOKEN-B", b_exchanges)),
+        cache=shared_cache,
+    )
+    token_b = await getattr(credential_b, get_token_method)("scope")
+
+    assert token_b.token == "ACCESS-TOKEN-B", "credential returned another account's cached token"
+    assert b_exchanges == ["b"], "credential did not exchange its own user assertion"
 
 
 def test_tenant_id_validation():
