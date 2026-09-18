@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-15/mongoMIrbac/CosmosDBMongoMIRoleDefinitionGet.json
+# x-ms-original-file: 2026-04-01-preview/mongoMIrbac/CosmosDBMongoMIRoleDefinitionGet.json
 if __name__ == "__main__":
     main()
