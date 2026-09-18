@@ -15,10 +15,10 @@ from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import OperationType
 
 if TYPE_CHECKING:
-    from .. import _types, models as _models
+    from .. import _unions, models as _models
 
 
-class ActionOperation(_Model):
+class ActionOperation(_Model):  # pylint: disable=docstring-missing-param
     """Identifies an accepted training request and its fine-tuning session.
 
     :ivar request_id: Request identifier to pass to the session's request-status endpoint.
@@ -43,7 +43,7 @@ class ActionOperation(_Model):
         self.status: Literal["pending"] = "pending"
 
 
-class AdamParams(_Model):
+class AdamParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Adam optimizer hyper-parameters.
 
     :ivar learning_rate: Nonnegative learning rate. Defaults to 0.0001.
@@ -122,7 +122,7 @@ class Checkpoint(_Model):
     """Metrics stored with the checkpoint, retaining their JSON value types."""
 
 
-class CheckpointInfo(_Model):
+class CheckpointInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Detailed metadata for a single checkpoint.
 
     :ivar base_model: Base model from which the checkpoint was created. Required.
@@ -160,7 +160,7 @@ class CheckpointInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckpointList(_Model):
+class CheckpointList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of all checkpoints for a session (no pagination).
 
     :ivar checkpoints: All training and sampler checkpoints for the session, returned in one page.
@@ -189,7 +189,7 @@ class CheckpointList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RequestStatus(_Model):
+class RequestStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Status envelope returned when polling a fine-tuning request.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -223,7 +223,9 @@ class RequestStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CompletedRequest(RequestStatus, discriminator="completed"):
+class CompletedRequest(
+    RequestStatus, discriminator="completed"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A request that completed successfully.
 
     :ivar status: Indicates that the request completed successfully. Required. Default value is
@@ -257,7 +259,7 @@ class CompletedRequest(RequestStatus, discriminator="completed"):
         self.status = "completed"  # type: ignore
 
 
-class CompleteResponse(_Model):
+class CompleteResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response from POST /fine_tuning_sessions/{sessionId}/complete.
 
     :ivar session_id: Identifier of the session being unloaded. Required.
@@ -291,7 +293,7 @@ class CompleteResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateSessionRequest(_Model):
+class CreateSessionRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for POST /fine_tuning_sessions.
 
     :ivar type: The session type. Required. "training"
@@ -353,7 +355,7 @@ class CreateSessionRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateSessionResponse(_Model):
+class CreateSessionResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response from POST /fine_tuning_sessions. Poll the returned request identifier to track session
     initialization.
 
@@ -424,7 +426,7 @@ class CreateSessionResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Cursor(_Model):
+class Cursor(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Pagination cursor returned in list responses.
 
     :ivar offset: Zero-based index of the first item in the current page. Required.
@@ -462,7 +464,7 @@ class Cursor(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Datum(_Model):
+class Datum(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single training example.
 
     :ivar model_input: Token-ID and optional image input to the model. Required.
@@ -495,7 +497,7 @@ class Datum(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeleteSessionResponse(_Model):
+class DeleteSessionResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response from DELETE /fine_tuning_sessions/{sessionId}.
 
     :ivar session_id: Identifier of the session targeted for deletion. Required.
@@ -535,7 +537,9 @@ class DeleteSessionResponse(_Model):
         self.type: Literal["delete_session"] = "delete_session"
 
 
-class FailedRequest(RequestStatus, discriminator="failed"):
+class FailedRequest(
+    RequestStatus, discriminator="failed"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A request that failed during processing.
 
     :ivar status: Indicates that the request failed. Required. Default value is "failed".
@@ -588,7 +592,7 @@ class FailedRequest(RequestStatus, discriminator="failed"):
         self.status = "failed"  # type: ignore
 
 
-class ForwardBackwardInput(_Model):
+class ForwardBackwardInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Inner payload for a forward-backward request.
 
     :ivar data: Training examples to process in this batch. Required.
@@ -630,7 +634,7 @@ class ForwardBackwardInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationResult(_Model):
+class OperationResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Normalized result returned by SDK convenience methods, not the REST poll envelope.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -676,7 +680,9 @@ class OperationResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ForwardBackwardOperationResult(OperationResult, discriminator="forward_backward"):
+class ForwardBackwardOperationResult(
+    OperationResult, discriminator="forward_backward"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Normalized forward or forward-backward result.
 
     :ivar operation_id: Request identifier associated with this convenience result. Required.
@@ -739,7 +745,7 @@ class ForwardBackwardOperationResult(OperationResult, discriminator="forward_bac
         self.type = OperationType.FORWARD_BACKWARD  # type: ignore
 
 
-class ForwardBackwardRequest(_Model):
+class ForwardBackwardRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for POST /fine_tuning_sessions/{sessionId}/forward_backward.
 
     :ivar forward_backward_input: Batch inputs for the combined forward and backward pass.
@@ -770,7 +776,7 @@ class ForwardBackwardRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ForwardInput(_Model):
+class ForwardInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Inputs for a forward-only pass without gradient accumulation. Uses the same batch and loss
     configuration as a forward-backward pass.
 
@@ -813,7 +819,7 @@ class ForwardInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ForwardRequest(_Model):
+class ForwardRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for POST /fine_tuning_sessions/{sessionId}/forward.
 
     :ivar forward_input: Batch inputs for the forward-only pass. Required.
@@ -841,7 +847,7 @@ class ForwardRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FromCheckpoint(_Model):
+class FromCheckpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A training checkpoint used to initialize a new fine-tuning session.
 
     :ivar source_session_id: Identifier of the session containing the source training checkpoint.
@@ -875,7 +881,7 @@ class FromCheckpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HeartbeatResponse(_Model):
+class HeartbeatResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response from POST /fine_tuning_sessions/{sessionId}/heartbeat.
 
     :ivar session_id: Identifier of the session whose heartbeat was refreshed. Required.
@@ -912,7 +918,7 @@ class HeartbeatResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageChunk(_Model):
+class ImageChunk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An image supplied as part of a multimodal input. Each decoded image must not exceed 10 MB. The
     service validates the image content and token count at runtime.
 
@@ -958,7 +964,7 @@ class ImageChunk(_Model):
         self.type: Literal["image"] = "image"
 
 
-class LoRAConfig(_Model):
+class LoRAConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LoRA adapter configuration. Omit optional settings to use the server defaults.
 
     :ivar rank: Number of LoRA rank dimensions required by the service. Required.
@@ -1013,7 +1019,7 @@ class LoRAConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LossFnConfig(_Model):
+class LossFnConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Optional per-loss-function hyper-parameters.
 
     :ivar clip_low_threshold: PPO (Proximal Policy Optimization) / CISPO (Clipped
@@ -1060,7 +1066,7 @@ class LossFnConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LossFnInputs(_Model):
+class LossFnInputs(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Per-datum loss function inputs used in forward-backward.
 
     :ivar target_tokens: Target token ids (shifted by 1 relative to model input). Required.
@@ -1110,7 +1116,7 @@ class LossFnInputs(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelInput(_Model):
+class ModelInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Full model input as an ordered sequence of token-ID and image chunks.
 
     :ivar chunks: Chunks forming the complete model input. At most 64 image chunks are allowed per
@@ -1119,7 +1125,9 @@ class ModelInput(_Model):
      ~azure.ai.finetuning_sessions.models.ImageChunk]
     """
 
-    chunks: list["_types.FineTuningInputChunk"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    chunks: list["_unions.FineTuningInputChunk"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Chunks forming the complete model input. At most 64 image chunks are allowed per example; the
      service enforces this limit at runtime. Required."""
 
@@ -1127,7 +1135,7 @@ class ModelInput(_Model):
     def __init__(
         self,
         *,
-        chunks: list["_types.FineTuningInputChunk"],
+        chunks: list["_unions.FineTuningInputChunk"],
     ) -> None: ...
 
     @overload
@@ -1141,7 +1149,7 @@ class ModelInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelInputChunk(_Model):
+class ModelInputChunk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A contiguous block of token IDs forming part of a model input.
 
     :ivar tokens: Sequence of token IDs in this chunk. Required.
@@ -1169,7 +1177,9 @@ class ModelInputChunk(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OptimStepOperationResult(OperationResult, discriminator="optim_step"):
+class OptimStepOperationResult(
+    OperationResult, discriminator="optim_step"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Normalized optimizer-step result.
 
     :ivar operation_id: Request identifier associated with this convenience result. Required.
@@ -1217,7 +1227,7 @@ class OptimStepOperationResult(OperationResult, discriminator="optim_step"):
         self.type = OperationType.OPTIM_STEP  # type: ignore
 
 
-class OptimStepRequest(_Model):
+class OptimStepRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for POST /fine_tuning_sessions/{sessionId}/optim_step.
 
     :ivar adam_params: Adam optimizer parameters used to apply accumulated gradients. Required.
@@ -1245,7 +1255,7 @@ class OptimStepRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PendingOperation(_Model):
+class PendingOperation(_Model):  # pylint: disable=docstring-missing-param
     """Identifies an accepted request whose result can be retrieved by polling.
 
     :ivar request_id: Request identifier to pass to the session's request-status endpoint.
@@ -1266,7 +1276,9 @@ class PendingOperation(_Model):
         self.status: Literal["pending"] = "pending"
 
 
-class PendingRequest(RequestStatus, discriminator="pending"):
+class PendingRequest(
+    RequestStatus, discriminator="pending"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A request that is still being processed.
 
     :ivar status: Indicates that the request has not yet completed. Required. Default value is
@@ -1300,7 +1312,7 @@ class PendingRequest(RequestStatus, discriminator="pending"):
         self.status = "pending"  # type: ignore
 
 
-class SampledSequence(_Model):
+class SampledSequence(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single sampled sequence within a sampling result payload.
 
     :ivar tokens: Generated token identifiers, in sequence order. Required.
@@ -1338,7 +1350,9 @@ class SampledSequence(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SampleOperationResult(OperationResult, discriminator="sample"):
+class SampleOperationResult(
+    OperationResult, discriminator="sample"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Normalized sampling result.
 
     :ivar operation_id: Request identifier associated with this convenience result. Required.
@@ -1395,7 +1409,7 @@ class SampleOperationResult(OperationResult, discriminator="sample"):
         self.type = OperationType.SAMPLE  # type: ignore
 
 
-class SampleRequest(_Model):
+class SampleRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for POST /fine_tuning_sessions/{sessionId}/sample.
 
     :ivar num_samples: Number of independent completions to generate. Default 1.
@@ -1457,7 +1471,7 @@ class SampleRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SamplingParams(_Model):
+class SamplingParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Token-generation sampling parameters.
 
     :ivar max_tokens: Maximum number of tokens to generate. Must be positive. Required.
@@ -1485,7 +1499,7 @@ class SamplingParams(_Model):
     """Top-k candidates. -1 = disabled."""
     seed: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """RNG seed for reproducible samples. Server chooses randomly if omitted."""
-    stop_criteria: Optional["_types.StopCriteria"] = rest_field(
+    stop_criteria: Optional["_unions.StopCriteria"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Stop criteria: either stop_token_ids or stop_strings, not both. Is either a [int] type or a
@@ -1500,7 +1514,7 @@ class SamplingParams(_Model):
         top_p: Optional[float] = None,
         top_k: Optional[int] = None,
         seed: Optional[int] = None,
-        stop_criteria: Optional["_types.StopCriteria"] = None,
+        stop_criteria: Optional["_unions.StopCriteria"] = None,
     ) -> None: ...
 
     @overload
@@ -1514,7 +1528,9 @@ class SamplingParams(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SaveCheckpointOperationResult(OperationResult, discriminator="save_checkpoint"):
+class SaveCheckpointOperationResult(
+    OperationResult, discriminator="save_checkpoint"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Normalized result of saving a training checkpoint.
 
     :ivar operation_id: Request identifier associated with this convenience result. Required.
@@ -1557,7 +1573,7 @@ class SaveCheckpointOperationResult(OperationResult, discriminator="save_checkpo
         self.type = OperationType.SAVE_CHECKPOINT  # type: ignore
 
 
-class SaveCheckpointRequest(_Model):
+class SaveCheckpointRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for POST /fine_tuning_sessions/{sessionId}/checkpoint.
 
     :ivar path: User-supplied checkpoint identifier. Alphanumeric plus underscores and hyphens; max
@@ -1597,7 +1613,9 @@ class SaveCheckpointRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SaveSamplerWeightsOperationResult(OperationResult, discriminator="save_sampler_weights"):
+class SaveSamplerWeightsOperationResult(
+    OperationResult, discriminator="save_sampler_weights"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Normalized result of saving sampler weights.
 
     :ivar operation_id: Request identifier associated with this convenience result. Required.
@@ -1640,7 +1658,7 @@ class SaveSamplerWeightsOperationResult(OperationResult, discriminator="save_sam
         self.type = OperationType.SAVE_SAMPLER_WEIGHTS  # type: ignore
 
 
-class SaveSamplerWeightsRequest(_Model):
+class SaveSamplerWeightsRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for POST /fine_tuning_sessions/{sessionId}/checkpoint_sample. Supply either path
     or both sampling_session_seq_id and seq_id. The service validates this requirement at runtime.
 
@@ -1692,7 +1710,7 @@ class SaveSamplerWeightsRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Session(_Model):
+class Session(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response from GET /fine_tuning_sessions/{sessionId}.
 
     :ivar session_id: Unique identifier for this fine-tuning session. Required.
@@ -1735,7 +1753,7 @@ class Session(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SessionList(_Model):
+class SessionList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Paginated list of fine-tuning sessions.
 
     :ivar data: Sessions returned in the current page. Required.
@@ -1768,7 +1786,7 @@ class SessionList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SessionModelData(_Model):
+class SessionModelData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Nested model sub-object within a session response.
 
     :ivar base_model: Base model used by the session. Required.
@@ -1806,7 +1824,7 @@ class SessionModelData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SessionSummary(_Model):
+class SessionSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Summary item returned in the paginated GET /fine_tuning_sessions list.
 
     :ivar session_id: Unique identifier for this fine-tuning session. Required.
@@ -1865,7 +1883,7 @@ class SessionSummary(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TensorData(_Model):
+class TensorData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A 1-D array of floating-point values serialised for the wire.
 
     :ivar data: The floating-point values of the tensor. Required.

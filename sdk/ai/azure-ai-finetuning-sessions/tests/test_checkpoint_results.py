@@ -4,7 +4,6 @@ from azure.ai.finetuning_sessions import _patch as sync_patch
 from azure.ai.finetuning_sessions.aio import _patch as async_patch
 from azure.ai.finetuning_sessions.models import SaveCheckpointOperationResult
 
-
 _CHECKPOINT_NAME = "checkpoint_name"
 _COMPLETED = {
     "status": "completed",

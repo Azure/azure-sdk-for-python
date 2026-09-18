@@ -10,12 +10,12 @@ Verifies:
 2. Retry-After header is honored over default backoff.
 3. Network errors use escalating backoff between retries.
 """
+
 from __future__ import annotations
 
 from unittest.mock import AsyncMock, MagicMock, patch
 import asyncio
 import pytest
-
 
 # ---------------------------------------------------------------------------
 # Async _post retry cap (#5261585)

@@ -31,6 +31,7 @@ Customers should branch on exception type rather than grepping message strings:
 Each exception carries structured metadata extracted from the server's response
 body so callers can make decisions without string parsing.
 """
+
 from __future__ import annotations
 
 from typing import Any, Optional
@@ -210,7 +211,7 @@ class RequestRetryableError(FineTuningSessionsError):
 
     Attributes:
         error_code: Server error code, if provided (e.g. ``"request_orphaned"``,
-            ``"request_read_timeout"``). Informational only — retry is driven by
+            ``"request_timeout"``). Informational only — retry is driven by
             ``should_retry``, not the code.
         retry_after_sec: Suggested wait before resubmitting, if provided.
         debug_ref: Opaque reference for support tickets.

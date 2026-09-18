@@ -4,6 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 """Bounded recovery from Envoy JWT rejections before application execution."""
+
 from __future__ import annotations
 
 import asyncio
@@ -18,7 +19,6 @@ from azure.core.exceptions import HttpResponseError
 
 from azure.ai.finetuning_sessions import _patch as sync
 from azure.ai.finetuning_sessions.aio import _patch as aio
-
 
 _SESSION_ID = "session_deadbeef"
 _ACCEPTED = {"request_id": "req-accepted", "session_id": _SESSION_ID}

@@ -31,6 +31,7 @@ Usage::
         opt = await client.optim_step(session_id, AdamParams(learning_rate=1e-4))
         await client.close_session(session_id)
 """
+
 from __future__ import annotations
 
 import asyncio

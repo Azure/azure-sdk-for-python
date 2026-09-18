@@ -14,6 +14,7 @@ The poll loop uses an *error budget* rather than a flat wall-clock deadline:
   * Any healthy 200 in between disarms the budget, so intermittent blips never
     trip it.
 """
+
 from __future__ import annotations
 
 import itertools

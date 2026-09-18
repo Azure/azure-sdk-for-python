@@ -27,13 +27,12 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import FineTuningSessionClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Deserializer, Serializer
 from ..models._enums import FoundryFeaturesOptInKeys
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 List = list
@@ -511,7 +510,7 @@ def build_operations_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class SessionsOperations:
+class SessionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -559,7 +558,7 @@ class SessionsOperations:
     @overload
     def create(
         self,
-        session: JSON,
+        session: _types.CreateSessionRequest,
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         content_type: str = "application/json",
@@ -571,7 +570,7 @@ class SessionsOperations:
         single session identifier and a request identifier to poll for session initialization.
 
         :param session: Configuration of the fine-tuning session to create. Required.
-        :type session: JSON
+        :type session: ~azure.ai.finetuning_sessions.types.CreateSessionRequest
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -615,7 +614,7 @@ class SessionsOperations:
     @distributed_trace
     def create(
         self,
-        session: Union[_models.CreateSessionRequest, JSON, IO[bytes]],
+        session: Union[_models.CreateSessionRequest, _types.CreateSessionRequest, IO[bytes]],
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
@@ -625,9 +624,10 @@ class SessionsOperations:
         Create a new fine-tuning session and allocate it to a GPU engine. The response contains a
         single session identifier and a request identifier to poll for session initialization.
 
-        :param session: Configuration of the fine-tuning session to create. Is one of the following
-         types: CreateSessionRequest, JSON, IO[bytes] Required.
-        :type session: ~azure.ai.finetuning_sessions.models.CreateSessionRequest or JSON or IO[bytes]
+        :param session: Configuration of the fine-tuning session to create. Is either a
+         CreateSessionRequest type or a IO[bytes] type. Required.
+        :type session: ~azure.ai.finetuning_sessions.models.CreateSessionRequest or
+         ~azure.ai.finetuning_sessions.types.CreateSessionRequest or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1076,7 +1076,7 @@ class SessionsOperations:
         return deserialized  # type: ignore
 
 
-class TrainingOperations:
+class TrainingOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1128,7 +1128,7 @@ class TrainingOperations:
     def forward_backward(
         self,
         session_id: str,
-        request: JSON,
+        request: _types.ForwardBackwardRequest,
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         content_type: str = "application/json",
@@ -1142,7 +1142,7 @@ class TrainingOperations:
         :param session_id: Identifier of the fine-tuning session that will process the batch. Required.
         :type session_id: str
         :param request: Training batch and loss configuration for the forward-backward pass. Required.
-        :type request: JSON
+        :type request: ~azure.ai.finetuning_sessions.types.ForwardBackwardRequest
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1190,7 +1190,7 @@ class TrainingOperations:
     def forward_backward(
         self,
         session_id: str,
-        request: Union[_models.ForwardBackwardRequest, JSON, IO[bytes]],
+        request: Union[_models.ForwardBackwardRequest, _types.ForwardBackwardRequest, IO[bytes]],
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
@@ -1202,9 +1202,10 @@ class TrainingOperations:
 
         :param session_id: Identifier of the fine-tuning session that will process the batch. Required.
         :type session_id: str
-        :param request: Training batch and loss configuration for the forward-backward pass. Is one of
-         the following types: ForwardBackwardRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.ai.finetuning_sessions.models.ForwardBackwardRequest or JSON or IO[bytes]
+        :param request: Training batch and loss configuration for the forward-backward pass. Is either
+         a ForwardBackwardRequest type or a IO[bytes] type. Required.
+        :type request: ~azure.ai.finetuning_sessions.models.ForwardBackwardRequest or
+         ~azure.ai.finetuning_sessions.types.ForwardBackwardRequest or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1310,7 +1311,7 @@ class TrainingOperations:
     def forward(
         self,
         session_id: str,
-        request: JSON,
+        request: _types.ForwardRequest,
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         content_type: str = "application/json",
@@ -1324,7 +1325,7 @@ class TrainingOperations:
         :param session_id: Identifier of the fine-tuning session that will process the batch. Required.
         :type session_id: str
         :param request: Training batch and loss configuration for the forward-only pass. Required.
-        :type request: JSON
+        :type request: ~azure.ai.finetuning_sessions.types.ForwardRequest
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1372,7 +1373,7 @@ class TrainingOperations:
     def forward(
         self,
         session_id: str,
-        request: Union[_models.ForwardRequest, JSON, IO[bytes]],
+        request: Union[_models.ForwardRequest, _types.ForwardRequest, IO[bytes]],
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
@@ -1384,9 +1385,10 @@ class TrainingOperations:
 
         :param session_id: Identifier of the fine-tuning session that will process the batch. Required.
         :type session_id: str
-        :param request: Training batch and loss configuration for the forward-only pass. Is one of the
-         following types: ForwardRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.ai.finetuning_sessions.models.ForwardRequest or JSON or IO[bytes]
+        :param request: Training batch and loss configuration for the forward-only pass. Is either a
+         ForwardRequest type or a IO[bytes] type. Required.
+        :type request: ~azure.ai.finetuning_sessions.models.ForwardRequest or
+         ~azure.ai.finetuning_sessions.types.ForwardRequest or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1493,7 +1495,7 @@ class TrainingOperations:
     def optimizer_step(
         self,
         session_id: str,
-        request: JSON,
+        request: _types.OptimStepRequest,
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         content_type: str = "application/json",
@@ -1508,7 +1510,7 @@ class TrainingOperations:
          Required.
         :type session_id: str
         :param request: Adam optimizer configuration for applying accumulated gradients. Required.
-        :type request: JSON
+        :type request: ~azure.ai.finetuning_sessions.types.OptimStepRequest
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1557,7 +1559,7 @@ class TrainingOperations:
     def optimizer_step(
         self,
         session_id: str,
-        request: Union[_models.OptimStepRequest, JSON, IO[bytes]],
+        request: Union[_models.OptimStepRequest, _types.OptimStepRequest, IO[bytes]],
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
@@ -1570,9 +1572,10 @@ class TrainingOperations:
         :param session_id: Identifier of the fine-tuning session whose weights will be updated.
          Required.
         :type session_id: str
-        :param request: Adam optimizer configuration for applying accumulated gradients. Is one of the
-         following types: OptimStepRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.ai.finetuning_sessions.models.OptimStepRequest or JSON or IO[bytes]
+        :param request: Adam optimizer configuration for applying accumulated gradients. Is either a
+         OptimStepRequest type or a IO[bytes] type. Required.
+        :type request: ~azure.ai.finetuning_sessions.models.OptimStepRequest or
+         ~azure.ai.finetuning_sessions.types.OptimStepRequest or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1644,7 +1647,7 @@ class TrainingOperations:
         return deserialized  # type: ignore
 
 
-class CheckpointsOperations:
+class CheckpointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1696,7 +1699,7 @@ class CheckpointsOperations:
     def save(
         self,
         session_id: str,
-        checkpoint: JSON,
+        checkpoint: _types.SaveCheckpointRequest,
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         content_type: str = "application/json",
@@ -1710,7 +1713,7 @@ class CheckpointsOperations:
         :param session_id: Identifier of the fine-tuning session to checkpoint. Required.
         :type session_id: str
         :param checkpoint: Identifier and optional training metadata for the checkpoint. Required.
-        :type checkpoint: JSON
+        :type checkpoint: ~azure.ai.finetuning_sessions.types.SaveCheckpointRequest
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1758,7 +1761,7 @@ class CheckpointsOperations:
     def save(
         self,
         session_id: str,
-        checkpoint: Union[_models.SaveCheckpointRequest, JSON, IO[bytes]],
+        checkpoint: Union[_models.SaveCheckpointRequest, _types.SaveCheckpointRequest, IO[bytes]],
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
@@ -1770,10 +1773,10 @@ class CheckpointsOperations:
 
         :param session_id: Identifier of the fine-tuning session to checkpoint. Required.
         :type session_id: str
-        :param checkpoint: Identifier and optional training metadata for the checkpoint. Is one of the
-         following types: SaveCheckpointRequest, JSON, IO[bytes] Required.
-        :type checkpoint: ~azure.ai.finetuning_sessions.models.SaveCheckpointRequest or JSON or
-         IO[bytes]
+        :param checkpoint: Identifier and optional training metadata for the checkpoint. Is either a
+         SaveCheckpointRequest type or a IO[bytes] type. Required.
+        :type checkpoint: ~azure.ai.finetuning_sessions.models.SaveCheckpointRequest or
+         ~azure.ai.finetuning_sessions.types.SaveCheckpointRequest or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1881,7 +1884,7 @@ class CheckpointsOperations:
     def save_sampler_weights(
         self,
         session_id: str,
-        checkpoint: JSON,
+        checkpoint: _types.SaveSamplerWeightsRequest,
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         content_type: str = "application/json",
@@ -1897,7 +1900,7 @@ class CheckpointsOperations:
         :type session_id: str
         :param checkpoint: Explicit checkpoint identifier or sequence identifiers for the sampler
          weights. Required.
-        :type checkpoint: JSON
+        :type checkpoint: ~azure.ai.finetuning_sessions.types.SaveSamplerWeightsRequest
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1947,7 +1950,7 @@ class CheckpointsOperations:
     def save_sampler_weights(
         self,
         session_id: str,
-        checkpoint: Union[_models.SaveSamplerWeightsRequest, JSON, IO[bytes]],
+        checkpoint: Union[_models.SaveSamplerWeightsRequest, _types.SaveSamplerWeightsRequest, IO[bytes]],
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
@@ -1961,9 +1964,9 @@ class CheckpointsOperations:
          Required.
         :type session_id: str
         :param checkpoint: Explicit checkpoint identifier or sequence identifiers for the sampler
-         weights. Is one of the following types: SaveSamplerWeightsRequest, JSON, IO[bytes] Required.
-        :type checkpoint: ~azure.ai.finetuning_sessions.models.SaveSamplerWeightsRequest or JSON or
-         IO[bytes]
+         weights. Is either a SaveSamplerWeightsRequest type or a IO[bytes] type. Required.
+        :type checkpoint: ~azure.ai.finetuning_sessions.models.SaveSamplerWeightsRequest or
+         ~azure.ai.finetuning_sessions.types.SaveSamplerWeightsRequest or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -2188,7 +2191,7 @@ class CheckpointsOperations:
         return deserialized  # type: ignore
 
 
-class SamplingOperations:
+class SamplingOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2246,7 +2249,7 @@ class SamplingOperations:
     def sample(
         self,
         session_id: str,
-        sample: JSON,
+        sample: _types.SampleRequest,
         *,
         checkpoint_id: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
@@ -2263,7 +2266,7 @@ class SamplingOperations:
          Required.
         :type session_id: str
         :param sample: Prompt and generation parameters for the requested completions. Required.
-        :type sample: JSON
+        :type sample: ~azure.ai.finetuning_sessions.types.SampleRequest
         :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
          Required.
         :paramtype checkpoint_id: str
@@ -2320,7 +2323,7 @@ class SamplingOperations:
     def sample(
         self,
         session_id: str,
-        sample: Union[_models.SampleRequest, JSON, IO[bytes]],
+        sample: Union[_models.SampleRequest, _types.SampleRequest, IO[bytes]],
         *,
         checkpoint_id: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
@@ -2335,9 +2338,10 @@ class SamplingOperations:
         :param session_id: Identifier of the fine-tuning session containing the sampler checkpoint.
          Required.
         :type session_id: str
-        :param sample: Prompt and generation parameters for the requested completions. Is one of the
-         following types: SampleRequest, JSON, IO[bytes] Required.
-        :type sample: ~azure.ai.finetuning_sessions.models.SampleRequest or JSON or IO[bytes]
+        :param sample: Prompt and generation parameters for the requested completions. Is either a
+         SampleRequest type or a IO[bytes] type. Required.
+        :type sample: ~azure.ai.finetuning_sessions.models.SampleRequest or
+         ~azure.ai.finetuning_sessions.types.SampleRequest or IO[bytes]
         :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
          Required.
         :paramtype checkpoint_id: str
@@ -2413,7 +2417,7 @@ class SamplingOperations:
         return deserialized  # type: ignore
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -7,8 +7,13 @@ The runtime SDK and its regression tests were ported from Loom master commit
 with that SDK and the actual service schemas, rather than reverse-mapping only
 files that happened to be different between two manually edited SDK copies.
 
-Changes are intentionally **uncommitted and unstaged**. No PR was reopened,
-no branch rebased, and no remote feature branch updated.
+The follow-up inference-error documentation and retry tests from
+`8710e209831248a986393c2df0ee47e333d51dfa` are included as well; that follow-up
+does not change the SDK runtime or raw response schema.
+
+The feature branches incorporate their September 17 target revisions through
+ordinary merge commits, without rebasing or rewriting existing history. PR
+reopening and review remain separate from pushing the feature branches.
 
 ## Sources
 
@@ -16,28 +21,31 @@ no branch rebased, and no remote feature branch updated.
   `haarunkumar/finetuning-sessions-spec`, targeting `feature/foundry-release`.
 - SDK branch: `feature/finetuning-sessions-sdk`, targeting `main`.
 - The generation source is described by [tsp-location.yaml](tsp-location.yaml).
-  Its `commit` currently names the public branch, **not a final immutable SHA**.
-  The remote branch does not include these uncommitted TypeSpec edits yet.
+  It pins the immutable public TypeSpec commit
+  `ec9d1a9f1f6dcef1eb16e5f9f243995daf083c50`.
+- The TypeSpec target incorporated is
+  `6d8e681878ddcfad7749a69e48dea167755dde6b`; the SDK main target incorporated is
+  `031b28b8b36efd78bc326de802ef03c1c53af7d4`.
 
-**After review:** commit the TypeSpec changes first, push that branch when ready,
-then replace the pointer's branch reference with that new full 40-character SHA.
-Recheck generation before committing the SDK. Do not pin the old June commit and
-claim it reproduces this update.
+For future updates, commit and push TypeSpec first, replace the source pin with
+the new full SHA, and recheck generation before committing the SDK. The TypeSpec
+commit must be remotely available before remote SDK regeneration can use it.
 
 ## Pinned generation environment
 
 | Package | Version |
 |---|---|
-| `@typespec/compiler`, `@typespec/http`, `@typespec/openapi3` | `1.13.0` |
-| `@azure-tools/typespec-azure-core`, `@azure-tools/typespec-client-generator-core` | `0.69.0` |
-| `@azure-tools/typespec-python` | `0.63.1` |
-| `@typespec/http-client-python` | `0.31.1` |
-| `@azure-tools/openai-typespec` | `1.20.1` |
+| `@typespec/compiler`, `@typespec/http`, `@typespec/openapi3` | `1.16.0` |
+| `@azure-tools/typespec-azure-core`, `@azure-tools/typespec-client-generator-core` | `0.72.0` |
+| `@azure-tools/typespec-python` | `0.63.7` |
+| `@typespec/http-client-python` | `0.37.2` |
+| `@azure-tools/openai-typespec` | `1.28.0` |
 
 The SDK emitter version matches the SDK repository's emitter manifest. The
-public specs repository pins the compiler and service libraries. Local setup
-used repository dependency installation, then a no-save installation of the
-Python emitter, without modifying root dependency manifests or lock files.
+public specs repository pins the compiler and service libraries. Full Foundry
+validation used its frozen pnpm lockfile with Node 24.14.1 and pnpm 11.8.0.
+Python generation used an isolated installation of the package-specific emitter
+manifest, without modifying shared dependency manifests or lock files.
 
 [emitter-package.json](emitter-package.json) pins this package's generation
 toolchain explicitly and is referenced by [tsp-location.yaml](tsp-location.yaml),
@@ -53,11 +61,12 @@ PyYAML dependency in pure Python on Python 3.13. TLS verification was not disabl
 ## Verification
 
 [verify_generation.py](verify_generation.py) takes `--spec-repo` followed by the
-local public specs repository root. It:
+local public specs repository root and optionally `--toolchain` followed by an
+isolated directory containing the pinned generation dependencies. It:
 
 1. Verifies the installed TypeSpec/compiler/emitter versions.
-2. Generates Python twice from the current local TypeSpec files into isolated
-   temporary package directories.
+2. Snapshots the SDK-specific TypeSpec inputs into temporary directories under
+  that toolchain and generates Python twice into isolated package directories.
 3. Compares all generated Python modules, typing marker, and generated metadata
    with each other and with this SDK package, ignoring only CRLF/LF differences.
 4. Detects extra/orphaned generated modules in the SDK.
@@ -65,8 +74,9 @@ local public specs repository root. It:
    changed by the check.
 
 It does not install dependencies, update this package, stage files, or commit.
-The input fingerprint identifies the exact TypeSpec working-tree content even
-before a new Git commit exists.
+The input fingerprint identifies the exact TypeSpec working-tree content. Input
+snapshots prevent an older npm emitter from resolving newer pnpm libraries (or
+the reverse) merely because both installations exist on the same machine.
 
 To update the generated layer, compile the SDK-specific TypeSpec client entry
 point with its adjacent configuration and set the Python emitter output directory
@@ -124,18 +134,21 @@ distinct from the offline tests and successful emission comparisons.
 
 ### Local results
 
-- **475 tests passed** against both the source package and its unpacked wheel.
-- **21 generated files** matched two independent pinned emissions; handwritten
+- **485 tests passed** against both the updated source package and its unpacked wheel.
+- **22 generated files** matched two independent pinned emissions; handwritten
   files and TypeSpec source were unchanged during verification.
 - Full public OpenAPI contained **13 canonical paths / 15 methods**, matching
   HTTP 200 submissions and raw request-status envelopes.
 - Full Foundry compilation and SDK authoring validation succeeded. Full-service
-  compilation retained 15 warnings; Python emission retained 62 warnings.
+  compilation retained 29 warnings; Python emission retained 66 warnings.
 - Consecutive wheel builds were checked after limiting package discovery to
-  `azure.ai.finetuning_sessions*`; the wheel contains 26 Python modules, not
-  copied build directories or tests.
+  `azure.ai.finetuning_sessions*`; build directories and tests must not be
+  packaged as additional modules.
+- The post-merge wheel contains **27 Python modules** matching source. Its
+  SHA-256 is `e47f0a9627fd081005718451a9dfba1ccd0f5336e01a59534cbd832674bf7c65`.
 
-Before publishing, also address remaining review hygiene: package registration
-in shared SDK CI, the previously checked-in wheel, and the original unrelated
-shared client-tool lockfile diff. A wheel belongs in a distribution/cookbook
-workflow, not in this SDK source PR.
+The original unrelated shared client-tool lockfile difference was removed during
+merge resolution, and the old wheel was removed from Git tracking (its local
+copy was preserved). A wheel belongs in a distribution/cookbook workflow, not in
+this SDK source PR. Package registration in shared SDK CI remains a review item;
+no pipeline definitions were changed as part of this synchronization.

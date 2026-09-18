@@ -12,6 +12,7 @@ Verifies:
 * ``404`` is swallowed (idempotent — session already gone).
 * Other ``4xx``/``5xx`` surface via the standard SDK error path.
 """
+
 from __future__ import annotations
 
 import asyncio

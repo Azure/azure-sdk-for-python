@@ -35,6 +35,7 @@ class FromCheckpoint(_models.FromCheckpoint):
     :vartype checkpoint_id: str
     """
 
+
 class ImageChunk(_models.ImageChunk):
     """Raw image bytes embedded in a model input.
 

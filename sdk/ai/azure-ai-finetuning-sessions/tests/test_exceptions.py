@@ -11,6 +11,7 @@ Verifies that:
 3. ``_classify_poll_failure`` correctly maps poll envelope failures to typed exceptions.
 4. Unknown errors fall through (return None) so generic handling still applies.
 """
+
 from __future__ import annotations
 
 import pytest
@@ -23,6 +24,7 @@ from azure.ai.finetuning_sessions._exceptions import (
     FineTuningSessionsError,
     NoCapacityError,
     OperationResultUnavailableError,
+    RequestRetryableError,
     RequestValidationError,
     TrainingEngineError,
     _classify_http_error,
@@ -44,6 +46,7 @@ class TestHierarchy:
             NoCapacityError,
             TrainingEngineError,
             OperationResultUnavailableError,
+            RequestRetryableError,
             ContentionError,
             RequestValidationError,
         ],
@@ -260,6 +263,36 @@ class TestClassifyHttpError:
 # _classify_poll_failure
 # ---------------------------------------------------------------------------
 class TestClassifyPollFailure:
+    @pytest.mark.parametrize(
+        "error_code",
+        [
+            "request_timeout",
+            "request_orphaned",
+            "inference_request_rate_limited",
+            "inference_unavailable",
+            # Older services remain compatible with the code-agnostic retry contract.
+            "request_read_timeout",
+            "request_task_timeout",
+            "external_inference_rate_limited",
+            "external_inference_unavailable",
+            "external_endpoints_exhausted",
+        ],
+    )
+    def test_external_inference_retry_codes_use_generic_retry_contract(self, error_code: str) -> None:
+        envelope = {
+            "status": "failed",
+            "error": "Retry the request.",
+            "error_code": error_code,
+            "should_retry": True,
+            "retry_after_sec": 30,
+            "debug_ref": "ref123",
+        }
+        exc = _classify_poll_failure(envelope)
+        assert isinstance(exc, RequestRetryableError)
+        assert exc.error_code == error_code
+        assert exc.retry_after_sec == 30
+        assert exc.debug_ref == "ref123"
+
     def test_engine_oom(self) -> None:
         envelope = {
             "status": "failed",

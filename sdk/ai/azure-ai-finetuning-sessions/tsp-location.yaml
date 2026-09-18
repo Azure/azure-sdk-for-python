@@ -1,8 +1,6 @@
 directory: specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuning-sessions
-# Local review uses the public TypeSpec working tree. After committing/pushing
-# that branch, replace this branch reference with its full 40-character SHA.
-# The remote branch does not contain the uncommitted changes yet.
-commit: haarunkumar/finetuning-sessions-spec
+# Public TypeSpec commit including the current Foundry release merge.
+commit: ec9d1a9f1f6dcef1eb16e5f9f243995daf083c50
 repo: Azure/azure-rest-api-specs
 entrypointFile: client.tsp
 emitterPackageJsonPath: sdk/ai/azure-ai-finetuning-sessions/emitter-package.json

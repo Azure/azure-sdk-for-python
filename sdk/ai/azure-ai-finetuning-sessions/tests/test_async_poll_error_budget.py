@@ -11,6 +11,7 @@ unit tests). These tests exercise the async loop integration: healthy pending
 200s are unbounded and clear the budget, while a sustained error streak past
 ``error_budget_sec`` raises ``TimeoutError``.
 """
+
 from __future__ import annotations
 
 import itertools

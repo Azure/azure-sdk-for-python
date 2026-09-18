@@ -10,6 +10,7 @@ loggers at package import time. The filter prepends an ISO-8601 UTC
 timestamp to ``record.msg`` only when no handler is reachable; otherwise
 it is a no-op (the caller's formatter owns the timestamp).
 """
+
 from __future__ import annotations
 
 import logging

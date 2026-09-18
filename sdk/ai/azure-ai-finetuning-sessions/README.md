@@ -92,13 +92,22 @@ model rather than assuming a client-side default.
     to the existing backend route when needed; no backend migration is performed
     by installing this package.
 
+## Inference error codes
+
+Retryable inference failures use `request_timeout`, `request_orphaned`,
+`inference_request_rate_limited`, and `inference_unavailable`. The SDK exposes
+the server's code on `RequestRetryableError.error_code` and resubmits based on
+`should_retry`, honoring `retry_after_sec`; it does not match code names.
+Older services returning legacy inference codes remain supported by the same
+mechanism. `invalid_request` and `internal_error` remain terminal.
+
 ## Local development
 
 Run the package's tests with `pytest`; the package configuration enables asyncio
 tests. [verify_generation.py](verify_generation.py) emits the TypeSpec twice into
 temporary directories and compares generated files against this package without
 rewriting either source tree. See [GENERATION.md](GENERATION.md) for the pinned
-toolchain, review differences, and the precommit source-pointer requirement.
+toolchain, review differences, and the pinned public TypeSpec source.
 
 ## Contributing
 

@@ -14,6 +14,7 @@ Covers the two behaviors added for Redis-based server rate limiting:
 2. ``sample()`` holds a lifecycle-scoped semaphore across the FULL submit+poll
    lifecycle, bounding overall concurrent samples (not just the in-flight POST).
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -30,7 +31,6 @@ from azure.ai.finetuning_sessions._exceptions import (
 from azure.ai.finetuning_sessions import _patch as _patch_mod
 from azure.ai.finetuning_sessions.aio import _patch as _aio_mod
 from azure.ai.finetuning_sessions.aio._patch import _post, _post_sample, sample
-
 
 # ---------------------------------------------------------------------------
 # Exception typing / classification

@@ -17,6 +17,7 @@ so both clients behave identically.
     trip it.
   * ``error_budget_sec=None`` disables the budget (retry forever).
 """
+
 from __future__ import annotations
 
 import itertools

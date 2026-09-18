@@ -27,6 +27,7 @@ Generated operations expose these HTTP 200 accepted-request handles and raw
 request-status envelopes. This handwritten layer manually polls request status,
 applies retries, and normalizes completed results into SDK convenience models.
 """
+
 from __future__ import annotations
 
 import concurrent.futures as _futures

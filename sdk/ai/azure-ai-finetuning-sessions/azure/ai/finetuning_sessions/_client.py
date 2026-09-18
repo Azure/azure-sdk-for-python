@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class FineTuningSessionClient:
+class FineTuningSessionClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FineTuningSessionClient.
 
     :ivar sessions: SessionsOperations operations
