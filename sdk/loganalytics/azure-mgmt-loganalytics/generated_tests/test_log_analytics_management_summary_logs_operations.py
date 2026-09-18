@@ -39,6 +39,12 @@ class TestLogAnalyticsManagementSummaryLogsOperations(AzureMgmtRecordedTestCase)
             summary_logs_name="str",
             parameters={
                 "id": "str",
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "name": "str",
                 "properties": {
                     "description": "str",

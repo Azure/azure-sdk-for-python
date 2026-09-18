@@ -15,7 +15,7 @@ from azure.mgmt.loganalytics import LogAnalyticsManagementClient
     pip install azure-identity
     pip install azure-mgmt-loganalytics
 # USAGE
-    python nsp_for_workspaces_get.py
+    python workspaces_purge_lake_data.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,16 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.workspaces.get_nsp(
-        resource_group_name="exampleRG",
-        workspace_name="someWorkspace",
-        network_security_perimeter_configuration_name="somePerimeterConfiguration",
-    )
-    print(response)
+    client.workspace_purge.begin_purge_lake_data(
+        resource_group_name="OIAutoRest5123",
+        workspace_name="aztest5048",
+        body={
+            "table": "AuxiliaryLogs_CL",
+            "timeRange": {"endTime": "2026-03-02T00:00:00Z", "startTime": "2026-03-01T00:00:00Z"},
+        },
+    ).result()
 
 
-# x-ms-original-file: 2026-03-01/NSPForWorkspaces_Get.json
+# x-ms-original-file: 2026-03-01/WorkspacesPurgeLakeData.json
 if __name__ == "__main__":
     main()

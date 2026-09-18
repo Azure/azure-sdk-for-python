@@ -142,7 +142,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                parameters: JSON, 
+                parameters: Cluster, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -183,7 +183,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                parameters: JSON, 
+                parameters: ClusterPatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -245,7 +245,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 data_export_name: str, 
-                parameters: JSON, 
+                parameters: DataExport, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -316,7 +316,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 data_source_name: str, 
-                parameters: JSON, 
+                parameters: DataSource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -462,7 +462,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 linked_service_name: str, 
-                parameters: JSON, 
+                parameters: LinkedService, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -533,7 +533,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 data_source_type: Union[str, DataSourceType], 
-                parameters: JSON, 
+                parameters: LinkedStorageAccountsResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -680,7 +680,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 resource_group_name: str, 
                 query_pack_name: str, 
                 id: str, 
-                query_payload: JSON, 
+                query_payload: LogAnalyticsQueryPackQuery, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -717,7 +717,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 self, 
                 resource_group_name: str, 
                 query_pack_name: str, 
-                query_search_properties: JSON, 
+                query_search_properties: LogAnalyticsQueryPackQuerySearchProperties, 
                 *, 
                 content_type: str = "application/json", 
                 include_body: Optional[bool] = ..., 
@@ -758,7 +758,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 resource_group_name: str, 
                 query_pack_name: str, 
                 id: str, 
-                query_payload: JSON, 
+                query_payload: LogAnalyticsQueryPackQuery, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -801,7 +801,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 self, 
                 resource_group_name: str, 
                 query_pack_name: str, 
-                log_analytics_query_pack_payload: JSON, 
+                log_analytics_query_pack_payload: LogAnalyticsQueryPack, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -832,7 +832,7 @@ namespace azure.mgmt.loganalytics.aio.operations
         async def create_or_update_without_name(
                 self, 
                 resource_group_name: str, 
-                log_analytics_query_pack_payload: JSON, 
+                log_analytics_query_pack_payload: LogAnalyticsQueryPack, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -890,7 +890,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 self, 
                 resource_group_name: str, 
                 query_pack_name: str, 
-                query_pack_tags: JSON, 
+                query_pack_tags: TagsResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -934,7 +934,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 saved_search_id: str, 
-                parameters: JSON, 
+                parameters: SavedSearch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1047,7 +1047,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 storage_insight_name: str, 
-                parameters: JSON, 
+                parameters: StorageInsight, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1118,7 +1118,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 summary_logs_name: str, 
-                parameters: JSON, 
+                parameters: SummaryLogs, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1163,7 +1163,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 summary_logs_name: str, 
-                parameters: JSON, 
+                parameters: SummaryLogsRetryBin, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1243,7 +1243,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 table_name: str, 
-                parameters: JSON, 
+                parameters: Table, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1288,7 +1288,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 table_name: str, 
-                parameters: JSON, 
+                parameters: Table, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1367,6 +1367,39 @@ namespace azure.mgmt.loganalytics.aio.operations
                 **kwargs
             ) -> None: ...
 
+        @overload
+        async def begin_purge_lake_data(
+                self, 
+                resource_group_name: str, 
+                workspace_name: str, 
+                body: WorkspacePurgeLakeDataBody, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_purge_lake_data(
+                self, 
+                resource_group_name: str, 
+                workspace_name: str, 
+                body: WorkspacePurgeLakeDataBody, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_purge_lake_data(
+                self, 
+                resource_group_name: str, 
+                workspace_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
         @distributed_trace_async
         async def get_purge_status(
                 self, 
@@ -1392,7 +1425,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 self, 
                 resource_group_name: str, 
                 workspace_name: str, 
-                body: JSON, 
+                body: WorkspacePurgeBody, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1434,7 +1467,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 self, 
                 resource_group_name: str, 
                 workspace_name: str, 
-                parameters: JSON, 
+                parameters: Workspace, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1538,7 +1571,7 @@ namespace azure.mgmt.loganalytics.aio.operations
                 self, 
                 resource_group_name: str, 
                 workspace_name: str, 
-                parameters: JSON, 
+                parameters: WorkspacePatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1854,6 +1887,7 @@ namespace azure.mgmt.loganalytics.models
         GUID = "guid"
         IP = "ip"
         URI = "uri"
+        VECTOR16 = "vector16"
 
 
     class azure.mgmt.loganalytics.models.ColumnTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3137,6 +3171,7 @@ namespace azure.mgmt.loganalytics.models
 
     class azure.mgmt.loganalytics.models.SummaryLogs(ProxyResource):
         id: str
+        identity: Optional[SummaryLogsIdentity]
         name: str
         properties: Optional[SummaryLogsProperties]
         system_data: SystemData
@@ -3148,6 +3183,7 @@ namespace azure.mgmt.loganalytics.models
         def __init__(
                 self, 
                 *, 
+                identity: Optional[SummaryLogsIdentity] = ..., 
                 properties: Optional[SummaryLogsProperties] = ...
             ) -> None: ...
 
@@ -3159,6 +3195,29 @@ namespace azure.mgmt.loganalytics.models
                 key: str, 
                 value: Any
             ) -> None: ...
+
+
+    class azure.mgmt.loganalytics.models.SummaryLogsIdentity(_Model):
+        principal_id: Optional[str]
+        tenant_id: Optional[str]
+        type: Union[str, SummaryLogsIdentityType]
+        user_assigned_identities: Optional[dict[str, SummaryLogsUserIdentityProperties]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: Union[str, SummaryLogsIdentityType], 
+                user_assigned_identities: Optional[dict[str, SummaryLogsUserIdentityProperties]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.loganalytics.models.SummaryLogsIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        NONE = "None"
+        USER_ASSIGNED = "UserAssigned"
 
 
     class azure.mgmt.loganalytics.models.SummaryLogsProperties(_Model):
@@ -3218,6 +3277,11 @@ namespace azure.mgmt.loganalytics.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.loganalytics.models.SummaryLogsUserIdentityProperties(_Model):
+        client_id: Optional[str]
+        principal_id: Optional[str]
 
 
     class azure.mgmt.loganalytics.models.SystemData(_Model):
@@ -3280,6 +3344,7 @@ namespace azure.mgmt.loganalytics.models
         archive_retention_in_days: Optional[int]
         last_plan_modified_date: Optional[str]
         plan: Optional[Union[str, TablePlanEnum]]
+        protection_level: Optional[Union[str, TableProtectionLevelEnum]]
         provisioning_state: Optional[Union[str, ProvisioningStateEnum]]
         restored_logs: Optional[RestoredLogs]
         result_statistics: Optional[ResultStatistics]
@@ -3295,6 +3360,7 @@ namespace azure.mgmt.loganalytics.models
                 self, 
                 *, 
                 plan: Optional[Union[str, TablePlanEnum]] = ..., 
+                protection_level: Optional[Union[str, TableProtectionLevelEnum]] = ..., 
                 restored_logs: Optional[RestoredLogs] = ..., 
                 retention_in_days: Optional[int] = ..., 
                 schema: Optional[Schema] = ..., 
@@ -3304,6 +3370,11 @@ namespace azure.mgmt.loganalytics.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.loganalytics.models.TableProtectionLevelEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        GENERAL = "General"
+        PROTECTED = "Protected"
 
 
     class azure.mgmt.loganalytics.models.TableSubTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3488,6 +3559,7 @@ namespace azure.mgmt.loganalytics.models
     class azure.mgmt.loganalytics.models.WorkspaceFeatures(_Model):
         associations: Optional[list[str]]
         cluster_resource_id: Optional[str]
+        data_authorization_mode: Optional[bool]
         disable_local_auth: Optional[bool]
         enable_data_export: Optional[bool]
         enable_log_access_using_only_resource_permissions: Optional[bool]
@@ -3499,6 +3571,7 @@ namespace azure.mgmt.loganalytics.models
                 self, 
                 *, 
                 cluster_resource_id: Optional[str] = ..., 
+                data_authorization_mode: Optional[bool] = ..., 
                 disable_local_auth: Optional[bool] = ..., 
                 enable_data_export: Optional[bool] = ..., 
                 enable_log_access_using_only_resource_permissions: Optional[bool] = ..., 
@@ -3607,6 +3680,38 @@ namespace azure.mgmt.loganalytics.models
                 key: Optional[str] = ..., 
                 operator: Optional[str] = ..., 
                 value: Optional[Any] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.loganalytics.models.WorkspacePurgeLakeDataBody(_Model):
+        table: str
+        time_range: WorkspacePurgeLakeDataTimeRange
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                table: str, 
+                time_range: WorkspacePurgeLakeDataTimeRange
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.loganalytics.models.WorkspacePurgeLakeDataTimeRange(_Model):
+        end_time: datetime
+        start_time: datetime
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                end_time: datetime, 
+                start_time: datetime
             ) -> None: ...
 
         @overload
@@ -3743,7 +3848,7 @@ namespace azure.mgmt.loganalytics.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                parameters: JSON, 
+                parameters: Cluster, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3784,7 +3889,7 @@ namespace azure.mgmt.loganalytics.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                parameters: JSON, 
+                parameters: ClusterPatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3846,7 +3951,7 @@ namespace azure.mgmt.loganalytics.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 data_export_name: str, 
-                parameters: JSON, 
+                parameters: DataExport, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3917,7 +4022,7 @@ namespace azure.mgmt.loganalytics.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 data_source_name: str, 
-                parameters: JSON, 
+                parameters: DataSource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4063,7 +4168,7 @@ namespace azure.mgmt.loganalytics.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 linked_service_name: str, 
-                parameters: JSON, 
+                parameters: LinkedService, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4134,7 +4239,7 @@ namespace azure.mgmt.loganalytics.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 data_source_type: Union[str, DataSourceType], 
-                parameters: JSON, 
+                parameters: LinkedStorageAccountsResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4281,7 +4386,7 @@ namespace azure.mgmt.loganalytics.operations
                 resource_group_name: str, 
                 query_pack_name: str, 
                 id: str, 
-                query_payload: JSON, 
+                query_payload: LogAnalyticsQueryPackQuery, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4318,7 +4423,7 @@ namespace azure.mgmt.loganalytics.operations
                 self, 
                 resource_group_name: str, 
                 query_pack_name: str, 
-                query_search_properties: JSON, 
+                query_search_properties: LogAnalyticsQueryPackQuerySearchProperties, 
                 *, 
                 content_type: str = "application/json", 
                 include_body: Optional[bool] = ..., 
@@ -4359,7 +4464,7 @@ namespace azure.mgmt.loganalytics.operations
                 resource_group_name: str, 
                 query_pack_name: str, 
                 id: str, 
-                query_payload: JSON, 
+                query_payload: LogAnalyticsQueryPackQuery, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4402,7 +4507,7 @@ namespace azure.mgmt.loganalytics.operations
                 self, 
                 resource_group_name: str, 
                 query_pack_name: str, 
-                log_analytics_query_pack_payload: JSON, 
+                log_analytics_query_pack_payload: LogAnalyticsQueryPack, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4433,7 +4538,7 @@ namespace azure.mgmt.loganalytics.operations
         def create_or_update_without_name(
                 self, 
                 resource_group_name: str, 
-                log_analytics_query_pack_payload: JSON, 
+                log_analytics_query_pack_payload: LogAnalyticsQueryPack, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4491,7 +4596,7 @@ namespace azure.mgmt.loganalytics.operations
                 self, 
                 resource_group_name: str, 
                 query_pack_name: str, 
-                query_pack_tags: JSON, 
+                query_pack_tags: TagsResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4535,7 +4640,7 @@ namespace azure.mgmt.loganalytics.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 saved_search_id: str, 
-                parameters: JSON, 
+                parameters: SavedSearch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4648,7 +4753,7 @@ namespace azure.mgmt.loganalytics.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 storage_insight_name: str, 
-                parameters: JSON, 
+                parameters: StorageInsight, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4719,7 +4824,7 @@ namespace azure.mgmt.loganalytics.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 summary_logs_name: str, 
-                parameters: JSON, 
+                parameters: SummaryLogs, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4764,7 +4869,7 @@ namespace azure.mgmt.loganalytics.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 summary_logs_name: str, 
-                parameters: JSON, 
+                parameters: SummaryLogsRetryBin, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4844,7 +4949,7 @@ namespace azure.mgmt.loganalytics.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 table_name: str, 
-                parameters: JSON, 
+                parameters: Table, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4889,7 +4994,7 @@ namespace azure.mgmt.loganalytics.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 table_name: str, 
-                parameters: JSON, 
+                parameters: Table, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4968,6 +5073,39 @@ namespace azure.mgmt.loganalytics.operations
                 **kwargs
             ) -> None: ...
 
+        @overload
+        def begin_purge_lake_data(
+                self, 
+                resource_group_name: str, 
+                workspace_name: str, 
+                body: WorkspacePurgeLakeDataBody, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_purge_lake_data(
+                self, 
+                resource_group_name: str, 
+                workspace_name: str, 
+                body: WorkspacePurgeLakeDataBody, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_purge_lake_data(
+                self, 
+                resource_group_name: str, 
+                workspace_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
         @distributed_trace
         def get_purge_status(
                 self, 
@@ -4993,7 +5131,7 @@ namespace azure.mgmt.loganalytics.operations
                 self, 
                 resource_group_name: str, 
                 workspace_name: str, 
-                body: JSON, 
+                body: WorkspacePurgeBody, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5035,7 +5173,7 @@ namespace azure.mgmt.loganalytics.operations
                 self, 
                 resource_group_name: str, 
                 workspace_name: str, 
-                parameters: JSON, 
+                parameters: Workspace, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5139,7 +5277,7 @@ namespace azure.mgmt.loganalytics.operations
                 self, 
                 resource_group_name: str, 
                 workspace_name: str, 
-                parameters: JSON, 
+                parameters: WorkspacePatch, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5155,6 +5293,836 @@ namespace azure.mgmt.loganalytics.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> Workspace: ...
+
+
+namespace azure.mgmt.loganalytics.types
+
+    class azure.mgmt.loganalytics.types.AssociatedWorkspace(TypedDict, total=False):
+        key "associateDate": str
+        key "resourceId": str
+        key "workspaceId": str
+        key "workspaceName": str
+        associateDate: str
+        resourceId: str
+        workspaceId: str
+        workspaceName: str
+
+
+    class azure.mgmt.loganalytics.types.AzureEntityResource(Resource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.loganalytics.types.CapacityReservationProperties(TypedDict, total=False):
+        key "lastSkuUpdate": str
+        key "minCapacity": int
+        lastSkuUpdate: str
+        minCapacity: int
+
+
+    class azure.mgmt.loganalytics.types.Cluster(TrackedResource):
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ClusterProperties', module='types')
+        key "sku": ForwardRef('ClusterSku', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: ClusterProperties
+        sku: ClusterSku
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.loganalytics.types.ClusterPatch(TypedDict, total=False):
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "properties": ForwardRef('ClusterPatchProperties', module='types')
+        key "sku": ForwardRef('ClusterSku', module='types')
+        identity: ManagedServiceIdentity
+        properties: ClusterPatchProperties
+        sku: ClusterSku
+        tags: dict[str, str]
+
+
+    class azure.mgmt.loganalytics.types.ClusterPatchProperties(TypedDict, total=False):
+        key "billingType": Union[str, BillingType]
+        key "keyVaultProperties": ForwardRef('KeyVaultProperties', module='types')
+        billingType: Union[str, BillingType]
+        keyVaultProperties: KeyVaultProperties
+
+
+    class azure.mgmt.loganalytics.types.ClusterProperties(TypedDict, total=False):
+        key "billingType": Union[str, BillingType]
+        key "capacityReservationProperties": ForwardRef('CapacityReservationProperties', module='types')
+        key "clusterId": str
+        key "createdDate": str
+        key "isAvailabilityZonesEnabled": bool
+        key "isDoubleEncryptionEnabled": bool
+        key "keyVaultProperties": ForwardRef('KeyVaultProperties', module='types')
+        key "lastModifiedDate": str
+        key "provisioningState": Union[str, ClusterEntityStatus]
+        key "replication": ForwardRef('ClusterReplicationProperties', module='types')
+        associatedWorkspaces: list[AssociatedWorkspace]
+        billingType: Union[str, BillingType]
+        capacityReservationProperties: CapacityReservationProperties
+        clusterId: str
+        createdDate: str
+        isAvailabilityZonesEnabled: bool
+        isDoubleEncryptionEnabled: bool
+        keyVaultProperties: KeyVaultProperties
+        lastModifiedDate: str
+        provisioningState: Union[str, ClusterEntityStatus]
+        replication: ClusterReplicationProperties
+
+
+    class azure.mgmt.loganalytics.types.ClusterReplicationProperties(TypedDict, total=False):
+        key "createdDate": str
+        key "enabled": bool
+        key "isAvailabilityZonesEnabled": bool
+        key "lastModifiedDate": str
+        key "location": str
+        key "provisioningState": Union[str, ClusterReplicationState]
+        createdDate: str
+        enabled: bool
+        isAvailabilityZonesEnabled: bool
+        lastModifiedDate: str
+        location: str
+        provisioningState: Union[str, ClusterReplicationState]
+
+
+    class azure.mgmt.loganalytics.types.ClusterSku(TypedDict, total=False):
+        key "capacity": Optional[int]
+        key "name": Union[str, ClusterSkuNameEnum]
+        capacity: int
+        name: Union[str, ClusterSkuNameEnum]
+
+
+    class azure.mgmt.loganalytics.types.Column(TypedDict, total=False):
+        key "dataTypeHint": Union[str, ColumnDataTypeHintEnum]
+        key "description": str
+        key "displayName": str
+        key "isDefaultDisplay": bool
+        key "isHidden": bool
+        key "name": str
+        key "type": Union[str, ColumnTypeEnum]
+        dataTypeHint: Union[str, ColumnDataTypeHintEnum]
+        description: str
+        displayName: str
+        isDefaultDisplay: bool
+        isHidden: bool
+        name: str
+        type: Union[str, ColumnTypeEnum]
+
+
+    class azure.mgmt.loganalytics.types.DataExport(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('DataExportProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: DataExportProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.loganalytics.types.DataExportProperties(TypedDict, total=False):
+        key "createdDate": str
+        key "dataExportId": str
+        key "destination": ForwardRef('Destination', module='types')
+        key "enable": bool
+        key "lastModifiedDate": str
+        key "tableNames": Required[list[str]]
+        createdDate: str
+        dataExportId: str
+        destination: Destination
+        enable: bool
+        lastModifiedDate: str
+        tableNames: list[str]
+
+
+    class azure.mgmt.loganalytics.types.DataSource(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "kind": Required[Union[str, DataSourceKind]]
+        key "name": str
+        key "properties": Required[Any]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        kind: Union[str, DataSourceKind]
+        name: str
+        properties: Any
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.loganalytics.types.Destination(TypedDict, total=False):
+        key "metaData": ForwardRef('DestinationMetaData', module='types')
+        key "resourceId": Required[str]
+        key "type": Union[str, Type]
+        metaData: DestinationMetaData
+        resourceId: str
+        type: Union[str, Type]
+
+
+    class azure.mgmt.loganalytics.types.DestinationMetaData(TypedDict, total=False):
+        key "eventHubName": str
+        eventHubName: str
+
+
+    class azure.mgmt.loganalytics.types.Identity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Required[Union[str, IdentityType]]
+        principalId: str
+        tenantId: str
+        type: Union[str, IdentityType]
+        userAssignedIdentities: dict[str, UserIdentityProperties]
+
+
+    class azure.mgmt.loganalytics.types.KeyVaultProperties(TypedDict, total=False):
+        key "keyName": str
+        key "keyRsaSize": int
+        key "keyVaultUri": str
+        key "keyVersion": str
+        keyName: str
+        keyRsaSize: int
+        keyVaultUri: str
+        keyVersion: str
+
+
+    class azure.mgmt.loganalytics.types.LinkedService(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": Required[LinkedServiceProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: LinkedServiceProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.loganalytics.types.LinkedServiceProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, LinkedServiceEntityStatus]
+        key "resourceId": str
+        key "writeAccessResourceId": str
+        provisioningState: Union[str, LinkedServiceEntityStatus]
+        resourceId: str
+        writeAccessResourceId: str
+
+
+    class azure.mgmt.loganalytics.types.LinkedStorageAccountsProperties(TypedDict, total=False):
+        key "dataSourceType": Union[str, DataSourceType]
+        dataSourceType: Union[str, DataSourceType]
+        storageAccountIds: list[str]
+
+
+    class azure.mgmt.loganalytics.types.LinkedStorageAccountsResource(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": Required[LinkedStorageAccountsProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: LinkedStorageAccountsProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.loganalytics.types.LogAnalyticsQueryPack(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[LogAnalyticsQueryPackProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: LogAnalyticsQueryPackProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.loganalytics.types.LogAnalyticsQueryPackProperties(TypedDict, total=False):
+        key "provisioningState": str
+        key "queryPackId": str
+        key "timeCreated": str
+        key "timeModified": str
+        provisioningState: str
+        queryPackId: str
+        timeCreated: str
+        timeModified: str
+
+
+    class azure.mgmt.loganalytics.types.LogAnalyticsQueryPackQuery(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('LogAnalyticsQueryPackQueryProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: LogAnalyticsQueryPackQueryProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.loganalytics.types.LogAnalyticsQueryPackQueryProperties(TypedDict, total=False):
+        key "author": str
+        key "body": Required[str]
+        key "description": str
+        key "displayName": Required[str]
+        key "id": str
+        key "properties": Any
+        key "related": ForwardRef('LogAnalyticsQueryPackQueryPropertiesRelated', module='types')
+        key "timeCreated": str
+        key "timeModified": str
+        author: str
+        body: str
+        description: str
+        displayName: str
+        id: str
+        properties: Any
+        related: LogAnalyticsQueryPackQueryPropertiesRelated
+        tags: dict[str, list[str]]
+        timeCreated: str
+        timeModified: str
+
+
+    class azure.mgmt.loganalytics.types.LogAnalyticsQueryPackQueryPropertiesRelated(TypedDict, total=False):
+        categories: list[str]
+        resourceTypes: list[str]
+        solutions: list[str]
+
+
+    class azure.mgmt.loganalytics.types.LogAnalyticsQueryPackQuerySearchProperties(TypedDict, total=False):
+        key "related": ForwardRef('LogAnalyticsQueryPackQuerySearchPropertiesRelated', module='types')
+        related: LogAnalyticsQueryPackQuerySearchPropertiesRelated
+        tags: dict[str, list[str]]
+
+
+    class azure.mgmt.loganalytics.types.LogAnalyticsQueryPackQuerySearchPropertiesRelated(TypedDict, total=False):
+        categories: list[str]
+        resourceTypes: list[str]
+        solutions: list[str]
+
+
+    class azure.mgmt.loganalytics.types.ManagedServiceIdentity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Required[Union[str, ManagedServiceIdentityType]]
+        principalId: str
+        tenantId: str
+        type: Union[str, ManagedServiceIdentityType]
+        userAssignedIdentities: dict[str, UserAssignedIdentity]
+
+
+    class azure.mgmt.loganalytics.types.PrivateLinkScopedResource(TypedDict, total=False):
+        key "resourceId": str
+        key "scopeId": str
+        resourceId: str
+        scopeId: str
+
+
+    class azure.mgmt.loganalytics.types.ProxyResource(Resource):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.loganalytics.types.Resource(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.loganalytics.types.RestoredLogs(TypedDict, total=False):
+        key "azureAsyncOperationId": str
+        key "endRestoreTime": str
+        key "sourceTable": str
+        key "startRestoreTime": str
+        azureAsyncOperationId: str
+        endRestoreTime: str
+        sourceTable: str
+        startRestoreTime: str
+
+
+    class azure.mgmt.loganalytics.types.ResultStatistics(TypedDict, total=False):
+        key "ingestedRecords": int
+        key "progress": float
+        key "scannedGb": float
+        ingestedRecords: int
+        progress: float
+        scannedGb: float
+
+
+    class azure.mgmt.loganalytics.types.RuleDefinition(TypedDict, total=False):
+        key "binDelay": int
+        key "binSize": int
+        key "binStartTime": str
+        key "destinationTable": str
+        key "query": str
+        key "timeSelector": Union[str, TimeSelectorEnum]
+        binDelay: int
+        binSize: int
+        binStartTime: str
+        destinationTable: str
+        query: str
+        timeSelector: Union[str, TimeSelectorEnum]
+
+
+    class azure.mgmt.loganalytics.types.SavedSearch(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": Required[SavedSearchProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: SavedSearchProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.loganalytics.types.SavedSearchProperties(TypedDict, total=False):
+        key "category": Required[str]
+        key "displayName": Required[str]
+        key "functionAlias": str
+        key "functionParameters": str
+        key "query": Required[str]
+        key "version": int
+        category: str
+        displayName: str
+        functionAlias: str
+        functionParameters: str
+        query: str
+        tags: list[Tag]
+        version: int
+
+
+    class azure.mgmt.loganalytics.types.Schema(TypedDict, total=False):
+        key "description": str
+        key "displayName": str
+        key "name": str
+        key "source": Union[str, SourceEnum]
+        key "tableSubType": Union[str, TableSubTypeEnum]
+        key "tableType": Union[str, TableTypeEnum]
+        categories: list[str]
+        columns: list[Column]
+        description: str
+        displayName: str
+        labels: list[str]
+        name: str
+        solutions: list[str]
+        source: Union[str, SourceEnum]
+        standardColumns: list[Column]
+        tableSubType: Union[str, TableSubTypeEnum]
+        tableType: Union[str, TableTypeEnum]
+
+
+    class azure.mgmt.loganalytics.types.SearchResults(TypedDict, total=False):
+        key "azureAsyncOperationId": str
+        key "description": str
+        key "endSearchTime": str
+        key "limit": int
+        key "query": str
+        key "sourceTable": str
+        key "startSearchTime": str
+        azureAsyncOperationId: str
+        description: str
+        endSearchTime: str
+        limit: int
+        query: str
+        sourceTable: str
+        startSearchTime: str
+
+
+    class azure.mgmt.loganalytics.types.StorageAccount(TypedDict, total=False):
+        key "id": Required[str]
+        key "key": Required[str]
+        id: str
+        key: str
+
+
+    class azure.mgmt.loganalytics.types.StorageInsight(ProxyResource):
+        key "eTag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('StorageInsightProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        eTag: str
+        id: str
+        name: str
+        properties: StorageInsightProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.loganalytics.types.StorageInsightProperties(TypedDict, total=False):
+        key "status": ForwardRef('StorageInsightStatus', module='types')
+        key "storageAccount": Required[StorageAccount]
+        containers: list[str]
+        status: StorageInsightStatus
+        storageAccount: StorageAccount
+        tables: list[str]
+
+
+    class azure.mgmt.loganalytics.types.StorageInsightStatus(TypedDict, total=False):
+        key "description": str
+        key "state": Required[Union[str, StorageInsightState]]
+        description: str
+        state: Union[str, StorageInsightState]
+
+
+    class azure.mgmt.loganalytics.types.SummaryLogs(ProxyResource):
+        key "id": str
+        key "identity": ForwardRef('SummaryLogsIdentity', module='types')
+        key "name": str
+        key "properties": ForwardRef('SummaryLogsProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: SummaryLogsIdentity
+        name: str
+        properties: SummaryLogsProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.loganalytics.types.SummaryLogsIdentity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Required[Union[str, SummaryLogsIdentityType]]
+        principalId: str
+        tenantId: str
+        type: Union[str, SummaryLogsIdentityType]
+        userAssignedIdentities: dict[str, SummaryLogsUserIdentityProperties]
+
+
+    class azure.mgmt.loganalytics.types.SummaryLogsProperties(TypedDict, total=False):
+        key "description": str
+        key "displayName": str
+        key "isActive": bool
+        key "provisioningState": Union[str, SummaryLogsProvisioningState]
+        key "ruleDefinition": ForwardRef('RuleDefinition', module='types')
+        key "ruleType": Union[str, RuleTypeEnum]
+        key "statusCode": Union[str, StatusCodeEnum]
+        description: str
+        displayName: str
+        isActive: bool
+        provisioningState: Union[str, SummaryLogsProvisioningState]
+        ruleDefinition: RuleDefinition
+        ruleType: Union[str, RuleTypeEnum]
+        statusCode: Union[str, StatusCodeEnum]
+
+
+    class azure.mgmt.loganalytics.types.SummaryLogsRetryBin(TypedDict, total=False):
+        key "properties": ForwardRef('SummaryLogsRetryBinProperties', module='types')
+        properties: SummaryLogsRetryBinProperties
+
+
+    class azure.mgmt.loganalytics.types.SummaryLogsRetryBinProperties(TypedDict, total=False):
+        key "retryBinStartTime": Required[str]
+        retryBinStartTime: str
+
+
+    class azure.mgmt.loganalytics.types.SummaryLogsUserIdentityProperties(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        clientId: str
+        principalId: str
+
+
+    class azure.mgmt.loganalytics.types.SystemData(TypedDict, total=False):
+        key "createdAt": str
+        key "createdBy": str
+        key "createdByType": Union[str, CreatedByType]
+        key "lastModifiedAt": str
+        key "lastModifiedBy": str
+        key "lastModifiedByType": Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
+
+
+    class azure.mgmt.loganalytics.types.Table(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('TableProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: TableProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.loganalytics.types.TableProperties(TypedDict, total=False):
+        key "archiveRetentionInDays": int
+        key "lastPlanModifiedDate": str
+        key "plan": Union[str, TablePlanEnum]
+        key "protectionLevel": Union[str, TableProtectionLevelEnum]
+        key "provisioningState": Union[str, ProvisioningStateEnum]
+        key "restoredLogs": ForwardRef('RestoredLogs', module='types')
+        key "resultStatistics": ForwardRef('ResultStatistics', module='types')
+        key "retentionInDays": int
+        key "retentionInDaysAsDefault": bool
+        key "schema": ForwardRef('Schema', module='types')
+        key "searchResults": ForwardRef('SearchResults', module='types')
+        key "totalRetentionInDays": int
+        key "totalRetentionInDaysAsDefault": bool
+        archiveRetentionInDays: int
+        lastPlanModifiedDate: str
+        plan: Union[str, TablePlanEnum]
+        protectionLevel: Union[str, TableProtectionLevelEnum]
+        provisioningState: Union[str, ProvisioningStateEnum]
+        restoredLogs: RestoredLogs
+        resultStatistics: ResultStatistics
+        retentionInDays: int
+        retentionInDaysAsDefault: bool
+        schema: Schema
+        searchResults: SearchResults
+        totalRetentionInDays: int
+        totalRetentionInDaysAsDefault: bool
+
+
+    class azure.mgmt.loganalytics.types.Tag(TypedDict, total=False):
+        key "name": Required[str]
+        key "value": Required[str]
+        name: str
+        value: str
+
+
+    class azure.mgmt.loganalytics.types.TagsResource(TypedDict, total=False):
+        tags: dict[str, str]
+
+
+    class azure.mgmt.loganalytics.types.TrackedResource(Resource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.loganalytics.types.UserAssignedIdentity(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        clientId: str
+        principalId: str
+
+
+    class azure.mgmt.loganalytics.types.UserIdentityProperties(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        clientId: str
+        principalId: str
+
+
+    class azure.mgmt.loganalytics.types.Workspace(TrackedResource):
+        key "etag": str
+        key "id": str
+        key "identity": ForwardRef('Identity', module='types')
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('WorkspaceProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        identity: Identity
+        location: str
+        name: str
+        properties: WorkspaceProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.loganalytics.types.WorkspaceCapping(TypedDict, total=False):
+        key "dailyQuotaGb": float
+        key "dataIngestionStatus": Union[str, DataIngestionStatus]
+        key "quotaNextResetTime": str
+        dailyQuotaGb: float
+        dataIngestionStatus: Union[str, DataIngestionStatus]
+        quotaNextResetTime: str
+
+
+    class azure.mgmt.loganalytics.types.WorkspaceFailoverProperties(TypedDict, total=False):
+        key "lastModifiedDate": str
+        key "state": Union[str, WorkspaceFailoverState]
+        lastModifiedDate: str
+        state: Union[str, WorkspaceFailoverState]
+
+
+    class azure.mgmt.loganalytics.types.WorkspaceFeatures(TypedDict, total=False):
+        key "clusterResourceId": Optional[str]
+        key "dataAuthorizationMode": Optional[bool]
+        key "disableLocalAuth": Optional[bool]
+        key "enableDataExport": Optional[bool]
+        key "enableLogAccessUsingOnlyResourcePermissions": Optional[bool]
+        key "immediatePurgeDataOn30Days": Optional[bool]
+        key "unifiedSentinelBillingOnly": Optional[bool]
+        associations: list[str]
+        clusterResourceId: str
+        dataAuthorizationMode: bool
+        disableLocalAuth: bool
+        enableDataExport: bool
+        enableLogAccessUsingOnlyResourcePermissions: bool
+        immediatePurgeDataOn30Days: bool
+        unifiedSentinelBillingOnly: bool
+
+
+    class azure.mgmt.loganalytics.types.WorkspacePatch(AzureEntityResource):
+        key "etag": str
+        key "id": str
+        key "identity": ForwardRef('Identity', module='types')
+        key "name": str
+        key "properties": ForwardRef('WorkspaceProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        identity: Identity
+        name: str
+        properties: WorkspaceProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.loganalytics.types.WorkspaceProperties(TypedDict, total=False):
+        key "createdDate": str
+        key "customerId": str
+        key "defaultDataCollectionRuleResourceId": str
+        key "failover": ForwardRef('WorkspaceFailoverProperties', module='types')
+        key "features": ForwardRef('WorkspaceFeatures', module='types')
+        key "forceCmkForQuery": bool
+        key "modifiedDate": str
+        key "provisioningState": Union[str, WorkspaceEntityStatus]
+        key "publicNetworkAccessForIngestion": Union[str, PublicNetworkAccessType]
+        key "publicNetworkAccessForQuery": Union[str, PublicNetworkAccessType]
+        key "replication": ForwardRef('WorkspaceReplicationProperties', module='types')
+        key "retentionInDays": Optional[int]
+        key "sku": ForwardRef('WorkspaceSku', module='types')
+        key "workspaceCapping": ForwardRef('WorkspaceCapping', module='types')
+        createdDate: str
+        customerId: str
+        defaultDataCollectionRuleResourceId: str
+        failover: WorkspaceFailoverProperties
+        features: WorkspaceFeatures
+        forceCmkForQuery: bool
+        modifiedDate: str
+        privateLinkScopedResources: list[PrivateLinkScopedResource]
+        provisioningState: Union[str, WorkspaceEntityStatus]
+        publicNetworkAccessForIngestion: Union[str, PublicNetworkAccessType]
+        publicNetworkAccessForQuery: Union[str, PublicNetworkAccessType]
+        replication: WorkspaceReplicationProperties
+        retentionInDays: int
+        sku: WorkspaceSku
+        workspaceCapping: WorkspaceCapping
+
+
+    class azure.mgmt.loganalytics.types.WorkspacePurgeBody(TypedDict, total=False):
+        key "filters": Required[list[WorkspacePurgeBodyFilters]]
+        key "table": Required[str]
+        filters: list[WorkspacePurgeBodyFilters]
+        table: str
+
+
+    class azure.mgmt.loganalytics.types.WorkspacePurgeBodyFilters(TypedDict, total=False):
+        key "column": str
+        key "key": str
+        key "operator": str
+        key "value": Any
+        column: str
+        key: str
+        operator: str
+        value: Any
+
+
+    class azure.mgmt.loganalytics.types.WorkspacePurgeLakeDataBody(TypedDict, total=False):
+        key "table": Required[str]
+        key "timeRange": Required[WorkspacePurgeLakeDataTimeRange]
+        table: str
+        timeRange: WorkspacePurgeLakeDataTimeRange
+
+
+    class azure.mgmt.loganalytics.types.WorkspacePurgeLakeDataTimeRange(TypedDict, total=False):
+        key "endTime": Required[str]
+        key "startTime": Required[str]
+        endTime: str
+        startTime: str
+
+
+    class azure.mgmt.loganalytics.types.WorkspaceReplicationProperties(TypedDict, total=False):
+        key "createdDate": str
+        key "enabled": bool
+        key "lastModifiedDate": str
+        key "location": str
+        key "provisioningState": Union[str, WorkspaceReplicationState]
+        createdDate: str
+        enabled: bool
+        lastModifiedDate: str
+        location: str
+        provisioningState: Union[str, WorkspaceReplicationState]
+
+
+    class azure.mgmt.loganalytics.types.WorkspaceSku(TypedDict, total=False):
+        key "capacityReservationLevel": Optional[int]
+        key "lastSkuUpdate": str
+        key "name": Required[Union[str, WorkspaceSkuNameEnum]]
+        capacityReservationLevel: int
+        lastSkuUpdate: str
+        name: Union[str, WorkspaceSkuNameEnum]
 
 
 ```
