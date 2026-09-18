@@ -3,6 +3,7 @@
 
 use std::sync::Arc;
 
+use pyo3::exceptions::PyTimeoutError;
 use pyo3::prelude::*;
 use pyo3::types::PyTuple;
 
@@ -13,6 +14,7 @@ use azure_data_cosmos_driver::{
     options::{ContentResponseOnWrite, OperationOptions},
 };
 
+use super::deadline::{parse_remaining_timeout, with_timeout};
 use super::driver_runner::{run_driver_operation_async, run_driver_operation_sync};
 use super::request::{build_operation_options, RequestHeadersAndOptions};
 use super::response::{
@@ -26,13 +28,21 @@ pub(crate) fn run_create_database_operation<'py>(
     modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     operation_name: &str,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_sync(
         py,
         driver_handle,
         operation_name,
-        move |driver| run_create_database_future(driver, modifiers, body_bytes),
-        tuple_from_result,
+        move |driver| {
+            with_timeout(timeout, run_create_database_future(driver, modifiers, body_bytes))
+        },
+        |py, result| {
+            tuple_from_result(py, result.map_err(|error| {
+                PyTimeoutError::new_err(format!("Database creation timed out: {error}"))
+            })?)
+        },
     )
 }
 
@@ -43,13 +53,21 @@ pub(crate) fn run_create_database_operation_async<'py>(
     modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     operation_name: &str,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_async(
         py,
         driver_handle,
         operation_name,
-        move |driver| run_create_database_future(driver, modifiers, body_bytes),
-        tuple_from_result,
+        move |driver| {
+            with_timeout(timeout, run_create_database_future(driver, modifiers, body_bytes))
+        },
+        |py, result| {
+            tuple_from_result(py, result.map_err(|error| {
+                PyTimeoutError::new_err(format!("Database creation timed out: {error}"))
+            })?)
+        },
     )
 }
 

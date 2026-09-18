@@ -16,17 +16,25 @@ must fail rather than silently dropping a setting or falling back to legacy.
 """
 from __future__ import annotations
 
+import json
+import time
+from copy import deepcopy
+
 from .._backend.partition_key import PartitionKeyInput
 
 from typing import Any, Dict, Mapping, Optional
 
 from .._backend.contracts import PreparedRequest
 from .._backend.operations import OP_CREATE_DATABASE, OP_DELETE_DATABASE, OP_READ_DATABASE
-from .._base import _validate_resource
 from .._constants import _Constants as Constants
+from ..offer import ThroughputProperties
+from ._resource_validation import validate_resource
 
 from ._request_settings import (
     account_request_settings,
+    build_customer_headers,
+    compose_options_from_kwargs,
+    OPTION_HEADER_NAMES,
     _timeout_is_representable,
     is_supported_operation_timeout,
     overrides_driver_owned_header,
@@ -47,6 +55,96 @@ _RUST_READ_DATABASE_SUPPORTED_KWARGS = frozenset({
     "response_hook",
 })
 
+_CREATE_DATABASE_OPTIONS = frozenset({
+    "initialHeaders", "offerThroughput", "autoUpgradePolicy", "throughputBucket",
+    "priorityLevel", "excludedLocations", "availabilityStrategy",
+    "correlatedActivityId", "contentType",
+})
+_CREATE_DATABASE_OWNED_HEADERS = frozenset({
+    "accept", "cache-control", "user-agent", "x-ms-version", "x-ms-client-id",
+    "x-ms-cosmos-sdk-supportedcapabilities", "authorization", "x-ms-date",
+})
+_CREATE_DATABASE_INAPPLICABLE_HEADERS = frozenset(
+    header for option, header in OPTION_HEADER_NAMES.items()
+    if option not in _CREATE_DATABASE_OPTIONS
+) | {"if-match", "if-none-match", "prefer", "x-ms-documentdb-partitionkey"}
+
+
+def prepare_create_database_options(
+    kwargs: dict[str, Any], offer: Optional[int | ThroughputProperties],
+) -> tuple[dict[str, Any], Optional[float]]:
+    """Snapshot creation inputs and establish one budget before driver setup."""
+    started = time.monotonic()
+    for name in ("populate_query_metrics", "session_token", "etag", "match_condition"):
+        if name in kwargs:
+            raise TypeError(f"create_database() does not support the '{name}' keyword argument")
+    feed_options = kwargs.pop("feed_options", {})
+    if "request_options" not in kwargs:
+        kwargs["request_options"] = feed_options
+    options = deepcopy(compose_options_from_kwargs(kwargs))
+    for source in (kwargs, options):
+        if source.pop("read_timeout", None) is not None:
+            raise TypeError("create_database() does not support the 'read_timeout' keyword argument")
+    timeout = kwargs.get("timeout", options.pop("timeout", None))
+    if not is_supported_operation_timeout(timeout):
+        raise ValueError("create_database timeout must be None or a finite number of seconds >= 1 and < 2**64.")
+    if timeout is not None or "timeout" in kwargs:
+        kwargs["timeout"] = timeout
+    if offer is not None:
+        options.pop("offerThroughput", None)
+        options.pop("autoUpgradePolicy", None)
+        if isinstance(offer, bool):
+            raise TypeError("offer_throughput must be int or ThroughputProperties, not bool")
+        if isinstance(offer, int):
+            options["offerThroughput"] = offer
+        elif isinstance(offer, ThroughputProperties):
+            manual = offer.offer_throughput
+            maximum = offer.auto_scale_max_throughput
+            increment = offer.auto_scale_increment_percent
+            if manual is not None and maximum is not None:
+                raise ValueError("Specify manual throughput or autoscale, not both.")
+            if maximum is not None:
+                autoscale: dict[str, Any] = {"maxThroughput": maximum}
+                if increment is not None:
+                    autoscale["autoUpgradePolicy"] = {"throughputPolicy": {"incrementPercent": increment}}
+                options["autoUpgradePolicy"] = json.dumps(autoscale)
+            elif increment is not None:
+                raise ValueError("auto_scale_max_throughput is required with auto_scale_increment_percent")
+            elif manual is not None:
+                options["offerThroughput"] = manual
+            else:
+                raise ValueError("ThroughputProperties must specify manual throughput or an autoscale maximum.")
+        else:
+            raise TypeError("offer_throughput must be int or ThroughputProperties")
+    initial = build_customer_headers(options.get("initialHeaders"))
+    has_manual = options.get("offerThroughput") is not None or "x-ms-offer-throughput" in initial
+    has_autoscale = (
+        options.get("autoUpgradePolicy") is not None
+        or "x-ms-cosmos-offer-autopilot-settings" in initial
+    )
+    if has_manual and has_autoscale:
+        raise ValueError("Specify manual throughput or autoscale, not both.")
+    return options, None if timeout is None else started + float(timeout)
+
+
+def is_create_database_rust_eligible(
+    request_options: Mapping[str, Any], operation_kwargs: Mapping[str, Any],
+) -> bool:
+    """Reject settings that cannot describe an account-level creation request."""
+    if set(operation_kwargs).difference({"timeout"}):
+        return False
+    if set(request_options).difference(_CREATE_DATABASE_OPTIONS):
+        return False
+    initial = request_options.get("initialHeaders")
+    if isinstance(initial, Mapping) and any(
+        isinstance(name, str) and name.lower() in (
+            _CREATE_DATABASE_OWNED_HEADERS | _CREATE_DATABASE_INAPPLICABLE_HEADERS
+        )
+        for name in initial
+    ):
+        return False
+    return is_supported_operation_timeout(operation_kwargs.get("timeout"))
+
 
 def build_create_database_prepared(
     database: Dict[str, Any],
@@ -55,8 +153,15 @@ def build_create_database_prepared(
     kwargs: Optional[Mapping[str, Any]] = None,
 ) -> PreparedRequest:
     """Build the account-level create-database request consumed by the Rust backend."""
-    _validate_resource(database)
+    validate_resource(database)
     headers, settings = account_request_settings(request_options, kwargs)
+    manual = settings.resource.offer_throughput is not None or "x-ms-offer-throughput" in headers
+    autoscale = (
+        settings.resource.autoscale_settings is not None
+        or "x-ms-cosmos-offer-autopilot-settings" in headers
+    )
+    if manual and autoscale:
+        raise ValueError("Specify manual throughput or autoscale, not both.")
     return PreparedRequest(
         op=OP_CREATE_DATABASE,
         container_link="",

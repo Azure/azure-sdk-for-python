@@ -3,55 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Backend-neutral coordination for account-level database operations.
+"""Coordinate account-level database operations through the selected backend.
 
-This is the database counterpart to
-:class:`~azure.cosmos._helpers.item_helper.ItemHelper`. The public methods
-``CosmosClient.create_database``, ``CosmosClient.create_database_if_not_exists``
-and ``DatabaseProxy.read`` gather their arguments and delegate here. This module
-runs each operation through the selected backend and returns the final database
-properties.
-
-What a "database" is, in customer terms: the top-level container-of-containers a
-customer makes once per tenant or app. Creating one is an account-level write, so
-unlike an item write there is no container and no partition key involved.
-
-Why this module exists (public methods must not know which backend runs):
-without it, that backend branching would live in the public client methods. Here
-it uses the concrete backend stored by the client and drives the create through
-:meth:`~azure.cosmos._backend.cosmos_backend.CosmosBackend.run_operation`, so the public
-method is a thin delegate that names no backend. This mirrors ``ItemHelper`` and
-the throughput and feed-range coordinators.
-
-The whole of ``DatabaseProxy.read`` on the rust path, end to end
------------------------------------------------------------------
-A customer calls ``db.read()``. Five pieces were added or changed to let that
-call run on the rust backend, and each one exists because something concrete
-breaks without it:
-
-1. ``DatabaseProxy.read`` (``database.py``) collects the caller's keyword
-   arguments and hands them here. It names no backend.
-2. :meth:`DatabaseHelper.read_database` (this module) asks
-   ``is_read_database_rust_eligible`` one question -- can the rust backend honor
-   everything this caller asked for? -- and hands both the rust request and the
-   core-python call to ``run_operation``. Rust rejects unsupported settings;
-   only explicit legacy selection runs the core-python call.
-   Without this step the choice would be made twice, in slightly different
-   ways, in two different public methods.
-3. ``build_read_database_prepared`` (``_request_database``) turns the caller's
-   options into the request the binding reads. Without it there was no rust
-   request to send, so a database read had no rust path at all.
-4. ``base.resolve_initial_headers`` layers a caller's ``initial_headers`` over
-   the client's defaults on the core-python path. Without it those headers are
-   dropped and never reach the service.
-5. ``read_database`` in the binding (``documents/databases.rs``) unpacks that
-   request and calls the driver.
-
-What would have happened without all of this: a customer who built a rust-backed
-client would still have had ``db.read()`` quietly run on the legacy Python
-transport. Same result, but different retry behavior and different diagnostics
-from every other call on the same client -- which is the kind of difference that
-only shows up during an incident.
+Public clients delegate execution and response handling here. Builders prepare
+Rust requests without transport state; unsupported Rust settings fail before
+dispatch rather than switching to legacy Python. Explicit legacy selection
+retains its connection calls. Creation accepts client-owned response state and
+gives its success hook independent copies of that operation's result.
 """
 
 from __future__ import annotations
@@ -70,12 +28,15 @@ from .._backend.operations import (
 )
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict
+from .._operation_deadline import legacy_deadline_options, remaining_timeout
+from ._item_context import ClientLastResponseHeaders
 from .._helpers._request_database import (
     build_create_database_prepared,
     build_delete_database_prepared,
     build_read_database_prepared,
     is_delete_database_rust_eligible,
     is_read_database_rust_eligible,
+    is_create_database_rust_eligible,
 )
 from .._helpers._response_parse import (
     process_backend_response,
@@ -87,10 +48,14 @@ from .._helpers._response_parse import (
 class DatabaseHelper:
     """Route database operations through the selected backend boundary."""
 
-    def __init__(self, client_connection: Any, backend: CosmosBackend) -> None:
+    def __init__(
+        self, client_connection: Any, backend: CosmosBackend, *,
+        response_state: Optional[ClientLastResponseHeaders] = None,
+    ) -> None:
         """Store the client connection and selected implementation."""
         self._client_connection = client_connection
         self._backend = backend
+        self._response_state = response_state
 
     def create_database(
         self,
@@ -99,6 +64,7 @@ class DatabaseHelper:
         *,
         response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
+        deadline: Optional[float] = None,
     ) -> CosmosDict:
         """Create one database, without exposing backend selection to the public method.
 
@@ -110,6 +76,9 @@ class DatabaseHelper:
         """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
+        if response_hook is not None and not callable(response_hook):
+            raise TypeError("create_database response_hook must be callable or None.")
+        hook = with_response_header_snapshot(response_hook, copy_body=True)
         if (
             request_options.get(Constants.Kwargs.READ_TIMEOUT) is not None
             or operation_kwargs.get(Constants.Kwargs.READ_TIMEOUT) is not None
@@ -117,25 +86,35 @@ class DatabaseHelper:
             raise TypeError(
                 "create_database() does not support the 'read_timeout' keyword argument"
             )
+        operation_kwargs.pop("read_timeout", None)
+        request_options = dict(request_options)
+        request_options.pop("read_timeout", None)
+        remaining_timeout(deadline)
         result = self._backend.run_operation(
             build_request=lambda: build_create_database_prepared(
                 database,
                 request_options,
                 kwargs=operation_kwargs,
             ),
-            routing=OperationRouting(OP_CREATE_DATABASE, True),
+            routing=OperationRouting(
+                OP_CREATE_DATABASE,
+                is_create_database_rust_eligible(request_options, operation_kwargs),
+            ),
             legacy_call=lambda: self._client_connection.CreateDatabase(
                 database=database,
-                options=request_options,
+                options=legacy_deadline_options(request_options, deadline),
                 **operation_kwargs,
             ),
             process_response=lambda response: process_backend_response(
                 response,
-                client_connection=self._client_connection,
+                client_connection=self._client_connection if self._response_state is None else None,
+                response_state=self._response_state,
             ),
+            deadline=deadline,
         )
-        if response_hook is not None:
-            response_hook(self._client_connection.last_response_headers, result)
+        remaining_timeout(deadline)
+        if hook is not None:
+            hook(result.get_response_headers(), result)
         return result
 
     def read_database(

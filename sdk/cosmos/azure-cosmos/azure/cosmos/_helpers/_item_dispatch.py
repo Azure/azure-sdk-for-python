@@ -8,7 +8,7 @@
 The merge_* utilities belong to the public wrapper and serve both backends.
 The build_*_request_options functions are used only by explicit legacy parity;
 they import legacy option preparation when invoked. Rust item helpers instead
-use _options.compose_item_options. Nothing here performs I/O.
+use _request_settings.compose_item_options. Nothing here performs I/O.
 """
 from __future__ import annotations
 

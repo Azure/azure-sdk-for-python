@@ -90,7 +90,7 @@ def process_backend_response(
         headers. ``None`` skips that side effect (used by tests).
     :type client_connection: Optional[Any]
     :param response_state: Narrow client-owned header state for connection-free
-        item callers. The connection argument remains for unmigrated families.
+        callers. The connection argument remains for unmigrated families.
     :type response_state: Optional[ClientLastResponseHeaders]
     :param response_hook: Optional callable invoked exactly once on
         success with ``(headers, parsed_body)``. Not invoked on failure.

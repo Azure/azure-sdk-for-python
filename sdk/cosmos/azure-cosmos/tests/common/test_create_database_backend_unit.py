@@ -124,7 +124,8 @@ def test_create_database_if_not_exists_is_not_registered_in_the_binding():
     assert OP_TO_BINDING_METHOD[OP_READ_DATABASE] == "read_database"
 
 
-def test_create_database_prepared_request_preserves_body_and_options():
+@pytest.mark.parametrize("autoscale_mode", [False, True])
+def test_create_database_prepared_request_preserves_body_and_options(autoscale_mode):
     """The request handed to the rust backend carries everything the create needs:
     the database body, account-level scope (empty container link, cross-partition
     ``"[]"`` header since there is no partition key), and every option the customer
@@ -134,8 +135,7 @@ def test_create_database_prepared_request_preserves_body_and_options():
     prepared = build_create_database_prepared(
         {"id": "db1"},
         {
-            "offerThroughput": 400,
-            "autoUpgradePolicy": autoscale,
+            **({"autoUpgradePolicy": autoscale} if autoscale_mode else {"offerThroughput": 400}),
             "throughputBucket": 7,
             "initialHeaders": {"x-custom": "value"},
         },
@@ -146,8 +146,12 @@ def test_create_database_prepared_request_preserves_body_and_options():
     assert prepared.container_link == ""
     assert legacy_partition_key_from_request(prepared) == "[]"
     assert json.loads(prepared.body_bytes) == {"id": "db1"}
-    assert wire_headers(prepared)["x-ms-offer-throughput"] == '400'
-    assert wire_headers(prepared)["x-ms-cosmos-offer-autopilot-settings"] == autoscale
+    if autoscale_mode:
+        assert wire_headers(prepared)["x-ms-cosmos-offer-autopilot-settings"] == autoscale
+        assert "x-ms-offer-throughput" not in wire_headers(prepared)
+    else:
+        assert wire_headers(prepared)["x-ms-offer-throughput"] == '400'
+        assert "x-ms-cosmos-offer-autopilot-settings" not in wire_headers(prepared)
     assert wire_headers(prepared)["x-ms-cosmos-throughput-bucket"] == '7'
     assert all(wire_headers(prepared).get(key.lower()) == str(value) for key, value in ({"x-custom": "value"}).items())
     assert settings_options(prepared)["timeout_seconds"] == 3.5
@@ -797,7 +801,9 @@ def test_sync_helper_keeps_legacy_create_database_behind_boundary():
     ``CreateDatabase`` call directly, passing the database, options, and any extra
     kwargs straight through -- the legacy engine stays behind the same boundary."""
     connection = SimpleNamespace(
-        CreateDatabase=MagicMock(return_value={"id": "db1"}),
+        CreateDatabase=MagicMock(return_value=CosmosDict(
+            {"id": "db1"}, response_headers={"x-ms-request-charge": "4.0"},
+        )),
         last_response_headers={"x-ms-request-charge": "4.0"},
     )
     hook_calls = []
@@ -1546,7 +1552,9 @@ def test_async_helper_keeps_legacy_create_database_behind_boundary():
     async def run():
         """Create via legacy-only path (no backend) and confirm the async ``CreateDatabase`` is awaited with correct args."""
         connection = SimpleNamespace(
-            CreateDatabase=AsyncMock(return_value={"id": "db1"}),
+            CreateDatabase=AsyncMock(return_value=CosmosDict(
+                {"id": "db1"}, response_headers={"x-ms-request-charge": "4.0"},
+            )),
             last_response_headers={"x-ms-request-charge": "4.0"},
         )
         hook_calls = []
@@ -1790,6 +1798,299 @@ def create_database_client(request):
 def _call_create_database(client, *args, method_name="create_database", **kwargs):
     result = getattr(client, method_name)(*args, **kwargs)
     return asyncio.run(result) if inspect.isawaitable(result) else result
+
+
+@pytest.mark.parametrize("options", [
+    {"connection_timeout": 1}, {"raw_request_hook": lambda request: None},
+    {"raw_response_hook": lambda response: None}, {"misspelled_setting": None},
+    {"no_response": True}, {"max_item_count": 5}, {"retry_write": True},
+    {"request_options": {"sessionToken": "unused"}},
+    {"request_options": {"populateQueryMetrics": False}},
+    {"request_options": {"operationStartTime": 123}},
+    {"request_options": {"maxItemCount": 1}},
+    *[{"initial_headers": {name: "unused"}} for name in (
+        "Accept", "Cache-Control", "User-Agent", "X-MS-VERSION",
+        "x-ms-client-id", "x-ms-cosmos-sdk-supportedcapabilities",
+        "authorization", "x-ms-date", "if-match", "x-ms-session-token",
+        "x-ms-documentdb-populatequerymetrics", "prefer",
+    )],
+])
+def test_create_rejects_unhonored_options_without_dispatch(create_database_client, options):
+    client = create_database_client
+    with pytest.raises(NotImplementedError, match="create_database"):
+        _call_create_database(client, "db1", **options)
+    assert not client._backend.prepared_requests
+    client.client_connection.CreateDatabase.assert_not_called()
+
+
+@pytest.mark.parametrize("timeout", [0.25, 0, -1, True, "5", float("nan"), float("inf"), 2**64])
+@pytest.mark.parametrize("nested", [False, True])
+def test_create_rejects_invalid_timeout_before_dispatch(create_database_client, timeout, nested):
+    options = {"request_options": {"timeout": timeout}} if nested else {"timeout": timeout}
+    with pytest.raises(ValueError, match="timeout"):
+        _call_create_database(create_database_client, "db1", **options)
+    assert not create_database_client._backend.prepared_requests
+
+
+@pytest.mark.parametrize("throughput", [
+    ThroughputProperties(offer_throughput=400, auto_scale_max_throughput=4000),
+    ThroughputProperties(offer_throughput=0, auto_scale_max_throughput=4000),
+    ThroughputProperties(auto_scale_increment_percent=0),
+    ThroughputProperties(auto_scale_increment_percent=10),
+    ThroughputProperties(),
+])
+def test_create_rejects_invalid_throughput_choice(create_database_client, throughput):
+    with pytest.raises(ValueError):
+        _call_create_database(create_database_client, "db1", offer_throughput=throughput)
+    assert not create_database_client._backend.prepared_requests
+
+
+@pytest.mark.parametrize("options", [
+    {"request_options": {"offerThroughput": 400, "autoUpgradePolicy": '{"maxThroughput":4000}'}},
+    {"offer_throughput": 400, "initial_headers": {
+        "x-ms-cosmos-offer-autopilot-settings": '{"maxThroughput":4000}',
+    }},
+    {"initial_headers": {
+        "x-ms-offer-throughput": "400",
+        "x-ms-cosmos-offer-autopilot-settings": '{"maxThroughput":4000}',
+    }},
+])
+def test_create_rejects_mixed_throughput_across_input_routes(create_database_client, options):
+    with pytest.raises(ValueError, match="not both"):
+        _call_create_database(create_database_client, "db1", **options)
+    assert not create_database_client._backend.prepared_requests
+
+
+def test_create_snapshots_options_and_does_not_leak_throughput(create_database_client):
+    from copy import deepcopy
+    client = create_database_client
+    options = {"initialHeaders": {"x-trace-id": "original"}}
+    original = deepcopy(options)
+    _call_create_database(client, "db1", request_options=options, offer_throughput=400)
+    _call_create_database(client, "db1", request_options=options)
+    assert options == original
+    first, second = client._backend.prepared_requests
+    assert wire_headers(first)["x-ms-offer-throughput"] == "400"
+    assert "x-ms-offer-throughput" not in wire_headers(second)
+    assert "operationStartTime" not in options
+    options["initialHeaders"]["x-trace-id"] = "later"
+    assert wire_headers(first)["x-trace-id"] == "original"
+
+
+def test_create_explicit_throughput_replaces_nested_mode(create_database_client):
+    _call_create_database(create_database_client, "db1", offer_throughput=400,
+                          request_options={"autoUpgradePolicy": '{"maxThroughput":4000}'})
+    headers = wire_headers(create_database_client._backend.prepared)
+    assert headers["x-ms-offer-throughput"] == "400"
+    assert "x-ms-cosmos-offer-autopilot-settings" not in headers
+
+
+def test_create_hook_owns_headers_and_nested_body(create_database_client):
+    client = create_database_client
+    client._backend.responses = [BackendResponse(
+        status_code=201, headers={"x-ms-activity-id": "own"},
+        body=b'{"id":"db1","nested":{"value":"original"}}',
+    )]
+    calls = []
+
+    class Hook:
+        def __bool__(self):
+            return False
+
+        def __call__(self, headers, properties):
+            calls.append((dict(headers), dict(properties)))
+            headers["x-ms-activity-id"] = "edited"
+            properties["id"] = "edited"
+            properties["nested"]["value"] = "edited"
+            properties.get_response_headers()["x-ms-activity-id"] = "edited"
+
+    proxy, result = _call_create_database(client, "db1", return_properties=True, response_hook=Hook())
+    assert len(calls) == 1
+    assert proxy.id == "db1"
+    assert result["nested"]["value"] == "original"
+    assert result.get_response_headers()["x-ms-activity-id"] == "own"
+    assert client._item_context.response_state.last_response_headers["x-ms-activity-id"] == "own"
+
+
+def test_create_hook_uses_result_not_latest_client_headers(create_database_client, monkeypatch):
+    from azure.cosmos._helpers import database_helper as sync_helper
+    from azure.cosmos.aio._helpers import database_helper as async_helper
+    client = create_database_client
+    module = async_helper if isinstance(client, AsyncCosmosClient) else sync_helper
+    original = module.process_backend_response
+
+    def parse_with_interleaved_response(*args, **kwargs):
+        result = original(*args, **kwargs)
+        client.client_connection.last_response_headers = {"x-ms-request-charge": "99"}
+        client._item_context.response_state.last_response_headers = CaseInsensitiveDict(
+            {"x-ms-request-charge": "99"}
+        )
+        return result
+
+    monkeypatch.setattr(module, "process_backend_response", parse_with_interleaved_response)
+    calls = []
+    _call_create_database(client, "db1", response_hook=lambda headers, body: calls.append(headers))
+    assert calls[0]["x-ms-request-charge"] == "5.25"
+
+
+@pytest.mark.parametrize("hook", [False, "invalid", 0])
+def test_create_validates_hook_before_dispatch(create_database_client, hook):
+    with pytest.raises(TypeError, match="response_hook"):
+        _call_create_database(create_database_client, "db1", response_hook=hook)
+    assert not create_database_client._backend.prepared_requests
+
+
+def test_create_hook_error_is_not_retried_or_reclassified(create_database_client):
+    failure = TimeoutError("customer callback failed")
+
+    def hook(headers, body):
+        raise failure
+
+    with pytest.raises(TimeoutError) as caught:
+        _call_create_database(create_database_client, "db1", timeout=5, response_hook=hook)
+    assert caught.value is failure
+    assert len(create_database_client._backend.prepared_requests) == 1
+    create_database_client.client_connection.CreateDatabase.assert_not_called()
+
+
+def test_create_passes_one_deadline_and_honors_nested_timeout(create_database_client, monkeypatch):
+    from azure.cosmos._helpers import _request_database
+    client = create_database_client
+    clock = [10.0]
+    monkeypatch.setattr(_request_database.time, "monotonic", lambda: clock[0])
+    execute = client._backend.execute
+    observed = []
+
+    def sync_execute(prepared, *, deadline=None):
+        observed.append(deadline)
+        return execute(prepared, deadline=deadline)
+
+    async def async_execute(prepared, *, deadline=None):
+        observed.append(deadline)
+        return await execute(prepared, deadline=deadline)
+
+    client._backend.execute = async_execute if isinstance(client, AsyncCosmosClient) else sync_execute
+    _call_create_database(client, "db1", request_options={"timeout": 3.5})
+    assert observed == [13.5]
+    assert settings_options(client._backend.prepared)["timeout_seconds"] == 3.5
+
+
+@pytest.mark.parametrize("setup_seconds", [0.75, 1.25])
+def test_create_driver_setup_consumes_budget(create_database_client, monkeypatch, setup_seconds):
+    from azure.cosmos._backend import rust as sync_rust
+    from azure.cosmos.aio._backend import rust as async_rust
+    from azure.cosmos._helpers import _request_database
+    from azure.cosmos.exceptions import CosmosClientTimeoutError
+    client = create_database_client
+    is_async = isinstance(client, AsyncCosmosClient)
+    clock = [100.0]
+    monkeypatch.setattr(_request_database.time, "monotonic", lambda: clock[0])
+    response = (201, 0, {}, b'{"id":"db1"}', None)
+    binding = AsyncMock(return_value=response) if is_async else MagicMock(return_value=response)
+    module = async_rust if is_async else sync_rust
+    monkeypatch.setattr(module, "_rust_module", SimpleNamespace(
+        create_database=binding, create_database_async=binding,
+    ))
+
+    def setup():
+        clock[0] += setup_seconds
+        return "fake-handle"
+
+    backend = client._backend
+    backend._ensure_driver_handle = AsyncMock(side_effect=setup) if is_async else setup
+    if is_async:
+        async def execute(prepared, *, deadline=None):
+            return await async_rust.AsyncRustBackend.execute(backend, prepared, deadline=deadline)
+    else:
+        def execute(prepared, *, deadline=None):
+            return sync_rust.RustBackend.execute(backend, prepared, deadline=deadline)
+    backend.execute = execute
+    hook = MagicMock()
+    if setup_seconds > 1:
+        with pytest.raises(CosmosClientTimeoutError):
+            _call_create_database(client, "db1", timeout=1, response_hook=hook)
+        binding.assert_not_called()
+        hook.assert_not_called()
+    else:
+        _call_create_database(client, "db1", timeout=1, response_hook=hook)
+        assert binding.call_args.kwargs["timeout_seconds"] == pytest.approx(0.25)
+        hook.assert_called_once()
+
+
+def test_create_async_timeout_drains_pending_work():
+    from azure.cosmos.exceptions import CosmosClientTimeoutError
+    import time
+
+    async def run():
+        cancelled = asyncio.Event()
+        backend = _AsyncRustBackend()
+
+        async def execute(prepared, *, deadline=None):
+            try:
+                await asyncio.Event().wait()
+            finally:
+                cancelled.set()
+
+        backend.execute = execute
+        hook = MagicMock()
+        with pytest.raises(CosmosClientTimeoutError):
+            await AsyncDatabaseHelper(SimpleNamespace(), backend).create_database(
+                {"id": "db1"}, {}, response_hook=hook, deadline=time.monotonic() + 0.01,
+            )
+        assert cancelled.is_set()
+        hook.assert_not_called()
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize("name", ["create_database", "create_database_async"])
+@pytest.mark.parametrize("remaining", [0.125, 1.0])
+def test_create_native_binding_accepts_remaining_budget(name, remaining):
+    from azure.cosmos import _rust
+    prepared = build_create_database_prepared({"id": "db1"}, {})
+    with pytest.raises(RuntimeError, match="(?i)driver"):
+        getattr(_rust, name)("unregistered-create-test-handle", prepared, timeout_seconds=remaining)
+
+
+@pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
+def test_create_boolean_overload_preserves_literal_overloads(client_type):
+    import typing
+    from typing import Literal, get_type_hints
+    if not hasattr(typing, "get_overloads"):
+        pytest.skip("Runtime overload inspection requires Python 3.11 or later.")
+    variants = typing.get_overloads(client_type.create_database)
+    assert [
+        get_type_hints(variant, localns={"ThroughputProperties": ThroughputProperties})["return_properties"]
+        for variant in variants
+    ] == [
+        Literal[False], Literal[True], bool,
+    ]
+
+
+@pytest.mark.parametrize("is_async", [False, True])
+def test_create_explicit_legacy_preserves_pipeline_and_isolates_hook(is_async):
+    response = CosmosDict(
+        {"id": "db1", "nested": {"value": "original"}},
+        response_headers={"x-ms-activity-id": "own"},
+    )
+    call = AsyncMock(return_value=response) if is_async else MagicMock(return_value=response)
+    connection = SimpleNamespace(CreateDatabase=call, last_response_headers={"x-ms-activity-id": "other"})
+    helper = (AsyncDatabaseHelper(connection, ASYNC_LEGACY_BACKEND) if is_async
+              else DatabaseHelper(connection, LEGACY_BACKEND))
+
+    def hook(headers, body):
+        assert headers["x-ms-activity-id"] == "own"
+        headers["x-ms-activity-id"] = "edited"
+        body["nested"]["value"] = "edited"
+
+    result = helper.create_database(
+        {"id": "db1"}, {}, response_hook=hook, kwargs={"connection_timeout": 2},
+    )
+    if is_async:
+        result = asyncio.run(result)
+    assert result["nested"]["value"] == "original"
+    assert result.get_response_headers()["x-ms-activity-id"] == "own"
+    assert call.call_args.kwargs["connection_timeout"] == 2
 
 
 @pytest.mark.parametrize("option", ["populate_query_metrics", "session_token", "etag", "match_condition"])

@@ -583,7 +583,7 @@ fn timeout_from_config(config: &Bound<'_, PyAny>, field_name: &str) -> PyResult<
 /// Read the optional `preferred_locations` off the prepared client config and
 /// turn each region name into a driver `Region` for preferred-region routing.
 ///
-/// Matches how `extract_request_headers_and_options` reads `excludedlocations`: it accepts any
+/// Matches how `extract_settings` reads `excluded_locations`: it accepts any
 /// Python sequence of strings (the `PreparedClientConfig` stores a tuple) and
 /// lets the driver normalize each name ("West US" -> "westus"). A config object
 /// without the attribute, or a Python `None`, yields no regions rather than an

@@ -5,26 +5,34 @@ use super::*;
 
 /// Create an account-level database and return its service response.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn create_database<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
     let modifiers = extract_account_prepared_modifiers(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
-    run_create_database_operation(py, driver_handle, modifiers, body_bytes, "create_database")
+    run_create_database_operation(
+        py, driver_handle, modifiers, body_bytes, "create_database", timeout_seconds,
+    )
 }
 
 /// Async counterpart of [`create_database`].
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn create_database_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
     let modifiers = extract_account_prepared_modifiers(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
-    run_create_database_operation_async(py, driver_handle, modifiers, body_bytes, "create_database_async")
+    run_create_database_operation_async(
+        py, driver_handle, modifiers, body_bytes, "create_database_async", timeout_seconds,
+    )
 }
 
 /// Read an account-level database and return its service properties.

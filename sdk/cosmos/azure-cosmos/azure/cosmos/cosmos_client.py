@@ -40,6 +40,7 @@ from ._backend.errors import raise_account_read_unsupported
 from ._backend.factory import make_backend
 from ._backend.transport_settings import resolve_client_transport_timeouts
 from ._base import build_options, _set_throughput_options
+from ._helpers._request_database import prepare_create_database_options
 from ._constants import _Constants as Constants
 from ._client_lifecycle import unwind_client_construction
 from ._connection_policy import copy_connection_policy, resolve_connection_policy_kwargs, resolve_retry_option
@@ -487,6 +488,19 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         """
         ...
 
+    @overload
+    def create_database(
+        self,
+        id: str,
+        *,
+        offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
+        initial_headers: Optional[dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
+        throughput_bucket: Optional[int] = None,
+        return_properties: bool,
+        **kwargs: Any,
+    ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]: ...
+
     @distributed_trace
     def create_database(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
         self,
@@ -512,6 +526,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
         :raises TypeError: An extra positional argument or an unsupported option is supplied.
 
+        ``timeout`` is a finite, non-boolean number of seconds >= 1 and < 2**64.
+        One budget covers preparation, driver setup, and execution; synchronous
+        setup cannot be forcibly interrupted. Hook headers and properties are
+        independent copies. Hook failures do not retry or undo creation.
+        Request-option dictionaries are not modified. Manual throughput and
+        autoscale are mutually exclusive; an empty ThroughputProperties is invalid.
+        Rust rejects unsupported options instead of ignoring them or using legacy.
+
         Only ``id`` may be positional. ``populate_query_metrics``, ``session_token``,
         ``etag``, and ``match_condition`` do not apply to database creation and are
         rejected, including when set to ``None``.
@@ -525,21 +547,20 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 :dedent: 0
                 :caption: Create a database in the Cosmos DB account:
         """
-        for option in ("populate_query_metrics", "session_token", "etag", "match_condition"):
-            if option in kwargs:
-                raise TypeError(f"create_database() does not support the '{option}' keyword argument")
-
         return_properties = kwargs.pop("return_properties", False)
 
         response_hook = kwargs.pop("response_hook", None)
-        request_options = build_options(kwargs)
-        _set_throughput_options(offer=offer_throughput, request_options=request_options)
+        request_options, deadline = prepare_create_database_options(kwargs, offer_throughput)
         database = {"id": id}
-        result = DatabaseHelper(self.client_connection, self._backend).create_database(
+        result = DatabaseHelper(
+            self.client_connection, self._backend,
+            response_state=self._item_context.response_state,
+        ).create_database(
             database,
             request_options,
             response_hook=response_hook,
             kwargs=kwargs,
+            deadline=deadline,
         )
         if not return_properties:
             return DatabaseProxy(self.client_connection, id=result["id"], properties=result,
