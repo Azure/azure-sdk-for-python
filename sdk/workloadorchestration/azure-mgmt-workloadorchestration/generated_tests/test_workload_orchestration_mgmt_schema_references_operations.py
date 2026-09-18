@@ -31,6 +31,69 @@ class TestWorkloadOrchestrationMgmtSchemaReferencesOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_schema_references_begin_create_or_update(self, resource_group):
+        response = self.client.schema_references.begin_create_or_update(
+            resource_uri="str",
+            schema_reference_name="str",
+            resource={
+                "eTag": "str",
+                "id": "str",
+                "name": "str",
+                "properties": {"schemaId": "str", "provisioningState": "str"},
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "type": "str",
+            },
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_schema_references_update(self, resource_group):
+        response = self.client.schema_references.update(
+            resource_uri="str",
+            schema_reference_name="str",
+            properties={
+                "eTag": "str",
+                "id": "str",
+                "name": "str",
+                "properties": {"schemaId": "str", "provisioningState": "str"},
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "type": "str",
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_schema_references_begin_delete(self, resource_group):
+        response = self.client.schema_references.begin_delete(
+            resource_uri="str",
+            schema_reference_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_schema_references_list_by_resource_group(self, resource_group):
         response = self.client.schema_references.list_by_resource_group(
             resource_uri="str",

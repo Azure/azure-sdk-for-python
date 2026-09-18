@@ -34,11 +34,11 @@ def main():
         resource_group_name="rgconfigurationmanager",
         context_name="testname",
         workflow_name="testname",
-        resource={"extendedLocation": {"name": "szjrwimeqyiue", "type": "EdgeZone"}, "properties": {}},
+        resource={"extendedLocation": {"name": "ggfwkwklvvkrmlysvvhcj", "type": "EdgeZone"}, "properties": {}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/Workflows_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/Workflows_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
