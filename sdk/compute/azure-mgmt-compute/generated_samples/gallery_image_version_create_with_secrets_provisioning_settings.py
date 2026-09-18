@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.compute import ComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-compute
 # USAGE
-    python gallery_image_version_update_without_source_id.py
+    python gallery_image_version_create_with_secrets_provisioning_settings.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,26 +31,42 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.gallery_image_versions.begin_update(
+    response = client.gallery_image_versions.begin_create_or_update(
         resource_group_name="myResourceGroup",
         gallery_name="myGalleryName",
         gallery_image_name="myGalleryImageName",
         gallery_image_version_name="1.0.0",
         gallery_image_version={
+            "location": "West US",
             "properties": {
                 "publishingProfile": {
-                    "targetRegions": [
-                        {"name": "West US", "regionalReplicaCount": 1},
-                        {"name": "East US", "regionalReplicaCount": 2, "storageAccountType": "Standard_ZRS"},
-                    ]
+                    "targetRegions": [{"excludeFromLatest": False, "name": "West US", "regionalReplicaCount": 1}]
                 },
-                "storageProfile": {},
-            }
+                "securityProfile": {
+                    "secretsProvisioningSettings": {
+                        "components": [
+                            {"name": "AzureGuestAgent", "version": "2.7.0"},
+                            {"name": "SecretsProvisioningLibrary", "version": "1.0.0"},
+                        ],
+                        "isSupported": True,
+                        "osName": "mariner",
+                    }
+                },
+                "storageProfile": {
+                    "osDiskImage": {
+                        "hostCaching": "ReadOnly",
+                        "source": {
+                            "storageAccountId": "/subscriptions/{subscriptionId}/resourceGroups/myResourceGroup/providers/Microsoft.Storage/storageAccounts/{storageAccount}",
+                            "uri": "https://gallerysourcencus.blob.core.windows.net/myvhds/Linux-VM-2024.vhd",
+                        },
+                    }
+                },
+            },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-03-03/galleryExamples/GalleryImageVersion_Update_WithoutSourceId.json
+# x-ms-original-file: 2026-03-03/galleryExamples/GalleryImageVersion_Create_WithSecretsProvisioningSettings.json
 if __name__ == "__main__":
     main()

@@ -1,5 +1,31 @@
 # Release History
 
+## 38.4.0 (2026-09-16)
+
+### Features Added
+
+  - Model `CommunityGalleryImageVersionProperties` added property `consumption_end_time`
+  - Model `CommunityGalleryImageVersionProperties` added property `image_state`
+  - Enum `ConfidentialVMEncryptionType` added member `DATA_DISK_ENCRYPTED_WITH_CMK`
+  - Model `DataDiskImageEncryption` added property `security_profile`
+  - Model `GalleryImageVersionProperties` added property `image_metadata_profiles`
+  - Model `GallerySoftDeletedResourceProperties` added property `consumption_end_time`
+  - Model `GallerySoftDeletedResourceProperties` added property `hard_deletion_target_time`
+  - Model `ImageVersionSecurityProfile` added property `secrets_provisioning_settings`
+  - Model `SharedGalleryImageVersionProperties` added property `consumption_end_time`
+  - Model `SharedGalleryImageVersionProperties` added property `image_state`
+  - Model `SoftDeletePolicy` added property `grace_period_in_days`
+  - Model `SoftDeletePolicy` added property `retention_period_in_days`
+  - Added model `DataDiskImageSecurityProfile`
+  - Added enum `GalleryImageVersionState`
+  - Added model `ImageMetadataProfile`
+  - Added model `MetadataKeyValue`
+  - Added enum `MetadataType`
+  - Added model `SecretsProvisioningComponent`
+  - Added enum `SecretsProvisioningComponentName`
+  - Added model `SecretsProvisioningSettings`
+  - Model `GalleryImageVersionsOperations` added parameter `bypass_soft_delete` in method `begin_delete`
+
 ## 38.3.0 (2026-08-12)
 
 ### Features Added
