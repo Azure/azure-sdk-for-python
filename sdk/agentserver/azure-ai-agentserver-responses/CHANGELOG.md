@@ -4,7 +4,8 @@
 
 ### Features Added
 
-- Added optional validated response metadata to `ResponseEventStream.emit_failed`.
+- Added optional response metadata to `ResponseEventStream.emit_failed`. Invalid failure metadata is logged and
+  omitted so metadata validation cannot suppress the original failure response.
 
 ### Bugs Fixed
 

@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Mapping, MutableMapping
 from copy import deepcopy
 from datetime import datetime, timezone
@@ -40,6 +41,7 @@ from ._internal_metadata import _ResponseInternalMetadataView
 # Event types whose payload is a full Response snapshot.
 # Lifecycle events nest under a "response" key on the wire.
 _RESPONSE_SNAPSHOT_EVENT_TYPES = _internals._RESPONSE_SNAPSHOT_EVENT_TYPES  # pylint: disable=protected-access
+_LOGGER = logging.getLogger(__name__)
 
 
 def _resolve_conversation_param(raw: Any) -> str | None:
@@ -382,7 +384,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :keyword type code: str | ~azure.ai.agentserver.responses.models.ResponseErrorCode
         :keyword message: Human-readable error message.
         :keyword type message: str
-        :keyword metadata: Optional public response metadata to merge into the terminal response.
+        :keyword metadata: Optional public response metadata to merge into the terminal response. Invalid
+            metadata is logged and omitted so it cannot suppress the original failure.
         :keyword type metadata: ~collections.abc.Mapping[str, str] | None
         :keyword usage: Optional usage statistics to attach to the response.
         :keyword type usage: ~azure.ai.agentserver.responses.models.ResponseUsage | None
@@ -396,7 +399,14 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             "message": message,
         }
         if metadata is not None:
-            _merge_response_metadata(self._response, metadata)
+            try:
+                _merge_response_metadata(self._response, metadata)
+            except (TypeError, ValueError) as exc:
+                _LOGGER.warning(
+                    "Ignoring invalid metadata supplied to emit_failed; the response failure will be emitted "
+                    "without it: %s",
+                    exc,
+                )
         self._set_terminal_fields(usage=usage)
         return cast(
             "response_models.ResponseFailedEvent",

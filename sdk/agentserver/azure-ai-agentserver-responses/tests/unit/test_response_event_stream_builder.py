@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import cast
 
 import pytest
@@ -205,15 +206,35 @@ def test_event_stream_builder__emit_failed_accepts_error_and_usage() -> None:
     assert failed["response"].get("completed_at") is None
 
 
-def test_event_stream_builder__emit_failed_validates_metadata() -> None:
-    stream = ResponseEventStream(response_id="resp_builder_failed_metadata")
+def test_event_stream_builder__emit_failed_ignores_invalid_metadata(caplog: pytest.LogCaptureFixture) -> None:
+    stream = ResponseEventStream(
+        response_id="resp_builder_failed_metadata",
+        request={"metadata": {"request": "preserved"}},
+    )
     stream.emit_created(status="in_progress")
 
-    with pytest.raises(TypeError, match="metadata values must be str"):
-        stream.emit_failed(metadata={"invalid": 1})  # type: ignore[dict-item]
+    with caplog.at_level(logging.WARNING):
+        failed = stream.emit_failed(metadata={"invalid": 1})  # type: ignore[dict-item]
 
-    with pytest.raises(ValueError, match="at most 16"):
-        stream.emit_failed(metadata={f"k{index}": "value" for index in range(17)})
+    assert failed["response"]["status"] == "failed"
+    assert failed["response"]["metadata"] == {"request": "preserved"}
+    assert "Ignoring invalid metadata supplied to emit_failed" in caplog.text
+    assert "metadata values must be str" in caplog.text
+
+
+def test_event_stream_builder__emit_failed_ignores_metadata_over_contract_limit(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    stream = ResponseEventStream(response_id="resp_builder_failed_metadata_limit")
+    stream.emit_created(status="in_progress")
+
+    with caplog.at_level(logging.WARNING):
+        failed = stream.emit_failed(metadata={f"k{index}": "value" for index in range(17)})
+
+    assert failed["response"]["status"] == "failed"
+    assert "metadata" not in failed["response"]
+    assert "Ignoring invalid metadata supplied to emit_failed" in caplog.text
+    assert "at most 16" in caplog.text
 
 
 def test_event_stream_builder__emit_incomplete_accepts_reason_and_usage() -> None:
