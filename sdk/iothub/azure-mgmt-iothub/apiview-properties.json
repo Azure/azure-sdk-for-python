@@ -13,6 +13,8 @@
         "azure.mgmt.iothub.models.CertificateWithNonceDescription": "Microsoft.Devices.CertificateWithNonceDescription",
         "azure.mgmt.iothub.models.CloudToDeviceProperties": "Microsoft.Devices.CloudToDeviceProperties",
         "azure.mgmt.iothub.models.DeviceRegistry": "Microsoft.Devices.DeviceRegistry",
+        "azure.mgmt.iothub.models.DeviceRegistryIdentity": "Microsoft.Devices.DeviceRegistryIdentity",
+        "azure.mgmt.iothub.models.DeviceRegistryLinkingProperties": "Microsoft.Devices.DeviceRegistryLinkingProperties",
         "azure.mgmt.iothub.models.EncryptionPropertiesDescription": "Microsoft.Devices.EncryptionPropertiesDescription",
         "azure.mgmt.iothub.models.EndpointHealthData": "Microsoft.Devices.EndpointHealthData",
         "azure.mgmt.iothub.models.EnrichmentProperties": "Microsoft.Devices.EnrichmentProperties",
@@ -45,6 +47,7 @@
         "azure.mgmt.iothub.models.ManagedIdentity": "Microsoft.Devices.ManagedIdentity",
         "azure.mgmt.iothub.models.MatchedRoute": "Microsoft.Devices.MatchedRoute",
         "azure.mgmt.iothub.models.MessagingEndpointProperties": "Microsoft.Devices.MessagingEndpointProperties",
+        "azure.mgmt.iothub.models.MqttV5Settings": "Microsoft.Devices.MqttV5Settings",
         "azure.mgmt.iothub.models.Name": "Microsoft.Devices.Name",
         "azure.mgmt.iothub.models.NetworkRuleSetIpRule": "Microsoft.Devices.NetworkRuleSetIpRule",
         "azure.mgmt.iothub.models.NetworkRuleSetProperties": "Microsoft.Devices.NetworkRuleSetProperties",
@@ -82,6 +85,7 @@
         "azure.mgmt.iothub.models.TestRouteInput": "Microsoft.Devices.TestRouteInput",
         "azure.mgmt.iothub.models.TestRouteResult": "Microsoft.Devices.TestRouteResult",
         "azure.mgmt.iothub.models.TestRouteResultDetails": "Microsoft.Devices.TestRouteResultDetails",
+        "azure.mgmt.iothub.models.TopicGroup": "Microsoft.Devices.TopicGroup",
         "azure.mgmt.iothub.models.UserSubscriptionQuota": "Microsoft.Devices.UserSubscriptionQuota",
         "azure.mgmt.iothub.models.UserSubscriptionQuotaListResult": "Microsoft.Devices.UserSubscriptionQuotaListResult",
         "azure.mgmt.iothub.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
@@ -92,12 +96,16 @@
         "azure.mgmt.iothub.models.DefaultAction": "Microsoft.Devices.DefaultAction",
         "azure.mgmt.iothub.models.NetworkRuleIPAction": "Microsoft.Devices.NetworkRuleIPAction",
         "azure.mgmt.iothub.models.AuthenticationType": "Microsoft.Devices.AuthenticationType",
+        "azure.mgmt.iothub.models.MessagePayloadFormat": "Microsoft.Devices.MessagePayloadFormat",
         "azure.mgmt.iothub.models.RoutingStorageContainerPropertiesEncoding": "Microsoft.Devices.RoutingStorageContainerPropertiesEncoding",
         "azure.mgmt.iothub.models.EventStreamAuthenticationType": "Microsoft.Devices.EventStreamAuthenticationType",
         "azure.mgmt.iothub.models.RoutingSource": "Microsoft.Devices.RoutingSource",
         "azure.mgmt.iothub.models.Capabilities": "Microsoft.Devices.Capabilities",
         "azure.mgmt.iothub.models.IotHubReplicaRoleType": "Microsoft.Devices.IotHubReplicaRoleType",
         "azure.mgmt.iothub.models.IpVersion": "Microsoft.Devices.IpVersion",
+        "azure.mgmt.iothub.models.ConnectionProfile": "Microsoft.Devices.ConnectionProfile",
+        "azure.mgmt.iothub.models.DeviceRegistryIdentityType": "Microsoft.Devices.DeviceRegistryIdentityType",
+        "azure.mgmt.iothub.models.DeviceRegistryLinkingState": "Microsoft.Devices.DeviceRegistryLinkingState",
         "azure.mgmt.iothub.models.GatewayVersion": "Microsoft.Devices.GatewayVersion",
         "azure.mgmt.iothub.models.IotHubSku": "Microsoft.Devices.IotHubSku",
         "azure.mgmt.iothub.models.IotHubSkuTier": "Microsoft.Devices.IotHubSkuTier",
@@ -186,5 +194,5 @@
         "azure.mgmt.iothub.operations.ResourceProviderCommonOperations.get_subscription_quota": "Microsoft.Devices.ResourceProviderCommonOperationGroup.getSubscriptionQuota",
         "azure.mgmt.iothub.aio.operations.ResourceProviderCommonOperations.get_subscription_quota": "Microsoft.Devices.ResourceProviderCommonOperationGroup.getSubscriptionQuota"
     },
-    "CrossLanguageVersion": "a148e0fb917c"
+    "CrossLanguageVersion": "07577cfc9b2b"
 }
