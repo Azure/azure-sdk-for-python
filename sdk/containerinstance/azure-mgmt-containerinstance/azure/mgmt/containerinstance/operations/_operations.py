@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import ContainerInstanceManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -40,7 +40,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -51,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +71,7 @@ def build_container_groups_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,7 +100,7 @@ def build_container_groups_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -132,7 +131,7 @@ def build_container_groups_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -162,7 +161,7 @@ def build_container_groups_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -189,7 +188,7 @@ def build_container_groups_restart_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/containerGroups/{containerGroupName}/restart"
     path_format_arguments = {
@@ -211,7 +210,7 @@ def build_container_groups_stop_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/containerGroups/{containerGroupName}/stop"
     path_format_arguments = {
@@ -233,7 +232,7 @@ def build_container_groups_start_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/containerGroups/{containerGroupName}/start"
     path_format_arguments = {
@@ -256,7 +255,7 @@ def build_container_groups_get_outbound_network_dependencies_endpoints_request( 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -282,7 +281,7 @@ def build_container_groups_list_request(subscription_id: str, **kwargs: Any) -> 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -308,7 +307,7 @@ def build_container_groups_list_by_resource_group_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -335,7 +334,7 @@ def build_ngroups_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -364,7 +363,7 @@ def build_ngroups_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -395,7 +394,7 @@ def build_ngroups_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -424,7 +423,7 @@ def build_ngroups_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/ngroups/{ngroupsName}"
     path_format_arguments = {
@@ -447,7 +446,7 @@ def build_ngroups_list_by_resource_group_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -472,7 +471,7 @@ def build_ngroups_list_request(subscription_id: str, **kwargs: Any) -> HttpReque
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -497,7 +496,7 @@ def build_ngroups_start_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/ngroups/{ngroupsName}/start"
     path_format_arguments = {
@@ -519,7 +518,7 @@ def build_ngroups_stop_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/ngroups/{ngroupsName}/stop"
     path_format_arguments = {
@@ -541,7 +540,7 @@ def build_ngroups_restart_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/ngroups/{ngroupsName}/restart"
     path_format_arguments = {
@@ -568,7 +567,7 @@ def build_cg_profile_get_by_revision_number_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -599,7 +598,7 @@ def build_cg_profile_list_all_revisions_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -629,7 +628,7 @@ def build_cg_profile_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -660,7 +659,7 @@ def build_cg_profile_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -693,7 +692,7 @@ def build_cg_profile_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -724,7 +723,7 @@ def build_cg_profile_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/containerGroupProfiles/{containerGroupProfileName}"
     path_format_arguments = {
@@ -743,17 +742,17 @@ def build_cg_profile_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_sandbox_groups_list_by_subscription_request(  # pylint: disable=name-too-long
+def build_ai_agents_groups_list_by_subscription_request(  # pylint: disable=name-too-long
     subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ContainerInstance/sandboxGroups"
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ContainerInstance/aiAgentsGroups"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
@@ -769,17 +768,17 @@ def build_sandbox_groups_list_by_subscription_request(  # pylint: disable=name-t
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_sandbox_groups_list_by_resource_group_request(  # pylint: disable=name-too-long
+def build_ai_agents_groups_list_by_resource_group_request(  # pylint: disable=name-too-long
     resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/sandboxGroups"
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/aiAgentsGroups"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -796,21 +795,21 @@ def build_sandbox_groups_list_by_resource_group_request(  # pylint: disable=name
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_sandbox_groups_get_request(
-    resource_group_name: str, sandbox_group_name: str, subscription_id: str, **kwargs: Any
+def build_ai_agents_groups_get_request(
+    resource_group_name: str, ai_agents_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/sandboxGroups/{sandboxGroupName}"
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/aiAgentsGroups/{aiAgentsGroupName}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "sandboxGroupName": _SERIALIZER.url("sandbox_group_name", sandbox_group_name, "str"),
+        "aiAgentsGroupName": _SERIALIZER.url("ai_agents_group_name", ai_agents_group_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -824,22 +823,22 @@ def build_sandbox_groups_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_sandbox_groups_create_or_update_request(  # pylint: disable=name-too-long
-    resource_group_name: str, sandbox_group_name: str, subscription_id: str, **kwargs: Any
+def build_ai_agents_groups_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, ai_agents_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/sandboxGroups/{sandboxGroupName}"
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/aiAgentsGroups/{aiAgentsGroupName}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "sandboxGroupName": _SERIALIZER.url("sandbox_group_name", sandbox_group_name, "str"),
+        "aiAgentsGroupName": _SERIALIZER.url("ai_agents_group_name", ai_agents_group_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -855,22 +854,22 @@ def build_sandbox_groups_create_or_update_request(  # pylint: disable=name-too-l
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_sandbox_groups_update_request(
-    resource_group_name: str, sandbox_group_name: str, subscription_id: str, **kwargs: Any
+def build_ai_agents_groups_update_request(
+    resource_group_name: str, ai_agents_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/sandboxGroups/{sandboxGroupName}"
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/aiAgentsGroups/{aiAgentsGroupName}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "sandboxGroupName": _SERIALIZER.url("sandbox_group_name", sandbox_group_name, "str"),
+        "aiAgentsGroupName": _SERIALIZER.url("ai_agents_group_name", ai_agents_group_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -886,18 +885,18 @@ def build_sandbox_groups_update_request(
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_sandbox_groups_delete_request(
-    resource_group_name: str, sandbox_group_name: str, subscription_id: str, **kwargs: Any
+def build_ai_agents_groups_delete_request(
+    resource_group_name: str, ai_agents_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/sandboxGroups/{sandboxGroupName}"
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/aiAgentsGroups/{aiAgentsGroupName}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "sandboxGroupName": _SERIALIZER.url("sandbox_group_name", sandbox_group_name, "str"),
+        "aiAgentsGroupName": _SERIALIZER.url("ai_agents_group_name", ai_agents_group_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -908,21 +907,21 @@ def build_sandbox_groups_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_sandbox_groups_connect_request(
-    resource_group_name: str, sandbox_group_name: str, subscription_id: str, **kwargs: Any
+def build_ai_agents_groups_connect_request(
+    resource_group_name: str, ai_agents_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/sandboxGroups/{sandboxGroupName}/connect"
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/aiAgentsGroups/{aiAgentsGroupName}/connect"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "sandboxGroupName": _SERIALIZER.url("sandbox_group_name", sandbox_group_name, "str"),
+        "aiAgentsGroupName": _SERIALIZER.url("ai_agents_group_name", ai_agents_group_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -949,7 +948,7 @@ def build_containers_list_logs_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -983,7 +982,7 @@ def build_containers_execute_command_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1014,7 +1013,7 @@ def build_containers_attach_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1043,7 +1042,7 @@ def build_cg_profiles_list_by_subscription_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1069,7 +1068,7 @@ def build_cg_profiles_list_by_resource_group_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1094,7 +1093,7 @@ def build_location_list_usage_request(location: str, subscription_id: str, **kwa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1121,7 +1120,7 @@ def build_location_list_cached_images_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1146,7 +1145,7 @@ def build_location_list_capabilities_request(location: str, subscription_id: str
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1172,7 +1171,7 @@ def build_subnet_service_association_link_delete_request(  # pylint: disable=nam
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}/providers/Microsoft.ContainerInstance/serviceAssociationLinks/default"
     path_format_arguments = {
@@ -1399,7 +1398,7 @@ class ContainerGroupsOperations:
         self,
         resource_group_name: str,
         container_group_name: str,
-        container_group: Union[_models.ContainerGroup, JSON, IO[bytes]],
+        container_group: Union[_models.ContainerGroup, _types.ContainerGroup, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1506,7 +1505,7 @@ class ContainerGroupsOperations:
         self,
         resource_group_name: str,
         container_group_name: str,
-        container_group: JSON,
+        container_group: _types.ContainerGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1522,7 +1521,7 @@ class ContainerGroupsOperations:
         :type container_group_name: str
         :param container_group: The properties of the container group to be created or updated.
          Required.
-        :type container_group: JSON
+        :type container_group: ~azure.mgmt.containerinstance.types.ContainerGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1568,7 +1567,7 @@ class ContainerGroupsOperations:
         self,
         resource_group_name: str,
         container_group_name: str,
-        container_group: Union[_models.ContainerGroup, JSON, IO[bytes]],
+        container_group: Union[_models.ContainerGroup, _types.ContainerGroup, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ContainerGroup]:
         """Create or update container groups.
@@ -1580,9 +1579,10 @@ class ContainerGroupsOperations:
         :type resource_group_name: str
         :param container_group_name: The name of the container group. Required.
         :type container_group_name: str
-        :param container_group: The properties of the container group to be created or updated. Is one
-         of the following types: ContainerGroup, JSON, IO[bytes] Required.
-        :type container_group: ~azure.mgmt.containerinstance.models.ContainerGroup or JSON or IO[bytes]
+        :param container_group: The properties of the container group to be created or updated. Is
+         either a ContainerGroup type or a IO[bytes] type. Required.
+        :type container_group: ~azure.mgmt.containerinstance.models.ContainerGroup or
+         ~azure.mgmt.containerinstance.types.ContainerGroup or IO[bytes]
         :return: An instance of LROPoller that returns ContainerGroup. The ContainerGroup is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerinstance.models.ContainerGroup]
@@ -1674,7 +1674,7 @@ class ContainerGroupsOperations:
         self,
         resource_group_name: str,
         container_group_name: str,
-        resource: JSON,
+        resource: _types.Resource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1689,7 +1689,7 @@ class ContainerGroupsOperations:
         :param container_group_name: The name of the container group. Required.
         :type container_group_name: str
         :param resource: The container group resource with just the tags to be updated. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.containerinstance.types.Resource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1732,7 +1732,7 @@ class ContainerGroupsOperations:
         self,
         resource_group_name: str,
         container_group_name: str,
-        resource: Union[_models.Resource, JSON, IO[bytes]],
+        resource: Union[_models.Resource, _types.Resource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ContainerGroup:
         """Update container groups.
@@ -1744,9 +1744,10 @@ class ContainerGroupsOperations:
         :type resource_group_name: str
         :param container_group_name: The name of the container group. Required.
         :type container_group_name: str
-        :param resource: The container group resource with just the tags to be updated. Is one of the
-         following types: Resource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.containerinstance.models.Resource or JSON or IO[bytes]
+        :param resource: The container group resource with just the tags to be updated. Is either a
+         Resource type or a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.containerinstance.models.Resource or
+         ~azure.mgmt.containerinstance.types.Resource or IO[bytes]
         :return: ContainerGroup. The ContainerGroup is compatible with MutableMapping
         :rtype: ~azure.mgmt.containerinstance.models.ContainerGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2613,7 +2614,7 @@ class NGroupsOperations:
         self,
         resource_group_name: str,
         ngroups_name: str,
-        n_group: Union[_models.NGroup, JSON, IO[bytes]],
+        n_group: Union[_models.NGroup, _types.NGroup, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2726,7 +2727,7 @@ class NGroupsOperations:
         self,
         resource_group_name: str,
         ngroups_name: str,
-        n_group: JSON,
+        n_group: _types.NGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2741,7 +2742,7 @@ class NGroupsOperations:
         :param ngroups_name: The NGroups name. Required.
         :type ngroups_name: str
         :param n_group: The NGroup object. Required.
-        :type n_group: JSON
+        :type n_group: ~azure.mgmt.containerinstance.types.NGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2786,7 +2787,7 @@ class NGroupsOperations:
         self,
         resource_group_name: str,
         ngroups_name: str,
-        n_group: Union[_models.NGroup, JSON, IO[bytes]],
+        n_group: Union[_models.NGroup, _types.NGroup, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.NGroup]:
         """NGroup PUT REST API.
@@ -2798,9 +2799,9 @@ class NGroupsOperations:
         :type resource_group_name: str
         :param ngroups_name: The NGroups name. Required.
         :type ngroups_name: str
-        :param n_group: The NGroup object. Is one of the following types: NGroup, JSON, IO[bytes]
-         Required.
-        :type n_group: ~azure.mgmt.containerinstance.models.NGroup or JSON or IO[bytes]
+        :param n_group: The NGroup object. Is either a NGroup type or a IO[bytes] type. Required.
+        :type n_group: ~azure.mgmt.containerinstance.models.NGroup or
+         ~azure.mgmt.containerinstance.types.NGroup or IO[bytes]
         :return: An instance of LROPoller that returns NGroup. The NGroup is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerinstance.models.NGroup]
@@ -2867,7 +2868,7 @@ class NGroupsOperations:
         self,
         resource_group_name: str,
         ngroups_name: str,
-        n_group: Union[_models.NGroupPatch, JSON, IO[bytes]],
+        n_group: Union[_models.NGroupPatch, _types.NGroupPatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2981,7 +2982,7 @@ class NGroupsOperations:
         self,
         resource_group_name: str,
         ngroups_name: str,
-        n_group: JSON,
+        n_group: _types.NGroupPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2996,7 +2997,7 @@ class NGroupsOperations:
         :param ngroups_name: The NGroups name. Required.
         :type ngroups_name: str
         :param n_group: The NGroup object. Required.
-        :type n_group: JSON
+        :type n_group: ~azure.mgmt.containerinstance.types.NGroupPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3041,7 +3042,7 @@ class NGroupsOperations:
         self,
         resource_group_name: str,
         ngroups_name: str,
-        n_group: Union[_models.NGroupPatch, JSON, IO[bytes]],
+        n_group: Union[_models.NGroupPatch, _types.NGroupPatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.NGroup]:
         """NGroups PATCH REST API.
@@ -3053,9 +3054,9 @@ class NGroupsOperations:
         :type resource_group_name: str
         :param ngroups_name: The NGroups name. Required.
         :type ngroups_name: str
-        :param n_group: The NGroup object. Is one of the following types: NGroupPatch, JSON, IO[bytes]
-         Required.
-        :type n_group: ~azure.mgmt.containerinstance.models.NGroupPatch or JSON or IO[bytes]
+        :param n_group: The NGroup object. Is either a NGroupPatch type or a IO[bytes] type. Required.
+        :type n_group: ~azure.mgmt.containerinstance.models.NGroupPatch or
+         ~azure.mgmt.containerinstance.types.NGroupPatch or IO[bytes]
         :return: An instance of LROPoller that returns NGroup. The NGroup is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerinstance.models.NGroup]
@@ -4054,7 +4055,7 @@ class CGProfileOperations:
         self,
         resource_group_name: str,
         container_group_profile_name: str,
-        container_group_profile: JSON,
+        container_group_profile: _types.ContainerGroupProfile,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4069,7 +4070,7 @@ class CGProfileOperations:
         :param container_group_profile_name: ContainerGroupProfile name. Required.
         :type container_group_profile_name: str
         :param container_group_profile: The ContainerGroupProfile object. Required.
-        :type container_group_profile: JSON
+        :type container_group_profile: ~azure.mgmt.containerinstance.types.ContainerGroupProfile
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4112,7 +4113,7 @@ class CGProfileOperations:
         self,
         resource_group_name: str,
         container_group_profile_name: str,
-        container_group_profile: Union[_models.ContainerGroupProfile, JSON, IO[bytes]],
+        container_group_profile: Union[_models.ContainerGroupProfile, _types.ContainerGroupProfile, IO[bytes]],
         **kwargs: Any
     ) -> _models.ContainerGroupProfile:
         """Create or Update a ContainerGroupProfile.
@@ -4124,10 +4125,10 @@ class CGProfileOperations:
         :type resource_group_name: str
         :param container_group_profile_name: ContainerGroupProfile name. Required.
         :type container_group_profile_name: str
-        :param container_group_profile: The ContainerGroupProfile object. Is one of the following
-         types: ContainerGroupProfile, JSON, IO[bytes] Required.
+        :param container_group_profile: The ContainerGroupProfile object. Is either a
+         ContainerGroupProfile type or a IO[bytes] type. Required.
         :type container_group_profile: ~azure.mgmt.containerinstance.models.ContainerGroupProfile or
-         JSON or IO[bytes]
+         ~azure.mgmt.containerinstance.types.ContainerGroupProfile or IO[bytes]
         :return: ContainerGroupProfile. The ContainerGroupProfile is compatible with MutableMapping
         :rtype: ~azure.mgmt.containerinstance.models.ContainerGroupProfile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4238,7 +4239,7 @@ class CGProfileOperations:
         self,
         resource_group_name: str,
         container_group_profile_name: str,
-        properties: JSON,
+        properties: _types.ContainerGroupProfilePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4253,7 +4254,7 @@ class CGProfileOperations:
         :param container_group_profile_name: ContainerGroupProfile name. Required.
         :type container_group_profile_name: str
         :param properties: The container group profile properties that need to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.containerinstance.types.ContainerGroupProfilePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4296,7 +4297,7 @@ class CGProfileOperations:
         self,
         resource_group_name: str,
         container_group_profile_name: str,
-        properties: Union[_models.ContainerGroupProfilePatch, JSON, IO[bytes]],
+        properties: Union[_models.ContainerGroupProfilePatch, _types.ContainerGroupProfilePatch, IO[bytes]],
         **kwargs: Any
     ) -> _models.ContainerGroupProfile:
         """Container group profile PATCH REST API.
@@ -4308,10 +4309,10 @@ class CGProfileOperations:
         :type resource_group_name: str
         :param container_group_profile_name: ContainerGroupProfile name. Required.
         :type container_group_profile_name: str
-        :param properties: The container group profile properties that need to be updated. Is one of
-         the following types: ContainerGroupProfilePatch, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.containerinstance.models.ContainerGroupProfilePatch or JSON or
-         IO[bytes]
+        :param properties: The container group profile properties that need to be updated. Is either a
+         ContainerGroupProfilePatch type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.containerinstance.models.ContainerGroupProfilePatch or
+         ~azure.mgmt.containerinstance.types.ContainerGroupProfilePatch or IO[bytes]
         :return: ContainerGroupProfile. The ContainerGroupProfile is compatible with MutableMapping
         :rtype: ~azure.mgmt.containerinstance.models.ContainerGroupProfile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4450,14 +4451,14 @@ class CGProfileOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SandboxGroupsOperations:
+class AiAgentsGroupsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.containerinstance.ContainerInstanceManagementClient`'s
-        :attr:`sandbox_groups` attribute.
+        :attr:`ai_agents_groups` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -4471,23 +4472,23 @@ class SandboxGroupsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-06-01-preview",
-        params_added_on={"2026-06-01-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2026-06-01-preview"],
+        method_added_on="2026-08-01-preview",
+        params_added_on={"2026-08-01-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-08-01-preview"],
     )
-    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.SandboxGroup"]:
-        """List SandboxGroup resources by subscription ID.
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.AiAgentsGroup"]:
+        """List AiAgentsGroup resources by subscription ID.
 
-        List SandboxGroup resources by subscription ID.
+        List AiAgentsGroup resources by subscription ID.
 
-        :return: An iterator like instance of SandboxGroup
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerinstance.models.SandboxGroup]
+        :return: An iterator like instance of AiAgentsGroup
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerinstance.models.AiAgentsGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.SandboxGroup]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.AiAgentsGroup]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4500,7 +4501,7 @@ class SandboxGroupsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_sandbox_groups_list_by_subscription_request(
+                _request = build_ai_agents_groups_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -4541,7 +4542,7 @@ class SandboxGroupsOperations:
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.SandboxGroup],
+                List[_models.AiAgentsGroup],
                 deserialized.get("value", []),
             )
             if cls:
@@ -4571,26 +4572,26 @@ class SandboxGroupsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-06-01-preview",
-        params_added_on={"2026-06-01-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2026-06-01-preview"],
+        method_added_on="2026-08-01-preview",
+        params_added_on={"2026-08-01-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-08-01-preview"],
     )
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.SandboxGroup"]:
-        """List SandboxGroup resources by resource group.
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.AiAgentsGroup"]:
+        """List AiAgentsGroup resources by resource group.
 
-        List SandboxGroup resources by resource group.
+        List AiAgentsGroup resources by resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :return: An iterator like instance of SandboxGroup
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerinstance.models.SandboxGroup]
+        :return: An iterator like instance of AiAgentsGroup
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerinstance.models.AiAgentsGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.SandboxGroup]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.AiAgentsGroup]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4603,7 +4604,7 @@ class SandboxGroupsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_sandbox_groups_list_by_resource_group_request(
+                _request = build_ai_agents_groups_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=self._config.api_version,
@@ -4645,7 +4646,7 @@ class SandboxGroupsOperations:
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.SandboxGroup],
+                List[_models.AiAgentsGroup],
                 deserialized.get("value", []),
             )
             if cls:
@@ -4675,30 +4676,30 @@ class SandboxGroupsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-06-01-preview",
+        method_added_on="2026-08-01-preview",
         params_added_on={
-            "2026-06-01-preview": [
+            "2026-08-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
-                "sandbox_group_name",
+                "ai_agents_group_name",
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-01-preview"],
+        api_versions_list=["2026-08-01-preview"],
     )
-    def get(self, resource_group_name: str, sandbox_group_name: str, **kwargs: Any) -> _models.SandboxGroup:
-        """Get a SandboxGroup.
+    def get(self, resource_group_name: str, ai_agents_group_name: str, **kwargs: Any) -> _models.AiAgentsGroup:
+        """Get an AiAgentsGroup.
 
-        Get a SandboxGroup.
+        Get an AiAgentsGroup.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param sandbox_group_name: The name of the SandboxGroup. Required.
-        :type sandbox_group_name: str
-        :return: SandboxGroup. The SandboxGroup is compatible with MutableMapping
-        :rtype: ~azure.mgmt.containerinstance.models.SandboxGroup
+        :param ai_agents_group_name: The name of the AiAgentsGroup. Required.
+        :type ai_agents_group_name: str
+        :return: AiAgentsGroup. The AiAgentsGroup is compatible with MutableMapping
+        :rtype: ~azure.mgmt.containerinstance.models.AiAgentsGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4712,11 +4713,11 @@ class SandboxGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.SandboxGroup] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AiAgentsGroup] = kwargs.pop("cls", None)
 
-        _request = build_sandbox_groups_get_request(
+        _request = build_ai_agents_groups_get_request(
             resource_group_name=resource_group_name,
-            sandbox_group_name=sandbox_group_name,
+            ai_agents_group_name=ai_agents_group_name,
             subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4751,7 +4752,7 @@ class SandboxGroupsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.SandboxGroup, response.json())
+            deserialized = _deserialize(_models.AiAgentsGroup, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4759,24 +4760,24 @@ class SandboxGroupsOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-06-01-preview",
+        method_added_on="2026-08-01-preview",
         params_added_on={
-            "2026-06-01-preview": [
+            "2026-08-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
-                "sandbox_group_name",
+                "ai_agents_group_name",
                 "content_type",
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-01-preview"],
+        api_versions_list=["2026-08-01-preview"],
     )
     def _create_or_update_initial(
         self,
         resource_group_name: str,
-        sandbox_group_name: str,
-        resource: Union[_models.SandboxGroup, JSON, IO[bytes]],
+        ai_agents_group_name: str,
+        resource: Union[_models.AiAgentsGroup, _types.AiAgentsGroup, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4800,9 +4801,9 @@ class SandboxGroupsOperations:
         else:
             _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_sandbox_groups_create_or_update_request(
+        _request = build_ai_agents_groups_create_or_update_request(
             resource_group_name=resource_group_name,
-            sandbox_group_name=sandbox_group_name,
+            ai_agents_group_name=ai_agents_group_name,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4853,29 +4854,29 @@ class SandboxGroupsOperations:
     def begin_create_or_update(
         self,
         resource_group_name: str,
-        sandbox_group_name: str,
-        resource: _models.SandboxGroup,
+        ai_agents_group_name: str,
+        resource: _models.AiAgentsGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.SandboxGroup]:
-        """Create a SandboxGroup.
+    ) -> LROPoller[_models.AiAgentsGroup]:
+        """Create an AiAgentsGroup.
 
-        Create a SandboxGroup.
+        Create an AiAgentsGroup.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param sandbox_group_name: The name of the SandboxGroup. Required.
-        :type sandbox_group_name: str
+        :param ai_agents_group_name: The name of the AiAgentsGroup. Required.
+        :type ai_agents_group_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.containerinstance.models.SandboxGroup
+        :type resource: ~azure.mgmt.containerinstance.models.AiAgentsGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns SandboxGroup. The SandboxGroup is compatible
+        :return: An instance of LROPoller that returns AiAgentsGroup. The AiAgentsGroup is compatible
          with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerinstance.models.SandboxGroup]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerinstance.models.AiAgentsGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4883,29 +4884,29 @@ class SandboxGroupsOperations:
     def begin_create_or_update(
         self,
         resource_group_name: str,
-        sandbox_group_name: str,
-        resource: JSON,
+        ai_agents_group_name: str,
+        resource: _types.AiAgentsGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.SandboxGroup]:
-        """Create a SandboxGroup.
+    ) -> LROPoller[_models.AiAgentsGroup]:
+        """Create an AiAgentsGroup.
 
-        Create a SandboxGroup.
+        Create an AiAgentsGroup.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param sandbox_group_name: The name of the SandboxGroup. Required.
-        :type sandbox_group_name: str
+        :param ai_agents_group_name: The name of the AiAgentsGroup. Required.
+        :type ai_agents_group_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.containerinstance.types.AiAgentsGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns SandboxGroup. The SandboxGroup is compatible
+        :return: An instance of LROPoller that returns AiAgentsGroup. The AiAgentsGroup is compatible
          with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerinstance.models.SandboxGroup]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerinstance.models.AiAgentsGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4913,83 +4914,84 @@ class SandboxGroupsOperations:
     def begin_create_or_update(
         self,
         resource_group_name: str,
-        sandbox_group_name: str,
+        ai_agents_group_name: str,
         resource: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.SandboxGroup]:
-        """Create a SandboxGroup.
+    ) -> LROPoller[_models.AiAgentsGroup]:
+        """Create an AiAgentsGroup.
 
-        Create a SandboxGroup.
+        Create an AiAgentsGroup.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param sandbox_group_name: The name of the SandboxGroup. Required.
-        :type sandbox_group_name: str
+        :param ai_agents_group_name: The name of the AiAgentsGroup. Required.
+        :type ai_agents_group_name: str
         :param resource: Resource create parameters. Required.
         :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns SandboxGroup. The SandboxGroup is compatible
+        :return: An instance of LROPoller that returns AiAgentsGroup. The AiAgentsGroup is compatible
          with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerinstance.models.SandboxGroup]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerinstance.models.AiAgentsGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-06-01-preview",
+        method_added_on="2026-08-01-preview",
         params_added_on={
-            "2026-06-01-preview": [
+            "2026-08-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
-                "sandbox_group_name",
+                "ai_agents_group_name",
                 "content_type",
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-01-preview"],
+        api_versions_list=["2026-08-01-preview"],
     )
     def begin_create_or_update(
         self,
         resource_group_name: str,
-        sandbox_group_name: str,
-        resource: Union[_models.SandboxGroup, JSON, IO[bytes]],
+        ai_agents_group_name: str,
+        resource: Union[_models.AiAgentsGroup, _types.AiAgentsGroup, IO[bytes]],
         **kwargs: Any
-    ) -> LROPoller[_models.SandboxGroup]:
-        """Create a SandboxGroup.
+    ) -> LROPoller[_models.AiAgentsGroup]:
+        """Create an AiAgentsGroup.
 
-        Create a SandboxGroup.
+        Create an AiAgentsGroup.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param sandbox_group_name: The name of the SandboxGroup. Required.
-        :type sandbox_group_name: str
-        :param resource: Resource create parameters. Is one of the following types: SandboxGroup, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.containerinstance.models.SandboxGroup or JSON or IO[bytes]
-        :return: An instance of LROPoller that returns SandboxGroup. The SandboxGroup is compatible
+        :param ai_agents_group_name: The name of the AiAgentsGroup. Required.
+        :type ai_agents_group_name: str
+        :param resource: Resource create parameters. Is either a AiAgentsGroup type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.containerinstance.models.AiAgentsGroup or
+         ~azure.mgmt.containerinstance.types.AiAgentsGroup or IO[bytes]
+        :return: An instance of LROPoller that returns AiAgentsGroup. The AiAgentsGroup is compatible
          with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerinstance.models.SandboxGroup]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerinstance.models.AiAgentsGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.SandboxGroup] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AiAgentsGroup] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
-                sandbox_group_name=sandbox_group_name,
+                ai_agents_group_name=ai_agents_group_name,
                 resource=resource,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -5002,7 +5004,7 @@ class SandboxGroupsOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = _deserialize(_models.SandboxGroup, response.json())
+            deserialized = _deserialize(_models.AiAgentsGroup, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -5020,35 +5022,35 @@ class SandboxGroupsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.SandboxGroup].from_continuation_token(
+            return LROPoller[_models.AiAgentsGroup].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.SandboxGroup](
+        return LROPoller[_models.AiAgentsGroup](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
     @api_version_validation(
-        method_added_on="2026-06-01-preview",
+        method_added_on="2026-08-01-preview",
         params_added_on={
-            "2026-06-01-preview": [
+            "2026-08-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
-                "sandbox_group_name",
+                "ai_agents_group_name",
                 "content_type",
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-01-preview"],
+        api_versions_list=["2026-08-01-preview"],
     )
     def _update_initial(
         self,
         resource_group_name: str,
-        sandbox_group_name: str,
-        properties: Union[_models.SandboxGroupTagsUpdate, JSON, IO[bytes]],
+        ai_agents_group_name: str,
+        properties: Union[_models.AiAgentsGroupTagsUpdate, _types.AiAgentsGroupTagsUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5072,9 +5074,9 @@ class SandboxGroupsOperations:
         else:
             _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_sandbox_groups_update_request(
+        _request = build_ai_agents_groups_update_request(
             resource_group_name=resource_group_name,
-            sandbox_group_name=sandbox_group_name,
+            ai_agents_group_name=ai_agents_group_name,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5123,29 +5125,29 @@ class SandboxGroupsOperations:
     def begin_update(
         self,
         resource_group_name: str,
-        sandbox_group_name: str,
-        properties: _models.SandboxGroupTagsUpdate,
+        ai_agents_group_name: str,
+        properties: _models.AiAgentsGroupTagsUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.SandboxGroup]:
-        """Update a SandboxGroup.
+    ) -> LROPoller[_models.AiAgentsGroup]:
+        """Update an AiAgentsGroup.
 
-        Update a SandboxGroup.
+        Update an AiAgentsGroup.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param sandbox_group_name: The name of the SandboxGroup. Required.
-        :type sandbox_group_name: str
+        :param ai_agents_group_name: The name of the AiAgentsGroup. Required.
+        :type ai_agents_group_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.containerinstance.models.SandboxGroupTagsUpdate
+        :type properties: ~azure.mgmt.containerinstance.models.AiAgentsGroupTagsUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns SandboxGroup. The SandboxGroup is compatible
+        :return: An instance of LROPoller that returns AiAgentsGroup. The AiAgentsGroup is compatible
          with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerinstance.models.SandboxGroup]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerinstance.models.AiAgentsGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -5153,29 +5155,29 @@ class SandboxGroupsOperations:
     def begin_update(
         self,
         resource_group_name: str,
-        sandbox_group_name: str,
-        properties: JSON,
+        ai_agents_group_name: str,
+        properties: _types.AiAgentsGroupTagsUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.SandboxGroup]:
-        """Update a SandboxGroup.
+    ) -> LROPoller[_models.AiAgentsGroup]:
+        """Update an AiAgentsGroup.
 
-        Update a SandboxGroup.
+        Update an AiAgentsGroup.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param sandbox_group_name: The name of the SandboxGroup. Required.
-        :type sandbox_group_name: str
+        :param ai_agents_group_name: The name of the AiAgentsGroup. Required.
+        :type ai_agents_group_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.containerinstance.types.AiAgentsGroupTagsUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns SandboxGroup. The SandboxGroup is compatible
+        :return: An instance of LROPoller that returns AiAgentsGroup. The AiAgentsGroup is compatible
          with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerinstance.models.SandboxGroup]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerinstance.models.AiAgentsGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -5183,84 +5185,84 @@ class SandboxGroupsOperations:
     def begin_update(
         self,
         resource_group_name: str,
-        sandbox_group_name: str,
+        ai_agents_group_name: str,
         properties: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.SandboxGroup]:
-        """Update a SandboxGroup.
+    ) -> LROPoller[_models.AiAgentsGroup]:
+        """Update an AiAgentsGroup.
 
-        Update a SandboxGroup.
+        Update an AiAgentsGroup.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param sandbox_group_name: The name of the SandboxGroup. Required.
-        :type sandbox_group_name: str
+        :param ai_agents_group_name: The name of the AiAgentsGroup. Required.
+        :type ai_agents_group_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns SandboxGroup. The SandboxGroup is compatible
+        :return: An instance of LROPoller that returns AiAgentsGroup. The AiAgentsGroup is compatible
          with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerinstance.models.SandboxGroup]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerinstance.models.AiAgentsGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-06-01-preview",
+        method_added_on="2026-08-01-preview",
         params_added_on={
-            "2026-06-01-preview": [
+            "2026-08-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
-                "sandbox_group_name",
+                "ai_agents_group_name",
                 "content_type",
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-01-preview"],
+        api_versions_list=["2026-08-01-preview"],
     )
     def begin_update(
         self,
         resource_group_name: str,
-        sandbox_group_name: str,
-        properties: Union[_models.SandboxGroupTagsUpdate, JSON, IO[bytes]],
+        ai_agents_group_name: str,
+        properties: Union[_models.AiAgentsGroupTagsUpdate, _types.AiAgentsGroupTagsUpdate, IO[bytes]],
         **kwargs: Any
-    ) -> LROPoller[_models.SandboxGroup]:
-        """Update a SandboxGroup.
+    ) -> LROPoller[_models.AiAgentsGroup]:
+        """Update an AiAgentsGroup.
 
-        Update a SandboxGroup.
+        Update an AiAgentsGroup.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param sandbox_group_name: The name of the SandboxGroup. Required.
-        :type sandbox_group_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         SandboxGroupTagsUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.containerinstance.models.SandboxGroupTagsUpdate or JSON or
-         IO[bytes]
-        :return: An instance of LROPoller that returns SandboxGroup. The SandboxGroup is compatible
+        :param ai_agents_group_name: The name of the AiAgentsGroup. Required.
+        :type ai_agents_group_name: str
+        :param properties: The resource properties to be updated. Is either a AiAgentsGroupTagsUpdate
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.containerinstance.models.AiAgentsGroupTagsUpdate or
+         ~azure.mgmt.containerinstance.types.AiAgentsGroupTagsUpdate or IO[bytes]
+        :return: An instance of LROPoller that returns AiAgentsGroup. The AiAgentsGroup is compatible
          with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerinstance.models.SandboxGroup]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerinstance.models.AiAgentsGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.SandboxGroup] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AiAgentsGroup] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
-                sandbox_group_name=sandbox_group_name,
+                ai_agents_group_name=ai_agents_group_name,
                 properties=properties,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -5273,7 +5275,7 @@ class SandboxGroupsOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = _deserialize(_models.SandboxGroup, response.json())
+            deserialized = _deserialize(_models.AiAgentsGroup, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -5291,24 +5293,24 @@ class SandboxGroupsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.SandboxGroup].from_continuation_token(
+            return LROPoller[_models.AiAgentsGroup].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.SandboxGroup](
+        return LROPoller[_models.AiAgentsGroup](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
     @api_version_validation(
-        method_added_on="2026-06-01-preview",
+        method_added_on="2026-08-01-preview",
         params_added_on={
-            "2026-06-01-preview": ["api_version", "subscription_id", "resource_group_name", "sandbox_group_name"]
+            "2026-08-01-preview": ["api_version", "subscription_id", "resource_group_name", "ai_agents_group_name"]
         },
-        api_versions_list=["2026-06-01-preview"],
+        api_versions_list=["2026-08-01-preview"],
     )
-    def _delete_initial(self, resource_group_name: str, sandbox_group_name: str, **kwargs: Any) -> Iterator[bytes]:
+    def _delete_initial(self, resource_group_name: str, ai_agents_group_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5322,9 +5324,9 @@ class SandboxGroupsOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_sandbox_groups_delete_request(
+        _request = build_ai_agents_groups_delete_request(
             resource_group_name=resource_group_name,
-            sandbox_group_name=sandbox_group_name,
+            ai_agents_group_name=ai_agents_group_name,
             subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5369,22 +5371,22 @@ class SandboxGroupsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-06-01-preview",
+        method_added_on="2026-08-01-preview",
         params_added_on={
-            "2026-06-01-preview": ["api_version", "subscription_id", "resource_group_name", "sandbox_group_name"]
+            "2026-08-01-preview": ["api_version", "subscription_id", "resource_group_name", "ai_agents_group_name"]
         },
-        api_versions_list=["2026-06-01-preview"],
+        api_versions_list=["2026-08-01-preview"],
     )
-    def begin_delete(self, resource_group_name: str, sandbox_group_name: str, **kwargs: Any) -> LROPoller[None]:
-        """Delete a SandboxGroup.
+    def begin_delete(self, resource_group_name: str, ai_agents_group_name: str, **kwargs: Any) -> LROPoller[None]:
+        """Delete an AiAgentsGroup.
 
-        Delete a SandboxGroup.
+        Delete an AiAgentsGroup.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param sandbox_group_name: The name of the SandboxGroup. Required.
-        :type sandbox_group_name: str
+        :param ai_agents_group_name: The name of the AiAgentsGroup. Required.
+        :type ai_agents_group_name: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5399,7 +5401,7 @@ class SandboxGroupsOperations:
         if cont_token is None:
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
-                sandbox_group_name=sandbox_group_name,
+                ai_agents_group_name=ai_agents_group_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -5435,32 +5437,33 @@ class SandboxGroupsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-06-01-preview",
+        method_added_on="2026-08-01-preview",
         params_added_on={
-            "2026-06-01-preview": [
+            "2026-08-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
-                "sandbox_group_name",
+                "ai_agents_group_name",
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-01-preview"],
+        api_versions_list=["2026-08-01-preview"],
     )
     def connect(
-        self, resource_group_name: str, sandbox_group_name: str, **kwargs: Any
-    ) -> _models.SandboxGroupAccessToken:
-        """Get an access token and endpoint for connecting to the SandboxGroup.
+        self, resource_group_name: str, ai_agents_group_name: str, **kwargs: Any
+    ) -> _models.AiAgentsGroupAccessToken:
+        """Get an access token and endpoint for connecting to the AiAgentsGroup.
 
-        Get an access token and endpoint for connecting to the SandboxGroup.
+        Get an access token and endpoint for connecting to the AiAgentsGroup.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param sandbox_group_name: The name of the SandboxGroup. Required.
-        :type sandbox_group_name: str
-        :return: SandboxGroupAccessToken. The SandboxGroupAccessToken is compatible with MutableMapping
-        :rtype: ~azure.mgmt.containerinstance.models.SandboxGroupAccessToken
+        :param ai_agents_group_name: The name of the AiAgentsGroup. Required.
+        :type ai_agents_group_name: str
+        :return: AiAgentsGroupAccessToken. The AiAgentsGroupAccessToken is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.containerinstance.models.AiAgentsGroupAccessToken
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5474,11 +5477,11 @@ class SandboxGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.SandboxGroupAccessToken] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AiAgentsGroupAccessToken] = kwargs.pop("cls", None)
 
-        _request = build_sandbox_groups_connect_request(
+        _request = build_ai_agents_groups_connect_request(
             resource_group_name=resource_group_name,
-            sandbox_group_name=sandbox_group_name,
+            ai_agents_group_name=ai_agents_group_name,
             subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5513,7 +5516,7 @@ class SandboxGroupsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.SandboxGroupAccessToken, response.json())
+            deserialized = _deserialize(_models.AiAgentsGroupAccessToken, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5672,7 +5675,7 @@ class ContainersOperations:
         resource_group_name: str,
         container_group_name: str,
         container_name: str,
-        container_exec_request: JSON,
+        container_exec_request: _types.ContainerExecRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5690,7 +5693,7 @@ class ContainersOperations:
         :param container_name: The name of the container instance. Required.
         :type container_name: str
         :param container_exec_request: The request for the exec command. Required.
-        :type container_exec_request: JSON
+        :type container_exec_request: ~azure.mgmt.containerinstance.types.ContainerExecRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5738,7 +5741,7 @@ class ContainersOperations:
         resource_group_name: str,
         container_group_name: str,
         container_name: str,
-        container_exec_request: Union[_models.ContainerExecRequest, JSON, IO[bytes]],
+        container_exec_request: Union[_models.ContainerExecRequest, _types.ContainerExecRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.ContainerExecResponse:
         """Executes a command in a specific container instance.
@@ -5753,10 +5756,10 @@ class ContainersOperations:
         :type container_group_name: str
         :param container_name: The name of the container instance. Required.
         :type container_name: str
-        :param container_exec_request: The request for the exec command. Is one of the following types:
-         ContainerExecRequest, JSON, IO[bytes] Required.
-        :type container_exec_request: ~azure.mgmt.containerinstance.models.ContainerExecRequest or JSON
-         or IO[bytes]
+        :param container_exec_request: The request for the exec command. Is either a
+         ContainerExecRequest type or a IO[bytes] type. Required.
+        :type container_exec_request: ~azure.mgmt.containerinstance.models.ContainerExecRequest or
+         ~azure.mgmt.containerinstance.types.ContainerExecRequest or IO[bytes]
         :return: ContainerExecResponse. The ContainerExecResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.containerinstance.models.ContainerExecResponse
         :raises ~azure.core.exceptions.HttpResponseError:
