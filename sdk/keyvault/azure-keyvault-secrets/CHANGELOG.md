@@ -1,5 +1,17 @@
 # Release History
 
+## 4.11.3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed challenge-based authentication to correctly parse the tenant ID from DSTSv2 authority URIs ([#45326](https://github.com/Azure/azure-sdk-for-python/issues/45326)).
+
+### Other Changes
+
 ## 4.11.2 (2026-08-25)
 
 ### Bugs Fixed
