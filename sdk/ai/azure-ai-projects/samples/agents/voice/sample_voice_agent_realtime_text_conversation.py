@@ -34,8 +34,8 @@ USAGE:
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - Foundry project endpoint:
        https://<account>.services.ai.azure.com/api/projects/<project>
-    2) FOUNDRY_VOICE_AGENT_MODEL - Optional. The realtime model deployment name.
-       Defaults to "gpt-realtime".
+    2) FOUNDRY_VOICE_AGENT_MODEL - Optional. The managed (service-hosted) realtime model
+       identifier. Defaults to "gpt-realtime".
     3) FOUNDRY_VOICE_AGENT_NAME - Optional. Name for the agent created by this
        sample. Defaults to "sample-realtime-text-conversation-agent".
 

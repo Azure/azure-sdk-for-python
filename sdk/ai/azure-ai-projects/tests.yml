@@ -9,16 +9,23 @@ extends:
       TestResourceDirectories:
         - ai/azure-ai-projects/
       # Scope this pipeline to only the Voice Agents realtime tests marked live_test_only (see
-      # tests/agents/test_voice_agent_realtime_livetest.py and its _async counterpart). The rest
-      # of azure-ai-projects' tests need additional resources/connections that test-resources.json
-      # does not provision (telephony phone numbers, fine-tuning jobs, hosted-agent container
-      # images, Bing/SharePoint/GitHub connections, ...), and some (telephony) place real phone
-      # calls, so they must not run unattended in this pipeline.
-      TestMarkArgument: 'live_test_only'
+      # tests/agents/test_voice_agent_realtime_livetest.py). The rest of azure-ai-projects' tests
+      # need additional resources/connections that test-resources.bicep does not provision
+      # (telephony phone numbers, fine-tuning jobs, hosted-agent container images, Bing/
+      # SharePoint/GitHub connections, ...), and some (telephony) place real phone calls, so they
+      # must not run unattended in this pipeline.
+      #
+      # The _async counterpart (test_voice_agent_realtime_livetest_async.py, marked
+      # live_test_only_async) is intentionally excluded: azure-core's aiohttp transport does not
+      # decompress Brotli (Content-Encoding: br) responses as of azure-core 1.41.0, and the
+      # Foundry service responds with br-encoded bodies, which breaks these async tests. Remove
+      # "and not live_test_only_async" below once azure-core adds Brotli support (or another
+      # workaround is adopted) and the async tests are verified to pass unattended in CI.
+      TestMarkArgument: 'live_test_only and not live_test_only_async'
       EnvVars:
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_SKIP_LIVE_RECORDING: 'true'
-        # test-resources.json provisions the Foundry account/project but not a model deployment
-        # (see tests/README.md); set this pipeline variable to a realtime-capable deployment name
-        # (e.g. "gpt-realtime") created in that project.
+        # The live tests use a service-hosted realtime model (VoiceModelType.MANAGED), which
+        # requires no project deployment. Set this pipeline variable to a managed model
+        # identifier (e.g. "gpt-realtime"); see tests/README.md.
         FOUNDRY_VOICE_AGENT_MODEL: $(FoundryVoiceAgentModel)

@@ -24,8 +24,8 @@ USAGE:
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
-    2) FOUNDRY_VOICE_AGENT_MODEL - Optional. The realtime model deployment name.
-       Defaults to "gpt-realtime".
+    2) FOUNDRY_VOICE_AGENT_MODEL - Optional. The managed (service-hosted) realtime model
+       identifier. Defaults to "gpt-realtime".
     3) FOUNDRY_VOICE_AGENT_NAME - Optional. Name for the sample voice agent
        created and deleted by this script. Defaults to
        "sample-voice-agent-function-tool".

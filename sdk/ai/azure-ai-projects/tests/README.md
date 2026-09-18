@@ -26,31 +26,41 @@ az login
 Most tests target a manually-configured Foundry project. The Voice Agents realtime live tests
 (`tests\agents\test_voice_agent_realtime_livetest*.py`, and `test_voice_agent_*.py` under
 `tests\agents\`) can instead have their Foundry account/project provisioned automatically using
-`test-resources.json` (located in the above folder) and the
+`test-resources.bicep` (located in the above folder) and the
 [test resource scripts](https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources),
 e.g.:
 
 ```powershell
-../../eng/common/TestResources/New-TestResources.ps1 -ServiceDirectory ai
+../../../eng/common/TestResources/New-TestResources.ps1 -ServiceDirectory ai
 ```
 
 This provisions a Cognitive Services `AIServices` account with a default project and grants the
 test principal the built-in *Foundry User* role, then prints `FOUNDRY_PROJECT_ENDPOINT` and
-`FOUNDRY_PROJECT_API_KEY` values to add to your `.env` file. A realtime-capable voice model (for
-example `gpt-realtime`) still needs to be deployed to the project manually -- its deployment name
-goes in `FOUNDRY_VOICE_AGENT_MODEL` -- since model deployment isn't automated by this template.
+`FOUNDRY_PROJECT_API_KEY` values to add to your `.env` file. The live tests use a service-hosted
+realtime model (`VoiceModelType.MANAGED`), so no project deployment is needed -- set
+`FOUNDRY_VOICE_AGENT_MODEL` to a managed model identifier such as `gpt-realtime` (see
+`azure.ai.projects.models.VoiceModelType` for the managed-vs-self-deployed distinction).
 
 ## Live-test CI pipeline
 
-`tests.yml` (in this package's root directory) wires the same `test-resources.json` into an
+`tests.yml` (in this package's root directory) wires the same `test-resources.bicep` into an
 Azure Pipelines live-test stage (`archetype-sdk-tests.yml`), scoped to `azure-ai-projects` and
-filtered to only the tests marked `@pytest.mark.live_test_only` (currently just
-`tests/agents/test_voice_agent_realtime_livetest.py`/`_async.py`). The rest of the package's
-tests aren't included, since they depend on additional resources/connections this template
-doesn't provision (telephony phone numbers, fine-tuning jobs, hosted-agent images, Bing/
-SharePoint/GitHub connections, ...), and some (telephony) place real phone calls. As with any new
-`tests.yml`, an actual Azure DevOps pipeline definition pointing at this file still needs to be
-created by the engineering-systems team before it runs in CI.
+filtered to only the tests marked `@pytest.mark.live_test_only`
+(`tests/agents/test_voice_agent_realtime_livetest.py`). The rest of the package's tests aren't
+included, since they depend on additional resources/connections this template doesn't provision
+(telephony phone numbers, fine-tuning jobs, hosted-agent images, Bing/SharePoint/GitHub
+connections, ...), and some (telephony) place real phone calls. As with any new `tests.yml`, an
+actual Azure DevOps pipeline definition pointing at this file still needs to be created by the
+engineering-systems team before it runs in CI.
+
+The async counterpart (`test_voice_agent_realtime_livetest_async.py`, marked
+`@pytest.mark.live_test_only_async`) is deliberately excluded from this pipeline for now:
+azure-core's aiohttp transport doesn't decompress Brotli (`Content-Encoding: br`) responses as of
+azure-core 1.41.0, and the Foundry service responds with `br`-encoded bodies, which breaks these
+async tests in CI. They can still be run locally against an environment with a Brotli-capable
+aiohttp body helper. Once azure-core adds Brotli support (or another workaround is adopted) and
+the async tests are verified to pass unattended, update `tests.yml`'s `TestMarkArgument` to
+include them again.
 
 ## Setup up environment variables
 

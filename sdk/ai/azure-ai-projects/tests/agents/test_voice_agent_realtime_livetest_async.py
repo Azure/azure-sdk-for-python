@@ -60,6 +60,7 @@ def _get_weather(city: str) -> str:
 
 
 @pytest.mark.live_test_only
+@pytest.mark.live_test_only_async
 @pytest.mark.skipif(
     not is_live(),
     reason="Live-only: opens a real WebSocket connection to the realtime service, which cannot "

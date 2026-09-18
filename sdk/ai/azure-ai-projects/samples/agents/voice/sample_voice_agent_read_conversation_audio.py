@@ -48,8 +48,8 @@ USAGE:
        voice_sample_util.py in this folder and
        sample_voice_agent_realtime_text_conversation.py for a full interactive
        version.
-    4) FOUNDRY_VOICE_AGENT_MODEL - Optional. The realtime model deployment name,
-       used only when creating the temporary agent. Defaults to "gpt-realtime".
+    4) FOUNDRY_VOICE_AGENT_MODEL - Optional. The managed (service-hosted) realtime model
+       identifier, used only when creating the temporary agent. Defaults to "gpt-realtime".
 """
 
 import os
