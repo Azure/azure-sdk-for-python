@@ -45,12 +45,11 @@ class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPRespons
 
     DEFAULT_SENSITIVE_HEADERS = set(
         [
-            [
-        "Authorization",
-        "x-ms-authorization-auxiliary",
-        "api-key",
-        "Ocp-Apim-Subscription-Key",
-    ]        ]
+            "Authorization",
+            "x-ms-authorization-auxiliary",
+            "api-key",
+            "Ocp-Apim-Subscription-Key",
+        ]
     )
 
     def __init__(
