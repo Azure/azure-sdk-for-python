@@ -1,0 +1,24 @@
+trigger: none
+
+extends:
+    template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      ServiceDirectory: ai
+      BuildTargetingString: 'azure-ai-projects'
+      JobName: VoiceAgentsRealtime
+      TestResourceDirectories:
+        - ai/azure-ai-projects/
+      # Scope this pipeline to only the Voice Agents realtime tests marked live_test_only (see
+      # tests/agents/test_voice_agent_realtime_livetest.py and its _async counterpart). The rest
+      # of azure-ai-projects' tests need additional resources/connections that test-resources.json
+      # does not provision (telephony phone numbers, fine-tuning jobs, hosted-agent container
+      # images, Bing/SharePoint/GitHub connections, ...), and some (telephony) place real phone
+      # calls, so they must not run unattended in this pipeline.
+      TestMarkArgument: 'live_test_only'
+      EnvVars:
+        AZURE_TEST_RUN_LIVE: 'true'
+        AZURE_SKIP_LIVE_RECORDING: 'true'
+        # test-resources.json provisions the Foundry account/project but not a model deployment
+        # (see tests/README.md); set this pipeline variable to a realtime-capable deployment name
+        # (e.g. "gpt-realtime") created in that project.
+        FOUNDRY_VOICE_MODEL_NAME: $(FoundryVoiceModelName)

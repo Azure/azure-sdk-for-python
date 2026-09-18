@@ -40,6 +40,18 @@ test principal the built-in *Foundry User* role, then prints `FOUNDRY_PROJECT_EN
 example `gpt-realtime`) still needs to be deployed to the project manually -- its deployment name
 goes in `FOUNDRY_VOICE_MODEL_NAME` -- since model deployment isn't automated by this template.
 
+## Live-test CI pipeline
+
+`tests.yml` (in this package's root directory) wires the same `test-resources.json` into an
+Azure Pipelines live-test stage (`archetype-sdk-tests.yml`), scoped to `azure-ai-projects` and
+filtered to only the tests marked `@pytest.mark.live_test_only` (currently just
+`tests/agents/test_voice_agent_realtime_livetest.py`/`_async.py`). The rest of the package's
+tests aren't included, since they depend on additional resources/connections this template
+doesn't provision (telephony phone numbers, fine-tuning jobs, hosted-agent images, Bing/
+SharePoint/GitHub connections, ...), and some (telephony) place real phone calls. As with any new
+`tests.yml`, an actual Azure DevOps pipeline definition pointing at this file still needs to be
+created by the engineering-systems team before it runs in CI.
+
 ## Setup up environment variables
 
 Copy the file `.env.template` (located in the above folder), and save it as file named `.env`.
