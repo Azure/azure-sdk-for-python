@@ -31,6 +31,7 @@ class BreakingChangeType(str, Enum):
     REMOVED_OR_RENAMED_MODULE = "RemovedOrRenamedModule"
     REMOVED_FUNCTION_KWARGS = "RemovedFunctionKwargs"
     REMOVED_OR_RENAMED_OPERATION_GROUP = "RemovedOrRenamedOperationGroup"
+    REQUIRED_PROPERTY = "RequiredProperty"
 
 
 class BreakingChangesTracker:
@@ -90,6 +91,7 @@ class BreakingChangesTracker:
         "Function `{}` changed from accepting keyword arguments to not accepting them"
     REMOVED_OR_RENAMED_OPERATION_GROUP_MSG = \
         "Deleted or renamed client operation group `{}.{}`"
+    REQUIRED_PROPERTY_MSG = "`{}.{}` is now required."
 
     def __init__(self, stable: Dict, current: Dict, package_name: str, **kwargs: Any) -> None:
         self.stable = stable
@@ -259,6 +261,7 @@ class BreakingChangesTracker:
             if class_deleted:
                 continue  # class was deleted, abort other checks
             self.check_class_instance_attribute_removed_or_renamed(class_components)
+            self.check_property_required(class_components)
 
             for method_name, method_components in class_components.get("methods", {}).items():
                 self._function_name = method_name
@@ -659,6 +662,28 @@ class BreakingChangesTracker:
             if bc:
                 self.breaking_changes.append(bc)
 
+    def check_property_required(self, components: Dict) -> None:
+        for key, value in components.get("properties", {}).items():
+            if not isinstance(value, dict):
+                continue
+            stable_type = self.stable[self._module_name]["class_nodes"][self._class_name]["properties"].get(key, {}).get("attr_type")
+            current_type = value.get("attr_type")
+
+            if (
+                isinstance(stable_type, str)
+                and stable_type.startswith("Optional[")
+                and isinstance(current_type, str)
+                and not current_type.startswith("Optional[")
+            ):
+                bc = (
+                    self.REQUIRED_PROPERTY_MSG,
+                    BreakingChangeType.REQUIRED_PROPERTY,
+                    self._module_name,
+                    self._class_name,
+                    key,
+                )
+                self.breaking_changes.append(bc)
+
     def check_class_removed_or_renamed(self, class_components: Dict) -> Union[bool, None]:
         if isinstance(self._class_name, jsondiff.Symbol):
             deleted_classes = []
@@ -767,6 +792,11 @@ class BreakingChangesTracker:
 
             should_keep = True
             for suppression in suppressions:
+                if (
+                    bc_type == "AddedClassMethod"
+                    and self.is_operation_group(module_name, class_name)
+                ):
+                    continue
                 if suppression.parameter_or_property_name is not None:
                     # If the ignore rule is for a property or parameter, we should check up to that level on the original change
                     if self.match((bc_type, module_name, class_name, function_name, parameter_name), suppression):
