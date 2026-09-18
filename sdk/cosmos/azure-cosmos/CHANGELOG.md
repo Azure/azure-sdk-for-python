@@ -5,6 +5,8 @@
 ### 4.17.2 (Unreleased)
 
 #### Features Added
+* Added **provisional** support for consuming previous item images returned by `AllVersionsAndDeletes` change feed.
+  This **preview feature** requires service-side opt-in. See [PR 49063](https://github.com/Azure/azure-sdk-for-python/pull/49063).
 
 #### Breaking Changes
 
