@@ -616,9 +616,9 @@ class TestMessagesOrQueryResponseInputValidator:
 # ``ToolCallsValidator`` inherit that narrowed default, so TCS and TOU
 # accept those tool calls.
 #
-# ``GroundednessConversationValidator`` keeps the wider list -- Groundedness
-# still rejects those three tools pending a context-extractor helper that
-# can derive a grounding ``context`` from structured ``tool_result`` payloads.
+# ``GroundednessConversationValidator`` now narrows further and allows
+# ``bing_grounding``, ``bing_custom_search``, and ``openapi_call`` while
+# preserving stricter guardrails only for the remaining unsupported families.
 
 NEWLY_ENABLED_TOOLS = [
     "azure_ai_search",
@@ -633,6 +633,19 @@ STILL_UNSUPPORTED_TOOLS = [
     "code_interpreter_call",
     "computer_call",
     "openapi_call",
+    "web_search",
+]
+
+GROUNDEDNESS_NEWLY_ENABLED_TOOLS = [
+    "bing_grounding",
+    "bing_custom_search",
+    "openapi_call",
+]
+
+GROUNDEDNESS_STILL_UNSUPPORTED_TOOLS = [
+    "browser_automation",
+    "code_interpreter_call",
+    "computer_call",
     "web_search",
 ]
 
@@ -661,23 +674,30 @@ class TestUnsupportedToolsListConversationValidator:
 
 @pytest.mark.unittest
 class TestUnsupportedToolsListGroundednessValidator:
-    """Groundedness keeps the wider list via its dedicated subclass."""
+    """Groundedness keeps a dedicated but narrower unsupported-tools list."""
 
-    def test_full_unsupported_list_contains_newly_enabled_tools(self):
-        for tool_name in NEWLY_ENABLED_TOOLS:
+    def test_groundedness_unsupported_list_does_not_include_newly_enabled_tools(self):
+        for tool_name in NEWLY_ENABLED_TOOLS + GROUNDEDNESS_NEWLY_ENABLED_TOOLS:
+            assert tool_name not in GroundednessConversationValidator.UNSUPPORTED_TOOLS
+
+    def test_groundedness_unsupported_list_contains_still_unsupported_tools(self):
+        for tool_name in GROUNDEDNESS_STILL_UNSUPPORTED_TOOLS:
             assert tool_name in GroundednessConversationValidator.UNSUPPORTED_TOOLS
 
-    def test_full_unsupported_list_contains_still_unsupported_tools(self):
-        for tool_name in STILL_UNSUPPORTED_TOOLS:
-            assert tool_name in GroundednessConversationValidator.UNSUPPORTED_TOOLS
+    def test_groundedness_unsupported_list_exact_match(self):
+        assert set(GroundednessConversationValidator.UNSUPPORTED_TOOLS) == set(GROUNDEDNESS_STILL_UNSUPPORTED_TOOLS)
 
-    def test_full_unsupported_list_exact_match(self):
-        assert set(GroundednessConversationValidator.UNSUPPORTED_TOOLS) == set(
-            NEWLY_ENABLED_TOOLS + STILL_UNSUPPORTED_TOOLS
-        )
+    @pytest.mark.parametrize("tool_name", NEWLY_ENABLED_TOOLS + GROUNDEDNESS_NEWLY_ENABLED_TOOLS)
+    def test_groundedness_validator_accepts_newly_enabled_tools(self, tool_name):
+        validator = GroundednessConversationValidator(error_target=TARGET, check_for_unsupported_tools=True)
+        assistant = {
+            "role": "assistant",
+            "content": [_tool_call_content_item(name=tool_name)],
+        }
+        assert validator.validate_eval_input({"query": [_user_message()], "response": [assistant]}) is True
 
-    @pytest.mark.parametrize("tool_name", NEWLY_ENABLED_TOOLS)
-    def test_groundedness_validator_still_rejects_newly_enabled_tools(self, tool_name):
+    @pytest.mark.parametrize("tool_name", GROUNDEDNESS_STILL_UNSUPPORTED_TOOLS)
+    def test_groundedness_validator_rejects_still_unsupported_tools(self, tool_name):
         validator = GroundednessConversationValidator(error_target=TARGET, check_for_unsupported_tools=True)
         assistant = {
             "role": "assistant",
