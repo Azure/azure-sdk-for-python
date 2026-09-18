@@ -25,7 +25,7 @@ class TestNetworkManagementExpressRouteCrossConnectionsOperationsAsync(AzureMgmt
         response = await self.client.express_route_cross_connections.get(
             resource_group_name=resource_group.name,
             cross_connection_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -117,7 +117,7 @@ class TestNetworkManagementExpressRouteCrossConnectionsOperationsAsync(AzureMgmt
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -131,7 +131,7 @@ class TestNetworkManagementExpressRouteCrossConnectionsOperationsAsync(AzureMgmt
             resource_group_name=resource_group.name,
             cross_connection_name="str",
             cross_connection_parameters={"tags": {"str": "str"}},
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -142,7 +142,7 @@ class TestNetworkManagementExpressRouteCrossConnectionsOperationsAsync(AzureMgmt
     async def test_express_route_cross_connections_list_by_resource_group(self, resource_group):
         response = self.client.express_route_cross_connections.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -152,7 +152,7 @@ class TestNetworkManagementExpressRouteCrossConnectionsOperationsAsync(AzureMgmt
     @recorded_by_proxy_async
     async def test_express_route_cross_connections_list(self, resource_group):
         response = self.client.express_route_cross_connections.list(
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -167,7 +167,7 @@ class TestNetworkManagementExpressRouteCrossConnectionsOperationsAsync(AzureMgmt
                 cross_connection_name="str",
                 peering_name="str",
                 device_path="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -183,7 +183,7 @@ class TestNetworkManagementExpressRouteCrossConnectionsOperationsAsync(AzureMgmt
                 cross_connection_name="str",
                 peering_name="str",
                 device_path="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -199,7 +199,157 @@ class TestNetworkManagementExpressRouteCrossConnectionsOperationsAsync(AzureMgmt
                 cross_connection_name="str",
                 peering_name="str",
                 device_path="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_express_route_cross_connections_begin_validate_circuit_migration(self, resource_group):
+        response = await (
+            await self.client.express_route_cross_connections.begin_validate_circuit_migration(
+                resource_group_name=resource_group.name,
+                cross_connection_name="str",
+                parameters={
+                    "targetPeeringLocation": "str",
+                    "targetPortMapping": [{"sourcePortId": "str", "targetPortId": "str"}],
+                },
+                api_version="2026-01-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_express_route_cross_connections_begin_get_circuit_migration_info(self, resource_group):
+        response = await (
+            await self.client.express_route_cross_connections.begin_get_circuit_migration_info(
+                resource_group_name=resource_group.name,
+                cross_connection_name="str",
+                parameters={
+                    "targetPeeringLocation": "str",
+                    "targetPortMapping": [{"sourcePortId": "str", "targetPortId": "str"}],
+                },
+                api_version="2026-01-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_express_route_cross_connections_begin_prepare_circuit_migration(self, resource_group):
+        response = await (
+            await self.client.express_route_cross_connections.begin_prepare_circuit_migration(
+                resource_group_name=resource_group.name,
+                cross_connection_name="str",
+                parameters={
+                    "portId": "str",
+                    "targetPeeringLocation": "str",
+                    "targetPortMapping": [{"sourcePortId": "str", "targetPortId": "str"}],
+                },
+                api_version="2026-01-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_express_route_cross_connections_begin_shut_down_bgp_for_circuit_migration(self, resource_group):
+        response = await (
+            await self.client.express_route_cross_connections.begin_shut_down_bgp_for_circuit_migration(
+                resource_group_name=resource_group.name,
+                cross_connection_name="str",
+                parameters={
+                    "portId": "str",
+                    "targetPeeringLocation": "str",
+                    "targetPortMapping": [{"sourcePortId": "str", "targetPortId": "str"}],
+                },
+                api_version="2026-01-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_express_route_cross_connections_begin_restore_bgp_for_circuit_migration(self, resource_group):
+        response = await (
+            await self.client.express_route_cross_connections.begin_restore_bgp_for_circuit_migration(
+                resource_group_name=resource_group.name,
+                cross_connection_name="str",
+                parameters={
+                    "portId": "str",
+                    "targetPeeringLocation": "str",
+                    "targetPortMapping": [{"sourcePortId": "str", "targetPortId": "str"}],
+                },
+                api_version="2026-01-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_express_route_cross_connections_begin_migrate_circuit(self, resource_group):
+        response = await (
+            await self.client.express_route_cross_connections.begin_migrate_circuit(
+                resource_group_name=resource_group.name,
+                cross_connection_name="str",
+                parameters={
+                    "portId": "str",
+                    "targetPeeringLocation": "str",
+                    "targetPortMapping": [{"sourcePortId": "str", "targetPortId": "str"}],
+                },
+                api_version="2026-01-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_express_route_cross_connections_begin_commit_circuit_migration(self, resource_group):
+        response = await (
+            await self.client.express_route_cross_connections.begin_commit_circuit_migration(
+                resource_group_name=resource_group.name,
+                cross_connection_name="str",
+                parameters={
+                    "portId": "str",
+                    "targetPeeringLocation": "str",
+                    "targetPortMapping": [{"sourcePortId": "str", "targetPortId": "str"}],
+                },
+                api_version="2026-01-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_express_route_cross_connections_begin_rollback_circuit_migration(self, resource_group):
+        response = await (
+            await self.client.express_route_cross_connections.begin_rollback_circuit_migration(
+                resource_group_name=resource_group.name,
+                cross_connection_name="str",
+                parameters={
+                    "portId": "str",
+                    "targetPeeringLocation": "str",
+                    "targetPortMapping": [{"sourcePortId": "str", "targetPortId": "str"}],
+                },
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
