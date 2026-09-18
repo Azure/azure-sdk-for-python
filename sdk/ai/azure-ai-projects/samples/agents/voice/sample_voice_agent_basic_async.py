@@ -45,6 +45,7 @@ async def main() -> None:
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     ):
+        created_version = None
         try:
             created_version = await project_client.agents.create_version(
                 agent_name=agent_name,
@@ -65,8 +66,9 @@ async def main() -> None:
             async for item in project_client.agents.list(kind=AgentKind.VOICE):
                 print(f"  - {item.name}")
         finally:
-            await project_client.agents.delete(agent_name=agent_name)
-            print(f"Deleted voice agent: {agent_name}")
+            if created_version is not None:
+                await project_client.agents.delete_version(agent_name=agent_name, agent_version=created_version.version)
+                print(f"Deleted voice agent version: {created_version.version}")
 
 
 if __name__ == "__main__":

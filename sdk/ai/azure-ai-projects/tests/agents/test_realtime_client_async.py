@@ -21,7 +21,7 @@ from urllib.parse import parse_qs, urlparse
 import pytest
 from azure.core.credentials import AccessToken
 
-from azure.ai.projects.aio._realtime import AsyncBetaRealtimeConnectionManager, _USER_AGENT
+from azure.ai.projects.aio._realtime import AsyncBetaRealtime, AsyncBetaRealtimeConnectionManager, _USER_AGENT
 from azure.ai.projects._version import VERSION
 from azure.ai.projects.models import (
     RealtimeClientEventResponseCreate,
@@ -41,6 +41,16 @@ class _AsyncFakeCredential:
 
     async def get_token(self, *args, **kwargs) -> AccessToken:  # pylint: disable=unused-argument
         return AccessToken(self._token, 9_999_999_999)
+
+
+async def test_async_realtime_constructor_hides_config_in_kwargs():
+    config = MagicMock()
+    client = MagicMock(_config=config)
+
+    realtime = AsyncBetaRealtime(client)
+
+    assert realtime._config is config
+    assert tuple(inspect.signature(AsyncBetaRealtime.__init__).parameters) == ("self", "args", "kwargs")
 
 
 def _make_manager(**overrides) -> AsyncBetaRealtimeConnectionManager:

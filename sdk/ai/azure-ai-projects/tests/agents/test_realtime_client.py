@@ -23,6 +23,7 @@ from azure.core.credentials import AccessToken
 from websockets.typing import Subprotocol
 
 from azure.ai.projects._realtime import (
+    BetaRealtime,
     BetaRealtimeConnectionManager,
     _assert_trusted_connection_url,
     _to_ws_url,
@@ -45,6 +46,16 @@ class _FakeCredential:
 
     def get_token(self, *args, **kwargs) -> AccessToken:  # pylint: disable=unused-argument
         return AccessToken(self._token, 9_999_999_999)
+
+
+def test_realtime_constructor_hides_config_in_kwargs():
+    config = MagicMock()
+    client = MagicMock(_config=config)
+
+    realtime = BetaRealtime(client)
+
+    assert realtime._config is config
+    assert tuple(inspect.signature(BetaRealtime.__init__).parameters) == ("self", "args", "kwargs")
 
 
 def _make_manager(**overrides) -> BetaRealtimeConnectionManager:
@@ -445,9 +456,7 @@ class TestRealtimeConnectionSend:
 
 def test_realtime_logging_emits_metadata_without_sensitive_content(caplog):
     fake_connection = MagicMock()
-    fake_connection.recv.return_value = json.dumps(
-        {"type": "some.new.event", "text": "secret-inbound-content"}
-    )
+    fake_connection.recv.return_value = json.dumps({"type": "some.new.event", "text": "secret-inbound-content"})
     connection_url = "wss://my-account.services.ai.azure.com/custom?sig=secret-query"
 
     caplog.set_level(logging.DEBUG, logger="azure.ai.projects._realtime")

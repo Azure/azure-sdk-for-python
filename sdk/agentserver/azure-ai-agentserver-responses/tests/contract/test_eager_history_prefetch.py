@@ -13,6 +13,7 @@ The fetched IDs are cached and reused by
 from __future__ import annotations
 
 from typing import Any
+from unittest.mock import AsyncMock
 
 import pytest
 from starlette.testclient import TestClient
@@ -219,6 +220,71 @@ class TestEagerHistoryPrefetchReuse:
         assert call_count == 1, (
             f"Expected get_history_item_ids to be called once (eager), " f"but called {call_count} times"
         )
+
+    @pytest.mark.parametrize("history_ids", [[], ["history_item"]])
+    @pytest.mark.parametrize("background", [False, True])
+    def test_stored_stream_reuses_request_local_prefetch(
+        self, monkeypatch: pytest.MonkeyPatch, history_ids: list[str], background: bool
+    ) -> None:
+        provider = InMemoryResponseProvider()
+        history = AsyncMock(return_value=history_ids)
+        create = AsyncMock(wraps=provider.create_response)
+        monkeypatch.setattr(provider, "get_history_item_ids", history)
+        monkeypatch.setattr(provider, "create_response", create)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
+        app.response_handler(_simple_handler)
+        client = TestClient(app)
+        previous = IdGenerator.new_response_id()
+        for user in ("user-one", "user-two"):
+            response = client.post(
+                "/responses",
+                json={
+                    "model": "m",
+                    "input": "hi",
+                    "previous_response_id": previous,
+                    "store": True,
+                    "stream": True,
+                    "background": background,
+                },
+                headers={"x-agent-user-id": user},
+            )
+            assert response.status_code == 200
+            assert "response.completed" in response.text
+            history.assert_awaited_once()
+            assert history.await_args.kwargs["context"].user_id_key == user
+            assert create.await_args.args[2] == history_ids
+            history.reset_mock()
+            create.reset_mock()
+
+    def test_missing_stream_reference_fails_before_handler(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        provider = InMemoryResponseProvider()
+        history = AsyncMock(side_effect=FoundryResourceNotFoundError("missing reference"))
+        create = AsyncMock()
+        handler_called = False
+
+        async def handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
+            nonlocal handler_called
+            handler_called = True
+            return await _simple_handler(request, context, cancellation_signal)
+
+        monkeypatch.setattr(provider, "get_history_item_ids", history)
+        monkeypatch.setattr(provider, "create_response", create)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
+        app.response_handler(handler)
+        response = TestClient(app).post(
+            "/responses",
+            json={
+                "model": "m",
+                "input": "hi",
+                "previous_response_id": IdGenerator.new_response_id(),
+                "store": True,
+                "stream": True,
+            },
+        )
+        assert response.status_code == 404
+        history.assert_awaited_once()
+        assert not handler_called
+        create.assert_not_awaited()
 
 
 class TestEagerHistoryPrefetchSkipped:

@@ -6,11 +6,11 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 ## Summary
 
-There are a total of 187 unique public methods:
+There are a total of 188 unique public methods:
 
 - 5 stable methods on the client
 - 59 stable methods on top-level sub-clients
-- 123 beta methods on nested beta sub-clients
+- 124 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 

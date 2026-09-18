@@ -26,7 +26,7 @@ class TestNetworkManagementFirewallPolicyKubeSelectorGroupsOperationsAsync(Azure
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
             kube_selector_group_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestNetworkManagementFirewallPolicyKubeSelectorGroupsOperationsAsync(Azure
                     },
                     "type": "str",
                 },
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -72,7 +72,7 @@ class TestNetworkManagementFirewallPolicyKubeSelectorGroupsOperationsAsync(Azure
                 resource_group_name=resource_group.name,
                 firewall_policy_name="str",
                 kube_selector_group_name="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -85,7 +85,7 @@ class TestNetworkManagementFirewallPolicyKubeSelectorGroupsOperationsAsync(Azure
         response = self.client.firewall_policy_kube_selector_groups.list(
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

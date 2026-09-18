@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+
 from typing import TYPE_CHECKING, Iterator, cast
 
 from ... import models as response_models
@@ -64,7 +65,7 @@ class ReasoningSummaryPartBuilder:
             raise ValueError(f"cannot call emit_added in '{self._lifecycle_state.value}' state")
         self._lifecycle_state = BuilderLifecycleState.ADDED
         return cast(
-            response_models.ResponseReasoningSummaryPartAddedEvent,
+            "response_models.ResponseReasoningSummaryPartAddedEvent",
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": "response.reasoning_summary_part.added",
@@ -85,7 +86,7 @@ class ReasoningSummaryPartBuilder:
         :rtype: ResponseReasoningSummaryTextDeltaEvent
         """
         return cast(
-            response_models.ResponseReasoningSummaryTextDeltaEvent,
+            "response_models.ResponseReasoningSummaryTextDeltaEvent",
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": "response.reasoning_summary_text.delta",
@@ -107,7 +108,7 @@ class ReasoningSummaryPartBuilder:
         """
         self._final_text = final_text
         return cast(
-            response_models.ResponseReasoningSummaryTextDoneEvent,
+            "response_models.ResponseReasoningSummaryTextDoneEvent",
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": "response.reasoning_summary_text.done",
@@ -130,7 +131,7 @@ class ReasoningSummaryPartBuilder:
             raise ValueError(f"cannot call emit_done in '{self._lifecycle_state.value}' state")
         self._lifecycle_state = BuilderLifecycleState.DONE
         return cast(
-            response_models.ResponseReasoningSummaryPartDoneEvent,
+            "response_models.ResponseReasoningSummaryPartDoneEvent",
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": "response.reasoning_summary_part.done",

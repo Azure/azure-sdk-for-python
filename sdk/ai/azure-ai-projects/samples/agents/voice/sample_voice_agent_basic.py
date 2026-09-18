@@ -7,10 +7,8 @@
 """
 DESCRIPTION:
     This sample demonstrates the voice-agent management lifecycle using the
-    unified Agents API in the Microsoft Foundry Python SDK (azure-ai-projects):
-    creating a voice agent (with an audio/voice configuration and conversation
-    storage enabled), retrieving it, listing the voice agents in the project,
-    creating a new version, disabling/enabling it, and deleting it.
+    synchronous AIProjectClient: creating a voice agent, retrieving it,
+    listing the voice agents in the project, and deleting it.
 
     Voice agents are exposed through `project_client.agents` with
     `kind="voice"`, the same surface used for prompt, workflow, hosted, and
@@ -56,6 +54,7 @@ with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
 ):
+    created_versions = []
     try:
         definition = VoiceAgentDefinition(
             # `managed` uses a service-hosted model; use `self_deployed` with a Foundry
@@ -73,6 +72,7 @@ with (
         )
 
         created_version = project_client.agents.create_version(agent_name=agent_name, definition=definition)
+        created_versions.append(created_version)
         print(f"Created voice agent '{agent_name}', version: {created_version.version}")
 
         agent = project_client.agents.get(agent_name=agent_name)
@@ -95,6 +95,7 @@ with (
             ),
             description="Updated instructions.",
         )
+        created_versions.append(updated_version)
         print(f"Updated voice agent to version: {updated_version.version}")
 
         # Disable the agent so its endpoint rejects new requests, then re-enable it.
@@ -103,5 +104,6 @@ with (
         project_client.agents.enable(agent_name=agent_name)
         print("Enabled voice agent")
     finally:
-        project_client.agents.delete(agent_name=agent_name)
-        print(f"Deleted voice agent: {agent_name}")
+        for version in reversed(created_versions):
+            project_client.agents.delete_version(agent_name=agent_name, agent_version=version.version)
+            print(f"Deleted voice agent version: {version.version}")

@@ -23,6 +23,7 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     StreamClosedError,
     StreamConsumedError,
+    ResourceModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -18388,7 +18389,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         body: _models.UpdateTelephonyBindingRequest,
         *,
         etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        match_condition: MatchConditions,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.TelephonyBinding:
@@ -18404,8 +18405,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: ~azure.ai.projects.models.UpdateTelephonyBindingRequest
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
@@ -18423,7 +18423,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         body: JSON,
         *,
         etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        match_condition: MatchConditions,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.TelephonyBinding:
@@ -18439,8 +18439,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: JSON
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
@@ -18458,7 +18457,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         body: IO[bytes],
         *,
         etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        match_condition: MatchConditions,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.TelephonyBinding:
@@ -18474,8 +18473,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
@@ -18493,7 +18491,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         body: Union[_models.UpdateTelephonyBindingRequest, JSON, IO[bytes]],
         *,
         etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        match_condition: MatchConditions,
         **kwargs: Any
     ) -> _models.TelephonyBinding:
         """Update an agent telephony binding.
@@ -18509,8 +18507,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: ~azure.ai.projects.models.UpdateTelephonyBindingRequest or JSON or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyBinding
@@ -18522,6 +18519,12 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -18589,13 +18592,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
     @distributed_trace_async
     async def delete_binding(
-        self,
-        agent_name: str,
-        binding_id: str,
-        *,
-        etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
-        **kwargs: Any
+        self, agent_name: str, binding_id: str, *, etag: str, match_condition: MatchConditions, **kwargs: Any
     ) -> None:
         """Delete an agent telephony binding.
 
@@ -18607,8 +18604,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type binding_id: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
@@ -18620,6 +18616,12 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -19155,7 +19157,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         agent_name: str,
         *,
         etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        match_condition: MatchConditions,
         transfer_targets: List[_models.TelephonyTransferTarget],
         content_type: str = "application/json",
         **kwargs: Any
@@ -19168,8 +19170,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type agent_name: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword transfer_targets: The complete set of destinations to which the voice agent may
          transfer calls. An empty array clears all targets when replacing the configuration. Required.
@@ -19190,7 +19191,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         body: JSON,
         *,
         etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        match_condition: MatchConditions,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
@@ -19204,8 +19205,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: JSON
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -19223,7 +19223,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         body: IO[bytes],
         *,
         etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        match_condition: MatchConditions,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
@@ -19237,8 +19237,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -19256,7 +19255,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        match_condition: MatchConditions,
         transfer_targets: List[_models.TelephonyTransferTarget] = _Unset,
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
@@ -19270,8 +19269,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: JSON or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword transfer_targets: The complete set of destinations to which the voice agent may
          transfer calls. An empty array clears all targets when replacing the configuration. Required.
@@ -19287,6 +19285,12 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -19618,13 +19622,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
     @distributed_trace_async
     async def cancel_call_job(
-        self,
-        agent_name: str,
-        call_job_id: str,
-        *,
-        etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
-        **kwargs: Any
+        self, agent_name: str, call_job_id: str, *, etag: str, match_condition: MatchConditions, **kwargs: Any
     ) -> _models.TelephonyCallJob:
         """Cancel an outbound telephony call job.
 
@@ -19636,8 +19634,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type call_job_id: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: TelephonyCallJob. The TelephonyCallJob is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyCallJob
@@ -19649,6 +19646,12 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}

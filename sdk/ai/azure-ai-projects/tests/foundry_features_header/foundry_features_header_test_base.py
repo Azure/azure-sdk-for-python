@@ -47,7 +47,7 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "skills": "Skills=V1Preview",
     "voice_agents": "VoiceAgents=V1Preview",
     "datasets": "DataGenerationJobs=V1Preview",
-    "agents": "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,VoiceAgents=V1Preview,DigitalWorker=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+    "agents": "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,VoiceAgents=V1Preview,DigitalWorker=V1Preview,GitHubCopilot=V1Preview,Skills=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
 }
 
 # Methods on .beta sub-clients that are NOT simple one-HTTP-call wrappers and
@@ -97,7 +97,7 @@ _NON_BETA_OPTIONAL_TEST_CASES = [
     #   The test id is derived automatically from method_name.
     pytest.param(
         "agents.create_version",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,VoiceAgents=V1Preview,DigitalWorker=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
+        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,VoiceAgents=V1Preview,DigitalWorker=V1Preview,GitHubCopilot=V1Preview,Skills=V1Preview,AgentsOptimization=V2Preview,ModelRouterControls=V1Preview",
     ),
     pytest.param(
         "evaluation_rules.create_or_update",
