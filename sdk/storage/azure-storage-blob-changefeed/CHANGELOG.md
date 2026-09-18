@@ -4,14 +4,13 @@
 
 This version and all future versions will require Python 3.9+. Python 3.8 is no longer supported.
 
+### Features Added
+
 ### Bugs Fixed
 - Fixed an `IndexError` that occurred when listing change feed events on accounts where the
 `$blobchangefeed/idx/segments/` hierarchy contains directory marker blobs (e.g.
 `idx/segments/2026/02/20`). Such non-segment paths are now skipped instead of being parsed
 as segment files.
-
-### Other Changes
-- Bumped minimum `cryptography` dependency to 50.0.0.
 
 ## 12.0.0b5 (2024-04-16)
 
