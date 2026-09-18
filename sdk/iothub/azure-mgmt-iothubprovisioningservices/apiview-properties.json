@@ -100,5 +100,5 @@
         "azure.mgmt.iothubprovisioningservices.operations.IotDpsResourceOperations.check_provisioning_service_name_availability": "Microsoft.Devices.IotDpsResourceOperationGroup.checkProvisioningServiceNameAvailability",
         "azure.mgmt.iothubprovisioningservices.aio.operations.IotDpsResourceOperations.check_provisioning_service_name_availability": "Microsoft.Devices.IotDpsResourceOperationGroup.checkProvisioningServiceNameAvailability"
     },
-    "CrossLanguageVersion": "f4a4a83aeda1"
+    "CrossLanguageVersion": "1b0eae068f7a"
 }
