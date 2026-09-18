@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.containerserviceaimanager import ContainerServiceAIManagerMgmtCl
     pip install azure-identity
     pip install azure-mgmt-containerserviceaimanager
 # USAGE
-    python operations_list.py
+    python model_sources_create_or_update_managed_identity.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,11 +31,28 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.operations.list()
-    for item in response:
-        print(item)
+    response = client.model_sources.begin_create_or_update(
+        resource_group_name="rgaimanagers",
+        ai_manager_name="aimanager1",
+        model_source_name="foundry",
+        resource={
+            "properties": {
+                "credential": {
+                    "managedIdentity": {
+                        "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mytestidentity"
+                    }
+                },
+                "description": "Foundry model source",
+                "microsoftFoundry": {
+                    "projectResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testrg/providers/Microsoft.CognitiveServices/accounts/test-account/projects/test-model-project"
+                },
+                "sourceType": "MicrosoftFoundry",
+            }
+        },
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-09-02-preview/Operations_List.json
+# x-ms-original-file: 2026-09-02-preview/ModelSources_CreateOrUpdate_ManagedIdentity.json
 if __name__ == "__main__":
     main()

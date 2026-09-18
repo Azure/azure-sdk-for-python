@@ -14,17 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerServiceAIManagerMgmtModelSourcesOperations(AzureMgmtRecordedTestCase):
+class TestContainerServiceAIManagerMgmtCustomAIModelsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ContainerServiceAIManagerMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_model_sources_get(self, resource_group):
-        response = self.client.model_sources.get(
+    def test_custom_ai_models_get(self, resource_group):
+        response = self.client.custom_ai_models.get(
             resource_group_name=resource_group.name,
             ai_manager_name="str",
-            model_source_name="str",
+            custom_ai_model_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,21 +32,22 @@ class TestContainerServiceAIManagerMgmtModelSourcesOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_model_sources_begin_create_or_update(self, resource_group):
-        response = self.client.model_sources.begin_create_or_update(
+    def test_custom_ai_models_begin_create_or_update(self, resource_group):
+        response = self.client.custom_ai_models.begin_create_or_update(
             resource_group_name=resource_group.name,
             ai_manager_name="str",
-            model_source_name="str",
+            custom_ai_model_name="str",
             resource={
                 "eTag": "str",
                 "id": "str",
                 "name": "str",
                 "properties": {
-                    "sourceType": "str",
-                    "credential": {"inline": {"value": "str"}, "managedIdentity": {"resourceId": "str"}},
+                    "baseModel": {"id": "str", "config": {"str": {}}, "totalWeightSizeBytes": 0},
+                    "modelId": "str",
+                    "modelSourceResourceId": "str",
                     "description": "str",
-                    "microsoftFoundry": {"projectResourceId": "str"},
                     "provisioningState": "str",
+                    "spec": {"isRestricted": bool, "maxContextLength": 0, "license": "str"},
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -65,11 +66,11 @@ class TestContainerServiceAIManagerMgmtModelSourcesOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_model_sources_begin_delete(self, resource_group):
-        response = self.client.model_sources.begin_delete(
+    def test_custom_ai_models_begin_delete(self, resource_group):
+        response = self.client.custom_ai_models.begin_delete(
             resource_group_name=resource_group.name,
             ai_manager_name="str",
-            model_source_name="str",
+            custom_ai_model_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -77,11 +78,23 @@ class TestContainerServiceAIManagerMgmtModelSourcesOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_model_sources_list(self, resource_group):
-        response = self.client.model_sources.list(
+    def test_custom_ai_models_list(self, resource_group):
+        response = self.client.custom_ai_models.list(
             resource_group_name=resource_group.name,
             ai_manager_name="str",
         )
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_custom_ai_models_calculate_cost(self, resource_group):
+        response = self.client.custom_ai_models.calculate_cost(
+            resource_group_name=resource_group.name,
+            ai_manager_name="str",
+            custom_ai_model_name="str",
+        )
+
         # please add some check logic here by yourself
         # ...
