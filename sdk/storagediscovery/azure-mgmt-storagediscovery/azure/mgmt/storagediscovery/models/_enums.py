@@ -19,6 +19,15 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
+class CapabilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The enablement status of a storage discovery capability."""
+
+    ENABLED = "Enabled"
+    """The capability is enabled."""
+    DISABLED = "Disabled"
+    """The capability is disabled."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -60,13 +69,13 @@ class StorageDiscoveryResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """Storage Discovery Resource Type."""
 
     STORAGE_ACCOUNTS = "Microsoft.Storage/storageAccounts"
-    """Storage Account Resource Type"""
+    """Storage Account Resource Type."""
 
 
 class StorageDiscoverySku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage Discovery Sku."""
 
     STANDARD = "Standard"
-    """Standard Sku"""
+    """Standard Sku."""
     FREE = "Free"
-    """Free Sku"""
+    """Free Sku."""

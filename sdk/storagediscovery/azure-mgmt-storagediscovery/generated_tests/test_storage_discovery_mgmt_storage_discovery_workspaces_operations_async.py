@@ -45,6 +45,14 @@ class TestStorageDiscoveryMgmtStorageDiscoveryWorkspacesOperationsAsync(AzureMgm
                         {"displayName": "str", "resourceTypes": ["str"], "tagKeysOnly": ["str"], "tags": {"str": "str"}}
                     ],
                     "workspaceRoots": ["str"],
+                    "capabilities": {
+                        "azureBlobStorage": {
+                            "capacityDetails": {"status": "str"},
+                            "prefixDefinitions": [
+                                {"containerName": "str", "storageAccountName": "str", "prefix": "str"}
+                            ],
+                        }
+                    },
                     "description": "str",
                     "provisioningState": "str",
                     "sku": "str",
@@ -73,6 +81,14 @@ class TestStorageDiscoveryMgmtStorageDiscoveryWorkspacesOperationsAsync(AzureMgm
             storage_discovery_workspace_name="str",
             properties={
                 "properties": {
+                    "capabilities": {
+                        "azureBlobStorage": {
+                            "capacityDetails": {"status": "str"},
+                            "prefixDefinitions": [
+                                {"containerName": "str", "prefix": "str", "storageAccountName": "str"}
+                            ],
+                        }
+                    },
                     "description": "str",
                     "scopes": [
                         {"displayName": "str", "resourceTypes": ["str"], "tagKeysOnly": ["str"], "tags": {"str": "str"}}
