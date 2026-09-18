@@ -6,4 +6,3 @@ recursive-include samples *.py *.md
 include azure/__init__.py
 include azure/ai/__init__.py
 include azure/ai/translation/__init__.py
-recursive-include doc *.rst

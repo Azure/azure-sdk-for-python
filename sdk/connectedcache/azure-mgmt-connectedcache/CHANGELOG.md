@@ -1,5 +1,31 @@
 # Release History
 
+## 1.0.0 (2026-07-23)
+
+### Features Added
+
+  - Model `AdditionalCacheNodeProperties` added property `app_version_wsl`
+  - Model `AdditionalCacheNodeProperties` added property `container_os_build`
+  - Model `AdditionalCacheNodeProperties` added property `container_os_edition`
+  - Model `AdditionalCacheNodeProperties` added property `container_os_version`
+  - Model `AdditionalCacheNodeProperties` added property `distro_os_build_wsl`
+  - Model `AdditionalCacheNodeProperties` added property `distro_os_edition_wsl`
+  - Model `AdditionalCacheNodeProperties` added property `distro_os_version_wsl`
+  - Model `AdditionalCacheNodeProperties` added property `host_os_build`
+  - Model `AdditionalCacheNodeProperties` added property `host_os_edition`
+  - Model `AdditionalCacheNodeProperties` added property `host_os_version`
+  - Model `AdditionalCacheNodeProperties` added property `install_version_msix`
+  - Model `AdditionalCacheNodeProperties` added property `install_version_script`
+  - Enum `AutoUpdateRingType` added member `BETA`
+  - Enum `AutoUpdateRingType` added member `STABLE`
+  - Model `CacheNodeEntity` added property `bgp_network_interface`
+  - Model `CacheNodeEntity` added property `open_firewall_port443`
+  - Model `CacheNodeEntity` added property `open_firewall_port5000`
+  - Model `CacheNodeEntity` added property `open_firewall_port5001`
+  - Model `CacheNodeEntity` added property `open_firewall_port80`
+  - Model `CacheNodeEntity` added property `runtime_account_type`
+  - Model `MccCacheNodeTlsCertificate` added property `cert_type`
+
 ## 1.0.0b2 (2025-01-13)
 
 ### Features Added

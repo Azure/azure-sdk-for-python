@@ -13,7 +13,9 @@ from ._shared.response_handlers import (
     process_storage_error,
     return_context_and_deserialized,
 )
+from ._shared.request_handlers import serialize_iso
 from ._shared.models import DictMixin
+from ._generated.models._patch import _BackCompatMixin
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import Logging as GeneratedLogging
@@ -29,7 +31,7 @@ if TYPE_CHECKING:
     from datetime import datetime
 
 
-class RetentionPolicy(GeneratedRetentionPolicy):
+class RetentionPolicy(_BackCompatMixin):
     """The retention policy which determines how long the associated data should
     persist.
 
@@ -47,6 +49,16 @@ class RetentionPolicy(GeneratedRetentionPolicy):
     days: Optional[int] = None
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained."""
 
+    _validation = {
+        "enabled": {"required": True},
+        "days": {"minimum": 1},
+    }
+
+    _attribute_map = {
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "days": {"key": "Days", "type": "int"},
+    }
+
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
         self.enabled = enabled
         self.days = days
@@ -62,8 +74,11 @@ class RetentionPolicy(GeneratedRetentionPolicy):
             days=generated.days,
         )
 
+    def _to_generated(self) -> GeneratedRetentionPolicy:
+        return GeneratedRetentionPolicy(enabled=self.enabled, days=self.days)
 
-class QueueAnalyticsLogging(GeneratedLogging):
+
+class QueueAnalyticsLogging(_BackCompatMixin):
     """Azure Analytics Logging settings.
 
     All required parameters must be populated in order to send to Azure.
@@ -86,6 +101,22 @@ class QueueAnalyticsLogging(GeneratedLogging):
     retention_policy: RetentionPolicy = RetentionPolicy()
     """The retention policy for the metrics."""
 
+    _validation = {
+        "version": {"required": True},
+        "delete": {"required": True},
+        "read": {"required": True},
+        "write": {"required": True},
+        "retention_policy": {"required": True},
+    }
+
+    _attribute_map = {
+        "version": {"key": "Version", "type": "str"},
+        "delete": {"key": "Delete", "type": "bool"},
+        "read": {"key": "Read", "type": "bool"},
+        "write": {"key": "Write", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
+    }
+
     def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get("version", "1.0")
         self.delete = kwargs.get("delete", False)
@@ -107,8 +138,20 @@ class QueueAnalyticsLogging(GeneratedLogging):
             ),
         )
 
+    @staticmethod
+    def _to_generated(logging: Optional["QueueAnalyticsLogging"]) -> Optional[GeneratedLogging]:
+        if logging is None:
+            return None
+        return GeneratedLogging(
+            version=logging.version,
+            delete=logging.delete,
+            read=logging.read,
+            write=logging.write,
+            retention_policy=logging.retention_policy._to_generated(),  # pylint: disable=protected-access
+        )
 
-class Metrics(GeneratedMetrics):
+
+class Metrics(_BackCompatMixin):
     """A summary of request statistics grouped by API in hour or minute aggregates.
 
     All required parameters must be populated in order to send to Azure.
@@ -129,6 +172,17 @@ class Metrics(GeneratedMetrics):
     retention_policy: RetentionPolicy = RetentionPolicy()
     """The retention policy for the metrics."""
 
+    _validation = {
+        "enabled": {"required": True},
+    }
+
+    _attribute_map = {
+        "version": {"key": "Version", "type": "str"},
+        "enabled": {"key": "Enabled", "type": "bool"},
+        "include_apis": {"key": "IncludeAPIs", "type": "bool"},
+        "retention_policy": {"key": "RetentionPolicy", "type": "RetentionPolicy"},
+    }
+
     def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get("version", "1.0")
         self.enabled = kwargs.get("enabled", False)
@@ -148,8 +202,19 @@ class Metrics(GeneratedMetrics):
             ),
         )
 
+    @staticmethod
+    def _to_generated(metrics: Optional["Metrics"]) -> Optional[GeneratedMetrics]:
+        if metrics is None:
+            return None
+        return GeneratedMetrics(
+            version=metrics.version,
+            enabled=metrics.enabled,
+            include_apis=metrics.include_apis,
+            retention_policy=metrics.retention_policy._to_generated(),  # pylint: disable=protected-access
+        )
 
-class CorsRule(GeneratedCorsRule):
+
+class CorsRule(_BackCompatMixin):
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
     security restriction known as same-origin policy that prevents a web page
@@ -181,9 +246,9 @@ class CorsRule(GeneratedCorsRule):
 
     allowed_origins: str
     """The comma-delimited string representation of the list of origin domains that will be allowed via
-        CORS, or "*" to allow all domains."""
+        CORS, or \"*\" to allow all domains."""
     allowed_methods: str
-    """The comma-delimited string representation of the list HTTP methods that are allowed to be executed
+    """The comma-delimited string representation of the list of HTTP methods that are allowed to be executed
         by the origin."""
     max_age_in_seconds: int
     """The number of seconds that the client/browser should cache a pre-flight response."""
@@ -192,6 +257,22 @@ class CorsRule(GeneratedCorsRule):
     allowed_headers: str
     """The comma-delimited string representation of the list of headers allowed to be part of the cross-origin
         request."""
+
+    _validation = {
+        "allowed_origins": {"required": True},
+        "allowed_methods": {"required": True},
+        "allowed_headers": {"required": True},
+        "exposed_headers": {"required": True},
+        "max_age_in_seconds": {"required": True, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "allowed_origins": {"key": "AllowedOrigins", "type": "str"},
+        "allowed_methods": {"key": "AllowedMethods", "type": "str"},
+        "allowed_headers": {"key": "AllowedHeaders", "type": "str"},
+        "exposed_headers": {"key": "ExposedHeaders", "type": "str"},
+        "max_age_in_seconds": {"key": "MaxAgeInSeconds", "type": "int"},
+    }
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
         self.allowed_origins = ",".join(allowed_origins)
@@ -274,7 +355,7 @@ class QueueSasPermissions(object):
             + ("p" if self.process else "")
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self._str
 
     @classmethod
@@ -300,7 +381,7 @@ class QueueSasPermissions(object):
         return parsed
 
 
-class AccessPolicy(GenAccessPolicy):
+class AccessPolicy(_BackCompatMixin):
     """Access Policy class used by the set and get access policy methods.
 
     A stored access policy can specify the start time, expiry time, and
@@ -340,13 +421,19 @@ class AccessPolicy(GenAccessPolicy):
         be interpreted as UTC.
     """
 
-    permission: Optional[Union[QueueSasPermissions, str]]  # type: ignore [assignment]
+    permission: Optional[Union[QueueSasPermissions, str]]
     """The permissions associated with the shared access signature. The user is restricted to
         operations allowed by the permissions."""
-    expiry: Optional[Union["datetime", str]]  # type: ignore [assignment]
+    expiry: Optional[Union["datetime", str]]
     """The time at which the shared access signature becomes invalid."""
-    start: Optional[Union["datetime", str]]  # type: ignore [assignment]
+    start: Optional[Union["datetime", str]]
     """The time at which the shared access signature becomes valid."""
+
+    _attribute_map = {
+        "start": {"key": "Start", "type": "str"},
+        "expiry": {"key": "Expiry", "type": "str"},
+        "permission": {"key": "Permission", "type": "str"},
+    }
 
     def __init__(
         self,
@@ -357,6 +444,26 @@ class AccessPolicy(GenAccessPolicy):
         self.start = start
         self.expiry = expiry
         self.permission = permission
+
+    @classmethod
+    def _from_generated(cls, generated: Any) -> Self:
+        if not generated:
+            return cls()
+        return cls(
+            permission=generated.permission,
+            expiry=generated.expiry,
+            start=generated.start,
+        )
+
+    def _to_generated(self) -> GenAccessPolicy:
+        permission = self.permission
+        if isinstance(permission, QueueSasPermissions):
+            permission = str(permission)
+        return GenAccessPolicy(
+            start=serialize_iso(self.start),
+            expiry=serialize_iso(self.expiry),
+            permission=permission,
+        )
 
 
 class QueueMessage(DictMixin):
@@ -397,7 +504,13 @@ class QueueMessage(DictMixin):
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
-        message = cls(content=generated.message_text)
+        # Prefer _decoded_content if set by MessageDecodePolicy (handles base64 decoding and decryption).
+        # The decode policy stores results in _decoded_content because the generated model's message_text
+        # RestField descriptor may re-serialize bytes back to base64 if set directly.
+        content = getattr(generated, "_decoded_content", None)
+        if content is None:
+            content = generated.message_text
+        message = cls(content=content)
         message.id = generated.message_id
         message.inserted_on = generated.insertion_time
         message.expires_on = generated.expiration_time
@@ -457,11 +570,13 @@ class MessagesPaged(PageIterator):
 
     def _extract_data_cb(self, messages: Any) -> Tuple[str, List[QueueMessage]]:
         # There is no concept of continuation token, so raising on my own condition
-        if not messages:
+        if not messages or not messages.items_property:
             raise StopIteration("End of paging")
         if self._max_messages is not None:
-            self._max_messages = self._max_messages - len(messages)
-        return "TOKEN_IGNORED", [QueueMessage._from_generated(q) for q in messages]  # pylint: disable=protected-access
+            self._max_messages = self._max_messages - len(messages.items_property)
+        return "TOKEN_IGNORED", [
+            QueueMessage._from_generated(q) for q in messages.items_property  # pylint: disable=protected-access
+        ]
 
 
 class QueueProperties(DictMixin):

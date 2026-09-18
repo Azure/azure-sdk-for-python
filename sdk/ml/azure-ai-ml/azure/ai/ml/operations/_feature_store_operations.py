@@ -10,10 +10,10 @@ from typing import Any, Dict, Iterable, Optional, cast
 
 from marshmallow import ValidationError
 
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp import (
+from azure.ai.ml._restclient.arm_ml_service import (
     MachineLearningServicesMgmtClient as ServiceClient102024Preview,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import ManagedNetworkProvisionOptions
+from azure.ai.ml._restclient.arm_ml_service.models import ManagedNetworkProvisionOptions
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -211,7 +211,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             Defaults to True.
         :paramtype grant_materialization_permissions: bool
         :keyword update_dependent_resources: Whether or not to update dependent resources. Defaults to False.
-        :type update_dependent_resources: bool
+        :paramtype update_dependent_resources: bool
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """

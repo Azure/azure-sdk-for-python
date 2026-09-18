@@ -38,6 +38,11 @@ test:
     - azure.mgmt.advisor.aio.operations
     - azure.mgmt.advisor.models
     - azure.mgmt.advisor.operations
+    - azure.mgmt.alertprocessingrules
+    - azure.mgmt.alertprocessingrules.aio
+    - azure.mgmt.alertprocessingrules.aio.operations
+    - azure.mgmt.alertprocessingrules.models
+    - azure.mgmt.alertprocessingrules.operations
     - azure.mgmt.alertsmanagement
     - azure.mgmt.alertsmanagement.aio
     - azure.mgmt.alertsmanagement.aio.operations
@@ -165,6 +170,11 @@ test:
     - azure.mgmt.cdn.aio.operations
     - azure.mgmt.cdn.models
     - azure.mgmt.cdn.operations
+    - azure.mgmt.certificateregistration
+    - azure.mgmt.certificateregistration.aio
+    - azure.mgmt.certificateregistration.aio.operations
+    - azure.mgmt.certificateregistration.models
+    - azure.mgmt.certificateregistration.operations
     - azure.mgmt.changeanalysis
     - azure.mgmt.changeanalysis.aio
     - azure.mgmt.changeanalysis.aio.operations
@@ -222,6 +232,11 @@ test:
     - azure.mgmt.confluent.aio.operations
     - azure.mgmt.confluent.models
     - azure.mgmt.confluent.operations
+    - azure.mgmt.connectedcache
+    - azure.mgmt.connectedcache.aio
+    - azure.mgmt.connectedcache.aio.operations
+    - azure.mgmt.connectedcache.models
+    - azure.mgmt.connectedcache.operations
     - azure.mgmt.connectedvmware
     - azure.mgmt.connectedvmware.aio
     - azure.mgmt.connectedvmware.aio.operations
@@ -367,6 +382,11 @@ test:
     - azure.mgmt.dnsresolver.aio.operations
     - azure.mgmt.dnsresolver.models
     - azure.mgmt.dnsresolver.operations
+    - azure.mgmt.domainregistration
+    - azure.mgmt.domainregistration.aio
+    - azure.mgmt.domainregistration.aio.operations
+    - azure.mgmt.domainregistration.models
+    - azure.mgmt.domainregistration.operations
     - azure.mgmt.durabletask
     - azure.mgmt.durabletask.aio
     - azure.mgmt.durabletask.aio.operations
@@ -428,6 +448,11 @@ test:
     - azure.mgmt.graphservices.aio.operations
     - azure.mgmt.graphservices.models
     - azure.mgmt.graphservices.operations
+    - azure.mgmt.guestconfig
+    - azure.mgmt.guestconfig.aio
+    - azure.mgmt.guestconfig.aio.operations
+    - azure.mgmt.guestconfig.models
+    - azure.mgmt.guestconfig.operations
     - azure.mgmt.hanaonazure
     - azure.mgmt.hanaonazure.aio
     - azure.mgmt.hanaonazure.aio.operations
@@ -443,6 +468,11 @@ test:
     - azure.mgmt.hdinsight.aio.operations
     - azure.mgmt.hdinsight.models
     - azure.mgmt.hdinsight.operations
+    - azure.mgmt.healthbot
+    - azure.mgmt.healthbot.aio
+    - azure.mgmt.healthbot.aio.operations
+    - azure.mgmt.healthbot.models
+    - azure.mgmt.healthbot.operations
     - azure.mgmt.healthcareapis
     - azure.mgmt.healthcareapis.aio
     - azure.mgmt.healthcareapis.aio.operations
@@ -524,6 +554,11 @@ test:
     - azure.mgmt.kubernetesconfiguration.extensions.aio.operations
     - azure.mgmt.kubernetesconfiguration.extensions.models
     - azure.mgmt.kubernetesconfiguration.extensions.operations
+    - azure.mgmt.kubernetesconfiguration.fluxconfigurations
+    - azure.mgmt.kubernetesconfiguration.fluxconfigurations.aio
+    - azure.mgmt.kubernetesconfiguration.fluxconfigurations.aio.operations
+    - azure.mgmt.kubernetesconfiguration.fluxconfigurations.models
+    - azure.mgmt.kubernetesconfiguration.fluxconfigurations.operations
     - azure.mgmt.kubernetesconfiguration.v2023_05_01
     - azure.mgmt.kubernetesconfiguration.v2023_05_01.aio
     - azure.mgmt.kubernetesconfiguration.v2023_05_01.aio.operations
@@ -599,6 +634,11 @@ test:
     - azure.mgmt.maps.aio.operations
     - azure.mgmt.maps.models
     - azure.mgmt.maps.operations
+    - azure.mgmt.marketplace
+    - azure.mgmt.marketplace.aio
+    - azure.mgmt.marketplace.aio.operations
+    - azure.mgmt.marketplace.models
+    - azure.mgmt.marketplace.operations
     - azure.mgmt.marketplaceordering
     - azure.mgmt.marketplaceordering.aio
     - azure.mgmt.marketplaceordering.aio.operations
@@ -629,6 +669,11 @@ test:
     - azure.mgmt.monitor.aio.operations
     - azure.mgmt.monitor.models
     - azure.mgmt.monitor.operations
+    - azure.mgmt.monitorworkspaces
+    - azure.mgmt.monitorworkspaces.aio
+    - azure.mgmt.monitorworkspaces.aio.operations
+    - azure.mgmt.monitorworkspaces.models
+    - azure.mgmt.monitorworkspaces.operations
     - azure.mgmt.msi
     - azure.mgmt.msi.aio
     - azure.mgmt.msi.aio.operations
@@ -654,6 +699,11 @@ test:
     - azure.mgmt.networkcloud.aio.operations
     - azure.mgmt.networkcloud.models
     - azure.mgmt.networkcloud.operations
+    - azure.mgmt.networkfunction
+    - azure.mgmt.networkfunction.aio
+    - azure.mgmt.networkfunction.aio.operations
+    - azure.mgmt.networkfunction.models
+    - azure.mgmt.networkfunction.operations
     - azure.mgmt.newrelicobservability
     - azure.mgmt.newrelicobservability.aio
     - azure.mgmt.newrelicobservability.aio.operations
@@ -734,6 +784,16 @@ test:
     - azure.mgmt.privatedns.aio.operations
     - azure.mgmt.privatedns.models
     - azure.mgmt.privatedns.operations
+    - azure.mgmt.prometheusrulegroups
+    - azure.mgmt.prometheusrulegroups.aio
+    - azure.mgmt.prometheusrulegroups.aio.operations
+    - azure.mgmt.prometheusrulegroups.models
+    - azure.mgmt.prometheusrulegroups.operations
+    - azure.mgmt.providerhub
+    - azure.mgmt.providerhub.aio
+    - azure.mgmt.providerhub.aio.operations
+    - azure.mgmt.providerhub.models
+    - azure.mgmt.providerhub.operations
     - azure.mgmt.purestorageblock
     - azure.mgmt.purestorageblock.aio
     - azure.mgmt.purestorageblock.aio.operations
@@ -823,6 +883,16 @@ test:
     - azure.mgmt.reservations.models
     - azure.mgmt.reservations.operations
     - azure.mgmt.resource
+    - azure.mgmt.resource.databoundaries
+    - azure.mgmt.resource.databoundaries.aio
+    - azure.mgmt.resource.databoundaries.aio.operations
+    - azure.mgmt.resource.databoundaries.models
+    - azure.mgmt.resource.databoundaries.operations
+    - azure.mgmt.resource.deployments
+    - azure.mgmt.resource.deployments.aio
+    - azure.mgmt.resource.deployments.aio.operations
+    - azure.mgmt.resource.deployments.models
+    - azure.mgmt.resource.deployments.operations
     - azure.mgmt.resource.deploymentscripts
     - azure.mgmt.resource.deploymentscripts.aio
     - azure.mgmt.resource.deploymentscripts.v2020_10_01
@@ -875,6 +945,9 @@ test:
     - azure.mgmt.resource.resources.v2022_09_01.operations
     - azure.mgmt.resource.subscriptions
     - azure.mgmt.resource.subscriptions.aio
+    - azure.mgmt.resource.subscriptions.aio.operations
+    - azure.mgmt.resource.subscriptions.models
+    - azure.mgmt.resource.subscriptions.operations
     - azure.mgmt.resource.subscriptions.v2021_01_01
     - azure.mgmt.resource.subscriptions.v2021_01_01.aio
     - azure.mgmt.resource.subscriptions.v2021_01_01.aio.operations
@@ -897,6 +970,11 @@ test:
     - azure.mgmt.resourcegraph.aio.operations
     - azure.mgmt.resourcegraph.models
     - azure.mgmt.resourcegraph.operations
+    - azure.mgmt.resourcehealth
+    - azure.mgmt.resourcehealth.aio
+    - azure.mgmt.resourcehealth.aio.operations
+    - azure.mgmt.resourcehealth.models
+    - azure.mgmt.resourcehealth.operations
     - azure.mgmt.resourcemover
     - azure.mgmt.resourcemover.aio
     - azure.mgmt.resourcemover.aio.operations
@@ -976,6 +1054,11 @@ test:
     - azure.mgmt.sql.aio.operations
     - azure.mgmt.sql.models
     - azure.mgmt.sql.operations
+    - azure.mgmt.sqlvirtualmachine
+    - azure.mgmt.sqlvirtualmachine.aio
+    - azure.mgmt.sqlvirtualmachine.aio.operations
+    - azure.mgmt.sqlvirtualmachine.models
+    - azure.mgmt.sqlvirtualmachine.operations
     - azure.mgmt.standbypool
     - azure.mgmt.standbypool.aio
     - azure.mgmt.standbypool.aio.operations

@@ -5,32 +5,27 @@
 """
 Base test class for azure-mgmt-discovery tests.
 
-Management SDK tests use AzureMgmtRecordedTestCase.
-The 2026-02-01-preview API is currently behind a feature flag and requires
-the EUAP (Early Update Access Program) endpoint.
+Management SDK tests use AzureMgmtRecordedTestCase against the GA API
+version 2026-06-01 on the public ARM endpoint.
 """
+
 import os
-from azure.identity import DefaultAzureCredential
 from devtools_testutils import AzureMgmtRecordedTestCase
 
+# Public ARM endpoint for the GA API version 2026-06-01.
+AZURE_ARM_ENDPOINT = os.environ.get("AZURE_ARM_ENDPOINT", "https://management.azure.com")
+AZURE_LOCATION = os.environ.get("AZURE_LOCATION", "uksouth")
 
-# EUAP endpoint required for 2026-02-01-preview API (feature-flagged)
-AZURE_ARM_ENDPOINT = os.environ.get("AZURE_ARM_ENDPOINT", "https://eastus2euap.management.azure.com")
-AZURE_LOCATION = os.environ.get("AZURE_LOCATION", "centraluseuap")
-
-# Test subscription and resource group with the feature flag enabled
+# Test subscription and resource group
 AZURE_SUBSCRIPTION_ID = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
-AZURE_RESOURCE_GROUP = os.environ.get("AZURE_RESOURCE_GROUP", "olawal")
+AZURE_RESOURCE_GROUP = os.environ.get("AZURE_RESOURCE_GROUP", "rgname")
 
 
 class DiscoveryMgmtTestCase(AzureMgmtRecordedTestCase):
-    """Base test class for Discovery management SDK tests.
-
-    Configures the client to use the EUAP endpoint for the feature-flagged API.
-    """
+    """Base test class for Discovery management SDK tests."""
 
     def create_discovery_client(self, client_class):
-        """Create a Discovery client configured for the EUAP endpoint."""
+        """Create a Discovery management client for the public ARM endpoint."""
         # Use environment variable for subscription or default
         subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", AZURE_SUBSCRIPTION_ID)
         credential = self.get_credential(client_class)

@@ -1,0 +1,18 @@
+{
+  "identity": {
+    "type": "SystemAssigned"
+  },
+  "location": "westus",
+  "properties": {
+    "authMode": "Key",
+    "description": "smoke online endpoint",
+    "mirrorTraffic": {},
+    "properties": {},
+    "traffic": {
+      "blue": 100
+    }
+  },
+  "tags": {
+    "tag1": "value1"
+  }
+}

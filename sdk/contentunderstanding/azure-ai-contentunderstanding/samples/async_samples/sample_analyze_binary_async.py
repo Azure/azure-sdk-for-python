@@ -26,8 +26,8 @@ DESCRIPTION:
     easier, the SDK provides a convenient ``to_llm_input()`` helper that converts an AnalysisResult
     into a single text block with YAML front matter (content type, page numbers, extracted fields)
     followed by the markdown body — ready for injection into LLM prompts, vector databases, or
-    agentic tool outputs. For advanced usage (output options, content ranges, video/audio, metadata),
-    see sample_to_llm_input_async.py.
+    agentic tool outputs. See sample_to_llm_input_async.py for output options, content ranges,
+    video/audio, and metadata.
 
     This sample focuses on document analysis. For prebuilt RAG analyzers covering images, audio, and
     video, see sample_analyze_url_async.py.
@@ -50,6 +50,29 @@ DESCRIPTION:
       prebuilt-documentSearch.
 
     This sample uses prebuilt-documentSearch to extract structured content from PDF documents.
+
+
+    ## Choose the right analyze method
+
+    By default, analysis is a long-running operation (LRO) via begin_analyze / begin_analyze_binary.
+    In 2026-06-01-preview, you can also use inline analyze APIs (analyze_inline /
+    analyze_binary_inline) that return ContentAnalyzerInlineResponse in a single call without
+    polling. For when to use each path, limits, and billing differences, see
+    https://aka.ms/cu-doc-limits, sample_analyze_inline_async.py, and
+    sample_analyze_binary_inline_async.py.
+
+    ## Analyze specific pages with content_range
+
+    You can restrict analysis to specific pages by passing ``content_range`` to
+    ``begin_analyze_binary``. Document content uses 1-based page numbers; examples:
+
+    - ``"1"`` — single page
+    - ``"1-3"`` — page range
+    - ``"9-"`` — from page 9 onward
+    - ``"1-3,5,9-"`` — combined ranges
+
+    For more ``content_range`` examples across documents, video, and audio, see
+    ``sample_analyze_url_async.py``.
 
 USAGE:
     python sample_analyze_binary_async.py
@@ -82,9 +105,7 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         # [START analyze_document_from_binary]
         # Replace with the path to your local document file.
         file_path = "sample_files/sample_invoice.pdf"
@@ -176,18 +197,14 @@ async def main() -> None:
                 print(f"\nNumber of pages: {len(content.pages)}")
                 for page in content.pages:
                     unit = content.unit or "units"
-                    print(
-                        f"  Page {page.page_number}: {page.width} x {page.height} {unit}"
-                    )
+                    print(f"  Page {page.page_number}: {page.width} x {page.height} {unit}")
 
             # Check for tables
             if content.tables and len(content.tables) > 0:
                 print(f"\nNumber of tables: {len(content.tables)}")
                 table_counter = 1
                 for table in content.tables:
-                    print(
-                        f"  Table {table_counter}: {table.row_count} rows x {table.column_count} columns"
-                    )
+                    print(f"  Table {table_counter}: {table.row_count} rows x {table.column_count} columns")
                     table_counter += 1
         # [END access_document_properties]
 

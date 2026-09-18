@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-09-16-preview/privateLinkScope/PrivateLinkScopePrivateLinkResource_ListGet.json
+# x-ms-original-file: 2026-07-15/privateLinkScope/PrivateLinkScopePrivateLinkResource_ListGet.json
 if __name__ == "__main__":
     main()

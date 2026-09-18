@@ -114,7 +114,12 @@ given the expressiveness of Python as a language. So, in practice, what should y
     - include the path to the `py.typed` in the
       MANIFEST.in ([example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/MANIFEST.in)).
       This is important as it ensures the `py.typed` is included in both the sdist/bdist.
-    - set `include_package_data=True` and `package_data={"azure.core": ["py.typed"]}` in the setup.py.
+    - set `[tool.setuptools.package-data]` in `pyproject.toml` to include the `py.typed` file. For example:
+      ```toml
+      [tool.setuptools.package-data]
+      pytyped = ["py.typed"]
+      ```
+      For legacy packages still using `setup.py`, set `include_package_data=True` and `package_data={"azure.core": ["py.typed"]}` instead.
       Note that the key should be the namespace of where the `py.typed` file is found.
 
 2) Add type hints anywhere in the source code where unit tests are worth writing. Consider typing/mypy as "free" tests
@@ -173,7 +178,7 @@ class Tree:
 ```
 
 If using `typing-extensions`, you must add it to the install dependencies for your library (do not rely on install by `azure-core`)
-[[example](https://github.com/Azure/azure-sdk-for-python/blob/5fd52b9ee039f8711322bd7ea43af763d326291a/sdk/eventhub/azure-eventhub/setup.py#L73)].
+[[example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/pyproject.toml#L27)].
 When importing a backported type into code, `typing-extensions` does a try/except on your behalf (either importing
 from `typing` if supported, or `typing-extensions` if the Python version is too old) so there is no need to do this
 check yourself.
@@ -196,7 +201,7 @@ environment run in CI and brings in the third party stub packages necessary. To 
 
 ### Run mypy
 
-mypy is currently pinned to version [1.9.0](https://pypi.org/project/mypy/1.9.0/).
+mypy is currently pinned to version [1.19.1](https://pypi.org/project/mypy/1.19.1/).
 
 To run mypy on your library, run `azpysdk mypy` at the package level:
 
@@ -204,7 +209,7 @@ To run mypy on your library, run `azpysdk mypy` at the package level:
 
 If you don't want to use `azpysdk` you can also install and run mypy on its own:
 
-`pip install mypy==1.9.0`
+`pip install mypy==1.19.1`
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>mypy azure`
 
@@ -226,7 +231,7 @@ Full documentation on mypy config options found here: https://mypy.readthedocs.i
 
 ### Run pyright
 
-We pin the version of pyright to version [1.1.287](https://github.com/microsoft/pyright).
+We pin the version of pyright to version [1.1.407](https://github.com/microsoft/pyright).
 
 Note that pyright requires that node is installed. The command-line [wrapper package](https://pypi.org/project/pyright/) for pyright will check if node is in the `PATH`, and if not, will download it at runtime.
 
@@ -236,7 +241,7 @@ To run pyright on your library, run `azpysdk pyright` at the package level:
 
 If you don't want to use `azpysdk` you can also install and run pyright on its own:
 
-`pip install pyright==1.1.287`
+`pip install pyright==1.1.407`
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>pyright azure`
 
@@ -268,7 +273,7 @@ To run verifytypes on your library, run `azpysdk verifytypes` at the package lev
 
 If you don't want to use `azpysdk` you can also install and run pyright/verifytypes on its own:
 
-`pip install pyright==1.1.287`
+`pip install pyright==1.1.407`
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>pyright --verifytypes azure.ai.textanalytics --ignoreexternal`
 

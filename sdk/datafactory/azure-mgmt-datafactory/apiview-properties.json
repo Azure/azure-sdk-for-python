@@ -1365,5 +1365,5 @@
         "azure.mgmt.datafactory.operations.ChangeDataCaptureOperations.status": "Microsoft.DataFactory.ChangeDataCaptureResources.status",
         "azure.mgmt.datafactory.aio.operations.ChangeDataCaptureOperations.status": "Microsoft.DataFactory.ChangeDataCaptureResources.status"
     },
-    "CrossLanguageVersion": "c5415d338f16"
+    "CrossLanguageVersion": "31f697c62f3e"
 }

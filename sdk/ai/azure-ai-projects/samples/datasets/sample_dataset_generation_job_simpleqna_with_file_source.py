@@ -31,7 +31,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" azure-identity openai python-dotenv
+    pip install "azure-ai-projects>=2.4.0" azure-identity openai python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -66,7 +66,6 @@ from azure.ai.projects.models import (
     DatasetDataGenerationJobOutput,
     DatasetVersion,
     FileDataGenerationJobSource,
-    JobStatus,
     PromptDataGenerationJobSource,
     SimpleQnADataGenerationJobOptions,
 )
@@ -119,8 +118,6 @@ SEED_REFERENCE_DOCUMENT = """# Widgets and Gizmos Reference
 EXPECTED_OUTPUT_DESCRIPTION = "Expert-level QnA pairs generated from the Widgets & Gizmos reference."
 EXPECTED_OUTPUT_TAGS = {"sample": "dataset-generation-simpleqna-with-file-source", "difficulty": "expert"}
 
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
-
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
@@ -156,7 +153,6 @@ with (
     #   - The File source contributes the source material (the reference
     #     document uploaded above).
     #   - The Prompt source contributes a steering instruction (difficulty).
-    print("Create a multi-source data generation job (File + Prompt).")
     job = DataGenerationJob(
         inputs=DataGenerationJobInputs(
             name=f"simpleqna-multisource-{run_id}",
@@ -184,33 +180,35 @@ with (
             ),
         ),
     )
-    job = project_client.beta.datasets.create_generation_job(job=job)
-    print(f"Created data generation job `{job.id}` (status: `{job.status}`).")
 
-    print(f"Poll job `{job.id}` until it reaches a terminal state.", end="", flush=True)
-    while True:
-        job = project_client.beta.datasets.get_generation_job(job_id=job.id)
-        if job.status in TERMINAL_STATUSES:
-            break
+    print("Begin creating a dataset generation job.")
+    poller = project_client.beta.datasets.begin_create_generation_job(
+        job=job,
+        polling_interval=poll_interval_seconds,
+    )
+
+    # Optional: While SDK is polling, periodically print the job status until the job is complete
+    print("Periodically check job status:")
+    while not poller.done():
+        print(f"\tstatus=`{poller.status()}`")
         time.sleep(poll_interval_seconds)
-        print(".", end="", flush=True)
-    print()
-    print(f"Final job status: `{job.status}`.")
 
-    if job.status != JobStatus.SUCCEEDED:
-        message = job.error.message if job.error is not None else "<no error message>"
-        raise RuntimeError(f"Job `{job.id}` ended with status `{job.status}`: {message}")
+    # Since done() is true, result() returns the final deserialized job result without
+    # waiting further. It also propagates any LRO polling exception.
+    job_result = poller.result()
+    print(f"Final LRO status: `{poller.status()}`.")
+    print(f"Data generation result: {job_result}")
 
     # Locate the Dataset output produced by the job.
     output_name: str = ""
     output_version: str = ""
-    for output in (job.result.outputs if job.result is not None else None) or []:
+    for output in job_result.outputs or []:
         if isinstance(output, DatasetDataGenerationJobOutput):
             output_name = output.name or ""
             output_version = output.version or ""
             break
     if not output_name or not output_version:
-        raise RuntimeError(f"Job `{job.id}` did not produce a dataset output.")
+        raise RuntimeError("The data generation job did not produce a dataset output.")
 
     # ------------------------------------------------------------------
     # 3. Inspect the generated dataset and show metadata propagation.
@@ -222,8 +220,8 @@ with (
     print(f"Generated dataset: name=`{dataset.name}` version=`{dataset.version}` id=`{dataset.id}`")
     print(f"  description: {dataset.description}")
     print(f"  tags:        {dataset.tags}")
-    if job.result is not None and job.result.generated_samples is not None:
-        print(f"Generated samples: {job.result.generated_samples}")
+    if job_result.generated_samples is not None:
+        print(f"Generated samples: {job_result.generated_samples}")
 
     # ------------------------------------------------------------------
     # 4. Clean up.
@@ -234,5 +232,5 @@ with (
     print(f"Delete the Azure OpenAI input file `{seed_file.id}`.")
     openai_client.files.delete(file_id=seed_file.id)
 
-    print(f"Delete the data generation job `{job.id}`.")
-    project_client.beta.datasets.delete_generation_job(job_id=job.id)
+    # Note: The data generation job is implicitly cleaned up by the service
+    # when the dataset is deleted (cascade delete).

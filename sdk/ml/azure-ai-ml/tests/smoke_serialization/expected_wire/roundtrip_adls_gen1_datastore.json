@@ -1,0 +1,19 @@
+{
+  "properties": {
+    "credentials": {
+      "authorityUrl": "https://login.microsoftonline.com",
+      "clientId": "11111111-1111-1111-1111-111111111111",
+      "credentialsType": "ServicePrincipal",
+      "secrets": {
+        "clientSecret": "smoke-secret",
+        "secretsType": "ServicePrincipal"
+      },
+      "tenantId": "00000000-0000-0000-0000-000000000000"
+    },
+    "datastoreType": "AzureDataLakeGen1",
+    "storeName": "smoke-store",
+    "tags": {
+      "tag1": "value1"
+    }
+  }
+}

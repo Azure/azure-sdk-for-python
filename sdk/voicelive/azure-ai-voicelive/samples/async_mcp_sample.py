@@ -13,7 +13,7 @@ FILE: async_mcp_sample.py
 DESCRIPTION:
     This sample demonstrates how to use the Azure AI Voice Live SDK asynchronously
     with MCP capabilities. It shows how to define mcp servers, handle mcp call events,
-    and connects with API version 2026-04-10 because MCP support requires that service version.
+    and connects with API version 2026-07-15 because MCP support requires that service version.
 
 USAGE:
     python async_mcp_sample.py
@@ -378,12 +378,12 @@ class AsyncMCPCallClient:
             logger.info(f"Connecting to VoiceLive API with model {self.model}")
 
             # Connect to VoiceLive WebSocket API asynchronously
-            # Using 2026-04-10 API version for MCP support
+            # Using 2026-07-15 API version for MCP support
             async with connect(
                 endpoint=self.endpoint,
                 credential=self.credential,
                 model=self.model,
-                api_version="2026-04-10",
+                api_version="2026-07-15",
             ) as connection:
                 # Initialize audio processor
                 self.audio_processor = AudioProcessor(connection)
@@ -653,7 +653,7 @@ class AsyncMCPCallClient:
 
 async def main():
     """Main async function."""
-    # Note: Use api_version="2026-04-10" to enable MCP features
+    # Note: Use api_version="2026-07-15" to enable MCP features
     endpoint = os.environ.get("AZURE_VOICELIVE_ENDPOINT", "wss://api.voicelive.com/v1")
     model = os.environ.get("AZURE_VOICELIVE_MODEL", "gpt-realtime")
     use_api_key = os.environ.get("AZURE_VOICELIVE_USE_API_KEY", "").strip().lower() in {"1", "true", "yes"}

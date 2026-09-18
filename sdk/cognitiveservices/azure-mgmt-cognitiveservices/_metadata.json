@@ -1,10 +1,11 @@
 {
-  "apiVersion": "2026-03-15-preview",
+  "apiVersion": "2026-07-15-preview",
   "apiVersions": {
-    "Microsoft.CognitiveServices": "2026-03-15-preview"
+    "Microsoft.CognitiveServices": "2026-07-15-preview"
   },
-  "commit": "182eacfaa4691f06fb161722f13f4d99e9b26a0a",
+  "commit": "6e058a0a22c828ca0ebfd5a4826a72addc44f909",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/cognitiveservices/CognitiveServices.Management",
-  "emitterVersion": "0.62.1"
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
 }

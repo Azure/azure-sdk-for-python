@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import CostManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -41,7 +41,6 @@ from .._utils.utils import prep_if_match, prep_if_none_match
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -2308,7 +2307,13 @@ class BudgetsOperations:
 
     @overload
     def create_or_update(
-        self, scope: str, budget_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        scope: str,
+        budget_name: str,
+        parameters: _types.Budget,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> _models.Budget:
         """The operation to create or update a budget. You can optionally provide an eTag if desired as a
         form of concurrency control. To obtain the latest eTag for a given budget, perform a get
@@ -2319,7 +2324,7 @@ class BudgetsOperations:
         :param budget_name: Budget Name. Required.
         :type budget_name: str
         :param parameters: Parameters supplied to the Create Budget operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.costmanagement.types.Budget
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2358,7 +2363,7 @@ class BudgetsOperations:
 
     @distributed_trace
     def create_or_update(
-        self, scope: str, budget_name: str, parameters: Union[_models.Budget, JSON, IO[bytes]], **kwargs: Any
+        self, scope: str, budget_name: str, parameters: Union[_models.Budget, _types.Budget, IO[bytes]], **kwargs: Any
     ) -> _models.Budget:
         """The operation to create or update a budget. You can optionally provide an eTag if desired as a
         form of concurrency control. To obtain the latest eTag for a given budget, perform a get
@@ -2368,9 +2373,10 @@ class BudgetsOperations:
         :type scope: str
         :param budget_name: Budget Name. Required.
         :type budget_name: str
-        :param parameters: Parameters supplied to the Create Budget operation. Is one of the following
-         types: Budget, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.costmanagement.models.Budget or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the Create Budget operation. Is either a Budget type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.costmanagement.models.Budget or
+         ~azure.mgmt.costmanagement.types.Budget or IO[bytes]
         :return: Budget. The Budget is compatible with MutableMapping
         :rtype: ~azure.mgmt.costmanagement.models.Budget
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2718,7 +2724,13 @@ class ExportsOperations:
 
     @overload
     def create_or_update(
-        self, scope: str, export_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        scope: str,
+        export_name: str,
+        parameters: _types.Export,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> _models.Export:
         """The operation to create or update a export. Update operation requires latest eTag to be set in
         the request. You may obtain the latest eTag by performing a get operation. Create operation
@@ -2729,7 +2741,7 @@ class ExportsOperations:
         :param export_name: Export Name. Required.
         :type export_name: str
         :param parameters: Parameters supplied to the CreateOrUpdate Export operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.costmanagement.types.Export
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2768,7 +2780,7 @@ class ExportsOperations:
 
     @distributed_trace
     def create_or_update(
-        self, scope: str, export_name: str, parameters: Union[_models.Export, JSON, IO[bytes]], **kwargs: Any
+        self, scope: str, export_name: str, parameters: Union[_models.Export, _types.Export, IO[bytes]], **kwargs: Any
     ) -> _models.Export:
         """The operation to create or update a export. Update operation requires latest eTag to be set in
         the request. You may obtain the latest eTag by performing a get operation. Create operation
@@ -2778,9 +2790,10 @@ class ExportsOperations:
         :type scope: str
         :param export_name: Export Name. Required.
         :type export_name: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Export operation. Is one of the
-         following types: Export, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.costmanagement.models.Export or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the CreateOrUpdate Export operation. Is either a
+         Export type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.costmanagement.models.Export or
+         ~azure.mgmt.costmanagement.types.Export or IO[bytes]
         :return: Export. The Export is compatible with MutableMapping
         :rtype: ~azure.mgmt.costmanagement.models.Export
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3024,7 +3037,7 @@ class ExportsOperations:
         self,
         scope: str,
         export_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.ExportRunRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -3036,7 +3049,7 @@ class ExportsOperations:
         :param export_name: Export Name. Required.
         :type export_name: str
         :param parameters: Parameters supplied to the Execute Export operation. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.costmanagement.types.ExportRunRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3076,7 +3089,7 @@ class ExportsOperations:
         self,
         scope: str,
         export_name: str,
-        parameters: Optional[Union[_models.ExportRunRequest, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.ExportRunRequest, _types.ExportRunRequest, IO[bytes]]] = None,
         **kwargs: Any,
     ) -> None:
         """The operation to run an export.
@@ -3085,9 +3098,10 @@ class ExportsOperations:
         :type scope: str
         :param export_name: Export Name. Required.
         :type export_name: str
-        :param parameters: Parameters supplied to the Execute Export operation. Is one of the following
-         types: ExportRunRequest, JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.costmanagement.models.ExportRunRequest or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the Execute Export operation. Is either a
+         ExportRunRequest type or a IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.costmanagement.models.ExportRunRequest or
+         ~azure.mgmt.costmanagement.types.ExportRunRequest or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3464,7 +3478,7 @@ class ViewsOperations:
 
     @overload
     def create_or_update(
-        self, view_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, view_name: str, parameters: _types.View, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.View:
         """The operation to create or update a view. Update operation requires latest eTag to be set in
         the request. You may obtain the latest eTag by performing a get operation. Create operation
@@ -3473,7 +3487,7 @@ class ViewsOperations:
         :param view_name: View name. Required.
         :type view_name: str
         :param parameters: Parameters supplied to the CreateOrUpdate View operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.costmanagement.types.View
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3504,7 +3518,7 @@ class ViewsOperations:
 
     @distributed_trace
     def create_or_update(
-        self, view_name: str, parameters: Union[_models.View, JSON, IO[bytes]], **kwargs: Any
+        self, view_name: str, parameters: Union[_models.View, _types.View, IO[bytes]], **kwargs: Any
     ) -> _models.View:
         """The operation to create or update a view. Update operation requires latest eTag to be set in
         the request. You may obtain the latest eTag by performing a get operation. Create operation
@@ -3512,9 +3526,10 @@ class ViewsOperations:
 
         :param view_name: View name. Required.
         :type view_name: str
-        :param parameters: Parameters supplied to the CreateOrUpdate View operation. Is one of the
-         following types: View, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.costmanagement.models.View or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the CreateOrUpdate View operation. Is either a View
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.costmanagement.models.View or
+         ~azure.mgmt.costmanagement.types.View or IO[bytes]
         :return: View. The View is compatible with MutableMapping
         :rtype: ~azure.mgmt.costmanagement.models.View
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3826,7 +3841,13 @@ class ViewsOperations:
 
     @overload
     def create_or_update_by_scope(
-        self, scope: str, view_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        scope: str,
+        view_name: str,
+        parameters: _types.View,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> _models.View:
         """The operation to create or update a view. Update operation requires latest eTag to be set in
         the request. You may obtain the latest eTag by performing a get operation. Create operation
@@ -3837,7 +3858,7 @@ class ViewsOperations:
         :param view_name: View name. Required.
         :type view_name: str
         :param parameters: Parameters supplied to the CreateOrUpdate View operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.costmanagement.types.View
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3876,7 +3897,7 @@ class ViewsOperations:
 
     @distributed_trace
     def create_or_update_by_scope(
-        self, scope: str, view_name: str, parameters: Union[_models.View, JSON, IO[bytes]], **kwargs: Any
+        self, scope: str, view_name: str, parameters: Union[_models.View, _types.View, IO[bytes]], **kwargs: Any
     ) -> _models.View:
         """The operation to create or update a view. Update operation requires latest eTag to be set in
         the request. You may obtain the latest eTag by performing a get operation. Create operation
@@ -3886,9 +3907,10 @@ class ViewsOperations:
         :type scope: str
         :param view_name: View name. Required.
         :type view_name: str
-        :param parameters: Parameters supplied to the CreateOrUpdate View operation. Is one of the
-         following types: View, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.costmanagement.models.View or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the CreateOrUpdate View operation. Is either a View
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.costmanagement.models.View or
+         ~azure.mgmt.costmanagement.types.View or IO[bytes]
         :return: View. The View is compatible with MutableMapping
         :rtype: ~azure.mgmt.costmanagement.models.View
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4225,7 +4247,13 @@ class AlertsOperations:
 
     @overload
     def dismiss(
-        self, scope: str, alert_id: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        scope: str,
+        alert_id: str,
+        parameters: _types.DismissAlertPayload,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> _models.Alert:
         """Dismisses the specified alert.
 
@@ -4234,7 +4262,7 @@ class AlertsOperations:
         :param alert_id: Alert ID. Required.
         :type alert_id: str
         :param parameters: Parameters supplied to the Dismiss Alert operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.costmanagement.types.DismissAlertPayload
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4265,7 +4293,11 @@ class AlertsOperations:
 
     @distributed_trace
     def dismiss(
-        self, scope: str, alert_id: str, parameters: Union[_models.DismissAlertPayload, JSON, IO[bytes]], **kwargs: Any
+        self,
+        scope: str,
+        alert_id: str,
+        parameters: Union[_models.DismissAlertPayload, _types.DismissAlertPayload, IO[bytes]],
+        **kwargs: Any,
     ) -> _models.Alert:
         """Dismisses the specified alert.
 
@@ -4273,9 +4305,10 @@ class AlertsOperations:
         :type scope: str
         :param alert_id: Alert ID. Required.
         :type alert_id: str
-        :param parameters: Parameters supplied to the Dismiss Alert operation. Is one of the following
-         types: DismissAlertPayload, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.costmanagement.models.DismissAlertPayload or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the Dismiss Alert operation. Is either a
+         DismissAlertPayload type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.costmanagement.models.DismissAlertPayload or
+         ~azure.mgmt.costmanagement.types.DismissAlertPayload or IO[bytes]
         :return: Alert. The Alert is compatible with MutableMapping
         :rtype: ~azure.mgmt.costmanagement.models.Alert
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4622,7 +4655,7 @@ class ScheduledActionsOperations:
     def create_or_update(
         self,
         name: str,
-        scheduled_action: JSON,
+        scheduled_action: _types.ScheduledAction,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -4634,7 +4667,7 @@ class ScheduledActionsOperations:
         :param name: Scheduled action name. Required.
         :type name: str
         :param scheduled_action: Scheduled action to be created or updated. Required.
-        :type scheduled_action: JSON
+        :type scheduled_action: ~azure.mgmt.costmanagement.types.ScheduledAction
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4682,7 +4715,7 @@ class ScheduledActionsOperations:
     def create_or_update(
         self,
         name: str,
-        scheduled_action: Union[_models.ScheduledAction, JSON, IO[bytes]],
+        scheduled_action: Union[_models.ScheduledAction, _types.ScheduledAction, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -4692,9 +4725,10 @@ class ScheduledActionsOperations:
 
         :param name: Scheduled action name. Required.
         :type name: str
-        :param scheduled_action: Scheduled action to be created or updated. Is one of the following
-         types: ScheduledAction, JSON, IO[bytes] Required.
-        :type scheduled_action: ~azure.mgmt.costmanagement.models.ScheduledAction or JSON or IO[bytes]
+        :param scheduled_action: Scheduled action to be created or updated. Is either a ScheduledAction
+         type or a IO[bytes] type. Required.
+        :type scheduled_action: ~azure.mgmt.costmanagement.models.ScheduledAction or
+         ~azure.mgmt.costmanagement.types.ScheduledAction or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -5083,7 +5117,7 @@ class ScheduledActionsOperations:
         self,
         scope: str,
         name: str,
-        scheduled_action: JSON,
+        scheduled_action: _types.ScheduledAction,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -5097,7 +5131,7 @@ class ScheduledActionsOperations:
         :param name: Scheduled action name. Required.
         :type name: str
         :param scheduled_action: Scheduled action to be created or updated. Required.
-        :type scheduled_action: JSON
+        :type scheduled_action: ~azure.mgmt.costmanagement.types.ScheduledAction
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5149,7 +5183,7 @@ class ScheduledActionsOperations:
         self,
         scope: str,
         name: str,
-        scheduled_action: Union[_models.ScheduledAction, JSON, IO[bytes]],
+        scheduled_action: Union[_models.ScheduledAction, _types.ScheduledAction, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -5161,9 +5195,10 @@ class ScheduledActionsOperations:
         :type scope: str
         :param name: Scheduled action name. Required.
         :type name: str
-        :param scheduled_action: Scheduled action to be created or updated. Is one of the following
-         types: ScheduledAction, JSON, IO[bytes] Required.
-        :type scheduled_action: ~azure.mgmt.costmanagement.models.ScheduledAction or JSON or IO[bytes]
+        :param scheduled_action: Scheduled action to be created or updated. Is either a ScheduledAction
+         type or a IO[bytes] type. Required.
+        :type scheduled_action: ~azure.mgmt.costmanagement.models.ScheduledAction or
+         ~azure.mgmt.costmanagement.types.ScheduledAction or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -5486,12 +5521,17 @@ class ScheduledActionsOperations:
 
     @overload
     def check_name_availability(
-        self, check_name_availability_request: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        check_name_availability_request: _types.CheckNameAvailabilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> _models.CheckNameAvailabilityResponse:
         """Checks availability and correctness of the name for a scheduled action.
 
         :param check_name_availability_request: The request body. Required.
-        :type check_name_availability_request: JSON
+        :type check_name_availability_request:
+         ~azure.mgmt.costmanagement.types.CheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5521,15 +5561,18 @@ class ScheduledActionsOperations:
     @distributed_trace
     def check_name_availability(
         self,
-        check_name_availability_request: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]],
+        check_name_availability_request: Union[
+            _models.CheckNameAvailabilityRequest, _types.CheckNameAvailabilityRequest, IO[bytes]
+        ],
         **kwargs: Any,
     ) -> _models.CheckNameAvailabilityResponse:
         """Checks availability and correctness of the name for a scheduled action.
 
-        :param check_name_availability_request: The request body. Is one of the following types:
-         CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
+        :param check_name_availability_request: The request body. Is either a
+         CheckNameAvailabilityRequest type or a IO[bytes] type. Required.
         :type check_name_availability_request:
-         ~azure.mgmt.costmanagement.models.CheckNameAvailabilityRequest or JSON or IO[bytes]
+         ~azure.mgmt.costmanagement.models.CheckNameAvailabilityRequest or
+         ~azure.mgmt.costmanagement.types.CheckNameAvailabilityRequest or IO[bytes]
         :return: CheckNameAvailabilityResponse. The CheckNameAvailabilityResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.costmanagement.models.CheckNameAvailabilityResponse
@@ -5644,7 +5687,7 @@ class ScheduledActionsOperations:
     def check_name_availability_by_scope(
         self,
         scope: str,
-        check_name_availability_request: JSON,
+        check_name_availability_request: _types.CheckNameAvailabilityRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -5670,7 +5713,8 @@ class ScheduledActionsOperations:
          Required.
         :type scope: str
         :param check_name_availability_request: Scheduled action to be created or updated. Required.
-        :type check_name_availability_request: JSON
+        :type check_name_availability_request:
+         ~azure.mgmt.costmanagement.types.CheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5724,7 +5768,9 @@ class ScheduledActionsOperations:
     def check_name_availability_by_scope(
         self,
         scope: str,
-        check_name_availability_request: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]],
+        check_name_availability_request: Union[
+            _models.CheckNameAvailabilityRequest, _types.CheckNameAvailabilityRequest, IO[bytes]
+        ],
         **kwargs: Any,
     ) -> _models.CheckNameAvailabilityResponse:
         """Checks availability and correctness of the name for a scheduled action within the given scope.
@@ -5747,10 +5793,11 @@ class ScheduledActionsOperations:
          External Subscription scope. Note: Insight Alerts are only available on subscription scope.
          Required.
         :type scope: str
-        :param check_name_availability_request: Scheduled action to be created or updated. Is one of
-         the following types: CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
+        :param check_name_availability_request: Scheduled action to be created or updated. Is either a
+         CheckNameAvailabilityRequest type or a IO[bytes] type. Required.
         :type check_name_availability_request:
-         ~azure.mgmt.costmanagement.models.CheckNameAvailabilityRequest or JSON or IO[bytes]
+         ~azure.mgmt.costmanagement.models.CheckNameAvailabilityRequest or
+         ~azure.mgmt.costmanagement.types.CheckNameAvailabilityRequest or IO[bytes]
         :return: CheckNameAvailabilityResponse. The CheckNameAvailabilityResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.costmanagement.models.CheckNameAvailabilityResponse
@@ -5938,7 +5985,7 @@ class SettingsOperations:
         self,
         scope: str,
         type: Union[str, _models.SettingType],
-        setting: JSON,
+        setting: _types.Setting,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -5950,7 +5997,7 @@ class SettingsOperations:
         :param type: Setting type. "taginheritance" Required.
         :type type: str or ~azure.mgmt.costmanagement.models.SettingType
         :param setting: Setting to be created or updated. Required.
-        :type setting: JSON
+        :type setting: ~azure.mgmt.costmanagement.types.Setting
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5990,7 +6037,7 @@ class SettingsOperations:
         self,
         scope: str,
         type: Union[str, _models.SettingType],
-        setting: Union[_models.Setting, JSON, IO[bytes]],
+        setting: Union[_models.Setting, _types.Setting, IO[bytes]],
         **kwargs: Any,
     ) -> _models.Setting:
         """Create or update a setting within the given scope.
@@ -5999,9 +6046,10 @@ class SettingsOperations:
         :type scope: str
         :param type: Setting type. "taginheritance" Required.
         :type type: str or ~azure.mgmt.costmanagement.models.SettingType
-        :param setting: Setting to be created or updated. Is one of the following types: Setting, JSON,
-         IO[bytes] Required.
-        :type setting: ~azure.mgmt.costmanagement.models.Setting or JSON or IO[bytes]
+        :param setting: Setting to be created or updated. Is either a Setting type or a IO[bytes] type.
+         Required.
+        :type setting: ~azure.mgmt.costmanagement.models.Setting or
+         ~azure.mgmt.costmanagement.types.Setting or IO[bytes]
         :return: Setting. The Setting is compatible with MutableMapping
         :rtype: ~azure.mgmt.costmanagement.models.Setting
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6340,7 +6388,11 @@ class GenerateCostDetailsReportOperations:
     def _create_operation_initial(
         self,
         scope: str,
-        parameters: Union[_models.GenerateCostDetailsReportRequestDefinition, JSON, IO[bytes]],
+        parameters: Union[
+            _models.GenerateCostDetailsReportRequestDefinition,
+            _types.GenerateCostDetailsReportRequestDefinition,
+            IO[bytes],
+        ],
         **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6449,7 +6501,12 @@ class GenerateCostDetailsReportOperations:
 
     @overload
     def begin_create_operation(
-        self, scope: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        scope: str,
+        parameters: _types.GenerateCostDetailsReportRequestDefinition,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> LROPoller[_models.CostDetailsOperationResults]:
         """This API is the replacement for all previously release Usage Details APIs. Request to generate
         a cost details report for the provided date range, billing period (Only enterprise customers)
@@ -6470,7 +6527,7 @@ class GenerateCostDetailsReportOperations:
          `https://aka.ms/costmgmt/scopes <https://aka.ms/costmgmt/scopes>`_. Required.
         :type scope: str
         :param parameters: Parameters supplied to the Create cost details operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.costmanagement.types.GenerateCostDetailsReportRequestDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6519,7 +6576,11 @@ class GenerateCostDetailsReportOperations:
     def begin_create_operation(
         self,
         scope: str,
-        parameters: Union[_models.GenerateCostDetailsReportRequestDefinition, JSON, IO[bytes]],
+        parameters: Union[
+            _models.GenerateCostDetailsReportRequestDefinition,
+            _types.GenerateCostDetailsReportRequestDefinition,
+            IO[bytes],
+        ],
         **kwargs: Any,
     ) -> LROPoller[_models.CostDetailsOperationResults]:
         """This API is the replacement for all previously release Usage Details APIs. Request to generate
@@ -6540,10 +6601,10 @@ class GenerateCostDetailsReportOperations:
          scopes.Currently Resource Group and Management Group are not supported. For details, see
          `https://aka.ms/costmgmt/scopes <https://aka.ms/costmgmt/scopes>`_. Required.
         :type scope: str
-        :param parameters: Parameters supplied to the Create cost details operation. Is one of the
-         following types: GenerateCostDetailsReportRequestDefinition, JSON, IO[bytes] Required.
+        :param parameters: Parameters supplied to the Create cost details operation. Is either a
+         GenerateCostDetailsReportRequestDefinition type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.costmanagement.models.GenerateCostDetailsReportRequestDefinition
-         or JSON or IO[bytes]
+         or ~azure.mgmt.costmanagement.types.GenerateCostDetailsReportRequestDefinition or IO[bytes]
         :return: An instance of LROPoller that returns CostDetailsOperationResults. The
          CostDetailsOperationResults is compatible with MutableMapping
         :rtype:
@@ -6723,7 +6784,7 @@ class CostAllocationRulesOperations:
         self,
         billing_account_id: str,
         rule_name: str,
-        cost_allocation_rule: JSON,
+        cost_allocation_rule: _types.CostAllocationRuleDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -6737,7 +6798,7 @@ class CostAllocationRulesOperations:
          alphanumeric characters other than '_' and '-'. The max length is 260 characters. Required.
         :type rule_name: str
         :param cost_allocation_rule: Cost allocation rule to be created or updated. Required.
-        :type cost_allocation_rule: JSON
+        :type cost_allocation_rule: ~azure.mgmt.costmanagement.types.CostAllocationRuleDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6781,7 +6842,9 @@ class CostAllocationRulesOperations:
         self,
         billing_account_id: str,
         rule_name: str,
-        cost_allocation_rule: Union[_models.CostAllocationRuleDefinition, JSON, IO[bytes]],
+        cost_allocation_rule: Union[
+            _models.CostAllocationRuleDefinition, _types.CostAllocationRuleDefinition, IO[bytes]
+        ],
         **kwargs: Any,
     ) -> _models.CostAllocationRuleDefinition:
         """Create/Update a rule to allocate cost between different resources within a billing account or
@@ -6792,10 +6855,10 @@ class CostAllocationRulesOperations:
         :param rule_name: Cost allocation rule name. The name cannot include spaces or any non
          alphanumeric characters other than '_' and '-'. The max length is 260 characters. Required.
         :type rule_name: str
-        :param cost_allocation_rule: Cost allocation rule to be created or updated. Is one of the
-         following types: CostAllocationRuleDefinition, JSON, IO[bytes] Required.
+        :param cost_allocation_rule: Cost allocation rule to be created or updated. Is either a
+         CostAllocationRuleDefinition type or a IO[bytes] type. Required.
         :type cost_allocation_rule: ~azure.mgmt.costmanagement.models.CostAllocationRuleDefinition or
-         JSON or IO[bytes]
+         ~azure.mgmt.costmanagement.types.CostAllocationRuleDefinition or IO[bytes]
         :return: CostAllocationRuleDefinition. The CostAllocationRuleDefinition is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.costmanagement.models.CostAllocationRuleDefinition
@@ -7051,7 +7114,7 @@ class CostAllocationRulesOperations:
     def check_name_availability(
         self,
         billing_account_id: str,
-        cost_allocation_rule_check_name_availability_request: JSON,
+        cost_allocation_rule_check_name_availability_request: _types.CostAllocationRuleCheckNameAvailabilityRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -7062,7 +7125,8 @@ class CostAllocationRulesOperations:
         :type billing_account_id: str
         :param cost_allocation_rule_check_name_availability_request: Cost allocation rule to be created
          or updated. Required.
-        :type cost_allocation_rule_check_name_availability_request: JSON
+        :type cost_allocation_rule_check_name_availability_request:
+         ~azure.mgmt.costmanagement.types.CostAllocationRuleCheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7102,7 +7166,9 @@ class CostAllocationRulesOperations:
         self,
         billing_account_id: str,
         cost_allocation_rule_check_name_availability_request: Union[
-            _models.CostAllocationRuleCheckNameAvailabilityRequest, JSON, IO[bytes]
+            _models.CostAllocationRuleCheckNameAvailabilityRequest,
+            _types.CostAllocationRuleCheckNameAvailabilityRequest,
+            IO[bytes],
         ],
         **kwargs: Any,
     ) -> _models.CostAllocationRuleCheckNameAvailabilityResponse:
@@ -7111,11 +7177,11 @@ class CostAllocationRulesOperations:
         :param billing_account_id: BillingAccount ID. Required.
         :type billing_account_id: str
         :param cost_allocation_rule_check_name_availability_request: Cost allocation rule to be created
-         or updated. Is one of the following types: CostAllocationRuleCheckNameAvailabilityRequest,
-         JSON, IO[bytes] Required.
+         or updated. Is either a CostAllocationRuleCheckNameAvailabilityRequest type or a IO[bytes]
+         type. Required.
         :type cost_allocation_rule_check_name_availability_request:
-         ~azure.mgmt.costmanagement.models.CostAllocationRuleCheckNameAvailabilityRequest or JSON or
-         IO[bytes]
+         ~azure.mgmt.costmanagement.models.CostAllocationRuleCheckNameAvailabilityRequest or
+         ~azure.mgmt.costmanagement.types.CostAllocationRuleCheckNameAvailabilityRequest or IO[bytes]
         :return: CostAllocationRuleCheckNameAvailabilityResponse. The
          CostAllocationRuleCheckNameAvailabilityResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.costmanagement.models.CostAllocationRuleCheckNameAvailabilityResponse
@@ -7821,7 +7887,9 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
     def _generate_by_billing_account_initial(
         self,
         billing_account_id: str,
-        benefit_utilization_summaries_request: Union[_models.BenefitUtilizationSummariesRequest, JSON, IO[bytes]],
+        benefit_utilization_summaries_request: Union[
+            _models.BenefitUtilizationSummariesRequest, _types.BenefitUtilizationSummariesRequest, IO[bytes]
+        ],
         **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7921,7 +7989,7 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
     def begin_generate_by_billing_account(
         self,
         billing_account_id: str,
-        benefit_utilization_summaries_request: JSON,
+        benefit_utilization_summaries_request: _types.BenefitUtilizationSummariesRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -7933,7 +8001,8 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         :type billing_account_id: str
         :param benefit_utilization_summaries_request: Async Benefit Utilization Summary report to be
          created. Required.
-        :type benefit_utilization_summaries_request: JSON
+        :type benefit_utilization_summaries_request:
+         ~azure.mgmt.costmanagement.types.BenefitUtilizationSummariesRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7975,7 +8044,9 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
     def begin_generate_by_billing_account(
         self,
         billing_account_id: str,
-        benefit_utilization_summaries_request: Union[_models.BenefitUtilizationSummariesRequest, JSON, IO[bytes]],
+        benefit_utilization_summaries_request: Union[
+            _models.BenefitUtilizationSummariesRequest, _types.BenefitUtilizationSummariesRequest, IO[bytes]
+        ],
         **kwargs: Any,
     ) -> LROPoller[_models.BenefitUtilizationSummariesOperationStatus]:
         """Triggers generation of a benefit utilization summaries report for the provided billing account.
@@ -7984,10 +8055,10 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         :param billing_account_id: BillingAccount ID. Required.
         :type billing_account_id: str
         :param benefit_utilization_summaries_request: Async Benefit Utilization Summary report to be
-         created. Is one of the following types: BenefitUtilizationSummariesRequest, JSON, IO[bytes]
-         Required.
+         created. Is either a BenefitUtilizationSummariesRequest type or a IO[bytes] type. Required.
         :type benefit_utilization_summaries_request:
-         ~azure.mgmt.costmanagement.models.BenefitUtilizationSummariesRequest or JSON or IO[bytes]
+         ~azure.mgmt.costmanagement.models.BenefitUtilizationSummariesRequest or
+         ~azure.mgmt.costmanagement.types.BenefitUtilizationSummariesRequest or IO[bytes]
         :return: An instance of LROPoller that returns BenefitUtilizationSummariesOperationStatus. The
          BenefitUtilizationSummariesOperationStatus is compatible with MutableMapping
         :rtype:
@@ -8049,7 +8120,9 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         self,
         billing_account_id: str,
         billing_profile_id: str,
-        benefit_utilization_summaries_request: Union[_models.BenefitUtilizationSummariesRequest, JSON, IO[bytes]],
+        benefit_utilization_summaries_request: Union[
+            _models.BenefitUtilizationSummariesRequest, _types.BenefitUtilizationSummariesRequest, IO[bytes]
+        ],
         **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8154,7 +8227,7 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         self,
         billing_account_id: str,
         billing_profile_id: str,
-        benefit_utilization_summaries_request: JSON,
+        benefit_utilization_summaries_request: _types.BenefitUtilizationSummariesRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -8168,7 +8241,8 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         :type billing_profile_id: str
         :param benefit_utilization_summaries_request: Async Benefit Utilization Summary report to be
          created. Required.
-        :type benefit_utilization_summaries_request: JSON
+        :type benefit_utilization_summaries_request:
+         ~azure.mgmt.costmanagement.types.BenefitUtilizationSummariesRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8214,7 +8288,9 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         self,
         billing_account_id: str,
         billing_profile_id: str,
-        benefit_utilization_summaries_request: Union[_models.BenefitUtilizationSummariesRequest, JSON, IO[bytes]],
+        benefit_utilization_summaries_request: Union[
+            _models.BenefitUtilizationSummariesRequest, _types.BenefitUtilizationSummariesRequest, IO[bytes]
+        ],
         **kwargs: Any,
     ) -> LROPoller[_models.BenefitUtilizationSummariesOperationStatus]:
         """Triggers generation of a benefit utilization summaries report for the provided billing account
@@ -8225,10 +8301,10 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         :param billing_profile_id: Billing Profile ID. Required.
         :type billing_profile_id: str
         :param benefit_utilization_summaries_request: Async Benefit Utilization Summary report to be
-         created. Is one of the following types: BenefitUtilizationSummariesRequest, JSON, IO[bytes]
-         Required.
+         created. Is either a BenefitUtilizationSummariesRequest type or a IO[bytes] type. Required.
         :type benefit_utilization_summaries_request:
-         ~azure.mgmt.costmanagement.models.BenefitUtilizationSummariesRequest or JSON or IO[bytes]
+         ~azure.mgmt.costmanagement.models.BenefitUtilizationSummariesRequest or
+         ~azure.mgmt.costmanagement.types.BenefitUtilizationSummariesRequest or IO[bytes]
         :return: An instance of LROPoller that returns BenefitUtilizationSummariesOperationStatus. The
          BenefitUtilizationSummariesOperationStatus is compatible with MutableMapping
         :rtype:
@@ -8290,7 +8366,9 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
     def _generate_by_reservation_order_id_initial(  # pylint: disable=name-too-long
         self,
         reservation_order_id: str,
-        benefit_utilization_summaries_request: Union[_models.BenefitUtilizationSummariesRequest, JSON, IO[bytes]],
+        benefit_utilization_summaries_request: Union[
+            _models.BenefitUtilizationSummariesRequest, _types.BenefitUtilizationSummariesRequest, IO[bytes]
+        ],
         **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8390,7 +8468,7 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
     def begin_generate_by_reservation_order_id(
         self,
         reservation_order_id: str,
-        benefit_utilization_summaries_request: JSON,
+        benefit_utilization_summaries_request: _types.BenefitUtilizationSummariesRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -8402,7 +8480,8 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         :type reservation_order_id: str
         :param benefit_utilization_summaries_request: Async Benefit Utilization Summary report to be
          created. Required.
-        :type benefit_utilization_summaries_request: JSON
+        :type benefit_utilization_summaries_request:
+         ~azure.mgmt.costmanagement.types.BenefitUtilizationSummariesRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8444,7 +8523,9 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
     def begin_generate_by_reservation_order_id(
         self,
         reservation_order_id: str,
-        benefit_utilization_summaries_request: Union[_models.BenefitUtilizationSummariesRequest, JSON, IO[bytes]],
+        benefit_utilization_summaries_request: Union[
+            _models.BenefitUtilizationSummariesRequest, _types.BenefitUtilizationSummariesRequest, IO[bytes]
+        ],
         **kwargs: Any,
     ) -> LROPoller[_models.BenefitUtilizationSummariesOperationStatus]:
         """Triggers generation of a benefit utilization summaries report for the provided reservation
@@ -8453,10 +8534,10 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         :param reservation_order_id: Reservation Order ID. Required.
         :type reservation_order_id: str
         :param benefit_utilization_summaries_request: Async Benefit Utilization Summary report to be
-         created. Is one of the following types: BenefitUtilizationSummariesRequest, JSON, IO[bytes]
-         Required.
+         created. Is either a BenefitUtilizationSummariesRequest type or a IO[bytes] type. Required.
         :type benefit_utilization_summaries_request:
-         ~azure.mgmt.costmanagement.models.BenefitUtilizationSummariesRequest or JSON or IO[bytes]
+         ~azure.mgmt.costmanagement.models.BenefitUtilizationSummariesRequest or
+         ~azure.mgmt.costmanagement.types.BenefitUtilizationSummariesRequest or IO[bytes]
         :return: An instance of LROPoller that returns BenefitUtilizationSummariesOperationStatus. The
          BenefitUtilizationSummariesOperationStatus is compatible with MutableMapping
         :rtype:
@@ -8518,7 +8599,9 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         self,
         reservation_order_id: str,
         reservation_id: str,
-        benefit_utilization_summaries_request: Union[_models.BenefitUtilizationSummariesRequest, JSON, IO[bytes]],
+        benefit_utilization_summaries_request: Union[
+            _models.BenefitUtilizationSummariesRequest, _types.BenefitUtilizationSummariesRequest, IO[bytes]
+        ],
         **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8622,7 +8705,7 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         self,
         reservation_order_id: str,
         reservation_id: str,
-        benefit_utilization_summaries_request: JSON,
+        benefit_utilization_summaries_request: _types.BenefitUtilizationSummariesRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -8635,7 +8718,8 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         :type reservation_id: str
         :param benefit_utilization_summaries_request: Async Benefit Utilization Summary report to be
          created. Required.
-        :type benefit_utilization_summaries_request: JSON
+        :type benefit_utilization_summaries_request:
+         ~azure.mgmt.costmanagement.types.BenefitUtilizationSummariesRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8680,7 +8764,9 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         self,
         reservation_order_id: str,
         reservation_id: str,
-        benefit_utilization_summaries_request: Union[_models.BenefitUtilizationSummariesRequest, JSON, IO[bytes]],
+        benefit_utilization_summaries_request: Union[
+            _models.BenefitUtilizationSummariesRequest, _types.BenefitUtilizationSummariesRequest, IO[bytes]
+        ],
         **kwargs: Any,
     ) -> LROPoller[_models.BenefitUtilizationSummariesOperationStatus]:
         """Triggers generation of a benefit utilization summaries report for the provided reservation.
@@ -8690,10 +8776,10 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         :param reservation_id: Reservation ID. Required.
         :type reservation_id: str
         :param benefit_utilization_summaries_request: Async Benefit Utilization Summary report to be
-         created. Is one of the following types: BenefitUtilizationSummariesRequest, JSON, IO[bytes]
-         Required.
+         created. Is either a BenefitUtilizationSummariesRequest type or a IO[bytes] type. Required.
         :type benefit_utilization_summaries_request:
-         ~azure.mgmt.costmanagement.models.BenefitUtilizationSummariesRequest or JSON or IO[bytes]
+         ~azure.mgmt.costmanagement.models.BenefitUtilizationSummariesRequest or
+         ~azure.mgmt.costmanagement.types.BenefitUtilizationSummariesRequest or IO[bytes]
         :return: An instance of LROPoller that returns BenefitUtilizationSummariesOperationStatus. The
          BenefitUtilizationSummariesOperationStatus is compatible with MutableMapping
         :rtype:
@@ -8755,7 +8841,9 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
     def _generate_by_savings_plan_order_id_initial(  # pylint: disable=name-too-long
         self,
         savings_plan_order_id: str,
-        benefit_utilization_summaries_request: Union[_models.BenefitUtilizationSummariesRequest, JSON, IO[bytes]],
+        benefit_utilization_summaries_request: Union[
+            _models.BenefitUtilizationSummariesRequest, _types.BenefitUtilizationSummariesRequest, IO[bytes]
+        ],
         **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8855,7 +8943,7 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
     def begin_generate_by_savings_plan_order_id(
         self,
         savings_plan_order_id: str,
-        benefit_utilization_summaries_request: JSON,
+        benefit_utilization_summaries_request: _types.BenefitUtilizationSummariesRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -8867,7 +8955,8 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         :type savings_plan_order_id: str
         :param benefit_utilization_summaries_request: Async Benefit Utilization Summary report to be
          created. Required.
-        :type benefit_utilization_summaries_request: JSON
+        :type benefit_utilization_summaries_request:
+         ~azure.mgmt.costmanagement.types.BenefitUtilizationSummariesRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8909,7 +8998,9 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
     def begin_generate_by_savings_plan_order_id(
         self,
         savings_plan_order_id: str,
-        benefit_utilization_summaries_request: Union[_models.BenefitUtilizationSummariesRequest, JSON, IO[bytes]],
+        benefit_utilization_summaries_request: Union[
+            _models.BenefitUtilizationSummariesRequest, _types.BenefitUtilizationSummariesRequest, IO[bytes]
+        ],
         **kwargs: Any,
     ) -> LROPoller[_models.BenefitUtilizationSummariesOperationStatus]:
         """Triggers generation of a benefit utilization summaries report for the provided savings plan
@@ -8918,10 +9009,10 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         :param savings_plan_order_id: Savings plan order ID. Required.
         :type savings_plan_order_id: str
         :param benefit_utilization_summaries_request: Async Benefit Utilization Summary report to be
-         created. Is one of the following types: BenefitUtilizationSummariesRequest, JSON, IO[bytes]
-         Required.
+         created. Is either a BenefitUtilizationSummariesRequest type or a IO[bytes] type. Required.
         :type benefit_utilization_summaries_request:
-         ~azure.mgmt.costmanagement.models.BenefitUtilizationSummariesRequest or JSON or IO[bytes]
+         ~azure.mgmt.costmanagement.models.BenefitUtilizationSummariesRequest or
+         ~azure.mgmt.costmanagement.types.BenefitUtilizationSummariesRequest or IO[bytes]
         :return: An instance of LROPoller that returns BenefitUtilizationSummariesOperationStatus. The
          BenefitUtilizationSummariesOperationStatus is compatible with MutableMapping
         :rtype:
@@ -8983,7 +9074,9 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         self,
         savings_plan_order_id: str,
         savings_plan_id: str,
-        benefit_utilization_summaries_request: Union[_models.BenefitUtilizationSummariesRequest, JSON, IO[bytes]],
+        benefit_utilization_summaries_request: Union[
+            _models.BenefitUtilizationSummariesRequest, _types.BenefitUtilizationSummariesRequest, IO[bytes]
+        ],
         **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -9087,7 +9180,7 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         self,
         savings_plan_order_id: str,
         savings_plan_id: str,
-        benefit_utilization_summaries_request: JSON,
+        benefit_utilization_summaries_request: _types.BenefitUtilizationSummariesRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -9100,7 +9193,8 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         :type savings_plan_id: str
         :param benefit_utilization_summaries_request: Async Benefit Utilization Summary report to be
          created. Required.
-        :type benefit_utilization_summaries_request: JSON
+        :type benefit_utilization_summaries_request:
+         ~azure.mgmt.costmanagement.types.BenefitUtilizationSummariesRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9145,7 +9239,9 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         self,
         savings_plan_order_id: str,
         savings_plan_id: str,
-        benefit_utilization_summaries_request: Union[_models.BenefitUtilizationSummariesRequest, JSON, IO[bytes]],
+        benefit_utilization_summaries_request: Union[
+            _models.BenefitUtilizationSummariesRequest, _types.BenefitUtilizationSummariesRequest, IO[bytes]
+        ],
         **kwargs: Any,
     ) -> LROPoller[_models.BenefitUtilizationSummariesOperationStatus]:
         """Triggers generation of a benefit utilization summaries report for the provided savings plan.
@@ -9155,10 +9251,10 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         :param savings_plan_id: Savings plan ID. Required.
         :type savings_plan_id: str
         :param benefit_utilization_summaries_request: Async Benefit Utilization Summary report to be
-         created. Is one of the following types: BenefitUtilizationSummariesRequest, JSON, IO[bytes]
-         Required.
+         created. Is either a BenefitUtilizationSummariesRequest type or a IO[bytes] type. Required.
         :type benefit_utilization_summaries_request:
-         ~azure.mgmt.costmanagement.models.BenefitUtilizationSummariesRequest or JSON or IO[bytes]
+         ~azure.mgmt.costmanagement.models.BenefitUtilizationSummariesRequest or
+         ~azure.mgmt.costmanagement.types.BenefitUtilizationSummariesRequest or IO[bytes]
         :return: An instance of LROPoller that returns BenefitUtilizationSummariesOperationStatus. The
          BenefitUtilizationSummariesOperationStatus is compatible with MutableMapping
         :rtype:
@@ -9238,7 +9334,9 @@ class GenerateDetailedCostReportOperations:
     def _create_operation_initial(
         self,
         scope: str,
-        parameters: Union[_models.GenerateDetailedCostReportDefinition, JSON, IO[bytes]],
+        parameters: Union[
+            _models.GenerateDetailedCostReportDefinition, _types.GenerateDetailedCostReportDefinition, IO[bytes]
+        ],
         **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -9345,7 +9443,12 @@ class GenerateDetailedCostReportOperations:
 
     @overload
     def begin_create_operation(
-        self, scope: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        scope: str,
+        parameters: _types.GenerateDetailedCostReportDefinition,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> LROPoller[_models.GenerateDetailedCostReportOperationResult]:
         """Generates the detailed cost report for provided date range, billing period(only enterprise
         customers) or Invoice ID asynchronously at a certain scope. Call returns a 202 with header
@@ -9358,7 +9461,7 @@ class GenerateDetailedCostReportOperations:
          <https://aka.ms/costmgmt/scopes>`_. Required.
         :type scope: str
         :param parameters: Parameters supplied to the Create detailed cost report operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.costmanagement.types.GenerateDetailedCostReportDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9399,7 +9502,9 @@ class GenerateDetailedCostReportOperations:
     def begin_create_operation(
         self,
         scope: str,
-        parameters: Union[_models.GenerateDetailedCostReportDefinition, JSON, IO[bytes]],
+        parameters: Union[
+            _models.GenerateDetailedCostReportDefinition, _types.GenerateDetailedCostReportDefinition, IO[bytes]
+        ],
         **kwargs: Any,
     ) -> LROPoller[_models.GenerateDetailedCostReportOperationResult]:
         """Generates the detailed cost report for provided date range, billing period(only enterprise
@@ -9412,10 +9517,10 @@ class GenerateDetailedCostReportOperations:
          billing scopes. For details, see `https://aka.ms/costmgmt/scopes
          <https://aka.ms/costmgmt/scopes>`_. Required.
         :type scope: str
-        :param parameters: Parameters supplied to the Create detailed cost report operation. Is one of
-         the following types: GenerateDetailedCostReportDefinition, JSON, IO[bytes] Required.
+        :param parameters: Parameters supplied to the Create detailed cost report operation. Is either
+         a GenerateDetailedCostReportDefinition type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.costmanagement.models.GenerateDetailedCostReportDefinition or
-         JSON or IO[bytes]
+         ~azure.mgmt.costmanagement.types.GenerateDetailedCostReportDefinition or IO[bytes]
         :return: An instance of LROPoller that returns GenerateDetailedCostReportOperationResult. The
          GenerateDetailedCostReportOperationResult is compatible with MutableMapping
         :rtype:
@@ -9539,7 +9644,7 @@ class ForecastOperations:
     def usage(
         self,
         scope: str,
-        parameters: JSON,
+        parameters: _types.ForecastDefinition,
         *,
         filter: Optional[str] = None,
         content_type: str = "application/json",
@@ -9566,7 +9671,7 @@ class ForecastOperations:
         :type scope: str
         :param parameters: Parameters supplied to the CreateOrUpdate Forecast Config operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.costmanagement.types.ForecastDefinition
         :keyword filter: May be used to filter forecasts by properties/usageDate (Utc time),
          properties/chargeType or properties/grain. The filter supports 'eq', 'lt', 'gt', 'le', 'ge',
          and 'and'. It does not currently support 'ne', 'or', or 'not'. Default value is None.
@@ -9627,7 +9732,7 @@ class ForecastOperations:
     def usage(
         self,
         scope: str,
-        parameters: Union[_models.ForecastDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.ForecastDefinition, _types.ForecastDefinition, IO[bytes]],
         *,
         filter: Optional[str] = None,
         **kwargs: Any,
@@ -9651,9 +9756,10 @@ class ForecastOperations:
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
          specific for partners. Required.
         :type scope: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Forecast Config operation. Is one
-         of the following types: ForecastDefinition, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.costmanagement.models.ForecastDefinition or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the CreateOrUpdate Forecast Config operation. Is
+         either a ForecastDefinition type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.costmanagement.models.ForecastDefinition or
+         ~azure.mgmt.costmanagement.types.ForecastDefinition or IO[bytes]
         :keyword filter: May be used to filter forecasts by properties/usageDate (Utc time),
          properties/chargeType or properties/grain. The filter supports 'eq', 'lt', 'gt', 'le', 'ge',
          and 'and'. It does not currently support 'ne', 'or', or 'not'. Default value is None.
@@ -9772,7 +9878,7 @@ class ForecastOperations:
         self,
         external_cloud_provider_type: Union[str, _models.ExternalCloudProviderType],
         external_cloud_provider_id: str,
-        parameters: JSON,
+        parameters: _types.ForecastDefinition,
         *,
         filter: Optional[str] = None,
         content_type: str = "application/json",
@@ -9791,7 +9897,7 @@ class ForecastOperations:
          Required.
         :type external_cloud_provider_id: str
         :param parameters: The request body. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.costmanagement.types.ForecastDefinition
         :keyword filter: May be used to filter forecasts by properties/usageDate (Utc time),
          properties/chargeType or properties/grain. The filter supports 'eq', 'lt', 'gt', 'le', 'ge',
          and 'and'. It does not currently support 'ne', 'or', or 'not'. Default value is None.
@@ -9846,7 +9952,7 @@ class ForecastOperations:
         self,
         external_cloud_provider_type: Union[str, _models.ExternalCloudProviderType],
         external_cloud_provider_id: str,
-        parameters: Union[_models.ForecastDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.ForecastDefinition, _types.ForecastDefinition, IO[bytes]],
         *,
         filter: Optional[str] = None,
         **kwargs: Any,
@@ -9863,9 +9969,10 @@ class ForecastOperations:
          '{externalBillingAccountId}' for consolidated account used with dimension/query operations.
          Required.
         :type external_cloud_provider_id: str
-        :param parameters: The request body. Is one of the following types: ForecastDefinition, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.costmanagement.models.ForecastDefinition or JSON or IO[bytes]
+        :param parameters: The request body. Is either a ForecastDefinition type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.costmanagement.models.ForecastDefinition or
+         ~azure.mgmt.costmanagement.types.ForecastDefinition or IO[bytes]
         :keyword filter: May be used to filter forecasts by properties/usageDate (Utc time),
          properties/chargeType or properties/grain. The filter supports 'eq', 'lt', 'gt', 'le', 'ge',
          and 'and'. It does not currently support 'ne', 'or', or 'not'. Default value is None.
@@ -10283,7 +10390,7 @@ class QueryOperations:
 
     @overload
     def usage(
-        self, scope: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, scope: str, parameters: _types.QueryDefinition, *, content_type: str = "application/json", **kwargs: Any
     ) -> Optional[_models.QueryResult]:
         """Query the usage data for scope defined.
 
@@ -10305,7 +10412,7 @@ class QueryOperations:
          specific for partners. Required.
         :type scope: str
         :param parameters: Parameters supplied to the CreateOrUpdate Query Config operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.costmanagement.types.QueryDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10349,7 +10456,7 @@ class QueryOperations:
 
     @distributed_trace
     def usage(
-        self, scope: str, parameters: Union[_models.QueryDefinition, JSON, IO[bytes]], **kwargs: Any
+        self, scope: str, parameters: Union[_models.QueryDefinition, _types.QueryDefinition, IO[bytes]], **kwargs: Any
     ) -> Optional[_models.QueryResult]:
         """Query the usage data for scope defined.
 
@@ -10370,9 +10477,10 @@ class QueryOperations:
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/customers/{customerId}'
          specific for partners. Required.
         :type scope: str
-        :param parameters: Parameters supplied to the CreateOrUpdate Query Config operation. Is one of
-         the following types: QueryDefinition, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the CreateOrUpdate Query Config operation. Is either
+         a QueryDefinition type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition or
+         ~azure.mgmt.costmanagement.types.QueryDefinition or IO[bytes]
         :return: QueryResult or None. The QueryResult is compatible with MutableMapping
         :rtype: ~azure.mgmt.costmanagement.models.QueryResult or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10481,7 +10589,7 @@ class QueryOperations:
         self,
         external_cloud_provider_type: Union[str, _models.ExternalCloudProviderType],
         external_cloud_provider_id: str,
-        parameters: JSON,
+        parameters: _types.QueryDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -10499,7 +10607,7 @@ class QueryOperations:
          Required.
         :type external_cloud_provider_id: str
         :param parameters: The request body. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.costmanagement.types.QueryDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10545,7 +10653,7 @@ class QueryOperations:
         self,
         external_cloud_provider_type: Union[str, _models.ExternalCloudProviderType],
         external_cloud_provider_id: str,
-        parameters: Union[_models.QueryDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.QueryDefinition, _types.QueryDefinition, IO[bytes]],
         **kwargs: Any,
     ) -> _models.QueryResult:
         """Query the usage data for external cloud provider type defined.
@@ -10560,9 +10668,10 @@ class QueryOperations:
          '{externalBillingAccountId}' for consolidated account used with dimension/query operations.
          Required.
         :type external_cloud_provider_id: str
-        :param parameters: The request body. Is one of the following types: QueryDefinition, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition or JSON or IO[bytes]
+        :param parameters: The request body. Is either a QueryDefinition type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.costmanagement.models.QueryDefinition or
+         ~azure.mgmt.costmanagement.types.QueryDefinition or IO[bytes]
         :return: QueryResult. The QueryResult is compatible with MutableMapping
         :rtype: ~azure.mgmt.costmanagement.models.QueryResult
         :raises ~azure.core.exceptions.HttpResponseError:

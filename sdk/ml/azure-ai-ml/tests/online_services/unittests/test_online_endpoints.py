@@ -6,15 +6,15 @@ from pytest_mock import MockFixture
 
 from azure.ai.ml import load_online_deployment, load_online_endpoint
 from azure.ai.ml._azure_environments import _resource_to_scopes
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    OnlineDeploymentData,
-    OnlineDeploymentDetails,
-    OnlineEndpointData,
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    OnlineDeployment as OnlineDeploymentData,
+    OnlineDeploymentProperties as OnlineDeploymentDetails,
+    OnlineEndpoint as OnlineEndpointData,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
+from azure.ai.ml._restclient.arm_ml_service.models import OnlineEndpointProperties as RestOnlineEndpoint
 from azure.ai.ml._restclient.arm_ml_service.models import EndpointAuthKeys
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import (

@@ -33,23 +33,26 @@ def main():
 
     response = client.node_pools.begin_create_or_update(
         resource_group_name="rgdiscovery",
-        supercomputer_name="8074da5c77f95509a8",
-        node_pool_name="5a88c24ec4e7091650",
+        supercomputer_name="2fda614bbdadfee575",
+        node_pool_name="932c7b8d4ff0c243b8",
         resource={
             "location": "uksouth",
             "properties": {
-                "maxNodeCount": 4,
+                "imageCacheLowerThreshold": 4,
+                "imageCacheUpperThreshold": 92,
+                "maxNodeCount": 18,
                 "minNodeCount": 0,
+                "osDiskSizeGb": 610,
                 "scaleSetPriority": "Regular",
                 "subnetId": "/subscriptions/31735C59-6307-4464-8B80-3675223F23D2/providers/Microsoft.Network/virtualNetworks/virtualnetwork1/subnets/subnet1",
                 "vmSize": "Standard_NC24ads_A100_v4",
             },
-            "tags": {"key6074": "qlnvwgazrqmwauqqvxntjtoye"},
+            "tags": {"key7034": "obcmoprnvrxxcdbeokgwotr"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/NodePools_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/NodePools_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

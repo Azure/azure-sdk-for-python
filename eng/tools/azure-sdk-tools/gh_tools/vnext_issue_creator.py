@@ -5,7 +5,7 @@
 
 # This script is used to create issues for client libraries failing the vnext of mypy, pyright, and pylint.
 from __future__ import annotations
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 import sys
 import os
@@ -20,10 +20,45 @@ from typing_extensions import Literal
 from github import Github, Auth, GithubException
 
 from ci_tools.variables import discover_repo_root
+from ci_tools.parsing import ParsedSetup
+from ci_tools.functions import is_package_active
+
+if TYPE_CHECKING:
+    from github.Repository import Repository
 
 logging.getLogger().setLevel(logging.INFO)
 
 CHECK_TYPE = Literal["mypy", "pylint", "pyright", "sphinx"]
+
+# The automation that files vnext issues has run under different identities over time
+# (the `azure-sdk` user account and the `azure-sdk-automation[bot]` GitHub App). We match
+# issues from any known automation creator so existing issues are correctly found and
+# de-duplicated regardless of which identity created them. Filtering by creator (rather
+# than title alone) avoids ever editing/closing an issue a human happened to open.
+VNEXT_ISSUE_CREATORS = ["azure-sdk", "azure-sdk-automation[bot]"]
+
+
+def find_vnext_issues(repo: "Repository", check_type: CHECK_TYPE, package_name: str) -> list:
+    """Return all open vnext issues for the given package and check_type, across every
+    known automation creator identity, sorted oldest-first (by issue number)."""
+    matches = [
+        issue
+        for issue in repo.get_issues(state="open", labels=[check_type])
+        if issue.title.split("needs")[0].strip() == package_name and issue.user.login in VNEXT_ISSUE_CREATORS
+    ]
+    return sorted(matches, key=lambda issue: issue.number)
+
+
+def is_package_deprecated(package_dir: str) -> bool:
+    """Returns True if the package is deprecated/inactive (e.g. carries the
+    'Development Status :: 7 - Inactive' classifier). Deprecated packages should
+    not have vnext issues created against them."""
+    try:
+        parsed = ParsedSetup.from_path(package_dir)
+    except Exception as e:  # pragma: no cover - defensive
+        logging.warning(f"Unable to parse metadata for {package_dir} to determine deprecation status: {e}")
+        return False
+    return not is_package_active(parsed)
 
 
 def get_version_running(check_type: CHECK_TYPE) -> str:
@@ -148,14 +183,20 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE, check_version: 
     package_path = pathlib.Path(package_dir)
     package_name = package_path.name
     service_directory = package_path.parent.name
+
+    # Deprecated/inactive packages should never have vnext issues created against them.
+    if is_package_deprecated(package_dir):
+        logging.info(f"Package {package_name} is deprecated/inactive. Skipping vnext issue creation for {check_type}.")
+        close_vnext_issue(package_name, check_type)
+        return
+
     auth = Auth.Token(os.environ["GH_TOKEN"])
     g = Github(auth=auth)
 
     today = datetime.date.today()
     repo = g.get_repo("Azure/azure-sdk-for-python")
 
-    issues = repo.get_issues(state="open", labels=[check_type], creator="azure-sdk")
-    vnext_issue = [issue for issue in issues if issue.title.split("needs")[0].strip() == package_name]
+    vnext_issue = find_vnext_issues(repo, check_type, package_name)
 
     version = check_version or get_version_running(check_type)
     build_link = get_build_link(check_type)
@@ -219,7 +260,13 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE, check_version: 
         labels = []
         assignees = []
 
-    vnext_issue[0].edit(
+    # Update the most recent issue and close any older duplicates so we converge on a single issue.
+    primary_issue = vnext_issue[-1]
+    for duplicate in vnext_issue[:-1]:
+        logging.info(f"Closing duplicate vnext issue #{duplicate.number} for {package_name} ({check_type}).")
+        duplicate.edit(state="closed")
+
+    primary_issue.edit(
         title=title,
         body=template,
     )
@@ -227,7 +274,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE, check_version: 
     # Assign codeowners individually with error handling
     for assignee in assignees:
         try:
-            vnext_issue[0].add_to_assignees(assignee)
+            primary_issue.add_to_assignees(assignee)
             logging.info(f"Assigned {assignee} to issue for {package_name}")
         except GithubException as e:
             logging.warning(f"Failed to assign {assignee} to issue for {package_name}: {e}")
@@ -241,8 +288,7 @@ def close_vnext_issue(package_name: str, check_type: CHECK_TYPE) -> None:
 
     repo = g.get_repo("Azure/azure-sdk-for-python")
 
-    issues = repo.get_issues(state="open", labels=[check_type], creator="azure-sdk")
-    vnext_issue = [issue for issue in issues if issue.title.split("needs")[0].strip() == package_name]
-    if vnext_issue:
-        logging.info(f"{package_name} passes {check_type}. Closing existing GH issue #{vnext_issue[0].number}...")
-        vnext_issue[0].edit(state="closed")
+    vnext_issues = find_vnext_issues(repo, check_type, package_name)
+    for issue in vnext_issues:
+        logging.info(f"{package_name} passes {check_type}. Closing existing GH issue #{issue.number}...")
+        issue.edit(state="closed")

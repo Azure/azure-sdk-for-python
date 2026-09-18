@@ -1,0 +1,12 @@
+{
+  "properties": {
+    "authType": "ApiKey",
+    "category": "CognitiveSearch",
+    "credentials": {
+      "key": "smoke-search-api-key"
+    },
+    "isSharedToAll": true,
+    "metadata": {},
+    "target": "https://smoke-search.search.windows.net/"
+  }
+}

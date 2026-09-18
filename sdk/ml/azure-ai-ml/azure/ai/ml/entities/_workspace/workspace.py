@@ -8,16 +8,17 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Type, Union
 
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import FeatureStoreSettings as RestFeatureStoreSettings
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import ManagedNetworkSettings as RestManagedNetwork
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import ManagedServiceIdentity as RestManagedServiceIdentity
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import NetworkAcls as RestNetworkAcls
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import FeatureStoreSettings as RestFeatureStoreSettings
+from azure.ai.ml._restclient.arm_ml_service.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.arm_ml_service.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.arm_ml_service.models import NetworkAcls as RestNetworkAcls
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.arm_ml_service.models import Workspace as RestWorkspace
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
+from azure.ai.ml._utils._workspace_utils import get_removed_workspace_property, set_removed_workspace_property
 from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
@@ -40,66 +41,66 @@ from .networking import ManagedNetwork
 class Workspace(Resource):
     """Azure ML workspace.
 
-    :param name: Name of the workspace.
-    :type name: str
-    :param description: Description of the workspace.
-    :type description: str
-    :param tags: Tags of the workspace.
-    :type tags: dict
-    :param display_name: Display name for the workspace. This is non-unique within the resource group.
-    :type display_name: str
-    :param location: The location to create the workspace in.
+    :keyword name: Name of the workspace.
+    :paramtype name: str
+    :keyword description: Description of the workspace.
+    :paramtype description: str
+    :keyword tags: Tags of the workspace.
+    :paramtype tags: dict
+    :keyword display_name: Display name for the workspace. This is non-unique within the resource group.
+    :paramtype display_name: str
+    :keyword location: The location to create the workspace in.
         If not specified, the same location as the resource group will be used.
-    :type location: str
-    :param resource_group: Name of resource group to create the workspace in.
-    :type resource_group: str
-    :param hbi_workspace: Whether the customer data is of high business impact (HBI),
+    :paramtype location: str
+    :keyword resource_group: Name of resource group to create the workspace in.
+    :paramtype resource_group: str
+    :keyword hbi_workspace: Whether the customer data is of high business impact (HBI),
         containing sensitive business information.
         For more information, see
         https://learn.microsoft.com/azure/machine-learning/concept-data-encryption#encryption-at-rest.
-    :type hbi_workspace: bool
-    :param storage_account: The resource ID of an existing storage account to use instead of creating a new one.
-    :type storage_account: str
-    :param container_registry: The resource ID of an existing container registry
+    :paramtype hbi_workspace: bool
+    :keyword storage_account: The resource ID of an existing storage account to use instead of creating a new one.
+    :paramtype storage_account: str
+    :keyword container_registry: The resource ID of an existing container registry
         to use instead of creating a new one.
-    :type container_registry: str
-    :param key_vault: The resource ID of an existing key vault to use instead of creating a new one.
-    :type key_vault: str
-    :param application_insights: The resource ID of an existing application insights
+    :paramtype container_registry: str
+    :keyword key_vault: The resource ID of an existing key vault to use instead of creating a new one.
+    :paramtype key_vault: str
+    :keyword application_insights: The resource ID of an existing application insights
         to use instead of creating a new one.
-    :type application_insights: str
-    :param customer_managed_key: Key vault details for encrypting data with customer-managed keys.
+    :paramtype application_insights: str
+    :keyword customer_managed_key: Key vault details for encrypting data with customer-managed keys.
         If not specified, Microsoft-managed keys will be used by default.
-    :type customer_managed_key: ~azure.ai.ml.entities.CustomerManagedKey
-    :param image_build_compute: The name of the compute target to use for building environment
+    :paramtype customer_managed_key: ~azure.ai.ml.entities.CustomerManagedKey
+    :keyword image_build_compute: The name of the compute target to use for building environment
         Docker images with the container registry is behind a VNet.
-    :type image_build_compute: str
-    :param public_network_access: Whether to allow public endpoint connectivity
+    :paramtype image_build_compute: str
+    :keyword public_network_access: Whether to allow public endpoint connectivity
         when a workspace is private link enabled.
-    :type public_network_access: str
-    :param network_acls: The network access control list (ACL) settings of the workspace.
-    :type network_acls: ~azure.ai.ml.entities.NetworkAcls
-    :param identity: workspace's Managed Identity (user assigned, or system assigned)
-    :type identity: ~azure.ai.ml.entities.IdentityConfiguration
-    :param primary_user_assigned_identity: The workspace's primary user assigned identity
-    :type primary_user_assigned_identity: str
-    :param managed_network: workspace's Managed Network configuration
-    :type managed_network: ~azure.ai.ml.entities.ManagedNetwork
-    :param provision_network_now: Set to trigger the provisioning of the managed vnet with the default options when
+    :paramtype public_network_access: str
+    :keyword network_acls: The network access control list (ACL) settings of the workspace.
+    :paramtype network_acls: ~azure.ai.ml.entities.NetworkAcls
+    :keyword identity: workspace's Managed Identity (user assigned, or system assigned)
+    :paramtype identity: ~azure.ai.ml.entities.IdentityConfiguration
+    :keyword primary_user_assigned_identity: The workspace's primary user assigned identity
+    :paramtype primary_user_assigned_identity: str
+    :keyword managed_network: workspace's Managed Network configuration
+    :paramtype managed_network: ~azure.ai.ml.entities.ManagedNetwork
+    :keyword provision_network_now: Set to trigger the provisioning of the managed vnet with the default options when
         creating a workspace with the managed vnet enable, or else it does nothing
-    :type provision_network_now: Optional[bool]
-    :param system_datastores_auth_mode: The authentication mode for system datastores.
-    :type system_datastores_auth_mode: str
-    :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
+    :paramtype provision_network_now: Optional[bool]
+    :keyword system_datastores_auth_mode: The authentication mode for system datastores.
+    :paramtype system_datastores_auth_mode: str
+    :keyword enable_data_isolation: A flag to determine if workspace has data isolation enabled.
         The flag can only be set at the creation phase, it can't be updated.
-    :type enable_data_isolation: bool
-    :param allow_roleassignment_on_rg: Determine whether allow workspace role assignment on resource group level.
-    :type allow_roleassignment_on_rg: Optional[bool]
-    :param serverless_compute: The serverless compute settings for the workspace.
+    :paramtype enable_data_isolation: bool
+    :keyword allow_roleassignment_on_rg: Determine whether allow workspace role assignment on resource group level.
+    :paramtype allow_roleassignment_on_rg: Optional[bool]
+    :keyword serverless_compute: The serverless compute settings for the workspace.
     :type: ~azure.ai.ml.entities.ServerlessComputeSettings
-    :param workspace_hub: Deprecated resource ID of an existing workspace hub to help create project workspace.
+    :keyword workspace_hub: Deprecated resource ID of an existing workspace hub to help create project workspace.
         Use the Project class instead now.
-    :type workspace_hub: Optional[str]
+    :paramtype workspace_hub: Optional[str]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
@@ -357,9 +358,13 @@ class Workspace(Resource):
                 mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
 
         # TODO: Remove once Online Endpoints updates API version to at least 2023-08-01
+        # allowRoleAssignmentOnRG was @removed at api-version 2025-12-01, so it is not declared on the
+        # shared arm_ml_service Workspace model; read it from the flattened wire envelope instead.
         allow_roleassignment_on_rg = None
         if hasattr(rest_obj, "allow_role_assignment_on_rg"):
             allow_roleassignment_on_rg = rest_obj.allow_role_assignment_on_rg
+        else:
+            allow_roleassignment_on_rg = get_removed_workspace_property(rest_obj, "allowRoleAssignmentOnRG")
         system_datastores_auth_mode = None
         if hasattr(rest_obj, "system_datastores_auth_mode"):
             system_datastores_auth_mode = rest_obj.system_datastores_auth_mode
@@ -402,6 +407,14 @@ class Workspace(Resource):
         if hasattr(rest_obj, "network_acls"):
             if rest_obj.network_acls and isinstance(rest_obj.network_acls, RestNetworkAcls):
                 network_acls = NetworkAcls._from_rest_object(rest_obj.network_acls)  # pylint: disable=protected-access
+        else:
+            # networkAcls was @removed at api-version 2025-12-01, so it is not declared on the shared
+            # arm_ml_service Workspace model; read it from the flattened wire envelope instead.
+            rest_network_acls = get_removed_workspace_property(rest_obj, "networkAcls")
+            if rest_network_acls:
+                network_acls = NetworkAcls._from_rest_object(  # pylint: disable=protected-access
+                    RestNetworkAcls(rest_network_acls)
+                )
 
         return cls(
             name=rest_obj.name,
@@ -451,7 +464,7 @@ class Workspace(Resource):
         if self.serverless_compute:
             serverless_compute_settings = self.serverless_compute._to_rest_object()  # pylint: disable=protected-access
 
-        return RestWorkspace(
+        rest_workspace = RestWorkspace(
             name=self.name,
             identity=(
                 self.identity._to_workspace_rest_object() if self.identity else None  # pylint: disable=protected-access
@@ -479,10 +492,14 @@ class Workspace(Resource):
             system_datastores_auth_mode=self.system_datastores_auth_mode,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=self.enable_data_isolation,
-            allow_role_assignment_on_rg=self.allow_roleassignment_on_rg,  # diff due to swagger restclient casing diff
             hub_resource_id=self._hub_id,
             serverless_compute_settings=serverless_compute_settings,
         )
+        # allowRoleAssignmentOnRG was @removed at api-version 2025-12-01 and is not a constructor field
+        # on the shared arm_ml_service Workspace model; set it on the flattened wire envelope instead.
+        # diff due to swagger restclient casing diff
+        set_removed_workspace_property(rest_workspace, "allowRoleAssignmentOnRG", self.allow_roleassignment_on_rg)
+        return rest_workspace
 
     # Helper for sub-class polymorphism. Needs to be overwritten by child classes
     # If they don't want to redefine things like _to_dict.

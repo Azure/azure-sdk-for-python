@@ -6,46 +6,46 @@ import collections.abc
 import re
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     CustomModelJobInput as RestCustomModelJobInput,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     CustomModelJobOutput as RestCustomModelJobOutput,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import InputDeliveryMode
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInputType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutputType, LiteralJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import InputDeliveryMode
+from azure.ai.ml._restclient.arm_ml_service.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.arm_ml_service.models import JobInputType
+from azure.ai.ml._restclient.arm_ml_service.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.arm_ml_service.models import JobOutputType, LiteralJobInput
+from azure.ai.ml._restclient.arm_ml_service.models import (
     MLFlowModelJobInput as RestMLFlowModelJobInput,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     MLFlowModelJobOutput as RestMLFlowModelJobOutput,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     MLTableJobInput as RestMLTableJobInput,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     MLTableJobOutput as RestMLTableJobOutput,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import OutputDeliveryMode
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import OutputDeliveryMode
+from azure.ai.ml._restclient.arm_ml_service.models import (
     TritonModelJobInput as RestTritonModelJobInput,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     TritonModelJobOutput as RestTritonModelJobOutput,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     UriFileJobInput as RestUriFileJobInput,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     UriFileJobOutput as RestUriFileJobOutput,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     UriFolderJobInput as RestUriFolderJobInput,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     UriFolderJobOutput as RestUriFolderJobOutput,
 )
 from azure.ai.ml._utils.utils import is_data_binding_expression
@@ -61,6 +61,40 @@ from azure.ai.ml.exceptions import (
     ValidationErrorType,
     ValidationException,
 )
+
+
+def to_hybrid_rest_model(value: Any, arm_base_cls: Any) -> Any:
+    """Convert a msrest rest model (or dict/list of them) into its arm_ml_service hybrid equivalent.
+
+    The shared job rest-conversion helpers (``to_rest_dataset_literal_inputs``,
+    ``to_rest_data_outputs``, ``DistributionConfiguration._to_rest_object``, etc.) emit msrest models
+    from per-version restclient packages. Job entities whose envelope is a shared arm_ml_service hybrid
+    model (command and fine-tuning jobs) submit the body through the hybrid ``SdkJSONEncoder``, which can
+    only serialize hybrid models. Round-trip each nested child through its wire dict
+    (msrest ``.serialize()`` -> ``arm_base_cls._deserialize(...)``); this is wire-identical and rebuilds
+    the full subtree as the correct discriminated arm subtype.
+
+    Remove once arm_ml_service is regenerated and these entities build fully-arm bodies.
+
+    :param value: A msrest rest model, a dict/list of them, an already-hybrid model, or None.
+    :type value: Any
+    :param arm_base_cls: The arm_ml_service base model class to deserialize into.
+    :type arm_base_cls: Any
+    :return: The hybrid-model equivalent (same shape as the input container).
+    :rtype: Any
+    """
+    if value is None:
+        return None
+    if isinstance(value, dict):
+        return {key: to_hybrid_rest_model(item, arm_base_cls) for key, item in value.items()}
+    if isinstance(value, list):
+        return [to_hybrid_rest_model(item, arm_base_cls) for item in value]
+    # Already an arm_ml_service hybrid model (e.g. a partially-migrated child): leave as-is.
+    if hasattr(value, "_is_model"):
+        return value
+    # msrest model -> camelCase wire dict -> discriminated arm hybrid model.
+    return arm_base_cls._deserialize(value.serialize(), [])  # pylint: disable=protected-access
+
 
 INPUT_MOUNT_MAPPING_FROM_REST = {
     InputDeliveryMode.READ_WRITE_MOUNT: InputOutputModes.RW_MOUNT,
@@ -247,7 +281,10 @@ def to_rest_dataset_literal_inputs(
                     and is_data_binding_expression(input_value.path)
                 ):
                     input_data = LiteralJobInput(value=input_value.path)
-                    # set mode attribute manually for binding job input
+                    # ``mode``/``pathOnCompute`` are not part of the LiteralJobInput wire body (the legacy
+                    # msrest model dropped them from ``serialize()`` too), but the pipeline node serializer
+                    # reads ``val.mode`` back off the object, so keep them as plain (non-serialized)
+                    # attributes on the arm_ml_service hybrid to preserve that behavior.
                     if input_value.mode:
                         input_data.mode = INPUT_MOUNT_MAPPING_TO_REST[input_value.mode]
                     if getattr(input_value, "path_on_compute", None) is not None:
@@ -277,7 +314,8 @@ def to_rest_dataset_literal_inputs(
                 # otherwise, the input is a literal input
                 if isinstance(input_value, dict):
                     input_data = LiteralJobInput(value=str(input_value["value"]))
-                    # set mode attribute manually for binding job input
+                    # ``mode`` is not part of the literal wire body but the pipeline node serializer reads
+                    # it back off the object, so keep it as a plain (non-serialized) attribute.
                     if "mode" in input_value:
                         input_data.mode = input_value["mode"]
                 else:
@@ -364,12 +402,15 @@ def to_rest_data_outputs(outputs: Optional[Dict]) -> Dict[str, RestJobOutput]:
                 if output_value_type in target_cls_dict:
                     output = target_cls_dict[output_value_type](
                         asset_name=output_value.name,
-                        asset_version=output_value.version,
                         uri=output_value.path,
                         mode=(OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None),
-                        pathOnCompute=getattr(output_value, "path_on_compute", None),
                         description=output_value.description,
                     )
+                    # The shared arm_ml_service JobOutput models dropped ``assetVersion``/``pathOnCompute``
+                    # from their constructor; the legacy msrest wire carried ``assetVersion`` (but not
+                    # ``pathOnCompute``), so preserve it as an unknown wire key when present.
+                    if output_value.version is not None:
+                        output["assetVersion"] = output_value.version
                 else:
                     msg = "unsupported JobOutput type: {}".format(output_value.type)
                     raise ValidationException(
@@ -401,10 +442,15 @@ def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Outpu
         # deal with invalid output type submitted by feb api
         # todo: backend help convert node level input/output type
         normalize_job_input_output_type(output_value)
-        if getattr(output_value, "pathOnCompute", None) is not None:
-            sourcePathOnCompute = output_value.pathOnCompute
+        # ``pathOnCompute``/``assetVersion`` live as attributes on the legacy msrest models (still returned
+        # by the operations layer) but as unknown wire keys on the shared arm_ml_service hybrid models
+        # (a MutableMapping) produced by an entity round-trip; read whichever spelling is present.
+        if getattr(output_value, "_is_model", False) is True:
+            sourcePathOnCompute = output_value.get("pathOnCompute")
+            asset_version = output_value.get("assetVersion")
         else:
-            sourcePathOnCompute = None
+            sourcePathOnCompute = getattr(output_value, "pathOnCompute", None)
+            asset_version = output_value.asset_version if hasattr(output_value, "asset_version") else None
         if output_value.job_output_type in output_type_mapping:
             from_rest_outputs[output_name] = Output(
                 type=output_type_mapping[output_value.job_output_type],
@@ -413,7 +459,7 @@ def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Outpu
                 path_on_compute=sourcePathOnCompute,
                 description=output_value.description,
                 name=output_value.asset_name,
-                version=(output_value.asset_version if hasattr(output_value, "asset_version") else None),
+                version=asset_version,
             )
         else:
             msg = "unsupported JobOutput type: {}".format(output_value.job_output_type)

@@ -26,7 +26,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
             resource_group_name=resource_group.name,
             application_gateway_name="str",
             connection_name="str",
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -63,6 +63,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                     "type": "str",
                                 }
                             ],
+                            "billingSku": "str",
                             "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                             "customNetworkInterfaceName": "str",
                             "ipConfigurations": [
@@ -245,6 +246,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                         "name": "str",
                                                         "properties": {
                                                             "ddosSettings": {
+                                                                "ddosCustomPolicy": {"id": "str"},
                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                 "protectionMode": "str",
                                                             },
@@ -536,6 +538,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                    "disablePeeringRoute": "str",
                                                                                     "provisioningState": "str",
                                                                                     "resourceGuid": "str",
                                                                                     "routes": [
@@ -547,6 +550,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                 "nextHopType": "str",
                                                                                                 "addressPrefix": "str",
                                                                                                 "hasBgpOverride": bool,
+                                                                                                "nextHop": {
+                                                                                                    "nextHopIpAddresses": [
+                                                                                                        "str"
+                                                                                                    ]
+                                                                                                },
                                                                                                 "nextHopIpAddress": "str",
                                                                                                 "provisioningState": "str",
                                                                                             },
@@ -624,7 +632,13 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                     },
                                                                 },
                                                             },
-                                                            "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                            "ipTags": [
+                                                                {
+                                                                    "firstPartyServiceTagId": "str",
+                                                                    "ipTagType": "str",
+                                                                    "tag": "str",
+                                                                }
+                                                            ],
                                                             "linkedPublicIPAddress": ...,
                                                             "migrationPhase": "str",
                                                             "natGateway": {
@@ -634,6 +648,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "idleTimeoutInMinutes": 0,
+                                                                    "nat64": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
                                                                     "publicIpAddressesV6": [{"id": "str"}],
@@ -655,6 +670,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                             "publicIPPrefix": {"id": "str"},
                                                             "resourceGuid": "str",
                                                             "servicePublicIPAddress": ...,
+                                                            "upgradedToV2": bool,
                                                         },
                                                         "sku": {"name": "str", "tier": "str"},
                                                         "tags": {"str": "str"},
@@ -727,6 +743,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -741,7 +758,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 "ipAddress": "str",
                                                                                 "ipConfiguration": ...,
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -752,6 +773,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -783,6 +805,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -989,6 +1012,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "disableBgpRoutePropagation": bool,
+                                                                    "disablePeeringRoute": "str",
                                                                     "provisioningState": "str",
                                                                     "resourceGuid": "str",
                                                                     "routes": [
@@ -1000,6 +1024,9 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 "nextHopType": "str",
                                                                                 "addressPrefix": "str",
                                                                                 "hasBgpOverride": bool,
+                                                                                "nextHop": {
+                                                                                    "nextHopIpAddresses": ["str"]
+                                                                                },
                                                                                 "nextHopIpAddress": "str",
                                                                                 "provisioningState": "str",
                                                                             },
@@ -1083,6 +1110,10 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                     "id": "str",
                                                                     "name": "str",
                                                                     "properties": {
+                                                                        "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"}
+                                                                        },
+                                                                        "enableConnectionTracking": bool,
                                                                         "gatewayLoadBalancer": {"id": "str"},
                                                                         "inboundNatPools": [{"id": "str"}],
                                                                         "inboundNatRules": [{"id": "str"}],
@@ -1103,6 +1134,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -1420,6 +1452,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "disableBgpRoutePropagation": bool,
+                                                                                                        "disablePeeringRoute": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "resourceGuid": "str",
                                                                                                         "routes": [
@@ -1431,6 +1464,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                                     "nextHopType": "str",
                                                                                                                     "addressPrefix": "str",
                                                                                                                     "hasBgpOverride": bool,
+                                                                                                                    "nextHop": {
+                                                                                                                        "nextHopIpAddresses": [
+                                                                                                                            "str"
+                                                                                                                        ]
+                                                                                                                    },
                                                                                                                     "nextHopIpAddress": "str",
                                                                                                                     "provisioningState": "str",
                                                                                                                 },
@@ -1525,7 +1563,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                     },
                                                                                 },
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -1536,6 +1578,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -1567,6 +1610,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -1640,6 +1684,9 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -1657,6 +1704,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                     "ipConfiguration": ...,
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -1670,6 +1718,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -1723,6 +1772,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -1961,6 +2011,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "disableBgpRoutePropagation": bool,
+                                                                                        "disablePeeringRoute": "str",
                                                                                         "provisioningState": "str",
                                                                                         "resourceGuid": "str",
                                                                                         "routes": [
@@ -1972,6 +2023,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                     "nextHopType": "str",
                                                                                                     "addressPrefix": "str",
                                                                                                     "hasBgpOverride": bool,
+                                                                                                    "nextHop": {
+                                                                                                        "nextHopIpAddresses": [
+                                                                                                            "str"
+                                                                                                        ]
+                                                                                                    },
                                                                                                     "nextHopIpAddress": "str",
                                                                                                     "provisioningState": "str",
                                                                                                 },
@@ -2299,6 +2355,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -2313,7 +2370,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 "ipAddress": "str",
                                                                                 "ipConfiguration": ...,
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -2324,6 +2385,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -2355,6 +2417,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -2399,6 +2462,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "disableBgpRoutePropagation": bool,
+                                                                    "disablePeeringRoute": "str",
                                                                     "provisioningState": "str",
                                                                     "resourceGuid": "str",
                                                                     "routes": [
@@ -2410,6 +2474,9 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 "nextHopType": "str",
                                                                                 "addressPrefix": "str",
                                                                                 "hasBgpOverride": bool,
+                                                                                "nextHop": {
+                                                                                    "nextHopIpAddresses": ["str"]
+                                                                                },
                                                                                 "nextHopIpAddress": "str",
                                                                                 "provisioningState": "str",
                                                                             },
@@ -2579,6 +2646,9 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -2596,6 +2666,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                         "ipConfiguration": ...,
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -2609,6 +2680,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -2644,6 +2716,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -2868,6 +2941,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "disableBgpRoutePropagation": bool,
+                                                                            "disablePeeringRoute": "str",
                                                                             "provisioningState": "str",
                                                                             "resourceGuid": "str",
                                                                             "routes": [
@@ -2879,6 +2953,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                         "nextHopType": "str",
                                                                                         "addressPrefix": "str",
                                                                                         "hasBgpOverride": bool,
+                                                                                        "nextHop": {
+                                                                                            "nextHopIpAddresses": [
+                                                                                                "str"
+                                                                                            ]
+                                                                                        },
                                                                                         "nextHopIpAddress": "str",
                                                                                         "provisioningState": "str",
                                                                                     },
@@ -2962,6 +3041,8 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                         "id": "str",
                                                         "name": "str",
                                                         "properties": {
+                                                            "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                                            "enableConnectionTracking": bool,
                                                             "gatewayLoadBalancer": {"id": "str"},
                                                             "inboundNatPools": [{"id": "str"}],
                                                             "inboundNatRules": [{"id": "str"}],
@@ -2979,6 +3060,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "ddosSettings": {
+                                                                        "ddosCustomPolicy": {"id": "str"},
                                                                         "ddosProtectionPlan": {"id": "str"},
                                                                         "protectionMode": "str",
                                                                     },
@@ -3274,6 +3356,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "disableBgpRoutePropagation": bool,
+                                                                                            "disablePeeringRoute": "str",
                                                                                             "provisioningState": "str",
                                                                                             "resourceGuid": "str",
                                                                                             "routes": [
@@ -3285,6 +3368,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                         "nextHopType": "str",
                                                                                                         "addressPrefix": "str",
                                                                                                         "hasBgpOverride": bool,
+                                                                                                        "nextHop": {
+                                                                                                            "nextHopIpAddresses": [
+                                                                                                                "str"
+                                                                                                            ]
+                                                                                                        },
                                                                                                         "nextHopIpAddress": "str",
                                                                                                         "provisioningState": "str",
                                                                                                     },
@@ -3364,7 +3452,13 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                             },
                                                                         },
                                                                     },
-                                                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                    "ipTags": [
+                                                                        {
+                                                                            "firstPartyServiceTagId": "str",
+                                                                            "ipTagType": "str",
+                                                                            "tag": "str",
+                                                                        }
+                                                                    ],
                                                                     "linkedPublicIPAddress": ...,
                                                                     "migrationPhase": "str",
                                                                     "natGateway": {
@@ -3374,6 +3468,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "idleTimeoutInMinutes": 0,
+                                                                            "nat64": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
                                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -3395,6 +3490,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                     "publicIPPrefix": {"id": "str"},
                                                                     "resourceGuid": "str",
                                                                     "servicePublicIPAddress": ...,
+                                                                    "upgradedToV2": bool,
                                                                 },
                                                                 "sku": {"name": "str", "tier": "str"},
                                                                 "tags": {"str": "str"},
@@ -3468,6 +3564,9 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -3485,6 +3584,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                         "ipConfiguration": ...,
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -3498,6 +3598,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -3533,6 +3634,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -3757,6 +3859,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "disableBgpRoutePropagation": bool,
+                                                                            "disablePeeringRoute": "str",
                                                                             "provisioningState": "str",
                                                                             "resourceGuid": "str",
                                                                             "routes": [
@@ -3768,6 +3871,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                         "nextHopType": "str",
                                                                                         "addressPrefix": "str",
                                                                                         "hasBgpOverride": bool,
+                                                                                        "nextHop": {
+                                                                                            "nextHopIpAddresses": [
+                                                                                                "str"
+                                                                                            ]
+                                                                                        },
                                                                                         "nextHopIpAddress": "str",
                                                                                         "provisioningState": "str",
                                                                                     },
@@ -3892,6 +4000,8 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                 "id": "str",
                                                                 "name": "str",
                                                                 "properties": {
+                                                                    "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                                                    "enableConnectionTracking": bool,
                                                                     "gatewayLoadBalancer": {"id": "str"},
                                                                     "inboundNatPools": [{"id": "str"}],
                                                                     "inboundNatRules": [{"id": "str"}],
@@ -3912,6 +4022,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -4217,6 +4328,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                                    "disablePeeringRoute": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "resourceGuid": "str",
                                                                                                     "routes": [
@@ -4228,6 +4340,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                                 "nextHopType": "str",
                                                                                                                 "addressPrefix": "str",
                                                                                                                 "hasBgpOverride": bool,
+                                                                                                                "nextHop": {
+                                                                                                                    "nextHopIpAddresses": [
+                                                                                                                        "str"
+                                                                                                                    ]
+                                                                                                                },
                                                                                                                 "nextHopIpAddress": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                             },
@@ -4318,7 +4435,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 },
                                                                             },
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -4329,6 +4450,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -4358,6 +4480,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -4431,6 +4554,9 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -4448,6 +4574,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                 "ipConfiguration": ...,
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -4461,6 +4588,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -4512,6 +4640,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -4748,6 +4877,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                    "disablePeeringRoute": "str",
                                                                                     "provisioningState": "str",
                                                                                     "resourceGuid": "str",
                                                                                     "routes": [
@@ -4759,6 +4889,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                 "nextHopType": "str",
                                                                                                 "addressPrefix": "str",
                                                                                                 "hasBgpOverride": bool,
+                                                                                                "nextHop": {
+                                                                                                    "nextHopIpAddresses": [
+                                                                                                        "str"
+                                                                                                    ]
+                                                                                                },
                                                                                                 "nextHopIpAddress": "str",
                                                                                                 "provisioningState": "str",
                                                                                             },
@@ -4973,6 +5108,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -5278,6 +5414,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                                    "disablePeeringRoute": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "resourceGuid": "str",
                                                                                                     "routes": [
@@ -5289,6 +5426,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                                 "nextHopType": "str",
                                                                                                                 "addressPrefix": "str",
                                                                                                                 "hasBgpOverride": bool,
+                                                                                                                "nextHop": {
+                                                                                                                    "nextHopIpAddresses": [
+                                                                                                                        "str"
+                                                                                                                    ]
+                                                                                                                },
                                                                                                                 "nextHopIpAddress": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                             },
@@ -5379,7 +5521,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 },
                                                                             },
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -5390,6 +5536,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -5419,6 +5566,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -5491,6 +5639,9 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -5508,6 +5659,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                 "ipConfiguration": ...,
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -5521,6 +5673,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -5572,6 +5725,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -5808,6 +5962,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                    "disablePeeringRoute": "str",
                                                                                     "provisioningState": "str",
                                                                                     "resourceGuid": "str",
                                                                                     "routes": [
@@ -5819,6 +5974,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                 "nextHopType": "str",
                                                                                                 "addressPrefix": "str",
                                                                                                 "hasBgpOverride": bool,
+                                                                                                "nextHop": {
+                                                                                                    "nextHopIpAddresses": [
+                                                                                                        "str"
+                                                                                                    ]
+                                                                                                },
                                                                                                 "nextHopIpAddress": "str",
                                                                                                 "provisioningState": "str",
                                                                                             },
@@ -5995,6 +6155,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                     "name": "str",
                                                     "properties": {
                                                         "ddosSettings": {
+                                                            "ddosCustomPolicy": {"id": "str"},
                                                             "ddosProtectionPlan": {"id": "str"},
                                                             "protectionMode": "str",
                                                         },
@@ -6008,7 +6169,13 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                         "idleTimeoutInMinutes": 0,
                                                         "ipAddress": "str",
                                                         "ipConfiguration": ...,
-                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                        "ipTags": [
+                                                            {
+                                                                "firstPartyServiceTagId": "str",
+                                                                "ipTagType": "str",
+                                                                "tag": "str",
+                                                            }
+                                                        ],
                                                         "linkedPublicIPAddress": ...,
                                                         "migrationPhase": "str",
                                                         "natGateway": {
@@ -6018,6 +6185,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                             "name": "str",
                                                             "properties": {
                                                                 "idleTimeoutInMinutes": 0,
+                                                                "nat64": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -6039,6 +6207,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                         "publicIPPrefix": {"id": "str"},
                                                         "resourceGuid": "str",
                                                         "servicePublicIPAddress": ...,
+                                                        "upgradedToV2": bool,
                                                     },
                                                     "sku": {"name": "str", "tier": "str"},
                                                     "tags": {"str": "str"},
@@ -6313,6 +6482,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -6338,7 +6508,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 },
                                                                             },
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -6349,6 +6523,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -6378,6 +6553,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -6397,6 +6573,12 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            }
+                                                                                        },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -6427,6 +6609,9 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -6455,6 +6640,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -6468,6 +6654,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -6519,6 +6706,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -6600,6 +6788,10 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"}
+                                                                            },
+                                                                            "enableConnectionTracking": bool,
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -6620,6 +6812,9 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -6648,6 +6843,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -6661,6 +6857,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -6694,6 +6891,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -6753,6 +6951,12 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -6777,6 +6981,9 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -6805,6 +7012,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -6818,6 +7026,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -6855,6 +7064,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -7028,6 +7238,9 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -7056,6 +7269,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -7069,6 +7283,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -7106,6 +7321,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -7224,6 +7440,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                         "name": "str",
                                         "properties": {
                                             "disableBgpRoutePropagation": bool,
+                                            "disablePeeringRoute": "str",
                                             "provisioningState": "str",
                                             "resourceGuid": "str",
                                             "routes": [
@@ -7235,6 +7452,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                         "nextHopType": "str",
                                                         "addressPrefix": "str",
                                                         "hasBgpOverride": bool,
+                                                        "nextHop": {"nextHopIpAddresses": ["str"]},
                                                         "nextHopIpAddress": "str",
                                                         "provisioningState": "str",
                                                     },
@@ -7319,7 +7537,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                 },
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7332,7 +7550,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
             resource_group_name=resource_group.name,
             application_gateway_name="str",
             connection_name="str",
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7344,7 +7562,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
         response = self.client.application_gateway_private_endpoint_connections.list(
             resource_group_name=resource_group.name,
             application_gateway_name="str",
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

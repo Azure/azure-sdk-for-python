@@ -33,10 +33,11 @@ def main():
     response = client.fleet.update(
         resource_group_name="rg1",
         fleet_name="fleet1",
+        body={"properties": {}},
     )
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/fleet/CosmosDBFleetUpdate.json
+# x-ms-original-file: 2026-03-15/fleet/CosmosDBFleetUpdate.json
 if __name__ == "__main__":
     main()

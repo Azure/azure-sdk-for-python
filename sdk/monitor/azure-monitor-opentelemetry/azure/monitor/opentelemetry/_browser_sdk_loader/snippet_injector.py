@@ -39,6 +39,7 @@ except ImportError:
 _logger = getLogger(__name__)
 
 
+# pylint: disable=do-not-log-exceptions-if-not-debug
 def _bounded_decompress(data: bytes, encoding: str) -> bytes:
     """Decompress ``data`` with the given encoding, raising if output exceeds the cap.
 
@@ -457,7 +458,9 @@ class WebSnippetInjector:
             # Re-raise so callers (e.g., inject_with_compression / should_inject) can
             # fall back to returning the original response untouched instead of
             # treating still-compressed bytes as HTML and double-compressing them.
-            _logger.warning("Failed to decompress content with encoding %s: %s", encoding, ex)
+            _logger.warning(  # pylint: disable=do-not-log-raised-errors
+                "Failed to decompress content with encoding %s: %s", encoding, ex
+            )
             raise
         return result
 

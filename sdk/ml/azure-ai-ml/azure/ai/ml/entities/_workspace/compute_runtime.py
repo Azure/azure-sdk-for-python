@@ -4,7 +4,7 @@
 
 from typing import Optional
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ComputeRuntimeDto as RestComputeRuntimeDto
+from azure.ai.ml._restclient.arm_ml_service.models import ComputeRuntimeDto as RestComputeRuntimeDto
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 

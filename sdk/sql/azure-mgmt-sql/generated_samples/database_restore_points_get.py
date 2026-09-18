@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-01-01/DatabaseRestorePointsGet.json
+# x-ms-original-file: 2025-08-01-preview/DatabaseRestorePointsGet.json
 if __name__ == "__main__":
     main()

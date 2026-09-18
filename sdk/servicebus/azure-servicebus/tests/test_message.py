@@ -1,5 +1,7 @@
 import os
+import uuid
 from decimal import Decimal
+from unittest import mock
 import pytest
 
 try:
@@ -24,10 +26,12 @@ from azure.servicebus._common.constants import (
 )
 from azure.servicebus._common.utils import (
     CE_ZERO_SECONDS,
+    transform_outbound_messages,
 )
 from azure.servicebus.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType, AmqpMessageProperties, AmqpMessageHeader
 from azure.servicebus._pyamqp.message import Message
 from azure.servicebus._pyamqp._message_backcompat import LegacyBatchMessage
+from azure.servicebus._pyamqp._encode import encode_payload
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
 
 from devtools_testutils import AzureMgmtRecordedTestCase
@@ -228,10 +232,89 @@ def test_servicebus_message_batch(uamqp_transport):
 
     assert batch.size_in_bytes == 238 and len(batch) == 1
 
+    # The batch envelope must capture the first message's message_id/session_id/partition_key so the
+    # broker can route the batch. Under uamqp_transport this previously raised
+    # TypeError: 'BatchMessage' object is not subscriptable.
+    if uamqp_transport:
+        assert batch._message.properties.message_id == b"message_id"
+        assert batch._message.properties.group_id == b"session_id"
+        assert batch._message.annotations[_X_OPT_PARTITION_KEY] == "session_id"
+    else:
+        assert batch._message[3].message_id == "message_id"
+        assert batch._message[3].group_id == "session_id"
+        assert batch._message[2][_X_OPT_PARTITION_KEY] == "session_id"
+
     with pytest.raises(ValueError):
         batch.add_message(ServiceBusMessage("A"))
 
     assert batch.message
+
+
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+def test_set_batch_envelope_properties(uamqp_transport):
+    # Unit coverage for each branch of the transport's batch-envelope routing-property capture,
+    # including the no-op case (all None). message_id/session_id populate the envelope properties
+    # (session_id as group_id); partition_key populates an annotation.
+    amqp_transport = UamqpTransport if uamqp_transport else PyamqpTransport
+
+    def new_envelope():
+        return ServiceBusMessageBatch(amqp_transport=amqp_transport)._message
+
+    def props(env):
+        return env.properties if uamqp_transport else env[3]
+
+    def annotations(env):
+        return env.annotations if uamqp_transport else env[2]
+
+    def encoded(value):
+        # uamqp encodes message_id/group_id to bytes on the envelope; pyamqp keeps the raw str.
+        return value.encode("utf-8") if uamqp_transport else value
+
+    # No routing props -> no-op, envelope left unchanged.
+    env = new_envelope()
+    amqp_transport.set_batch_envelope_properties(env, None, None, None)
+    assert props(env) is None
+    assert annotations(env) is None
+
+    # message_id only.
+    env = new_envelope()
+    amqp_transport.set_batch_envelope_properties(env, "mid", None, None)
+    assert props(env).message_id == encoded("mid")
+    assert props(env).group_id is None
+    assert annotations(env) is None
+
+    # session_id only -> carried as the AMQP group_id.
+    env = new_envelope()
+    amqp_transport.set_batch_envelope_properties(env, None, "sess", None)
+    assert props(env).group_id == encoded("sess")
+    assert props(env).message_id is None
+    assert annotations(env) is None
+
+    # partition_key only -> annotation set, properties left unset.
+    env = new_envelope()
+    amqp_transport.set_batch_envelope_properties(env, None, None, "pk")
+    assert props(env) is None
+    assert annotations(env)[_X_OPT_PARTITION_KEY] == "pk"
+
+
+def test_transform_outbound_messages_discriminates_list_vs_single():
+    # ServiceBusSender.send_messages routes on isinstance(transform_outbound_messages(...), list):
+    # a list input must yield a list (-> batch branch), a single message must yield a single
+    # ServiceBusMessage (-> the trace branch that accesses obj_message._message). A list reaching
+    # that single-message branch raised the AttributeError reported in #42598, so this pins the
+    # discriminator contract the fix relies on (both sync and async senders).
+    to_amqp = PyamqpTransport.to_outgoing_amqp_message
+
+    as_list = transform_outbound_messages(
+        [ServiceBusMessage("a"), ServiceBusMessage("b")], ServiceBusMessage, to_amqp
+    )
+    assert isinstance(as_list, list)
+    assert len(as_list) == 2
+    assert all(isinstance(m, ServiceBusMessage) for m in as_list)
+
+    single = transform_outbound_messages(ServiceBusMessage("a"), ServiceBusMessage, to_amqp)
+    assert isinstance(single, ServiceBusMessage)
+    assert not isinstance(single, list)
 
 
 def test_amqp_message():
@@ -358,6 +441,234 @@ def test_servicebus_message_time_to_live():
     assert message.time_to_live == timedelta(seconds=30)
     message.time_to_live = timedelta(days=1)
     assert message.time_to_live == timedelta(days=1)
+
+
+def test_servicebus_received_message_from_bytes():
+    """Test that from_bytes can decode a basic AMQP message payload."""
+    from azure.servicebus._pyamqp._encode import encode_payload as _encode_payload
+    from azure.servicebus._pyamqp.message import Message as PyamqpMessage, Header, Properties
+
+    # Construct a pyamqp Message with various sections
+    original = PyamqpMessage(
+        header=Header(durable=True, priority=4, ttl=30000, delivery_count=1),
+        properties=Properties(
+            message_id="test-message-id-123",
+            content_type=b"application/json",
+            correlation_id="corr-456",
+            subject=b"test-subject",
+            reply_to=b"reply-queue",
+            group_id=b"session-1",
+            reply_to_group_id=b"reply-session",
+        ),
+        message_annotations={
+            _X_OPT_PARTITION_KEY: b"pk-1",
+        },
+        application_properties={b"custom_prop": b"custom_value"},
+        data=[b"hello world"],
+    )
+
+    # Encode to bytes then decode via from_bytes.
+    # _encode_payload returns the bytearray buffer it was given; wrap in bytes()
+    # so the test exercises the public from_bytes(bytes) contract.
+    output = bytearray()
+    payload = bytes(_encode_payload(output, original))
+    received = ServiceBusReceivedMessage.from_bytes(payload)
+
+    # Validate message body
+    body = b"".join(received.body)
+    assert body == b"hello world"
+    assert received.body_type == AmqpMessageBodyType.DATA
+
+    # Validate properties
+    assert received.message_id == "test-message-id-123"
+    assert received.content_type == "application/json"
+    assert received.correlation_id == "corr-456"
+    assert received.subject == "test-subject"
+    assert received.reply_to == "reply-queue"
+    assert received.session_id == "session-1"
+    assert received.reply_to_session_id == "reply-session"
+
+    # Validate header fields
+    assert received.time_to_live == timedelta(milliseconds=30000)
+    assert received.delivery_count == 1
+
+    # Validate annotations
+    assert received.partition_key == "pk-1"
+
+    # Validate application properties
+    assert received.raw_amqp_message.application_properties == {b"custom_prop": b"custom_value"}
+
+    # This payload carries no delivery-annotations lock token, so lock_token is None.
+    assert received.lock_token is None
+
+
+def test_servicebus_received_message_from_bytes_minimal():
+    """Test from_bytes with a minimal AMQP message (data body only, no properties)."""
+    from azure.servicebus._pyamqp._encode import encode_payload as _encode_payload
+    from azure.servicebus._pyamqp.message import Message as PyamqpMessage
+
+    original = PyamqpMessage(data=[b"minimal payload"])
+    output = bytearray()
+    payload = bytes(_encode_payload(output, original))
+    received = ServiceBusReceivedMessage.from_bytes(payload)
+
+    body = b"".join(received.body)
+    assert body == b"minimal payload"
+    assert received.message_id is None
+    assert received.content_type is None
+    assert received.session_id is None
+    assert received.lock_token is None
+
+
+def test_servicebus_received_message_from_bytes_value_body():
+    """Test from_bytes with an AMQP value body message."""
+    from azure.servicebus._pyamqp._encode import encode_payload as _encode_payload
+    from azure.servicebus._pyamqp.message import Message as PyamqpMessage
+
+    original = PyamqpMessage(value={"key": "value"})
+    output = bytearray()
+    payload = bytes(_encode_payload(output, original))
+    received = ServiceBusReceivedMessage.from_bytes(payload)
+
+    assert received.body_type == AmqpMessageBodyType.VALUE
+    # AMQP encoding round-trips strings as bytes
+    assert received.body == {b"key": b"value"}
+
+
+def test_servicebus_received_message_from_bytes_sequence_body():
+    """Test from_bytes with an AMQP sequence body message."""
+    from azure.servicebus._pyamqp._encode import encode_payload as _encode_payload
+    from azure.servicebus._pyamqp.message import Message as PyamqpMessage
+
+    original = PyamqpMessage(sequence=[1, 2, 3])
+    output = bytearray()
+    payload = bytes(_encode_payload(output, original))
+    received = ServiceBusReceivedMessage.from_bytes(payload)
+
+    assert received.body_type == AmqpMessageBodyType.SEQUENCE
+    # Confirm the decoded sequence contents round-trip, not just the body type.
+    assert list(received.body) == [1, 2, 3]
+
+
+def test_servicebus_received_message_from_bytes_raises_for_none():
+    """Test from_bytes raises a clear TypeError for non-bytes input."""
+    with pytest.raises(TypeError, match="message must be bytes"):
+        ServiceBusReceivedMessage.from_bytes(None)  # type: ignore[arg-type]
+
+
+def test_servicebus_received_message_from_bytes_raises_for_empty_payload():
+    """Test from_bytes rejects empty payloads with a clear ValueError."""
+    with pytest.raises(ValueError, match="message cannot be empty"):
+        ServiceBusReceivedMessage.from_bytes(b"")
+
+
+def test_servicebus_received_message_from_bytes_raises_for_invalid_payload():
+    """Test from_bytes wraps decode failures from malformed bytes in a chained ValueError.
+
+    Garbage bytes make the AMQP decoder raise low-level errors (e.g. ``TypeError`` /
+    ``IndexError``); ``from_bytes`` must surface a clear ``ValueError`` instead of
+    leaking those, and chain the original cause for diagnosability.
+    """
+    with pytest.raises(ValueError, match="not a valid AMQP") as exc_info:
+        ServiceBusReceivedMessage.from_bytes(b"\x01\x02\x03\x04")
+    assert exc_info.value.__cause__ is not None
+
+
+def test_servicebus_received_message_from_bytes_raises_for_truncated_payload():
+    """Test from_bytes wraps a truncated payload in a chained ValueError.
+
+    A partial read from the Functions host or a corrupted persisted message can
+    truncate a valid payload mid-section. That lands inside the fixed-width struct
+    decoders (e.g. ``_decode_ulong_large``), where ``unpack`` on a short slice raises
+    ``struct.error`` -- which derives from ``Exception``, not from ``IndexError``, so
+    a slice past the buffer end returns a truncated result rather than raising.
+    ``from_bytes`` must still surface a clear chained ``ValueError`` instead of leaking
+    the low-level ``struct.error``.
+    """
+    from azure.servicebus._pyamqp._encode import encode_payload as _encode_payload
+    from azure.servicebus._pyamqp.message import Message as PyamqpMessage, Header, Properties
+
+    original = PyamqpMessage(
+        header=Header(durable=True, priority=4, ttl=30000, delivery_count=1),
+        properties=Properties(message_id="test-message-id-123", content_type=b"application/json"),
+        application_properties={b"custom_prop": b"custom_value"},
+        data=[b"hello world"],
+    )
+    output = bytearray()
+    payload = bytes(_encode_payload(output, original))
+
+    # Cut partway through a fixed-width field so unpack sees a short buffer.
+    truncated = payload[:14]
+    with pytest.raises(ValueError, match="not a valid AMQP") as exc_info:
+        ServiceBusReceivedMessage.from_bytes(truncated)
+    assert exc_info.value.__cause__ is not None
+
+
+def test_servicebus_received_message_from_bytes_preserves_broker_metadata():
+    """Test from_bytes preserves broker metadata carried in the payload.
+
+    The payload's delivery-annotations carry ``x-opt-lock-token`` and its
+    message-annotations carry ``x-opt-sequence-number`` / ``x-opt-enqueued-time`` /
+    ``x-opt-locked-until``. Those properties must therefore be populated rather than
+    ``None``. This is a regression guard against forcing ``RECEIVE_AND_DELETE`` on
+    reconstruction, which would mark the message settled and suppress ``lock_token``
+    and ``locked_until_utc``.
+    """
+    # Real AMQP payload captured from the Azure Functions host in issue #43979.
+    payload = b'\x00Sp\xc0\x0b\x05@@pH\x19\x08\x00@R\x01\x00Sq\xc1$\x02\xa3\x10x-opt-lock-token\x98\xfcS\xa1_\xddfIO\x82]\xee\x1b|4<\xfb\x00Sr\xc1U\x06\xa3\x13x-opt-enqueued-time\x83\x00\x00\x01\x8ev\xc7\xdb\xc8\xa3\x15x-opt-sequence-numberU\x0c\xa3\x12x-opt-locked-until\x83\x00\x00\x01\x8ev\xc8\xc67\x00Ss\xc0?\r\xa1 f00d2a33551440389d68e299d31adc7c@@@@@@@\x83\x00\x00\x01\x8e\xbe\xe0\xe3\xc8\x83\x00\x00\x01\x8ev\xc7\xdb\xc8@@@\x00Su\xa0\x05hello'
+
+    received = ServiceBusReceivedMessage.from_bytes(payload)
+
+    assert b"".join(received.body) == b"hello"
+    assert received.message_id == "f00d2a33551440389d68e299d31adc7c"
+    assert received.sequence_number == 12
+    assert received.enqueued_time_utc is not None
+    assert received.locked_until_utc is not None
+    assert str(received.lock_token) == "fc53a15f-dd66-494f-825d-ee1b7c343cfb"
+
+
+def _pyamqp_encoded_inner_message(body=b"data"):
+    # Encode a minimal AMQP message payload, as the service wraps each
+    # deferred/peeked message inside the management-link response.
+    output = bytearray()
+    encode_payload(output, Message(data=[body]))
+    return bytes(output)
+
+
+def test_servicebus_received_message_deferred_has_lock_token():
+    # Regression test for #42454: receive_deferred_messages returned messages
+    # with lock_token=None. For deferred messages the service returns the
+    # lock-token alongside the message in the management-link response (not as a
+    # delivery-tag), so parse_received_message must read m[b"lock-token"].
+    lock_token = uuid.uuid4()
+    mgmt_response = Message(
+        value={b"messages": [{b"message": _pyamqp_encoded_inner_message(), b"lock-token": lock_token}]}
+    )
+    parsed = PyamqpTransport.parse_received_message(
+        mgmt_response,
+        ServiceBusReceivedMessage,
+        receiver=mock.Mock(),
+        is_deferred_message=True,
+        receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
+    )
+    assert len(parsed) == 1
+    assert parsed[0].lock_token == lock_token
+
+
+def test_servicebus_received_message_peeked_has_no_lock_token():
+    # Peeked messages are not locked and carry no lock-token in the response,
+    # so lock_token must remain None (the deferred-only extraction must not leak
+    # into the peek path).
+    mgmt_response = Message(value={b"messages": [{b"message": _pyamqp_encoded_inner_message()}]})
+    parsed = PyamqpTransport.parse_received_message(
+        mgmt_response,
+        ServiceBusReceivedMessage,
+        receiver=mock.Mock(),
+        is_peeked_message=True,
+        receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
+    )
+    assert len(parsed) == 1
+    assert parsed[0].lock_token is None
 
 
 class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):

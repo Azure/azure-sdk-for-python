@@ -19,7 +19,7 @@ DESCRIPTION:
     structured ``AnalysisResult`` into a text format that an LLM can consume. The ``to_llm_input``
     helper handles this conversion automatically:
 
-    - **YAML front matter** with content type, extracted fields, page numbers, and optional metadata
+    - **YAML front matter** with detected MIME type, extracted fields, page numbers, and optional metadata
     - **Markdown body** with the document content and page markers
 
     The helper supports all content types (documents, images, audio, video) and handles
@@ -29,12 +29,26 @@ DESCRIPTION:
 
     ### Scenarios demonstrated
 
-    1. **Output options** — Fields-only, markdown-only, and custom metadata
-    2. **Multi-page PDF with content_range** — Analyze specific pages and verify page markers
-    3. **Multi-segment video** — Analyze a video with multiple segments and time ranges
-    4. **Audio with content_range** — Analyze a specific time range of an audio file
+    1. **Output options** — Fields-only, markdown-only, and caller custom_metadata
+    2. **Preview analysis metadata** — Emit service-provided ``AnalysisContent.metadata`` in front matter
+    3. **Multi-page PDF with content_range** — Analyze specific pages and verify page markers
+    4. **Multi-segment video** — Analyze a video with multiple segments and time ranges
+    5. **Audio with content_range** — Analyze a specific time range of an audio file
 
     For classification results, see ``sample_create_classifier.py``.
+
+    Example output from the sample metadata PDF (preview metadata scenario)::
+
+        ---
+        mimeType: application/pdf
+        metadata:
+          author: Contoso Metadata Team
+          contentType: application/pdf
+          language: en-US
+          pageCount: '1'
+          title: Contoso Metadata Extraction Sample
+        pages: 1
+        ---
 
 USAGE:
     python sample_to_llm_input.py
@@ -66,7 +80,7 @@ def main() -> None:
     client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
 
     # ================================================================
-    # 1. OUTPUT OPTIONS — Fields-only, markdown-only, metadata
+    # 1. OUTPUT OPTIONS — Fields-only, markdown-only, custom_metadata
     # ================================================================
 
     # [START to_llm_input]
@@ -105,18 +119,61 @@ def main() -> None:
     print("\n--- Markdown only (include_fields=False) ---")
     print(markdown_only)
 
-    # Custom metadata — add your own key-value pairs to the YAML front matter.
+    # Custom metadata — nested under customMetadata: so it never collides with
+    # helper-owned keys (mimeType, fields, metadata, …).
     # Useful for RAG pipelines to track document source, department, batch, etc.
-    with_metadata = to_llm_input(
+    with_custom_metadata = to_llm_input(
         result,
-        metadata={"source": "invoice.pdf", "department": "finance"},
+        custom_metadata={"source": "invoice.pdf", "department": "finance"},
     )
-    print("\n--- With metadata ---")
-    print(with_metadata)
+    print("\n--- With customMetadata ---")
+    print(with_custom_metadata)
+    # Example front matter showing the nested customMetadata block
+    # (fields/markdown omitted for brevity)::
+    #
+    #     ---
+    #     mimeType: application/pdf
+    #     customMetadata:
+    #       source: invoice.pdf
+    #       department: finance
+    #     pages: 1
+    #     ---
     # [END to_llm_input_options]
 
     # ================================================================
-    # 2. MULTI-PAGE PDF WITH CONTENT RANGE
+    # 2. PREVIEW API VERSION: ANALYSIS METADATA IN FRONT MATTER
+    # ================================================================
+
+    # [START to_llm_input_analysis_metadata]
+    # This scenario requires preview API version 2026-06-01-preview (the default
+    # for this beta package). Analysis metadata surfaced by the service on each
+    # content item (AnalysisContent.metadata) is rendered under the "metadata"
+    # front matter key. String metadata values are emitted as opaque YAML scalars.
+    metadata_pdf_path = "sample_files/sample_metadata.pdf"
+
+    print("\n" + "=" * 60)
+    print("PREVIEW METADATA FROM ANALYSIS RESULT")
+    print("=" * 60)
+    print("Analyzing a PDF with embedded metadata...")
+    print(f"  File: {metadata_pdf_path}\n")
+
+    with open(metadata_pdf_path, "rb") as f:
+        metadata_pdf_bytes = f.read()
+
+    poller = client.begin_analyze_binary(
+        analyzer_id="prebuilt-layout",
+        binary_input=metadata_pdf_bytes,
+    )
+    result = poller.result()
+
+    # to_llm_input includes AnalysisContent.metadata under the "metadata" block.
+    metadata_text = to_llm_input(result)
+    print("Output:")
+    print(metadata_text)
+    # [END to_llm_input_analysis_metadata]
+
+    # ================================================================
+    # 3. MULTI-PAGE PDF WITH CONTENT RANGE
     # ================================================================
 
     # [START to_llm_input_content_range]
@@ -146,7 +203,7 @@ def main() -> None:
     # [END to_llm_input_content_range]
 
     # ================================================================
-    # 3. MULTI-SEGMENT VIDEO
+    # 4. MULTI-SEGMENT VIDEO
     # ================================================================
 
     # [START to_llm_input_video]
@@ -175,7 +232,7 @@ def main() -> None:
     # [END to_llm_input_video]
 
     # ================================================================
-    # 4. AUDIO WITH CONTENT RANGE
+    # 5. AUDIO WITH CONTENT RANGE
     # ================================================================
 
     # [START to_llm_input_audio]
@@ -197,10 +254,10 @@ def main() -> None:
     )
     result = poller.result()
 
-    # Include metadata to track the source file in RAG pipelines
+    # Include custom_metadata to track the source file in RAG pipelines
     text = to_llm_input(
         result,
-        metadata={"source": "callCenterRecording.mp3"},
+        custom_metadata={"source": "callCenterRecording.mp3"},
     )
     print("Output:")
     print(text)

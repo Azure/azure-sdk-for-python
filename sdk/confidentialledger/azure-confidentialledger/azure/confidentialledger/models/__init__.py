@@ -40,7 +40,6 @@ from ._models import (  # type: ignore
     ReceiptElement,
     ReceiptLeafComponents,
     Role,
-    Roles,
     TransactionReceipt,
     TransactionStatus,
     UserDefinedFunction,
@@ -49,6 +48,8 @@ from ._models import (  # type: ignore
     UserDefinedFunctionExecutionResponse,
     UserDefinedFunctionExecutionResult,
     UserDefinedFunctionHook,
+    UserDefinedRole,
+    UserDefinedRoles,
 )
 
 from ._enums import (  # type: ignore
@@ -93,7 +94,6 @@ __all__ = [
     "ReceiptElement",
     "ReceiptLeafComponents",
     "Role",
-    "Roles",
     "TransactionReceipt",
     "TransactionStatus",
     "UserDefinedFunction",
@@ -102,6 +102,8 @@ __all__ = [
     "UserDefinedFunctionExecutionResponse",
     "UserDefinedFunctionExecutionResult",
     "UserDefinedFunctionHook",
+    "UserDefinedRole",
+    "UserDefinedRoles",
     "ApplicationClaimKind",
     "ApplicationClaimProtocol",
     "ConfidentialLedgerQueryState",

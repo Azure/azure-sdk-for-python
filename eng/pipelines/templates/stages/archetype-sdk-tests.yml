@@ -14,6 +14,9 @@ parameters:
   - name: EnvVars
     type: object
     default: {}
+  - name: VariableGroups
+    type: object
+    default: []
   - name: MaxParallel
     type: number
     default: 0
@@ -104,10 +107,13 @@ extends:
     stages:
     - ${{ each package in coalesce(parameters.Packages, split(parameters.BuildTargetingString, '|')) }}:
       - ${{ each cloud in parameters.CloudConfig }}:
-        - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
+        - ${{ if contains(parameters.Clouds, cloud.key) }}:
           - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
             - stage:
               displayName: ${{ format('{0} {1} {2}', cloud.key, parameters.JobName, package) }}
+              variables:
+                - ${{ each group in parameters.VariableGroups }}:
+                  - group: ${{ group }}
               dependsOn: []
               jobs:
                 - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
@@ -162,10 +168,11 @@ extends:
                       ServiceConnection: ${{ coalesce(cloud.value.ServiceConnection, lower(format('azure-sdk-tests-{0}', cloud.key))) }}
                       SubscriptionConfigurationFilePaths: ${{ cloud.value.SubscriptionConfigurationFilePaths }}
 
-      - ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
+      # Analyze-weekly runs only on scheduled runs that start on a weekend (Sat/Sun, UTC).
+      - ${{ if eq(variables['Build.Reason'], 'Schedule') }}:
         - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
           parameters:
-            BuildTargetingString: ${{ parameters.BuildTargetingString }}
+            BuildTargetingString: ${{ package }}
             ServiceDirectory: ${{ parameters.ServiceDirectory }}
             JobName: ${{ parameters.JobName }}
-
+            Condition: and(succeeded(), in(format('{0:ddd}', pipeline.startTime), 'Sat', 'Sun'))

@@ -4,30 +4,22 @@
 # ---------------------------------------------------------
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-"""GitHub Copilot SDK adapter for Azure AI Agent Server.
+"""DEPRECATED: azure-ai-agentserver-ghcopilot is no longer maintained.
 
-Bridges the GitHub Copilot SDK to the Azure AI Foundry hosted agent
-platform, translating between the Copilot SDK's event model and the
-Foundry Responses API (RAPI) protocol.
-
-Uses the new agentserver packages (core 2.0 + responses 1.0) with the
-AgentServerHost + ResponsesAgentServerHost composition model.
-
-Usage::
-
-    from azure.ai.agentserver.githubcopilot import GitHubCopilotAdapter
-
-    adapter = GitHubCopilotAdapter.from_project(".")
-    adapter.run()
+This package has been deprecated. Please use azure-ai-agentserver-core
+and azure-ai-agentserver-responses directly.
 """
 
-from ._copilot_adapter import CopilotAdapter, GitHubCopilotAdapter
-from ._tool_acl import ToolAcl
+import warnings
+
 from ._version import VERSION
 
-__all__ = [
-    "CopilotAdapter",
-    "GitHubCopilotAdapter",
-    "ToolAcl",
-]
+warnings.warn(
+    "azure-ai-agentserver-ghcopilot is deprecated and will not receive further updates. "
+    "Migrate to azure-ai-agentserver-core and azure-ai-agentserver-responses.",
+    DeprecationWarning,
+    stacklevel=2,
+)
+
+__all__: list[str] = []
 __version__ = VERSION

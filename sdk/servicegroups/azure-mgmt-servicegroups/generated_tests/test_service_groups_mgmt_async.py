@@ -29,7 +29,12 @@ class TestServiceGroupsMgmtAsync(AzureMgmtRecordedTestCase):
                     "id": "str",
                     "kind": "str",
                     "name": "str",
-                    "properties": {"displayName": "str", "parent": {"resourceId": "str"}, "provisioningState": "str"},
+                    "properties": {
+                        "attributes": {"criticality": 0},
+                        "displayName": "str",
+                        "parent": {"resourceId": "str"},
+                        "provisioningState": "str",
+                    },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
@@ -57,7 +62,12 @@ class TestServiceGroupsMgmtAsync(AzureMgmtRecordedTestCase):
                     "id": "str",
                     "kind": "str",
                     "name": "str",
-                    "properties": {"displayName": "str", "parent": {"resourceId": "str"}, "provisioningState": "str"},
+                    "properties": {
+                        "attributes": {"criticality": 0},
+                        "displayName": "str",
+                        "parent": {"resourceId": "str"},
+                        "provisioningState": "str",
+                    },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",

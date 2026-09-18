@@ -1,0 +1,20 @@
+{
+  "properties": {
+    "command": "echo local",
+    "environmentId": "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+    "environmentVariables": {},
+    "inputs": {},
+    "isArchived": false,
+    "jobType": "Command",
+    "outputs": {},
+    "properties": {},
+    "resources": {
+      "properties": {
+        "IsLocal": {
+          "IsLocal": true
+        }
+      }
+    },
+    "tags": {}
+  }
+}

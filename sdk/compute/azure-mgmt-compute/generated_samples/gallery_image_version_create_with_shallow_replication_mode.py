@@ -55,6 +55,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-03/galleryExamples/GalleryImageVersion_Create_WithShallowReplicationMode.json
+# x-ms-original-file: 2025-12-03/galleryExamples/GalleryImageVersion_Create_WithShallowReplicationMode.json
 if __name__ == "__main__":
     main()

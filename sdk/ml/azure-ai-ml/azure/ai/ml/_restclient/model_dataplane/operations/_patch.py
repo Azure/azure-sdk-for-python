@@ -69,7 +69,14 @@ def _begin_create_or_update_model_with_system_metadata(
     error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
     error_map.update(kwargs.pop("error_map", {}))
 
-    _json = self._serialize.body(body, "ModelVersionData")
+    # ``body`` is an arm_ml_service hybrid ``ModelVersion``. Serialize it to the camelCase wire dict, then inject the
+    # ``system_metadata`` value under the snake_case ``properties.system_metadata`` key (byte-identical to the legacy
+    # behavior, which serialized a msrest ``ModelVersionData`` and then set the same snake_case key).
+    import json as _json_mod
+
+    from azure.ai.ml._restclient.arm_ml_service._utils.model_base import SdkJSONEncoder
+
+    _json = _json_mod.loads(_json_mod.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True))
     _json["properties"]["system_metadata"] = body.properties.system_metadata
 
     request = _build_create_or_update_model_with_system_metadata_request(

@@ -32,7 +32,9 @@ class TestNetworkManagementHubVirtualNetworkConnectionsOperations(AzureMgmtRecor
                 "properties": {
                     "allowHubToRemoteVnetTransit": bool,
                     "allowRemoteVnetToUseHubVnetGateways": bool,
+                    "connectionPolicy": {"id": "str"},
                     "enableInternetSecurity": bool,
+                    "enableOnlyIpv6Peering": "str",
                     "provisioningState": "str",
                     "remoteVirtualNetwork": {"id": "str"},
                     "routingConfiguration": {
@@ -51,7 +53,7 @@ class TestNetworkManagementHubVirtualNetworkConnectionsOperations(AzureMgmtRecor
                     },
                 },
             },
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -64,7 +66,7 @@ class TestNetworkManagementHubVirtualNetworkConnectionsOperations(AzureMgmtRecor
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             connection_name="str",
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -77,7 +79,7 @@ class TestNetworkManagementHubVirtualNetworkConnectionsOperations(AzureMgmtRecor
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             connection_name="str",
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -89,7 +91,7 @@ class TestNetworkManagementHubVirtualNetworkConnectionsOperations(AzureMgmtRecor
         response = self.client.hub_virtual_network_connections.list(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

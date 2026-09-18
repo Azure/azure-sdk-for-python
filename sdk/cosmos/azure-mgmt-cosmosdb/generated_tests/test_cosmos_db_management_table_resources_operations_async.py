@@ -52,7 +52,6 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
                             "offerReplacePending": "str",
                             "softAllowedMaximumThroughput": "str",
                             "throughput": 0,
-                            "throughputBuckets": [{"id": 0, "maxThroughputPercentage": 0, "isDefaultBucket": bool}],
                         }
                     },
                     "id": "str",

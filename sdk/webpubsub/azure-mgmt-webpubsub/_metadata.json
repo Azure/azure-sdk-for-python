@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2025-12-01-preview",
+  "apiVersions": {
+    "Microsoft.SignalRService": "2025-12-01-preview"
+  },
+  "commit": "a7bdbe741c0ef1f1b159d8569b173757bd823ae9",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/webpubsub/resource-manager/Microsoft.SignalRService/SignalRService",
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.0"
+}

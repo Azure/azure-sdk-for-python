@@ -1,0 +1,10 @@
+{
+  "properties": {
+    "isAnonymous": false,
+    "isArchived": false,
+    "modelType": "mlflow_model",
+    "modelUri": "azureml://datastores/workspaceblobstore/paths/smoke/mlflow-model/",
+    "properties": {},
+    "tags": {}
+  }
+}

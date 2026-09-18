@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-08-01/StorageAccountGetProperties.json
+# x-ms-original-file: 2026-04-01/StorageAccountGetProperties.json
 if __name__ == "__main__":
     main()

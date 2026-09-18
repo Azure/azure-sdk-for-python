@@ -34,11 +34,11 @@ def main():
         resource_group_name="rg1",
         traffic_controller_name="tc1",
         frontend_name="fe1",
-        resource={"location": "NorthCentralUS", "properties": {}},
+        resource={"location": "NorthCentralUS", "properties": {"publicNetworkAccess": "Enabled"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/FrontendPut.json
+# x-ms-original-file: 2026-03-01/FrontendPut.json
 if __name__ == "__main__":
     main()

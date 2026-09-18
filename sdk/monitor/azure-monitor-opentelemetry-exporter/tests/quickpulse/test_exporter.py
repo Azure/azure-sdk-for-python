@@ -17,9 +17,6 @@ from opentelemetry.sdk.metrics.export import (
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.sdk.resources import Resource, ResourceAttributes
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client import (
-    LiveMetricsClient,
-)
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import (
     MonitoringDataPoint,
 )
@@ -134,7 +131,7 @@ class TestQuickpulse(unittest.TestCase):
         from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
         class _FakeCredential:
-            def get_token(self, *scopes, **kwargs):
+            def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
                 return mock.MagicMock(token="fake", expires_on=9999999999)
 
         credential = _FakeCredential()
@@ -158,6 +155,58 @@ class TestQuickpulse(unittest.TestCase):
             ("https://monitor.azure.com//.default",),
             "Auth policy scope must use double-slash format",
         )
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.LiveMetricsClient")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
+    def test_init_credential_from_auth_string_env_var(self, cred_mock, client_mock):
+        """Live Metrics resolves AAD credential from APPLICATIONINSIGHTS_AUTHENTICATION_STRING."""
+        with mock.patch.dict(
+            "os.environ",
+            {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD;ClientId=test-client-id"},
+        ):
+            exporter = _QuickpulseExporter(
+                connection_string=(
+                    "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;"
+                    "LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+                )
+            )
+        cred_mock.assert_called_once_with(client_id="test-client-id")
+        self.assertIs(exporter._credential, cred_mock.return_value)
+        self.assertIs(client_mock.call_args.kwargs["credential"], cred_mock.return_value)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.LiveMetricsClient")
+    def test_init_credential_kwarg_takes_precedence_over_env_var(self, client_mock):
+        """An explicit credential kwarg wins over the env-var convention."""
+
+        class _FakeCredential:
+            def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
+                return mock.MagicMock(token="fake", expires_on=9999999999)
+
+        credential = _FakeCredential()
+        with mock.patch.dict(
+            "os.environ",
+            {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD;ClientId=test-client-id"},
+        ):
+            exporter = _QuickpulseExporter(
+                connection_string=(
+                    "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;"
+                    "LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+                ),
+                credential=credential,
+            )
+        self.assertIs(exporter._credential, credential)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.LiveMetricsClient")
+    def test_init_credential_none_without_kwarg_or_env_var(self, client_mock):
+        """Without a credential kwarg or the auth-string env var, credential stays None."""
+        with mock.patch.dict("os.environ", {}, clear=True):
+            exporter = _QuickpulseExporter(
+                connection_string=(
+                    "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;"
+                    "LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+                )
+            )
+        self.assertIsNone(exporter._credential)
 
     def test_export_missing_data_point(self):
         result = self._exporter.export(OTMetricsData(resource_metrics=[]))
@@ -269,7 +318,7 @@ class TestQuickpulse(unittest.TestCase):
         update_filter_mock.assert_not_called()
 
     @mock.patch(
-        "azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client.LiveMetricsClient.is_subscribed"
+        "azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client.LiveMetricsClient.is_subscribed"  # pylint: disable=line-too-long
     )
     def test_ping(self, ping_mock):
         ping_response = _Response(
@@ -285,14 +334,14 @@ class TestQuickpulse(unittest.TestCase):
 
     def test_ping_exception(self):
         with mock.patch(
-            "azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client.LiveMetricsClient.is_subscribed",
+            "azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client.LiveMetricsClient.is_subscribed",  # pylint: disable=line-too-long
             throw(HttpResponseError),
         ):  # noqa: E501
             response = self._exporter._ping(monitoring_data_point=self._data_point)
             self.assertIsNone(response)
 
     @mock.patch(
-        "azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client.LiveMetricsClient.is_subscribed"
+        "azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client.LiveMetricsClient.is_subscribed"  # pylint: disable=line-too-long
     )
     def test_ping_etag_response(self, ping_mock):
         ping_response = _Response(

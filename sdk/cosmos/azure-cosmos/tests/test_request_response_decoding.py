@@ -1,33 +1,11 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-"""Wiring tests for the response-body decode call in the core sync/async
-``_Request()`` paths.
-
-Background: ``_synchronized_request._Request`` and
-``_asynchronous_request._Request`` are the highest-traffic code paths in
-the SDK — every CRUD, query, and change-feed read flows through them.
-Both call ``decode_response_body_for_status`` to decode the HTTP
-response body before the status-code branching that builds typed
-``CosmosResourceNotFoundError`` / ``CosmosHttpResponseError`` exceptions.
-
-These tests lock in two contracts:
-
-1. **Wiring** — the call sites actually invoke the shared decoder. If
-   someone reverts the call back to ``data.decode("utf-8")`` we want a
-   unit test to fail immediately. Mirrors the wiring tests already in
-   place for the inference service in ``test_semantic_reranker_unit``.
-
-2. **Behavior** — when an HTTP error response body contains invalid
-   UTF-8, ``_Request`` surfaces the real typed exception
-   (``CosmosResourceNotFoundError`` etc.) instead of letting a
-   ``UnicodeDecodeError`` escape. This is the property the
-   ``decode_response_body_for_status`` helper was introduced to
-   guarantee; without an end-to-end test on ``_Request``, the helper
-   could quietly fall out of use and the regression would not be
-   caught at unit-test time.
-"""
+"""Tests that check the sync and async request functions both call the
+shared decode helper, and that a response body with invalid bytes
+still surfaces the right typed exception based on the HTTP status."""
 import asyncio
+import os
 import unittest
 from unittest.mock import MagicMock, patch, AsyncMock
 
@@ -38,19 +16,15 @@ from azure.cosmos.aio import _asynchronous_request
 from azure.cosmos.http_constants import ResourceType
 
 
-# Same invalid UTF-8 used in test_response_decoding.py
 _INVALID_UTF8 = b'{"note":"hello \xc3\x28 world"}'
 _VALID_UTF8 = b'{"ok":true}'
+_MALFORMED_INPUT_ENV_VAR = "AZURE_COSMOS_CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT"
 
 _FAKE_ENDPOINT = "https://example.documents.azure.com:443/"
 
 
 def _build_request_args(status_code: int, body: bytes):
-    """Build the minimal set of mocked dependencies ``_Request`` needs to
-    reach the decode call site. Returns (args_tuple, mock_response)."""
-    # ``endpoint_override`` short-circuits endpoint resolution so we do
-    # not need a real GlobalEndpointManager. ``DatabaseAccount`` skips
-    # ``refresh_endpoint_list`` for the same reason.
+    """Builds the smallest set of mocks the request function needs."""
     request_params = MagicMock()
     request_params.healthy_tentative_location = False
     request_params.resource_type = ResourceType.DatabaseAccount
@@ -77,7 +51,7 @@ def _build_request_args(status_code: int, body: bytes):
     request.url = _FAKE_ENDPOINT + "dbs"
     request.headers = {}
 
-    # The fake pipeline response that _PipelineRunFunction will return.
+    # Fake HTTP response with the given body and status.
     mock_response = MagicMock()
     mock_response.http_response.status_code = status_code
     mock_response.http_response.headers = {}
@@ -90,11 +64,12 @@ def _build_request_args(status_code: int, body: bytes):
 
 
 class TestSyncRequestUsesSharedDecoder(unittest.TestCase):
-    """Wiring + behavioral tests for ``_synchronized_request._Request``."""
+    """Sync request function: uses the shared decoder, and turns
+    error responses into typed exceptions."""
 
     def test_request_invokes_shared_response_decoder(self):
-        """Reverting the call site back to ``data.decode('utf-8')`` would
-        make this test fail. Locks in the wiring."""
+        """Checks the sync request function actually calls the shared
+        decode helper with the response bytes and status."""
         args, mock_response = _build_request_args(status_code=200, body=_VALID_UTF8)
 
         with patch(
@@ -109,11 +84,8 @@ class TestSyncRequestUsesSharedDecoder(unittest.TestCase):
             mock_decode.assert_called_once_with(_VALID_UTF8, 200, "Read")
 
     def test_invalid_utf8_on_404_surfaces_resource_not_found(self):
-        """Behavioral guarantee: a 404 carrying a malformed-UTF-8 body
-        must surface as ``CosmosResourceNotFoundError``, not as a
-        ``UnicodeDecodeError``. Customer error handlers branch on the
-        typed exception; a decode error here would skip those handlers
-        entirely."""
+        """A 404 with invalid bytes in the body should still come
+        out as the typed not-found exception, not a decode error."""
         args, mock_response = _build_request_args(status_code=404, body=_INVALID_UTF8)
 
         with patch(
@@ -124,9 +96,8 @@ class TestSyncRequestUsesSharedDecoder(unittest.TestCase):
                 _synchronized_request._Request(*args)
 
     def test_invalid_utf8_on_503_surfaces_http_response_error(self):
-        """Same guarantee for the generic ``status_code >= 400`` branch.
-        503 specifically matters: it drives cross-region retry; masking
-        it with a decode error would stop failover from happening."""
+        """A 503 with invalid bytes still comes out as the generic
+        HTTP error with the right status, not a decode error."""
         args, mock_response = _build_request_args(status_code=503, body=_INVALID_UTF8)
 
         with patch(
@@ -139,7 +110,7 @@ class TestSyncRequestUsesSharedDecoder(unittest.TestCase):
 
 
 class TestAsyncRequestUsesSharedDecoder(unittest.TestCase):
-    """Wiring + behavioral tests for ``_asynchronous_request._Request``."""
+    """Async request function: same checks as the sync class."""
 
     def test_request_invokes_shared_response_decoder(self):
         async def run_test():
@@ -187,21 +158,19 @@ class TestAsyncRequestUsesSharedDecoder(unittest.TestCase):
 
 
 class TestRequestWrapsResidualUnicodeDecodeErrorAsDecodeError(unittest.TestCase):
-    """For a successful (2xx) response carrying invalid UTF-8 in default
-    strict mode, ``_Request`` must surface the failure as
-    ``azure.core.exceptions.DecodeError`` — not as a stdlib
-    ``UnicodeDecodeError``. This contract matches the existing JSON-parse
-    failure path (which also raises ``DecodeError``) and keeps the wire
-    truth intact:
+    """A 200 response with invalid bytes (in default strict mode)
+    should be raised as DecodeError, keeping the real wire status and
+    the original cause attached."""
 
-    * ``e.response.status_code`` is the real wire status (e.g. 200) —
-      no synthetic 400, no faked sub-status.
-    * ``e.__cause__`` is the original ``UnicodeDecodeError`` so
-      operators can still see the byte offset and the env-var hint.
+    def setUp(self):
+        self._saved_malformed = os.environ.get(_MALFORMED_INPUT_ENV_VAR)
+        os.environ.pop(_MALFORMED_INPUT_ENV_VAR, None)
 
-    Customer middleware keyed on ``HttpResponseError`` /
-    ``CosmosHttpResponseError`` continues to work because ``DecodeError``
-    is a subclass of ``HttpResponseError``."""
+    def tearDown(self):
+        if self._saved_malformed is not None:
+            os.environ[_MALFORMED_INPUT_ENV_VAR] = self._saved_malformed
+        else:
+            os.environ.pop(_MALFORMED_INPUT_ENV_VAR, None)
 
     def test_sync_2xx_with_invalid_utf8_raises_decode_error(self):
         args, mock_response = _build_request_args(status_code=200, body=_INVALID_UTF8)
@@ -235,4 +204,3 @@ class TestRequestWrapsResidualUnicodeDecodeErrorAsDecodeError(unittest.TestCase)
 
 if __name__ == "__main__":
     unittest.main()
-

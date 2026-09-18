@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import StorageCacheManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -40,7 +40,6 @@ from .._utils.utils import ClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -1888,7 +1887,7 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: Union[_models.AmlFilesystem, JSON, IO[bytes]],
+        aml_filesystem: Union[_models.AmlFilesystem, _types.AmlFilesystem, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1997,7 +1996,7 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: JSON,
+        aml_filesystem: _types.AmlFilesystem,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2013,7 +2012,7 @@ class AmlFilesystemsOperations:
         :param aml_filesystem: Object containing the user-selectable properties of the AML file system.
          If read-only properties are included, they must match the existing values of those properties.
          Required.
-        :type aml_filesystem: JSON
+        :type aml_filesystem: ~azure.mgmt.storagecache.types.AmlFilesystem
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2059,7 +2058,7 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: Union[_models.AmlFilesystem, JSON, IO[bytes]],
+        aml_filesystem: Union[_models.AmlFilesystem, _types.AmlFilesystem, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AmlFilesystem]:
         """Create or update an AML file system.
@@ -2072,8 +2071,9 @@ class AmlFilesystemsOperations:
         :type aml_filesystem_name: str
         :param aml_filesystem: Object containing the user-selectable properties of the AML file system.
          If read-only properties are included, they must match the existing values of those properties.
-         Is one of the following types: AmlFilesystem, JSON, IO[bytes] Required.
-        :type aml_filesystem: ~azure.mgmt.storagecache.models.AmlFilesystem or JSON or IO[bytes]
+         Is either a AmlFilesystem type or a IO[bytes] type. Required.
+        :type aml_filesystem: ~azure.mgmt.storagecache.models.AmlFilesystem or
+         ~azure.mgmt.storagecache.types.AmlFilesystem or IO[bytes]
         :return: An instance of LROPoller that returns AmlFilesystem. The AmlFilesystem is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.AmlFilesystem]
@@ -2135,7 +2135,7 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: Union[_models.AmlFilesystemUpdate, JSON, IO[bytes]],
+        aml_filesystem: Union[_models.AmlFilesystemUpdate, _types.AmlFilesystemUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2245,7 +2245,7 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: JSON,
+        aml_filesystem: _types.AmlFilesystemUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2261,7 +2261,7 @@ class AmlFilesystemsOperations:
         :param aml_filesystem: Object containing the user-selectable properties of the AML file system.
          If read-only properties are included, they must match the existing values of those properties.
          Required.
-        :type aml_filesystem: JSON
+        :type aml_filesystem: ~azure.mgmt.storagecache.types.AmlFilesystemUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2307,7 +2307,7 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        aml_filesystem: Union[_models.AmlFilesystemUpdate, JSON, IO[bytes]],
+        aml_filesystem: Union[_models.AmlFilesystemUpdate, _types.AmlFilesystemUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AmlFilesystem]:
         """Update an AML file system instance.
@@ -2320,8 +2320,9 @@ class AmlFilesystemsOperations:
         :type aml_filesystem_name: str
         :param aml_filesystem: Object containing the user-selectable properties of the AML file system.
          If read-only properties are included, they must match the existing values of those properties.
-         Is one of the following types: AmlFilesystemUpdate, JSON, IO[bytes] Required.
-        :type aml_filesystem: ~azure.mgmt.storagecache.models.AmlFilesystemUpdate or JSON or IO[bytes]
+         Is either a AmlFilesystemUpdate type or a IO[bytes] type. Required.
+        :type aml_filesystem: ~azure.mgmt.storagecache.models.AmlFilesystemUpdate or
+         ~azure.mgmt.storagecache.types.AmlFilesystemUpdate or IO[bytes]
         :return: An instance of LROPoller that returns AmlFilesystem. The AmlFilesystem is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.AmlFilesystem]
@@ -2722,7 +2723,7 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        archive_info: Optional[JSON] = None,
+        archive_info: Optional[_types.AmlFilesystemArchiveInfo] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2736,7 +2737,7 @@ class AmlFilesystemsOperations:
          and hyphens. Start and end with alphanumeric. Required.
         :type aml_filesystem_name: str
         :param archive_info: Information about the archive operation. Default value is None.
-        :type archive_info: JSON
+        :type archive_info: ~azure.mgmt.storagecache.types.AmlFilesystemArchiveInfo
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2778,7 +2779,9 @@ class AmlFilesystemsOperations:
         self,
         resource_group_name: str,
         aml_filesystem_name: str,
-        archive_info: Optional[Union[_models.AmlFilesystemArchiveInfo, JSON, IO[bytes]]] = None,
+        archive_info: Optional[
+            Union[_models.AmlFilesystemArchiveInfo, _types.AmlFilesystemArchiveInfo, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """Archive data from the AML file system.
@@ -2789,10 +2792,10 @@ class AmlFilesystemsOperations:
         :param aml_filesystem_name: Name for the AML file system. Allows alphanumerics, underscores,
          and hyphens. Start and end with alphanumeric. Required.
         :type aml_filesystem_name: str
-        :param archive_info: Information about the archive operation. Is one of the following types:
-         AmlFilesystemArchiveInfo, JSON, IO[bytes] Default value is None.
-        :type archive_info: ~azure.mgmt.storagecache.models.AmlFilesystemArchiveInfo or JSON or
-         IO[bytes]
+        :param archive_info: Information about the archive operation. Is either a
+         AmlFilesystemArchiveInfo type or a IO[bytes] type. Default value is None.
+        :type archive_info: ~azure.mgmt.storagecache.models.AmlFilesystemArchiveInfo or
+         ~azure.mgmt.storagecache.types.AmlFilesystemArchiveInfo or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3017,7 +3020,7 @@ class AutoExportJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         auto_export_job_name: str,
-        auto_export_job: Union[_models.AutoExportJob, JSON, IO[bytes]],
+        auto_export_job: Union[_models.AutoExportJob, _types.AutoExportJob, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3132,7 +3135,7 @@ class AutoExportJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         auto_export_job_name: str,
-        auto_export_job: JSON,
+        auto_export_job: _types.AutoExportJob,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3151,7 +3154,7 @@ class AutoExportJobsOperations:
         :param auto_export_job: Object containing the user-selectable properties of the auto export
          job. If read-only properties are included, they must match the existing values of those
          properties. Required.
-        :type auto_export_job: JSON
+        :type auto_export_job: ~azure.mgmt.storagecache.types.AutoExportJob
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3202,7 +3205,7 @@ class AutoExportJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         auto_export_job_name: str,
-        auto_export_job: Union[_models.AutoExportJob, JSON, IO[bytes]],
+        auto_export_job: Union[_models.AutoExportJob, _types.AutoExportJob, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AutoExportJob]:
         """Create or update an auto export job.
@@ -3218,8 +3221,9 @@ class AutoExportJobsOperations:
         :type auto_export_job_name: str
         :param auto_export_job: Object containing the user-selectable properties of the auto export
          job. If read-only properties are included, they must match the existing values of those
-         properties. Is one of the following types: AutoExportJob, JSON, IO[bytes] Required.
-        :type auto_export_job: ~azure.mgmt.storagecache.models.AutoExportJob or JSON or IO[bytes]
+         properties. Is either a AutoExportJob type or a IO[bytes] type. Required.
+        :type auto_export_job: ~azure.mgmt.storagecache.models.AutoExportJob or
+         ~azure.mgmt.storagecache.types.AutoExportJob or IO[bytes]
         :return: An instance of LROPoller that returns AutoExportJob. The AutoExportJob is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.AutoExportJob]
@@ -3283,7 +3287,7 @@ class AutoExportJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         auto_export_job_name: str,
-        auto_export_job: Union[_models.AutoExportJobUpdate, JSON, IO[bytes]],
+        auto_export_job: Union[_models.AutoExportJobUpdate, _types.AutoExportJobUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3399,7 +3403,7 @@ class AutoExportJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         auto_export_job_name: str,
-        auto_export_job: JSON,
+        auto_export_job: _types.AutoExportJobUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3418,7 +3422,7 @@ class AutoExportJobsOperations:
         :param auto_export_job: Object containing the user-selectable properties of the auto export
          job. If read-only properties are included, they must match the existing values of those
          properties. Required.
-        :type auto_export_job: JSON
+        :type auto_export_job: ~azure.mgmt.storagecache.types.AutoExportJobUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3469,7 +3473,7 @@ class AutoExportJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         auto_export_job_name: str,
-        auto_export_job: Union[_models.AutoExportJobUpdate, JSON, IO[bytes]],
+        auto_export_job: Union[_models.AutoExportJobUpdate, _types.AutoExportJobUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AutoExportJob]:
         """Update an auto export job instance.
@@ -3485,8 +3489,9 @@ class AutoExportJobsOperations:
         :type auto_export_job_name: str
         :param auto_export_job: Object containing the user-selectable properties of the auto export
          job. If read-only properties are included, they must match the existing values of those
-         properties. Is one of the following types: AutoExportJobUpdate, JSON, IO[bytes] Required.
-        :type auto_export_job: ~azure.mgmt.storagecache.models.AutoExportJobUpdate or JSON or IO[bytes]
+         properties. Is either a AutoExportJobUpdate type or a IO[bytes] type. Required.
+        :type auto_export_job: ~azure.mgmt.storagecache.models.AutoExportJobUpdate or
+         ~azure.mgmt.storagecache.types.AutoExportJobUpdate or IO[bytes]
         :return: An instance of LROPoller that returns AutoExportJob. The AutoExportJob is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.AutoExportJob]
@@ -3879,7 +3884,7 @@ class ImportJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         import_job_name: str,
-        import_job: Union[_models.ImportJob, JSON, IO[bytes]],
+        import_job: Union[_models.ImportJob, _types.ImportJob, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3994,7 +3999,7 @@ class ImportJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         import_job_name: str,
-        import_job: JSON,
+        import_job: _types.ImportJob,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4013,7 +4018,7 @@ class ImportJobsOperations:
         :param import_job: Object containing the user-selectable properties of the import job. If
          read-only properties are included, they must match the existing values of those properties.
          Required.
-        :type import_job: JSON
+        :type import_job: ~azure.mgmt.storagecache.types.ImportJob
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4064,7 +4069,7 @@ class ImportJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         import_job_name: str,
-        import_job: Union[_models.ImportJob, JSON, IO[bytes]],
+        import_job: Union[_models.ImportJob, _types.ImportJob, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ImportJob]:
         """Create or update an import job.
@@ -4080,8 +4085,9 @@ class ImportJobsOperations:
         :type import_job_name: str
         :param import_job: Object containing the user-selectable properties of the import job. If
          read-only properties are included, they must match the existing values of those properties. Is
-         one of the following types: ImportJob, JSON, IO[bytes] Required.
-        :type import_job: ~azure.mgmt.storagecache.models.ImportJob or JSON or IO[bytes]
+         either a ImportJob type or a IO[bytes] type. Required.
+        :type import_job: ~azure.mgmt.storagecache.models.ImportJob or
+         ~azure.mgmt.storagecache.types.ImportJob or IO[bytes]
         :return: An instance of LROPoller that returns ImportJob. The ImportJob is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.ImportJob]
@@ -4145,7 +4151,7 @@ class ImportJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         import_job_name: str,
-        import_job: Union[_models.ImportJobUpdate, JSON, IO[bytes]],
+        import_job: Union[_models.ImportJobUpdate, _types.ImportJobUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4261,7 +4267,7 @@ class ImportJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         import_job_name: str,
-        import_job: JSON,
+        import_job: _types.ImportJobUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4280,7 +4286,7 @@ class ImportJobsOperations:
         :param import_job: Object containing the user-selectable properties of the import job. If
          read-only properties are included, they must match the existing values of those properties.
          Required.
-        :type import_job: JSON
+        :type import_job: ~azure.mgmt.storagecache.types.ImportJobUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4331,7 +4337,7 @@ class ImportJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         import_job_name: str,
-        import_job: Union[_models.ImportJobUpdate, JSON, IO[bytes]],
+        import_job: Union[_models.ImportJobUpdate, _types.ImportJobUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ImportJob]:
         """Update an import job instance.
@@ -4347,8 +4353,9 @@ class ImportJobsOperations:
         :type import_job_name: str
         :param import_job: Object containing the user-selectable properties of the import job. If
          read-only properties are included, they must match the existing values of those properties. Is
-         one of the following types: ImportJobUpdate, JSON, IO[bytes] Required.
-        :type import_job: ~azure.mgmt.storagecache.models.ImportJobUpdate or JSON or IO[bytes]
+         either a ImportJobUpdate type or a IO[bytes] type. Required.
+        :type import_job: ~azure.mgmt.storagecache.models.ImportJobUpdate or
+         ~azure.mgmt.storagecache.types.ImportJobUpdate or IO[bytes]
         :return: An instance of LROPoller that returns ImportJob. The ImportJob is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.ImportJob]
@@ -4741,7 +4748,7 @@ class AutoImportJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         auto_import_job_name: str,
-        auto_import_job: Union[_models.AutoImportJob, JSON, IO[bytes]],
+        auto_import_job: Union[_models.AutoImportJob, _types.AutoImportJob, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4856,7 +4863,7 @@ class AutoImportJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         auto_import_job_name: str,
-        auto_import_job: JSON,
+        auto_import_job: _types.AutoImportJob,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4875,7 +4882,7 @@ class AutoImportJobsOperations:
         :param auto_import_job: Object containing the user-selectable properties of the auto import
          job. If read-only properties are included, they must match the existing values of those
          properties. Required.
-        :type auto_import_job: JSON
+        :type auto_import_job: ~azure.mgmt.storagecache.types.AutoImportJob
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4926,7 +4933,7 @@ class AutoImportJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         auto_import_job_name: str,
-        auto_import_job: Union[_models.AutoImportJob, JSON, IO[bytes]],
+        auto_import_job: Union[_models.AutoImportJob, _types.AutoImportJob, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AutoImportJob]:
         """Create or update an auto import job.
@@ -4942,8 +4949,9 @@ class AutoImportJobsOperations:
         :type auto_import_job_name: str
         :param auto_import_job: Object containing the user-selectable properties of the auto import
          job. If read-only properties are included, they must match the existing values of those
-         properties. Is one of the following types: AutoImportJob, JSON, IO[bytes] Required.
-        :type auto_import_job: ~azure.mgmt.storagecache.models.AutoImportJob or JSON or IO[bytes]
+         properties. Is either a AutoImportJob type or a IO[bytes] type. Required.
+        :type auto_import_job: ~azure.mgmt.storagecache.models.AutoImportJob or
+         ~azure.mgmt.storagecache.types.AutoImportJob or IO[bytes]
         :return: An instance of LROPoller that returns AutoImportJob. The AutoImportJob is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.AutoImportJob]
@@ -5007,7 +5015,7 @@ class AutoImportJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         auto_import_job_name: str,
-        auto_import_job: Union[_models.AutoImportJobUpdate, JSON, IO[bytes]],
+        auto_import_job: Union[_models.AutoImportJobUpdate, _types.AutoImportJobUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5123,7 +5131,7 @@ class AutoImportJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         auto_import_job_name: str,
-        auto_import_job: JSON,
+        auto_import_job: _types.AutoImportJobUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5142,7 +5150,7 @@ class AutoImportJobsOperations:
         :param auto_import_job: Object containing the user-selectable properties of the auto import
          job. If read-only properties are included, they must match the existing values of those
          properties. Required.
-        :type auto_import_job: JSON
+        :type auto_import_job: ~azure.mgmt.storagecache.types.AutoImportJobUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5193,7 +5201,7 @@ class AutoImportJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         auto_import_job_name: str,
-        auto_import_job: Union[_models.AutoImportJobUpdate, JSON, IO[bytes]],
+        auto_import_job: Union[_models.AutoImportJobUpdate, _types.AutoImportJobUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AutoImportJob]:
         """Update an auto import job instance.
@@ -5209,8 +5217,9 @@ class AutoImportJobsOperations:
         :type auto_import_job_name: str
         :param auto_import_job: Object containing the user-selectable properties of the auto import
          job. If read-only properties are included, they must match the existing values of those
-         properties. Is one of the following types: AutoImportJobUpdate, JSON, IO[bytes] Required.
-        :type auto_import_job: ~azure.mgmt.storagecache.models.AutoImportJobUpdate or JSON or IO[bytes]
+         properties. Is either a AutoImportJobUpdate type or a IO[bytes] type. Required.
+        :type auto_import_job: ~azure.mgmt.storagecache.models.AutoImportJobUpdate or
+         ~azure.mgmt.storagecache.types.AutoImportJobUpdate or IO[bytes]
         :return: An instance of LROPoller that returns AutoImportJob. The AutoImportJob is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.AutoImportJob]
@@ -5603,7 +5612,7 @@ class ExpansionJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         expansion_job_name: str,
-        expansion_job: Union[_models.ExpansionJob, JSON, IO[bytes]],
+        expansion_job: Union[_models.ExpansionJob, _types.ExpansionJob, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5719,7 +5728,7 @@ class ExpansionJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         expansion_job_name: str,
-        expansion_job: JSON,
+        expansion_job: _types.ExpansionJob,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5738,7 +5747,7 @@ class ExpansionJobsOperations:
         :param expansion_job: Object containing the user-selectable properties of the expansion job. If
          read-only properties are included, they must match the existing values of those properties.
          Required.
-        :type expansion_job: JSON
+        :type expansion_job: ~azure.mgmt.storagecache.types.ExpansionJob
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5789,7 +5798,7 @@ class ExpansionJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         expansion_job_name: str,
-        expansion_job: Union[_models.ExpansionJob, JSON, IO[bytes]],
+        expansion_job: Union[_models.ExpansionJob, _types.ExpansionJob, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ExpansionJob]:
         """Create or update an expansion job.
@@ -5805,8 +5814,9 @@ class ExpansionJobsOperations:
         :type expansion_job_name: str
         :param expansion_job: Object containing the user-selectable properties of the expansion job. If
          read-only properties are included, they must match the existing values of those properties. Is
-         one of the following types: ExpansionJob, JSON, IO[bytes] Required.
-        :type expansion_job: ~azure.mgmt.storagecache.models.ExpansionJob or JSON or IO[bytes]
+         either a ExpansionJob type or a IO[bytes] type. Required.
+        :type expansion_job: ~azure.mgmt.storagecache.models.ExpansionJob or
+         ~azure.mgmt.storagecache.types.ExpansionJob or IO[bytes]
         :return: An instance of LROPoller that returns ExpansionJob. The ExpansionJob is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.ExpansionJob]
@@ -5870,7 +5880,7 @@ class ExpansionJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         expansion_job_name: str,
-        expansion_job: Union[_models.ExpansionJobUpdate, JSON, IO[bytes]],
+        expansion_job: Union[_models.ExpansionJobUpdate, _types.ExpansionJobUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5986,7 +5996,7 @@ class ExpansionJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         expansion_job_name: str,
-        expansion_job: JSON,
+        expansion_job: _types.ExpansionJobUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6005,7 +6015,7 @@ class ExpansionJobsOperations:
         :param expansion_job: Object containing the user-selectable properties of the expansion job. If
          read-only properties are included, they must match the existing values of those properties.
          Required.
-        :type expansion_job: JSON
+        :type expansion_job: ~azure.mgmt.storagecache.types.ExpansionJobUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6056,7 +6066,7 @@ class ExpansionJobsOperations:
         resource_group_name: str,
         aml_filesystem_name: str,
         expansion_job_name: str,
-        expansion_job: Union[_models.ExpansionJobUpdate, JSON, IO[bytes]],
+        expansion_job: Union[_models.ExpansionJobUpdate, _types.ExpansionJobUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ExpansionJob]:
         """Update an expansion job instance.
@@ -6072,8 +6082,9 @@ class ExpansionJobsOperations:
         :type expansion_job_name: str
         :param expansion_job: Object containing the user-selectable properties of the expansion job. If
          read-only properties are included, they must match the existing values of those properties. Is
-         one of the following types: ExpansionJobUpdate, JSON, IO[bytes] Required.
-        :type expansion_job: ~azure.mgmt.storagecache.models.ExpansionJobUpdate or JSON or IO[bytes]
+         either a ExpansionJobUpdate type or a IO[bytes] type. Required.
+        :type expansion_job: ~azure.mgmt.storagecache.models.ExpansionJobUpdate or
+         ~azure.mgmt.storagecache.types.ExpansionJobUpdate or IO[bytes]
         :return: An instance of LROPoller that returns ExpansionJob. The ExpansionJob is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.ExpansionJob]
@@ -6456,7 +6467,11 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     def _create_or_update_initial(
-        self, resource_group_name: str, cache_name: str, cache: Union[_models.Cache, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        cache_name: str,
+        cache: Union[_models.Cache, _types.Cache, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6565,7 +6580,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        cache: JSON,
+        cache: _types.Cache,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6580,7 +6595,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :type cache_name: str
         :param cache: Object containing the user-selectable properties of the new cache. If read-only
          properties are included, they must match the existing values of those properties. Required.
-        :type cache: JSON
+        :type cache: ~azure.mgmt.storagecache.types.Cache
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6622,7 +6637,11 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def begin_create_or_update(
-        self, resource_group_name: str, cache_name: str, cache: Union[_models.Cache, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        cache_name: str,
+        cache: Union[_models.Cache, _types.Cache, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.Cache]:
         """Create or update a cache.
 
@@ -6633,9 +6652,10 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
         :param cache: Object containing the user-selectable properties of the new cache. If read-only
-         properties are included, they must match the existing values of those properties. Is one of the
-         following types: Cache, JSON, IO[bytes] Required.
-        :type cache: ~azure.mgmt.storagecache.models.Cache or JSON or IO[bytes]
+         properties are included, they must match the existing values of those properties. Is either a
+         Cache type or a IO[bytes] type. Required.
+        :type cache: ~azure.mgmt.storagecache.models.Cache or ~azure.mgmt.storagecache.types.Cache or
+         IO[bytes]
         :return: An instance of LROPoller that returns Cache. The Cache is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.Cache]
@@ -6697,7 +6717,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        cache: Optional[Union[_models.Cache, JSON, IO[bytes]]] = None,
+        cache: Optional[Union[_models.Cache, _types.Cache, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6811,7 +6831,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        cache: Optional[JSON] = None,
+        cache: Optional[_types.Cache] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6827,7 +6847,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :param cache: Object containing the user-selectable properties of the cache. If read-only
          properties are included, they must match the existing values of those properties. Default value
          is None.
-        :type cache: JSON
+        :type cache: ~azure.mgmt.storagecache.types.Cache
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6873,7 +6893,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        cache: Optional[Union[_models.Cache, JSON, IO[bytes]]] = None,
+        cache: Optional[Union[_models.Cache, _types.Cache, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[_models.Cache]:
         """Update a cache instance.
@@ -6885,9 +6905,10 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
         :param cache: Object containing the user-selectable properties of the cache. If read-only
-         properties are included, they must match the existing values of those properties. Is one of the
-         following types: Cache, JSON, IO[bytes] Default value is None.
-        :type cache: ~azure.mgmt.storagecache.models.Cache or JSON or IO[bytes]
+         properties are included, they must match the existing values of those properties. Is either a
+         Cache type or a IO[bytes] type. Default value is None.
+        :type cache: ~azure.mgmt.storagecache.models.Cache or ~azure.mgmt.storagecache.types.Cache or
+         IO[bytes]
         :return: An instance of LROPoller that returns Cache. The Cache is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.Cache]
@@ -7741,7 +7762,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        primingjob: Optional[Union[_models.PrimingJob, JSON, IO[bytes]]] = None,
+        primingjob: Optional[Union[_models.PrimingJob, _types.PrimingJob, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7851,7 +7872,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        primingjob: Optional[JSON] = None,
+        primingjob: Optional[_types.PrimingJob] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7865,7 +7886,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
         :param primingjob: Object containing the definition of a priming job. Default value is None.
-        :type primingjob: JSON
+        :type primingjob: ~azure.mgmt.storagecache.types.PrimingJob
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7907,7 +7928,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        primingjob: Optional[Union[_models.PrimingJob, JSON, IO[bytes]]] = None,
+        primingjob: Optional[Union[_models.PrimingJob, _types.PrimingJob, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Create a priming job. This operation is only allowed when the cache is healthy.
@@ -7918,9 +7939,10 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :param cache_name: Name of cache. Length of name must not be greater than 80 and chars must be
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
-        :param primingjob: Object containing the definition of a priming job. Is one of the following
-         types: PrimingJob, JSON, IO[bytes] Default value is None.
-        :type primingjob: ~azure.mgmt.storagecache.models.PrimingJob or JSON or IO[bytes]
+        :param primingjob: Object containing the definition of a priming job. Is either a PrimingJob
+         type or a IO[bytes] type. Default value is None.
+        :type primingjob: ~azure.mgmt.storagecache.models.PrimingJob or
+         ~azure.mgmt.storagecache.types.PrimingJob or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7977,7 +7999,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, JSON, IO[bytes]]] = None,
+        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, _types.PrimingJobIdParameter, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8088,7 +8110,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        priming_job_id: Optional[JSON] = None,
+        priming_job_id: Optional[_types.PrimingJobIdParameter] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8102,7 +8124,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
         :param priming_job_id: Object containing the priming job ID. Default value is None.
-        :type priming_job_id: JSON
+        :type priming_job_id: ~azure.mgmt.storagecache.types.PrimingJobIdParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8144,7 +8166,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, JSON, IO[bytes]]] = None,
+        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, _types.PrimingJobIdParameter, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Schedule a priming job for deletion.
@@ -8155,10 +8177,10 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :param cache_name: Name of cache. Length of name must not be greater than 80 and chars must be
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
-        :param priming_job_id: Object containing the priming job ID. Is one of the following types:
-         PrimingJobIdParameter, JSON, IO[bytes] Default value is None.
-        :type priming_job_id: ~azure.mgmt.storagecache.models.PrimingJobIdParameter or JSON or
-         IO[bytes]
+        :param priming_job_id: Object containing the priming job ID. Is either a PrimingJobIdParameter
+         type or a IO[bytes] type. Default value is None.
+        :type priming_job_id: ~azure.mgmt.storagecache.models.PrimingJobIdParameter or
+         ~azure.mgmt.storagecache.types.PrimingJobIdParameter or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8215,7 +8237,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, JSON, IO[bytes]]] = None,
+        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, _types.PrimingJobIdParameter, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8326,7 +8348,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        priming_job_id: Optional[JSON] = None,
+        priming_job_id: Optional[_types.PrimingJobIdParameter] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8340,7 +8362,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
         :param priming_job_id: Object containing the priming job ID. Default value is None.
-        :type priming_job_id: JSON
+        :type priming_job_id: ~azure.mgmt.storagecache.types.PrimingJobIdParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8382,7 +8404,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, JSON, IO[bytes]]] = None,
+        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, _types.PrimingJobIdParameter, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Schedule a priming job to be paused.
@@ -8393,10 +8415,10 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :param cache_name: Name of cache. Length of name must not be greater than 80 and chars must be
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
-        :param priming_job_id: Object containing the priming job ID. Is one of the following types:
-         PrimingJobIdParameter, JSON, IO[bytes] Default value is None.
-        :type priming_job_id: ~azure.mgmt.storagecache.models.PrimingJobIdParameter or JSON or
-         IO[bytes]
+        :param priming_job_id: Object containing the priming job ID. Is either a PrimingJobIdParameter
+         type or a IO[bytes] type. Default value is None.
+        :type priming_job_id: ~azure.mgmt.storagecache.models.PrimingJobIdParameter or
+         ~azure.mgmt.storagecache.types.PrimingJobIdParameter or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8453,7 +8475,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, JSON, IO[bytes]]] = None,
+        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, _types.PrimingJobIdParameter, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8564,7 +8586,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        priming_job_id: Optional[JSON] = None,
+        priming_job_id: Optional[_types.PrimingJobIdParameter] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8578,7 +8600,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
         :param priming_job_id: Object containing the priming job ID. Default value is None.
-        :type priming_job_id: JSON
+        :type priming_job_id: ~azure.mgmt.storagecache.types.PrimingJobIdParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8620,7 +8642,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, JSON, IO[bytes]]] = None,
+        priming_job_id: Optional[Union[_models.PrimingJobIdParameter, _types.PrimingJobIdParameter, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Resumes a paused priming job.
@@ -8631,10 +8653,10 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :param cache_name: Name of cache. Length of name must not be greater than 80 and chars must be
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
-        :param priming_job_id: Object containing the priming job ID. Is one of the following types:
-         PrimingJobIdParameter, JSON, IO[bytes] Default value is None.
-        :type priming_job_id: ~azure.mgmt.storagecache.models.PrimingJobIdParameter or JSON or
-         IO[bytes]
+        :param priming_job_id: Object containing the priming job ID. Is either a PrimingJobIdParameter
+         type or a IO[bytes] type. Default value is None.
+        :type priming_job_id: ~azure.mgmt.storagecache.models.PrimingJobIdParameter or
+         ~azure.mgmt.storagecache.types.PrimingJobIdParameter or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8812,7 +8834,9 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        space_allocation: Optional[Union[List[_models.StorageTargetSpaceAllocation], List[JSON], IO[bytes]]] = None,
+        space_allocation: Optional[
+            Union[List[_models.StorageTargetSpaceAllocation], List[_types.StorageTargetSpaceAllocation], IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8923,7 +8947,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        space_allocation: Optional[List[JSON]] = None,
+        space_allocation: Optional[List[_types.StorageTargetSpaceAllocation]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8938,7 +8962,7 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         :type cache_name: str
         :param space_allocation: List containing storage target cache space percentage allocations.
          Default value is None.
-        :type space_allocation: list[JSON]
+        :type space_allocation: list[~azure.mgmt.storagecache.types.StorageTargetSpaceAllocation]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8981,7 +9005,9 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cache_name: str,
-        space_allocation: Optional[Union[List[_models.StorageTargetSpaceAllocation], List[JSON], IO[bytes]]] = None,
+        space_allocation: Optional[
+            Union[List[_models.StorageTargetSpaceAllocation], List[_types.StorageTargetSpaceAllocation], IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Update cache space allocation.
@@ -8993,10 +9019,9 @@ class CachesOperations:  # pylint: disable=too-many-public-methods
          from the [-0-9a-zA-Z_] char class. Required.
         :type cache_name: str
         :param space_allocation: List containing storage target cache space percentage allocations. Is
-         one of the following types: [StorageTargetSpaceAllocation], [JSON], IO[bytes] Default value is
-         None.
+         either a [StorageTargetSpaceAllocation] type or a IO[bytes] type. Default value is None.
         :type space_allocation: list[~azure.mgmt.storagecache.models.StorageTargetSpaceAllocation] or
-         list[JSON] or IO[bytes]
+         list[~azure.mgmt.storagecache.types.StorageTargetSpaceAllocation] or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9150,7 +9175,7 @@ class StorageTargetsOperations:
         resource_group_name: str,
         cache_name: str,
         storage_target_name: str,
-        storagetarget: Union[_models.StorageTarget, JSON, IO[bytes]],
+        storagetarget: Union[_models.StorageTarget, _types.StorageTarget, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -9266,7 +9291,7 @@ class StorageTargetsOperations:
         resource_group_name: str,
         cache_name: str,
         storage_target_name: str,
-        storagetarget: JSON,
+        storagetarget: _types.StorageTarget,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9284,7 +9309,7 @@ class StorageTargetsOperations:
         :param storage_target_name: Name of Storage Target. Required.
         :type storage_target_name: str
         :param storagetarget: Object containing the definition of a Storage Target. Required.
-        :type storagetarget: JSON
+        :type storagetarget: ~azure.mgmt.storagecache.types.StorageTarget
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9334,7 +9359,7 @@ class StorageTargetsOperations:
         resource_group_name: str,
         cache_name: str,
         storage_target_name: str,
-        storagetarget: Union[_models.StorageTarget, JSON, IO[bytes]],
+        storagetarget: Union[_models.StorageTarget, _types.StorageTarget, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.StorageTarget]:
         """Create or update a Storage Target. This operation is allowed at any time, but if the cache is
@@ -9349,9 +9374,10 @@ class StorageTargetsOperations:
         :type cache_name: str
         :param storage_target_name: Name of Storage Target. Required.
         :type storage_target_name: str
-        :param storagetarget: Object containing the definition of a Storage Target. Is one of the
-         following types: StorageTarget, JSON, IO[bytes] Required.
-        :type storagetarget: ~azure.mgmt.storagecache.models.StorageTarget or JSON or IO[bytes]
+        :param storagetarget: Object containing the definition of a Storage Target. Is either a
+         StorageTarget type or a IO[bytes] type. Required.
+        :type storagetarget: ~azure.mgmt.storagecache.models.StorageTarget or
+         ~azure.mgmt.storagecache.types.StorageTarget or IO[bytes]
         :return: An instance of LROPoller that returns StorageTarget. The StorageTarget is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storagecache.models.StorageTarget]
@@ -10912,7 +10938,7 @@ class _StorageCacheManagementClientOperationsMixin(
     @overload
     def check_aml_fs_subnets(
         self,
-        aml_filesystem_subnet_info: Optional[JSON] = None,
+        aml_filesystem_subnet_info: Optional[_types.AmlFilesystemSubnetInfo] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10920,7 +10946,7 @@ class _StorageCacheManagementClientOperationsMixin(
         """Check that subnets will be valid for AML file system create calls.
 
         :param aml_filesystem_subnet_info: The request body. Default value is None.
-        :type aml_filesystem_subnet_info: JSON
+        :type aml_filesystem_subnet_info: ~azure.mgmt.storagecache.types.AmlFilesystemSubnetInfo
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10952,15 +10978,17 @@ class _StorageCacheManagementClientOperationsMixin(
     @distributed_trace
     def check_aml_fs_subnets(  # pylint: disable=inconsistent-return-statements
         self,
-        aml_filesystem_subnet_info: Optional[Union[_models.AmlFilesystemSubnetInfo, JSON, IO[bytes]]] = None,
+        aml_filesystem_subnet_info: Optional[
+            Union[_models.AmlFilesystemSubnetInfo, _types.AmlFilesystemSubnetInfo, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """Check that subnets will be valid for AML file system create calls.
 
-        :param aml_filesystem_subnet_info: The request body. Is one of the following types:
-         AmlFilesystemSubnetInfo, JSON, IO[bytes] Default value is None.
+        :param aml_filesystem_subnet_info: The request body. Is either a AmlFilesystemSubnetInfo type
+         or a IO[bytes] type. Default value is None.
         :type aml_filesystem_subnet_info: ~azure.mgmt.storagecache.models.AmlFilesystemSubnetInfo or
-         JSON or IO[bytes]
+         ~azure.mgmt.storagecache.types.AmlFilesystemSubnetInfo or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11050,7 +11078,7 @@ class _StorageCacheManagementClientOperationsMixin(
     @overload
     def get_required_aml_fs_subnets_size(
         self,
-        required_aml_filesystem_subnets_size_info: Optional[JSON] = None,
+        required_aml_filesystem_subnets_size_info: Optional[_types.RequiredAmlFilesystemSubnetsSizeInfo] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11058,7 +11086,8 @@ class _StorageCacheManagementClientOperationsMixin(
         """Get the number of available IP addresses needed for the AML file system information provided.
 
         :param required_aml_filesystem_subnets_size_info: The request body. Default value is None.
-        :type required_aml_filesystem_subnets_size_info: JSON
+        :type required_aml_filesystem_subnets_size_info:
+         ~azure.mgmt.storagecache.types.RequiredAmlFilesystemSubnetsSizeInfo
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11093,16 +11122,17 @@ class _StorageCacheManagementClientOperationsMixin(
     def get_required_aml_fs_subnets_size(
         self,
         required_aml_filesystem_subnets_size_info: Optional[
-            Union[_models.RequiredAmlFilesystemSubnetsSizeInfo, JSON, IO[bytes]]
+            Union[_models.RequiredAmlFilesystemSubnetsSizeInfo, _types.RequiredAmlFilesystemSubnetsSizeInfo, IO[bytes]]
         ] = None,
         **kwargs: Any
     ) -> _models.RequiredAmlFilesystemSubnetsSize:
         """Get the number of available IP addresses needed for the AML file system information provided.
 
-        :param required_aml_filesystem_subnets_size_info: The request body. Is one of the following
-         types: RequiredAmlFilesystemSubnetsSizeInfo, JSON, IO[bytes] Default value is None.
+        :param required_aml_filesystem_subnets_size_info: The request body. Is either a
+         RequiredAmlFilesystemSubnetsSizeInfo type or a IO[bytes] type. Default value is None.
         :type required_aml_filesystem_subnets_size_info:
-         ~azure.mgmt.storagecache.models.RequiredAmlFilesystemSubnetsSizeInfo or JSON or IO[bytes]
+         ~azure.mgmt.storagecache.models.RequiredAmlFilesystemSubnetsSizeInfo or
+         ~azure.mgmt.storagecache.types.RequiredAmlFilesystemSubnetsSizeInfo or IO[bytes]
         :return: RequiredAmlFilesystemSubnetsSize. The RequiredAmlFilesystemSubnetsSize is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.storagecache.models.RequiredAmlFilesystemSubnetsSize

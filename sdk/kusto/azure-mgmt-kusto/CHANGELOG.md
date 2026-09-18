@@ -1,5 +1,83 @@
 # Release History
 
+## 4.0.0 (2026-06-24)
+
+### Features Added
+
+  - Client `KustoManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `KustoManagementClient` added method `send_request`
+  - Model `AttachedDatabaseConfiguration` added property `system_data`
+  - Model `AttachedDatabaseConfigurationsCheckNameRequest` added property `type`
+  - Model `ClusterCheckNameRequest` added property `type`
+  - Model `ClusterPrincipalAssignment` added property `system_data`
+  - Model `ClusterPrincipalAssignmentCheckNameRequest` added property `type`
+  - Model `ClusterUpdate` added property `system_data`
+  - Model `CosmosDbDataConnection` added property `system_data`
+  - Model `DataConnection` added property `system_data`
+  - Model `DataConnectionCheckNameRequest` added property `type`
+  - Enum `DataConnectionKind` added member `EVENT_GRID_WITH_MANAGED_IDENTITY`
+  - Enum `DataConnectionKind` added member `EVENT_HUB_WITH_MANAGED_IDENTITY`
+  - Model `Database` added property `system_data`
+  - Model `DatabasePrincipalAssignment` added property `system_data`
+  - Model `DatabasePrincipalAssignmentCheckNameRequest` added property `type`
+  - Model `DatabasePrincipalListResult` added property `next_link`
+  - Model `EventGridDataConnection` added property `system_data`
+  - Enum `EventGridDataFormat` added member `AZMONSTREAM`
+  - Model `EventHubDataConnection` added property `system_data`
+  - Enum `EventHubDataFormat` added member `AZMONSTREAM`
+  - Model `IotHubDataConnection` added property `system_data`
+  - Enum `IotHubDataFormat` added member `AZMONSTREAM`
+  - Model `KeyVaultProperties` added property `federated_identity_client_id`
+  - Model `LanguageExtensionsList` added property `next_link`
+  - Model `ManagedPrivateEndpointsCheckNameRequest` added property `type`
+  - Model `ProxyResource` added property `system_data`
+  - Enum `PublicNetworkAccess` added member `SECURED_BY_PERIMETER`
+  - Model `Resource` added property `system_data`
+  - Model `SandboxCustomImage` added property `system_data`
+  - Model `SandboxCustomImagesCheckNameRequest` added property `type`
+  - Model `ScriptCheckNameRequest` added property `type`
+  - Model `TrackedResource` added property `system_data`
+  - Added model `EventGridConnectionWithManagedIdentityProperties`
+  - Added model `EventGridDataConnectionWithManagedIdentity`
+  - Added model `EventHubConnectionWithManagedIdentityProperties`
+  - Added model `EventHubDataConnectionWithManagedIdentity`
+  - Parameter `caller_role` of `Method DatabasesOperations.begin_update` is now optional
+  - Parameter `caller_role` of `Method DatabasesOperations.begin_create_or_update` is now optional
+
+### Breaking Changes
+
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `AttachedDatabaseConfiguration` moved instance variable `provisioning_state`, `database_name`, `cluster_resource_id`, `attached_database_names`, `default_principals_modification_kind`, `table_level_sharing_properties`, `database_name_override` and `database_name_prefix` under property `properties` whose type is `AttachedDatabaseConfigurationProperties`
+  - Model `Cluster` moved instance variable `state`, `provisioning_state`, `uri`, `data_ingestion_uri`, `state_reason`, `trusted_external_tenants`, `optimized_autoscale`, `enable_disk_encryption`, `enable_streaming_ingest`, `virtual_network_configuration`, `key_vault_properties`, `enable_purge`, `language_extensions`, `enable_double_encryption`, `public_network_access`, `allowed_ip_range_list`, `engine_type`, `accepted_audiences`, `enable_auto_stop`, `restrict_outbound_network_access`, `allowed_fqdn_list`, `callout_policies`, `public_ip_type`, `virtual_cluster_graduation_properties`, `private_endpoint_connections`, `migration_cluster` and `zone_status` under property `properties` whose type is `ClusterProperties`
+  - Model `ClusterPrincipalAssignment` moved instance variable `principal_id`, `role`, `tenant_id`, `principal_type`, `tenant_name`, `principal_name`, `provisioning_state` and `aad_object_id` under property `properties` whose type is `ClusterPrincipalProperties`
+  - Model `ClusterUpdate` moved instance variable `state`, `provisioning_state`, `uri`, `data_ingestion_uri`, `state_reason`, `trusted_external_tenants`, `optimized_autoscale`, `enable_disk_encryption`, `enable_streaming_ingest`, `virtual_network_configuration`, `key_vault_properties`, `enable_purge`, `language_extensions`, `enable_double_encryption`, `public_network_access`, `allowed_ip_range_list`, `engine_type`, `accepted_audiences`, `enable_auto_stop`, `restrict_outbound_network_access`, `allowed_fqdn_list`, `callout_policies`, `public_ip_type`, `virtual_cluster_graduation_properties`, `private_endpoint_connections`, `migration_cluster` and `zone_status` under property `properties` whose type is `ClusterProperties`
+  - Model `CosmosDbDataConnection` moved instance variable `table_name`, `mapping_rule_name`, `managed_identity_resource_id`, `managed_identity_object_id`, `cosmos_db_account_resource_id`, `cosmos_db_database`, `cosmos_db_container`, `retrieval_start_date` and `provisioning_state` under property `properties` whose type is `CosmosDbDataConnectionProperties`
+  - Model `DatabasePrincipalAssignment` moved instance variable `principal_id`, `role`, `tenant_id`, `principal_type`, `tenant_name`, `principal_name`, `provisioning_state` and `aad_object_id` under property `properties` whose type is `DatabasePrincipalProperties`
+  - Model `EventGridDataConnection` moved instance variable `storage_account_resource_id`, `event_grid_resource_id`, `event_hub_resource_id`, `consumer_group`, `table_name`, `mapping_rule_name`, `data_format`, `ignore_first_record`, `blob_storage_event_type`, `managed_identity_resource_id`, `managed_identity_object_id`, `database_routing` and `provisioning_state` under property `properties` whose type is `EventGridConnectionProperties`
+  - Model `EventHubDataConnection` moved instance variable `event_hub_resource_id`, `consumer_group`, `table_name`, `mapping_rule_name`, `data_format`, `event_system_properties`, `compression`, `provisioning_state`, `managed_identity_resource_id`, `managed_identity_object_id`, `database_routing` and `retrieval_start_date` under property `properties` whose type is `EventHubConnectionProperties`
+  - Model `FollowerDatabaseDefinitionGet` moved instance variable `cluster_resource_id`, `attached_database_configuration_name`, `database_name`, `table_level_sharing_properties` and `database_share_origin` under property `properties` whose type is `FollowerDatabaseProperties`
+  - Model `IotHubDataConnection` moved instance variable `iot_hub_resource_id`, `consumer_group`, `table_name`, `mapping_rule_name`, `data_format`, `event_system_properties`, `shared_access_policy_name`, `database_routing`, `retrieval_start_date` and `provisioning_state` under property `properties` whose type is `IotHubConnectionProperties`
+  - Model `ManagedPrivateEndpoint` moved instance variable `private_link_resource_id`, `private_link_resource_region`, `group_id`, `request_message` and `provisioning_state` under property `properties` whose type is `ManagedPrivateEndpointProperties`
+  - Model `OperationResult` moved instance variable `code` and `message` under property `error` whose type is `OperationResultErrorProperties`
+  - Model `OperationResult` moved instance variable `operation_kind`, `provisioning_state` and `operation_state` under property `properties` whose type is `OperationResultProperties`
+  - Model `OutboundNetworkDependenciesEndpoint` moved instance variable `category`, `endpoints` and `provisioning_state` under property `properties` whose type is `OutboundNetworkDependenciesEndpointProperties`
+  - Model `PrivateEndpointConnection` moved instance variable `private_endpoint`, `private_link_service_connection_state`, `group_id` and `provisioning_state` under property `properties` whose type is `PrivateEndpointConnectionProperties`
+  - Model `PrivateLinkResource` moved instance variable `group_id`, `required_members` and `required_zone_names` under property `properties` whose type is `PrivateLinkResourceProperties`
+  - Model `ReadOnlyFollowingDatabase` moved instance variable `provisioning_state`, `soft_delete_period`, `hot_cache_period`, `statistics`, `leader_cluster_resource_id`, `attached_database_configuration_name`, `principals_modification_kind`, `table_level_sharing_properties`, `original_database_name`, `database_share_origin` and `suspension_details` under property `properties` whose type is `ReadOnlyFollowingDatabaseProperties`
+  - Model `ReadWriteDatabase` moved instance variable `provisioning_state`, `soft_delete_period`, `hot_cache_period`, `statistics`, `is_followed`, `key_vault_properties` and `suspension_details` under property `properties` whose type is `ReadWriteDatabaseProperties`
+  - Model `SandboxCustomImage` moved instance variable `language`, `language_version`, `base_image_name`, `requirements_file_content` and `provisioning_state` under property `properties` whose type is `SandboxCustomImageProperties`
+  - Model `Script` moved instance variable `script_url`, `script_url_sas_token`, `script_content`, `force_update_tag`, `continue_on_errors`, `provisioning_state`, `script_level` and `principal_permissions_action` under property `properties` whose type is `ScriptProperties`
+  - Method `ClustersOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match`/`if_none_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ClustersOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `DatabasesOperations.begin_create_or_update` changed its parameter `caller_role` from `positional_or_keyword` to `keyword_only`
+  - Method `DatabasesOperations.begin_update` changed its parameter `caller_role` from `positional_or_keyword` to `keyword_only`
+  - Method `DatabasesOperations.list_by_cluster` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `AttachedDatabaseConfigurationListResult`/`ClusterListResult`/`ClusterPrincipalAssignmentListResult`/`DataConnectionListResult`/`DatabaseListResult`/`DatabasePrincipalAssignmentListResult`/`FollowerDatabaseListResult`/`FollowerDatabaseListResultGet`/`ListResourceSkusResult`/`ManagedPrivateEndpointListResult`/`OperationListResult`/`OutboundNetworkDependenciesEndpointListResult`/`PrivateEndpointConnectionListResult`/`PrivateLinkResourceListResult`/`SandboxCustomImagesListResult`/`ScriptListResult`/`SkuDescriptionList` which actually were not used by SDK users
+
 ## 4.0.0b1 (2026-06-02)
 
 ### Features Added

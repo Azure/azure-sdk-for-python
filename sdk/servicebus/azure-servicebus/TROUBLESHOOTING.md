@@ -23,6 +23,7 @@ This troubleshooting guide contains instructions to diagnose frequently encounte
   * [Entity not found errors](#entity-not-found-errors)
 * [Troubleshooting message handling issues](#troubleshooting-message-handling-issues)
   * [Message and session lock issues](#message-and-session-lock-issues)
+  * [Messages are redelivered even though settlement succeeded](#messages-are-redelivered-even-though-settlement-succeeded)
   * [Message size issues](#message-size-issues)
 * [Troubleshooting receiver issues](#troubleshooting-receiver-issues)
   * [Number of messages returned doesn't match number requested](#number-of-messages-returned-doesnt-match-number-requested)
@@ -279,6 +280,41 @@ with receiver:
         # Process message
         receiver.complete_message(message)
 ```
+
+### Messages are redelivered even though settlement succeeded
+
+Settlements (`complete_message`, `abandon_message`, `defer_message`, `dead_letter_message`) wait for the
+service to confirm the outcome and raise when it is rejected, so a settlement the service did not apply
+surfaces as an exception rather than as an unexplained redelivery:
+
+```python
+from azure.servicebus.exceptions import MessageLockLostError
+
+receiver = client.get_queue_receiver(queue_name=QUEUE_NAME)
+with receiver:
+    for message in receiver.receive_messages(max_message_count=10):
+        try:
+            receiver.complete_message(message)
+        except MessageLockLostError:
+            # The service rejected the settlement -- the message will be redelivered.
+            pass
+```
+
+This also distinguishes the two causes: a rejection means the lock was already lost at settle time (see
+[Message and session lock issues](#message-and-session-lock-issues) and `AutoLockRenewer`), while a
+settlement that is confirmed and *still* redelivers points elsewhere.
+
+Confirming costs one service round trip per settlement, so settling one message at a time is slow at
+volume. On the async client, settle concurrently:
+
+```python
+await asyncio.gather(*(receiver.complete_message(m) for m in messages))
+```
+
+If you need the previous pre-settled behavior, it is no longer configurable — the other Service Bus SDKs
+await the disposition unconditionally and this now matches them. Outcomes cannot be observed in
+`RECEIVE_AND_DELETE` mode (the service settles on delivery) or with `uamqp_transport=True`, where
+settlements remain pre-settled.
 
 ### Message size issues
 

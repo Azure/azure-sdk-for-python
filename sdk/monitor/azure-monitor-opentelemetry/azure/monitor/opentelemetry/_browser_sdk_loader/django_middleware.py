@@ -25,6 +25,7 @@ from ._config import BrowserSDKConfig
 _logger = getLogger(__name__)
 
 
+# pylint: disable=do-not-log-exceptions-if-not-debug
 class ApplicationInsightsWebSnippetMiddleware(MiddlewareMixin):
     """Django middleware for injecting Application Insights web snippet into HTML responses.
 

@@ -53,7 +53,7 @@ class TestRealtimeServiceBasic(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime", "gpt-4.1", "phi4-mm-realtime", "phi4-mini"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-07-15"])
     async def test_realtime_service(self, test_data_dir: Path, model: str, api_version: str, **kwargs):
         voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
         voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
@@ -107,7 +107,7 @@ class TestRealtimeServiceBasic(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime"])
-    @pytest.mark.parametrize("api_version", ["2025-05-01-preview", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-05-01-preview", "2026-07-15"])
     async def test_realtime_service_live_session_update(
         self,
         test_data_dir: Path,
@@ -185,7 +185,7 @@ class TestRealtimeServiceBasic(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-07-15"])
     async def test_realtime_service_retrieve_item(self, test_data_dir: Path, model: str, api_version: str, **kwargs):
         file = test_data_dir / "largest_lake.wav"
         voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
@@ -228,7 +228,7 @@ class TestRealtimeServiceBasic(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime"])
-    @pytest.mark.parametrize("api_version", ["2025-05-01-preview", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-05-01-preview", "2026-07-15"])
     async def test_realtime_service_truncate_item(self, test_data_dir: Path, model: str, api_version: str, **kwargs):
         file = test_data_dir / "largest_lake.wav"
         voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")

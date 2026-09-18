@@ -301,6 +301,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         assert resp["blob_committed_block_count"] == 1
         assert resp["etag"] is not None
         assert resp["last_modified"] is not None
+        assert resp["content_md5"] is not None
+        assert resp["content_crc64"] is not None
 
         # Assert
 
@@ -409,6 +411,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         assert resp.get("blob_committed_block_count") == 1
         assert resp.get("etag") is not None
         assert resp.get("last_modified") is not None
+        assert resp.get("content_md5") is not None
+        assert resp.get("content_crc64") is not None
 
         # Assert the destination blob is constructed correctly
         destination_blob_properties = await destination_blob_client.get_blob_properties()

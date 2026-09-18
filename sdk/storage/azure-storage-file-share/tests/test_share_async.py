@@ -816,11 +816,12 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         lease = await share.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
         resp = []
         async for s in self.fsc.list_shares():
-            resp.append(s)
+            if s.name == share.share_name:
+                resp.append(s)
 
         # Assert
         assert resp is not None
-        assert len(resp) >= 1
+        assert len(resp) == 1
         assert resp[0] is not None
         assert resp[0].lease.duration == "infinite"
         assert resp[0].lease.status == "locked"
@@ -943,8 +944,6 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         for i in range(0, 4):
             share = await self._create_share(prefix + str(i))
             share_names.append(share.share_name)
-
-        share_names.sort()
 
         # Act
         generator1 = self.fsc.list_shares(prefix, results_per_page=2).by_page()

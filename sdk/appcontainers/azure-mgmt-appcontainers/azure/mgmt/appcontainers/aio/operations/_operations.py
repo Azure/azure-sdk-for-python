@@ -33,12 +33,13 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
 from ..._validation import api_version_validation
 from ...operations._operations import (
+    build_available_environment_modes_list_request,
     build_available_workload_profiles_get_request,
     build_billing_meters_get_request,
     build_certificates_create_or_update_request,
@@ -67,6 +68,12 @@ from ...operations._operations import (
     build_connected_environments_storages_get_request,
     build_connected_environments_storages_list_request,
     build_connected_environments_update_request,
+    build_container_app_private_endpoint_connections_create_or_update_request,
+    build_container_app_private_endpoint_connections_delete_request,
+    build_container_app_private_endpoint_connections_get_request,
+    build_container_app_private_endpoint_connections_list_request,
+    build_container_app_private_link_resources_get_request,
+    build_container_app_private_link_resources_list_request,
     build_container_apps_api_get_custom_domain_verification_id_request,
     build_container_apps_api_job_execution_request,
     build_container_apps_auth_configs_create_or_update_request,
@@ -80,12 +87,19 @@ from ...operations._operations import (
     build_container_apps_diagnostics_get_root_request,
     build_container_apps_diagnostics_list_detectors_request,
     build_container_apps_diagnostics_list_revisions_request,
+    build_container_apps_functions_get_request,
+    build_container_apps_functions_list_request,
     build_container_apps_get_auth_token_request,
     build_container_apps_get_request,
+    build_container_apps_label_history_delete_label_history_request,
+    build_container_apps_label_history_get_label_history_request,
+    build_container_apps_label_history_list_label_history_request,
     build_container_apps_list_by_resource_group_request,
     build_container_apps_list_by_subscription_request,
     build_container_apps_list_custom_host_name_analysis_request,
     build_container_apps_list_secrets_request,
+    build_container_apps_revision_functions_get_request,
+    build_container_apps_revision_functions_list_request,
     build_container_apps_revision_replicas_get_replica_request,
     build_container_apps_revision_replicas_list_replicas_request,
     build_container_apps_revisions_activate_revision_request,
@@ -106,11 +120,21 @@ from ...operations._operations import (
     build_container_apps_start_request,
     build_container_apps_stop_request,
     build_container_apps_update_request,
+    build_dapr_component_resiliency_policies_create_or_update_request,
+    build_dapr_component_resiliency_policies_delete_request,
+    build_dapr_component_resiliency_policies_get_request,
+    build_dapr_component_resiliency_policies_list_request,
     build_dapr_components_create_or_update_request,
     build_dapr_components_delete_request,
     build_dapr_components_get_request,
     build_dapr_components_list_request,
     build_dapr_components_list_secrets_request,
+    build_dot_net_components_create_or_update_request,
+    build_dot_net_components_delete_request,
+    build_dot_net_components_get_request,
+    build_dot_net_components_list_request,
+    build_dot_net_components_update_request,
+    build_functions_extension_invoke_functions_host_request,
     build_http_route_config_create_or_update_request,
     build_http_route_config_delete_request,
     build_http_route_config_get_request,
@@ -131,9 +155,11 @@ from ...operations._operations import (
     build_jobs_list_detectors_request,
     build_jobs_list_secrets_request,
     build_jobs_proxy_get_request,
+    build_jobs_resume_request,
     build_jobs_start_request,
     build_jobs_stop_execution_request,
     build_jobs_stop_multiple_executions_request,
+    build_jobs_suspend_request,
     build_jobs_update_request,
     build_logic_apps_create_or_update_request,
     build_logic_apps_delete_request,
@@ -156,8 +182,10 @@ from ...operations._operations import (
     build_managed_environment_private_endpoint_connections_delete_request,
     build_managed_environment_private_endpoint_connections_get_request,
     build_managed_environment_private_endpoint_connections_list_request,
+    build_managed_environment_private_link_resources_get_request,
     build_managed_environment_private_link_resources_list_request,
     build_managed_environment_usages_list_request,
+    build_managed_environments_check_migration_eligibility_request,
     build_managed_environments_create_or_update_request,
     build_managed_environments_delete_request,
     build_managed_environments_diagnostics_get_root_request,
@@ -173,17 +201,26 @@ from ...operations._operations import (
     build_managed_environments_update_request,
     build_namespaces_check_name_availability_request,
     build_operations_list_request,
+    build_sandbox_groups_create_or_update_request,
+    build_sandbox_groups_delete_request,
+    build_sandbox_groups_get_request,
+    build_sandbox_groups_list_by_resource_group_request,
+    build_sandbox_groups_list_by_subscription_request,
+    build_sandbox_groups_update_request,
     build_usages_list_request,
+    build_vnet_connections_create_or_update_request,
+    build_vnet_connections_delete_request,
+    build_vnet_connections_get_request,
+    build_vnet_connections_list_by_sandbox_group_request,
 )
 from .._configuration import ContainerAppsAPIClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -294,7 +331,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ContainerAppsSessionPoolsOperations:
+class ContainerAppsSessionPoolsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -387,7 +424,7 @@ class ContainerAppsSessionPoolsOperations:
         self,
         resource_group_name: str,
         session_pool_name: str,
-        session_pool_envelope: Union[_models.SessionPool, JSON, IO[bytes]],
+        session_pool_envelope: Union[_models.SessionPool, _types.SessionPool, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -495,7 +532,7 @@ class ContainerAppsSessionPoolsOperations:
         self,
         resource_group_name: str,
         session_pool_name: str,
-        session_pool_envelope: JSON,
+        session_pool_envelope: _types.SessionPool,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -510,7 +547,7 @@ class ContainerAppsSessionPoolsOperations:
         :param session_pool_name: Name of the session pool. Required.
         :type session_pool_name: str
         :param session_pool_envelope: Properties used to create a session pool. Required.
-        :type session_pool_envelope: JSON
+        :type session_pool_envelope: ~azure.mgmt.appcontainers.types.SessionPool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -555,7 +592,7 @@ class ContainerAppsSessionPoolsOperations:
         self,
         resource_group_name: str,
         session_pool_name: str,
-        session_pool_envelope: Union[_models.SessionPool, JSON, IO[bytes]],
+        session_pool_envelope: Union[_models.SessionPool, _types.SessionPool, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SessionPool]:
         """Create or update a session pool.
@@ -567,9 +604,10 @@ class ContainerAppsSessionPoolsOperations:
         :type resource_group_name: str
         :param session_pool_name: Name of the session pool. Required.
         :type session_pool_name: str
-        :param session_pool_envelope: Properties used to create a session pool. Is one of the following
-         types: SessionPool, JSON, IO[bytes] Required.
-        :type session_pool_envelope: ~azure.mgmt.appcontainers.models.SessionPool or JSON or IO[bytes]
+        :param session_pool_envelope: Properties used to create a session pool. Is either a SessionPool
+         type or a IO[bytes] type. Required.
+        :type session_pool_envelope: ~azure.mgmt.appcontainers.models.SessionPool or
+         ~azure.mgmt.appcontainers.types.SessionPool or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SessionPool. The SessionPool is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.SessionPool]
@@ -631,7 +669,9 @@ class ContainerAppsSessionPoolsOperations:
         self,
         resource_group_name: str,
         session_pool_name: str,
-        session_pool_envelope: Union[_models.SessionPoolUpdatableProperties, JSON, IO[bytes]],
+        session_pool_envelope: Union[
+            _models.SessionPoolUpdatableProperties, _types.SessionPoolUpdatableProperties, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -740,7 +780,7 @@ class ContainerAppsSessionPoolsOperations:
         self,
         resource_group_name: str,
         session_pool_name: str,
-        session_pool_envelope: JSON,
+        session_pool_envelope: _types.SessionPoolUpdatableProperties,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -755,7 +795,7 @@ class ContainerAppsSessionPoolsOperations:
         :param session_pool_name: Name of the session pool. Required.
         :type session_pool_name: str
         :param session_pool_envelope: Properties used to create a session pool. Required.
-        :type session_pool_envelope: JSON
+        :type session_pool_envelope: ~azure.mgmt.appcontainers.types.SessionPoolUpdatableProperties
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -800,7 +840,9 @@ class ContainerAppsSessionPoolsOperations:
         self,
         resource_group_name: str,
         session_pool_name: str,
-        session_pool_envelope: Union[_models.SessionPoolUpdatableProperties, JSON, IO[bytes]],
+        session_pool_envelope: Union[
+            _models.SessionPoolUpdatableProperties, _types.SessionPoolUpdatableProperties, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SessionPool]:
         """Update properties of a session pool.
@@ -812,10 +854,10 @@ class ContainerAppsSessionPoolsOperations:
         :type resource_group_name: str
         :param session_pool_name: Name of the session pool. Required.
         :type session_pool_name: str
-        :param session_pool_envelope: Properties used to create a session pool. Is one of the following
-         types: SessionPoolUpdatableProperties, JSON, IO[bytes] Required.
+        :param session_pool_envelope: Properties used to create a session pool. Is either a
+         SessionPoolUpdatableProperties type or a IO[bytes] type. Required.
         :type session_pool_envelope: ~azure.mgmt.appcontainers.models.SessionPoolUpdatableProperties or
-         JSON or IO[bytes]
+         ~azure.mgmt.appcontainers.types.SessionPoolUpdatableProperties or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SessionPool. The SessionPool is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.SessionPool]
@@ -1190,7 +1232,1532 @@ class ContainerAppsSessionPoolsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ContainerAppsSourceControlsOperations:
+class SandboxGroupsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.appcontainers.aio.ContainerAppsAPIClient`'s
+        :attr:`sandbox_groups` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ContainerAppsAPIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": ["api_version", "subscription_id", "resource_group_name", "sandbox_group_name", "accept"]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def get(self, resource_group_name: str, sandbox_group_name: str, **kwargs: Any) -> _models.SandboxGroup:
+        """Get the properties of a SandboxGroup.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param sandbox_group_name: The name of the SandboxGroup. Required.
+        :type sandbox_group_name: str
+        :return: SandboxGroup. The SandboxGroup is compatible with MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.SandboxGroup
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SandboxGroup] = kwargs.pop("cls", None)
+
+        _request = build_sandbox_groups_get_request(
+            resource_group_name=resource_group_name,
+            sandbox_group_name=sandbox_group_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SandboxGroup, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "sandbox_group_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        sandbox_group_name: str,
+        resource: Union[_models.SandboxGroup, _types.SandboxGroup, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_sandbox_groups_create_or_update_request(
+            resource_group_name=resource_group_name,
+            sandbox_group_name=sandbox_group_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        sandbox_group_name: str,
+        resource: _models.SandboxGroup,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SandboxGroup]:
+        """Create or update a SandboxGroup.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param sandbox_group_name: The name of the SandboxGroup. Required.
+        :type sandbox_group_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.appcontainers.models.SandboxGroup
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SandboxGroup. The SandboxGroup is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.SandboxGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        sandbox_group_name: str,
+        resource: _types.SandboxGroup,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SandboxGroup]:
+        """Create or update a SandboxGroup.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param sandbox_group_name: The name of the SandboxGroup. Required.
+        :type sandbox_group_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.appcontainers.types.SandboxGroup
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SandboxGroup. The SandboxGroup is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.SandboxGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        sandbox_group_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SandboxGroup]:
+        """Create or update a SandboxGroup.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param sandbox_group_name: The name of the SandboxGroup. Required.
+        :type sandbox_group_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SandboxGroup. The SandboxGroup is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.SandboxGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "sandbox_group_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        sandbox_group_name: str,
+        resource: Union[_models.SandboxGroup, _types.SandboxGroup, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SandboxGroup]:
+        """Create or update a SandboxGroup.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param sandbox_group_name: The name of the SandboxGroup. Required.
+        :type sandbox_group_name: str
+        :param resource: Resource create parameters. Is either a SandboxGroup type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.appcontainers.models.SandboxGroup or
+         ~azure.mgmt.appcontainers.types.SandboxGroup or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns SandboxGroup. The SandboxGroup is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.SandboxGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SandboxGroup] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                sandbox_group_name=sandbox_group_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.SandboxGroup, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.SandboxGroup].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.SandboxGroup](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "sandbox_group_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        sandbox_group_name: str,
+        properties: Union[_models.SandboxGroupPatch, _types.SandboxGroupPatch, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_sandbox_groups_update_request(
+            resource_group_name=resource_group_name,
+            sandbox_group_name=sandbox_group_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        sandbox_group_name: str,
+        properties: _models.SandboxGroupPatch,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SandboxGroup]:
+        """Patches a SandboxGroup.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param sandbox_group_name: The name of the SandboxGroup. Required.
+        :type sandbox_group_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.appcontainers.models.SandboxGroupPatch
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SandboxGroup. The SandboxGroup is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.SandboxGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        sandbox_group_name: str,
+        properties: _types.SandboxGroupPatch,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SandboxGroup]:
+        """Patches a SandboxGroup.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param sandbox_group_name: The name of the SandboxGroup. Required.
+        :type sandbox_group_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.appcontainers.types.SandboxGroupPatch
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SandboxGroup. The SandboxGroup is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.SandboxGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        sandbox_group_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SandboxGroup]:
+        """Patches a SandboxGroup.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param sandbox_group_name: The name of the SandboxGroup. Required.
+        :type sandbox_group_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SandboxGroup. The SandboxGroup is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.SandboxGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "sandbox_group_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        sandbox_group_name: str,
+        properties: Union[_models.SandboxGroupPatch, _types.SandboxGroupPatch, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SandboxGroup]:
+        """Patches a SandboxGroup.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param sandbox_group_name: The name of the SandboxGroup. Required.
+        :type sandbox_group_name: str
+        :param properties: The resource properties to be updated. Is either a SandboxGroupPatch type or
+         a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.appcontainers.models.SandboxGroupPatch or
+         ~azure.mgmt.appcontainers.types.SandboxGroupPatch or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns SandboxGroup. The SandboxGroup is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.SandboxGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SandboxGroup] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                sandbox_group_name=sandbox_group_name,
+                properties=properties,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.SandboxGroup, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.SandboxGroup].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.SandboxGroup](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={"2026-07-01": ["api_version", "subscription_id", "resource_group_name", "sandbox_group_name"]},
+        api_versions_list=["2026-07-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, sandbox_group_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_sandbox_groups_delete_request(
+            resource_group_name=resource_group_name,
+            sandbox_group_name=sandbox_group_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={"2026-07-01": ["api_version", "subscription_id", "resource_group_name", "sandbox_group_name"]},
+        api_versions_list=["2026-07-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, sandbox_group_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a SandboxGroup.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param sandbox_group_name: The name of the SandboxGroup. Required.
+        :type sandbox_group_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                sandbox_group_name=sandbox_group_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={"2026-07-01": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-07-01"],
+    )
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.SandboxGroup"]:
+        """Get all SandboxGroups in a resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of SandboxGroup
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appcontainers.models.SandboxGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.SandboxGroup]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_sandbox_groups_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.SandboxGroup],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={"2026-07-01": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-07-01"],
+    )
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.SandboxGroup"]:
+        """Get all SandboxGroups for a subscription.
+
+        :return: An iterator like instance of SandboxGroup
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appcontainers.models.SandboxGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.SandboxGroup]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_sandbox_groups_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.SandboxGroup],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class VnetConnectionsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.appcontainers.aio.ContainerAppsAPIClient`'s
+        :attr:`vnet_connections` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ContainerAppsAPIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "sandbox_group_name",
+                "vnet_connection_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def get(
+        self, resource_group_name: str, sandbox_group_name: str, vnet_connection_name: str, **kwargs: Any
+    ) -> _models.VnetConnection:
+        """Get the properties of a VnetConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param sandbox_group_name: The name of the SandboxGroup. Required.
+        :type sandbox_group_name: str
+        :param vnet_connection_name: The name of the VnetConnection. Required.
+        :type vnet_connection_name: str
+        :return: VnetConnection. The VnetConnection is compatible with MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.VnetConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VnetConnection] = kwargs.pop("cls", None)
+
+        _request = build_vnet_connections_get_request(
+            resource_group_name=resource_group_name,
+            sandbox_group_name=sandbox_group_name,
+            vnet_connection_name=vnet_connection_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VnetConnection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        sandbox_group_name: str,
+        vnet_connection_name: str,
+        resource: _models.VnetConnection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.VnetConnection:
+        """Create or update a VnetConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param sandbox_group_name: The name of the SandboxGroup. Required.
+        :type sandbox_group_name: str
+        :param vnet_connection_name: The name of the VnetConnection. Required.
+        :type vnet_connection_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.appcontainers.models.VnetConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: VnetConnection. The VnetConnection is compatible with MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.VnetConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        sandbox_group_name: str,
+        vnet_connection_name: str,
+        resource: _types.VnetConnection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.VnetConnection:
+        """Create or update a VnetConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param sandbox_group_name: The name of the SandboxGroup. Required.
+        :type sandbox_group_name: str
+        :param vnet_connection_name: The name of the VnetConnection. Required.
+        :type vnet_connection_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.appcontainers.types.VnetConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: VnetConnection. The VnetConnection is compatible with MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.VnetConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        sandbox_group_name: str,
+        vnet_connection_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.VnetConnection:
+        """Create or update a VnetConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param sandbox_group_name: The name of the SandboxGroup. Required.
+        :type sandbox_group_name: str
+        :param vnet_connection_name: The name of the VnetConnection. Required.
+        :type vnet_connection_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: VnetConnection. The VnetConnection is compatible with MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.VnetConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "sandbox_group_name",
+                "vnet_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        sandbox_group_name: str,
+        vnet_connection_name: str,
+        resource: Union[_models.VnetConnection, _types.VnetConnection, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.VnetConnection:
+        """Create or update a VnetConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param sandbox_group_name: The name of the SandboxGroup. Required.
+        :type sandbox_group_name: str
+        :param vnet_connection_name: The name of the VnetConnection. Required.
+        :type vnet_connection_name: str
+        :param resource: Resource create parameters. Is either a VnetConnection type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.appcontainers.models.VnetConnection or
+         ~azure.mgmt.appcontainers.types.VnetConnection or IO[bytes]
+        :return: VnetConnection. The VnetConnection is compatible with MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.VnetConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.VnetConnection] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_vnet_connections_create_or_update_request(
+            resource_group_name=resource_group_name,
+            sandbox_group_name=sandbox_group_name,
+            vnet_connection_name=vnet_connection_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VnetConnection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "sandbox_group_name",
+                "vnet_connection_name",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, sandbox_group_name: str, vnet_connection_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_vnet_connections_delete_request(
+            resource_group_name=resource_group_name,
+            sandbox_group_name=sandbox_group_name,
+            vnet_connection_name=vnet_connection_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "sandbox_group_name",
+                "vnet_connection_name",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, sandbox_group_name: str, vnet_connection_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a VnetConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param sandbox_group_name: The name of the SandboxGroup. Required.
+        :type sandbox_group_name: str
+        :param vnet_connection_name: The name of the VnetConnection. Required.
+        :type vnet_connection_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                sandbox_group_name=sandbox_group_name,
+                vnet_connection_name=vnet_connection_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": ["api_version", "subscription_id", "resource_group_name", "sandbox_group_name", "accept"]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    def list_by_sandbox_group(
+        self, resource_group_name: str, sandbox_group_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.VnetConnection"]:
+        """List all VnetConnections in the specified SandboxGroup.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param sandbox_group_name: The name of the SandboxGroup. Required.
+        :type sandbox_group_name: str
+        :return: An iterator like instance of VnetConnection
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appcontainers.models.VnetConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VnetConnection]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_vnet_connections_list_by_sandbox_group_request(
+                    resource_group_name=resource_group_name,
+                    sandbox_group_name=sandbox_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.VnetConnection],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class ContainerAppsSourceControlsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1289,7 +2856,7 @@ class ContainerAppsSourceControlsOperations:
         resource_group_name: str,
         container_app_name: str,
         source_control_name: str,
-        source_control_envelope: Union[_models.SourceControl, JSON, IO[bytes]],
+        source_control_envelope: Union[_models.SourceControl, _types.SourceControl, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1401,7 +2968,7 @@ class ContainerAppsSourceControlsOperations:
         resource_group_name: str,
         container_app_name: str,
         source_control_name: str,
-        source_control_envelope: JSON,
+        source_control_envelope: _types.SourceControl,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1419,7 +2986,7 @@ class ContainerAppsSourceControlsOperations:
         :type source_control_name: str
         :param source_control_envelope: Properties used to create a Container App SourceControl.
          Required.
-        :type source_control_envelope: JSON
+        :type source_control_envelope: ~azure.mgmt.appcontainers.types.SourceControl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1469,7 +3036,7 @@ class ContainerAppsSourceControlsOperations:
         resource_group_name: str,
         container_app_name: str,
         source_control_name: str,
-        source_control_envelope: Union[_models.SourceControl, JSON, IO[bytes]],
+        source_control_envelope: Union[_models.SourceControl, _types.SourceControl, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SourceControl]:
         """Create or update the SourceControl for a Container App.
@@ -1483,10 +3050,10 @@ class ContainerAppsSourceControlsOperations:
         :type container_app_name: str
         :param source_control_name: Name of the Container App SourceControl. Required.
         :type source_control_name: str
-        :param source_control_envelope: Properties used to create a Container App SourceControl. Is one
-         of the following types: SourceControl, JSON, IO[bytes] Required.
-        :type source_control_envelope: ~azure.mgmt.appcontainers.models.SourceControl or JSON or
-         IO[bytes]
+        :param source_control_envelope: Properties used to create a Container App SourceControl. Is
+         either a SourceControl type or a IO[bytes] type. Required.
+        :type source_control_envelope: ~azure.mgmt.appcontainers.models.SourceControl or
+         ~azure.mgmt.appcontainers.types.SourceControl or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SourceControl. The SourceControl is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.SourceControl]
@@ -1776,7 +3343,7 @@ class ContainerAppsSourceControlsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ContainerAppsOperations:
+class ContainerAppsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1869,7 +3436,7 @@ class ContainerAppsOperations:
         self,
         resource_group_name: str,
         container_app_name: str,
-        container_app_envelope: Union[_models.ContainerApp, JSON, IO[bytes]],
+        container_app_envelope: Union[_models.ContainerApp, _types.ContainerApp, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1977,7 +3544,7 @@ class ContainerAppsOperations:
         self,
         resource_group_name: str,
         container_app_name: str,
-        container_app_envelope: JSON,
+        container_app_envelope: _types.ContainerApp,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1992,7 +3559,7 @@ class ContainerAppsOperations:
         :param container_app_name: Name of the Container App. Required.
         :type container_app_name: str
         :param container_app_envelope: Properties used to create a container app. Required.
-        :type container_app_envelope: JSON
+        :type container_app_envelope: ~azure.mgmt.appcontainers.types.ContainerApp
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2037,7 +3604,7 @@ class ContainerAppsOperations:
         self,
         resource_group_name: str,
         container_app_name: str,
-        container_app_envelope: Union[_models.ContainerApp, JSON, IO[bytes]],
+        container_app_envelope: Union[_models.ContainerApp, _types.ContainerApp, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ContainerApp]:
         """Create or update a Container App.
@@ -2049,10 +3616,10 @@ class ContainerAppsOperations:
         :type resource_group_name: str
         :param container_app_name: Name of the Container App. Required.
         :type container_app_name: str
-        :param container_app_envelope: Properties used to create a container app. Is one of the
-         following types: ContainerApp, JSON, IO[bytes] Required.
-        :type container_app_envelope: ~azure.mgmt.appcontainers.models.ContainerApp or JSON or
-         IO[bytes]
+        :param container_app_envelope: Properties used to create a container app. Is either a
+         ContainerApp type or a IO[bytes] type. Required.
+        :type container_app_envelope: ~azure.mgmt.appcontainers.models.ContainerApp or
+         ~azure.mgmt.appcontainers.types.ContainerApp or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ContainerApp. The ContainerApp is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.ContainerApp]
@@ -2114,7 +3681,7 @@ class ContainerAppsOperations:
         self,
         resource_group_name: str,
         container_app_name: str,
-        container_app_envelope: Union[_models.ContainerApp, JSON, IO[bytes]],
+        container_app_envelope: Union[_models.ContainerApp, _types.ContainerApp, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2220,7 +3787,7 @@ class ContainerAppsOperations:
         self,
         resource_group_name: str,
         container_app_name: str,
-        container_app_envelope: JSON,
+        container_app_envelope: _types.ContainerApp,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2235,7 +3802,7 @@ class ContainerAppsOperations:
         :param container_app_name: Name of the Container App. Required.
         :type container_app_name: str
         :param container_app_envelope: Properties of a Container App that need to be updated. Required.
-        :type container_app_envelope: JSON
+        :type container_app_envelope: ~azure.mgmt.appcontainers.types.ContainerApp
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2280,7 +3847,7 @@ class ContainerAppsOperations:
         self,
         resource_group_name: str,
         container_app_name: str,
-        container_app_envelope: Union[_models.ContainerApp, JSON, IO[bytes]],
+        container_app_envelope: Union[_models.ContainerApp, _types.ContainerApp, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ContainerApp]:
         """Update properties of a Container App.
@@ -2292,10 +3859,10 @@ class ContainerAppsOperations:
         :type resource_group_name: str
         :param container_app_name: Name of the Container App. Required.
         :type container_app_name: str
-        :param container_app_envelope: Properties of a Container App that need to be updated. Is one of
-         the following types: ContainerApp, JSON, IO[bytes] Required.
-        :type container_app_envelope: ~azure.mgmt.appcontainers.models.ContainerApp or JSON or
-         IO[bytes]
+        :param container_app_envelope: Properties of a Container App that need to be updated. Is either
+         a ContainerApp type or a IO[bytes] type. Required.
+        :type container_app_envelope: ~azure.mgmt.appcontainers.models.ContainerApp or
+         ~azure.mgmt.appcontainers.types.ContainerApp or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ContainerApp. The ContainerApp is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.ContainerApp]
@@ -3152,7 +4719,234 @@ class ContainerAppsOperations:
         )
 
 
-class ContainerAppsRevisionsOperations:
+class ContainerAppsFunctionsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.appcontainers.aio.ContainerAppsAPIClient`'s
+        :attr:`container_apps_functions` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ContainerAppsAPIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "container_app_name",
+                "function_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
+    )
+    async def get(
+        self, resource_group_name: str, container_app_name: str, function_name: str, **kwargs: Any
+    ) -> _models.ContainerAppsFunction:
+        """Get a specific function of a Container App from the latest Revision.
+
+        Gets the details of a specific function from the latest Container App revision.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param container_app_name: Name of the Container App. Required.
+        :type container_app_name: str
+        :param function_name: Name of the Function. Required.
+        :type function_name: str
+        :return: ContainerAppsFunction. The ContainerAppsFunction is compatible with MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.ContainerAppsFunction
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ContainerAppsFunction] = kwargs.pop("cls", None)
+
+        _request = build_container_apps_functions_get_request(
+            resource_group_name=resource_group_name,
+            container_app_name=container_app_name,
+            function_name=function_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ContainerAppsFunction, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "container_app_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
+    )
+    def list(
+        self, resource_group_name: str, container_app_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ContainerAppsFunction"]:
+        """List the functions for a given Container App from the latest Revision.
+
+        Lists the functions available in the latest revision of a Container App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param container_app_name: Name of the Container App. Required.
+        :type container_app_name: str
+        :return: An iterator like instance of ContainerAppsFunction
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appcontainers.models.ContainerAppsFunction]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ContainerAppsFunction]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_container_apps_functions_list_request(
+                    resource_group_name=resource_group_name,
+                    container_app_name=container_app_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ContainerAppsFunction],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class ContainerAppsRevisionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3546,7 +5340,426 @@ class ContainerAppsRevisionsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ContainerAppsRevisionReplicasOperations:
+class FunctionsExtensionOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.appcontainers.aio.ContainerAppsAPIClient`'s
+        :attr:`functions_extension` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ContainerAppsAPIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "container_app_name",
+                "revision_name",
+                "function_app_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def invoke_functions_host(
+        self,
+        resource_group_name: str,
+        container_app_name: str,
+        revision_name: str,
+        function_app_name: str,
+        **kwargs: Any
+    ) -> str:
+        """Proxies a Functions host call to the function app backed by the container app.
+
+        Proxies a Functions host call to the function app backed by the container app.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param container_app_name: Name of the Container App. Required.
+        :type container_app_name: str
+        :param revision_name: Name of the Container App Revision. Required.
+        :type revision_name: str
+        :param function_app_name: Name of the Function. Required.
+        :type function_app_name: str
+        :return: str
+        :rtype: str
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[str] = kwargs.pop("cls", None)
+
+        _request = build_functions_extension_invoke_functions_host_request(
+            resource_group_name=resource_group_name,
+            container_app_name=container_app_name,
+            revision_name=revision_name,
+            function_app_name=function_app_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(str, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class ContainerAppsLabelHistoryOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.appcontainers.aio.ContainerAppsAPIClient`'s
+        :attr:`container_apps_label_history` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ContainerAppsAPIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "container_app_name",
+                "label_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def get_label_history(
+        self, resource_group_name: str, container_app_name: str, label_name: str, **kwargs: Any
+    ) -> _models.LabelHistory:
+        """Get the history of a label.
+
+        Gets the revision history associated with a Container App label.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param container_app_name: Name of the Container App. Required.
+        :type container_app_name: str
+        :param label_name: Name of the label. Required.
+        :type label_name: str
+        :return: LabelHistory. The LabelHistory is compatible with MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.LabelHistory
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.LabelHistory] = kwargs.pop("cls", None)
+
+        _request = build_container_apps_label_history_get_label_history_request(
+            resource_group_name=resource_group_name,
+            container_app_name=container_app_name,
+            label_name=label_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.LabelHistory, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": ["api_version", "subscription_id", "resource_group_name", "container_app_name", "label_name"]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def delete_label_history(
+        self, resource_group_name: str, container_app_name: str, label_name: str, **kwargs: Any
+    ) -> None:
+        """Delete the history of a label.
+
+        Deletes the revision history associated with a Container App label.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param container_app_name: Name of the Container App. Required.
+        :type container_app_name: str
+        :param label_name: Name of the label. Required.
+        :type label_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_container_apps_label_history_delete_label_history_request(
+            resource_group_name=resource_group_name,
+            container_app_name=container_app_name,
+            label_name=label_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "container_app_name",
+                "filter",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    def list_label_history(
+        self, resource_group_name: str, container_app_name: str, *, filter: Optional[str] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.LabelHistory"]:
+        """Get the Label History for a given Container App.
+
+        Lists the label revision histories for a Container App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param container_app_name: Name of the Container App. Required.
+        :type container_app_name: str
+        :keyword filter: The filter to apply on the operation. Default value is None.
+        :paramtype filter: str
+        :return: An iterator like instance of LabelHistory
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appcontainers.models.LabelHistory]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.LabelHistory]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_container_apps_label_history_list_label_history_request(
+                    resource_group_name=resource_group_name,
+                    container_app_name=container_app_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.LabelHistory],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class ContainerAppsRevisionReplicasOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3721,7 +5934,958 @@ class ContainerAppsRevisionReplicasOperations:
         return deserialized  # type: ignore
 
 
-class JavaComponentsOperations:
+class DotNetComponentsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.appcontainers.aio.ContainerAppsAPIClient`'s
+        :attr:`dot_net_components` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ContainerAppsAPIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "environment_name",
+                "name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
+    )
+    async def get(
+        self, resource_group_name: str, environment_name: str, name: str, **kwargs: Any
+    ) -> _models.DotNetComponent:
+        """Get a .NET Component.
+
+        Gets the details of a .NET component in a managed environment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :param name: Name of the .NET Component. Required.
+        :type name: str
+        :return: DotNetComponent. The DotNetComponent is compatible with MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.DotNetComponent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.DotNetComponent] = kwargs.pop("cls", None)
+
+        _request = build_dot_net_components_get_request(
+            resource_group_name=resource_group_name,
+            environment_name=environment_name,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.DotNetComponent, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "environment_name",
+                "name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        environment_name: str,
+        name: str,
+        dot_net_component_envelope: Union[_models.DotNetComponent, _types.DotNetComponent, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(dot_net_component_envelope, (IOBase, bytes)):
+            _content = dot_net_component_envelope
+        else:
+            _content = json.dumps(dot_net_component_envelope, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_dot_net_components_create_or_update_request(
+            resource_group_name=resource_group_name,
+            environment_name=environment_name,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        environment_name: str,
+        name: str,
+        dot_net_component_envelope: _models.DotNetComponent,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.DotNetComponent]:
+        """Creates or updates a .NET Component.
+
+        Creates or updates a .NET Component in a Managed Environment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :param name: Name of the .NET Component. Required.
+        :type name: str
+        :param dot_net_component_envelope: Configuration details of the .NET Component. Required.
+        :type dot_net_component_envelope: ~azure.mgmt.appcontainers.models.DotNetComponent
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns DotNetComponent. The DotNetComponent is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.DotNetComponent]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        environment_name: str,
+        name: str,
+        dot_net_component_envelope: _types.DotNetComponent,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.DotNetComponent]:
+        """Creates or updates a .NET Component.
+
+        Creates or updates a .NET Component in a Managed Environment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :param name: Name of the .NET Component. Required.
+        :type name: str
+        :param dot_net_component_envelope: Configuration details of the .NET Component. Required.
+        :type dot_net_component_envelope: ~azure.mgmt.appcontainers.types.DotNetComponent
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns DotNetComponent. The DotNetComponent is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.DotNetComponent]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        environment_name: str,
+        name: str,
+        dot_net_component_envelope: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.DotNetComponent]:
+        """Creates or updates a .NET Component.
+
+        Creates or updates a .NET Component in a Managed Environment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :param name: Name of the .NET Component. Required.
+        :type name: str
+        :param dot_net_component_envelope: Configuration details of the .NET Component. Required.
+        :type dot_net_component_envelope: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns DotNetComponent. The DotNetComponent is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.DotNetComponent]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "environment_name",
+                "name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        environment_name: str,
+        name: str,
+        dot_net_component_envelope: Union[_models.DotNetComponent, _types.DotNetComponent, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.DotNetComponent]:
+        """Creates or updates a .NET Component.
+
+        Creates or updates a .NET Component in a Managed Environment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :param name: Name of the .NET Component. Required.
+        :type name: str
+        :param dot_net_component_envelope: Configuration details of the .NET Component. Is either a
+         DotNetComponent type or a IO[bytes] type. Required.
+        :type dot_net_component_envelope: ~azure.mgmt.appcontainers.models.DotNetComponent or
+         ~azure.mgmt.appcontainers.types.DotNetComponent or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns DotNetComponent. The DotNetComponent is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.DotNetComponent]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DotNetComponent] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                environment_name=environment_name,
+                name=name,
+                dot_net_component_envelope=dot_net_component_envelope,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.DotNetComponent, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.DotNetComponent].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.DotNetComponent](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "environment_name",
+                "name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        environment_name: str,
+        name: str,
+        dot_net_component_envelope: Union[_models.DotNetComponent, _types.DotNetComponent, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(dot_net_component_envelope, (IOBase, bytes)):
+            _content = dot_net_component_envelope
+        else:
+            _content = json.dumps(dot_net_component_envelope, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_dot_net_components_update_request(
+            resource_group_name=resource_group_name,
+            environment_name=environment_name,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        environment_name: str,
+        name: str,
+        dot_net_component_envelope: _models.DotNetComponent,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.DotNetComponent]:
+        """Update properties of a .NET Component.
+
+        Patches a .NET Component using JSON Merge Patch.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :param name: Name of the .NET Component. Required.
+        :type name: str
+        :param dot_net_component_envelope: Configuration details of the .NET Component. Required.
+        :type dot_net_component_envelope: ~azure.mgmt.appcontainers.models.DotNetComponent
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns DotNetComponent. The DotNetComponent is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.DotNetComponent]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        environment_name: str,
+        name: str,
+        dot_net_component_envelope: _types.DotNetComponent,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.DotNetComponent]:
+        """Update properties of a .NET Component.
+
+        Patches a .NET Component using JSON Merge Patch.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :param name: Name of the .NET Component. Required.
+        :type name: str
+        :param dot_net_component_envelope: Configuration details of the .NET Component. Required.
+        :type dot_net_component_envelope: ~azure.mgmt.appcontainers.types.DotNetComponent
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns DotNetComponent. The DotNetComponent is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.DotNetComponent]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        environment_name: str,
+        name: str,
+        dot_net_component_envelope: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.DotNetComponent]:
+        """Update properties of a .NET Component.
+
+        Patches a .NET Component using JSON Merge Patch.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :param name: Name of the .NET Component. Required.
+        :type name: str
+        :param dot_net_component_envelope: Configuration details of the .NET Component. Required.
+        :type dot_net_component_envelope: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns DotNetComponent. The DotNetComponent is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.DotNetComponent]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "environment_name",
+                "name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        environment_name: str,
+        name: str,
+        dot_net_component_envelope: Union[_models.DotNetComponent, _types.DotNetComponent, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.DotNetComponent]:
+        """Update properties of a .NET Component.
+
+        Patches a .NET Component using JSON Merge Patch.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :param name: Name of the .NET Component. Required.
+        :type name: str
+        :param dot_net_component_envelope: Configuration details of the .NET Component. Is either a
+         DotNetComponent type or a IO[bytes] type. Required.
+        :type dot_net_component_envelope: ~azure.mgmt.appcontainers.models.DotNetComponent or
+         ~azure.mgmt.appcontainers.types.DotNetComponent or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns DotNetComponent. The DotNetComponent is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.DotNetComponent]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DotNetComponent] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                environment_name=environment_name,
+                name=name,
+                dot_net_component_envelope=dot_net_component_envelope,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.DotNetComponent, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.DotNetComponent].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.DotNetComponent](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "environment_name", "name"]
+        },
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, environment_name: str, name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_dot_net_components_delete_request(
+            resource_group_name=resource_group_name,
+            environment_name=environment_name,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "environment_name", "name"]
+        },
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, environment_name: str, name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a .NET Component.
+
+        Deletes a .NET component from a managed environment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :param name: Name of the .NET Component. Required.
+        :type name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                environment_name=environment_name,
+                name=name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "environment_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
+    )
+    def list(
+        self, resource_group_name: str, environment_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.DotNetComponent"]:
+        """Get the .NET Components for a managed environment.
+
+        Lists the .NET components in a managed environment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :return: An iterator like instance of DotNetComponent
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appcontainers.models.DotNetComponent]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.DotNetComponent]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_dot_net_components_list_request(
+                    resource_group_name=resource_group_name,
+                    environment_name=environment_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.DotNetComponent],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class JavaComponentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3820,7 +6984,7 @@ class JavaComponentsOperations:
         resource_group_name: str,
         environment_name: str,
         name: str,
-        java_component_envelope: Union[_models.JavaComponent, JSON, IO[bytes]],
+        java_component_envelope: Union[_models.JavaComponent, _types.JavaComponent, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3933,7 +7097,7 @@ class JavaComponentsOperations:
         resource_group_name: str,
         environment_name: str,
         name: str,
-        java_component_envelope: JSON,
+        java_component_envelope: _types.JavaComponent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3950,7 +7114,7 @@ class JavaComponentsOperations:
         :param name: Name of the Java Component. Required.
         :type name: str
         :param java_component_envelope: Configuration details of the Java Component. Required.
-        :type java_component_envelope: JSON
+        :type java_component_envelope: ~azure.mgmt.appcontainers.types.JavaComponent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3999,7 +7163,7 @@ class JavaComponentsOperations:
         resource_group_name: str,
         environment_name: str,
         name: str,
-        java_component_envelope: Union[_models.JavaComponent, JSON, IO[bytes]],
+        java_component_envelope: Union[_models.JavaComponent, _types.JavaComponent, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.JavaComponent]:
         """Creates or updates a Java Component.
@@ -4013,10 +7177,10 @@ class JavaComponentsOperations:
         :type environment_name: str
         :param name: Name of the Java Component. Required.
         :type name: str
-        :param java_component_envelope: Configuration details of the Java Component. Is one of the
-         following types: JavaComponent, JSON, IO[bytes] Required.
-        :type java_component_envelope: ~azure.mgmt.appcontainers.models.JavaComponent or JSON or
-         IO[bytes]
+        :param java_component_envelope: Configuration details of the Java Component. Is either a
+         JavaComponent type or a IO[bytes] type. Required.
+        :type java_component_envelope: ~azure.mgmt.appcontainers.models.JavaComponent or
+         ~azure.mgmt.appcontainers.types.JavaComponent or IO[bytes]
         :return: An instance of AsyncLROPoller that returns JavaComponent. The JavaComponent is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.JavaComponent]
@@ -4080,7 +7244,7 @@ class JavaComponentsOperations:
         resource_group_name: str,
         environment_name: str,
         name: str,
-        java_component_envelope: Union[_models.JavaComponent, JSON, IO[bytes]],
+        java_component_envelope: Union[_models.JavaComponent, _types.JavaComponent, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4191,7 +7355,7 @@ class JavaComponentsOperations:
         resource_group_name: str,
         environment_name: str,
         name: str,
-        java_component_envelope: JSON,
+        java_component_envelope: _types.JavaComponent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4208,7 +7372,7 @@ class JavaComponentsOperations:
         :param name: Name of the Java Component. Required.
         :type name: str
         :param java_component_envelope: Configuration details of the Java Component. Required.
-        :type java_component_envelope: JSON
+        :type java_component_envelope: ~azure.mgmt.appcontainers.types.JavaComponent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4257,7 +7421,7 @@ class JavaComponentsOperations:
         resource_group_name: str,
         environment_name: str,
         name: str,
-        java_component_envelope: Union[_models.JavaComponent, JSON, IO[bytes]],
+        java_component_envelope: Union[_models.JavaComponent, _types.JavaComponent, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.JavaComponent]:
         """Update properties of a Java Component.
@@ -4271,10 +7435,10 @@ class JavaComponentsOperations:
         :type environment_name: str
         :param name: Name of the Java Component. Required.
         :type name: str
-        :param java_component_envelope: Configuration details of the Java Component. Is one of the
-         following types: JavaComponent, JSON, IO[bytes] Required.
-        :type java_component_envelope: ~azure.mgmt.appcontainers.models.JavaComponent or JSON or
-         IO[bytes]
+        :param java_component_envelope: Configuration details of the Java Component. Is either a
+         JavaComponent type or a IO[bytes] type. Required.
+        :type java_component_envelope: ~azure.mgmt.appcontainers.models.JavaComponent or
+         ~azure.mgmt.appcontainers.types.JavaComponent or IO[bytes]
         :return: An instance of AsyncLROPoller that returns JavaComponent. The JavaComponent is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.JavaComponent]
@@ -4564,7 +7728,7 @@ class JavaComponentsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class LogicAppsOperations:
+class LogicAppsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4694,7 +7858,7 @@ class LogicAppsOperations:
         resource_group_name: str,
         container_app_name: str,
         logic_app_name: str,
-        resource: Optional[JSON] = None,
+        resource: Optional[_types.LogicApp] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4709,7 +7873,7 @@ class LogicAppsOperations:
         :param logic_app_name: Name of the Logic App, the extension resource. Required.
         :type logic_app_name: str
         :param resource: Resource create parameters. Default value is None.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.appcontainers.types.LogicApp
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4762,14 +7926,14 @@ class LogicAppsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01"],
+        api_versions_list=["2026-01-01", "2026-03-02-preview", "2026-07-01"],
     )
     async def create_or_update(
         self,
         resource_group_name: str,
         container_app_name: str,
         logic_app_name: str,
-        resource: Optional[Union[_models.LogicApp, JSON, IO[bytes]]] = None,
+        resource: Optional[Union[_models.LogicApp, _types.LogicApp, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.LogicApp:
         """Create or update a Logic App extension resource.
@@ -4781,9 +7945,10 @@ class LogicAppsOperations:
         :type container_app_name: str
         :param logic_app_name: Name of the Logic App, the extension resource. Required.
         :type logic_app_name: str
-        :param resource: Resource create parameters. Is one of the following types: LogicApp, JSON,
-         IO[bytes] Default value is None.
-        :type resource: ~azure.mgmt.appcontainers.models.LogicApp or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a LogicApp type or a IO[bytes] type.
+         Default value is None.
+        :type resource: ~azure.mgmt.appcontainers.models.LogicApp or
+         ~azure.mgmt.appcontainers.types.LogicApp or IO[bytes]
         :return: LogicApp. The LogicApp is compatible with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.LogicApp
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5188,7 +8353,7 @@ class LogicAppsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ContainerAppsAuthConfigsOperations:
+class ContainerAppsAuthConfigsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5320,7 +8485,7 @@ class ContainerAppsAuthConfigsOperations:
         resource_group_name: str,
         container_app_name: str,
         auth_config_name: str,
-        auth_config_envelope: JSON,
+        auth_config_envelope: _types.AuthConfig,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5337,7 +8502,7 @@ class ContainerAppsAuthConfigsOperations:
         :param auth_config_name: Name of the Container App AuthConfig. Required.
         :type auth_config_name: str
         :param auth_config_envelope: Properties used to create a Container App AuthConfig. Required.
-        :type auth_config_envelope: JSON
+        :type auth_config_envelope: ~azure.mgmt.appcontainers.types.AuthConfig
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5384,7 +8549,7 @@ class ContainerAppsAuthConfigsOperations:
         resource_group_name: str,
         container_app_name: str,
         auth_config_name: str,
-        auth_config_envelope: Union[_models.AuthConfig, JSON, IO[bytes]],
+        auth_config_envelope: Union[_models.AuthConfig, _types.AuthConfig, IO[bytes]],
         **kwargs: Any
     ) -> _models.AuthConfig:
         """Create or update the AuthConfig for a Container App.
@@ -5398,9 +8563,10 @@ class ContainerAppsAuthConfigsOperations:
         :type container_app_name: str
         :param auth_config_name: Name of the Container App AuthConfig. Required.
         :type auth_config_name: str
-        :param auth_config_envelope: Properties used to create a Container App AuthConfig. Is one of
-         the following types: AuthConfig, JSON, IO[bytes] Required.
-        :type auth_config_envelope: ~azure.mgmt.appcontainers.models.AuthConfig or JSON or IO[bytes]
+        :param auth_config_envelope: Properties used to create a Container App AuthConfig. Is either a
+         AuthConfig type or a IO[bytes] type. Required.
+        :type auth_config_envelope: ~azure.mgmt.appcontainers.models.AuthConfig or
+         ~azure.mgmt.appcontainers.types.AuthConfig or IO[bytes]
         :return: AuthConfig. The AuthConfig is compatible with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.AuthConfig
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5642,7 +8808,7 @@ class ContainerAppsAuthConfigsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ConnectedEnvironmentsOperations:
+class ConnectedEnvironmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5735,7 +8901,7 @@ class ConnectedEnvironmentsOperations:
         self,
         resource_group_name: str,
         connected_environment_name: str,
-        environment_envelope: Union[_models.ConnectedEnvironment, JSON, IO[bytes]],
+        environment_envelope: Union[_models.ConnectedEnvironment, _types.ConnectedEnvironment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5842,7 +9008,7 @@ class ConnectedEnvironmentsOperations:
         self,
         resource_group_name: str,
         connected_environment_name: str,
-        environment_envelope: JSON,
+        environment_envelope: _types.ConnectedEnvironment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5855,7 +9021,7 @@ class ConnectedEnvironmentsOperations:
         :param connected_environment_name: Name of the connectedEnvironment. Required.
         :type connected_environment_name: str
         :param environment_envelope: Configuration details of the connectedEnvironment. Required.
-        :type environment_envelope: JSON
+        :type environment_envelope: ~azure.mgmt.appcontainers.types.ConnectedEnvironment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5900,7 +9066,7 @@ class ConnectedEnvironmentsOperations:
         self,
         resource_group_name: str,
         connected_environment_name: str,
-        environment_envelope: Union[_models.ConnectedEnvironment, JSON, IO[bytes]],
+        environment_envelope: Union[_models.ConnectedEnvironment, _types.ConnectedEnvironment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ConnectedEnvironment]:
         """Creates or updates an connectedEnvironment.
@@ -5910,10 +9076,10 @@ class ConnectedEnvironmentsOperations:
         :type resource_group_name: str
         :param connected_environment_name: Name of the connectedEnvironment. Required.
         :type connected_environment_name: str
-        :param environment_envelope: Configuration details of the connectedEnvironment. Is one of the
-         following types: ConnectedEnvironment, JSON, IO[bytes] Required.
-        :type environment_envelope: ~azure.mgmt.appcontainers.models.ConnectedEnvironment or JSON or
-         IO[bytes]
+        :param environment_envelope: Configuration details of the connectedEnvironment. Is either a
+         ConnectedEnvironment type or a IO[bytes] type. Required.
+        :type environment_envelope: ~azure.mgmt.appcontainers.models.ConnectedEnvironment or
+         ~azure.mgmt.appcontainers.types.ConnectedEnvironment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ConnectedEnvironment. The
          ConnectedEnvironment is compatible with MutableMapping
         :rtype:
@@ -6006,7 +9172,7 @@ class ConnectedEnvironmentsOperations:
         self,
         resource_group_name: str,
         connected_environment_name: str,
-        environment_envelope: JSON,
+        environment_envelope: _types.ConnectedEnvironmentPatchResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6021,7 +9187,7 @@ class ConnectedEnvironmentsOperations:
         :param connected_environment_name: Name of the connectedEnvironment. Required.
         :type connected_environment_name: str
         :param environment_envelope: Configuration details of the connectedEnvironment. Required.
-        :type environment_envelope: JSON
+        :type environment_envelope: ~azure.mgmt.appcontainers.types.ConnectedEnvironmentPatchResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6064,7 +9230,9 @@ class ConnectedEnvironmentsOperations:
         self,
         resource_group_name: str,
         connected_environment_name: str,
-        environment_envelope: Union[_models.ConnectedEnvironmentPatchResource, JSON, IO[bytes]],
+        environment_envelope: Union[
+            _models.ConnectedEnvironmentPatchResource, _types.ConnectedEnvironmentPatchResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ConnectedEnvironment:
         """Update connected Environment's properties.
@@ -6076,10 +9244,10 @@ class ConnectedEnvironmentsOperations:
         :type resource_group_name: str
         :param connected_environment_name: Name of the connectedEnvironment. Required.
         :type connected_environment_name: str
-        :param environment_envelope: Configuration details of the connectedEnvironment. Is one of the
-         following types: ConnectedEnvironmentPatchResource, JSON, IO[bytes] Required.
+        :param environment_envelope: Configuration details of the connectedEnvironment. Is either a
+         ConnectedEnvironmentPatchResource type or a IO[bytes] type. Required.
         :type environment_envelope: ~azure.mgmt.appcontainers.models.ConnectedEnvironmentPatchResource
-         or JSON or IO[bytes]
+         or ~azure.mgmt.appcontainers.types.ConnectedEnvironmentPatchResource or IO[bytes]
         :return: ConnectedEnvironment. The ConnectedEnvironment is compatible with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.ConnectedEnvironment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6506,7 +9674,7 @@ class ConnectedEnvironmentsOperations:
         self,
         resource_group_name: str,
         connected_environment_name: str,
-        check_name_availability_request: JSON,
+        check_name_availability_request: _types.CheckNameAvailabilityRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6522,7 +9690,8 @@ class ConnectedEnvironmentsOperations:
         :type connected_environment_name: str
         :param check_name_availability_request: The check connectedEnvironmentName availability
          request. Required.
-        :type check_name_availability_request: JSON
+        :type check_name_availability_request:
+         ~azure.mgmt.appcontainers.types.CheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6568,7 +9737,9 @@ class ConnectedEnvironmentsOperations:
         self,
         resource_group_name: str,
         connected_environment_name: str,
-        check_name_availability_request: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]],
+        check_name_availability_request: Union[
+            _models.CheckNameAvailabilityRequest, _types.CheckNameAvailabilityRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """Checks the resource connectedEnvironmentName availability.
@@ -6581,9 +9752,10 @@ class ConnectedEnvironmentsOperations:
         :param connected_environment_name: Name of the connectedEnvironment. Required.
         :type connected_environment_name: str
         :param check_name_availability_request: The check connectedEnvironmentName availability
-         request. Is one of the following types: CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
+         request. Is either a CheckNameAvailabilityRequest type or a IO[bytes] type. Required.
         :type check_name_availability_request:
-         ~azure.mgmt.appcontainers.models.CheckNameAvailabilityRequest or JSON or IO[bytes]
+         ~azure.mgmt.appcontainers.models.CheckNameAvailabilityRequest or
+         ~azure.mgmt.appcontainers.types.CheckNameAvailabilityRequest or IO[bytes]
         :return: CheckNameAvailabilityResponse. The CheckNameAvailabilityResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.CheckNameAvailabilityResponse
@@ -6657,7 +9829,7 @@ class ConnectedEnvironmentsOperations:
         return deserialized  # type: ignore
 
 
-class CertificatesOperations:
+class CertificatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6789,7 +9961,7 @@ class CertificatesOperations:
         resource_group_name: str,
         environment_name: str,
         certificate_name: str,
-        certificate_envelope: Optional[JSON] = None,
+        certificate_envelope: Optional[_types.Certificate] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6806,7 +9978,7 @@ class CertificatesOperations:
         :param certificate_name: Name of the Certificate. Required.
         :type certificate_name: str
         :param certificate_envelope: Certificate to be created or updated. Default value is None.
-        :type certificate_envelope: JSON
+        :type certificate_envelope: ~azure.mgmt.appcontainers.types.Certificate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6853,7 +10025,7 @@ class CertificatesOperations:
         resource_group_name: str,
         environment_name: str,
         certificate_name: str,
-        certificate_envelope: Optional[Union[_models.Certificate, JSON, IO[bytes]]] = None,
+        certificate_envelope: Optional[Union[_models.Certificate, _types.Certificate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.Certificate:
         """Create or Update a Certificate.
@@ -6867,9 +10039,10 @@ class CertificatesOperations:
         :type environment_name: str
         :param certificate_name: Name of the Certificate. Required.
         :type certificate_name: str
-        :param certificate_envelope: Certificate to be created or updated. Is one of the following
-         types: Certificate, JSON, IO[bytes] Default value is None.
-        :type certificate_envelope: ~azure.mgmt.appcontainers.models.Certificate or JSON or IO[bytes]
+        :param certificate_envelope: Certificate to be created or updated. Is either a Certificate type
+         or a IO[bytes] type. Default value is None.
+        :type certificate_envelope: ~azure.mgmt.appcontainers.models.Certificate or
+         ~azure.mgmt.appcontainers.types.Certificate or IO[bytes]
         :return: Certificate. The Certificate is compatible with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.Certificate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6984,7 +10157,7 @@ class CertificatesOperations:
         resource_group_name: str,
         environment_name: str,
         certificate_name: str,
-        certificate_envelope: JSON,
+        certificate_envelope: _types.CertificatePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7001,7 +10174,7 @@ class CertificatesOperations:
         :param certificate_name: Name of the Certificate. Required.
         :type certificate_name: str
         :param certificate_envelope: Properties of a certificate that need to be updated. Required.
-        :type certificate_envelope: JSON
+        :type certificate_envelope: ~azure.mgmt.appcontainers.types.CertificatePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7048,7 +10221,7 @@ class CertificatesOperations:
         resource_group_name: str,
         environment_name: str,
         certificate_name: str,
-        certificate_envelope: Union[_models.CertificatePatch, JSON, IO[bytes]],
+        certificate_envelope: Union[_models.CertificatePatch, _types.CertificatePatch, IO[bytes]],
         **kwargs: Any
     ) -> _models.Certificate:
         """Update properties of a certificate.
@@ -7062,10 +10235,10 @@ class CertificatesOperations:
         :type environment_name: str
         :param certificate_name: Name of the Certificate. Required.
         :type certificate_name: str
-        :param certificate_envelope: Properties of a certificate that need to be updated. Is one of the
-         following types: CertificatePatch, JSON, IO[bytes] Required.
-        :type certificate_envelope: ~azure.mgmt.appcontainers.models.CertificatePatch or JSON or
-         IO[bytes]
+        :param certificate_envelope: Properties of a certificate that need to be updated. Is either a
+         CertificatePatch type or a IO[bytes] type. Required.
+        :type certificate_envelope: ~azure.mgmt.appcontainers.models.CertificatePatch or
+         ~azure.mgmt.appcontainers.types.CertificatePatch or IO[bytes]
         :return: Certificate. The Certificate is compatible with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.Certificate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7307,7 +10480,7 @@ class CertificatesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedEnvironmentsOperations:
+class ManagedEnvironmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7400,7 +10573,7 @@ class ManagedEnvironmentsOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        environment_envelope: Union[_models.ManagedEnvironment, JSON, IO[bytes]],
+        environment_envelope: Union[_models.ManagedEnvironment, _types.ManagedEnvironment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7506,7 +10679,7 @@ class ManagedEnvironmentsOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        environment_envelope: JSON,
+        environment_envelope: _types.ManagedEnvironment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7521,7 +10694,7 @@ class ManagedEnvironmentsOperations:
         :param environment_name: Name of the Environment. Required.
         :type environment_name: str
         :param environment_envelope: Configuration details of the Environment. Required.
-        :type environment_envelope: JSON
+        :type environment_envelope: ~azure.mgmt.appcontainers.types.ManagedEnvironment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7566,7 +10739,7 @@ class ManagedEnvironmentsOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        environment_envelope: Union[_models.ManagedEnvironment, JSON, IO[bytes]],
+        environment_envelope: Union[_models.ManagedEnvironment, _types.ManagedEnvironment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedEnvironment]:
         """Creates or updates a Managed Environment.
@@ -7578,10 +10751,10 @@ class ManagedEnvironmentsOperations:
         :type resource_group_name: str
         :param environment_name: Name of the Environment. Required.
         :type environment_name: str
-        :param environment_envelope: Configuration details of the Environment. Is one of the following
-         types: ManagedEnvironment, JSON, IO[bytes] Required.
-        :type environment_envelope: ~azure.mgmt.appcontainers.models.ManagedEnvironment or JSON or
-         IO[bytes]
+        :param environment_envelope: Configuration details of the Environment. Is either a
+         ManagedEnvironment type or a IO[bytes] type. Required.
+        :type environment_envelope: ~azure.mgmt.appcontainers.models.ManagedEnvironment or
+         ~azure.mgmt.appcontainers.types.ManagedEnvironment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedEnvironment. The ManagedEnvironment
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.ManagedEnvironment]
@@ -7643,7 +10816,7 @@ class ManagedEnvironmentsOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        environment_envelope: Union[_models.ManagedEnvironment, JSON, IO[bytes]],
+        environment_envelope: Union[_models.ManagedEnvironment, _types.ManagedEnvironment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7749,7 +10922,7 @@ class ManagedEnvironmentsOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        environment_envelope: JSON,
+        environment_envelope: _types.ManagedEnvironment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7764,7 +10937,7 @@ class ManagedEnvironmentsOperations:
         :param environment_name: Name of the Environment. Required.
         :type environment_name: str
         :param environment_envelope: Configuration details of the Environment. Required.
-        :type environment_envelope: JSON
+        :type environment_envelope: ~azure.mgmt.appcontainers.types.ManagedEnvironment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7809,7 +10982,7 @@ class ManagedEnvironmentsOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        environment_envelope: Union[_models.ManagedEnvironment, JSON, IO[bytes]],
+        environment_envelope: Union[_models.ManagedEnvironment, _types.ManagedEnvironment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedEnvironment]:
         """Update Managed Environment's properties.
@@ -7821,10 +10994,10 @@ class ManagedEnvironmentsOperations:
         :type resource_group_name: str
         :param environment_name: Name of the Environment. Required.
         :type environment_name: str
-        :param environment_envelope: Configuration details of the Environment. Is one of the following
-         types: ManagedEnvironment, JSON, IO[bytes] Required.
-        :type environment_envelope: ~azure.mgmt.appcontainers.models.ManagedEnvironment or JSON or
-         IO[bytes]
+        :param environment_envelope: Configuration details of the Environment. Is either a
+         ManagedEnvironment type or a IO[bytes] type. Required.
+        :type environment_envelope: ~azure.mgmt.appcontainers.models.ManagedEnvironment or
+         ~azure.mgmt.appcontainers.types.ManagedEnvironment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedEnvironment. The ManagedEnvironment
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.ManagedEnvironment]
@@ -8381,8 +11554,205 @@ class ManagedEnvironmentsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
+    @overload
+    async def check_migration_eligibility(
+        self,
+        resource_group_name: str,
+        environment_name: str,
+        body: _models.CheckMigrationEligibilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.CheckMigrationEligibilityResponse:
+        """Checks whether a Managed Environment can be migrated to a target mode.
 
-class ConnectedEnvironmentsDaprComponentsOperations:  # pylint: disable=name-too-long
+        Checks whether a Managed Environment can be migrated to a target mode.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the Environment. Required.
+        :type environment_name: str
+        :param body: The migration eligibility check request. Required.
+        :type body: ~azure.mgmt.appcontainers.models.CheckMigrationEligibilityRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CheckMigrationEligibilityResponse. The CheckMigrationEligibilityResponse is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.CheckMigrationEligibilityResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def check_migration_eligibility(
+        self,
+        resource_group_name: str,
+        environment_name: str,
+        body: _types.CheckMigrationEligibilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.CheckMigrationEligibilityResponse:
+        """Checks whether a Managed Environment can be migrated to a target mode.
+
+        Checks whether a Managed Environment can be migrated to a target mode.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the Environment. Required.
+        :type environment_name: str
+        :param body: The migration eligibility check request. Required.
+        :type body: ~azure.mgmt.appcontainers.types.CheckMigrationEligibilityRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CheckMigrationEligibilityResponse. The CheckMigrationEligibilityResponse is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.CheckMigrationEligibilityResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def check_migration_eligibility(
+        self,
+        resource_group_name: str,
+        environment_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.CheckMigrationEligibilityResponse:
+        """Checks whether a Managed Environment can be migrated to a target mode.
+
+        Checks whether a Managed Environment can be migrated to a target mode.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the Environment. Required.
+        :type environment_name: str
+        :param body: The migration eligibility check request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CheckMigrationEligibilityResponse. The CheckMigrationEligibilityResponse is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.CheckMigrationEligibilityResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "environment_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def check_migration_eligibility(
+        self,
+        resource_group_name: str,
+        environment_name: str,
+        body: Union[_models.CheckMigrationEligibilityRequest, _types.CheckMigrationEligibilityRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.CheckMigrationEligibilityResponse:
+        """Checks whether a Managed Environment can be migrated to a target mode.
+
+        Checks whether a Managed Environment can be migrated to a target mode.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the Environment. Required.
+        :type environment_name: str
+        :param body: The migration eligibility check request. Is either a
+         CheckMigrationEligibilityRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.appcontainers.models.CheckMigrationEligibilityRequest or
+         ~azure.mgmt.appcontainers.types.CheckMigrationEligibilityRequest or IO[bytes]
+        :return: CheckMigrationEligibilityResponse. The CheckMigrationEligibilityResponse is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.CheckMigrationEligibilityResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CheckMigrationEligibilityResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_managed_environments_check_migration_eligibility_request(
+            resource_group_name=resource_group_name,
+            environment_name=environment_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.CheckMigrationEligibilityResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class ConnectedEnvironmentsDaprComponentsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8481,7 +11851,7 @@ class ConnectedEnvironmentsDaprComponentsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         connected_environment_name: str,
         component_name: str,
-        dapr_component_envelope: Union[_models.DaprComponent, JSON, IO[bytes]],
+        dapr_component_envelope: Union[_models.DaprComponent, _types.DaprComponent, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8594,7 +11964,7 @@ class ConnectedEnvironmentsDaprComponentsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         connected_environment_name: str,
         component_name: str,
-        dapr_component_envelope: JSON,
+        dapr_component_envelope: _types.DaprComponent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8611,7 +11981,7 @@ class ConnectedEnvironmentsDaprComponentsOperations:  # pylint: disable=name-too
         :param component_name: Name of the Dapr Component. Required.
         :type component_name: str
         :param dapr_component_envelope: Configuration details of the Dapr Component. Required.
-        :type dapr_component_envelope: JSON
+        :type dapr_component_envelope: ~azure.mgmt.appcontainers.types.DaprComponent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8660,7 +12030,7 @@ class ConnectedEnvironmentsDaprComponentsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         connected_environment_name: str,
         component_name: str,
-        dapr_component_envelope: Union[_models.DaprComponent, JSON, IO[bytes]],
+        dapr_component_envelope: Union[_models.DaprComponent, _types.DaprComponent, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DaprComponent]:
         """Creates or updates a Dapr Component.
@@ -8674,10 +12044,10 @@ class ConnectedEnvironmentsDaprComponentsOperations:  # pylint: disable=name-too
         :type connected_environment_name: str
         :param component_name: Name of the Dapr Component. Required.
         :type component_name: str
-        :param dapr_component_envelope: Configuration details of the Dapr Component. Is one of the
-         following types: DaprComponent, JSON, IO[bytes] Required.
-        :type dapr_component_envelope: ~azure.mgmt.appcontainers.models.DaprComponent or JSON or
-         IO[bytes]
+        :param dapr_component_envelope: Configuration details of the Dapr Component. Is either a
+         DaprComponent type or a IO[bytes] type. Required.
+        :type dapr_component_envelope: ~azure.mgmt.appcontainers.models.DaprComponent or
+         ~azure.mgmt.appcontainers.types.DaprComponent or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DaprComponent. The DaprComponent is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.DaprComponent]
@@ -9044,7 +12414,7 @@ class ConnectedEnvironmentsDaprComponentsOperations:  # pylint: disable=name-too
         return deserialized  # type: ignore
 
 
-class DaprComponentsOperations:
+class DaprComponentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9176,7 +12546,7 @@ class DaprComponentsOperations:
         resource_group_name: str,
         environment_name: str,
         component_name: str,
-        dapr_component_envelope: JSON,
+        dapr_component_envelope: _types.DaprComponent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9193,7 +12563,7 @@ class DaprComponentsOperations:
         :param component_name: Name of the Dapr Component. Required.
         :type component_name: str
         :param dapr_component_envelope: Configuration details of the Dapr Component. Required.
-        :type dapr_component_envelope: JSON
+        :type dapr_component_envelope: ~azure.mgmt.appcontainers.types.DaprComponent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9240,7 +12610,7 @@ class DaprComponentsOperations:
         resource_group_name: str,
         environment_name: str,
         component_name: str,
-        dapr_component_envelope: Union[_models.DaprComponent, JSON, IO[bytes]],
+        dapr_component_envelope: Union[_models.DaprComponent, _types.DaprComponent, IO[bytes]],
         **kwargs: Any
     ) -> _models.DaprComponent:
         """Creates or updates a Dapr Component.
@@ -9254,10 +12624,10 @@ class DaprComponentsOperations:
         :type environment_name: str
         :param component_name: Name of the Dapr Component. Required.
         :type component_name: str
-        :param dapr_component_envelope: Configuration details of the Dapr Component. Is one of the
-         following types: DaprComponent, JSON, IO[bytes] Required.
-        :type dapr_component_envelope: ~azure.mgmt.appcontainers.models.DaprComponent or JSON or
-         IO[bytes]
+        :param dapr_component_envelope: Configuration details of the Dapr Component. Is either a
+         DaprComponent type or a IO[bytes] type. Required.
+        :type dapr_component_envelope: ~azure.mgmt.appcontainers.models.DaprComponent or
+         ~azure.mgmt.appcontainers.types.DaprComponent or IO[bytes]
         :return: DaprComponent. The DaprComponent is compatible with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.DaprComponent
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9574,7 +12944,7 @@ class DaprComponentsOperations:
         return deserialized  # type: ignore
 
 
-class ConnectedEnvironmentsStoragesOperations:
+class ConnectedEnvironmentsStoragesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9674,7 +13044,7 @@ class ConnectedEnvironmentsStoragesOperations:
         resource_group_name: str,
         connected_environment_name: str,
         storage_name: str,
-        storage_envelope: Union[_models.ConnectedEnvironmentStorage, JSON, IO[bytes]],
+        storage_envelope: Union[_models.ConnectedEnvironmentStorage, _types.ConnectedEnvironmentStorage, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -9788,7 +13158,7 @@ class ConnectedEnvironmentsStoragesOperations:
         resource_group_name: str,
         connected_environment_name: str,
         storage_name: str,
-        storage_envelope: JSON,
+        storage_envelope: _types.ConnectedEnvironmentStorage,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9805,7 +13175,7 @@ class ConnectedEnvironmentsStoragesOperations:
         :param storage_name: Name of the storage. Required.
         :type storage_name: str
         :param storage_envelope: Configuration details of storage. Required.
-        :type storage_envelope: JSON
+        :type storage_envelope: ~azure.mgmt.appcontainers.types.ConnectedEnvironmentStorage
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9856,7 +13226,7 @@ class ConnectedEnvironmentsStoragesOperations:
         resource_group_name: str,
         connected_environment_name: str,
         storage_name: str,
-        storage_envelope: Union[_models.ConnectedEnvironmentStorage, JSON, IO[bytes]],
+        storage_envelope: Union[_models.ConnectedEnvironmentStorage, _types.ConnectedEnvironmentStorage, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ConnectedEnvironmentStorage]:
         """Create or update storage for a connectedEnvironment.
@@ -9870,10 +13240,10 @@ class ConnectedEnvironmentsStoragesOperations:
         :type connected_environment_name: str
         :param storage_name: Name of the storage. Required.
         :type storage_name: str
-        :param storage_envelope: Configuration details of storage. Is one of the following types:
-         ConnectedEnvironmentStorage, JSON, IO[bytes] Required.
-        :type storage_envelope: ~azure.mgmt.appcontainers.models.ConnectedEnvironmentStorage or JSON or
-         IO[bytes]
+        :param storage_envelope: Configuration details of storage. Is either a
+         ConnectedEnvironmentStorage type or a IO[bytes] type. Required.
+        :type storage_envelope: ~azure.mgmt.appcontainers.models.ConnectedEnvironmentStorage or
+         ~azure.mgmt.appcontainers.types.ConnectedEnvironmentStorage or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ConnectedEnvironmentStorage. The
          ConnectedEnvironmentStorage is compatible with MutableMapping
         :rtype:
@@ -10135,7 +13505,7 @@ class ConnectedEnvironmentsStoragesOperations:
         return deserialized  # type: ignore
 
 
-class ManagedCertificatesOperations:
+class ManagedCertificatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10234,7 +13604,9 @@ class ManagedCertificatesOperations:
         resource_group_name: str,
         environment_name: str,
         managed_certificate_name: str,
-        managed_certificate_envelope: Optional[Union[_models.ManagedCertificate, JSON, IO[bytes]]] = None,
+        managed_certificate_envelope: Optional[
+            Union[_models.ManagedCertificate, _types.ManagedCertificate, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -10352,7 +13724,7 @@ class ManagedCertificatesOperations:
         resource_group_name: str,
         environment_name: str,
         managed_certificate_name: str,
-        managed_certificate_envelope: Optional[JSON] = None,
+        managed_certificate_envelope: Optional[_types.ManagedCertificate] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10370,7 +13742,7 @@ class ManagedCertificatesOperations:
         :type managed_certificate_name: str
         :param managed_certificate_envelope: Managed Certificate to be created or updated. Default
          value is None.
-        :type managed_certificate_envelope: JSON
+        :type managed_certificate_envelope: ~azure.mgmt.appcontainers.types.ManagedCertificate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10420,7 +13792,9 @@ class ManagedCertificatesOperations:
         resource_group_name: str,
         environment_name: str,
         managed_certificate_name: str,
-        managed_certificate_envelope: Optional[Union[_models.ManagedCertificate, JSON, IO[bytes]]] = None,
+        managed_certificate_envelope: Optional[
+            Union[_models.ManagedCertificate, _types.ManagedCertificate, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedCertificate]:
         """Create or Update a Managed Certificate.
@@ -10434,10 +13808,10 @@ class ManagedCertificatesOperations:
         :type environment_name: str
         :param managed_certificate_name: Name of the Managed Certificate. Required.
         :type managed_certificate_name: str
-        :param managed_certificate_envelope: Managed Certificate to be created or updated. Is one of
-         the following types: ManagedCertificate, JSON, IO[bytes] Default value is None.
-        :type managed_certificate_envelope: ~azure.mgmt.appcontainers.models.ManagedCertificate or JSON
-         or IO[bytes]
+        :param managed_certificate_envelope: Managed Certificate to be created or updated. Is either a
+         ManagedCertificate type or a IO[bytes] type. Default value is None.
+        :type managed_certificate_envelope: ~azure.mgmt.appcontainers.models.ManagedCertificate or
+         ~azure.mgmt.appcontainers.types.ManagedCertificate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedCertificate. The ManagedCertificate
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.ManagedCertificate]
@@ -10536,7 +13910,7 @@ class ManagedCertificatesOperations:
         resource_group_name: str,
         environment_name: str,
         managed_certificate_name: str,
-        managed_certificate_envelope: JSON,
+        managed_certificate_envelope: _types.ManagedCertificatePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10554,7 +13928,7 @@ class ManagedCertificatesOperations:
         :type managed_certificate_name: str
         :param managed_certificate_envelope: Properties of a managed certificate that need to be
          updated. Required.
-        :type managed_certificate_envelope: JSON
+        :type managed_certificate_envelope: ~azure.mgmt.appcontainers.types.ManagedCertificatePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10602,7 +13976,7 @@ class ManagedCertificatesOperations:
         resource_group_name: str,
         environment_name: str,
         managed_certificate_name: str,
-        managed_certificate_envelope: Union[_models.ManagedCertificatePatch, JSON, IO[bytes]],
+        managed_certificate_envelope: Union[_models.ManagedCertificatePatch, _types.ManagedCertificatePatch, IO[bytes]],
         **kwargs: Any
     ) -> _models.ManagedCertificate:
         """Update tags of a managed certificate.
@@ -10617,9 +13991,9 @@ class ManagedCertificatesOperations:
         :param managed_certificate_name: Name of the Managed Certificate. Required.
         :type managed_certificate_name: str
         :param managed_certificate_envelope: Properties of a managed certificate that need to be
-         updated. Is one of the following types: ManagedCertificatePatch, JSON, IO[bytes] Required.
+         updated. Is either a ManagedCertificatePatch type or a IO[bytes] type. Required.
         :type managed_certificate_envelope: ~azure.mgmt.appcontainers.models.ManagedCertificatePatch or
-         JSON or IO[bytes]
+         ~azure.mgmt.appcontainers.types.ManagedCertificatePatch or IO[bytes]
         :return: ManagedCertificate. The ManagedCertificate is compatible with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.ManagedCertificate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10862,7 +14236,1678 @@ class ManagedCertificatesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MaintenanceConfigurationsOperations:
+class ContainerAppPrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.appcontainers.aio.ContainerAppsAPIClient`'s
+        :attr:`container_app_private_endpoint_connections` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ContainerAppsAPIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "container_app_name",
+                "private_endpoint_connection_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def get(
+        self, resource_group_name: str, container_app_name: str, private_endpoint_connection_name: str, **kwargs: Any
+    ) -> _models.PrivateEndpointConnection:
+        """Get a private endpoint connection for a given Container App.
+
+        Gets the details of a private endpoint connection associated with a Container App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param container_app_name: Name of the Container App. Required.
+        :type container_app_name: str
+        :param private_endpoint_connection_name: Name of the Private Endpoint Connection. Required.
+        :type private_endpoint_connection_name: str
+        :return: PrivateEndpointConnection. The PrivateEndpointConnection is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.PrivateEndpointConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.PrivateEndpointConnection] = kwargs.pop("cls", None)
+
+        _request = build_container_app_private_endpoint_connections_get_request(
+            resource_group_name=resource_group_name,
+            container_app_name=container_app_name,
+            private_endpoint_connection_name=private_endpoint_connection_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PrivateEndpointConnection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "container_app_name",
+                "private_endpoint_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        container_app_name: str,
+        private_endpoint_connection_name: str,
+        private_endpoint_connection_envelope: Union[
+            _models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(private_endpoint_connection_envelope, (IOBase, bytes)):
+            _content = private_endpoint_connection_envelope
+        else:
+            _content = json.dumps(private_endpoint_connection_envelope, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_container_app_private_endpoint_connections_create_or_update_request(
+            resource_group_name=resource_group_name,
+            container_app_name=container_app_name,
+            private_endpoint_connection_name=private_endpoint_connection_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        container_app_name: str,
+        private_endpoint_connection_name: str,
+        private_endpoint_connection_envelope: _models.PrivateEndpointConnection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
+        """Update the state of a private endpoint connection for a given Container App.
+
+        Creates a private endpoint connection or updates its connection state for a Container App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param container_app_name: Name of the Container App. Required.
+        :type container_app_name: str
+        :param private_endpoint_connection_name: Name of the Private Endpoint Connection. Required.
+        :type private_endpoint_connection_name: str
+        :param private_endpoint_connection_envelope: The resource of private endpoint and its
+         properties. Required.
+        :type private_endpoint_connection_envelope:
+         ~azure.mgmt.appcontainers.models.PrivateEndpointConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns PrivateEndpointConnection. The
+         PrivateEndpointConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.PrivateEndpointConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        container_app_name: str,
+        private_endpoint_connection_name: str,
+        private_endpoint_connection_envelope: _types.PrivateEndpointConnection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
+        """Update the state of a private endpoint connection for a given Container App.
+
+        Creates a private endpoint connection or updates its connection state for a Container App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param container_app_name: Name of the Container App. Required.
+        :type container_app_name: str
+        :param private_endpoint_connection_name: Name of the Private Endpoint Connection. Required.
+        :type private_endpoint_connection_name: str
+        :param private_endpoint_connection_envelope: The resource of private endpoint and its
+         properties. Required.
+        :type private_endpoint_connection_envelope:
+         ~azure.mgmt.appcontainers.types.PrivateEndpointConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns PrivateEndpointConnection. The
+         PrivateEndpointConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.PrivateEndpointConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        container_app_name: str,
+        private_endpoint_connection_name: str,
+        private_endpoint_connection_envelope: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
+        """Update the state of a private endpoint connection for a given Container App.
+
+        Creates a private endpoint connection or updates its connection state for a Container App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param container_app_name: Name of the Container App. Required.
+        :type container_app_name: str
+        :param private_endpoint_connection_name: Name of the Private Endpoint Connection. Required.
+        :type private_endpoint_connection_name: str
+        :param private_endpoint_connection_envelope: The resource of private endpoint and its
+         properties. Required.
+        :type private_endpoint_connection_envelope: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns PrivateEndpointConnection. The
+         PrivateEndpointConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.PrivateEndpointConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "container_app_name",
+                "private_endpoint_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        container_app_name: str,
+        private_endpoint_connection_name: str,
+        private_endpoint_connection_envelope: Union[
+            _models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
+        """Update the state of a private endpoint connection for a given Container App.
+
+        Creates a private endpoint connection or updates its connection state for a Container App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param container_app_name: Name of the Container App. Required.
+        :type container_app_name: str
+        :param private_endpoint_connection_name: Name of the Private Endpoint Connection. Required.
+        :type private_endpoint_connection_name: str
+        :param private_endpoint_connection_envelope: The resource of private endpoint and its
+         properties. Is either a PrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type private_endpoint_connection_envelope:
+         ~azure.mgmt.appcontainers.models.PrivateEndpointConnection or
+         ~azure.mgmt.appcontainers.types.PrivateEndpointConnection or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns PrivateEndpointConnection. The
+         PrivateEndpointConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.PrivateEndpointConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PrivateEndpointConnection] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                container_app_name=container_app_name,
+                private_endpoint_connection_name=private_endpoint_connection_name,
+                private_endpoint_connection_envelope=private_endpoint_connection_envelope,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.PrivateEndpointConnection, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.PrivateEndpointConnection].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.PrivateEndpointConnection](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "container_app_name",
+                "private_endpoint_connection_name",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, container_app_name: str, private_endpoint_connection_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_container_app_private_endpoint_connections_delete_request(
+            resource_group_name=resource_group_name,
+            container_app_name=container_app_name,
+            private_endpoint_connection_name=private_endpoint_connection_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "container_app_name",
+                "private_endpoint_connection_name",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, container_app_name: str, private_endpoint_connection_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a private endpoint connection for a given Container App.
+
+        Deletes the specified private endpoint connection associated with a Container App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param container_app_name: Name of the Container App. Required.
+        :type container_app_name: str
+        :param private_endpoint_connection_name: Name of the Private Endpoint Connection. Required.
+        :type private_endpoint_connection_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                container_app_name=container_app_name,
+                private_endpoint_connection_name=private_endpoint_connection_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": ["api_version", "subscription_id", "resource_group_name", "container_app_name", "accept"]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    def list(
+        self, resource_group_name: str, container_app_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PrivateEndpointConnection"]:
+        """List private endpoint connections for a given Container App.
+
+        Lists all private endpoint connections associated with a Container App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param container_app_name: Name of the Container App. Required.
+        :type container_app_name: str
+        :return: An iterator like instance of PrivateEndpointConnection
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appcontainers.models.PrivateEndpointConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.PrivateEndpointConnection]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_container_app_private_endpoint_connections_list_request(
+                    resource_group_name=resource_group_name,
+                    container_app_name=container_app_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.PrivateEndpointConnection],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class ContainerAppPrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.appcontainers.aio.ContainerAppsAPIClient`'s
+        :attr:`container_app_private_link_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ContainerAppsAPIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": ["api_version", "subscription_id", "resource_group_name", "container_app_name", "accept"]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    def list(
+        self, resource_group_name: str, container_app_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PrivateLinkResource"]:
+        """List private link resources for a given Container App.
+
+        Lists the private link resources supported by a Container App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param container_app_name: Name of the Container App. Required.
+        :type container_app_name: str
+        :return: An iterator like instance of PrivateLinkResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appcontainers.models.PrivateLinkResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.PrivateLinkResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_container_app_private_link_resources_list_request(
+                    resource_group_name=resource_group_name,
+                    container_app_name=container_app_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.PrivateLinkResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "container_app_name",
+                "private_link_resource_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def get(
+        self, resource_group_name: str, container_app_name: str, private_link_resource_name: str, **kwargs: Any
+    ) -> _models.PrivateLinkResource:
+        """Get a private link resource for a given Container App.
+
+        Gets the details of a private link resource supported by a Container App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param container_app_name: Name of the Container App. Required.
+        :type container_app_name: str
+        :param private_link_resource_name: The name of the private link associated with the Azure
+         resource. Required.
+        :type private_link_resource_name: str
+        :return: PrivateLinkResource. The PrivateLinkResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.PrivateLinkResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.PrivateLinkResource] = kwargs.pop("cls", None)
+
+        _request = build_container_app_private_link_resources_get_request(
+            resource_group_name=resource_group_name,
+            container_app_name=container_app_name,
+            private_link_resource_name=private_link_resource_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PrivateLinkResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class ManagedEnvironmentPrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.appcontainers.aio.ContainerAppsAPIClient`'s
+        :attr:`managed_environment_private_link_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ContainerAppsAPIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": ["api_version", "subscription_id", "resource_group_name", "environment_name", "accept"]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    def list(
+        self, resource_group_name: str, environment_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PrivateLinkResource"]:
+        """List private link resources for a given managed environment.
+
+        List private link resources for a given managed environment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :return: An iterator like instance of PrivateLinkResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appcontainers.models.PrivateLinkResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.PrivateLinkResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_managed_environment_private_link_resources_list_request(
+                    resource_group_name=resource_group_name,
+                    environment_name=environment_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.PrivateLinkResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "environment_name",
+                "private_link_resource_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def get(
+        self, resource_group_name: str, environment_name: str, private_link_resource_name: str, **kwargs: Any
+    ) -> _models.PrivateLinkResource:
+        """Get a private link resource for a given managed environment.
+
+        Gets the details of a private link resource supported by a managed environment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :param private_link_resource_name: The name of the private link associated with the Azure
+         resource. Required.
+        :type private_link_resource_name: str
+        :return: PrivateLinkResource. The PrivateLinkResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.PrivateLinkResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.PrivateLinkResource] = kwargs.pop("cls", None)
+
+        _request = build_managed_environment_private_link_resources_get_request(
+            resource_group_name=resource_group_name,
+            environment_name=environment_name,
+            private_link_resource_name=private_link_resource_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PrivateLinkResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class DaprComponentResiliencyPoliciesOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.appcontainers.aio.ContainerAppsAPIClient`'s
+        :attr:`dapr_component_resiliency_policies` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ContainerAppsAPIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "environment_name",
+                "component_name",
+                "name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def get(
+        self, resource_group_name: str, environment_name: str, component_name: str, name: str, **kwargs: Any
+    ) -> _models.DaprComponentResiliencyPolicy:
+        """Get a Dapr component resiliency policy.
+
+        Gets the details of a resiliency policy for a Dapr component.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :param component_name: Name of the Dapr Component. Required.
+        :type component_name: str
+        :param name: Name of the Dapr Component Resiliency Policy. Required.
+        :type name: str
+        :return: DaprComponentResiliencyPolicy. The DaprComponentResiliencyPolicy is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.DaprComponentResiliencyPolicy] = kwargs.pop("cls", None)
+
+        _request = build_dapr_component_resiliency_policies_get_request(
+            resource_group_name=resource_group_name,
+            environment_name=environment_name,
+            component_name=component_name,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.DaprComponentResiliencyPolicy, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        environment_name: str,
+        component_name: str,
+        name: str,
+        dapr_component_resiliency_policy_envelope: _models.DaprComponentResiliencyPolicy,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.DaprComponentResiliencyPolicy:
+        """Creates or updates a Dapr component resiliency policy.
+
+        Creates or updates a resiliency policy for a Dapr component.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :param component_name: Name of the Dapr Component. Required.
+        :type component_name: str
+        :param name: Name of the Dapr Component Resiliency Policy. Required.
+        :type name: str
+        :param dapr_component_resiliency_policy_envelope: Configuration details of the Dapr Component
+         Resiliency Policy. Required.
+        :type dapr_component_resiliency_policy_envelope:
+         ~azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicy
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DaprComponentResiliencyPolicy. The DaprComponentResiliencyPolicy is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        environment_name: str,
+        component_name: str,
+        name: str,
+        dapr_component_resiliency_policy_envelope: _types.DaprComponentResiliencyPolicy,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.DaprComponentResiliencyPolicy:
+        """Creates or updates a Dapr component resiliency policy.
+
+        Creates or updates a resiliency policy for a Dapr component.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :param component_name: Name of the Dapr Component. Required.
+        :type component_name: str
+        :param name: Name of the Dapr Component Resiliency Policy. Required.
+        :type name: str
+        :param dapr_component_resiliency_policy_envelope: Configuration details of the Dapr Component
+         Resiliency Policy. Required.
+        :type dapr_component_resiliency_policy_envelope:
+         ~azure.mgmt.appcontainers.types.DaprComponentResiliencyPolicy
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DaprComponentResiliencyPolicy. The DaprComponentResiliencyPolicy is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        environment_name: str,
+        component_name: str,
+        name: str,
+        dapr_component_resiliency_policy_envelope: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.DaprComponentResiliencyPolicy:
+        """Creates or updates a Dapr component resiliency policy.
+
+        Creates or updates a resiliency policy for a Dapr component.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :param component_name: Name of the Dapr Component. Required.
+        :type component_name: str
+        :param name: Name of the Dapr Component Resiliency Policy. Required.
+        :type name: str
+        :param dapr_component_resiliency_policy_envelope: Configuration details of the Dapr Component
+         Resiliency Policy. Required.
+        :type dapr_component_resiliency_policy_envelope: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DaprComponentResiliencyPolicy. The DaprComponentResiliencyPolicy is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "environment_name",
+                "component_name",
+                "name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        environment_name: str,
+        component_name: str,
+        name: str,
+        dapr_component_resiliency_policy_envelope: Union[
+            _models.DaprComponentResiliencyPolicy, _types.DaprComponentResiliencyPolicy, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> _models.DaprComponentResiliencyPolicy:
+        """Creates or updates a Dapr component resiliency policy.
+
+        Creates or updates a resiliency policy for a Dapr component.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :param component_name: Name of the Dapr Component. Required.
+        :type component_name: str
+        :param name: Name of the Dapr Component Resiliency Policy. Required.
+        :type name: str
+        :param dapr_component_resiliency_policy_envelope: Configuration details of the Dapr Component
+         Resiliency Policy. Is either a DaprComponentResiliencyPolicy type or a IO[bytes] type.
+         Required.
+        :type dapr_component_resiliency_policy_envelope:
+         ~azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicy or
+         ~azure.mgmt.appcontainers.types.DaprComponentResiliencyPolicy or IO[bytes]
+        :return: DaprComponentResiliencyPolicy. The DaprComponentResiliencyPolicy is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DaprComponentResiliencyPolicy] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(dapr_component_resiliency_policy_envelope, (IOBase, bytes)):
+            _content = dapr_component_resiliency_policy_envelope
+        else:
+            _content = json.dumps(dapr_component_resiliency_policy_envelope, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_dapr_component_resiliency_policies_create_or_update_request(
+            resource_group_name=resource_group_name,
+            environment_name=environment_name,
+            component_name=component_name,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.DaprComponentResiliencyPolicy, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "environment_name",
+                "component_name",
+                "name",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    async def delete(
+        self, resource_group_name: str, environment_name: str, component_name: str, name: str, **kwargs: Any
+    ) -> None:
+        """Delete a Dapr component resiliency policy.
+
+        Delete a resiliency policy for a Dapr component.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :param component_name: Name of the Dapr Component. Required.
+        :type component_name: str
+        :param name: Name of the Dapr Component Resiliency Policy. Required.
+        :type name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_dapr_component_resiliency_policies_delete_request(
+            resource_group_name=resource_group_name,
+            environment_name=environment_name,
+            component_name=component_name,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "environment_name",
+                "component_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01"],
+    )
+    def list(
+        self, resource_group_name: str, environment_name: str, component_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.DaprComponentResiliencyPolicy"]:
+        """Get the resiliency policies for a Dapr component.
+
+        Lists the resiliency policies configured for a Dapr component.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param environment_name: Name of the managed environment. Required.
+        :type environment_name: str
+        :param component_name: Name of the Dapr Component. Required.
+        :type component_name: str
+        :return: An iterator like instance of DaprComponentResiliencyPolicy
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appcontainers.models.DaprComponentResiliencyPolicy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.DaprComponentResiliencyPolicy]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_dapr_component_resiliency_policies_list_request(
+                    resource_group_name=resource_group_name,
+                    environment_name=environment_name,
+                    component_name=component_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.DaprComponentResiliencyPolicy],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class MaintenanceConfigurationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10994,7 +16039,7 @@ class MaintenanceConfigurationsOperations:
         resource_group_name: str,
         environment_name: str,
         config_name: str,
-        maintenance_configuration_envelope: JSON,
+        maintenance_configuration_envelope: _types.MaintenanceConfigurationResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11010,7 +16055,8 @@ class MaintenanceConfigurationsOperations:
         :type config_name: str
         :param maintenance_configuration_envelope: Parameters to set the maintenance configuration for
          ManagedEnvironment . Required.
-        :type maintenance_configuration_envelope: JSON
+        :type maintenance_configuration_envelope:
+         ~azure.mgmt.appcontainers.types.MaintenanceConfigurationResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11058,7 +16104,9 @@ class MaintenanceConfigurationsOperations:
         resource_group_name: str,
         environment_name: str,
         config_name: str,
-        maintenance_configuration_envelope: Union[_models.MaintenanceConfigurationResource, JSON, IO[bytes]],
+        maintenance_configuration_envelope: Union[
+            _models.MaintenanceConfigurationResource, _types.MaintenanceConfigurationResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.MaintenanceConfigurationResource:
         """Create or update the maintenance configuration for Managed Environment.
@@ -11071,10 +16119,11 @@ class MaintenanceConfigurationsOperations:
         :param config_name: Name of the Maintenance Configuration. Required.
         :type config_name: str
         :param maintenance_configuration_envelope: Parameters to set the maintenance configuration for
-         ManagedEnvironment . Is one of the following types: MaintenanceConfigurationResource, JSON,
-         IO[bytes] Required.
+         ManagedEnvironment . Is either a MaintenanceConfigurationResource type or a IO[bytes] type.
+         Required.
         :type maintenance_configuration_envelope:
-         ~azure.mgmt.appcontainers.models.MaintenanceConfigurationResource or JSON or IO[bytes]
+         ~azure.mgmt.appcontainers.models.MaintenanceConfigurationResource or
+         ~azure.mgmt.appcontainers.types.MaintenanceConfigurationResource or IO[bytes]
         :return: MaintenanceConfigurationResource. The MaintenanceConfigurationResource is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.MaintenanceConfigurationResource
@@ -11312,7 +16361,7 @@ class MaintenanceConfigurationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedEnvironmentsStoragesOperations:
+class ManagedEnvironmentsStoragesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11446,7 +16495,7 @@ class ManagedEnvironmentsStoragesOperations:
         resource_group_name: str,
         environment_name: str,
         storage_name: str,
-        storage_envelope: JSON,
+        storage_envelope: _types.ManagedEnvironmentStorage,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11463,7 +16512,7 @@ class ManagedEnvironmentsStoragesOperations:
         :param storage_name: Name of the storage. Required.
         :type storage_name: str
         :param storage_envelope: Configuration details of storage. Required.
-        :type storage_envelope: JSON
+        :type storage_envelope: ~azure.mgmt.appcontainers.types.ManagedEnvironmentStorage
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11512,7 +16561,7 @@ class ManagedEnvironmentsStoragesOperations:
         resource_group_name: str,
         environment_name: str,
         storage_name: str,
-        storage_envelope: Union[_models.ManagedEnvironmentStorage, JSON, IO[bytes]],
+        storage_envelope: Union[_models.ManagedEnvironmentStorage, _types.ManagedEnvironmentStorage, IO[bytes]],
         **kwargs: Any
     ) -> _models.ManagedEnvironmentStorage:
         """Create or update storage for a managedEnvironment.
@@ -11526,10 +16575,10 @@ class ManagedEnvironmentsStoragesOperations:
         :type environment_name: str
         :param storage_name: Name of the storage. Required.
         :type storage_name: str
-        :param storage_envelope: Configuration details of storage. Is one of the following types:
-         ManagedEnvironmentStorage, JSON, IO[bytes] Required.
-        :type storage_envelope: ~azure.mgmt.appcontainers.models.ManagedEnvironmentStorage or JSON or
-         IO[bytes]
+        :param storage_envelope: Configuration details of storage. Is either a
+         ManagedEnvironmentStorage type or a IO[bytes] type. Required.
+        :type storage_envelope: ~azure.mgmt.appcontainers.models.ManagedEnvironmentStorage or
+         ~azure.mgmt.appcontainers.types.ManagedEnvironmentStorage or IO[bytes]
         :return: ManagedEnvironmentStorage. The ManagedEnvironmentStorage is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.ManagedEnvironmentStorage
@@ -11741,7 +16790,7 @@ class ManagedEnvironmentsStoragesOperations:
         return deserialized  # type: ignore
 
 
-class JobsOperations:
+class JobsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11831,7 +16880,11 @@ class JobsOperations:
         return deserialized  # type: ignore
 
     async def _create_or_update_initial(
-        self, resource_group_name: str, job_name: str, job_envelope: Union[_models.Job, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        job_name: str,
+        job_envelope: Union[_models.Job, _types.Job, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -11938,7 +16991,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        job_envelope: JSON,
+        job_envelope: _types.Job,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11953,7 +17006,7 @@ class JobsOperations:
         :param job_name: Job Name. Required.
         :type job_name: str
         :param job_envelope: Properties used to create a container apps job. Required.
-        :type job_envelope: JSON
+        :type job_envelope: ~azure.mgmt.appcontainers.types.Job
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11995,7 +17048,11 @@ class JobsOperations:
 
     @distributed_trace_async
     async def begin_create_or_update(
-        self, resource_group_name: str, job_name: str, job_envelope: Union[_models.Job, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        job_name: str,
+        job_envelope: Union[_models.Job, _types.Job, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.Job]:
         """Create or Update a Container Apps Job.
 
@@ -12006,9 +17063,10 @@ class JobsOperations:
         :type resource_group_name: str
         :param job_name: Job Name. Required.
         :type job_name: str
-        :param job_envelope: Properties used to create a container apps job. Is one of the following
-         types: Job, JSON, IO[bytes] Required.
-        :type job_envelope: ~azure.mgmt.appcontainers.models.Job or JSON or IO[bytes]
+        :param job_envelope: Properties used to create a container apps job. Is either a Job type or a
+         IO[bytes] type. Required.
+        :type job_envelope: ~azure.mgmt.appcontainers.models.Job or ~azure.mgmt.appcontainers.types.Job
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Job. The Job is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.Job]
@@ -12070,7 +17128,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        job_envelope: Union[_models.JobPatchProperties, JSON, IO[bytes]],
+        job_envelope: Union[_models.JobPatchProperties, _types.JobPatchProperties, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12176,7 +17234,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        job_envelope: JSON,
+        job_envelope: _types.JobPatchProperties,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12191,7 +17249,7 @@ class JobsOperations:
         :param job_name: Job Name. Required.
         :type job_name: str
         :param job_envelope: Properties used to create a container apps job. Required.
-        :type job_envelope: JSON
+        :type job_envelope: ~azure.mgmt.appcontainers.types.JobPatchProperties
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12236,7 +17294,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        job_envelope: Union[_models.JobPatchProperties, JSON, IO[bytes]],
+        job_envelope: Union[_models.JobPatchProperties, _types.JobPatchProperties, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Job]:
         """Update properties of a Container Apps Job.
@@ -12248,9 +17306,10 @@ class JobsOperations:
         :type resource_group_name: str
         :param job_name: Job Name. Required.
         :type job_name: str
-        :param job_envelope: Properties used to create a container apps job. Is one of the following
-         types: JobPatchProperties, JSON, IO[bytes] Required.
-        :type job_envelope: ~azure.mgmt.appcontainers.models.JobPatchProperties or JSON or IO[bytes]
+        :param job_envelope: Properties used to create a container apps job. Is either a
+         JobPatchProperties type or a IO[bytes] type. Required.
+        :type job_envelope: ~azure.mgmt.appcontainers.models.JobPatchProperties or
+         ~azure.mgmt.appcontainers.types.JobPatchProperties or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Job. The Job is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.Job]
@@ -12624,7 +17683,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        template: Optional[Union[_models.JobExecutionTemplate, JSON, IO[bytes]]] = None,
+        template: Optional[Union[_models.JobExecutionTemplate, _types.JobExecutionTemplate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12734,7 +17793,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        template: Optional[JSON] = None,
+        template: Optional[_types.JobExecutionTemplate] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12749,7 +17808,7 @@ class JobsOperations:
         :param job_name: Job Name. Required.
         :type job_name: str
         :param template: Properties used to start a job execution. Default value is None.
-        :type template: JSON
+        :type template: ~azure.mgmt.appcontainers.types.JobExecutionTemplate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12794,7 +17853,7 @@ class JobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        template: Optional[Union[_models.JobExecutionTemplate, JSON, IO[bytes]]] = None,
+        template: Optional[Union[_models.JobExecutionTemplate, _types.JobExecutionTemplate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.JobExecutionBase]:
         """Start a Container Apps Job.
@@ -12806,9 +17865,10 @@ class JobsOperations:
         :type resource_group_name: str
         :param job_name: Job Name. Required.
         :type job_name: str
-        :param template: Properties used to start a job execution. Is one of the following types:
-         JobExecutionTemplate, JSON, IO[bytes] Default value is None.
-        :type template: ~azure.mgmt.appcontainers.models.JobExecutionTemplate or JSON or IO[bytes]
+        :param template: Properties used to start a job execution. Is either a JobExecutionTemplate
+         type or a IO[bytes] type. Default value is None.
+        :type template: ~azure.mgmt.appcontainers.models.JobExecutionTemplate or
+         ~azure.mgmt.appcontainers.types.JobExecutionTemplate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns JobExecutionBase. The JobExecutionBase is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.JobExecutionBase]
@@ -13069,6 +18129,290 @@ class JobsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "job_name", "accept"]
+        },
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
+    )
+    async def _resume_initial(self, resource_group_name: str, job_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_jobs_resume_request(
+            resource_group_name=resource_group_name,
+            job_name=job_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "job_name", "accept"]
+        },
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
+    )
+    async def begin_resume(self, resource_group_name: str, job_name: str, **kwargs: Any) -> AsyncLROPoller[_models.Job]:
+        """Resumes a suspended job.
+
+        Resumes execution for a suspended Container Apps job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param job_name: Job Name. Required.
+        :type job_name: str
+        :return: An instance of AsyncLROPoller that returns Job. The Job is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.Job]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Job] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._resume_initial(
+                resource_group_name=resource_group_name,
+                job_name=job_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Job, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.Job].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.Job](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "job_name", "accept"]
+        },
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
+    )
+    async def _suspend_initial(self, resource_group_name: str, job_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_jobs_suspend_request(
+            resource_group_name=resource_group_name,
+            job_name=job_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-02-preview",
+        params_added_on={
+            "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "job_name", "accept"]
+        },
+        api_versions_list=["2026-03-02-preview", "2026-07-01"],
+    )
+    async def begin_suspend(
+        self, resource_group_name: str, job_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[_models.Job]:
+        """Suspends a job.
+
+        Suspends execution for a running Container Apps job.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param job_name: Job Name. Required.
+        :type job_name: str
+        :return: An instance of AsyncLROPoller that returns Job. The Job is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.Job]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Job] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._suspend_initial(
+                resource_group_name=resource_group_name,
+                job_name=job_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Job, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.Job].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.Job](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _stop_execution_initial(
         self, resource_group_name: str, job_name: str, job_execution_name: str, **kwargs: Any
@@ -13453,7 +18797,7 @@ class JobsOperations:
         return deserialized  # type: ignore
 
 
-class ContainerAppsDiagnosticsOperations:
+class ContainerAppsDiagnosticsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13908,7 +19252,7 @@ class ContainerAppsDiagnosticsOperations:
         return deserialized  # type: ignore
 
 
-class ManagedEnvironmentsDiagnosticsOperations:
+class ManagedEnvironmentsDiagnosticsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14000,7 +19344,213 @@ class ManagedEnvironmentsDiagnosticsOperations:
         return deserialized  # type: ignore
 
 
-class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-long
+class ContainerAppsRevisionFunctionsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.appcontainers.aio.ContainerAppsAPIClient`'s
+        :attr:`container_apps_revision_functions` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ContainerAppsAPIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get(
+        self, resource_group_name: str, container_app_name: str, revision_name: str, function_name: str, **kwargs: Any
+    ) -> _models.ContainerAppsFunction:
+        """Get a specific function of a Container App Revision.
+
+        Gets the details of a specific function in a Container App revision.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param container_app_name: Name of the Container App. Required.
+        :type container_app_name: str
+        :param revision_name: Name of the Container App Revision. Required.
+        :type revision_name: str
+        :param function_name: Name of the Function. Required.
+        :type function_name: str
+        :return: ContainerAppsFunction. The ContainerAppsFunction is compatible with MutableMapping
+        :rtype: ~azure.mgmt.appcontainers.models.ContainerAppsFunction
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ContainerAppsFunction] = kwargs.pop("cls", None)
+
+        _request = build_container_apps_revision_functions_get_request(
+            resource_group_name=resource_group_name,
+            container_app_name=container_app_name,
+            revision_name=revision_name,
+            function_name=function_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ContainerAppsFunction, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list(
+        self, resource_group_name: str, container_app_name: str, revision_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ContainerAppsFunction"]:
+        """List the functions for a given Container App Revision.
+
+        Lists the functions available in a specific Container App revision.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param container_app_name: Name of the Container App. Required.
+        :type container_app_name: str
+        :param revision_name: Name of the Container App Revision. Required.
+        :type revision_name: str
+        :return: An iterator like instance of ContainerAppsFunction
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appcontainers.models.ContainerAppsFunction]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ContainerAppsFunction]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_container_apps_revision_functions_list_request(
+                    resource_group_name=resource_group_name,
+                    container_app_name=container_app_name,
+                    revision_name=revision_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ContainerAppsFunction],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14099,7 +19649,7 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         connected_environment_name: str,
         certificate_name: str,
-        certificate_envelope: Optional[Union[_models.Certificate, JSON, IO[bytes]]] = None,
+        certificate_envelope: Optional[Union[_models.Certificate, _types.Certificate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14216,7 +19766,7 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         connected_environment_name: str,
         certificate_name: str,
-        certificate_envelope: Optional[JSON] = None,
+        certificate_envelope: Optional[_types.Certificate] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14233,7 +19783,7 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         :param certificate_name: Name of the Certificate. Required.
         :type certificate_name: str
         :param certificate_envelope: Certificate to be created or updated. Default value is None.
-        :type certificate_envelope: JSON
+        :type certificate_envelope: ~azure.mgmt.appcontainers.types.Certificate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14282,7 +19832,7 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         connected_environment_name: str,
         certificate_name: str,
-        certificate_envelope: Optional[Union[_models.Certificate, JSON, IO[bytes]]] = None,
+        certificate_envelope: Optional[Union[_models.Certificate, _types.Certificate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Certificate]:
         """Create or Update a Certificate.
@@ -14296,9 +19846,10 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         :type connected_environment_name: str
         :param certificate_name: Name of the Certificate. Required.
         :type certificate_name: str
-        :param certificate_envelope: Certificate to be created or updated. Is one of the following
-         types: Certificate, JSON, IO[bytes] Default value is None.
-        :type certificate_envelope: ~azure.mgmt.appcontainers.models.Certificate or JSON or IO[bytes]
+        :param certificate_envelope: Certificate to be created or updated. Is either a Certificate type
+         or a IO[bytes] type. Default value is None.
+        :type certificate_envelope: ~azure.mgmt.appcontainers.models.Certificate or
+         ~azure.mgmt.appcontainers.types.Certificate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Certificate. The Certificate is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.Certificate]
@@ -14363,7 +19914,7 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         connected_environment_name: str,
         certificate_name: str,
-        certificate_envelope: Union[_models.CertificatePatch, JSON, IO[bytes]],
+        certificate_envelope: Union[_models.CertificatePatch, _types.CertificatePatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14474,7 +20025,7 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         connected_environment_name: str,
         certificate_name: str,
-        certificate_envelope: JSON,
+        certificate_envelope: _types.CertificatePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14491,7 +20042,7 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         :param certificate_name: Name of the Certificate. Required.
         :type certificate_name: str
         :param certificate_envelope: Properties of a certificate that need to be updated. Required.
-        :type certificate_envelope: JSON
+        :type certificate_envelope: ~azure.mgmt.appcontainers.types.CertificatePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14540,7 +20091,7 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         connected_environment_name: str,
         certificate_name: str,
-        certificate_envelope: Union[_models.CertificatePatch, JSON, IO[bytes]],
+        certificate_envelope: Union[_models.CertificatePatch, _types.CertificatePatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Certificate]:
         """Update properties of a certificate.
@@ -14554,10 +20105,10 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         :type connected_environment_name: str
         :param certificate_name: Name of the Certificate. Required.
         :type certificate_name: str
-        :param certificate_envelope: Properties of a certificate that need to be updated. Is one of the
-         following types: CertificatePatch, JSON, IO[bytes] Required.
-        :type certificate_envelope: ~azure.mgmt.appcontainers.models.CertificatePatch or JSON or
-         IO[bytes]
+        :param certificate_envelope: Properties of a certificate that need to be updated. Is either a
+         CertificatePatch type or a IO[bytes] type. Required.
+        :type certificate_envelope: ~azure.mgmt.appcontainers.models.CertificatePatch or
+         ~azure.mgmt.appcontainers.types.CertificatePatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Certificate. The Certificate is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.appcontainers.models.Certificate]
@@ -14847,7 +20398,7 @@ class ConnectedEnvironmentsCertificatesOperations:  # pylint: disable=name-too-l
         return AsyncItemPaged(get_next, extract_data)
 
 
-class NamespacesOperations:
+class NamespacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14900,7 +20451,7 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        check_name_availability_request: JSON,
+        check_name_availability_request: _types.CheckNameAvailabilityRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14915,7 +20466,8 @@ class NamespacesOperations:
         :param environment_name: Name of the Environment. Required.
         :type environment_name: str
         :param check_name_availability_request: The check name availability request. Required.
-        :type check_name_availability_request: JSON
+        :type check_name_availability_request:
+         ~azure.mgmt.appcontainers.types.CheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14960,7 +20512,9 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         environment_name: str,
-        check_name_availability_request: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]],
+        check_name_availability_request: Union[
+            _models.CheckNameAvailabilityRequest, _types.CheckNameAvailabilityRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """Checks the resource name availability.
@@ -14972,10 +20526,11 @@ class NamespacesOperations:
         :type resource_group_name: str
         :param environment_name: Name of the Environment. Required.
         :type environment_name: str
-        :param check_name_availability_request: The check name availability request. Is one of the
-         following types: CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
+        :param check_name_availability_request: The check name availability request. Is either a
+         CheckNameAvailabilityRequest type or a IO[bytes] type. Required.
         :type check_name_availability_request:
-         ~azure.mgmt.appcontainers.models.CheckNameAvailabilityRequest or JSON or IO[bytes]
+         ~azure.mgmt.appcontainers.models.CheckNameAvailabilityRequest or
+         ~azure.mgmt.appcontainers.types.CheckNameAvailabilityRequest or IO[bytes]
         :return: CheckNameAvailabilityResponse. The CheckNameAvailabilityResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.CheckNameAvailabilityResponse
@@ -15049,130 +20604,7 @@ class NamespacesOperations:
         return deserialized  # type: ignore
 
 
-class ManagedEnvironmentPrivateLinkResourcesOperations:  # pylint: disable=name-too-long
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.appcontainers.aio.ContainerAppsAPIClient`'s
-        :attr:`managed_environment_private_link_resources` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerAppsAPIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def list(
-        self, resource_group_name: str, environment_name: str, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PrivateLinkResource"]:
-        """List private link resources for a given managed environment.
-
-        List private link resources for a given managed environment.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param environment_name: Name of the managed environment. Required.
-        :type environment_name: str
-        :return: An iterator like instance of PrivateLinkResource
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appcontainers.models.PrivateLinkResource]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.PrivateLinkResource]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_managed_environment_private_link_resources_list_request(
-                    resource_group_name=resource_group_name,
-                    environment_name=environment_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.PrivateLinkResource],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-
-class ManagedEnvironmentPrivateEndpointConnectionsOperations:  # pylint: disable=name-too-long
+class ManagedEnvironmentPrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15272,7 +20704,9 @@ class ManagedEnvironmentPrivateEndpointConnectionsOperations:  # pylint: disable
         resource_group_name: str,
         environment_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection_envelope: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        private_endpoint_connection_envelope: Union[
+            _models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -15386,7 +20820,7 @@ class ManagedEnvironmentPrivateEndpointConnectionsOperations:  # pylint: disable
         resource_group_name: str,
         environment_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection_envelope: JSON,
+        private_endpoint_connection_envelope: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15404,7 +20838,8 @@ class ManagedEnvironmentPrivateEndpointConnectionsOperations:  # pylint: disable
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection_envelope: The resource of private endpoint and its
          properties. Required.
-        :type private_endpoint_connection_envelope: JSON
+        :type private_endpoint_connection_envelope:
+         ~azure.mgmt.appcontainers.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15456,7 +20891,9 @@ class ManagedEnvironmentPrivateEndpointConnectionsOperations:  # pylint: disable
         resource_group_name: str,
         environment_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection_envelope: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        private_endpoint_connection_envelope: Union[
+            _models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
         """Update the state of a private endpoint connection for a given managed environment.
@@ -15471,9 +20908,10 @@ class ManagedEnvironmentPrivateEndpointConnectionsOperations:  # pylint: disable
         :param private_endpoint_connection_name: Name of the Private Endpoint Connection. Required.
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection_envelope: The resource of private endpoint and its
-         properties. Is one of the following types: PrivateEndpointConnection, JSON, IO[bytes] Required.
+         properties. Is either a PrivateEndpointConnection type or a IO[bytes] type. Required.
         :type private_endpoint_connection_envelope:
-         ~azure.mgmt.appcontainers.models.PrivateEndpointConnection or JSON or IO[bytes]
+         ~azure.mgmt.appcontainers.models.PrivateEndpointConnection or
+         ~azure.mgmt.appcontainers.types.PrivateEndpointConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype:
@@ -15765,7 +21203,7 @@ class ManagedEnvironmentPrivateEndpointConnectionsOperations:  # pylint: disable
         return AsyncItemPaged(get_next, extract_data)
 
 
-class HttpRouteConfigOperations:
+class HttpRouteConfigOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15898,7 +21336,7 @@ class HttpRouteConfigOperations:
         resource_group_name: str,
         environment_name: str,
         http_route_name: str,
-        http_route_config_envelope: Optional[JSON] = None,
+        http_route_config_envelope: Optional[_types.HttpRouteConfig] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15916,7 +21354,7 @@ class HttpRouteConfigOperations:
         :type http_route_name: str
         :param http_route_config_envelope: Http Route config to be created or updated. Default value is
          None.
-        :type http_route_config_envelope: JSON
+        :type http_route_config_envelope: ~azure.mgmt.appcontainers.types.HttpRouteConfig
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15964,7 +21402,7 @@ class HttpRouteConfigOperations:
         resource_group_name: str,
         environment_name: str,
         http_route_name: str,
-        http_route_config_envelope: Optional[Union[_models.HttpRouteConfig, JSON, IO[bytes]]] = None,
+        http_route_config_envelope: Optional[Union[_models.HttpRouteConfig, _types.HttpRouteConfig, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.HttpRouteConfig:
         """Create or Update a Http Route Config.
@@ -15978,10 +21416,10 @@ class HttpRouteConfigOperations:
         :type environment_name: str
         :param http_route_name: Name of the Http Route Config. Required.
         :type http_route_name: str
-        :param http_route_config_envelope: Http Route config to be created or updated. Is one of the
-         following types: HttpRouteConfig, JSON, IO[bytes] Default value is None.
-        :type http_route_config_envelope: ~azure.mgmt.appcontainers.models.HttpRouteConfig or JSON or
-         IO[bytes]
+        :param http_route_config_envelope: Http Route config to be created or updated. Is either a
+         HttpRouteConfig type or a IO[bytes] type. Default value is None.
+        :type http_route_config_envelope: ~azure.mgmt.appcontainers.models.HttpRouteConfig or
+         ~azure.mgmt.appcontainers.types.HttpRouteConfig or IO[bytes]
         :return: HttpRouteConfig. The HttpRouteConfig is compatible with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.HttpRouteConfig
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -16097,7 +21535,7 @@ class HttpRouteConfigOperations:
         resource_group_name: str,
         environment_name: str,
         http_route_name: str,
-        http_route_config_envelope: JSON,
+        http_route_config_envelope: _types.HttpRouteConfig,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16115,7 +21553,7 @@ class HttpRouteConfigOperations:
         :type http_route_name: str
         :param http_route_config_envelope: Properties of http route config that need to be updated.
          Required.
-        :type http_route_config_envelope: JSON
+        :type http_route_config_envelope: ~azure.mgmt.appcontainers.types.HttpRouteConfig
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16163,7 +21601,7 @@ class HttpRouteConfigOperations:
         resource_group_name: str,
         environment_name: str,
         http_route_name: str,
-        http_route_config_envelope: Union[_models.HttpRouteConfig, JSON, IO[bytes]],
+        http_route_config_envelope: Union[_models.HttpRouteConfig, _types.HttpRouteConfig, IO[bytes]],
         **kwargs: Any
     ) -> _models.HttpRouteConfig:
         """Update tags of a Http Route Config object.
@@ -16178,9 +21616,9 @@ class HttpRouteConfigOperations:
         :param http_route_name: Name of the Http Route Config Resource. Required.
         :type http_route_name: str
         :param http_route_config_envelope: Properties of http route config that need to be updated. Is
-         one of the following types: HttpRouteConfig, JSON, IO[bytes] Required.
-        :type http_route_config_envelope: ~azure.mgmt.appcontainers.models.HttpRouteConfig or JSON or
-         IO[bytes]
+         either a HttpRouteConfig type or a IO[bytes] type. Required.
+        :type http_route_config_envelope: ~azure.mgmt.appcontainers.models.HttpRouteConfig or
+         ~azure.mgmt.appcontainers.types.HttpRouteConfig or IO[bytes]
         :return: HttpRouteConfig. The HttpRouteConfig is compatible with MutableMapping
         :rtype: ~azure.mgmt.appcontainers.models.HttpRouteConfig
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -16485,7 +21923,7 @@ class HttpRouteConfigOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class JobsExecutionsOperations:
+class JobsExecutionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16610,7 +22048,7 @@ class JobsExecutionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedEnvironmentDiagnosticsOperations:
+class ManagedEnvironmentDiagnosticsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16779,7 +22217,7 @@ class ManagedEnvironmentDiagnosticsOperations:
         return deserialized  # type: ignore
 
 
-class AvailableWorkloadProfilesOperations:
+class AvailableWorkloadProfilesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16896,7 +22334,124 @@ class AvailableWorkloadProfilesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BillingMetersOperations:
+class AvailableEnvironmentModesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.appcontainers.aio.ContainerAppsAPIClient`'s
+        :attr:`available_environment_modes` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ContainerAppsAPIClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.AvailableEnvironmentMode"]:
+        """Get available environment modes by location.
+
+        Gets the environment modes available to a subscription in a location.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :return: An iterator like instance of AvailableEnvironmentMode
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appcontainers.models.AvailableEnvironmentMode]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AvailableEnvironmentMode]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_available_environment_modes_list_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AvailableEnvironmentMode],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class BillingMetersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16982,7 +22537,7 @@ class BillingMetersOperations:
         return deserialized  # type: ignore
 
 
-class UsagesOperations:
+class UsagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17097,7 +22652,7 @@ class UsagesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedEnvironmentUsagesOperations:
+class ManagedEnvironmentUsagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

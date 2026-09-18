@@ -1,5 +1,6 @@
 import pytest
 from azure.ai.evaluation import QAEvaluator
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 @pytest.mark.usefixtures("mock_model_config")
@@ -27,3 +28,13 @@ class TestQAEvaluator:
                 assert (
                     evaluator._is_reasoning_model is False
                 ), f"{type(evaluator).__name__} did not default to is_reasoning_model=False"
+
+    def test_invalid_threshold_type_error_metadata(self, mock_model_config):
+        """Test that an invalid threshold type raises EvaluationException with correct metadata."""
+        with pytest.raises(EvaluationException) as exc_info:
+            QAEvaluator(model_config=mock_model_config, groundedness_threshold="not-a-number")  # type: ignore
+
+        exc = exc_info.value
+        assert exc.blame == ErrorBlame.USER_ERROR
+        assert exc.category == ErrorCategory.INVALID_VALUE
+        assert exc.target == ErrorTarget.QA_EVALUATOR

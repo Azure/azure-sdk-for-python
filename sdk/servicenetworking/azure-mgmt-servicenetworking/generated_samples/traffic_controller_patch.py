@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/TrafficControllerPatch.json
+# x-ms-original-file: 2026-03-01/TrafficControllerPatch.json
 if __name__ == "__main__":
     main()

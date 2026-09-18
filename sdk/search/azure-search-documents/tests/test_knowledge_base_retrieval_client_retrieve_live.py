@@ -33,6 +33,13 @@ _RETRIEVAL_CAPABILITIES = (
     "azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalResponse",
     "azure.search.documents.knowledgebases.models.KnowledgeRetrievalSemanticIntent",
 )
+_STREAM_CAPABILITIES = (
+    "azure.search.documents.knowledgebases.KnowledgeBaseRetrievalClient.retrieve_stream",
+    "KnowledgeBaseRetrievalEvent",
+    "KnowledgeBaseRetrievalStream",
+    "azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStartedEvent",
+    "azure.search.documents.knowledgebases.models.KnowledgeBaseResponseCompletedEvent",
+)
 
 
 class TestKnowledgeBaseRetrievalClient(AzureRecordedTestCase):
@@ -71,3 +78,48 @@ class TestKnowledgeBaseRetrievalClient(AzureRecordedTestCase):
             assert isinstance(result, KnowledgeBaseRetrievalResponse)
             assert hasattr(result, "response")
             assert hasattr(result, "references")
+
+    @live_test()
+    def test_retrieve_stream_returns_typed_lifecycle_events(self, endpoint: str) -> None:
+        require_capability(
+            *_KNOWLEDGE_BASE_RESOURCE_CAPABILITIES,
+            *_RETRIEVAL_CAPABILITIES,
+            *_STREAM_CAPABILITIES,
+        )
+        from azure.search.documents.knowledgebases import KnowledgeBaseRetrievalClient
+        from azure.search.documents.knowledgebases.models import (
+            KnowledgeBaseResponseCompletedEvent,
+            KnowledgeBaseRetrievalRequest,
+            KnowledgeBaseRetrievalResponse,
+            KnowledgeBaseRetrievalStartedEvent,
+            KnowledgeRetrievalMinimalReasoningEffort,
+            KnowledgeRetrievalSemanticIntent,
+        )
+
+        with knowledge_base_resources(
+            self,
+            endpoint,
+            prefix="knowledge-base-retrieve-stream",
+            wait_for_active=True,
+            description=KNOWLEDGE_BASE_RETRIEVAL_DESCRIPTION,
+            source_description=KNOWLEDGE_SOURCE_RETRIEVAL_DESCRIPTION,
+        ) as context:
+            retrieval_request = KnowledgeBaseRetrievalRequest(
+                intents=[KnowledgeRetrievalSemanticIntent(search=RETRIEVAL_QUERY)],
+                retrieval_reasoning_effort=KnowledgeRetrievalMinimalReasoningEffort(),
+            )
+
+            with KnowledgeBaseRetrievalClient(
+                endpoint,
+                credential=context.credential,
+                knowledge_base_name=context.knowledge_base_name,
+            ) as client:
+                with client.retrieve_stream(retrieval_request) as stream:
+                    events = list(stream)
+
+            assert events[0].event_type == "retrieval.started"
+            assert isinstance(events[0].data, KnowledgeBaseRetrievalStartedEvent)
+            assert events[-1].event_type == "response.completed"
+            assert isinstance(events[-1].data, KnowledgeBaseResponseCompletedEvent)
+            assert isinstance(events[-1].data.response, KnowledgeBaseRetrievalResponse)
+            assert sum(event.event_type in ("response.completed", "error") for event in events) == 1

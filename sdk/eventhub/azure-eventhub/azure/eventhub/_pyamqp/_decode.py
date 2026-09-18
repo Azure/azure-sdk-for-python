@@ -22,7 +22,9 @@ from typing import (
 from typing_extensions import Literal
 
 
+from . import described
 from .message import Message, Header, Properties
+from . import performatives
 
 if TYPE_CHECKING:
     from .message import MessageDict
@@ -171,6 +173,7 @@ def _decode_binary_large(buffer: memoryview) -> Tuple[memoryview, bytes]:
     length_index = c_unsigned_long.unpack(buffer[:4])[0] + 4
     return buffer[length_index:], buffer[4:length_index].tobytes()
 
+
 def _decode_decimal128(buffer: memoryview) -> Tuple[memoryview, decimal.Decimal]:
     """
     Decode a Decimal128 value from the buffer.
@@ -298,11 +301,20 @@ def _decode_map_large(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
 def _decode_array_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = buffer[1]  # Ignore first byte (size) and just rely on count
     if count:
-        subconstructor = buffer[2]
-        buffer = buffer[3:]
         values = [None] * count
-        for i in range(count):
-            buffer, values[i] = _DECODE_BY_CONSTRUCTOR[subconstructor](buffer)
+        subconstructor = buffer[2]
+
+        if subconstructor == 0:
+            composite_type = buffer[3]
+            buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[4:])
+            subconstructor = buffer[0]
+            buffer = buffer[1:]
+            for i in range(count):
+                buffer, values[i] = _decode_described_array(buffer, subconstructor, descriptor)
+        else:
+            buffer = buffer[3:]
+            for i in range(count):
+                buffer, values[i] = _DECODE_BY_CONSTRUCTOR[subconstructor](buffer)
         return buffer, values
     return buffer[2:], []
 
@@ -317,11 +329,20 @@ def _decode_array_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
             f"AMQP array element count {count} exceeds maximum {_MAX_COMPOUND_COUNT}"
         )
     if count:
-        subconstructor = buffer[8]
-        buffer = buffer[9:]
         values = [None] * count
-        for i in range(count):
-            buffer, values[i] = _DECODE_BY_CONSTRUCTOR[subconstructor](buffer)
+        subconstructor = buffer[8]
+
+        if subconstructor == 0:
+            composite_type = buffer[9]
+            buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[10:])
+            subconstructor = buffer[0]
+            buffer = buffer[1:]
+            for i in range(count):
+                buffer, values[i] = _decode_described_array(buffer, subconstructor, descriptor)
+        else:
+            buffer = buffer[9:]
+            for i in range(count):
+                buffer, values[i] = _DECODE_BY_CONSTRUCTOR[subconstructor](buffer)
         return buffer, values
     return buffer[8:], []
 
@@ -331,7 +352,25 @@ def _decode_described(buffer: memoryview) -> Tuple[memoryview, object]:
     #  descriptor without decoding descriptor value
     composite_type = buffer[0]
     buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[1:])
-    buffer, value = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
+    tp = buffer[0]
+    buffer, value = _DECODE_BY_CONSTRUCTOR[tp](buffer[1:])
+    try:
+        value = _DESCR_BY_CONSTRUCTOR[tp](value, descriptor=descriptor)
+    except KeyError:
+        pass
+    try:
+        composite_type = cast(int, _COMPOSITES[descriptor])
+        return buffer, {composite_type: value}
+    except KeyError:
+        return buffer, value
+
+
+def _decode_described_array(buffer: memoryview, tp: int, descriptor) -> Tuple[memoryview, Any]:
+    buffer, value = _DECODE_BY_CONSTRUCTOR[tp](buffer)
+    try:
+        value = _DESCR_BY_CONSTRUCTOR[tp](value, descriptor=descriptor)
+    except KeyError:
+        pass
     try:
         composite_type = cast(int, _COMPOSITES[descriptor])
         return buffer, {composite_type: value}
@@ -378,6 +417,48 @@ def decode_payload(buffer: memoryview) -> Message:
     return Message(**message_properties)
 
 
+# The AMQP-defined default of each wire field of a performative, keyed by its
+# frame-type code and ordered as the fields appear on the wire. The AMQP 1.0
+# spec (section 1.4) lets a sender omit trailing fields whose value is the
+# default, so an incoming performative list can be shorter than the full field
+# count. Padding the decoded list back up to the full count with these defaults
+# keeps positional (frame[N]) access and namedtuple unpacking safe, and makes an
+# omitted field read back as its default rather than None. That distinction
+# matters: an Open that omits max_frame_size means 4294967295, and the connection
+# compares it numerically (frame[2] < 512), which would raise on None.
+# The transfer performative (code 20) carries a trailing payload that is not a
+# wire field, so its _definition uses a None sentinel for that slot, which is
+# excluded here.
+_PERFORMATIVE_FIELD_DEFAULTS: Dict[int, List[Any]] = {
+    # _code and _definition are assigned onto the performative classes at import
+    # time (see performatives.py), so pylint cannot see them statically.
+    # pylint: disable=protected-access,no-member
+    performative._code: [field.default for field in performative._definition if field is not None]  # type: ignore
+    for performative in (
+        performatives.OpenFrame,
+        performatives.BeginFrame,
+        performatives.AttachFrame,
+        performatives.FlowFrame,
+        performatives.TransferFrame,
+        performatives.DispositionFrame,
+        performatives.DetachFrame,
+        performatives.EndFrame,
+        performatives.CloseFrame,
+        performatives.SASLMechanism,
+        performatives.SASLInit,
+        performatives.SASLChallenge,
+        performatives.SASLResponse,
+        performatives.SASLOutcome,
+    )
+}
+
+# The number of wire fields for each performative, derived from the defaults
+# above so the two stay in lockstep.
+_PERFORMATIVE_FIELD_COUNT: Dict[int, int] = {
+    code: len(defaults) for code, defaults in _PERFORMATIVE_FIELD_DEFAULTS.items()
+}
+
+
 def decode_frame(data: memoryview) -> Tuple[int, List[Any]]:
     # Ignore the first two bytes, they will always be the constructors for
     # described type then ulong.
@@ -394,6 +475,12 @@ def decode_frame(data: memoryview) -> Tuple[int, List[Any]]:
                 f"AMQP frame field count {count} exceeds maximum {_MAX_COMPOUND_COUNT}"
             )
         buffer = data[12:]
+    elif compound_list_type == 0x45:
+        # list0 0x45: an empty list with no size or count bytes. A sender may
+        # encode a performative whose fields are all omitted this way, so treat
+        # it as zero fields and let the padding below fill in the nulls.
+        count = 0
+        buffer = data[4:]
     else:
         # list8 0xc0: data[4] is size, data[5] is count (1 byte, bounded at 255).
         count = data[5]
@@ -401,6 +488,25 @@ def decode_frame(data: memoryview) -> Tuple[int, List[Any]]:
     fields: List[Optional[memoryview]] = [None] * count
     for i in range(count):
         buffer, fields[i] = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
+    # A sender may omit trailing fields whose value is the default (AMQP 1.0
+    # section 1.4), so pad the decoded list back up to the performative's full
+    # field count with each omitted field's default before any positional access
+    # or unpacking.
+    field_defaults = _PERFORMATIVE_FIELD_DEFAULTS.get(frame_type)
+    if field_defaults is not None:
+        if count < len(field_defaults):
+            fields.extend(field_defaults[count:])
+        # Only trailing fields may be omitted, so a sender that sets a later
+        # field while wanting an earlier one's default must encode that earlier
+        # field as an explicit null. A decoded null for a field whose AMQP
+        # default is non-null therefore also means that default; normalize it so
+        # it reads back identically to the omitted case. For example, an Open
+        # that nulls max_frame_size must still compare as 4294967295, not None,
+        # when _incoming_open evaluates frame[2] < 512. Fields whose declared
+        # default is null are left as None.
+        for index, default in enumerate(field_defaults):
+            if default is not None and fields[index] is None:
+                fields[index] = default
     if frame_type == 20:
         fields.append(buffer)
     return frame_type, fields
@@ -452,3 +558,36 @@ _DECODE_BY_CONSTRUCTOR[208] = _decode_list_large
 _DECODE_BY_CONSTRUCTOR[209] = _decode_map_large
 _DECODE_BY_CONSTRUCTOR[224] = _decode_array_small
 _DECODE_BY_CONSTRUCTOR[240] = _decode_array_large
+
+_DESCR_BY_CONSTRUCTOR: Dict[int, Any] = {
+    67: described.DescribedInt,
+    68: described.DescribedInt,
+    69: described.DescribedList,
+    80: described.DescribedInt,
+    81: described.DescribedInt,
+    82: described.DescribedInt,
+    83: described.DescribedInt,
+    84: described.DescribedInt,
+    85: described.DescribedInt,
+    96: described.DescribedInt,
+    97: described.DescribedInt,
+    112: described.DescribedInt,
+    113: described.DescribedInt,
+    114: described.DescribedFloat,
+    128: described.DescribedInt,
+    129: described.DescribedInt,
+    130: described.DescribedFloat,
+    131: described.DescribedInt,
+    160: described.DescribedBytes,
+    161: described.DescribedBytes,
+    163: described.DescribedBytes,
+    176: described.DescribedBytes,
+    177: described.DescribedBytes,
+    179: described.DescribedBytes,
+    192: described.DescribedList,
+    193: described.DescribedDict,
+    208: described.DescribedList,
+    209: described.DescribedDict,
+    224: described.DescribedList,
+    240: described.DescribedList,
+}

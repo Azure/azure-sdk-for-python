@@ -23,33 +23,37 @@ class AutoUpdateRingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Auto update Ring type."""
 
     PREVIEW = "Preview"
-    """customer selection of preview update install mcc on their physical vm"""
+    """customer selection of preview update install mcc on their physical vm."""
     SLOW = "Slow"
-    """customer selection of slow update to install mcc on their physical vm"""
+    """customer selection of slow update to install mcc on their physical vm."""
     FAST = "Fast"
-    """customer selection of fast / auto update to install mcc on their physical vm"""
+    """customer selection of fast / auto update to install mcc on their physical vm."""
+    STABLE = "Stable"
+    """customer selection of stable update to install mcc on their physical vm."""
+    BETA = "Beta"
+    """customer selection of beta update to install mcc on their physical vm."""
 
 
 class BgpReviewStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cache node resource Bgp review state as integer."""
 
     NOT_CONFIGURED = "NotConfigured"
-    """bgp not configured"""
+    """bgp not configured."""
     IN_REVIEW = "InReview"
-    """bgp is in review state"""
+    """bgp is in review state."""
     APPROVED = "Approved"
-    """bgp is in Approved state"""
+    """bgp is in Approved state."""
     ATTENTION_REQUIRED = "AttentionRequired"
-    """bgp is setup need an attention for more troubleshoot"""
+    """bgp is setup need an attention for more troubleshoot."""
 
 
 class ConfigurationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cache node configuration setup state."""
 
     CONFIGURED = "Configured"
-    """connected cache setup configured"""
+    """connected cache setup configured."""
     NOT_CONFIGURED_IP = "NotConfigured_Ip"
-    """connected cache setup not configured"""
+    """connected cache setup not configured."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -69,11 +73,11 @@ class CustomerTransitState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Customer resource transit states."""
 
     NO_TRANSIT = "NoTransit"
-    """do not have transit"""
+    """do not have transit."""
     COMBINED_TRANSIT = "CombinedTransit"
-    """transit provider and have own subscribers"""
+    """transit provider and have own subscribers."""
     TRANSIT_ONLY = "TransitOnly"
-    """pure transit provider or network service provider"""
+    """pure transit provider or network service provider."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -93,11 +97,11 @@ class OsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Operating System of the cache node."""
 
     WINDOWS = "Windows"
-    """cache node installs on windows operating system"""
+    """cache node installs on windows operating system."""
     LINUX = "Linux"
-    """cache node installs on Linux Operating system"""
+    """cache node installs on Linux Operating system."""
     EFLOW = "Eflow"
-    """cache node installs on Azure Eflow"""
+    """cache node installs on Azure Eflow."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -110,19 +114,19 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     UNKNOWN = "Unknown"
-    """unknown  state of the provisioning state"""
+    """unknown  state of the provisioning state."""
     ACCEPTED = "Accepted"
-    """Accepted state of the provisioning state during the Async Operations"""
+    """Accepted state of the provisioning state during the Async Operations."""
     UPGRADING = "Upgrading"
-    """Upgrading state of the provisioning state"""
+    """Upgrading state of the provisioning state."""
     DELETING = "Deleting"
-    """Deleting state of the provisioning state"""
+    """Deleting state of the provisioning state."""
 
 
 class ProxyRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Proxy details enum."""
 
     NONE = "None"
-    """Proxy is not required in setup"""
+    """Proxy is not required in setup."""
     REQUIRED = "Required"
-    """proxy is required in setup"""
+    """proxy is required in setup."""

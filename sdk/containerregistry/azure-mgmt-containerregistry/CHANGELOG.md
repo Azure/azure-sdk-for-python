@@ -1,5 +1,41 @@
 # Release History
 
+## 15.1.0b3 (2026-09-06)
+
+### Features Added
+
+  - Updated API version to `2026-09-01-preview`
+  - Model `ConnectedRegistry` added property `identity`
+  - Model `ConnectedRegistryUpdateParameters` added property `identity`
+  - Model `StatusDetailProperties` added property `available_gib` for available disk space in gibibytes
+  - Model `StatusDetailProperties` added property `total_gib` for total disk space in gibibytes
+  - Model `SyncProperties` added property `auth_type`
+  - Model `SyncUpdateProperties` added property `auth_type`
+  - Added enum `AuthType` with values `SyncToken` and `ManagedIdentity` for connected registry synchronization authentication
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added model `UserAssignedIdentity`
+
+### Breaking Changes
+
+  - Model `SyncProperties` property `token_id` (JSON `tokenId`) is no longer required and is now `Optional[str]` with constructor default `None`; type-checked readers may need to handle `None`.
+  - Removed response-only `TypedDict` definitions from `azure.mgmt.containerregistry.types`, including `ArchiveVersion`, `Webhook`, `RegistryNameStatus`, and `RegistryListCredentialsResult`; corresponding model classes remain available in `azure.mgmt.containerregistry.models`.
+
+## 15.1.0b2 (2026-07-03)
+
+### Features Added
+
+  - Model `CacheRuleProperties` added property `additional_authentication_properties`
+  - Model `CacheRuleUpdateProperties` added property `additional_authentication_properties`
+  - Model `NetworkRuleSet` added property `virtual_network_rules`
+  - Model `RegistryProperties` added property `writable_cache_repos`
+  - Model `RegistryPropertiesUpdateParameters` added property `writable_cache_repos`
+  - Added model `AdditionalAuthenticationProperties`
+  - Added enum `AdditionalAuthenticationType`
+  - Added model `GarAuthenticationProperties`
+  - Added model `VirtualNetworkRule`
+  - Added enum `WritableCacheRepos`
+
 ## 15.1.0b1 (2026-03-20)
 
 ### Features Added

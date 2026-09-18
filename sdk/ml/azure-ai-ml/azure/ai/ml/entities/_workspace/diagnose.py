@@ -5,21 +5,41 @@
 import json
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     DiagnoseRequestProperties as RestDiagnoseRequestProperties,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import DiagnoseResponseResult as RestDiagnoseResponseResult
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import DiagnoseResponseResult as RestDiagnoseResponseResult
+from azure.ai.ml._restclient.arm_ml_service.models import (
     DiagnoseResponseResultValue as RestDiagnoseResponseResultValue,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import DiagnoseResult as RestDiagnoseResult
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import DiagnoseResult as RestDiagnoseResult
+from azure.ai.ml._restclient.arm_ml_service.models import (
     DiagnoseWorkspaceParameters as RestDiagnoseWorkspaceParameters,
 )
 
 
 class DiagnoseRequestProperties:
-    """DiagnoseRequestProperties."""
+    """DiagnoseRequestProperties.
+
+    :keyword udr: User-defined route diagnosis parameters. Defaults to None.
+    :paramtype udr: Optional[Dict[str, Any]]
+    :keyword nsg: Network security group diagnosis parameters. Defaults to None.
+    :paramtype nsg: Optional[Dict[str, Any]]
+    :keyword resource_lock: Resource lock diagnosis parameters. Defaults to None.
+    :paramtype resource_lock: Optional[Dict[str, Any]]
+    :keyword dns_resolution: DNS resolution diagnosis parameters. Defaults to None.
+    :paramtype dns_resolution: Optional[Dict[str, Any]]
+    :keyword storage_account: Storage account diagnosis parameters. Defaults to None.
+    :paramtype storage_account: Optional[Dict[str, Any]]
+    :keyword key_vault: Key vault diagnosis parameters. Defaults to None.
+    :paramtype key_vault: Optional[Dict[str, Any]]
+    :keyword container_registry: Container registry diagnosis parameters. Defaults to None.
+    :paramtype container_registry: Optional[Dict[str, Any]]
+    :keyword application_insights: Application Insights diagnosis parameters. Defaults to None.
+    :paramtype application_insights: Optional[Dict[str, Any]]
+    :keyword others: Additional diagnosis parameters. Defaults to None.
+    :paramtype others: Optional[Dict[str, Any]]
+    """
 
     def __init__(
         self,
@@ -73,7 +93,11 @@ class DiagnoseRequestProperties:
 
 
 class DiagnoseResponseResult:
-    """DiagnoseResponseResult."""
+    """DiagnoseResponseResult.
+
+    :keyword value: The diagnosis response result value. Defaults to None.
+    :paramtype value: Optional[~azure.ai.ml.entities.DiagnoseResponseResultValue]
+    """
 
     def __init__(
         self,
@@ -95,7 +119,27 @@ class DiagnoseResponseResult:
 
 
 class DiagnoseResponseResultValue:
-    """DiagnoseResponseResultValue."""
+    """DiagnoseResponseResultValue.
+
+    :keyword user_defined_route_results: User-defined route diagnosis results. Defaults to None.
+    :paramtype user_defined_route_results: Optional[List[~azure.ai.ml.entities.DiagnoseResult]]
+    :keyword network_security_rule_results: Network security rule diagnosis results. Defaults to None.
+    :paramtype network_security_rule_results: Optional[List[~azure.ai.ml.entities.DiagnoseResult]]
+    :keyword resource_lock_results: Resource lock diagnosis results. Defaults to None.
+    :paramtype resource_lock_results: Optional[List[~azure.ai.ml.entities.DiagnoseResult]]
+    :keyword dns_resolution_results: DNS resolution diagnosis results. Defaults to None.
+    :paramtype dns_resolution_results: Optional[List[~azure.ai.ml.entities.DiagnoseResult]]
+    :keyword storage_account_results: Storage account diagnosis results. Defaults to None.
+    :paramtype storage_account_results: Optional[List[~azure.ai.ml.entities.DiagnoseResult]]
+    :keyword key_vault_results: Key vault diagnosis results. Defaults to None.
+    :paramtype key_vault_results: Optional[List[~azure.ai.ml.entities.DiagnoseResult]]
+    :keyword container_registry_results: Container registry diagnosis results. Defaults to None.
+    :paramtype container_registry_results: Optional[List[~azure.ai.ml.entities.DiagnoseResult]]
+    :keyword application_insights_results: Application Insights diagnosis results. Defaults to None.
+    :paramtype application_insights_results: Optional[List[~azure.ai.ml.entities.DiagnoseResult]]
+    :keyword other_results: Additional diagnosis results. Defaults to None.
+    :paramtype other_results: Optional[List[~azure.ai.ml.entities.DiagnoseResult]]
+    """
 
     def __init__(
         self,
@@ -158,7 +202,15 @@ class DiagnoseResponseResultValue:
 
 
 class DiagnoseResult:
-    """Result of Diagnose."""
+    """Result of Diagnose.
+
+    :keyword code: The diagnosis result code. Defaults to None.
+    :paramtype code: Optional[str]
+    :keyword level: The diagnosis result level. Defaults to None.
+    :paramtype level: Optional[str]
+    :keyword message: The diagnosis result message. Defaults to None.
+    :paramtype message: Optional[str]
+    """
 
     def __init__(
         self,
@@ -188,7 +240,11 @@ class DiagnoseResult:
 
 
 class DiagnoseWorkspaceParameters:
-    """Parameters to diagnose a workspace."""
+    """Parameters to diagnose a workspace.
+
+    :keyword value: The diagnosis request properties. Defaults to None.
+    :paramtype value: Optional[~azure.ai.ml.entities.DiagnoseRequestProperties]
+    """
 
     def __init__(
         self,

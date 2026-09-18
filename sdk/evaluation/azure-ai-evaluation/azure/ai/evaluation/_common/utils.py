@@ -1,12 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import json
 import os
 import posixpath
 import re
 import math
 import threading
-from typing import Any, List, Literal, Mapping, Optional, Type, TypeVar, Tuple, Union, cast, get_args, get_origin
+from typing import Any, Dict, List, Literal, Mapping, Optional, Type, TypeVar, Tuple, Union, cast, get_args, get_origin
 
 import nltk
 from azure.storage.blob import ContainerClient
@@ -17,11 +18,17 @@ from azure.ai.evaluation._exceptions import ErrorMessage, ErrorBlame, ErrorCateg
 from azure.ai.evaluation._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
+    _BYOModelConfiguration,
     OpenAIModelConfiguration,
 )
 
 from . import constants
-from .constants import EvaluatorScoringPattern, EVALUATOR_SCORING_PATTERNS, SCORING_PATTERN_CONFIG
+from .constants import (
+    EvaluatorScoringPattern,
+    EVALUATOR_SCORING_PATTERNS,
+    SCORING_PATTERN_CONFIG,
+    EvaluationLevel,
+)
 
 _nltk_data_download_lock = threading.Lock()
 
@@ -216,7 +223,7 @@ def parse_model_config_type(
 
 
 def construct_prompty_model_config(
-    model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+    model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration, _BYOModelConfiguration],
     default_api_version: str,
     user_agent: str,
 ) -> dict:
@@ -303,7 +310,15 @@ def validate_azure_ai_project(o: object) -> AzureAIProject:
     return cast(AzureAIProject, o)
 
 
-def validate_model_config(config: dict) -> Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]:
+def validate_model_config(
+    config: dict,
+) -> Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration, _BYOModelConfiguration]:
+    # BYO judge configs (connection/deployment) omit azure_endpoint/azure_deployment and route via
+    # the Foundry Responses API, so skip the AzureOpenAI/OpenAI TypedDict validation.
+    from azure.ai.evaluation._byo_judge import is_byo_model_config
+
+    if is_byo_model_config(config):
+        return cast(_BYOModelConfiguration, config)
     try:
         return _validate_typed_dict(config, AzureOpenAIModelConfiguration)
     except TypeError:
@@ -644,7 +659,11 @@ def filter_to_used_tools(tool_definitions, msgs_lists, logger=None):
         return tool_definitions
 
 
-def _get_conversation_history(query, include_system_messages=False, include_tool_messages=False):
+def _get_conversation_history(
+    query, include_system_messages=False, include_tool_messages=False, include_tool_calls=False
+):
+    if include_tool_calls:
+        return _get_conversation_history_with_tool_calls(query, include_system_messages=include_system_messages)
     all_user_queries, all_agent_responses = [], []
     cur_user_query, cur_agent_response = [], []
     system_message = None
@@ -723,16 +742,19 @@ def _pretty_format_conversation_history(conversation_history):
     return formatted_history
 
 
-def reformat_conversation_history(query, logger=None, include_system_messages=False, include_tool_messages=False):
+def reformat_conversation_history(
+    query, logger=None, include_system_messages=False, include_tool_messages=False, include_tool_calls=False
+):
     """Reformats the conversation history to a more compact representation."""
     try:
         conversation_history = _get_conversation_history(
             query,
             include_system_messages=include_system_messages,
             include_tool_messages=include_tool_messages,
+            include_tool_calls=include_tool_calls,
         )
         return _pretty_format_conversation_history(conversation_history)
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-except
         # If the conversation history cannot be parsed for whatever reason (e.g. the converter format changed), the original query is returned
         # This is a fallback to ensure that the evaluation can still proceed. However the accuracy of the evaluation will be affected.
         # From our tests the negative impact on IntentResolution is:
@@ -741,7 +763,12 @@ def reformat_conversation_history(query, logger=None, include_system_messages=Fa
         #   Lower percentage of mode in Likert scale (73.4% vs 75.4%)
         #   Lower pairwise agreement between LLMs (85% vs 90% at the pass/fail level with threshold of 3)
         if logger:
-            logger.warning("Conversation history could not be parsed, falling back to original query")
+            logger.warning(
+                "Conversation history could not be parsed; falling back to raw input. "
+                "Evaluator accuracy will degrade. Input shape: %s. Error: %s",
+                _log_safe_summary(query),
+                e,
+            )
         return query
 
 
@@ -765,7 +792,7 @@ def _get_agent_response(agent_response_msgs, include_tool_messages=False):
                 for content in msg.get("content", []):
                     if content.get("type") == "tool_result":
                         result = content.get("tool_result")
-                        tool_results[msg["tool_call_id"]] = f"[TOOL_RESULT] {result}"
+                        tool_results[msg["tool_call_id"]] = f"[TOOL_RESULT] {_stringify_tool_result(result)}"
 
     # Second pass: parse assistant messages and tool calls
     for msg in agent_response_msgs:
@@ -803,16 +830,22 @@ def reformat_agent_response(response, logger=None, include_tool_messages=False):
         if agent_response == []:
             # If no message could be extracted, likely the format changed, fallback to the original response in that case
             if logger:
-                logger.debug(
-                    "Empty agent response extracted, likely due to input schema change. Falling back to original response"
+                logger.warning(
+                    "Empty agent response extracted, likely due to input schema change. "
+                    "Falling back to original response. %s",
+                    _log_safe_summary(response),
                 )
             return response
         return "\n".join(agent_response)
-    except Exception:
+    except Exception as e:  # pylint: disable=broad-except
         # If the agent response cannot be parsed for whatever reason (e.g. the converter format changed), the original response is returned
         # This is a fallback to ensure that the evaluation can still proceed. See comments on reformat_conversation_history for more details.
         if logger:
-            logger.debug("Agent response could not be parsed, falling back to original response")
+            logger.warning(
+                "Agent response could not be parsed, falling back to original response. Error: %s. %s",
+                e,
+                _log_safe_summary(response),
+            )
         return response
 
 
@@ -826,11 +859,15 @@ def reformat_tool_definitions(tool_definitions, logger=None):
             param_names = ", ".join(params.keys()) if params else "no parameters"
             output_lines.append(f"- {name}: {desc} (inputs: {param_names})")
         return "\n".join(output_lines)
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-except
         # If the tool definitions cannot be parsed for whatever reason, the original tool definitions are returned
         # This is a fallback to ensure that the evaluation can still proceed. See comments on reformat_conversation_history for more details.
         if logger:
-            logger.debug("Tool definitions could not be parsed, falling back to original definitions")
+            logger.warning(
+                "Tool definitions could not be parsed; falling back to raw definitions. " "Input shape: %s. Error: %s",
+                _log_safe_summary(tool_definitions),
+                e,
+            )
         return tool_definitions
 
 
@@ -902,6 +939,354 @@ def simplify_messages(messages, drop_system=True, drop_tool_calls=False, logger=
         return messages
 
 
+# Runtime tool-call statuses that indicate a failed or incomplete execution.
+_FAILED_RUNTIME_STATUSES = frozenset({"failed", "incomplete"})
+
+
+def _stringify_tool_result(result):
+    """Render a tool_result value as a string the LLM judge can read.
+
+    Tool outputs arrive in mixed shapes depending on the producer: function/MCP tools usually
+    emit a plain ``str``, while built-in grounding tools (``azure_ai_search``, ``azure_fabric``,
+    ``sharepoint_grounding``) emit a list/dict. Falling back to ``f"{result}"`` for the latter
+    produced a Python ``repr`` (single quotes, trailing commas) that the LLM had to
+    reverse-engineer. Strings are passed through unchanged (zero behavior change for function/MCP
+    tools), anything else is serialized as JSON with ``default=str`` so non-JSON-native values do
+    not raise, and ``None`` renders as the empty string.
+
+    :param result: The raw tool_result value.
+    :type result: Any
+    :return: A string representation suitable for an LLM prompt.
+    :rtype: str
+    """
+    if result is None:
+        return ""
+    if isinstance(result, str):
+        return result
+    try:
+        return json.dumps(result, default=str, ensure_ascii=False)
+    except (TypeError, ValueError):
+        return str(result)
+
+
+def _log_safe_summary(obj):
+    """Return a non-sensitive structural summary of a payload for safe logging.
+
+    The raw payload may contain customer-controlled data (tool arguments, tool results, assistant
+    text, database rows, file content, etc.) which can include credentials or PII. Logging the
+    payload itself risks leaking that data into telemetry sinks at any log level. This helper
+    returns shape-only metadata - type, length, top-level keys/roles - which is sufficient to
+    diagnose schema drift without exposing values.
+
+    :param obj: The payload to summarize.
+    :type obj: Any
+    :return: A shape-only, non-sensitive summary string.
+    :rtype: str
+    """
+    try:
+        type_name = type(obj).__name__
+        if isinstance(obj, list):
+            roles = []
+            for item in obj[:10]:
+                if isinstance(item, dict):
+                    role = item.get("role")
+                    if isinstance(role, str):
+                        roles.append(role)
+            roles_summary = roles if roles else "n/a"
+            return f"type={type_name} len={len(obj)} roles={roles_summary}"
+        if isinstance(obj, dict):
+            keys = sorted(k for k in obj.keys() if isinstance(k, str))[:10]
+            return f"type={type_name} top_keys={keys}"
+        length = len(obj) if hasattr(obj, "__len__") else "n/a"
+        return f"type={type_name} len={length}"
+    except Exception:  # pylint: disable=broad-except
+        return f"type={type(obj).__name__} (summary unavailable)"
+
+
+def _coerce_bool(value) -> Optional[bool]:
+    """Coerce an LLM output value to bool or None.
+
+    Handles Python booleans and string variants like 'true', 'false'.
+
+    :param value: The value to coerce.
+    :type value: Any
+    :return: The coerced boolean, or None if it cannot be interpreted.
+    :rtype: Optional[bool]
+    """
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return None
+    if isinstance(value, str):
+        lower = value.strip().lower()
+        if lower == "true":
+            return True
+        if lower == "false":
+            return False
+    return None
+
+
+def _coerce_number(value) -> Optional[float]:
+    """Coerce an LLM output value to a number or None.
+
+    Handles Python ints/floats and string variants like '3', '2.5', 'null'.
+
+    :param value: The value to coerce.
+    :type value: Any
+    :return: The coerced number, or None if it cannot be interpreted.
+    :rtype: Optional[float]
+    """
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, (int, float)):
+        return value
+    if value is None:
+        return None
+    if isinstance(value, str):
+        stripped = value.strip()
+        if stripped.lower() in ("null", "none", ""):
+            return None
+        try:
+            return float(stripped)
+        except ValueError:
+            return None
+    return None
+
+
+def _collect_failed_tool_calls(messages):
+    """Return ordered, unique tool names whose runtime status indicates failure.
+
+    A tool call is treated as a runtime failure when either its assistant ``tool_call`` content
+    block or its matched tool ``tool_result`` content block carries a ``status`` field in
+    ``{failed, incomplete}``. This lets callers short-circuit deterministically and skip the LLM
+    judge on the failure path. When the failing block carries no resolvable function name, the
+    tool ``tool_call_id`` is used as a stable identifier instead.
+
+    :param messages: The list of conversation messages to scan.
+    :type messages: Any
+    :return: Ordered, de-duplicated list of failed tool names (or ids).
+    :rtype: List
+    """
+    if not isinstance(messages, list):
+        return []
+
+    id_to_name = {}
+    failed_ids = []
+    failed_names_without_id = []
+
+    for msg in messages:
+        if not isinstance(msg, dict) or msg.get("role") != "assistant":
+            continue
+        for content in msg.get("content", []) or []:
+            if not isinstance(content, dict) or content.get("type") != "tool_call":
+                continue
+            if "tool_call" in content and "function" in content.get("tool_call", {}):
+                tc = content["tool_call"]
+                name = tc.get("function", {}).get("name", "") or ""
+                call_id = tc.get("id")
+            else:
+                name = content.get("name", "") or ""
+                call_id = content.get("tool_call_id")
+            if call_id is not None:
+                id_to_name[call_id] = name
+            status = content.get("status")
+            if isinstance(status, str) and status in _FAILED_RUNTIME_STATUSES:
+                if call_id is not None:
+                    failed_ids.append(call_id)
+                elif name:
+                    failed_names_without_id.append(name)
+
+    for msg in messages:
+        if not isinstance(msg, dict) or msg.get("role") != "tool":
+            continue
+        call_id = msg.get("tool_call_id")
+        for content in msg.get("content", []) or []:
+            if not isinstance(content, dict) or content.get("type") != "tool_result":
+                continue
+            status = content.get("status")
+            if isinstance(status, str) and status in _FAILED_RUNTIME_STATUSES and call_id is not None:
+                failed_ids.append(call_id)
+
+    ordered = []
+    seen = set()
+    for call_id in failed_ids:
+        label = id_to_name.get(call_id) or call_id
+        if label and label not in seen:
+            seen.add(label)
+            ordered.append(label)
+    for name in failed_names_without_id:
+        if name and name not in seen:
+            seen.add(name)
+            ordered.append(name)
+    return ordered
+
+
+def _get_tool_calls_results(agent_response_msgs):
+    """Extract formatted agent tool calls and results from a response.
+
+    The output uses the ``[TOOL_CALL]`` / ``[TOOL_RESULT]`` line format. Tool results are rendered
+    via :func:`_stringify_tool_result` so list/dict grounding outputs are readable JSON.
+
+    :param agent_response_msgs: The agent response messages to scan.
+    :type agent_response_msgs: List[dict]
+    :return: A list of formatted tool-call/result lines.
+    :rtype: List[str]
+    """
+    agent_response_text = []
+    tool_results = {}
+
+    for msg in agent_response_msgs:
+        if msg.get("role") == "tool" and "tool_call_id" in msg:
+            for content in msg.get("content", []):
+                if content.get("type") == "tool_result":
+                    result = content.get("tool_result")
+                    tool_results[msg["tool_call_id"]] = f"[TOOL_RESULT] {_stringify_tool_result(result)}"
+
+    for msg in agent_response_msgs:
+        if "role" in msg and msg.get("role") == "assistant" and "content" in msg:
+            for content in msg.get("content", []):
+                if content.get("type") == "tool_call":
+                    if "tool_call" in content and "function" in content.get("tool_call", {}):
+                        tc = content.get("tool_call", {})
+                        func_name = tc.get("function", {}).get("name", "")
+                        args = tc.get("function", {}).get("arguments", {})
+                        tool_call_id = tc.get("id")
+                    else:
+                        tool_call_id = content.get("tool_call_id")
+                        func_name = content.get("name", "")
+                        args = content.get("arguments", {})
+                    args_str = ", ".join(f"{k}={_format_value(v)}" for k, v in args.items())
+                    call_line = f"[TOOL_CALL] {func_name}({args_str})"
+                    agent_response_text.append(call_line)
+                    if tool_call_id in tool_results:
+                        agent_response_text.append(tool_results[tool_call_id])
+
+    return agent_response_text
+
+
+def _reformat_tool_calls_results(response, logger=None):
+    """Reformat an agent response into tool-call/result lines, with a safe fallback.
+
+    :param response: The agent response to reformat.
+    :type response: Union[None, List[dict], str]
+    :param logger: Optional logger for warning messages.
+    :type logger: Optional[logging.Logger]
+    :return: The formatted string, or the original response if parsing fails.
+    :rtype: Union[str, List[dict]]
+    """
+    try:
+        if response is None or response == []:
+            return ""
+        agent_response = _get_tool_calls_results(response)
+        if agent_response == []:
+            if logger:
+                logger.warning(
+                    "Empty agent response extracted, likely due to input schema change. "
+                    "Falling back to using the original response. %s",
+                    _log_safe_summary(response),
+                )
+            return response
+        return "\n".join(agent_response)
+    except Exception as e:  # pylint: disable=broad-except
+        if logger:
+            logger.warning(
+                "Agent response could not be parsed, falling back to original response. Error: %s. %s",
+                e,
+                _log_safe_summary(response),
+            )
+        return response
+
+
+def _get_conversation_history_with_tool_calls(query, include_system_messages=False):
+    """Parse conversation history, rendering tool calls/results inline within agent turns.
+
+    This is the ``include_tool_calls=True`` variant used by tool-focused evaluators. Unlike the
+    default path, tool calls and their matched results are flattened into ``[TOOL_CALL]`` /
+    ``[TOOL_RESULT]`` lines within each agent turn.
+
+    :param query: The list of conversation messages.
+    :type query: List[dict]
+    :param include_system_messages: Whether to capture the system message.
+    :type include_system_messages: bool
+    :return: Dict with ``user_queries``, ``agent_responses`` and optionally ``system_message``.
+    :rtype: Dict
+    :raises EvaluationException: If the conversation history is malformed.
+    """
+    all_user_queries = []
+    cur_user_query = []
+    all_agent_responses = []
+    cur_agent_response = []
+    system_message = None
+
+    tool_results = {}
+    for msg in query:
+        if msg.get("role") == "tool" and "tool_call_id" in msg:
+            tool_call_id = msg["tool_call_id"]
+            for content in msg.get("content", []):
+                if content.get("type") == "tool_result":
+                    result = content.get("tool_result")
+                    tool_results[tool_call_id] = f"[TOOL_RESULT] {_stringify_tool_result(result)}"
+
+    for msg in query:
+        if "role" not in msg:
+            continue
+
+        if include_system_messages and msg["role"] == "system" and "content" in msg:
+            system_message = msg.get("content", "")
+
+        if msg["role"] == "user" and "content" in msg:
+            if cur_agent_response != []:
+                all_agent_responses.append(cur_agent_response)
+                cur_agent_response = []
+            text_in_msg = _extract_text_from_content(msg["content"])
+            if text_in_msg:
+                cur_user_query.append(text_in_msg)
+
+        if msg["role"] == "assistant" and "content" in msg:
+            if cur_user_query != []:
+                all_user_queries.append(cur_user_query)
+                cur_user_query = []
+
+            text_in_msg = _extract_text_from_content(msg["content"])
+            if text_in_msg:
+                cur_agent_response.append(text_in_msg)
+
+            for content in msg.get("content", []):
+                if content.get("type") == "tool_call":
+                    tool_call_id = content.get("tool_call_id")
+                    func_name = content.get("name", "")
+                    args = content.get("arguments", {})
+                    if "tool_call" in content and "function" in content.get("tool_call", {}):
+                        tc = content.get("tool_call", {})
+                        func_name = tc.get("function", {}).get("name", "")
+                        args = tc.get("function", {}).get("arguments", {})
+                        tool_call_id = tc.get("id")
+                    args_str = ", ".join(f"{k}={_format_value(v)}" for k, v in args.items())
+                    tool_call_text = f"[TOOL_CALL] {func_name}({args_str})"
+                    cur_agent_response.append(tool_call_text)
+                    if tool_call_id and tool_call_id in tool_results:
+                        cur_agent_response.append(tool_results[tool_call_id])
+
+    if cur_user_query != []:
+        all_user_queries.append(cur_user_query)
+    if cur_agent_response != []:
+        all_agent_responses.append(cur_agent_response)
+
+    if len(all_user_queries) != len(all_agent_responses) + 1:
+        raise EvaluationException(
+            message=ErrorMessage.MALFORMED_CONVERSATION_HISTORY,
+            internal_message=ErrorMessage.MALFORMED_CONVERSATION_HISTORY,
+            target=ErrorTarget.CONVERSATION_HISTORY_PARSING,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+
+    result = {"user_queries": all_user_queries, "agent_responses": all_agent_responses}
+    if include_system_messages:
+        result["system_message"] = system_message
+    return result
+
+
 def upload(path: str, container_client: ContainerClient, logger=None):
     """Upload files or directories to Azure Blob Storage using a container client.
 
@@ -962,3 +1347,313 @@ def upload(path: str, container_client: ContainerClient, logger=None):
             category=ErrorCategory.UPLOAD_ERROR,
             blame=ErrorBlame.SYSTEM_ERROR,
         ) from e
+
+
+# region Multi-turn utilities
+
+
+def _merge_query_response_messages(query: List[dict], response: List[dict]) -> List[dict]:
+    """Merge query and response message lists into a single conversation.
+
+    :param query: The query messages.
+    :type query: List[dict]
+    :param response: The response messages.
+    :type response: List[dict]
+    :return: The merged conversation messages.
+    :rtype: List[dict]
+    """
+    return [*query, *response]
+
+
+def _split_messages_at_latest_user(messages: List[dict]) -> Tuple[List[dict], List[dict]]:
+    """Split messages into query/response slices at the latest user turn.
+
+    :param messages: The conversation messages.
+    :type messages: List[dict]
+    :return: A tuple of (query_messages, response_messages).
+    :rtype: Tuple[List[dict], List[dict]]
+    """
+    latest_user_index = max(
+        (i for i, message in enumerate(messages) if message.get("role") == "user"),
+        default=-1,
+    )
+    if latest_user_index == -1:
+        raise ValueError("messages must contain at least one message with role 'user'.")
+    return messages[: latest_user_index + 1], messages[latest_user_index + 1 :]
+
+
+def _wrap_string_messages(query: str, response: str) -> Tuple[List[dict], List[dict]]:
+    """Wrap string query/response into separate message lists.
+
+    :param query: The query string.
+    :type query: str
+    :param response: The response string.
+    :type response: str
+    :return: A tuple of (query_messages, response_messages).
+    :rtype: Tuple[List[dict], List[dict]]
+    """
+    return (
+        [{"role": "user", "content": [{"type": "text", "text": query}]}],
+        [{"role": "assistant", "content": [{"type": "text", "text": response}]}],
+    )
+
+
+def serialize_messages(messages):
+    """Serialize a list of chat messages into a labeled text transcript for multi-turn prompts.
+
+    **Input format:** List of message dicts, each with ``"role"`` (``user``, ``assistant``, ``tool``,
+    ``system``, ``developer``) and ``"content"`` (string or list of content-block dicts like
+    ``{"type": "text", "text": "..."}``). Tool messages may include ``tool_call_id`` and content
+    blocks of type ``tool_result``/``tool_call``.
+
+    **Output format:** Plain-text transcript with labeled turns::
+
+        User turn 1:
+          <user text>
+
+        Agent turn 1:
+          <assistant text>
+          [TOOL_CALL] func_name({"arg": "val"})
+          [TOOL_RESULT] <result>
+
+        User turn 2:
+          <user text>
+        ...
+
+    System/developer messages are included as a system preamble. Consecutive messages of the same
+    role are grouped into a single turn. Assistant string content is auto-normalized to content-block
+    format for consistent formatting.
+
+    :param messages: Chat messages with role and content.
+    :type messages: List[dict]
+    :return: Formatted text transcript.
+    :rtype: str
+    """
+    if not messages:
+        return ""
+
+    from azure.ai.evaluation._evaluators._common._validators._validation_constants import MessageRole
+
+    all_user_queries = []
+    all_agent_responses = []
+    cur_user_query = []
+    cur_agent_response = []
+    system_message = None
+
+    for msg in messages:
+        if not isinstance(msg, dict):
+            continue
+        role = msg.get("role")
+        if not role:
+            continue
+
+        # _get_agent_response expects content as list of dicts, not a plain string
+        normalized = msg
+        if role == MessageRole.ASSISTANT and isinstance(msg.get("content"), str):
+            normalized = {**msg, "content": [{"type": "text", "text": msg["content"]}]}
+
+        if role in (MessageRole.SYSTEM, MessageRole.DEVELOPER):
+            content = msg.get("content", "")
+            if isinstance(content, list):
+                system_message = "\n".join(_extract_text_from_content(content))
+            else:
+                system_message = content
+
+        elif role == MessageRole.USER and "content" in msg:
+            if cur_agent_response:
+                formatted = _get_agent_response(cur_agent_response, include_tool_messages=True)
+                all_agent_responses.append([formatted])
+                cur_agent_response = []
+            content = msg["content"]
+            if isinstance(content, str):
+                text_in_msg = [content]
+            else:
+                text_in_msg = _extract_text_from_content(content)
+            if text_in_msg:
+                cur_user_query.append(text_in_msg)
+
+        elif role in (MessageRole.ASSISTANT, MessageRole.TOOL):
+            if cur_user_query:
+                all_user_queries.append(cur_user_query)
+                cur_user_query = []
+            cur_agent_response.append(normalized)
+
+    # Flush any remaining buffered turn
+    if cur_user_query:
+        all_user_queries.append(cur_user_query)
+    if cur_agent_response:
+        formatted = _get_agent_response(cur_agent_response, include_tool_messages=True)
+        all_agent_responses.append([formatted])
+
+    conversation_history: Dict = {
+        "user_queries": all_user_queries,
+        "agent_responses": all_agent_responses[: len(all_user_queries) - 1] if len(all_user_queries) > 0 else [],
+    }
+    if system_message:
+        conversation_history["system_message"] = system_message
+
+    result = _pretty_format_conversation_history(conversation_history)
+
+    # Append any trailing agent turn (the final response after the last user query)
+    start = max(len(all_user_queries) - 1, 0)
+    for i, agent_response in enumerate(all_agent_responses[start:], start=start):
+        result += f"Agent turn {i + 1}:\n"
+        for msg_text in agent_response:
+            if isinstance(msg_text, list):
+                for submsg in msg_text:
+                    result += "  " + "\n  ".join(submsg.split("\n")) + "\n"
+            else:
+                result += "  " + "\n  ".join(msg_text.split("\n")) + "\n"
+        result += "\n"
+
+    return result.rstrip("\n")
+
+
+def _resolve_evaluation_level(
+    evaluation_level: Optional[Union[EvaluationLevel, str]],
+    error_target: ErrorTarget,
+) -> Optional[EvaluationLevel]:
+    """Validate and normalize the evaluation_level parameter.
+
+    :param evaluation_level: The evaluation level to resolve.
+    :type evaluation_level: Optional[Union[EvaluationLevel, str]]
+    :param error_target: The error target for exceptions.
+    :type error_target: ErrorTarget
+    :return: The resolved EvaluationLevel or None for auto-detect.
+    :rtype: Optional[EvaluationLevel]
+    """
+    valid = [level.value for level in EvaluationLevel]
+    if evaluation_level is None or evaluation_level == "":
+        return None
+    if isinstance(evaluation_level, EvaluationLevel):
+        return evaluation_level
+    if isinstance(evaluation_level, str):
+        try:
+            return EvaluationLevel(evaluation_level)
+        except ValueError as exc:
+            raise EvaluationException(
+                message=(f"Invalid evaluation_level '{evaluation_level}'. " f"Must be one of: {valid}."),
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=error_target,
+            ) from exc
+    raise EvaluationException(
+        message=(f"Invalid evaluation_level '{evaluation_level}'. " f"Must be one of: {valid}."),
+        blame=ErrorBlame.USER_ERROR,
+        category=ErrorCategory.INVALID_VALUE,
+        target=error_target,
+    )
+
+
+def _is_intermediate_response(response):
+    """Check if response is intermediate (last content item is function_call or mcp_approval_request).
+
+    An intermediate response is one where the assistant's last message ends with a
+    function_call or mcp_approval_request content type, meaning the conversation is
+    still in progress and not yet ready for evaluation.
+
+    :param response: The response messages.
+    :type response: List[dict]
+    :return: True if the response is intermediate, False otherwise.
+    :rtype: bool
+    """
+    if isinstance(response, list) and len(response) > 0:
+        last_msg = response[-1]
+        if isinstance(last_msg, dict) and last_msg.get("role") == "assistant":
+            content = last_msg.get("content", [])
+            if isinstance(content, list) and len(content) > 0:
+                last_content = content[-1]
+                if isinstance(last_content, dict) and last_content.get("type") in (
+                    "function_call",
+                    "mcp_approval_request",
+                ):
+                    return True
+    return False
+
+
+def _drop_mcp_approval_messages(messages):
+    """Remove MCP approval request/response messages from a conversation.
+
+    MCP approval messages are protocol-level messages that should not be included
+    in the evaluation input.
+
+    :param messages: The conversation messages.
+    :type messages: List[dict]
+    :return: The filtered messages without MCP approval request/response messages.
+    :rtype: List[dict]
+    """
+    if not isinstance(messages, list):
+        return messages
+    return [
+        msg
+        for msg in messages
+        if not (
+            isinstance(msg, dict)
+            and isinstance(msg.get("content"), list)
+            and (
+                (
+                    msg.get("role") == "assistant"
+                    and any(isinstance(c, dict) and c.get("type") == "mcp_approval_request" for c in msg["content"])
+                )
+                or (
+                    msg.get("role") == "tool"
+                    and any(isinstance(c, dict) and c.get("type") == "mcp_approval_response" for c in msg["content"])
+                )
+            )
+        )
+    ]
+
+
+def _normalize_function_call_types(messages):
+    """Normalize function_call/function_call_output/openapi_call/openapi_call_output types to tool_call/tool_result.
+
+    This ensures a consistent content type vocabulary for downstream evaluators
+    regardless of how the original messages were authored.
+
+    :param messages: The conversation messages.
+    :type messages: List[dict]
+    :return: The messages with normalized content types.
+    :rtype: List[dict]
+    """
+    if not isinstance(messages, list):
+        return messages
+    for msg in messages:
+        if not isinstance(msg, dict) or not isinstance(msg.get("content"), list):
+            continue
+        for item in msg["content"]:
+            if not isinstance(item, dict):
+                continue
+            t = item.get("type")
+            if t == "function_call":
+                item["type"] = "tool_call"
+                if "function_call" in item:
+                    item["tool_call"] = item.pop("function_call")
+            elif t == "function_call_output":
+                item["type"] = "tool_result"
+                if "function_call_output" in item:
+                    item["tool_result"] = item.pop("function_call_output")
+            elif t == "openapi_call":
+                item["type"] = "tool_call"
+            elif t == "openapi_call_output":
+                item["type"] = "tool_result"
+                if "openapi_call_output" in item:
+                    item["tool_result"] = item.pop("openapi_call_output")
+    return messages
+
+
+def _preprocess_messages(messages):
+    """Preprocess conversation messages by dropping MCP approval messages and normalizing function call types.
+
+    This should be called before passing messages to serialization or evaluation functions.
+
+    :param messages: The conversation messages.
+    :type messages: List[dict]
+    :return: The preprocessed messages.
+    :rtype: List[dict]
+    """
+    messages = _drop_mcp_approval_messages(messages)
+    messages = _normalize_function_call_types(messages)
+    return messages
+
+
+# endregion Multi-turn utilities

@@ -18,7 +18,7 @@ from azure.ai.projects.models import (
 class TestAgentCodeInterpreterAsync(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_code_interpreter_simple_math_async(self, **kwargs):
         """
         Test agent with Code Interpreter for simple Python code execution (async version).

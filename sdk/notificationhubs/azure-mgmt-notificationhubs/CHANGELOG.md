@@ -1,5 +1,42 @@
 # Release History
 
+## 8.1.0b3 (2026-07-08)
+
+### Features Added
+
+  - Client `NotificationHubsManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `NotificationHubsManagementClient` added method `send_request`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `AdmCredential` moved instance variables `client_id`, `client_secret` and `auth_token_url` under property `properties` whose type is `AdmCredentialProperties`
+  - Model `ApnsCredential` moved instance variables `apns_certificate`, `certificate_key`, `endpoint`, `thumbprint`, `key_id`, `app_name`, `app_id` and `token` under property `properties` whose type is `ApnsCredentialProperties`
+  - Model `BaiduCredential` moved instance variables `baidu_api_key`, `baidu_end_point` and `baidu_secret_key` under property `properties` whose type is `BaiduCredentialProperties`
+  - Model `BrowserCredential` moved instance variables `subject`, `vapid_private_key` and `vapid_public_key` under property `properties` whose type is `BrowserCredentialProperties`
+  - Model `DebugSendResponse` moved instance variables `success`, `failure` and `results` under property `properties` whose type is `DebugSendResult`
+  - Model `FcmV1Credential` moved instance variables `client_email`, `private_key` and `project_id` under property `properties` whose type is `FcmV1CredentialProperties`
+  - Model `GcmCredential` moved instance variables `gcm_endpoint` and `google_api_key` under property `properties` whose type is `GcmCredentialProperties`
+  - Model `MpnsCredential` moved instance variables `mpns_certificate`, `certificate_key` and `thumbprint` under property `properties` whose type is `MpnsCredentialProperties`
+  - Model `NamespaceResource` moved instance variables `name_properties_name`, `provisioning_state`, `status`, `enabled`, `critical`, `subscription_id`, `region`, `metric_id`, `created_at`, `updated_at`, `namespace_type`, `replication_region`, `zone_redundancy`, `network_acls`, `pns_credentials`, `service_bus_endpoint`, `private_endpoint_connections`, `scale_unit`, `data_center` and `public_network_access` under property `properties` whose type is `NamespaceProperties`
+  - Model `NotificationHubPatchParameters` moved instance variables `name`, `registration_ttl`, `authorization_rules`, `apns_credential`, `wns_credential`, `gcm_credential`, `mpns_credential`, `adm_credential`, `baidu_credential`, `browser_credential`, `xiaomi_credential`, `fcm_v1_credential` and `daily_max_active_devices` under property `properties` whose type is `NotificationHubProperties`
+  - Model `NotificationHubResource` moved instance variables `name_properties_name`, `registration_ttl`, `authorization_rules`, `apns_credential`, `wns_credential`, `gcm_credential`, `mpns_credential`, `adm_credential`, `baidu_credential`, `browser_credential`, `xiaomi_credential`, `fcm_v1_credential` and `daily_max_active_devices` under property `properties` whose type is `NotificationHubProperties`
+  - Model `PnsCredentialsResource` moved instance variables `adm_credential`, `apns_credential`, `baidu_credential`, `browser_credential`, `gcm_credential`, `mpns_credential`, `wns_credential`, `xiaomi_credential` and `fcm_v1_credential` under property `properties` whose type is `PnsCredentials`
+  - Model `SharedAccessAuthorizationRuleResource` moved instance variables `rights`, `primary_key`, `secondary_key`, `key_name`, `modified_time`, `created_time`, `claim_type`, `claim_value` and `revision` under property `properties` whose type is `SharedAccessAuthorizationRuleProperties`
+  - Model `WnsCredential` moved instance variables `package_sid`, `secret_key`, `windows_live_endpoint`, `certificate_key` and `wns_certificate` under property `properties` whose type is `WnsCredentialProperties`
+  - Model `XiaomiCredential` moved instance variables `app_secret` and `endpoint` under property `properties` whose type is `XiaomiCredentialProperties`
+  - Method `NamespacesOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Parameter `top` of `NamespacesOperations.list` is now optional
+  - Method `NamespacesOperations.list_all` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Parameter `top` of `NamespacesOperations.list_all` is now optional
+  - Method `NotificationHubsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Parameter `top` of `NotificationHubsOperations.list` is now optional
+
+### Other Changes
+
+  - Deleted model `NamespaceListResult`/`NotificationHubListResult`/`OperationListResult`/`PrivateEndpointConnectionResourceListResult`/`PrivateLinkResourceListResult`/`SharedAccessAuthorizationRuleListResult` which actually were not used by SDK users
+  - Deleted model `ConnectionDetails`/`GroupConnectivityInformation`/`PrivateLinkServiceConnection` which actually were not used by SDK users
+
 ## 8.1.0b2 (2024-03-21)
 
 ### Features Added

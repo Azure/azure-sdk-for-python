@@ -1726,7 +1726,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def test_delete_all_items_by_partition_key_async(self):
         # create container via setup client (control-plane)
         created_collection = await self._create_container_for_test(
-            container_id='test_delete_all_items_by_partition_key ' + str(uuid.uuid4()),
+            container_id='test_delete_all_items_by_partition_key_' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/pk', kind='Hash')
         )
         # Create two partition keys

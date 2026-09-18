@@ -13,61 +13,61 @@ from azure.core import CaseInsensitiveEnumMeta
 class FileFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Format types."""
 
-    DOCUMENT = "document"
-    """Document type file format"""
-    GLOSSARY = "glossary"
-    """Glossary type file format"""
+    DOCUMENT = "Document"
+    """Document type file format."""
+    GLOSSARY = "Glossary"
+    """Glossary type file format."""
 
 
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """List of possible statuses for job or document."""
 
     NOT_STARTED = "NotStarted"
-    """NotStarted"""
+    """NotStarted."""
     RUNNING = "Running"
-    """Running"""
+    """Running."""
     SUCCEEDED = "Succeeded"
-    """Succeeded"""
+    """Succeeded."""
     FAILED = "Failed"
-    """Failed"""
+    """Failed."""
     CANCELED = "Cancelled"
-    """Cancelled"""
+    """Cancelled."""
     CANCELING = "Cancelling"
-    """Cancelling"""
+    """Cancelling."""
     VALIDATION_FAILED = "ValidationFailed"
-    """ValidationFailed"""
+    """ValidationFailed."""
 
 
 class StorageInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage type of the input documents source string."""
 
     FOLDER = "Folder"
-    """Folder storage input type"""
+    """Folder storage input type."""
     FILE = "File"
-    """File storage input type"""
+    """File storage input type."""
 
 
 class TranslationErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enums containing high level error codes."""
 
     INVALID_REQUEST = "InvalidRequest"
-    """InvalidRequest"""
+    """InvalidRequest."""
     INVALID_ARGUMENT = "InvalidArgument"
-    """InvalidArgument"""
+    """InvalidArgument."""
     INTERNAL_SERVER_ERROR = "InternalServerError"
-    """InternalServerError"""
+    """InternalServerError."""
     SERVICE_UNAVAILABLE = "ServiceUnavailable"
-    """ServiceUnavailable"""
+    """ServiceUnavailable."""
     RESOURCE_NOT_FOUND = "ResourceNotFound"
-    """ResourceNotFound"""
+    """ResourceNotFound."""
     UNAUTHORIZED = "Unauthorized"
-    """Unauthorized"""
+    """Unauthorized."""
     REQUEST_RATE_TOO_HIGH = "RequestRateTooHigh"
-    """RequestRateTooHigh"""
+    """RequestRateTooHigh."""
 
 
 class TranslationStorageSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage Source."""
 
     AZURE_BLOB = "AzureBlob"
-    """Azure blob storage source"""
+    """Azure blob storage source."""

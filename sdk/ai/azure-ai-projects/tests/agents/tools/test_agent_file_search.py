@@ -18,7 +18,7 @@ class TestAgentFileSearch(TestBase):
     # To only run this test:
     # pytest tests/agents/tools/test_agent_file_search.py::TestAgentFileSearch::test_agent_file_search -s
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_file_search(self, **kwargs):
         """
         Test agent with File Search tool for document Q&A.
@@ -122,7 +122,7 @@ class TestAgentFileSearch(TestBase):
             print("Vector store deleted")
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.HTTPX2)
     def test_agent_file_search_unsupported_file_type(self, **kwargs):
         """
         Negative test: Verify that unsupported file types are rejected with clear error messages.
@@ -194,7 +194,7 @@ Widget B,Q2,25000"""
             print("\nVector store deleted")
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_file_search_multi_turn_conversation(self, **kwargs):
         """
         Test multi-turn conversation with File Search.

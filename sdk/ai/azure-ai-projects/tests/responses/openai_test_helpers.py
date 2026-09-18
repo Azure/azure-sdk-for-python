@@ -30,6 +30,7 @@ ASYNC_TOKEN_PROVIDER_PATCH = "azure.ai.projects.aio._patch.get_bearer_token_prov
 def make_sync_client(
     allow_preview: bool = True,
     console_logging: bool = False,
+    logging_enable: bool = False,
     custom_user_agent: Optional[str] = None,
 ) -> AIProjectClient:
     """Return a minimal sync AIProjectClient stub suitable for unit-testing get_openai_client."""
@@ -40,6 +41,7 @@ def make_sync_client(
     client._config.api_version = API_VERSION
     client._config.credential = MagicMock()
     client._console_logging_enabled = console_logging
+    client._kwargs = {"logging_enable": logging_enable}
     client._custom_user_agent = custom_user_agent
     return client
 
@@ -47,6 +49,7 @@ def make_sync_client(
 def make_async_client(
     allow_preview: bool = True,
     console_logging: bool = False,
+    logging_enable: bool = False,
     custom_user_agent: Optional[str] = None,
 ) -> AsyncAIProjectClient:
     """Return a minimal async AIProjectClient stub suitable for unit-testing get_openai_client."""
@@ -57,6 +60,7 @@ def make_async_client(
     client._config.api_version = API_VERSION
     client._config.credential = MagicMock()
     client._console_logging_enabled = console_logging
+    client._kwargs = {"logging_enable": logging_enable}
     client._custom_user_agent = custom_user_agent
     return client
 

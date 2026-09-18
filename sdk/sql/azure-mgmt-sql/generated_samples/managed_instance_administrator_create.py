@@ -38,6 +38,7 @@ def main():
             "properties": {
                 "administratorType": "ActiveDirectory",
                 "login": "bob@contoso.com",
+                "principalType": "User",
                 "sid": "44444444-3333-2222-1111-000000000000",
                 "tenantId": "55555555-4444-3333-2222-111111111111",
             }
@@ -46,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-01-01/ManagedInstanceAdministratorCreate.json
+# x-ms-original-file: 2025-08-01-preview/ManagedInstanceAdministratorCreate.json
 if __name__ == "__main__":
     main()

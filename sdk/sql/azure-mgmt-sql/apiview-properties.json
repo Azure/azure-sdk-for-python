@@ -69,6 +69,8 @@
         "azure.mgmt.sql.models.DataMaskingPolicyProperties": "Microsoft.Sql.DataMaskingPolicyProperties",
         "azure.mgmt.sql.models.DataMaskingRule": "Microsoft.Sql.DataMaskingRule",
         "azure.mgmt.sql.models.DataMaskingRuleProperties": "Microsoft.Sql.DataMaskingRuleProperties",
+        "azure.mgmt.sql.models.DataSyncParticipantIdentity": "Microsoft.Sql.DataSyncParticipantIdentity",
+        "azure.mgmt.sql.models.DataSyncParticipantUserAssignedIdentity": "Microsoft.Sql.DataSyncParticipantUserAssignedIdentity",
         "azure.mgmt.sql.models.DataWarehouseUserActivities": "Microsoft.Sql.DataWarehouseUserActivities",
         "azure.mgmt.sql.models.DataWarehouseUserActivitiesProperties": "Microsoft.Sql.DataWarehouseUserActivitiesProperties",
         "azure.mgmt.sql.models.DeletedServer": "Microsoft.Sql.DeletedServer",
@@ -96,6 +98,7 @@
         "azure.mgmt.sql.models.EndpointCertificateProperties": "Microsoft.Sql.EndpointCertificateProperties",
         "azure.mgmt.sql.models.EndpointDependency": "Microsoft.Sql.EndpointDependency",
         "azure.mgmt.sql.models.EndpointDetail": "Microsoft.Sql.EndpointDetail",
+        "azure.mgmt.sql.models.EndpointTrustedRootCertificateInfo": "Microsoft.Sql.EndpointTrustedRootCertificateInfo",
         "azure.mgmt.sql.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
         "azure.mgmt.sql.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
         "azure.mgmt.sql.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
@@ -502,6 +505,7 @@
         "azure.mgmt.sql.models.LinkRole": "Microsoft.Sql.LinkRole",
         "azure.mgmt.sql.models.FailoverModeType": "Microsoft.Sql.FailoverModeType",
         "azure.mgmt.sql.models.SeedingModeType": "Microsoft.Sql.SeedingModeType",
+        "azure.mgmt.sql.models.LinkModeType": "Microsoft.Sql.LinkModeType",
         "azure.mgmt.sql.models.ReplicaSynchronizationHealth": "Microsoft.Sql.ReplicaSynchronizationHealth",
         "azure.mgmt.sql.models.ReplicaConnectedState": "Microsoft.Sql.ReplicaConnectedState",
         "azure.mgmt.sql.models.FailoverType": "Microsoft.Sql.FailoverType",
@@ -559,6 +563,7 @@
         "azure.mgmt.sql.models.ManagedShortTermRetentionPolicyName": "Microsoft.Sql.ManagedShortTermRetentionPolicyName",
         "azure.mgmt.sql.models.SecurityAlertPolicyState": "Microsoft.Sql.SecurityAlertPolicyState",
         "azure.mgmt.sql.models.ManagedInstanceAdministratorType": "Microsoft.Sql.ManagedInstanceAdministratorType",
+        "azure.mgmt.sql.models.ManagedInstanceAdministratorPrincipalType": "Microsoft.Sql.ManagedInstanceAdministratorPrincipalType",
         "azure.mgmt.sql.models.AdministratorName": "Microsoft.Sql.AdministratorName",
         "azure.mgmt.sql.models.AuthenticationName": "Microsoft.Sql.AuthenticationName",
         "azure.mgmt.sql.models.DtcName": "Microsoft.Sql.DtcName",
@@ -574,6 +579,7 @@
         "azure.mgmt.sql.models.SyncMemberDbType": "Microsoft.Sql.SyncMemberDbType",
         "azure.mgmt.sql.models.SyncConflictResolutionPolicy": "Microsoft.Sql.SyncConflictResolutionPolicy",
         "azure.mgmt.sql.models.SyncGroupState": "Microsoft.Sql.SyncGroupState",
+        "azure.mgmt.sql.models.DataSyncParticipantIdentityType": "Microsoft.Sql.DataSyncParticipantIdentityType",
         "azure.mgmt.sql.models.SyncGroupLogType": "Microsoft.Sql.SyncGroupLogType",
         "azure.mgmt.sql.models.SyncGroupsType": "Microsoft.Sql.SyncGroupsType",
         "azure.mgmt.sql.models.SyncDirection": "Microsoft.Sql.SyncDirection",
@@ -1702,5 +1708,5 @@
         "azure.mgmt.sql.operations.CapabilitiesOperations.list_by_location": "Microsoft.Sql.CapabilitiesOperationGroup.listByLocation",
         "azure.mgmt.sql.aio.operations.CapabilitiesOperations.list_by_location": "Microsoft.Sql.CapabilitiesOperationGroup.listByLocation"
     },
-    "CrossLanguageVersion": "028db855ae66"
+    "CrossLanguageVersion": "8886d50d2900"
 }

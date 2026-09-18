@@ -24,7 +24,10 @@ import pytest
 import uuid
 from typing import Dict
 from devtools_testutils.aio import recorded_by_proxy_async
-from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
+from testpreparer_async import (
+    ContentUnderstandingPreparer,
+    ContentUnderstandingClientTestBaseAsync,
+)
 from azure.ai.contentunderstanding import to_llm_input
 from azure.ai.contentunderstanding.models import (
     ContentAnalyzer,
@@ -80,9 +83,9 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
         # Assertions for categories
         assert categories is not None, "Categories should not be null"
         assert len(categories) == 3, "Should have 3 categories"
-        assert categories["Invoice"].analyzer_id == "prebuilt-invoice", (
-            "Invoice category should route segments to prebuilt-invoice for field extraction"
-        )
+        assert (
+            categories["Invoice"].analyzer_id == "prebuilt-invoice"
+        ), "Invoice category should route segments to prebuilt-invoice for field extraction"
         print(f"[PASS] Content categories defined: {len(categories)} categories (Invoice -> prebuilt-invoice)")
 
         # Validate each category has description
@@ -111,7 +114,7 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
             base_analyzer_id="prebuilt-document",
             description="Custom classifier for financial document categorization",
             config=config,
-            models={"completion": "gpt-4.1"},
+            models={"completion": "gpt-5.2"},
         )
 
         # Assertions for classifier
@@ -206,7 +209,7 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
             base_analyzer_id="prebuilt-document",
             description="Custom classifier for financial document categorization",
             config=config,
-            models={"completion": "gpt-4.1"},
+            models={"completion": "gpt-5.2"},
         )
 
         # Create the classifier
@@ -272,7 +275,7 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
             text = to_llm_input(analyze_result)
             assert isinstance(text, str) and text.strip(), "to_llm_input should return a non-empty string"
             assert text.startswith("---"), "to_llm_input output should start with YAML front matter delimiter"
-            assert "contentType: document" in text, "YAML front matter should declare 'contentType: document'"
+            assert "mimeType: application/pdf" in text, "YAML front matter should declare 'mimeType: application/pdf'"
             segments = getattr(document_content, "segments", None)
             if segments and len(segments) > 1:
                 # Multi-segment classification: per-segment blocks separated by '*****'
@@ -281,9 +284,9 @@ class TestSampleCreateClassifierAsync(ContentUnderstandingClientTestBaseAsync):
                 for segment in segments:
                     cat = getattr(segment, "category", None)
                     if cat:
-                        assert f"category: {cat}" in text, (
-                            f"Segment category '{cat}' should appear in YAML front matter"
-                        )
+                        assert (
+                            f"category: {cat}" in text
+                        ), f"Segment category '{cat}' should appear in YAML front matter"
             print(f"[PASS] to_llm_input output validated ({len(text)} characters)")
 
             # Cleanup

@@ -19,6 +19,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
 from settings.testcase import BlobPreparer
+from test_helpers import _deterministic_urandom
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.blob import BlobType
@@ -327,7 +328,8 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        await blob.upload_blob(content, max_concurrency=3)
+        with mock.patch("os.urandom", _deterministic_urandom()):
+            await blob.upload_blob(content, max_concurrency=3)
         blob_content = await (await blob.download_blob(max_concurrency=3)).readall()
 
         # Assert
@@ -348,7 +350,8 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        await blob.upload_blob(content, max_concurrency=3)
+        with mock.patch("os.urandom", _deterministic_urandom()):
+            await blob.upload_blob(content, max_concurrency=3)
         blob_content = await (await blob.download_blob(max_concurrency=3)).readall()
 
         # Assert
@@ -369,7 +372,8 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        await blob.upload_blob(content, length=self.config.max_single_put_size + 53, max_concurrency=3)
+        with mock.patch("os.urandom", _deterministic_urandom()):
+            await blob.upload_blob(content, length=self.config.max_single_put_size + 53, max_concurrency=3)
         blob_content = await (await blob.download_blob(max_concurrency=3)).readall()
 
         # Assert
@@ -412,7 +416,8 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        await blob.upload_blob(content[2:], length=self.config.max_single_put_size + 5, max_concurrency=1)
+        with mock.patch("os.urandom", _deterministic_urandom()):
+            await blob.upload_blob(content[2:], length=self.config.max_single_put_size + 5, max_concurrency=1)
         blob_content = await (await blob.download_blob()).readall()
 
         # Assert
@@ -452,7 +457,8 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        await blob.upload_blob(content, max_concurrency=1)
+        with mock.patch("os.urandom", _deterministic_urandom()):
+            await blob.upload_blob(content, max_concurrency=1)
         blob_content = await (await blob.download_blob()).readall()
 
         # Assert

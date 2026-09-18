@@ -45,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01-preview/workspaceManagerMembers/CreateOrUpdateWorkspaceManagerMember.json
+# x-ms-original-file: 2025-10-01-preview/workspaceManagerMembers/CreateOrUpdateWorkspaceManagerMember.json
 if __name__ == "__main__":
     main()

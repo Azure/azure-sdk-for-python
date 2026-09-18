@@ -8,7 +8,6 @@
 from checkers.removed_method_overloads_checker import RemovedMethodOverloadChecker
 from checkers.added_method_overloads_checker import AddedMethodOverloadChecker
 from checkers.changed_function_return_type_checker import ChangedFunctionReturnTypeChecker
-from checkers.unflattened_models_checker import UnflattenedModelsChecker
 
 CHECKERS = [
     RemovedMethodOverloadChecker(),
@@ -16,7 +15,4 @@ CHECKERS = [
     ChangedFunctionReturnTypeChecker(),
 ]
 
-POST_PROCESSING_CHECKERS = [
-    # Add any post-processing checkers here
-    UnflattenedModelsChecker(),
-]
+POST_PROCESSING_CHECKERS = []

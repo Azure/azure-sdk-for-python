@@ -1,8 +1,20 @@
 # Release History
 
-## 12.18.0b1 (Unreleased)
+## 12.19.0b1 (Unreleased)
 
 ### Features Added
+
+## 12.18.0b1 (2026-08-10)
+
+### Features Added
+- Added support for service version 2026-10-06.
+
+### Other Changes
+- Migrated generated code to use the new TypeSpec generator.
+
+### Bugs Fixed
+- Return type of get_access_policies is now the publicly exposed AccessPolicy model. Previously we were leaking the internal generated AccessPolicy model without exposing it in the api.
+
 
 ## 12.17.0 (2026-06-08)
 

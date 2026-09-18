@@ -1,24 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Invocations protocol for Azure AI Hosted Agents.
+"""Invocations-protocol host for Azure AI Hosted Agents, exposing ``InvocationAgentServerHost``."""
 
-This package provides an invocation protocol host as a subclass of
-:class:`~azure.ai.agentserver.core.AgentServerHost`.
-
-Quick start::
-
-    from azure.ai.agentserver.invocations import InvocationAgentServerHost
-    from starlette.responses import JSONResponse
-
-    app = InvocationAgentServerHost()
-
-    @app.invoke_handler
-    async def handle(request):
-        return JSONResponse({"ok": True})
-
-    app.run()
-"""
+# NOTE: keep this module docstring on a SINGLE line. The apiview-stub-generator
+# (apistub, pinned via eng/apiview_reqs.txt) namespace detector mis-parses a
+# multi-line module docstring in a package __init__ — a closing triple-quote on
+# its own line leaves its parser stuck in "docstring" mode, so the package
+# namespace resolves to "" and api.md generation breaks. The public API is
+# enumerated in ``__all__`` below.
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from ._invocation import InvocationAgentServerHost

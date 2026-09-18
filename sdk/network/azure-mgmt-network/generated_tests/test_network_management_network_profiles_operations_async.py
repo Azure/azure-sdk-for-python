@@ -26,7 +26,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.network_profiles.get(
             resource_group_name=resource_group.name,
             network_profile_name="str",
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -110,6 +110,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -123,7 +124,13 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                         "idleTimeoutInMinutes": 0,
                                                                         "ipAddress": "str",
                                                                         "ipConfiguration": ...,
-                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "ipTags": [
+                                                                            {
+                                                                                "firstPartyServiceTagId": "str",
+                                                                                "ipTagType": "str",
+                                                                                "tag": "str",
+                                                                            }
+                                                                        ],
                                                                         "linkedPublicIPAddress": ...,
                                                                         "migrationPhase": "str",
                                                                         "natGateway": {
@@ -133,6 +140,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -154,6 +162,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                         "publicIPPrefix": {"id": "str"},
                                                                         "resourceGuid": "str",
                                                                         "servicePublicIPAddress": ...,
+                                                                        "upgradedToV2": bool,
                                                                     },
                                                                     "sku": {"name": "str", "tier": "str"},
                                                                     "tags": {"str": "str"},
@@ -454,6 +463,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -482,6 +494,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -495,6 +508,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -532,6 +546,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -554,6 +569,12 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            }
+                                                                                                        },
+                                                                                                        "enableConnectionTracking": bool,
                                                                                                         "gatewayLoadBalancer": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -592,6 +613,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "ddosSettings": {
+                                                                                                                    "ddosCustomPolicy": {
+                                                                                                                        "id": "str"
+                                                                                                                    },
                                                                                                                     "ddosProtectionPlan": {
                                                                                                                         "id": "str"
                                                                                                                     },
@@ -620,6 +644,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                 },
                                                                                                                 "ipTags": [
                                                                                                                     {
+                                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                                         "ipTagType": "str",
                                                                                                                         "tag": "str",
                                                                                                                     }
@@ -633,6 +658,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
                                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                                        "nat64": "str",
                                                                                                                         "provisioningState": "str",
                                                                                                                         "publicIpAddresses": [
                                                                                                                             {
@@ -686,6 +712,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                 },
                                                                                                                 "resourceGuid": "str",
                                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                                "upgradedToV2": bool,
                                                                                                             },
                                                                                                             "sku": {
                                                                                                                 "name": "str",
@@ -761,6 +788,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "billingSku": "str",
                                                                                 "customDnsConfigs": [
                                                                                     {
                                                                                         "fqdn": "str",
@@ -866,6 +894,12 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                }
+                                                                                            },
+                                                                                            "enableConnectionTracking": bool,
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -896,6 +930,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -924,6 +961,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                     },
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -937,6 +975,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -990,6 +1029,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -1042,6 +1082,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                             "type": "str",
                                                                                                         }
                                                                                                     ],
+                                                                                                    "billingSku": "str",
                                                                                                     "customDnsConfigs": [
                                                                                                         {
                                                                                                             "fqdn": "str",
@@ -1154,6 +1195,12 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        }
+                                                                                                    },
+                                                                                                    "enableConnectionTracking": bool,
                                                                                                     "gatewayLoadBalancer": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -1184,6 +1231,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "ddosSettings": {
+                                                                                                                "ddosCustomPolicy": {
+                                                                                                                    "id": "str"
+                                                                                                                },
                                                                                                                 "ddosProtectionPlan": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -1212,6 +1262,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                             },
                                                                                                             "ipTags": [
                                                                                                                 {
+                                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                                     "ipTagType": "str",
                                                                                                                     "tag": "str",
                                                                                                                 }
@@ -1225,6 +1276,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
                                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                                    "nat64": "str",
                                                                                                                     "provisioningState": "str",
                                                                                                                     "publicIpAddresses": [
                                                                                                                         {
@@ -1278,6 +1330,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                             },
                                                                                                             "resourceGuid": "str",
                                                                                                             "servicePublicIPAddress": ...,
+                                                                                                            "upgradedToV2": bool,
                                                                                                         },
                                                                                                         "sku": {
                                                                                                             "name": "str",
@@ -1467,6 +1520,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "ddosSettings": {
+                                                                                                                "ddosCustomPolicy": {
+                                                                                                                    "id": "str"
+                                                                                                                },
                                                                                                                 "ddosProtectionPlan": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -1495,6 +1551,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                             },
                                                                                                             "ipTags": [
                                                                                                                 {
+                                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                                     "ipTagType": "str",
                                                                                                                     "tag": "str",
                                                                                                                 }
@@ -1508,6 +1565,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
                                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                                    "nat64": "str",
                                                                                                                     "provisioningState": "str",
                                                                                                                     "publicIpAddresses": [
                                                                                                                         {
@@ -1561,6 +1619,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                             },
                                                                                                             "resourceGuid": "str",
                                                                                                             "servicePublicIPAddress": ...,
+                                                                                                            "upgradedToV2": bool,
                                                                                                         },
                                                                                                         "sku": {
                                                                                                             "name": "str",
@@ -1685,6 +1744,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "billingSku": "str",
                                                                 "customDnsConfigs": [
                                                                     {"fqdn": "str", "ipAddresses": ["str"]}
                                                                 ],
@@ -1906,6 +1966,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -1934,6 +1997,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -1947,6 +2011,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -1998,6 +2063,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -2020,6 +2086,12 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "ddosSettings": {
+                                                                                                                "ddosCustomPolicy": {
+                                                                                                                    "id": "str"
+                                                                                                                }
+                                                                                                            },
+                                                                                                            "enableConnectionTracking": bool,
                                                                                                             "gatewayLoadBalancer": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -2058,6 +2130,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
                                                                                                                     "ddosSettings": {
+                                                                                                                        "ddosCustomPolicy": {
+                                                                                                                            "id": "str"
+                                                                                                                        },
                                                                                                                         "ddosProtectionPlan": {
                                                                                                                             "id": "str"
                                                                                                                         },
@@ -2086,6 +2161,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                     },
                                                                                                                     "ipTags": [
                                                                                                                         {
+                                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                                             "ipTagType": "str",
                                                                                                                             "tag": "str",
                                                                                                                         }
@@ -2099,6 +2175,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
                                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                                            "nat64": "str",
                                                                                                                             "provisioningState": "str",
                                                                                                                             "publicIpAddresses": [
                                                                                                                                 {
@@ -2152,6 +2229,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                     },
                                                                                                                     "resourceGuid": "str",
                                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                                    "upgradedToV2": bool,
                                                                                                                 },
                                                                                                                 "sku": {
                                                                                                                     "name": "str",
@@ -2435,6 +2513,12 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    }
+                                                                                                },
+                                                                                                "enableConnectionTracking": bool,
                                                                                                 "gatewayLoadBalancer": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -2465,6 +2549,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            },
                                                                                                             "ddosProtectionPlan": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -2493,6 +2580,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                         },
                                                                                                         "ipTags": [
                                                                                                             {
+                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                 "ipTagType": "str",
                                                                                                                 "tag": "str",
                                                                                                             }
@@ -2506,6 +2594,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                "nat64": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                                 "publicIpAddresses": [
                                                                                                                     {
@@ -2559,6 +2648,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                         },
                                                                                                         "resourceGuid": "str",
                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                        "upgradedToV2": bool,
                                                                                                     },
                                                                                                     "sku": {
                                                                                                         "name": "str",
@@ -2627,6 +2717,12 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            }
+                                                                                                        },
+                                                                                                        "enableConnectionTracking": bool,
                                                                                                         "gatewayLoadBalancer": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -2665,6 +2761,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "ddosSettings": {
+                                                                                                                    "ddosCustomPolicy": {
+                                                                                                                        "id": "str"
+                                                                                                                    },
                                                                                                                     "ddosProtectionPlan": {
                                                                                                                         "id": "str"
                                                                                                                     },
@@ -2693,6 +2792,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                 },
                                                                                                                 "ipTags": [
                                                                                                                     {
+                                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                                         "ipTagType": "str",
                                                                                                                         "tag": "str",
                                                                                                                     }
@@ -2706,6 +2806,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
                                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                                        "nat64": "str",
                                                                                                                         "provisioningState": "str",
                                                                                                                         "publicIpAddresses": [
                                                                                                                             {
@@ -2759,6 +2860,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                 },
                                                                                                                 "resourceGuid": "str",
                                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                                "upgradedToV2": bool,
                                                                                                             },
                                                                                                             "sku": {
                                                                                                                 "name": "str",
@@ -2948,6 +3050,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "ddosSettings": {
+                                                                                                                    "ddosCustomPolicy": {
+                                                                                                                        "id": "str"
+                                                                                                                    },
                                                                                                                     "ddosProtectionPlan": {
                                                                                                                         "id": "str"
                                                                                                                     },
@@ -2976,6 +3081,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                 },
                                                                                                                 "ipTags": [
                                                                                                                     {
+                                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                                         "ipTagType": "str",
                                                                                                                         "tag": "str",
                                                                                                                     }
@@ -2989,6 +3095,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
                                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                                        "nat64": "str",
                                                                                                                         "provisioningState": "str",
                                                                                                                         "publicIpAddresses": [
                                                                                                                             {
@@ -3042,6 +3149,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                 },
                                                                                                                 "resourceGuid": "str",
                                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                                "upgradedToV2": bool,
                                                                                                             },
                                                                                                             "sku": {
                                                                                                                 "name": "str",
@@ -3133,6 +3241,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                         "name": "str",
                                                         "properties": {
                                                             "disableBgpRoutePropagation": bool,
+                                                            "disablePeeringRoute": "str",
                                                             "provisioningState": "str",
                                                             "resourceGuid": "str",
                                                             "routes": [
@@ -3144,6 +3253,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                         "nextHopType": "str",
                                                                         "addressPrefix": "str",
                                                                         "hasBgpOverride": bool,
+                                                                        "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                         "nextHopIpAddress": "str",
                                                                         "provisioningState": "str",
                                                                     },
@@ -3299,6 +3409,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -3313,7 +3424,11 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                 "ipAddress": "str",
                                                                                 "ipConfiguration": ...,
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -3324,6 +3439,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -3355,6 +3471,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -3669,6 +3786,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -3697,6 +3817,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                     },
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -3710,6 +3831,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -3763,6 +3885,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -3785,6 +3908,12 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "ddosSettings": {
+                                                                                                                    "ddosCustomPolicy": {
+                                                                                                                        "id": "str"
+                                                                                                                    }
+                                                                                                                },
+                                                                                                                "enableConnectionTracking": bool,
                                                                                                                 "gatewayLoadBalancer": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -3823,6 +3952,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
                                                                                                                         "ddosSettings": {
+                                                                                                                            "ddosCustomPolicy": {
+                                                                                                                                "id": "str"
+                                                                                                                            },
                                                                                                                             "ddosProtectionPlan": {
                                                                                                                                 "id": "str"
                                                                                                                             },
@@ -3851,6 +3983,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                         },
                                                                                                                         "ipTags": [
                                                                                                                             {
+                                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                                 "ipTagType": "str",
                                                                                                                                 "tag": "str",
                                                                                                                             }
@@ -3864,6 +3997,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                             "name": "str",
                                                                                                                             "properties": {
                                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                                "nat64": "str",
                                                                                                                                 "provisioningState": "str",
                                                                                                                                 "publicIpAddresses": [
                                                                                                                                     {
@@ -3917,6 +4051,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                         },
                                                                                                                         "resourceGuid": "str",
                                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                                        "upgradedToV2": bool,
                                                                                                                     },
                                                                                                                     "sku": {
                                                                                                                         "name": "str",
@@ -3996,6 +4131,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 "type": "str",
                                                                                             }
                                                                                         ],
+                                                                                        "billingSku": "str",
                                                                                         "customDnsConfigs": [
                                                                                             {
                                                                                                 "fqdn": "str",
@@ -4101,6 +4237,12 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        }
+                                                                                                    },
+                                                                                                    "enableConnectionTracking": bool,
                                                                                                     "gatewayLoadBalancer": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -4131,6 +4273,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "ddosSettings": {
+                                                                                                                "ddosCustomPolicy": {
+                                                                                                                    "id": "str"
+                                                                                                                },
                                                                                                                 "ddosProtectionPlan": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -4159,6 +4304,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                             },
                                                                                                             "ipTags": [
                                                                                                                 {
+                                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                                     "ipTagType": "str",
                                                                                                                     "tag": "str",
                                                                                                                 }
@@ -4172,6 +4318,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
                                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                                    "nat64": "str",
                                                                                                                     "provisioningState": "str",
                                                                                                                     "publicIpAddresses": [
                                                                                                                         {
@@ -4225,6 +4372,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                             },
                                                                                                             "resourceGuid": "str",
                                                                                                             "servicePublicIPAddress": ...,
+                                                                                                            "upgradedToV2": bool,
                                                                                                         },
                                                                                                         "sku": {
                                                                                                             "name": "str",
@@ -4281,6 +4429,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                     "type": "str",
                                                                                                                 }
                                                                                                             ],
+                                                                                                            "billingSku": "str",
                                                                                                             "customDnsConfigs": [
                                                                                                                 {
                                                                                                                     "fqdn": "str",
@@ -4395,6 +4544,12 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "ddosSettings": {
+                                                                                                                "ddosCustomPolicy": {
+                                                                                                                    "id": "str"
+                                                                                                                }
+                                                                                                            },
+                                                                                                            "enableConnectionTracking": bool,
                                                                                                             "gatewayLoadBalancer": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -4433,6 +4588,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
                                                                                                                     "ddosSettings": {
+                                                                                                                        "ddosCustomPolicy": {
+                                                                                                                            "id": "str"
+                                                                                                                        },
                                                                                                                         "ddosProtectionPlan": {
                                                                                                                             "id": "str"
                                                                                                                         },
@@ -4461,6 +4619,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                     },
                                                                                                                     "ipTags": [
                                                                                                                         {
+                                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                                             "ipTagType": "str",
                                                                                                                             "tag": "str",
                                                                                                                         }
@@ -4474,6 +4633,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
                                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                                            "nat64": "str",
                                                                                                                             "provisioningState": "str",
                                                                                                                             "publicIpAddresses": [
                                                                                                                                 {
@@ -4527,6 +4687,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                     },
                                                                                                                     "resourceGuid": "str",
                                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                                    "upgradedToV2": bool,
                                                                                                                 },
                                                                                                                 "sku": {
                                                                                                                     "name": "str",
@@ -4718,6 +4879,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
                                                                                                                     "ddosSettings": {
+                                                                                                                        "ddosCustomPolicy": {
+                                                                                                                            "id": "str"
+                                                                                                                        },
                                                                                                                         "ddosProtectionPlan": {
                                                                                                                             "id": "str"
                                                                                                                         },
@@ -4746,6 +4910,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                     },
                                                                                                                     "ipTags": [
                                                                                                                         {
+                                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                                             "ipTagType": "str",
                                                                                                                             "tag": "str",
                                                                                                                         }
@@ -4759,6 +4924,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
                                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                                            "nat64": "str",
                                                                                                                             "provisioningState": "str",
                                                                                                                             "publicIpAddresses": [
                                                                                                                                 {
@@ -4812,6 +4978,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                     },
                                                                                                                     "resourceGuid": "str",
                                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                                    "upgradedToV2": bool,
                                                                                                                 },
                                                                                                                 "sku": {
                                                                                                                     "name": "str",
@@ -4936,6 +5103,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                 "type": "str",
                                                                             }
                                                                         ],
+                                                                        "billingSku": "str",
                                                                         "customDnsConfigs": [
                                                                             {"fqdn": "str", "ipAddresses": ["str"]}
                                                                         ],
@@ -5165,6 +5333,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            },
                                                                                                             "ddosProtectionPlan": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -5193,6 +5364,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                         },
                                                                                                         "ipTags": [
                                                                                                             {
+                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                 "ipTagType": "str",
                                                                                                                 "tag": "str",
                                                                                                             }
@@ -5206,6 +5378,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                "nat64": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                                 "publicIpAddresses": [
                                                                                                                     {
@@ -5259,6 +5432,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                         },
                                                                                                         "resourceGuid": "str",
                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                        "upgradedToV2": bool,
                                                                                                     },
                                                                                                     "sku": {
                                                                                                         "name": "str",
@@ -5283,6 +5457,12 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "ddosSettings": {
+                                                                                                                        "ddosCustomPolicy": {
+                                                                                                                            "id": "str"
+                                                                                                                        }
+                                                                                                                    },
+                                                                                                                    "enableConnectionTracking": bool,
                                                                                                                     "gatewayLoadBalancer": {
                                                                                                                         "id": "str"
                                                                                                                     },
@@ -5321,6 +5501,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
                                                                                                                             "ddosSettings": {
+                                                                                                                                "ddosCustomPolicy": {
+                                                                                                                                    "id": "str"
+                                                                                                                                },
                                                                                                                                 "ddosProtectionPlan": {
                                                                                                                                     "id": "str"
                                                                                                                                 },
@@ -5349,6 +5532,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                             },
                                                                                                                             "ipTags": [
                                                                                                                                 {
+                                                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                                                     "ipTagType": "str",
                                                                                                                                     "tag": "str",
                                                                                                                                 }
@@ -5362,6 +5546,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                                 "name": "str",
                                                                                                                                 "properties": {
                                                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                                                    "nat64": "str",
                                                                                                                                     "provisioningState": "str",
                                                                                                                                     "publicIpAddresses": [
                                                                                                                                         {
@@ -5415,6 +5600,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                             },
                                                                                                                             "resourceGuid": "str",
                                                                                                                             "servicePublicIPAddress": ...,
+                                                                                                                            "upgradedToV2": bool,
                                                                                                                         },
                                                                                                                         "sku": {
                                                                                                                             "name": "str",
@@ -5702,6 +5888,12 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            }
+                                                                                                        },
+                                                                                                        "enableConnectionTracking": bool,
                                                                                                         "gatewayLoadBalancer": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -5740,6 +5932,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "ddosSettings": {
+                                                                                                                    "ddosCustomPolicy": {
+                                                                                                                        "id": "str"
+                                                                                                                    },
                                                                                                                     "ddosProtectionPlan": {
                                                                                                                         "id": "str"
                                                                                                                     },
@@ -5768,6 +5963,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                 },
                                                                                                                 "ipTags": [
                                                                                                                     {
+                                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                                         "ipTagType": "str",
                                                                                                                         "tag": "str",
                                                                                                                     }
@@ -5781,6 +5977,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
                                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                                        "nat64": "str",
                                                                                                                         "provisioningState": "str",
                                                                                                                         "publicIpAddresses": [
                                                                                                                             {
@@ -5834,6 +6031,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                 },
                                                                                                                 "resourceGuid": "str",
                                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                                "upgradedToV2": bool,
                                                                                                             },
                                                                                                             "sku": {
                                                                                                                 "name": "str",
@@ -5904,6 +6102,12 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "ddosSettings": {
+                                                                                                                    "ddosCustomPolicy": {
+                                                                                                                        "id": "str"
+                                                                                                                    }
+                                                                                                                },
+                                                                                                                "enableConnectionTracking": bool,
                                                                                                                 "gatewayLoadBalancer": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -5942,6 +6146,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
                                                                                                                         "ddosSettings": {
+                                                                                                                            "ddosCustomPolicy": {
+                                                                                                                                "id": "str"
+                                                                                                                            },
                                                                                                                             "ddosProtectionPlan": {
                                                                                                                                 "id": "str"
                                                                                                                             },
@@ -5970,6 +6177,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                         },
                                                                                                                         "ipTags": [
                                                                                                                             {
+                                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                                 "ipTagType": "str",
                                                                                                                                 "tag": "str",
                                                                                                                             }
@@ -5983,6 +6191,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                             "name": "str",
                                                                                                                             "properties": {
                                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                                "nat64": "str",
                                                                                                                                 "provisioningState": "str",
                                                                                                                                 "publicIpAddresses": [
                                                                                                                                     {
@@ -6036,6 +6245,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                         },
                                                                                                                         "resourceGuid": "str",
                                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                                        "upgradedToV2": bool,
                                                                                                                     },
                                                                                                                     "sku": {
                                                                                                                         "name": "str",
@@ -6227,6 +6437,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
                                                                                                                         "ddosSettings": {
+                                                                                                                            "ddosCustomPolicy": {
+                                                                                                                                "id": "str"
+                                                                                                                            },
                                                                                                                             "ddosProtectionPlan": {
                                                                                                                                 "id": "str"
                                                                                                                             },
@@ -6255,6 +6468,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                         },
                                                                                                                         "ipTags": [
                                                                                                                             {
+                                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                                 "ipTagType": "str",
                                                                                                                                 "tag": "str",
                                                                                                                             }
@@ -6268,6 +6482,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                             "name": "str",
                                                                                                                             "properties": {
                                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                                "nat64": "str",
                                                                                                                                 "provisioningState": "str",
                                                                                                                                 "publicIpAddresses": [
                                                                                                                                     {
@@ -6321,6 +6536,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                         },
                                                                                                                         "resourceGuid": "str",
                                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                                        "upgradedToV2": bool,
                                                                                                                     },
                                                                                                                     "sku": {
                                                                                                                         "name": "str",
@@ -6414,6 +6630,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "disableBgpRoutePropagation": bool,
+                                                                    "disablePeeringRoute": "str",
                                                                     "provisioningState": "str",
                                                                     "resourceGuid": "str",
                                                                     "routes": [
@@ -6425,6 +6642,9 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                                                                                 "nextHopType": "str",
                                                                                 "addressPrefix": "str",
                                                                                 "hasBgpOverride": bool,
+                                                                                "nextHop": {
+                                                                                    "nextHopIpAddresses": ["str"]
+                                                                                },
                                                                                 "nextHopIpAddress": "str",
                                                                                 "provisioningState": "str",
                                                                             },
@@ -6523,7 +6743,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -6536,7 +6756,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             network_profile_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -6549,7 +6769,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
             await self.client.network_profiles.begin_delete(
                 resource_group_name=resource_group.name,
                 network_profile_name="str",
-                api_version="2025-05-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -6561,7 +6781,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
     async def test_network_profiles_list(self, resource_group):
         response = self.client.network_profiles.list(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -6571,7 +6791,7 @@ class TestNetworkManagementNetworkProfilesOperationsAsync(AzureMgmtRecordedTestC
     @recorded_by_proxy_async
     async def test_network_profiles_list_all(self, resource_group):
         response = self.client.network_profiles.list_all(
-            api_version="2025-05-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

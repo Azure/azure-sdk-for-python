@@ -7,7 +7,7 @@
 import gzip
 import unittest
 import zlib
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from azure.monitor.opentelemetry._browser_sdk_loader._config import BrowserSDKConfig
 from azure.monitor.opentelemetry._browser_sdk_loader import snippet_injector as snippet_injector_module
@@ -26,7 +26,10 @@ class TestWebSnippetInjector(unittest.TestCase):
         """Set up test fixtures."""
         self.config = BrowserSDKConfig(
             enabled=True,
-            connection_string="InstrumentationKey=12345678-1234-1234-1234-123456789012;IngestionEndpoint=https://test.in.applicationinsights.azure.com/",
+            connection_string=(
+                "InstrumentationKey=12345678-1234-1234-1234-123456789012;"
+                + "IngestionEndpoint=https://test.in.applicationinsights.azure.com/"
+            ),
         )
         self.injector = WebSnippetInjector(self.config)
 

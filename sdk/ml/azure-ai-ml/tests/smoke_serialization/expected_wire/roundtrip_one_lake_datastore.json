@@ -1,0 +1,22 @@
+{
+  "properties": {
+    "artifact": {
+      "artifactName": "smoke-lakehouse",
+      "artifactType": "LakeHouse"
+    },
+    "credentials": {
+      "authorityUrl": "https://login.microsoftonline.com",
+      "clientId": "11111111-1111-1111-1111-111111111111",
+      "credentialsType": "ServicePrincipal",
+      "secrets": {
+        "clientSecret": "smoke-secret",
+        "secretsType": "ServicePrincipal"
+      },
+      "tenantId": "00000000-0000-0000-0000-000000000000"
+    },
+    "datastoreType": "OneLake",
+    "endpoint": "onelake.dfs.fabric.microsoft.com",
+    "oneLakeWorkspaceName": "smoke-onelake-workspace",
+    "tags": {}
+  }
+}

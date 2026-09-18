@@ -1,0 +1,44 @@
+# cspell configuration for this service. Words are case-insensitive and
+# kept sorted alphabetically. The import of the central config is required.
+import:
+  - ../../.vscode/cspell.json
+words:
+  - abril
+  - año
+  - BRCPF
+  - Coumadin
+  - dann
+  - Detta
+  - dinero
+  - documento
+  - dokument
+  - engelska
+  - escrito
+  - ESDNI
+  - était
+  - EUGPS
+  - Fahrt
+  - fhir
+  - Forndexter
+  - Fusce
+  - gegründet
+  - Hola
+  - IDRG
+  - IFIC
+  - Inigo
+  - italiano
+  - L'hôtel
+  - n'était
+  - naam
+  - nach
+  - PLREGON
+  - scritto
+  - skrivet
+  - Sprache
+  - tengo
+  - UMLS
+  - USUK
+  - verfasst
+  - wurde
+  - zalgo
+  - Zocor

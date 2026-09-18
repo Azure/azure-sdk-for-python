@@ -413,7 +413,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
             user = client.get_ledger_user(user_id)
             assert user["userId"] == user_id
-            assert user["assignedRoles"] == ["Contributor", "Reader"]
+            assert sorted(user["assignedRoles"]) == ["Contributor", "Reader"]
 
             client.delete_ledger_user(user_id)
 
@@ -584,23 +584,30 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
         role_name = "modify"
 
-        client.create_user_defined_role({"roles": [{"role_name": role_name, "role_actions": ["/content/read"]}]})
+        # Clean up in case role exists from a previous run
+        try:
+            client.delete_user_defined_role_stable(role_name=role_name)
+            time.sleep(3)
+        except exceptions.HttpResponseError:
+            pass
+
+        client.create_user_defined_role_stable({"roles": [{"role_name": role_name, "role_actions": ["/content/read"]}]})
         time.sleep(3)
 
-        roles = client.get_user_defined_role(role_name=role_name)
-        assert roles.roles[0]["role_name"] == role_name
-        assert roles.roles[0]["role_actions"] == ["/content/read"]
+        role_result = client.get_user_defined_role(role_name=role_name)
+        assert role_result["roles"][0]["role_name"] == role_name
+        assert role_result["roles"][0]["role_actions"] == ["/content/read"]
 
-        client.update_user_defined_role(
+        client.update_user_defined_role_stable(
             {"roles": [{"role_name": role_name, "role_actions": ["/content/write", "/content/read"]}]}
         )
         time.sleep(3)
 
-        roles = client.get_user_defined_role(role_name=role_name)
-        assert roles.roles[0]["role_name"] == role_name
-        assert roles.roles[0]["role_actions"] == ["/content/read", "/content/write"]
+        role_result = client.get_user_defined_role(role_name=role_name)
+        assert role_result["roles"][0]["role_name"] == role_name
+        assert sorted(role_result["roles"][0]["role_actions"]) == ["/content/read", "/content/write"]
 
-        client.delete_user_defined_role(role_name=role_name)
+        client.delete_user_defined_role_stable(role_name=role_name)
         time.sleep(3)
 
     @ConfidentialLedgerPreparer()

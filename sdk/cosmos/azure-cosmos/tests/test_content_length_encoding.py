@@ -1,27 +1,12 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-"""Regression tests for the Content-Length header computation.
-
-The SDK previously computed ``Content-Length`` from ``len(request.data)`` —
-the number of Unicode code points in the JSON string — instead of the
-UTF-8 byte length that actually goes on the wire. For any non-ASCII
-payload that under-counted the body by the number of multi-byte
-characters, which can cause downstream HTTP receivers to truncate the
-body, reject the request, or mis-frame the next keep-alive request.
-
-Every assertion in this file exercises the actual production code path
-in ``_synchronized_request.SynchronizedRequest`` or
-``_asynchronous_request.AsynchronousRequest`` by patching the retry
-layer and inspecting the request object the SDK would have put on the
-wire. A previous iteration of this file also contained "mirror" tests
-that re-implemented the production formula locally — those have been
-removed because they could not catch a production regression (they
-only verified that ``len(s.encode("utf-8"))`` works, which is a Python
-built-in).
-"""
+"""Tests that the Content-Length header on outgoing requests is the
+UTF-8 byte count of the body, not the number of characters."""
 import unittest
 from unittest import mock
+
+import pytest
 
 from azure.cosmos import _synchronized_request, http_constants
 from azure.cosmos.aio import _asynchronous_request
@@ -29,22 +14,10 @@ from azure.cosmos.documents import _OperationType
 from azure.cosmos.http_constants import HttpHeaders
 
 
-# Payload matrix covering the four interesting char-vs-byte cases. Each
-# str payload is named by the most divergent character it contains.
-# The 4-byte emoji case maximizes the difference between ``len(s)``
-# (the old, buggy formula) and ``len(s.encode("utf-8"))`` (the new,
-# correct formula), so a regression that reverts the fix will fail
-# loudest on that case.
-#
-# Subtlety on why the payloads are pre-serialized JSON strings rather
-# than dicts: the SDK's ``_request_body_from_data`` uses
-# ``json.dumps(data, separators=(",", ":"))`` with default
-# ``ensure_ascii=True``. That means dicts containing multi-byte chars
-# get escaped to pure ASCII (e.g. ``"é"`` -> ``"\\u00e9"``) *before*
-# Content-Length is computed — the byte-length code path is never
-# actually exercised. The path that matters is when a customer passes
-# a pre-serialized string, which ``_request_body_from_data`` returns
-# unchanged. That is the path these tests exercise.
+# Payloads chosen so the byte count differs from the character count
+# by an increasing amount: 1, 2, 3, then 4 bytes per non-ASCII char.
+# The string forms are passed as-is (not as dicts) because that's the
+# input shape that exercises the byte-count code path.
 _STR_PAYLOADS = [
     ("ascii_baseline", '{"name":"hello"}'),       # 1 byte per char
     ("two_byte_latin", '{"name":"café"}'),        # 2-byte 'é'
@@ -54,6 +27,8 @@ _STR_PAYLOADS = [
 
 
 class _DummyRequestParams:
+    """Stand-in for RequestObject with hedging disabled and a plain item
+    create, so requests reach the mocked executor directly."""
     def __init__(self):
         self.availability_strategy = None
         self.is_hedging_request = False
@@ -63,23 +38,36 @@ class _DummyRequestParams:
 
 
 class _DummyGlobalEndpointManager:
+    """Endpoint manager stub reporting per-partition failover as off."""
     @staticmethod
     def is_per_partition_automatic_failover_enabled():
         return False
 
 
 class _DummyRequest:
+    """Minimal HttpRequest stand-in capturing body and headers."""
     def __init__(self):
         self.headers = {}
         self.data = None
 
 
+class _DummyClient:
+    """Client stub with the compact UTF-8 option off, so these tests cover
+    the default serialization path."""
+    _enable_compact_utf8_item_writes = False
+
+
+# These tests need no emulator, but the Cosmos CI lane selects tests with
+# "-m cosmosEmulator" (see eng/pipelines/templates/stages/cosmos-sdk-client.yml),
+# so an unmarked test is silently deselected and would never run.
+@pytest.mark.cosmosEmulator
 class TestContentLengthWiringSync(unittest.TestCase):
-    """Sync path: ``SynchronizedRequest`` → ``Execute`` should produce a
-    request whose ``Content-Length`` header equals the UTF-8 byte count
-    of the serialized body (not the code-point count)."""
+    """Checks the sync request path sets Content-Length to the byte
+    count of the body."""
 
     def _capture_outgoing_request(self, request_data):
+        """Run one request through the sync path with the retry executor
+        mocked out, returning the body and Content-Length that would be sent."""
         params = _DummyRequestParams()
         manager = _DummyGlobalEndpointManager()
         request = _DummyRequest()
@@ -96,7 +84,7 @@ class TestContentLengthWiringSync(unittest.TestCase):
             _synchronized_request._retry_utility, "Execute", side_effect=_fake_execute
         ):
             _synchronized_request.SynchronizedRequest(
-                client=object(),
+                client=_DummyClient(),
                 request_params=params,
                 global_endpoint_manager=manager,
                 connection_policy=object(),
@@ -107,10 +95,9 @@ class TestContentLengthWiringSync(unittest.TestCase):
         return captured
 
     def test_str_bodies_set_utf8_byte_content_length(self):
-        """For each payload in the byte-divergence matrix, the
-        ``Content-Length`` header the SDK puts on the wire must equal
-        the UTF-8 byte count of the JSON-serialized body. For the emoji
-        case in particular this exceeds the code-point count by 3×."""
+        """For each payload, Content-Length equals the UTF-8 byte count
+        of the body. For the multi-byte cases it must also differ from
+        the character count."""
         for label, payload in _STR_PAYLOADS:
             with self.subTest(payload=label):
                 captured = self._capture_outgoing_request(payload)
@@ -118,24 +105,38 @@ class TestContentLengthWiringSync(unittest.TestCase):
                 self.assertIsInstance(body, str)
                 expected_bytes = len(body.encode("utf-8"))
                 self.assertEqual(captured["content_length"], expected_bytes)
-                # Explicitly assert the value differs from the buggy
-                # formula for the multi-byte cases. ASCII is excluded
-                # because for ASCII both formulas agree.
+                # ASCII is the same in both counts, so only check the
+                # difference for the multi-byte cases.
                 if label != "ascii_baseline":
                     self.assertNotEqual(captured["content_length"], len(body))
 
     def test_none_body_sets_content_length_zero(self):
-        """Covers the ``elif body is None`` branch in production: a
-        request with no body should still get ``Content-Length: 0``."""
+        """A request with no body should still get Content-Length 0."""
         captured = self._capture_outgoing_request(None)
         self.assertEqual(captured["content_length"], 0)
 
+    def test_bytes_body_is_coerced_to_none_and_content_length_zero(self):
+        """A bytes payload is currently converted to None inside the
+        SDK, so Content-Length ends up as 0. This test pins the current
+        behavior so any change to bytes handling is forced to be deliberate."""
+        captured = self._capture_outgoing_request(b'{"x":1}')
+        self.assertIsNone(captured["body"])
+        self.assertEqual(captured["content_length"], 0)
 
+    def test_bytearray_body_is_coerced_to_none_and_content_length_zero(self):
+        """Same contract as for bytes. Bytearray inputs are also
+        converted to None and get Content-Length 0."""
+        captured = self._capture_outgoing_request(bytearray(b'{"x":1}'))
+        self.assertIsNone(captured["body"])
+        self.assertEqual(captured["content_length"], 0)
+
+
+@pytest.mark.cosmosEmulator
 class TestContentLengthWiringAsync(unittest.IsolatedAsyncioTestCase):
-    """Async path: same contract as the sync test class, routed through
-    ``AsynchronousRequest`` → ``ExecuteAsync``."""
+    """Async version of the sync class above. Same checks."""
 
     async def _capture_outgoing_request(self, request_data):
+        """Async twin of the sync capture helper."""
         params = _DummyRequestParams()
         manager = _DummyGlobalEndpointManager()
         request = _DummyRequest()
@@ -154,7 +155,7 @@ class TestContentLengthWiringAsync(unittest.IsolatedAsyncioTestCase):
             side_effect=_fake_execute_async,
         ):
             await _asynchronous_request.AsynchronousRequest(
-                client=object(),
+                client=_DummyClient(),
                 request_params=params,
                 global_endpoint_manager=manager,
                 connection_policy=object(),
@@ -165,6 +166,8 @@ class TestContentLengthWiringAsync(unittest.IsolatedAsyncioTestCase):
         return captured
 
     async def test_str_bodies_set_utf8_byte_content_length(self):
+        """Async twin: Content-Length is the UTF-8 byte count, and for
+        multi-byte payloads it differs from the character count."""
         for label, payload in _STR_PAYLOADS:
             with self.subTest(payload=label):
                 captured = await self._capture_outgoing_request(payload)
@@ -176,10 +179,23 @@ class TestContentLengthWiringAsync(unittest.IsolatedAsyncioTestCase):
                     self.assertNotEqual(captured["content_length"], len(body))
 
     async def test_none_body_sets_content_length_zero(self):
+        """Async twin: a request with no body still gets Content-Length 0."""
         captured = await self._capture_outgoing_request(None)
+        self.assertEqual(captured["content_length"], 0)
+
+    async def test_bytes_body_is_coerced_to_none_and_content_length_zero(self):
+        """Async version of the bytes-body check. Same contract: bytes
+        come out as None and Content-Length is set to 0."""
+        captured = await self._capture_outgoing_request(b'{"x":1}')
+        self.assertIsNone(captured["body"])
+        self.assertEqual(captured["content_length"], 0)
+
+    async def test_bytearray_body_is_coerced_to_none_and_content_length_zero(self):
+        """Async version of the bytearray check."""
+        captured = await self._capture_outgoing_request(bytearray(b'{"x":1}'))
+        self.assertIsNone(captured["body"])
         self.assertEqual(captured["content_length"], 0)
 
 
 if __name__ == "__main__":
     unittest.main()
-

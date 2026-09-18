@@ -5,9 +5,9 @@ import os
 import shutil
 import unittest
 from unittest import mock
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.transport import HttpResponse
 from azure.monitor.opentelemetry.exporter.export._base import (
     _get_auth_policy,
@@ -17,6 +17,7 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     ExportResult,
     _get_storage_directory,
 )
+from azure.monitor.opentelemetry.exporter._utils import _get_retry_delay_from_headers
 from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
@@ -309,6 +310,194 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._storage_min_retry_interval, 100)
         self.assertEqual(base._storage_directory, "test/path")
         mock_get_temp_dir.assert_not_called()
+
+    # ========================================================================
+    # ONESETTINGS LOCAL STORAGE TOGGLE TESTS
+    # ========================================================================
+
+    def _make_local_storage_settings(self, enabled):
+        state = "enabled" if enabled else "disabled"
+        return {"FEATURE_LOCAL_STORAGE": {"default": state}}
+
+    def test_configuration_callback_disables_storage(self):
+        """OneSettings FEATURE_LOCAL_STORAGE=disabled turns off active local storage (put/gets no-op)."""
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+        )
+        self.assertIsNotNone(base.storage)
+        try:
+            base._local_storage_configuration_callback(self._make_local_storage_settings(False))
+            # Flag model: the instance stays alive but is toggled off.
+            self.assertIsNotNone(base.storage)
+            self.assertFalse(base.storage._active)
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    def test_configuration_callback_reenables_storage(self):
+        """After a disable, FEATURE_LOCAL_STORAGE=enabled toggles the same storage instance back on."""
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+        )
+        base._local_storage_configuration_callback(self._make_local_storage_settings(False))
+        self.assertIsNotNone(base.storage)
+        self.assertFalse(base.storage._active)
+        storage_instance = base.storage
+        try:
+            base._local_storage_configuration_callback(self._make_local_storage_settings(True))
+            # Same instance is reused (not reconstructed) and toggled back on.
+            self.assertIs(base.storage, storage_instance)
+            self.assertTrue(base.storage._active)
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    def test_configuration_callback_respects_user_optout(self):
+        """A user's explicit disable_offline_storage=True is a hard gate OneSettings cannot override."""
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=True,
+        )
+        self.assertIsNone(base.storage)
+        base._local_storage_configuration_callback(self._make_local_storage_settings(True))
+        self.assertIsNone(base.storage)
+
+    def test_configuration_callback_flag_absent_no_change(self):
+        """When FEATURE_LOCAL_STORAGE is absent, storage state is left unchanged."""
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+        )
+        try:
+            base._local_storage_configuration_callback({})
+            self.assertIsNotNone(base.storage)
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    def test_constructor_registers_local_storage_callback(self, mock_get_config_manager):
+        """A normal exporter registers its local storage callback with the config manager."""
+        mock_manager = mock.Mock()
+        mock_manager.get_settings.return_value = {}
+        mock_get_config_manager.return_value = mock_manager
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+        )
+        try:
+            mock_manager.register_callback.assert_called_once_with(base._local_storage_configuration_callback)
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    def test_constructor_no_callback_when_control_plane_disabled(self, mock_get_config_manager):
+        """When the control plane is disabled (manager is None), no callback is registered."""
+        mock_get_config_manager.return_value = None
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+        )
+        try:
+            # No exception means the None manager was handled gracefully.
+            self.assertIsNotNone(base)
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    def test_stats_exporter_does_not_register_local_storage_callback(self, mock_get_config_manager):
+        """The statsbeat exporter manages its own storage and must not register the base callback."""
+        mock_manager = mock.Mock()
+        mock_get_config_manager.return_value = mock_manager
+        base = AzureMonitorMetricExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+            is_sdkstats=True,
+        )
+        try:
+            mock_manager.register_callback.assert_not_called()
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    def test_customer_sdkstats_exporter_registers_local_storage_callback(self, mock_get_config_manager):
+        """The customer-sdkstats exporter shares the customer's storage folder, so it participates
+        in the remote FEATURE_LOCAL_STORAGE toggle and must register the base callback."""
+        mock_manager = mock.Mock()
+        mock_manager.get_settings.return_value = {}
+        mock_get_config_manager.return_value = mock_manager
+        base = AzureMonitorMetricExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+            is_customer_sdkstats=True,
+        )
+        try:
+            mock_manager.register_callback.assert_called_once_with(base._local_storage_configuration_callback)
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    def test_late_exporter_applies_cached_disabled_settings(self):
+        """An exporter created after FEATURE_LOCAL_STORAGE=disabled was cached applies that cached
+        state at registration time (via the manager's centralized replay, no config change needed)
+        and starts with storage toggled off."""
+        from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
+        from azure.monitor.opentelemetry.exporter._utils import Singleton
+
+        Singleton._instances.pop(_ConfigurationManager, None)
+        manager = _ConfigurationManager()
+        manager._current_state = manager._current_state.with_updates(
+            settings_cache=self._make_local_storage_settings(False)
+        )
+        try:
+            with mock.patch(
+                "azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager",
+                return_value=manager,
+            ):
+                base = BaseExporter(
+                    connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+                    disable_offline_storage=False,
+                )
+            try:
+                # Flag model: instance exists but is toggled off per the cached kill-switch.
+                self.assertIsNotNone(base.storage)
+                self.assertFalse(base.storage._active)
+            finally:
+                if base.storage is not None:
+                    clean_folder(base.storage._path)
+        finally:
+            Singleton._instances.pop(_ConfigurationManager, None)
+
+    def test_late_exporter_empty_cache_leaves_storage_active(self):
+        """When the cached settings are empty (worker has not fetched yet), the replay is a no-op and
+        storage remains active per the user's disable_offline_storage setting."""
+        from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
+        from azure.monitor.opentelemetry.exporter._utils import Singleton
+
+        Singleton._instances.pop(_ConfigurationManager, None)
+        manager = _ConfigurationManager()
+        try:
+            with mock.patch(
+                "azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager",
+                return_value=manager,
+            ):
+                base = BaseExporter(
+                    connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+                    disable_offline_storage=False,
+                )
+            try:
+                self.assertIsNotNone(base.storage)
+                self.assertTrue(base.storage._active)
+            finally:
+                if base.storage is not None:
+                    clean_folder(base.storage._path)
+        finally:
+            Singleton._instances.pop(_ConfigurationManager, None)
 
     def test_normal_exporter_includes_http_logging_policy(self):
         from azure.core.pipeline.policies import HttpLoggingPolicy
@@ -655,6 +844,24 @@ class TestBaseExporter(unittest.TestCase):
         # Verify storage.put was called with the serialized envelopes
         exporter.storage.put.assert_called_once_with(serialized_envelopes)
 
+    def test_handle_transmit_from_storage_429_retry_after_passed_as_lease_period(self):
+        """When _retry_after_delay_seconds is set (from a prior 429 full-request
+        failure), _handle_transmit_from_storage must forward it as lease_period
+        to storage.put so the blob stays locked for the server-requested delay."""
+        exporter = BaseExporter(disable_offline_storage=False)
+        exporter.storage = mock.Mock()
+        exporter.storage.put.return_value = StorageExportResult.LOCAL_FILE_BLOB_SUCCESS
+
+        exporter._retry_after_delay_seconds = 120
+
+        test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+        serialized_envelopes = [envelope.as_dict() for envelope in test_envelopes]
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+
+        exporter.storage.put.assert_called_once_with(serialized_envelopes, lease_period=120)
+        # _retry_after_delay_seconds must be cleared after consumption
+        self.assertIsNone(exporter._retry_after_delay_seconds)
+
     def test_handle_transmit_from_storage_success_triggers_transmit(self):
         exporter = BaseExporter(disable_offline_storage=False)
 
@@ -708,7 +915,6 @@ class TestBaseExporter(unittest.TestCase):
             result = blob.put(envelopes_to_store)
 
             # ASSERT: put should return SUCCESS, not an error string
-            from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 
             self.assertEqual(
                 result,
@@ -840,6 +1046,11 @@ class TestBaseExporter(unittest.TestCase):
 
     def test_transmit_request_error(self):
         with mock.patch.object(AzureMonitorClient, "track", throw(ServiceRequestError, message="error")):
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmit_response_error(self):
+        with mock.patch.object(AzureMonitorClient, "track", throw(ServiceResponseError, message="Read timed out")):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
@@ -977,6 +1188,84 @@ class TestBaseExporter(unittest.TestCase):
         # Storage should NOT be called since all errors are sampling rejections
         exporter.storage.put.assert_not_called()
 
+    def test_transmission_206_retry_after_delay_seconds_applied_to_storage_lease(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.storage = mock.Mock()
+        custom_envelopes_to_export = [
+            TelemetryItem(name="Test", time=datetime.now()),
+        ]
+        with mock.patch.object(AzureMonitorClient, "track") as post:
+            post.return_value = (
+                TrackResponse(
+                    items_received=1,
+                    items_accepted=0,
+                    errors=[
+                        TelemetryErrorDetails(index=0, status_code=429, message="throttled"),
+                    ],
+                ),
+                {"Retry-After": "120"},
+            )
+            result = exporter._transmit(custom_envelopes_to_export)
+
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        exporter.storage.put.assert_called_once()
+        self.assertEqual(exporter.storage.put.call_args[0][1], 120)
+
+    def test_transmission_206_invalid_retry_after_falls_back_to_default_storage_lease(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.storage = mock.Mock()
+        custom_envelopes_to_export = [
+            TelemetryItem(name="Test", time=datetime.now()),
+        ]
+        with mock.patch.object(AzureMonitorClient, "track") as post:
+            post.return_value = (
+                TrackResponse(
+                    items_received=1,
+                    items_accepted=0,
+                    errors=[
+                        TelemetryErrorDetails(index=0, status_code=429, message="throttled"),
+                    ],
+                ),
+                {"Retry-After": "0"},
+            )
+            result = exporter._transmit(custom_envelopes_to_export)
+
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        exporter.storage.put.assert_called_once()
+        self.assertEqual(exporter.storage.put.call_args[0][1], exporter._storage_min_retry_interval)
+
+    def test_get_retry_delay_from_headers_delay_seconds(self):
+        headers = {"Retry-After": "120"}
+        self.assertEqual(_get_retry_delay_from_headers(headers), 120)
+
+    def test_get_retry_delay_from_headers_http_date(self):
+        fixed_now = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+        future = fixed_now + timedelta(seconds=121)
+        headers = {"Retry-After": future.strftime("%a, %d %b %Y %H:%M:%S GMT")}
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.datetime") as mock_dt:
+            mock_dt.datetime.now.return_value = fixed_now
+            mock_dt.datetime.strptime = datetime.strptime
+            mock_dt.timezone = timezone
+            self.assertEqual(_get_retry_delay_from_headers(headers), 121)
+
+    def test_get_retry_delay_from_headers_invalid_or_non_positive(self):
+        invalid_headers = (
+            None,
+            {},
+            {"Retry-After": ""},
+            {"Retry-After": "0"},
+            {"Retry-After": "-1"},
+            {"Retry-After": "not-a-date"},
+        )
+
+        for headers in invalid_headers:
+            with self.subTest(headers=headers):
+                self.assertIsNone(_get_retry_delay_from_headers(headers))
+
+    def test_get_retry_delay_from_headers_prefers_retry_after(self):
+        headers = {"Retry-After": "60", "x-ms-retry-after-ms": "90000"}
+        self.assertEqual(_get_retry_delay_from_headers(headers), 60)
+
     def test_is_sampling_rejection_true(self):
         """Test that _is_sampling_rejection correctly identifies sampling rejection messages."""
         self.assertTrue(_is_sampling_rejection("Telemetry sampled out."))
@@ -1014,6 +1303,23 @@ class TestBaseExporter(unittest.TestCase):
         with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(429)):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmission_429_with_retry_after_header_sets_delay(self):
+        """A full-request 429 whose response carries a Retry-After header must
+        cause _transmit to set _retry_after_delay_seconds on the exporter so
+        that _handle_transmit_from_storage can forward it as the storage lease
+        period."""
+        response = HttpResponse(None, None)
+        response.status_code = 429
+        response.headers = {"Retry-After": "120"}
+        error = HttpResponseError(response=response)
+
+        exporter = BaseExporter(disable_offline_storage=True)
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=error):
+            result = exporter._transmit(self._envelopes_to_export)
+
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+        self.assertEqual(exporter._retry_after_delay_seconds, 120)
 
     def test_transmission_439(self):
         with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(439)):
@@ -1063,6 +1369,25 @@ class TestBaseExporter(unittest.TestCase):
         stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
         self.assertEqual(_REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]]["ServiceRequestError"], 1)
+        self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
+        self.assertEqual(_REQUESTS_MAP["count"], 1)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+            "APPLICATIONINSIGHTS_SDKSTATS_DISABLED": "false",
+        },
+    )
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    def test_transmit_response_error_statsbeat(self, stats_mock):
+        exporter = BaseExporter(disable_offline_storage=True)
+        with mock.patch.object(AzureMonitorClient, "track", throw(ServiceResponseError, message="Read timed out")):
+            result = exporter._transmit(self._envelopes_to_export)
+        stats_mock.assert_called_once()
+        self.assertEqual(len(_REQUESTS_MAP), 3)
+        self.assertEqual(_REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]]["ServiceResponseError"], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
         self.assertEqual(_REQUESTS_MAP["count"], 1)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)

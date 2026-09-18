@@ -20,5 +20,5 @@ class TestMgmtBotServiceModel:
             site_name="xxx",
             is_enabled=True,
             is_webchat_preview_enabled=True,
-            is_secure_site_enabled=True
+            is_secure_site_enabled=True,
         )

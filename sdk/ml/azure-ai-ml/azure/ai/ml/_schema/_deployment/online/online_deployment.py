@@ -9,7 +9,7 @@ from typing import Any
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointComputeType
+from azure.ai.ml._restclient.arm_ml_service.models import EndpointComputeType
 from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
 from azure.ai.ml._schema._utils.utils import exit_if_registry_assets
 from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField, StringTransformedEnum, UnionField

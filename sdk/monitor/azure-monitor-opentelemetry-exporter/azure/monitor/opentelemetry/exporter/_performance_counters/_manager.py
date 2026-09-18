@@ -58,7 +58,7 @@ if _IO_AVAILABLE:
         AttributeError,
         Exception,
     ) as e:
-        _logger.exception(
+        _logger.exception(  # pylint: disable=do-not-use-logging-exception
             "Performance counter %s is unavailable due to an error while initializing process I/O counters: %s",
             _PROCESS_IO_RATE[0],
             e,

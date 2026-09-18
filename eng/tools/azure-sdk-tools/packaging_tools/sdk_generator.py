@@ -246,6 +246,7 @@ def main(generate_input, generate_output):
             try:
                 package_total.add(package_name)
                 sdk_code_path = str(Path(sdk_folder, folder_name, package_name))
+                package_path = Path(folder_name, package_name).as_posix()
                 # Sanitize invalid Python escape sequences (e.g. `\W`) in
                 # generated docstrings to avoid SyntaxWarning on Python 3.12+.
                 # See https://github.com/Azure/azure-sdk-for-python/issues/47011
@@ -257,7 +258,7 @@ def main(generate_input, generate_output):
                 if package_name not in result:
                     package_entry = {}
                     package_entry["packageName"] = package_name
-                    package_entry["path"] = [folder_name]
+                    package_entry["path"] = [package_path]
                     package_entry[spec_word] = [readme_or_tsp]
                     package_entry["tagIsStable"] = (
                         sdk_release_type == "stable"
@@ -267,7 +268,7 @@ def main(generate_input, generate_output):
                     package_entry["targetReleaseDate"] = data.get("targetReleaseDate", "")
                     result[package_name] = package_entry
                 else:
-                    result[package_name]["path"].append(folder_name)
+                    result[package_name]["path"].append(package_path)
                     result[package_name][spec_word].append(readme_or_tsp)
             except Exception as e:
                 _LOGGER.error(f"Fail to process package {package_name} in {readme_or_tsp}: {str(e)}")
@@ -312,11 +313,10 @@ def main(generate_input, generate_output):
             run_post_emitter_script(sdk_code_path)
 
             # Generate ApiView
-            if data.get("runMode") in ["spec-pull-request"]:
+            if data.get("runMode") in ["spec-pull-request", "release"]:
                 apiview_start_time = time.time()
                 try:
-                    _LOGGER.info("install dependencies for apiview generation")
-                    package_path = Path(sdk_folder, folder_name, package_name)
+                    _LOGGER.info(f"install apiview generation tool")
                     check_call(
                         [
                             "python",
@@ -324,26 +324,28 @@ def main(generate_input, generate_output):
                             "pip",
                             "install",
                             "-r",
-                            "../../../eng/apiview_reqs.txt",
-                            "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi"
-                            "/simple/",
+                            "eng/apiview_reqs.txt",
+                            "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
                         ],
-                        cwd=package_path,
                         timeout=600,
+                        stderr=None if data.get("runMode") == "release" else subprocess.DEVNULL,
                     )
-                    cmds = ["apistubgen", "--pkg-path", "."]
-                    cross_language_mapping_path = Path(package_path, "apiview-properties.json")
-                    if cross_language_mapping_path.exists():
-                        cmds.extend(["--mapping-path", str(cross_language_mapping_path)])
 
+                    _LOGGER.info("generate apiview artifacts")
+                    package_path = Path(sdk_folder, folder_name, package_name)
+                    cmds = [
+                        "azpysdk",
+                        "apistub",
+                        package_name,
+                    ]
                     _LOGGER.info(f"generate apiview file for package {package_name}")
                     check_call(
                         cmds,
-                        cwd=package_path,
-                        timeout=600,
+                        timeout=900 if data.get("runMode") == "spec-pull-request" else 36000,
                         # known issue that higher python version meet install warning with lower pylint.
                         # we skip the output here to reduce confusion and will remove it after apiview tool upgrade to higher pylint version.
-                        stderr=subprocess.DEVNULL,
+                        # in "release" mode we keep stderr so the output is visible for debugging.
+                        stderr=None if data.get("runMode") == "release" else subprocess.DEVNULL,
                     )
                     for file in os.listdir(package_path):
                         if "_python.json" in file and package_name in file:
@@ -363,7 +365,7 @@ def main(generate_input, generate_output):
 
             # Build artifacts for package
             try:
-                create_package(result[package_name]["path"][0], package_name)
+                create_package(folder_name, package_name)
                 dist_path = Path(sdk_folder, folder_name, package_name, "dist")
                 result[package_name]["artifacts"] = [
                     str(dist_path / package_file) for package_file in os.listdir(dist_path)
@@ -382,7 +384,7 @@ def main(generate_input, generate_output):
                 "lite": f"pip install {package_name}",
             }
             result[package_name]["result"] = "succeeded"
-            result[package_name]["packageFolder"] = result[package_name]["path"][0]
+            result[package_name]["packageFolder"] = folder_name
 
     # remove duplicates
     try:

@@ -1,10 +1,11 @@
 {
-  "apiVersion": "2026-01-01-preview",
+  "apiVersion": "2026-09-01-preview",
   "apiVersions": {
-    "Microsoft.CloudHealth": "2026-01-01-preview"
+    "Microsoft.CloudHealth": "2026-09-01-preview"
   },
-  "commit": "01ee9d04b3d982bdf8c896f239b044c7cdeb2afd",
+  "commit": "ef5352bc9eb986c683703bc0f7907804837a1e00",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "typespec_src": "specification/cloudhealth/CloudHealth.Management",
-  "emitterVersion": "0.61.2"
+  "typespec_src": "specification/cloudhealth/resource-manager/Microsoft.CloudHealth/CloudHealth",
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
 }

@@ -11,13 +11,13 @@ class EndpointRequestSettings:
     def __init__(self, *, request_batch_size: Optional[int] = None, min_endpoint_success_ratio: Optional[float] = None):
         """Initialize EndpointRequestSettings.
 
-        :param request_batch_size: The number of requests to send to the teacher model endpoint as a batch,
+        :keyword request_batch_size: The number of requests to send to the teacher model endpoint as a batch,
             defaults to None
-        :type request_batch_size: typing.Optional[int], optional
-        :param min_endpoint_success_ratio: The ratio of (successful requests / total requests) needed for the
+        :paramtype request_batch_size: typing.Optional[int], optional
+        :keyword min_endpoint_success_ratio: The ratio of (successful requests / total requests) needed for the
             data generation step to be considered successful. Must be a value between 0 and 1 inclusive,
             defaults to None
-        :type min_endpoint_success_ratio: typing.Optional[float], optional
+        :paramtype min_endpoint_success_ratio: typing.Optional[float], optional
         """
         self._request_batch_size = request_batch_size
         self._min_endpoint_success_ratio = min_endpoint_success_ratio

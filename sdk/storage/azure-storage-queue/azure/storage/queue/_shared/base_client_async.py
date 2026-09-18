@@ -36,9 +36,11 @@ from .models import StorageConfiguration
 from .parser import DEVSTORE_ACCOUNT_KEY, _get_development_storage_endpoint
 from .policies import (
     QueueMessagePolicy,
+    RangeHeaderPolicy,
     StorageHeadersPolicy,
     StorageHosts,
     StorageRequestHook,
+    StorageSensitiveHeaderCleanupPolicy,
 )
 from .policies_async import (
     AsyncContentValidationPolicy,
@@ -159,6 +161,7 @@ class AsyncStorageAccountHostsMixin(object):
         hosts = self._hosts
         policies = [
             QueueMessagePolicy(),
+            RangeHeaderPolicy(),
             config.proxy_policy,
             config.user_agent_policy,
             AsyncContentValidationPolicy(),
@@ -173,6 +176,7 @@ class AsyncStorageAccountHostsMixin(object):
             AsyncStorageResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
+            StorageSensitiveHeaderCleanupPolicy(**kwargs),
         ]
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")  # type: ignore

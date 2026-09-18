@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 def _script_path() -> Path:
-    return Path(__file__).resolve().parents[2] / "scripts" / "generate_validators.py"
+    return Path(__file__).resolve().parents[2] / "_scripts" / "generate_validators.py"
 
 
 def _spec() -> str:
@@ -134,7 +134,8 @@ def test_regeneration_overwrites_previous_output_cleanly(tmp_path: Path) -> None
 
     content = out_path.read_text(encoding="utf-8")
     assert "stale-content" not in content
-    assert content.startswith("# pylint: disable=line-too-long,useless-suppression,too-many-lines")
+    assert content.startswith("# --------------------------------------------------------------------------")
+    assert "# pylint: disable=line-too-long,useless-suppression,too-many-lines" in content
 
 
 def test_generator_handles_inline_create_response_schema(tmp_path: Path) -> None:

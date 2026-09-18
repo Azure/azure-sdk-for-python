@@ -14,6 +14,7 @@ from devtools_testutils import (
     add_uri_regex_sanitizer,
     is_live,
     remove_batch_sanitizers,
+    set_custom_default_matcher,
 )
 
 os.environ["PYTHONHASHSEED"] = "0"
@@ -21,6 +22,7 @@ os.environ["PYTHONHASHSEED"] = "0"
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
+    set_custom_default_matcher(compare_bodies=False, ignore_query_ordering=True, ignored_headers="Accept")
     azure_keyvault_url = os.getenv("AZURE_KEYVAULT_URL", "https://Sanitized.vault.azure.net")
     azure_keyvault_url = azure_keyvault_url.rstrip("/")
     keyvault_tenant_id = os.getenv("KEYVAULT_TENANT_ID", "keyvault_tenant_id")

@@ -101,6 +101,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-03/galleryExamples/GalleryImageVersion_Create_WithVHD_UefiSettings.json
+# x-ms-original-file: 2025-12-03/galleryExamples/GalleryImageVersion_Create_WithVHD_UefiSettings.json
 if __name__ == "__main__":
     main()

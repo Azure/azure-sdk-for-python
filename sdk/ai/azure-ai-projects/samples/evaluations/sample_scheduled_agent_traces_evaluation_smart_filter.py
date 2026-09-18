@@ -36,7 +36,7 @@ from pprint import pprint
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.mgmt.authorization import AuthorizationManagementClient
-from azure.mgmt.resource import ResourceManagementClient
+from azure.mgmt.resource.resources import ResourceManagementClient
 import uuid
 from azure.ai.projects.models import (
     TestingCriterionAzureAIEvaluator,

@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "type": "SystemAssigned"
+  },
+  "properties": {
+    "computeType": "AmlCompute",
+    "description": "smoke aml compute",
+    "disableLocalAuth": false,
+    "properties": {
+      "enableNodePublicIp": true,
+      "osType": "Linux",
+      "remoteLoginPortPublicAccess": "Enabled",
+      "scaleSettings": {
+        "maxNodeCount": 4,
+        "minNodeCount": 0,
+        "nodeIdleTimeBeforeScaleDown": "PT2M"
+      },
+      "subnet": {},
+      "userAccountCredentials": {
+        "adminUserName": "azureuser",
+        "adminUserSshPublicKey": "ssh-rsa AAAAB3Nz smoke"
+      },
+      "vmPriority": "Dedicated",
+      "vmSize": "STANDARD_DS3_V2"
+    }
+  },
+  "tags": {
+    "tag1": "value1"
+  }
+}

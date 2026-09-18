@@ -56,7 +56,7 @@ if TYPE_CHECKING:
 
 
 class LogAnalyticsManagementClient:  # pylint: disable=too-many-instance-attributes
-    """Provides NSP operations for working with Log Analytics.
+    """LogAnalyticsManagementClient.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.loganalytics.aio.operations.Operations

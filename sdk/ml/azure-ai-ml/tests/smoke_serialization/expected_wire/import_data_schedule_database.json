@@ -1,0 +1,31 @@
+{
+  "properties": {
+    "action": {
+      "actionType": "ImportData",
+      "dataImportDefinition": {
+        "assetName": "smoke-azuresqldb-asset",
+        "dataType": "uri_folder",
+        "dataUri": "azureml://datastores/workspaceblobstore/paths/{name}",
+        "isAnonymous": false,
+        "isArchived": false,
+        "properties": {},
+        "source": {
+          "connection": "azureml:smoke_connection",
+          "query": "select * from region",
+          "sourceType": "database"
+        },
+        "tags": {}
+      }
+    },
+    "displayName": "smoke-import-schedule-db-display",
+    "properties": {},
+    "tags": {},
+    "trigger": {
+      "endTime": "2026-12-31T00:00:00",
+      "expression": "15 10 * * 1",
+      "startTime": "2026-01-01T00:00:00",
+      "timeZone": "UTC",
+      "triggerType": "Cron"
+    }
+  }
+}

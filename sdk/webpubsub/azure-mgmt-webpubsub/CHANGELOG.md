@@ -1,5 +1,47 @@
 # Release History
 
+## 3.0.0b1 (2026-07-07)
+
+### Features Added
+
+  - Client `WebPubSubManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `WebPubSubManagementClient` added method `send_request`
+  - Client `WebPubSubManagementClient` added operation group `web_pub_sub_persistent_storages`
+  - Model `EventHandler` added property `group_presence_events`
+  - Model `WebPubSubHubProperties` added property `chat`
+  - Added model `ApplicationFirewallSettings`
+  - Added model `ChatSettings`
+  - Added model `ClientConnectionCountRule`
+  - Added enum `ClientConnectionCountRuleDiscriminator`
+  - Added model `ClientTrafficControlRule`
+  - Added enum `ClientTrafficControlRuleDiscriminator`
+  - Added model `GroupPresenceEventFilters`
+  - Added enum `GroupPresenceEventName`
+  - Added model `PersistentStorage`
+  - Added model `PersistentStorageProperties`
+  - Added model `ThrottleByJwtCustomClaimRule`
+  - Added model `ThrottleByJwtSignatureRule`
+  - Added model `ThrottleByUserIdRule`
+  - Added model `TrafficThrottleByJwtCustomClaimRule`
+  - Added model `TrafficThrottleByJwtSignatureRule`
+  - Added model `TrafficThrottleByUserIdRule`
+  - Added operation group `WebPubSubPersistentStoragesOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `CustomCertificate` moved instance variable `provisioning_state`, `key_vault_base_uri`, `key_vault_secret_name` and `key_vault_secret_version` under property `properties` whose type is `CustomCertificateProperties`
+  - Model `CustomDomain` moved instance variable `provisioning_state`, `domain_name` and `custom_certificate` under property `properties` whose type is `CustomDomainProperties`
+  - Model `PrivateEndpointConnection` moved instance variable `provisioning_state`, `private_endpoint`, `group_ids` and `private_link_service_connection_state` under property `properties` whose type is `PrivateEndpointConnectionProperties`
+  - Model `PrivateLinkResource` moved instance variable `group_id`, `required_members`, `required_zone_names` and `shareable_private_link_resource_types` under property `properties` whose type is `PrivateLinkResourceProperties`
+  - Model `Replica` moved instance variable `provisioning_state`, `region_endpoint_enabled` and `resource_stopped` under property `properties` whose type is `ReplicaProperties`
+  - Model `SharedPrivateLinkResource` moved instance variable `group_id`, `private_link_resource_id`, `provisioning_state`, `request_message` and `status` under property `properties` whose type is `SharedPrivateLinkResourceProperties`
+  - Model `WebPubSubResource` moved instance variable `provisioning_state`, `external_ip`, `host_name`, `public_port`, `server_port`, `version`, `private_endpoint_connections`, `shared_private_link_resources`, `tls`, `host_name_prefix`, `live_trace_configuration`, `resource_log_configuration`, `network_ac_ls`, `public_network_access`, `disable_local_auth`, `disable_aad_auth`, `region_endpoint_enabled`, `resource_stopped` and `socket_io` under property `properties` whose type is `WebPubSubProperties`
+
+### Other Changes
+
+  - Deleted model `CustomCertificateList`/`CustomDomainList`/`OperationList`/`PrivateEndpointConnectionList`/`PrivateLinkResourceList`/`ReplicaList`/`SharedPrivateLinkResourceList`/`SignalRServiceUsageList`/`WebPubSubHubList`/`WebPubSubResourceList` which actually were not used by SDK users
+
 ## 2.0.0 (2024-09-23)
 
 ### Features Added

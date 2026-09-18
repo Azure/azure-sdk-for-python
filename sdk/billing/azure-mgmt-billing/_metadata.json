@@ -3,8 +3,9 @@
   "apiVersions": {
     "Microsoft.Billing": "2024-04-01"
   },
-  "commit": "924420fe602b631163f1e2628337c2dd7f26c173",
+  "commit": "1523f9e8e89437d84d69a6651f09d74a7ae65ed3",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/billing/resource-manager/Microsoft.Billing/Billing",
-  "emitterVersion": "0.62.1"
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.33.0"
 }

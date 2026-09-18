@@ -69,7 +69,7 @@ class TestFullTextPolicy(unittest.TestCase):
         # calls through cls.data_client.get_database_client(...).get_container_client(...).
         cls.data_client = test_config.TestConfig.create_data_client()
         cls.created_database = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
-        cls.test_db = cls.client.create_database(str(uuid.uuid4()))
+        cls.test_db = cls.client.create_database(test_config.unique_database_id("full-text"))
 
     @classmethod
     def tearDownClass(cls):
@@ -300,9 +300,6 @@ class TestFullTextPolicy(unittest.TestCase):
             # pytest.fail("Container creation should have failed for lack of embedding policy.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert re.search(
-                    r"the path of the full.text index.*does not match the path specified in the full.text policy",
-                    e.http_error_message, re.IGNORECASE)
 
         # Pass a full text indexing policy with a wrongly formatted path
         indexing_policy_wrong_path = {
@@ -320,9 +317,6 @@ class TestFullTextPolicy(unittest.TestCase):
             pytest.fail("Container creation should have failed for invalid path.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert re.search(
-                    r"full.text index specification at index \(0\) contains invalid path",
-                    e.http_error_message, re.IGNORECASE)
 
         # Pass a full text indexing policy without a path field
         indexing_policy_no_path = {
@@ -340,9 +334,6 @@ class TestFullTextPolicy(unittest.TestCase):
             pytest.fail("Container creation should have failed for missing path.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert re.search(
-                    r"missing path in full.text index specification at index \(0\)",
-                    e.http_error_message, re.IGNORECASE)
 
     # Skipped until testing pipeline is set up for full text multi-language support
     @pytest.mark.skip

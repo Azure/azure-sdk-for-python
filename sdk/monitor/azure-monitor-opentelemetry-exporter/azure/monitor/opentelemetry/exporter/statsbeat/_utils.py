@@ -4,7 +4,8 @@ import os
 import logging
 import json
 from collections.abc import Iterable  # pylint: disable=import-error
-from typing import Optional, Dict
+from typing import Optional, Dict, List
+from opentelemetry.metrics import CallbackOptions, Observation
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME,
@@ -165,3 +166,39 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
             "Unexpected error getting stats connection string for region '%s': %s", target_region, str(ex)
         )
         return None
+
+
+def _get_additional_observations(metric_name: str, options: CallbackOptions) -> List[Observation]:
+    """Return observations contributed by extra callbacks registered on :class:`StatsbeatManager`.
+
+    Invoked by the built-in ``_StatsbeatMetrics`` callbacks at collection time.
+    Reads callbacks registered on the singleton :class:`StatsbeatManager`.
+    Exceptions raised by individual callbacks are caught, logged, and skipped.
+
+    :param metric_name: Name of the built-in statsbeat metric being collected.
+    :type metric_name: str
+    :param options: OpenTelemetry callback options forwarded to each registered callback.
+    :type options: ~opentelemetry.metrics.CallbackOptions
+    :returns: List of observations contributed by registered callbacks.
+    :rtype: list[~opentelemetry.metrics.Observation]
+    """
+    # Lazy import to avoid a circular import between _manager and _utils.
+    from azure.monitor.opentelemetry.exporter.statsbeat._manager import (  # pylint: disable=import-outside-toplevel
+        StatsbeatManager,
+    )
+
+    callbacks = StatsbeatManager().get_additional_metric_callbacks(metric_name)
+
+    observations: List[Observation] = []
+    iter_logger = logging.getLogger(__name__)
+    for cb in callbacks:
+        try:
+            observations.extend(cb(options))
+        except Exception:  # pylint: disable=broad-except
+            iter_logger.debug(
+                "Extra statsbeat callback %r for %r raised; skipping.",
+                cb,
+                metric_name,
+                exc_info=True,
+            )
+    return observations

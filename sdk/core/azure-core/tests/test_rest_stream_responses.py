@@ -85,9 +85,7 @@ def test_iter_bytes(client):
 def test_iter_text(client):
     request = HttpRequest("GET", "/basic/string")
     with client.send_request(request, stream=True) as response:
-        content = ""
-        for part in response.iter_text():
-            content += part
+        content = "".join(response.iter_text())
         assert content == "Hello, world!"
 
 
@@ -150,7 +148,7 @@ def test_decompress_plain_no_header(client):
     request = HttpRequest("GET", "/streams/string")
     response = client.send_request(request, stream=True)
     with pytest.raises(ResponseNotReadError):
-        response.content
+        _ = response.content
     response.read()
     assert response.content == b"test"
 

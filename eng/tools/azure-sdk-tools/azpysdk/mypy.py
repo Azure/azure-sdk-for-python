@@ -14,7 +14,7 @@ from ci_tools.logging import logger
 
 PYTHON_VERSION = "3.10"
 MYPY_VERSION = "1.19.1"
-NEXT_MYPY_VERSION = "1.19.1"
+NEXT_MYPY_VERSION = "2.1.0"
 ADDITIONAL_LOCKED_DEPENDENCIES = [
     "types-chardet==5.0.4.6",
     "types-requests==2.31.0.6",

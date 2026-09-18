@@ -905,5 +905,6 @@
         "azure.mgmt.recoveryservicessiterecovery.aio.operations.ReplicationVaultHealthOperations.get": "Microsoft.RecoveryServices.ReplicationVaultHealthOperationGroup.get",
         "azure.mgmt.recoveryservicessiterecovery.operations.ReplicationVaultHealthOperations.begin_refresh": "Microsoft.RecoveryServices.ReplicationVaultHealthOperationGroup.refresh",
         "azure.mgmt.recoveryservicessiterecovery.aio.operations.ReplicationVaultHealthOperations.begin_refresh": "Microsoft.RecoveryServices.ReplicationVaultHealthOperationGroup.refresh"
-    }
+    },
+    "CrossLanguageVersion": "9fdc96ec84d9"
 }

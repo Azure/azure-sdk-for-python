@@ -1,0 +1,29 @@
+{
+  "properties": {
+    "action": {
+      "actionType": "CreateJob",
+      "jobDefinition": {
+        "command": "echo scheduled",
+        "computeId": "smoke-compute",
+        "environmentId": "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+        "environmentVariables": {},
+        "inputs": {},
+        "isArchived": false,
+        "jobType": "Command",
+        "outputs": {},
+        "properties": {},
+        "tags": {}
+      }
+    },
+    "displayName": "smoke-schedule-cron-datetime-display",
+    "properties": {},
+    "tags": {},
+    "trigger": {
+      "endTime": "2026-12-31 00:00:00",
+      "expression": "15 10 * * 1",
+      "startTime": "2026-01-01 00:00:00",
+      "timeZone": "UTC",
+      "triggerType": "Cron"
+    }
+  }
+}

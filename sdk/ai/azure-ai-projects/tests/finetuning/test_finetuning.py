@@ -423,7 +423,7 @@ class TestFineTuning(TestBase):
     )
     @servicePreparer()
     @_pass_create_args
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_create_job(self, job_type, model_type, training_type, **kwargs):
         if job_type == SFT_JOB_TYPE:
             self._test_sft_create_job_helper(model_type, training_type, **kwargs)
@@ -452,7 +452,7 @@ class TestFineTuning(TestBase):
     )
     @servicePreparer()
     @_pass_create_args
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_create_job_live_extended(self, job_type, model_type, training_type, **kwargs):
         if job_type == SFT_JOB_TYPE:
             self._test_sft_create_job_helper(model_type, training_type, **kwargs)
@@ -471,7 +471,7 @@ class TestFineTuning(TestBase):
         ],
     )
     @_pass_retrieve_args
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_retrieve_job(self, job_type, expected_method_type, **kwargs):
         with self.create_client(**kwargs) as project_client:
             with project_client.get_openai_client() as openai_client:
@@ -525,7 +525,7 @@ class TestFineTuning(TestBase):
         ],
     )
     @_pass_retrieve_args
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_retrieve_job_live_extended(self, job_type, expected_method_type, **kwargs):
         with self.create_client(**kwargs) as project_client:
             with project_client.get_openai_client() as openai_client:
@@ -567,7 +567,7 @@ class TestFineTuning(TestBase):
                 self._cleanup_test_file(openai_client, validation_file.id)
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_finetuning_list_jobs(self, **kwargs):
         with self.create_client(**kwargs) as project_client:
             with project_client.get_openai_client() as openai_client:
@@ -592,7 +592,7 @@ class TestFineTuning(TestBase):
     )
     @servicePreparer()
     @_pass_cancel_args
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_cancel_job(self, job_type, model_type, training_type, expected_method_type, **kwargs):
         self._test_cancel_job_helper(job_type, model_type, training_type, expected_method_type, **kwargs)
 
@@ -616,12 +616,12 @@ class TestFineTuning(TestBase):
     )
     @servicePreparer()
     @_pass_cancel_args
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_cancel_job_live_extended(self, job_type, model_type, training_type, expected_method_type, **kwargs):
         self._test_cancel_job_helper(job_type, model_type, training_type, expected_method_type, **kwargs)
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_finetuning_list_events(self, **kwargs):
 
         with self.create_client(**kwargs) as project_client:
@@ -664,7 +664,7 @@ class TestFineTuning(TestBase):
         reason="Skipped extended FT live tests. Those only run live, without recordings, when RUN_EXTENDED_FINE_TUNING_LIVE_TESTS=true",
     )
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_finetuning_pause_job(self, **kwargs):
         running_job_id = kwargs.get("running_fine_tuning_job_id")
 
@@ -698,7 +698,7 @@ class TestFineTuning(TestBase):
         reason="Skipped extended FT live tests. Those only run live, without recordings, when RUN_EXTENDED_FINE_TUNING_LIVE_TESTS=true",
     )
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_finetuning_resume_job(self, **kwargs):
         paused_job_id = kwargs.get("paused_fine_tuning_job_id")
 
@@ -727,7 +727,7 @@ class TestFineTuning(TestBase):
                 print(f"[test_finetuning_resume_job] Successfully resumed and verified job: {paused_job_id}")
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_finetuning_list_checkpoints(self, **kwargs):
         completed_job_id = kwargs.get("completed_oai_model_sft_fine_tuning_job_id")
 
@@ -780,7 +780,7 @@ class TestFineTuning(TestBase):
     )
     @servicePreparer()
     @_pass_deploy_args
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_deploy_and_infer_job(
         self, job_id_env_var, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs
     ):
@@ -826,7 +826,7 @@ class TestFineTuning(TestBase):
     )
     @servicePreparer()
     @_pass_deploy_args
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_deploy_and_infer_job_live_extended(
         self, job_id_env_var, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs
     ):

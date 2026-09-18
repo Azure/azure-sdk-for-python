@@ -1,6 +1,6 @@
 ---
 name: create-package-skill
-description: 'Interactive wizard that walks service teams through creating a package-specific skill for their Azure SDK package. Scans the package, detects customization patterns, scaffolds a SKILL.md with references, validates with vally lint, and registers in find-package-skill. WHEN: create package skill; add service skill; bootstrap skill for package; new package skill; skill for my SDK package; write skill for search; write skill for cosmos.'
+description: 'Interactive wizard that walks service teams through creating a package-specific skill for their Azure SDK package. Scans the package, detects customization patterns, scaffolds a SKILL.md with references, and validates with vally lint. The skill is placed inside the package''s .github/skills/ directory so find-package-skill discovers it automatically. WHEN: create package skill; add service skill; bootstrap skill for package; new package skill; skill for my SDK package; write skill for search; write skill for cosmos.'
 ---
 
 # Create Package Skill Wizard
@@ -33,7 +33,7 @@ Run each phase in order. **Progressive loading:** Read only the current phase fi
 | **Phase 1** | 📝 Scaffold SKILL.md — generate skill with step-by-step post-regen workflow (Option A) or reference-manual structure (Option B) | [phases/01-scaffold-skill.md](phases/01-scaffold-skill.md) |
 | **Phase 2** | 📚 Generate References — create customizations.md (required) and optionally architecture.md | [phases/02-generate-references.md](phases/02-generate-references.md) |
 | **Phase 3** | Validate -- run vally lint | [phases/03-validate.md](phases/03-validate.md) |
-| **Phase 4** | 📋 Register — add to find-package-skill table | [phases/04-register.md](phases/04-register.md) |
+| **Phase 4** | 📋 Finalize — confirm discoverable location, summarize | [phases/04-finalize.md](phases/04-finalize.md) |
 
 ## Guardrails
 

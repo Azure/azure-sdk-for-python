@@ -6,4 +6,6 @@ flask
 psycopg2-binary
 requests
 urllib3
+httpx
+httpx2
 brotli

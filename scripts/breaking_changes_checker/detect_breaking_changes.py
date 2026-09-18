@@ -18,12 +18,16 @@ import ast
 import logging
 import inspect
 import subprocess
+import sys
+import shutil
+import tempfile
 from enum import Enum
-from typing import Dict, Union, Type, Callable, Optional
+from typing import Dict, Tuple, Union, Type, Callable, Optional
 from packaging_tools.venvtools import create_venv_with_package
 from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES, IGNORE_BREAKING_CHANGES
 from breaking_changes_tracker import BreakingChangesTracker
 from changelog_tracker import ChangelogTracker
+from apiview_converter import convert_api_md_to_report
 from pathlib import Path
 from supported_checkers import CHECKERS, POST_PROCESSING_CHECKERS
 
@@ -250,9 +254,7 @@ def _is_overload_decorator(dec: ast.expr) -> bool:
     return False
 
 
-def _find_function_def_in_body(
-    body, target_name: str
-) -> Optional[Union[ast.FunctionDef, ast.AsyncFunctionDef]]:
+def _find_function_def_in_body(body, target_name: str) -> Optional[Union[ast.FunctionDef, ast.AsyncFunctionDef]]:
     """Return the first non-overload (Async)FunctionDef in ``body`` matching ``target_name``.
 
     Only scans direct children of ``body`` -- does NOT recurse -- so a method
@@ -324,11 +326,7 @@ def create_function_report(f: Callable, is_async: bool = False) -> Dict:
             # "<locals>" segment indicates a method bound to a class named
             # by the first qualname component.
             qualname_parts = qualname.split(".")
-            if (
-                len(qualname_parts) >= 2
-                and qualname_parts[-1] == target_name
-                and "<locals>" not in qualname_parts
-            ):
+            if len(qualname_parts) >= 2 and qualname_parts[-1] == target_name and "<locals>" not in qualname_parts:
                 owner_class = qualname_parts[-2]
                 cls_node = _find_class_node(module_ast, owner_class)
                 if cls_node is not None:
@@ -378,12 +376,14 @@ def get_parameter_type(annotation) -> str:
     # value remains JSON-serializable.
     if isinstance(annotation, ast.BinOp) and isinstance(annotation.op, ast.BitOr):
         parts = []
+
         def _flatten(node):
             if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
                 _flatten(node.left)
                 _flatten(node.right)
             else:
                 parts.append(get_parameter_type(node))
+
         _flatten(annotation)
         return f"Union[{', '.join(str(p) for p in parts)}]"
     # Fall back to a source-level string representation so we never return a
@@ -570,6 +570,27 @@ def build_library_report(target_module: str) -> Dict:
     return public_api
 
 
+def compare_report_dicts(stable: Dict, current: Dict, package_name: str, changelog: bool):
+    """Compare two code report dicts and run the breaking change / changelog checks."""
+    if "azure-mgmt-" in package_name:
+        stable = report_azure_mgmt_versioned_module(stable)
+        current = report_azure_mgmt_versioned_module(current)
+
+    stable, current = drop_shadow_types_modules(stable, current)
+
+    tracker_cls = ChangelogTracker if changelog else BreakingChangesTracker
+    checker = tracker_cls(
+        stable,
+        current,
+        package_name,
+        checkers=CHECKERS,
+        ignore=IGNORE_BREAKING_CHANGES,
+        post_processing_checkers=POST_PROCESSING_CHECKERS,
+    )
+    checker.run_checks()
+    return checker
+
+
 def test_compare_reports(
     pkg_dir: str, changelog: bool, source_report: str = "stable.json", target_report: str = "current.json"
 ) -> None:
@@ -589,28 +610,7 @@ def test_compare_reports(
     with open(target_report, "r") as fd:
         current = json.load(fd)
 
-    if "azure-mgmt-" in package_name:
-        stable = report_azure_mgmt_versioned_module(stable)
-        current = report_azure_mgmt_versioned_module(current)
-
-    checker = BreakingChangesTracker(
-        stable,
-        current,
-        package_name,
-        checkers=CHECKERS,
-        ignore=IGNORE_BREAKING_CHANGES,
-        post_processing_checkers=POST_PROCESSING_CHECKERS,
-    )
-    if changelog:
-        checker = ChangelogTracker(
-            stable,
-            current,
-            package_name,
-            checkers=CHECKERS,
-            ignore=IGNORE_BREAKING_CHANGES,
-            post_processing_checkers=POST_PROCESSING_CHECKERS,
-        )
-    checker.run_checks()
+    checker = compare_report_dicts(stable, current, package_name, changelog)
 
     # Only clean up reports that were generated into pkg_dir with default, non-absolute names.
     cleanup_default_reports = (
@@ -662,6 +662,153 @@ def report_azure_mgmt_versioned_module(code_report):
     return merged_report
 
 
+def drop_shadow_types_modules(stable: Dict, current: Dict) -> Tuple[Dict, Dict]:
+    """Drop the generated shadow ``types`` module from both code reports before diffing.
+
+    TypeSpec generated libraries emit a ``types`` module of ``TypedDict`` input aliases that
+    shadow the real classes in the sibling ``models`` module. It carries no API contract of its
+    own: which models get a ``TypedDict`` is decided by the emitter's input-reachability rules,
+    so the module's contents churn across emitter upgrades even when the service API is
+    unchanged. Diffing it yields either duplicates of the ``models`` entries or -- when a model
+    stops being used as input and only its ``TypedDict`` disappears -- false ``Deleted or renamed
+    model`` reports for classes that are still part of the public API.
+
+    A ``types`` module is only treated as a shadow when every class it declares also exists in a
+    sibling ``models`` module; that subset relation is what makes it a projection rather than an
+    API surface of its own. A ``types`` module that owns even one class -- hand-written or a
+    generated ``TypedDict`` with no counterpart model -- is kept and diffed normally.
+
+    The decision is made across both reports so the filter is symmetric; dropping the module from
+    only one side would surface a phantom added/removed module.
+    """
+
+    def is_shadow(module: str) -> bool:
+        if not module.endswith(".types"):
+            return False
+        models_module = module[: -len("types")] + "models"
+        seen = False
+        for report in (stable, current):
+            if module not in report:
+                continue
+            if models_module not in report:
+                return False
+            seen = True
+            types_classes = set(report[module].get("class_nodes", {}))
+            models_classes = set(report[models_module].get("class_nodes", {}))
+            if not types_classes <= models_classes:
+                return False
+        return seen
+
+    shadow_modules = {module for module in set(stable) | set(current) if is_shadow(module)}
+    if shadow_modules:
+        _LOGGER.info("Skipping generated shadow `types` module(s): %s", ", ".join(sorted(shadow_modules)))
+
+    return (
+        {module: nodes for module, nodes in stable.items() if module not in shadow_modules},
+        {module: nodes for module, nodes in current.items() if module not in shadow_modules},
+    )
+
+
+def generate_apistub_markdown(
+    package_name: str, out_dir: str, version: Optional[str] = None, from_pypi: bool = True
+) -> str:
+    """Generate ``api.md`` for ``package_name`` and return its path.
+
+    Delegates to ``azpysdk apistub``. When ``from_pypi`` is set, the released
+    wheel for ``version`` is downloaded from PyPI; otherwise ``api.md`` is
+    generated from the local source in ``out_dir``. The APIView token file is
+    generated and exported to ``api.md``.
+    """
+    azpysdk = shutil.which("azpysdk")
+    if not azpysdk:
+        raise RuntimeError(
+            "azpysdk is not installed. Install it with "
+            "'pip install -e eng/tools/azure-sdk-tools' (or 'pip install azure-sdk-tools')."
+        )
+
+    # Use a fresh temp dir per call so a stale api.md is never picked up.
+    suffix = version if from_pypi else "local"
+    dest_dir = tempfile.mkdtemp(prefix=f"apistub_{package_name}_{suffix}_")
+
+    command = [azpysdk, "apistub", "--dest-dir", dest_dir]
+    if from_pypi:
+        if not version:
+            raise ValueError("A version is required when generating api.md from PyPI.")
+        command += ["--generate-from-pypi", version]
+    command.append(".")
+
+    subprocess.check_call(command, cwd=out_dir)
+    api_md = os.path.join(dest_dir, "api.md")
+    if not os.path.isfile(api_md):
+        raise FileNotFoundError(f"apistub did not produce api.md at {api_md}")
+    return api_md
+
+
+def build_report_from_apistub(
+    package_name: str,
+    out_dir: str,
+    version: Optional[str] = None,
+    debug: bool = False,
+    label: str = "",
+    from_pypi: bool = True,
+) -> Dict:
+    """Generate api.md via apistub and convert it to a code report dict.
+
+    When ``debug`` is set, the generated ``api.md`` and the resulting
+    ``code_report.json`` are copied into ``out_dir`` (prefixed with ``label``)
+    so they can be inspected after the run instead of being left in a temp dir.
+    """
+    api_md = generate_apistub_markdown(package_name, out_dir, version, from_pypi=from_pypi)
+    dest_dir = os.path.dirname(api_md)
+    try:
+        report = convert_api_md_to_report(api_md)
+        if debug:
+            prefix = f"{label}_" if label else ""
+            debug_api_md = os.path.join(out_dir, f"{prefix}api.md")
+            shutil.copyfile(api_md, debug_api_md)
+            debug_report = os.path.join(out_dir, f"{prefix}code_report.json")
+            with open(debug_report, "w") as fd:
+                json.dump(report, fd, indent=2)
+            _LOGGER.info(f"[debug] kept {debug_api_md} and {debug_report}")
+    finally:
+        shutil.rmtree(dest_dir, ignore_errors=True)
+    return report
+
+
+def _uninstall_package(package_name: str, pkg_dir: str) -> None:
+    """Remove an installed package so APIStub cannot reuse a same-version distribution."""
+    subprocess.run(
+        [sys.executable, "-m", "pip", "uninstall", "-y", package_name],
+        cwd=pkg_dir,
+        check=False,
+    )
+
+
+def _resolve_pypi_version(package_name: str, latest_pypi_version: bool) -> str:
+    """Resolve the PyPI version to compare against.
+
+    Returns the latest release (which may be a preview) when
+    ``latest_pypi_version`` is set, otherwise the most recent stable release.
+    Exits cleanly when no relevant version exists on PyPI.
+    """
+    from pypi_tools.pypi import PyPIClient
+
+    # Force the public PyPI backend: in CI ``PIP_INDEX_URL`` points at the curated
+    # Azure Artifacts feed, which is not a full mirror of PyPI. A package can be
+    # released on public PyPI while absent from that feed, so query pypi.org
+    # directly to resolve the version to compare against.
+    client = PyPIClient(force_pypi=True)
+    try:
+        if latest_pypi_version:
+            return str(client.get_ordered_versions(package_name)[-1])
+        return str(client.get_relevant_versions(package_name)[1])
+    except (IndexError, KeyError):
+        # IndexError: the package exists but has no relevant/previous version.
+        # KeyError: the package is brand new and not published on PyPI yet.
+        _LOGGER.warning(f"No relevant version for {package_name} on PyPi. Exiting...")
+        exit(0)
+
+
 def main(
     package_name: str,
     target_module: str,
@@ -673,10 +820,15 @@ def main(
     latest_pypi_version: bool,
     source_report: Optional[Path],
     target_report: Optional[Path],
+    use_apistub: bool = False,
+    debug: bool = False,
 ):
     # If code_report is set, only generate a code report for the package and return
     if code_report:
-        public_api = build_library_report(target_module)
+        if use_apistub:
+            public_api = build_report_from_apistub(package_name, pkg_dir, from_pypi=False)
+        else:
+            public_api = build_library_report(target_module)
         with open("code_report.json", "w") as fd:
             json.dump(public_api, fd, indent=2)
         _LOGGER.info("code_report.json is written.")
@@ -687,22 +839,33 @@ def main(
         test_compare_reports(pkg_dir, changelog, str(source_report), str(target_report))
         return
 
+    # If using apistub, generate api.md for the stable (PyPI) and current (local)
+    # versions, convert both to code reports, and compare them directly.
+    if use_apistub:
+        # Resolve the previous released version on PyPI when one was not provided,
+        # otherwise apistub falls back to the installed version and "stable" would
+        # match "current", producing an empty changelog.
+        if not version:
+            version = _resolve_pypi_version(package_name, latest_pypi_version)
+        # APIStub installs each target into this Python environment, and pip skips
+        # replacement when local and PyPI distributions have the same name/version.
+        # Clear both snapshots for repeatable runs, then install local last so it
+        # remains available to downstream SDK generation steps.
+        _uninstall_package(package_name, pkg_dir)
+        stable = build_report_from_apistub(
+            package_name, pkg_dir, version=version, debug=debug, label="stable", from_pypi=True
+        )
+        _uninstall_package(package_name, pkg_dir)
+        current = build_report_from_apistub(package_name, pkg_dir, debug=debug, label="current", from_pypi=False)
+        checker = compare_report_dicts(stable, current, package_name, changelog)
+        print(checker.report_changes())
+        if not changelog and checker.breaking_changes:
+            exit(1)
+        return
+
     # For default behavior, find the latest stable version on PyPi
     if not version:
-
-        from pypi_tools.pypi import PyPIClient
-
-        client = PyPIClient()
-
-        try:
-            if latest_pypi_version:
-                versions = client.get_ordered_versions(package_name)
-                version = str(versions[-1])
-            else:
-                version = str(client.get_relevant_versions(package_name)[1])
-        except IndexError:
-            _LOGGER.warning(f"No revelant version for {package_name} on PyPi. Exiting...")
-            exit(0)
+        version = _resolve_pypi_version(package_name, latest_pypi_version)
 
     in_venv = True if in_venv == "true" else False  # subprocess sends back string so convert to bool
 
@@ -808,6 +971,22 @@ if __name__ == "__main__":
         default=False,
     )
 
+    parser.add_argument(
+        "--use-apistub",
+        dest="use_apistub",
+        help="Generate the code report from an apistub-generated api.md instead of importing the package.",
+        action="store_true",
+        default=False,
+    )
+
+    parser.add_argument(
+        "--debug",
+        dest="debug",
+        help="Keep the generated api.md and code_report.json files (in the target directory) for easier debugging.",
+        action="store_true",
+        default=False,
+    )
+
     args, unknown = parser.parse_known_args()
     if unknown:
         _LOGGER.info(f"Ignoring unknown arguments: {unknown}")
@@ -857,4 +1036,6 @@ if __name__ == "__main__":
         args.latest_pypi_version,
         args.source_report,
         args.target_report,
+        args.use_apistub,
+        args.debug,
     )

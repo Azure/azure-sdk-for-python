@@ -32,13 +32,16 @@ def main():
 
     response = client.storage_assets.begin_update(
         resource_group_name="rgdiscovery",
-        storage_container_name="d177d30241e3f8a27d",
-        storage_asset_name="6cd8920c03970ccdfe",
-        properties={"properties": {"description": "tljmqqr"}, "tags": {"key5822": "jicwkfdyoqvgpoy"}},
+        storage_container_name="0d1a35c1a97ad3a5d9",
+        storage_asset_name="06a17210ad733943d1",
+        properties={
+            "properties": {"description": "hesvphxbjqrgbmdntuohbtmmllmqj"},
+            "tags": {"key6257": "fspetaqmcldlgu"},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/StorageAssets_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/StorageAssets_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

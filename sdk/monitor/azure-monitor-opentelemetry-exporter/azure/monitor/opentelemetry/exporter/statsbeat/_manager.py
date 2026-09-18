@@ -2,8 +2,9 @@
 # Licensed under the MIT License.
 import logging
 import threading
-from typing import Optional, Any, Dict
+from typing import Callable, Iterable, List, Optional, Any, Dict
 
+from opentelemetry.metrics import CallbackOptions, Observation
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.resources import Resource
@@ -46,6 +47,9 @@ class StatsbeatConfig:
         self.instrumentation_key = instrumentation_key
 
         # features
+        # ``disable_offline_storage`` mirrors the user's setting and is used ONLY to report the
+        # DISK_RETRY statsbeat feature bit (telemetry about the customer's config). Statsbeat's own
+        # exporter never persists to disk, independent of the user (see _do_initialize).
         self.disable_offline_storage = disable_offline_storage
         self.credential = credential
         self.distro_version = distro_version
@@ -82,6 +86,8 @@ class StatsbeatConfig:
             endpoint=exporter._endpoint,
             region=exporter._region,
             instrumentation_key=exporter._instrumentation_key,
+            # Carry the user's setting only to report the DISK_RETRY feature bit. Statsbeat's own
+            # exporter never persists to disk (see _do_initialize), regardless of the user's setting.
             disable_offline_storage=exporter._disable_offline_storage,
             credential=exporter._credential,
             distro_version=exporter._distro_version,
@@ -91,8 +97,10 @@ class StatsbeatConfig:
     def from_config(cls, base_config: "StatsbeatConfig", config_dict: Dict[str, str]) -> Optional["StatsbeatConfig"]:
         """Update configuration from a dictionary. Used in conjunction with OneSettings control plane.
 
-        Creates a new StatsbeatConfig instance with the same base configuration but updated
-        `connection_string` and `disable_offline_storage` from the provided dictionary.
+        Creates a new StatsbeatConfig instance with the same base configuration but an updated
+        `connection_string` from the provided dictionary. The customer's `disable_offline_storage`
+        setting is preserved for DISK_RETRY reporting; sdkstats's own storage is always disabled
+        (it never persists to disk) and is not controlled by OneSettings.
 
         :param base_config: Base configuration to update
         :type base_config: StatsbeatConfig
@@ -117,17 +125,12 @@ class StatsbeatConfig:
             # If something went wrong in fetching connection string, fall back to the original
             connection_string = base_config.connection_string
 
-        # TODO: Add support for disable_offline_storage from config_dict once supported in control plane
-        disable_offline_storage = config_dict.get("disable_offline_storage")
-        disable_offline_storage_config = (
-            isinstance(disable_offline_storage, str) and disable_offline_storage.lower() == "true"
-        )
-
         return cls(
             endpoint=base_config.endpoint,
             region=base_config.region,
             instrumentation_key=base_config.instrumentation_key,
-            disable_offline_storage=disable_offline_storage_config,  # TODO: Use config value once supported
+            # Preserve the customer's setting across reconfigures (used only for DISK_RETRY reporting).
+            disable_offline_storage=base_config.disable_offline_storage,
             credential=base_config.credential,
             distro_version=base_config.distro_version,
             connection_string=connection_string,
@@ -160,6 +163,38 @@ class StatsbeatManager(metaclass=Singleton):
 
         # Set during first initialization, preserved in shutdown for potential re-initialization
         self._config: Optional[StatsbeatConfig] = None  # type: ignore
+
+        # Extra observation callbacks contributed by SDKs/distros.
+        self._additional_callbacks: Dict[str, List[Callable[[CallbackOptions], Iterable[Observation]]]] = {}
+
+    def add_additional_metric_callbacks(
+        self,
+        metric_name: str,
+        callback: Callable[[CallbackOptions], Iterable[Observation]],
+    ) -> None:
+        """Register additional callbacks for a built-in statsbeat metric.
+
+        :param metric_name: Name of the built-in statsbeat metric.
+        :type metric_name: str
+        :param callback: Callback that yields observations for the metric.
+        :type callback: Callable[[~opentelemetry.metrics.CallbackOptions], Iterable[~opentelemetry.metrics.Observation]]
+        """
+        callbacks = self._additional_callbacks.setdefault(metric_name, [])
+        if callback not in callbacks:
+            callbacks.append(callback)
+
+    def get_additional_metric_callbacks(
+        self,
+        metric_name: str,
+    ) -> Iterable[Callable[[CallbackOptions], Iterable[Observation]]]:
+        """Return registered callbacks for a built-in statsbeat metric.
+
+        :param metric_name: Name of the built-in statsbeat metric.
+        :type metric_name: str
+        :return: Registered callbacks for the provided metric name.
+        :rtype: Iterable[Callable[[~opentelemetry.metrics.CallbackOptions], Iterable[~opentelemetry.metrics.Observation]]] # pylint: disable=line-too-long
+        """
+        return self._additional_callbacks.get(metric_name, ())
 
     @staticmethod
     def _validate_config(config: Optional[StatsbeatConfig]) -> bool:
@@ -210,7 +245,11 @@ class StatsbeatManager(metaclass=Singleton):
 
             statsbeat_exporter = AzureMonitorMetricExporter(
                 connection_string=config.connection_string,
-                disable_offline_storage=config.disable_offline_storage,
+                # Statsbeat never persists its own envelopes to disk. It is best-effort internal
+                # diagnostics, so it does not need disk-backed retry, and disabling storage avoids any
+                # disk writes for users who opted out. config.disable_offline_storage reflects the
+                # customer's config and is used only for DISK_RETRY reporting below.
+                disable_offline_storage=True,
                 is_sdkstats=True,
             )
 

@@ -1,11 +1,11 @@
 {
-  "commit": "994e2132b8c3533657ab86c11a6c39875f779d22",
+  "apiVersion": "2026-05-22-preview",
+  "apiVersions": {
+    "Microsoft.ConfidentialLedger": "2026-05-22-preview"
+  },
+  "commit": "a7bdbe741c0ef1f1b159d8569b173757bd823ae9",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.50.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/confidentialledger/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/home/codespace/workspace/sdk --tag=package-2022-05-13 --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/confidentialledger/resource-manager/readme.md"
+  "typespec_src": "specification/confidentialledger/resource-manager/Microsoft.ConfidentialLedger/ConfidentialLedger",
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.0"
 }

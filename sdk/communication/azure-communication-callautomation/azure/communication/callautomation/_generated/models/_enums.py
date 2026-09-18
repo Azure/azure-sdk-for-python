@@ -11,16 +11,14 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The audio format used for encoding, including sample rate and channel type. The default is
-    Pcm16KMono.
-    """
+    """The format of the audio received from the audio subscription option."""
 
     PCM16_K_MONO = "pcm16KMono"
     PCM24_K_MONO = "pcm24KMono"
 
 
 class CallConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of the call connection."""
+    """The states of a call connection."""
 
     UNKNOWN = "unknown"
     CONNECTING = "connecting"
@@ -40,7 +38,7 @@ class CallLocatorKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class CallRejectReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The rejection reason."""
+    """Reason of rejecting a call."""
 
     NONE = "none"
     BUSY = "busy"
@@ -67,7 +65,7 @@ class CommunicationIdentifierModelKind(str, Enum, metaclass=CaseInsensitiveEnumM
 
 
 class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DtmfTone."""
+    """List of valid stop tones."""
 
     ZERO = "zero"
     ONE = "one"
@@ -95,7 +93,7 @@ class MediaStreamingAudioChannelType(str, Enum, metaclass=CaseInsensitiveEnumMet
 
 
 class MediaStreamingContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """MediaStreamingContentType."""
+    """Type of content in Media streaming."""
 
     AUDIO = "audio"
 
@@ -130,7 +128,7 @@ class MediaStreamingStatusDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class MediaStreamingSubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Media streaming subscription state."""
+    """Current state of media streaming session."""
 
     DISABLED = "disabled"
     INACTIVE = "inactive"
@@ -138,7 +136,7 @@ class MediaStreamingSubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMe
 
 
 class PlaySourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the type of the play source."""
+    """Defines the types of play source."""
 
     FILE = "file"
     TEXT = "text"
@@ -146,8 +144,8 @@ class PlaySourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class RecognitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Determines the sub-type of the recognize operation.
-    In case of cancel operation the this field is not set and is returned empty.
+    """Recognition type determines the sub-type of the recognition operation Possible values will be
+    Dtmf, Speech, or Choices.
     """
 
     DTMF = "dtmf"
@@ -156,7 +154,7 @@ class RecognitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class RecognizeInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Determines the type of the recognition."""
+    """Defines the type of the recognize input."""
 
     DTMF = "dtmf"
     SPEECH = "speech"
@@ -165,7 +163,7 @@ class RecognizeInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class RecordingChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The channel type of call recording."""
+    """Defines the channel type of call recording."""
 
     MIXED = "mixed"
     UNMIXED = "unmixed"
@@ -179,7 +177,7 @@ class RecordingContent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class RecordingFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The format type of call recording."""
+    """Defines the format type of call recording."""
 
     WAV = "wav"
     MP3 = "mp3"
@@ -189,12 +187,9 @@ class RecordingFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class RecordingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RecordingKind."""
 
-    AZURE_COMMUNICATION_SERVICES = "AzureCommunicationServices"
-    """Recording initiated by Azure Communication Services"""
-    TEAMS = "Teams"
-    """Recording initiated by Teams user"""
-    TEAMS_COMPLIANCE = "TeamsCompliance"
-    """Recording initiated by Teams compliance policy"""
+    AZURE_COMMUNICATION_SERVICES = "azureCommunicationServices"
+    TEAMS = "teams"
+    TEAMS_COMPLIANCE = "teamsCompliance"
 
 
 class RecordingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -207,10 +202,8 @@ class RecordingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class RecordingStorageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the kind of external storage."""
 
-    AZURE_COMMUNICATION_SERVICES = "AzureCommunicationServices"
-    """Storage managed by Azure Communication Services"""
-    AZURE_BLOB_STORAGE = "AzureBlobStorage"
-    """Storage managed by provided Azure blob"""
+    AZURE_COMMUNICATION_SERVICES = "azureCommunicationServices"
+    AZURE_BLOB_STORAGE = "azureBlobStorage"
 
 
 class StreamingTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -222,7 +215,7 @@ class StreamingTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class TranscriptionResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TranscriptionResultType."""
+    """Transcription result types."""
 
     FINAL = "final"
     INTERMEDIATE = "intermediate"
@@ -260,7 +253,7 @@ class TranscriptionStatusDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class TranscriptionSubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Transcription subscription state."""
+    """Current state of transcription session."""
 
     DISABLED = "disabled"
     INACTIVE = "inactive"
@@ -268,7 +261,7 @@ class TranscriptionSubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMet
 
 
 class VoiceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Voice kind type."""
+    """Audio kind type."""
 
     MALE = "male"
     FEMALE = "female"

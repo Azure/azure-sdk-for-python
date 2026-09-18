@@ -18,8 +18,8 @@ class AutoMLComponent(Component):
     not intended to be used by the end users and therefore it won't be provided to the end users and it won't have
     public documentation for the users.
 
-    :param task: Task of the component.
-    :type task: str
+    :keyword task: Task of the component.
+    :paramtype task: str
     """
 
     def __init__(

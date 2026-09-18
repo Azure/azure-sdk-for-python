@@ -30,7 +30,6 @@ class TestRedTeams(TestBase):
 
         async with self.create_async_client(**kwargs) as project_client:
 
-            # [START red_team_sample]
             print("Creating a Red Team scan for direct model testing")
 
             # Create target configuration for testing an Azure OpenAI model

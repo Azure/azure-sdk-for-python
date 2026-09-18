@@ -6,7 +6,7 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase as JobBaseData
 from azure.ai.ml._schema.job.parallel_job import ParallelJobSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import JobType
@@ -72,10 +72,10 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
     :type partition_keys: list
     :param input_data: The input data.
     :type input_data: str
-    :param inputs: Inputs of the job.
-    :type inputs: dict
-    :param outputs: Outputs of the job.
-    :type outputs: dict
+    :keyword inputs: Inputs of the job.
+    :paramtype inputs: dict
+    :keyword outputs: Outputs of the job.
+    :paramtype outputs: dict
     """
 
     def __init__(

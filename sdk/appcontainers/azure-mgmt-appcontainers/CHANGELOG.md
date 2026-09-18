@@ -1,5 +1,137 @@
 # Release History
 
+## 5.1.0 (2026-09-14)
+
+### Features Added
+
+  - Client `ContainerAppsAPIClient` added operation group `available_environment_modes`
+  - Client `ContainerAppsAPIClient` added operation group `container_app_private_endpoint_connections`
+  - Client `ContainerAppsAPIClient` added operation group `container_app_private_link_resources`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_functions`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_label_history`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_revision_functions`
+  - Client `ContainerAppsAPIClient` added operation group `dapr_component_resiliency_policies`
+  - Client `ContainerAppsAPIClient` added operation group `dot_net_components`
+  - Client `ContainerAppsAPIClient` added operation group `functions_extension`
+  - Client `ContainerAppsAPIClient` added operation group `sandbox_groups`
+  - Client `ContainerAppsAPIClient` added operation group `vnet_connections`
+  - Model `BlobStorageTokenStore` added property `blob_container_uri`
+  - Model `BlobStorageTokenStore` added property `client_id`
+  - Model `BlobStorageTokenStore` added property `managed_identity_resource_id`
+  - Model `ContainerAppProperties` added property `networking`
+  - Model `JobExecutionProperties` added property `detailed_status`
+  - Model `JobExecutionProperties` added property `message`
+  - Model `JobExecutionProperties` added property `reason`
+  - Model `JobProperties` added property `running_state`
+  - Model `ManagedEnvironmentProperties` added property `app_insights_configuration`
+  - Model `ManagedEnvironmentProperties` added property `environment_mode`
+  - Model `ManagedEnvironmentProperties` added property `open_telemetry_configuration`
+  - Model `ReplicaContainer` added property `debug_endpoint`
+  - Model `Scale` added property `allow_scaling_rule_override`
+  - Model `SessionContainer` added property `probes`
+  - Added model `AppInsightsConfiguration`
+  - Added model `AvailableEnvironmentMode`
+  - Added model `AvailableEnvironmentModeProperties`
+  - Added model `CheckMigrationEligibilityRequest`
+  - Added model `CheckMigrationEligibilityResponse`
+  - Added model `ContainerAppNetworkingConfiguration`
+  - Added model `ContainerAppsFunction`
+  - Added model `ContainerAppsFunctionProperties`
+  - Added enum `ContainerAppsFunctionState`
+  - Added model `ContainerExecutionStatus`
+  - Added model `DaprComponentResiliencyPolicy`
+  - Added model `DaprComponentResiliencyPolicyCircuitBreakerPolicyConfiguration`
+  - Added model `DaprComponentResiliencyPolicyConfiguration`
+  - Added model `DaprComponentResiliencyPolicyHttpRetryBackOffConfiguration`
+  - Added model `DaprComponentResiliencyPolicyHttpRetryPolicyConfiguration`
+  - Added model `DaprComponentResiliencyPolicyProperties`
+  - Added model `DaprComponentResiliencyPolicyTimeoutPolicyConfiguration`
+  - Added model `DataDogConfiguration`
+  - Added model `DestinationsConfiguration`
+  - Added model `DotNetComponent`
+  - Added model `DotNetComponentConfigurationProperty`
+  - Added model `DotNetComponentProperties`
+  - Added enum `DotNetComponentProvisioningState`
+  - Added model `DotNetComponentServiceBind`
+  - Added enum `DotNetComponentType`
+  - Added model `ExecutionStatus`
+  - Added model `Header`
+  - Added enum `JobRunningState`
+  - Added model `LabelHistory`
+  - Added model `LabelHistoryProperties`
+  - Added model `LabelHistoryRecordItem`
+  - Added model `LogsConfiguration`
+  - Added enum `ManagedEnvironmentMode`
+  - Added model `MetricsConfiguration`
+  - Added model `MigrationEligibilityFailureReason`
+  - Added model `OpenTelemetryConfiguration`
+  - Added model `OtlpConfiguration`
+  - Added model `ReplicaExecutionStatus`
+  - Added model `SandboxGroup`
+  - Added model `SandboxGroupPatch`
+  - Added model `SandboxGroupPatchProperties`
+  - Added model `SandboxGroupProperties`
+  - Added enum `SandboxGroupProvisioningState`
+  - Added model `SessionProbe`
+  - Added model `SessionProbeHttpGet`
+  - Added model `SessionProbeHttpGetHttpHeadersItem`
+  - Added model `SessionProbeTcpSocket`
+  - Added enum `SessionProbeType`
+  - Added enum `Status`
+  - Added model `TracesConfiguration`
+  - Added model `VnetConnection`
+  - Added model `VnetConnectionProperties`
+  - Added enum `VnetConnectionProvisioningState`
+  - Model `JobsOperations` added method `begin_resume`
+  - Model `JobsOperations` added method `begin_suspend`
+  - Model `ManagedEnvironmentsOperations` added method `check_migration_eligibility`
+  - Added operation group `AvailableEnvironmentModesOperations`
+  - Added operation group `ContainerAppPrivateEndpointConnectionsOperations`
+  - Added operation group `ContainerAppPrivateLinkResourcesOperations`
+  - Added operation group `ContainerAppsFunctionsOperations`
+  - Added operation group `ContainerAppsLabelHistoryOperations`
+  - Added operation group `ContainerAppsRevisionFunctionsOperations`
+  - Added operation group `DaprComponentResiliencyPoliciesOperations`
+  - Added operation group `DotNetComponentsOperations`
+  - Added operation group `FunctionsExtensionOperations`
+  - Added operation group `SandboxGroupsOperations`
+  - Added operation group `VnetConnectionsOperations`
+
+## 5.0.0 (2026-07-08)
+
+### Features Added
+
+  - Client `ContainerAppsAPIClient` added method `send_request`
+  - Model `JobExecution` added property `system_data`
+  - Model `Usage` added property `unit`
+  - Added enum `SessionPoolIdentityLifeCycle`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `AuthConfig` moved instance variable `platform`, `global_validation`, `identity_providers`, `login`, `http_settings` and `encryption_settings` under property `properties` whose type is `AuthConfigProperties`
+  - Model `ConnectedEnvironment` moved instance variable `provisioning_state`, `deployment_errors`, `default_domain`, `static_ip`, `dapr_ai_connection_string` and `custom_domain_configuration` under property `properties` whose type is `ConnectedEnvironmentProperties`
+  - Model `ContainerApp` moved instance variable `provisioning_state`, `running_status`, `managed_environment_id`, `environment_id`, `workload_profile_name`, `latest_revision_name`, `latest_ready_revision_name`, `latest_revision_fqdn`, `custom_domain_verification_id`, `configuration`, `template`, `outbound_ip_addresses` and `event_stream_endpoint` under property `properties` whose type is `ContainerAppProperties`
+  - Model `ContainerAppAuthToken` moved instance variable `token` and `expires` under property `properties` whose type is `ContainerAppAuthTokenProperties`
+  - Model `DaprComponent` moved instance variable `component_type`, `version`, `ignore_errors`, `init_timeout`, `secrets`, `secret_store_component`, `metadata`, `scopes`, `provisioning_state` and `deployment_errors` under property `properties` whose type is `DaprComponentProperties`
+  - Model `EnvironmentAuthToken` moved instance variable `token` and `expires` under property `properties` whose type is `EnvironmentAuthTokenProperties`
+  - Model `Job` moved instance variable `provisioning_state`, `environment_id`, `workload_profile_name`, `configuration`, `template`, `outbound_ip_addresses` and `event_stream_endpoint` under property `properties` whose type is `JobProperties`
+  - Model `JobExecution` moved instance variable `status`, `start_time`, `end_time` and `template` under property `properties` whose type is `JobExecutionProperties`
+  - Model `MaintenanceConfigurationResource` moved instance variable `scheduled_entries` under property `properties` whose type is `ScheduledEntries`
+  - Model `ManagedEnvironment` moved instance variable `provisioning_state`, `dapr_ai_instrumentation_key`, `dapr_ai_connection_string`, `vnet_configuration`, `deployment_errors`, `default_domain`, `static_ip`, `app_logs_configuration`, `zone_redundant`, `custom_domain_configuration`, `event_stream_endpoint`, `workload_profiles`, `keda_configuration`, `dapr_configuration`, `infrastructure_resource_group`, `peer_authentication`, `peer_traffic_configuration`, `ingress_configuration`, `private_endpoint_connections` and `public_network_access` under property `properties` whose type is `ManagedEnvironmentProperties`
+  - Model `PrivateEndpointConnection` moved instance variable `group_ids`, `private_endpoint`, `private_link_service_connection_state` and `provisioning_state` under property `properties` whose type is `PrivateEndpointConnectionProperties`
+  - Model `PrivateLinkResource` moved instance variable `group_id`, `required_members` and `required_zone_names` under property `properties` whose type is `PrivateLinkResourceProperties`
+  - Model `Replica` moved instance variable `created_time`, `running_state`, `running_state_details`, `containers` and `init_containers` under property `properties` whose type is `ReplicaProperties`
+  - Model `Revision` moved instance variable `created_time`, `last_active_time`, `fqdn`, `template`, `active`, `replicas`, `traffic_weight`, `provisioning_error`, `health_state`, `provisioning_state` and `running_state` under property `properties` whose type is `RevisionProperties`
+  - Model `SessionPool` moved instance variable `environment_id`, `container_type`, `pool_management_type`, `node_count`, `scale_configuration`, `secrets`, `dynamic_pool_configuration`, `custom_container_template`, `session_network_configuration`, `pool_management_endpoint`, `provisioning_state` and `managed_identity_settings` under property `properties` whose type is `SessionPoolProperties`
+  - Model `SessionPoolUpdatableProperties` moved instance variable `scale_configuration`, `secrets`, `dynamic_pool_configuration`, `custom_container_template` and `session_network_configuration` under property `properties` whose type is `SessionPoolUpdatablePropertiesProperties`
+  - Model `SourceControl` moved instance variable `operation_state`, `repo_url`, `branch` and `github_action_configuration` under property `properties` whose type is `SourceControlProperties`
+  - Method `ContainerAppsOperations.list_custom_host_name_analysis` changed its parameter `custom_hostname` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `AuthConfigCollection`/`AvailableOperations`/`AvailableWorkloadProfilesCollection`/`CertificateCollection`/`ConnectedEnvironmentCollection`/`ContainerAppCollection`/`DaprComponentsCollection`/`HttpRouteConfigCollection`/`JavaComponentsCollection`/`JobExecutionNamesCollection`/`JobsCollection`/`ListUsagesResult`/`MaintenanceConfigurationCollection`/`ManagedCertificateCollection`/`ManagedEnvironmentsCollection`/`PrivateEndpointConnectionListResult`/`PrivateLinkResourceListResult`/`RevisionCollection`/`SessionPoolCollection`/`SourceControlCollection`/`WorkflowEnvelopeCollection`/`WorkloadProfileStatesCollection` which actually were not used by SDK users
+
 ## 5.0.0b1 (2026-05-27)
 
 ### Features Added

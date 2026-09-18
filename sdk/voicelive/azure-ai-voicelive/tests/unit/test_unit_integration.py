@@ -204,9 +204,9 @@ class TestRecentChangesIntegration:
         from azure.ai.voicelive.models import RequestSession, OpenAIVoice, OpenAIVoiceName
 
         # Test that session creation still works
-        session = RequestSession(model="gpt-4o-realtime-preview", voice=OpenAIVoice(name=OpenAIVoiceName.ALLOY))
+        session = RequestSession(model="gpt-realtime", voice=OpenAIVoice(name=OpenAIVoiceName.ALLOY))
 
-        assert session.model == "gpt-4o-realtime-preview"
+        assert session.model == "gpt-realtime"
         assert session.voice.name == OpenAIVoiceName.ALLOY
 
 

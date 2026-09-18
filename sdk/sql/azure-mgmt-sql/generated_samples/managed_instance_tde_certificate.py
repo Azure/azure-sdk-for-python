@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-01-01/ManagedInstanceTdeCertificate.json
+# x-ms-original-file: 2025-08-01-preview/ManagedInstanceTdeCertificate.json
 if __name__ == "__main__":
     main()

@@ -1,11 +1,11 @@
 {
-  "commit": "2a9f3c7adc8277ab8208ef0d988ab46da56407be",
+  "apiVersion": "2023-07-01-preview",
+  "apiVersions": {
+    "Microsoft.Network": "2023-07-01-preview"
+  },
+  "commit": "bde4bb3dac2805590036bc8416474607914c8cd8",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.35.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/dns/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --tag=package-2018-05 --use=@autorest/python@6.35.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/dns/resource-manager/readme.md"
+  "typespec_src": "specification/dns/resource-manager/Microsoft.Network/Dns",
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.1"
 }

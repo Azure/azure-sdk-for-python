@@ -103,12 +103,12 @@ class MlException(AzureError):
     :type message: str
     :param no_personal_data_message: The error message without any personal data. This will be pushed to telemetry logs.
     :type no_personal_data_message: str
-    :param target: The name of the element that caused the exception to be thrown.
-    :type target: ErrorTarget
-    :param error_category: The error category, defaults to Unknown.
-    :type error_category: ErrorCategory
-    :param error: The original exception if any.
-    :type error: Exception
+    :param args: Optional positional arguments forwarded to the base exception.
+    :type args: Any
+    :keyword target: The name of the element that caused the exception to be thrown.
+    :paramtype target: ErrorTarget
+    :keyword error_category: The error category, defaults to Unknown.
+    :paramtype error_category: ErrorCategory
     """
 
     def __init__(
@@ -173,10 +173,12 @@ class DeploymentException(MlException):
     :param no_personal_data_message: The error message without any personal data.
         This will be pushed to telemetry logs.
     :type no_personal_data_message: str
-    :param target: The name of the element that caused the exception to be thrown.
-    :type target: ErrorTarget
-    :param error_category: The error category, defaults to Unknown.
-    :type error_category: ErrorCategory
+    :param args: Optional positional arguments forwarded to the base exception.
+    :type args: Any
+    :keyword target: The name of the element that caused the exception to be thrown.
+    :paramtype target: ErrorTarget
+    :keyword error_category: The error category, defaults to Unknown.
+    :paramtype error_category: ErrorCategory
     """
 
     def __init__(
@@ -206,10 +208,12 @@ class ComponentException(MlException):
     :param no_personal_data_message: The error message without any personal data.
         This will be pushed to telemetry logs.
     :type no_personal_data_message: str
-    :param target: The name of the element that caused the exception to be thrown.
-    :type target: ErrorTarget
-    :param error_category: The error category, defaults to Unknown.
-    :type error_category: ErrorCategory
+    :param args: Optional positional arguments forwarded to the base exception.
+    :type args: Any
+    :keyword target: The name of the element that caused the exception to be thrown.
+    :paramtype target: ErrorTarget
+    :keyword error_category: The error category, defaults to Unknown.
+    :paramtype error_category: ErrorCategory
     """
 
     def __init__(
@@ -239,10 +243,12 @@ class JobException(MlException):
     :param no_personal_data_message: The error message without any personal data.
         This will be pushed to telemetry logs.
     :type no_personal_data_message: str
-    :param target: The name of the element that caused the exception to be thrown.
-    :type target: ErrorTarget
-    :param error_category: The error category, defaults to Unknown.
-    :type error_category: ErrorCategory
+    :param args: Optional positional arguments forwarded to the base exception.
+    :type args: Any
+    :keyword target: The name of the element that caused the exception to be thrown.
+    :paramtype target: ErrorTarget
+    :keyword error_category: The error category, defaults to Unknown.
+    :paramtype error_category: ErrorCategory
     """
 
     def __init__(
@@ -272,10 +278,12 @@ class ModelException(MlException):
     :param no_personal_data_message: The error message without any personal data.
         This will be pushed to telemetry logs.
     :type no_personal_data_message: str
-    :param target: The name of the element that caused the exception to be thrown.
-    :type target: ErrorTarget
-    :param error_category: The error category, defaults to Unknown.
-    :type error_category: ErrorCategory
+    :param args: Optional positional arguments forwarded to the base exception.
+    :type args: Any
+    :keyword target: The name of the element that caused the exception to be thrown.
+    :paramtype target: ErrorTarget
+    :keyword error_category: The error category, defaults to Unknown.
+    :paramtype error_category: ErrorCategory
     """
 
     def __init__(
@@ -305,10 +313,12 @@ class AssetException(MlException):
     :param no_personal_data_message: The error message without any personal data.
         This will be pushed to telemetry logs.
     :type no_personal_data_message: str
-    :param target: The name of the element that caused the exception to be thrown.
-    :type target: ErrorTarget
-    :param error_category: The error category, defaults to Unknown.
-    :type error_category: ErrorCategory
+    :param args: Optional positional arguments forwarded to the base exception.
+    :type args: Any
+    :keyword target: The name of the element that caused the exception to be thrown.
+    :paramtype target: ErrorTarget
+    :keyword error_category: The error category, defaults to Unknown.
+    :paramtype error_category: ErrorCategory
     """
 
     def __init__(
@@ -338,10 +348,12 @@ class ScheduleException(MlException):
     :param no_personal_data_message: The error message without any personal data.
         This will be pushed to telemetry logs.
     :type no_personal_data_message: str
-    :param target: The name of the element that caused the exception to be thrown.
-    :type target: ErrorTarget
-    :param error_category: The error category, defaults to Unknown.
-    :type error_category: ErrorCategory
+    :param args: Optional positional arguments forwarded to the base exception.
+    :type args: Any
+    :keyword target: The name of the element that caused the exception to be thrown.
+    :paramtype target: ErrorTarget
+    :keyword error_category: The error category, defaults to Unknown.
+    :paramtype error_category: ErrorCategory
     """
 
     def __init__(
@@ -381,12 +393,12 @@ class ValidationException(MlException):
         :param no_personal_data_message: The error message without any personal data.
             This will be pushed to telemetry logs.
         :type no_personal_data_message: str
-        :param error_type: The error type, chosen from one of the values of ValidationErrorType enum class.
-        :type error_type: ValidationErrorType
-        :param target: The name of the element that caused the exception to be thrown.
-        :type target: ErrorTarget
-        :param error_category: The error category, defaults to Unknown.
-        :type error_category: ErrorCategory
+        :keyword error_type: The error type, chosen from one of the values of ValidationErrorType enum class.
+        :paramtype error_type: ValidationErrorType
+        :keyword target: The name of the element that caused the exception to be thrown.
+        :paramtype target: ErrorTarget
+        :keyword error_category: The error category, defaults to Unknown.
+        :paramtype error_category: ErrorCategory
         :param error: The original exception if any.
         :type error: Exception
         """
@@ -430,10 +442,12 @@ class AssetPathException(MlException):
     :param no_personal_data_message: The error message without any personal data.
         This will be pushed to telemetry logs.
     :type no_personal_data_message: str
-    :param target: The name of the element that caused the exception to be thrown.
-    :type target: ErrorTarget
-    :param error_category: The error category, defaults to Unknown.
-    :type error_category: ErrorCategory
+    :param args: Optional positional arguments forwarded to the base exception.
+    :type args: Any
+    :keyword target: The name of the element that caused the exception to be thrown.
+    :paramtype target: ErrorTarget
+    :keyword error_category: The error category, defaults to Unknown.
+    :paramtype error_category: ErrorCategory
     """
 
     def __init__(
@@ -456,7 +470,18 @@ class AssetPathException(MlException):
 
 
 class EmptyDirectoryError(MlException):
-    """Exception raised when an empty directory is provided as input for an I/O operation."""
+    """Exception raised when an empty directory is provided as input for an I/O operation.
+
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    :param target: The name of the element that caused the exception to be thrown.
+    :type target: ErrorTarget
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    """
 
     def __init__(
         self,
@@ -475,7 +500,18 @@ class EmptyDirectoryError(MlException):
 
 
 class UserErrorException(MlException):
-    """Exception raised when invalid or unsupported inputs are provided."""
+    """Exception raised when invalid or unsupported inputs are provided.
+
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    :param error_category: The error category, defaults to UserError.
+    :type error_category: ErrorCategory
+    :param target: The name of the element that caused the exception to be thrown.
+    :type target: ErrorTarget
+    """
 
     def __init__(
         self,
@@ -493,7 +529,11 @@ class UserErrorException(MlException):
 
 
 class CannotSetAttributeError(UserErrorException):
-    """Exception raised when a user try setting attributes of inputs/outputs."""
+    """Exception raised when a user tries setting attributes of inputs/outputs.
+
+    :param object_name: The name of the object whose attribute cannot be set.
+    :type object_name: str
+    """
 
     def __init__(self, object_name):
         msg = "It is not allowed to set attribute of %r." % object_name
@@ -504,7 +544,13 @@ class CannotSetAttributeError(UserErrorException):
 
 
 class UnsupportedParameterKindError(UserErrorException):
-    """Exception raised when a user try setting attributes of inputs/outputs."""
+    """Exception raised when a function receives an unsupported parameter kind.
+
+    :param func_name: The name of the function that received the unsupported parameter kind.
+    :type func_name: str
+    :param parameter_kind: The unsupported parameter kind, defaults to ``*args or **kwargs``.
+    :type parameter_kind: str
+    """
 
     def __init__(self, func_name, parameter_kind=None):
         parameter_kind = parameter_kind or "*args or **kwargs"
@@ -513,14 +559,29 @@ class UnsupportedParameterKindError(UserErrorException):
 
 
 class KeywordError(UserErrorException):
-    """Super class of all type keyword error."""
+    """Base class for all keyword-related errors.
+
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    """
 
     def __init__(self, message, no_personal_data_message=None):
         super().__init__(message=message, no_personal_data_message=no_personal_data_message)
 
 
 class UnexpectedKeywordError(KeywordError):
-    """Exception raised when an unexpected keyword parameter is provided in dynamic functions."""
+    """Exception raised when an unexpected keyword parameter is provided in dynamic functions.
+
+    :param func_name: The name of the function that received the unexpected keyword.
+    :type func_name: str
+    :param keyword: The unexpected keyword that was provided.
+    :type keyword: str
+    :param keywords: The list of valid keywords, defaults to None.
+    :type keywords: list
+    """
 
     def __init__(self, func_name, keyword, keywords=None):
         message = "%s() got an unexpected keyword argument %r" % (func_name, keyword)
@@ -529,7 +590,13 @@ class UnexpectedKeywordError(KeywordError):
 
 
 class UnexpectedAttributeError(KeywordError, AttributeError):
-    """Exception raised when an unexpected keyword is invoked by attribute, e.g. inputs.invalid_key."""
+    """Exception raised when an unexpected keyword is invoked by attribute, e.g. inputs.invalid_key.
+
+    :param keyword: The unexpected attribute that was accessed.
+    :type keyword: str
+    :param keywords: The list of valid attributes, defaults to None.
+    :type keywords: list
+    """
 
     def __init__(self, keyword, keywords=None):
         message = "Got an unexpected attribute %r" % keyword
@@ -538,7 +605,13 @@ class UnexpectedAttributeError(KeywordError, AttributeError):
 
 
 class MissingPositionalArgsError(KeywordError):
-    """Exception raised when missing positional keyword parameter in dynamic functions."""
+    """Exception raised when missing positional keyword parameter in dynamic functions.
+
+    :param func_name: The name of the function that is missing positional arguments.
+    :type func_name: str
+    :param missing_args: The list of missing positional argument names.
+    :type missing_args: list
+    """
 
     def __init__(self, func_name, missing_args):
         message = "%s() missing %d required positional argument(s): %s." % (
@@ -550,7 +623,17 @@ class MissingPositionalArgsError(KeywordError):
 
 
 class TooManyPositionalArgsError(KeywordError):
-    """Exception raised when too many positional arguments is provided in dynamic functions."""
+    """Exception raised when too many positional arguments are provided in dynamic functions.
+
+    :param func_name: The name of the function that received too many positional arguments.
+    :type func_name: str
+    :param min_number: The minimum number of accepted positional arguments.
+    :type min_number: int
+    :param max_number: The maximum number of accepted positional arguments.
+    :type max_number: int
+    :param given_number: The number of positional arguments that were provided.
+    :type given_number: int
+    """
 
     def __init__(self, func_name, min_number, max_number, given_number):
         message = "%s() takes %s positional argument but %d were given." % (
@@ -562,7 +645,13 @@ class TooManyPositionalArgsError(KeywordError):
 
 
 class MultipleValueError(KeywordError):
-    """Exception raised when giving multiple value of a keyword parameter in dynamic functions."""
+    """Exception raised when giving multiple values of a keyword parameter in dynamic functions.
+
+    :param func_name: The name of the function that received multiple values.
+    :type func_name: str
+    :param keyword: The keyword argument that received multiple values.
+    :type keyword: str
+    """
 
     def __init__(self, func_name, keyword):
         message = "%s() got multiple values for argument %r." % (func_name, keyword)
@@ -570,7 +659,13 @@ class MultipleValueError(KeywordError):
 
 
 class ParamValueNotExistsError(KeywordError):
-    """Exception raised when items in non_pipeline_inputs not in keyword parameters in dynamic functions."""
+    """Exception raised when items in non_pipeline_inputs not in keyword parameters in dynamic functions.
+
+    :param func_name: The name of the function that received the unexpected params.
+    :type func_name: str
+    :param keywords: The list of unexpected parameter names.
+    :type keywords: list
+    """
 
     def __init__(self, func_name, keywords):
         message = "%s() got unexpected params in non_pipeline_inputs %r." % (func_name, keywords)
@@ -578,7 +673,11 @@ class ParamValueNotExistsError(KeywordError):
 
 
 class UnsupportedOperationError(UserErrorException):
-    """Exception raised when specified operation is not supported."""
+    """Exception raised when specified operation is not supported.
+
+    :param operation_name: The name of the operation that is not supported.
+    :type operation_name: str
+    """
 
     def __init__(self, operation_name):
         message = "Operation %s is not supported." % operation_name
@@ -586,7 +685,15 @@ class UnsupportedOperationError(UserErrorException):
 
 
 class LocalEndpointNotFoundError(MlException):
-    """Exception raised if local endpoint cannot be found."""
+    """Exception raised if local endpoint cannot be found.
+
+    :param endpoint_name: The name of the local endpoint.
+    :type endpoint_name: str
+    :param deployment_name: The name of the local deployment, defaults to None.
+    :type deployment_name: str
+    :param error_category: The error category, defaults to UserError.
+    :type error_category: ErrorCategory
+    """
 
     def __init__(
         self,
@@ -610,7 +717,15 @@ class LocalEndpointNotFoundError(MlException):
 
 
 class LocalEndpointInFailedStateError(MlException):
-    """Exception raised when local endpoint is in Failed state."""
+    """Exception raised when local endpoint is in Failed state.
+
+    :param endpoint_name: The name of the local endpoint.
+    :type endpoint_name: str
+    :param deployment_name: The name of the local deployment, defaults to None.
+    :type deployment_name: str
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    """
 
     def __init__(self, endpoint_name, deployment_name=None, error_category=ErrorCategory.UNKNOWN):
         resource_name = (
@@ -631,7 +746,11 @@ class LocalEndpointInFailedStateError(MlException):
 
 
 class DockerEngineNotAvailableError(MlException):
-    """Exception raised when local Docker Engine is unavailable for local operation."""
+    """Exception raised when local Docker Engine is unavailable for local operation.
+
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    """
 
     def __init__(self, error_category=ErrorCategory.UNKNOWN):
         msg = "Please make sure Docker Engine is installed and running. https://docs.docker.com/engine/install/"
@@ -645,7 +764,13 @@ class DockerEngineNotAvailableError(MlException):
 
 class MultipleLocalDeploymentsFoundError(MlException):
     """Exception raised when no deployment name is specified for local endpoint even though multiple deployments
-    exist."""
+    exist.
+
+    :param endpoint_name: The name of the local endpoint.
+    :type endpoint_name: str
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    """
 
     def __init__(self, endpoint_name: str, error_category=ErrorCategory.UNKNOWN):
         super().__init__(
@@ -657,7 +782,16 @@ class MultipleLocalDeploymentsFoundError(MlException):
 
 
 class InvalidLocalEndpointError(MlException):
-    """Exception raised when local endpoint is invalid."""
+    """Exception raised when local endpoint is invalid.
+
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    :param error_category: The error category, defaults to UserError.
+    :type error_category: ErrorCategory
+    """
 
     def __init__(
         self,
@@ -674,7 +808,13 @@ class InvalidLocalEndpointError(MlException):
 
 
 class LocalEndpointImageBuildError(MlException):
-    """Exception raised when local endpoint's Docker image build is unsuccessful."""
+    """Exception raised when local endpoint's Docker image build is unsuccessful.
+
+    :param error: The underlying error or error message that caused the image build to fail.
+    :type error: Union[str, Exception]
+    :param error_category: The error category, defaults to Unknown.
+    :type error_category: ErrorCategory
+    """
 
     def __init__(self, error: Union[str, Exception], error_category=ErrorCategory.UNKNOWN):
         err = f"Building the local endpoint image failed with error: {str(error)}"
@@ -691,6 +831,15 @@ class CloudArtifactsNotSupportedError(MlException):
     """Exception raised when remote cloud artifacts are used with local endpoints.
 
     Local endpoints only support local artifacts.
+
+    :param endpoint_name: The name of the local endpoint.
+    :type endpoint_name: str
+    :param invalid_artifact: The cloud artifact that is not supported locally.
+    :type invalid_artifact: str
+    :param deployment_name: The name of the local deployment, defaults to None.
+    :type deployment_name: str
+    :param error_category: The error category, defaults to UserError.
+    :type error_category: ErrorCategory
     """
 
     def __init__(
@@ -719,7 +868,19 @@ class CloudArtifactsNotSupportedError(MlException):
 
 
 class RequiredLocalArtifactsNotFoundError(MlException):
-    """Exception raised when local artifact is not provided for local endpoint."""
+    """Exception raised when local artifact is not provided for local endpoint.
+
+    :param endpoint_name: The name of the local endpoint.
+    :type endpoint_name: str
+    :param required_artifact: The name of the required local artifact.
+    :type required_artifact: str
+    :param required_artifact_type: The type of the required local artifact.
+    :type required_artifact_type: str
+    :param deployment_name: The name of the local deployment, defaults to None.
+    :type deployment_name: str
+    :param error_category: The error category, defaults to UserError.
+    :type error_category: ErrorCategory
+    """
 
     def __init__(
         self,
@@ -752,7 +913,18 @@ class RequiredLocalArtifactsNotFoundError(MlException):
 
 
 class JobParsingError(MlException):
-    """Exception that the job data returned by MFE cannot be parsed."""
+    """Exception that the job data returned by MFE cannot be parsed.
+
+    :param error_category: The error category.
+    :type error_category: ErrorCategory
+    :param no_personal_data_message: The error message without any personal data.
+        This will be pushed to telemetry logs.
+    :type no_personal_data_message: str
+    :param message: A message describing the error. This is the error message the user will see.
+    :type message: str
+    :param args: Optional positional arguments forwarded to the base exception.
+    :type args: Any
+    """
 
     def __init__(self, error_category, no_personal_data_message, message, *args, **kwargs):
         super(JobParsingError, self).__init__(
@@ -766,7 +938,15 @@ class JobParsingError(MlException):
 
 
 class PipelineChildJobError(MlException):
-    """Exception that the pipeline child job is not supported."""
+    """Exception that the pipeline child job is not supported.
+
+    :param job_id: The job id of the pipeline child job.
+    :type job_id: str
+    :param command: The command that is not supported on the pipeline child job, defaults to "parse".
+    :type command: str
+    :param prompt_studio_ui: Whether to prompt the user to use the studio UI, defaults to False.
+    :type prompt_studio_ui: bool
+    """
 
     ERROR_MESSAGE_TEMPLATE = "az ml job {command} is not supported on pipeline child job, {prompt_message}."
     PROMPT_STUDIO_UI_MESSAGE = "please go to studio UI to do related actions{url}"
@@ -798,7 +978,12 @@ class PipelineChildJobError(MlException):
 class InvalidVSCodeRequestError(MlException):
     """Exception raised when VS Code Debug is invoked with a remote endpoint.
 
-    VSCode debug is only supported for local endpoints.
+    VS Code debug is only supported for local endpoints.
+
+    :param error_category: The error category, defaults to UserError.
+    :type error_category: ErrorCategory
+    :param msg: A message describing the error, defaults to None.
+    :type msg: str
     """
 
     def __init__(self, error_category=ErrorCategory.USER_ERROR, msg=None):
@@ -811,7 +996,13 @@ class InvalidVSCodeRequestError(MlException):
 
 
 class VSCodeCommandNotFound(MlException):
-    """Exception raised when VSCode instance cannot be instantiated."""
+    """Exception raised when VS Code instance cannot be instantiated.
+
+    :param output: The output of the failed VS Code command, defaults to None.
+    :type output: str
+    :param error_category: The error category, defaults to UserError.
+    :type error_category: ErrorCategory
+    """
 
     def __init__(self, output=None, error_category=ErrorCategory.USER_ERROR):
         error_msg = f" due to error: [{output}]" if output else ""
@@ -828,7 +1019,13 @@ class VSCodeCommandNotFound(MlException):
 
 
 class LocalDeploymentGPUNotAvailable(MlException):
-    """Exception raised when local_enable_gpu is set and Nvidia GPU is not available."""
+    """Exception raised when local_enable_gpu is set and NVIDIA GPU is not available.
+
+    :param error_category: The error category, defaults to UserError.
+    :type error_category: ErrorCategory
+    :param msg: A message describing the error, defaults to None.
+    :type msg: str
+    """
 
     def __init__(self, error_category=ErrorCategory.USER_ERROR, msg=None):
         super().__init__(

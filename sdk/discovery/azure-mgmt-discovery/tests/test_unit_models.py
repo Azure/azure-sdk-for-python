@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -7,6 +8,7 @@ Unit tests for azure-mgmt-discovery models.
 
 These tests verify model initialization without making HTTP calls.
 """
+
 from azure.mgmt.discovery import models
 
 
@@ -25,11 +27,11 @@ class TestDiscoveryModelsUnit:
     def test_identity_model(self):
         """Test Identity model can be initialized."""
         identity = models.Identity(
-            id="/subscriptions/sub/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id",
+            id="/subscriptions/sub/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/sanitized-identity",
         )
         assert (
             identity.id
-            == "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id"
+            == "/subscriptions/sub/resourceGroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/sanitized-identity"
         )
 
     def test_bookshelf_model_initialization(self):

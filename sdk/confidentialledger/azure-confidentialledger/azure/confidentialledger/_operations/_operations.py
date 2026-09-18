@@ -34,6 +34,7 @@ from .._configuration import ConfidentialLedgerClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
+from .._validation import api_version_validation
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
@@ -47,7 +48,7 @@ def build_confidential_ledger_get_constitution_request(**kwargs: Any) -> HttpReq
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -68,7 +69,7 @@ def build_confidential_ledger_list_consortium_members_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -87,7 +88,7 @@ def build_confidential_ledger_get_enclave_quotes_request(**kwargs: Any) -> HttpR
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -106,7 +107,7 @@ def build_confidential_ledger_list_collections_request(**kwargs: Any) -> HttpReq
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -114,6 +115,29 @@ def build_confidential_ledger_list_collections_request(**kwargs: Any) -> HttpReq
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_confidential_ledger_list_tags_request(  # pylint: disable=name-too-long
+    *, collection_id: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/app/collections/tags"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if collection_id is not None:
+        _params["collectionId"] = _SERIALIZER.query("collection_id", collection_id, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -132,7 +156,7 @@ def build_confidential_ledger_list_ledger_entries_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -162,7 +186,7 @@ def build_confidential_ledger_create_ledger_entry_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -189,7 +213,7 @@ def build_confidential_ledger_get_ledger_entry_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -217,7 +241,7 @@ def build_confidential_ledger_get_receipt_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -243,7 +267,7 @@ def build_confidential_ledger_get_transaction_status_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -269,7 +293,7 @@ def build_confidential_ledger_get_current_ledger_entry_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -290,7 +314,7 @@ def build_confidential_ledger_list_users_request(**kwargs: Any) -> HttpRequest: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -309,7 +333,7 @@ def build_confidential_ledger_list_ledger_users_request(**kwargs: Any) -> HttpRe
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -329,7 +353,7 @@ def build_confidential_ledger_delete_user_request(  # pylint: disable=name-too-l
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     # Construct URL
     _url = "/app/users/{userId}"
     path_format_arguments = {
@@ -350,7 +374,7 @@ def build_confidential_ledger_get_user_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -377,7 +401,7 @@ def build_confidential_ledger_create_or_update_user_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -404,7 +428,7 @@ def build_confidential_ledger_delete_ledger_user_request(  # pylint: disable=nam
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     # Construct URL
     _url = "/app/ledgerUsers/{userId}"
     path_format_arguments = {
@@ -425,7 +449,7 @@ def build_confidential_ledger_get_ledger_user_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -452,7 +476,7 @@ def build_confidential_ledger_create_or_update_ledger_user_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -480,7 +504,7 @@ def build_confidential_ledger_get_user_defined_endpoint_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -502,7 +526,7 @@ def build_confidential_ledger_create_user_defined_endpoint_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     # Construct URL
     _url = "/app/userDefinedEndpoints"
 
@@ -522,7 +546,7 @@ def build_confidential_ledger_get_runtime_options_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -537,14 +561,14 @@ def build_confidential_ledger_get_runtime_options_request(  # pylint: disable=na
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_confidential_ledger_update_runtime_options_request(  # pylint: disable=name-too-long
+def build_confidential_ledger_update_runtime_options_stable_request(  # pylint: disable=name-too-long
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -567,7 +591,7 @@ def build_confidential_ledger_get_user_defined_endpoints_module_request(  # pyli
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -589,7 +613,7 @@ def build_confidential_ledger_list_user_defined_functions_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -609,7 +633,7 @@ def build_confidential_ledger_delete_user_defined_function_request(  # pylint: d
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     # Construct URL
     _url = "/app/userDefinedFunctions/{functionId}"
     path_format_arguments = {
@@ -630,7 +654,7 @@ def build_confidential_ledger_get_user_defined_function_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -657,7 +681,7 @@ def build_confidential_ledger_create_user_defined_function_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -686,7 +710,7 @@ def build_confidential_ledger_execute_user_defined_function_request(  # pylint: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -714,7 +738,7 @@ def build_confidential_ledger_get_user_defined_role_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -730,14 +754,16 @@ def build_confidential_ledger_get_user_defined_role_request(  # pylint: disable=
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_confidential_ledger_create_user_defined_role_request(  # pylint: disable=name-too-long
+def build_confidential_ledger_create_user_defined_role_stable_request(  # pylint: disable=name-too-long
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/app/roles"
 
@@ -747,18 +773,21 @@ def build_confidential_ledger_create_user_defined_role_request(  # pylint: disab
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_confidential_ledger_update_user_defined_role_request(  # pylint: disable=name-too-long
+def build_confidential_ledger_update_user_defined_role_stable_request(  # pylint: disable=name-too-long
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/app/roles"
 
@@ -768,16 +797,17 @@ def build_confidential_ledger_update_user_defined_role_request(  # pylint: disab
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_confidential_ledger_delete_user_defined_role_request(  # pylint: disable=name-too-long
+def build_confidential_ledger_delete_user_defined_role_stable_request(  # pylint: disable=name-too-long
     *, role_name: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-23"))
     # Construct URL
     _url = "/app/roles"
 
@@ -796,8 +826,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
     def get_constitution(self, **kwargs: Any) -> _models.Constitution:
         """Gets the constitution used for governance.
 
-        The constitution is a script that assesses and applies proposals from
-        consortium members.
+        The constitution is a script that assesses and applies proposals from consortium members.
 
         :return: Constitution. The Constitution is compatible with MutableMapping
         :rtype: ~azure.confidentialledger.models.Constitution
@@ -828,6 +857,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -842,11 +872,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Constitution, response.json())
 
@@ -904,7 +937,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "ledgerEndpoint": self._serialize.url(
@@ -917,7 +953,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.ConsortiumMember], deserialized.get("members", []))
+            list_of_elem = _deserialize(
+                list[_models.ConsortiumMember],
+                deserialized.get("members", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -933,7 +972,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+                error = _failsafe_deserialize(
+                    _models.ConfidentialLedgerError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -944,8 +986,8 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
     def get_enclave_quotes(self, **kwargs: Any) -> _models.ConfidentialLedgerEnclaves:
         """Gets quotes for all nodes of the Confidential Ledger.
 
-        A quote is an SGX enclave measurement that can be used to verify the validity
-        of a node and its enclave.
+        A quote is an SGX enclave measurement that can be used to verify the validity of a node and its
+        enclave.
 
         :return: ConfidentialLedgerEnclaves. The ConfidentialLedgerEnclaves is compatible with
          MutableMapping
@@ -977,6 +1019,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -991,11 +1034,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ConfidentialLedgerEnclaves, response.json())
 
@@ -1053,7 +1099,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "ledgerEndpoint": self._serialize.url(
@@ -1066,7 +1115,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.Collection], deserialized.get("collections", []))
+            list_of_elem = _deserialize(
+                list[_models.Collection],
+                deserialized.get("collections", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1082,7 +1134,112 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+                error = _failsafe_deserialize(
+                    _models.ConfidentialLedgerError,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-02-23",
+        params_added_on={"2026-02-23": ["api_version", "collection_id", "accept"]},
+        api_versions_list=["2026-02-23"],
+    )
+    def list_tags(self, *, collection_id: Optional[str] = None, **kwargs: Any) -> ItemPaged[str]:
+        """Gets a list of tags for a collection.
+
+        Retrieves the tags associated with a collection.
+
+        :keyword collection_id: The collection id. Default value is None.
+        :paramtype collection_id: str
+        :return: An iterator like instance of str
+        :rtype: ~azure.core.paging.ItemPaged[str]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[str]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_confidential_ledger_list_tags_request(
+                    collection_id=collection_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "ledgerEndpoint": self._serialize.url(
+                        "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "ledgerEndpoint": self._serialize.url(
+                        "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[str],
+                deserialized.get("tags", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ConfidentialLedgerError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1101,8 +1258,8 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
     ) -> ItemPaged["_models.LedgerEntry"]:
         """Gets ledger entries from a collection corresponding to a range.
 
-        A collection id may optionally be specified. Only entries in the specified (or
-        default) collection will be returned.
+        A collection id may optionally be specified. Only entries in the specified (or default)
+        collection will be returned.
 
         :keyword collection_id: The collection id. Default value is None.
         :paramtype collection_id: str
@@ -1160,7 +1317,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "ledgerEndpoint": self._serialize.url(
@@ -1173,7 +1333,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.LedgerEntry], deserialized.get("entries", []))
+            list_of_elem = _deserialize(
+                list[_models.LedgerEntry],
+                deserialized.get("entries", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1189,7 +1352,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+                error = _failsafe_deserialize(
+                    _models.ConfidentialLedgerError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1341,6 +1507,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1355,7 +1522,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1364,7 +1534,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         )
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.LedgerWriteResult, response.json())
 
@@ -1377,14 +1547,12 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
     def get_ledger_entry(
         self, transaction_id: str, *, collection_id: Optional[str] = None, **kwargs: Any
     ) -> _models.LedgerQueryResult:
-        """Gets the ledger entry at the specified transaction id. A collection id may
-        optionally be specified to indicate the collection from which to fetch the
-        value.
+        """Gets the ledger entry at the specified transaction id. A collection id may optionally be
+        specified to indicate the collection from which to fetch the value.
 
-        To return older ledger entries, the relevant sections of the ledger must be
-        read from disk and validated. To prevent blocking within the enclave, the
-        response will indicate whether the entry is ready and part of the response, or
-        if the loading is still ongoing.
+        To return older ledger entries, the relevant sections of the ledger must be read from disk and
+        validated. To prevent blocking within the enclave, the response will indicate whether the entry
+        is ready and part of the response, or if the loading is still ongoing.
 
         :param transaction_id: Identifies a write transaction. Required.
         :type transaction_id: str
@@ -1421,6 +1589,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1435,11 +1604,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.LedgerQueryResult, response.json())
 
@@ -1486,6 +1658,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1500,11 +1673,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.TransactionReceipt, response.json())
 
@@ -1551,6 +1727,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1565,11 +1742,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.TransactionStatus, response.json())
 
@@ -1616,6 +1796,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1630,11 +1811,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.LedgerEntry, response.json())
 
@@ -1692,7 +1876,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "ledgerEndpoint": self._serialize.url(
@@ -1705,7 +1892,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.LedgerUser], deserialized.get("ledgerUsers", []))
+            list_of_elem = _deserialize(
+                list[_models.LedgerUser],
+                deserialized.get("ledgerUsers", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1721,7 +1911,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+                error = _failsafe_deserialize(
+                    _models.ConfidentialLedgerError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1777,7 +1970,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "ledgerEndpoint": self._serialize.url(
@@ -1790,7 +1986,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.LedgerUserMultipleRoles], deserialized.get("ledgerUsers", []))
+            list_of_elem = _deserialize(
+                list[_models.LedgerUserMultipleRoles],
+                deserialized.get("ledgerUsers", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1806,7 +2005,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+                error = _failsafe_deserialize(
+                    _models.ConfidentialLedgerError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1860,7 +2062,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -1904,6 +2109,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1918,11 +2124,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.LedgerUser, response.json())
 
@@ -2054,6 +2263,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2068,11 +2278,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.LedgerUser, response.json())
 
@@ -2128,7 +2341,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -2172,6 +2388,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2186,11 +2403,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.LedgerUserMultipleRoles, response.json())
 
@@ -2331,6 +2551,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2345,11 +2566,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.LedgerUserMultipleRoles, response.json())
 
@@ -2393,6 +2617,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2407,11 +2632,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Bundle, response.json())
 
@@ -2533,7 +2761,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -2574,6 +2805,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2588,11 +2820,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.JsRuntimeOptions, response.json())
 
@@ -2602,8 +2837,12 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         return deserialized  # type: ignore
 
     @overload
-    def update_runtime_options(
-        self, js_runtime_options: _models.JsRuntimeOptions, *, content_type: str = "application/json", **kwargs: Any
+    def update_runtime_options_stable(
+        self,
+        js_runtime_options: _models.JsRuntimeOptions,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any,
     ) -> _models.JsRuntimeOptions:
         """Runtime options for user defined endpoints.
 
@@ -2612,7 +2851,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         :param js_runtime_options: JS Runtime options. Required.
         :type js_runtime_options: ~azure.confidentialledger.models.JsRuntimeOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: JsRuntimeOptions. The JsRuntimeOptions is compatible with MutableMapping
         :rtype: ~azure.confidentialledger.models.JsRuntimeOptions
@@ -2620,8 +2859,8 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         """
 
     @overload
-    def update_runtime_options(
-        self, js_runtime_options: JSON, *, content_type: str = "application/json", **kwargs: Any
+    def update_runtime_options_stable(
+        self, js_runtime_options: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.JsRuntimeOptions:
         """Runtime options for user defined endpoints.
 
@@ -2630,7 +2869,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         :param js_runtime_options: JS Runtime options. Required.
         :type js_runtime_options: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: JsRuntimeOptions. The JsRuntimeOptions is compatible with MutableMapping
         :rtype: ~azure.confidentialledger.models.JsRuntimeOptions
@@ -2638,8 +2877,8 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         """
 
     @overload
-    def update_runtime_options(
-        self, js_runtime_options: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    def update_runtime_options_stable(
+        self, js_runtime_options: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.JsRuntimeOptions:
         """Runtime options for user defined endpoints.
 
@@ -2648,7 +2887,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         :param js_runtime_options: JS Runtime options. Required.
         :type js_runtime_options: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: JsRuntimeOptions. The JsRuntimeOptions is compatible with MutableMapping
         :rtype: ~azure.confidentialledger.models.JsRuntimeOptions
@@ -2656,7 +2895,12 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         """
 
     @distributed_trace
-    def update_runtime_options(
+    @api_version_validation(
+        method_added_on="2026-02-23",
+        params_added_on={"2026-02-23": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2026-02-23"],
+    )
+    def update_runtime_options_stable(
         self, js_runtime_options: Union[_models.JsRuntimeOptions, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.JsRuntimeOptions:
         """Runtime options for user defined endpoints.
@@ -2685,14 +2929,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.JsRuntimeOptions] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/merge-patch+json"
         _content = None
         if isinstance(js_runtime_options, (IOBase, bytes)):
             _content = js_runtime_options
         else:
             _content = json.dumps(js_runtime_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_confidential_ledger_update_runtime_options_request(
+        _request = build_confidential_ledger_update_runtime_options_stable_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2706,6 +2950,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2720,11 +2965,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.JsRuntimeOptions, response.json())
 
@@ -2771,6 +3019,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2785,11 +3034,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ModuleDef, response.json())
 
@@ -2847,7 +3099,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "ledgerEndpoint": self._serialize.url(
@@ -2860,7 +3115,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.UserDefinedFunction], deserialized.get("functions", []))
+            list_of_elem = _deserialize(
+                list[_models.UserDefinedFunction],
+                deserialized.get("functions", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2876,7 +3134,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+                error = _failsafe_deserialize(
+                    _models.ConfidentialLedgerError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2932,7 +3193,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -2976,6 +3240,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2990,11 +3255,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.UserDefinedFunction, response.json())
 
@@ -3133,6 +3401,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3147,7 +3416,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3156,7 +3428,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         )
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.UserDefinedFunction, response.json())
 
@@ -3312,6 +3584,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3326,11 +3599,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.UserDefinedFunctionExecutionResponse, response.json())
 
@@ -3340,15 +3616,15 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_user_defined_role(self, *, role_name: str, **kwargs: Any) -> _models.Roles:
+    def get_user_defined_role(self, *, role_name: str, **kwargs: Any) -> _models.UserDefinedRole:
         """Gets role actions for user defined roles.
 
         user defined roles allow users to define and manage app specific AuthZ policy.
 
         :keyword role_name: user defined role name. Required.
         :paramtype role_name: str
-        :return: Roles. The Roles is compatible with MutableMapping
-        :rtype: ~azure.confidentialledger.models.Roles
+        :return: UserDefinedRole. The UserDefinedRole is compatible with MutableMapping
+        :rtype: ~azure.confidentialledger.models.UserDefinedRole
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3362,7 +3638,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Roles] = kwargs.pop("cls", None)
+        cls: ClsType[_models.UserDefinedRole] = kwargs.pop("cls", None)
 
         _request = build_confidential_ledger_get_user_defined_role_request(
             role_name=role_name,
@@ -3377,6 +3653,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3391,13 +3668,16 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Roles, response.json())
+            deserialized = _deserialize(_models.UserDefinedRole, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3405,25 +3685,27 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         return deserialized  # type: ignore
 
     @overload
-    def create_user_defined_role(
-        self, body: _models.Roles, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    def create_user_defined_role_stable(
+        self, body: _models.UserDefinedRoles, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.UserDefinedRoles:
         """Creates new roles and their actions.
 
         User defined roles allow users to define and manage app specific AuthZ policy.
 
         :param body: Request body. Required.
-        :type body: ~azure.confidentialledger.models.Roles
+        :type body: ~azure.confidentialledger.models.UserDefinedRoles
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
+        :return: UserDefinedRoles. The UserDefinedRoles is compatible with MutableMapping
+        :rtype: ~azure.confidentialledger.models.UserDefinedRoles
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def create_user_defined_role(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def create_user_defined_role_stable(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.UserDefinedRoles:
         """Creates new roles and their actions.
 
         User defined roles allow users to define and manage app specific AuthZ policy.
@@ -3433,15 +3715,15 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
+        :return: UserDefinedRoles. The UserDefinedRoles is compatible with MutableMapping
+        :rtype: ~azure.confidentialledger.models.UserDefinedRoles
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def create_user_defined_role(
+    def create_user_defined_role_stable(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    ) -> _models.UserDefinedRoles:
         """Creates new roles and their actions.
 
         User defined roles allow users to define and manage app specific AuthZ policy.
@@ -3451,23 +3733,29 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
+        :return: UserDefinedRoles. The UserDefinedRoles is compatible with MutableMapping
+        :rtype: ~azure.confidentialledger.models.UserDefinedRoles
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def create_user_defined_role(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.Roles, JSON, IO[bytes]], **kwargs: Any
-    ) -> None:
+    @api_version_validation(
+        method_added_on="2026-02-23",
+        params_added_on={"2026-02-23": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2026-02-23"],
+    )
+    def create_user_defined_role_stable(
+        self, body: Union[_models.UserDefinedRoles, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.UserDefinedRoles:
         """Creates new roles and their actions.
 
         User defined roles allow users to define and manage app specific AuthZ policy.
 
-        :param body: Request body. Is one of the following types: Roles, JSON, IO[bytes] Required.
-        :type body: ~azure.confidentialledger.models.Roles or JSON or IO[bytes]
-        :return: None
-        :rtype: None
+        :param body: Request body. Is one of the following types: UserDefinedRoles, JSON, IO[bytes]
+         Required.
+        :type body: ~azure.confidentialledger.models.UserDefinedRoles or JSON or IO[bytes]
+        :return: UserDefinedRoles. The UserDefinedRoles is compatible with MutableMapping
+        :rtype: ~azure.confidentialledger.models.UserDefinedRoles
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3482,7 +3770,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.UserDefinedRoles] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -3491,7 +3779,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_confidential_ledger_create_user_defined_role_request(
+        _request = build_confidential_ledger_create_user_defined_role_stable_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3505,7 +3793,8 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -3513,81 +3802,104 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.UserDefinedRoles, response.json())
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
-    def update_user_defined_role(
-        self, body: _models.Roles, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Patch replaces the allowed action on existing roles,if the desire is to remove
-        an existing action, the role must be deleted and recreated.
+    def update_user_defined_role_stable(
+        self, body: _models.UserDefinedRoles, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> _models.UserDefinedRoles:
+        """Patch replaces the allowed action on existing roles,if the desire is to remove an existing
+        action, the role must be deleted and recreated.
 
         User defined roles allow users to define and manage app specific AuthZ policy.
 
         :param body: Request body. Required.
-        :type body: ~azure.confidentialledger.models.Roles
+        :type body: ~azure.confidentialledger.models.UserDefinedRoles
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
+        :return: UserDefinedRoles. The UserDefinedRoles is compatible with MutableMapping
+        :rtype: ~azure.confidentialledger.models.UserDefinedRoles
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def update_user_defined_role(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
-        """Patch replaces the allowed action on existing roles,if the desire is to remove
-        an existing action, the role must be deleted and recreated.
+    def update_user_defined_role_stable(
+        self, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> _models.UserDefinedRoles:
+        """Patch replaces the allowed action on existing roles,if the desire is to remove an existing
+        action, the role must be deleted and recreated.
 
         User defined roles allow users to define and manage app specific AuthZ policy.
 
         :param body: Request body. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
+        :return: UserDefinedRoles. The UserDefinedRoles is compatible with MutableMapping
+        :rtype: ~azure.confidentialledger.models.UserDefinedRoles
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def update_user_defined_role(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Patch replaces the allowed action on existing roles,if the desire is to remove
-        an existing action, the role must be deleted and recreated.
+    def update_user_defined_role_stable(
+        self, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> _models.UserDefinedRoles:
+        """Patch replaces the allowed action on existing roles,if the desire is to remove an existing
+        action, the role must be deleted and recreated.
 
         User defined roles allow users to define and manage app specific AuthZ policy.
 
         :param body: Request body. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
+        :return: UserDefinedRoles. The UserDefinedRoles is compatible with MutableMapping
+        :rtype: ~azure.confidentialledger.models.UserDefinedRoles
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def update_user_defined_role(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.Roles, JSON, IO[bytes]], **kwargs: Any
-    ) -> None:
-        """Patch replaces the allowed action on existing roles,if the desire is to remove
-        an existing action, the role must be deleted and recreated.
+    @api_version_validation(
+        method_added_on="2026-02-23",
+        params_added_on={"2026-02-23": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2026-02-23"],
+    )
+    def update_user_defined_role_stable(
+        self, body: Union[_models.UserDefinedRoles, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.UserDefinedRoles:
+        """Patch replaces the allowed action on existing roles,if the desire is to remove an existing
+        action, the role must be deleted and recreated.
 
         User defined roles allow users to define and manage app specific AuthZ policy.
 
-        :param body: Request body. Is one of the following types: Roles, JSON, IO[bytes] Required.
-        :type body: ~azure.confidentialledger.models.Roles or JSON or IO[bytes]
-        :return: None
-        :rtype: None
+        :param body: Request body. Is one of the following types: UserDefinedRoles, JSON, IO[bytes]
+         Required.
+        :type body: ~azure.confidentialledger.models.UserDefinedRoles or JSON or IO[bytes]
+        :return: UserDefinedRoles. The UserDefinedRoles is compatible with MutableMapping
+        :rtype: ~azure.confidentialledger.models.UserDefinedRoles
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3602,16 +3914,16 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.UserDefinedRoles] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/merge-patch+json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_confidential_ledger_update_user_defined_role_request(
+        _request = build_confidential_ledger_update_user_defined_role_stable_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3625,7 +3937,8 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -3633,21 +3946,40 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.UserDefinedRoles, response.json())
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_user_defined_role(  # pylint: disable=inconsistent-return-statements
+    @api_version_validation(
+        method_added_on="2026-02-23",
+        params_added_on={"2026-02-23": ["api_version", "role_name"]},
+        api_versions_list=["2026-02-23"],
+    )
+    def delete_user_defined_role_stable(  # pylint: disable=inconsistent-return-statements
         self, *, role_name: str, **kwargs: Any
     ) -> None:
         """Deletes user defined roles.
 
-        A user defined role allows the users to create and manage their own role
-        actions using the API.
+        A user defined role allows the users to create and manage their own role actions using the API.
 
         :keyword role_name: user defined role name. Required.
         :paramtype role_name: str
@@ -3668,7 +4000,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_confidential_ledger_delete_user_defined_role_request(
+        _request = build_confidential_ledger_delete_user_defined_role_stable_request(
             role_name=role_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3688,9 +4020,12 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if cls:

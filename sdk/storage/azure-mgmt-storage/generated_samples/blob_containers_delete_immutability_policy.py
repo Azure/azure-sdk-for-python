@@ -34,12 +34,12 @@ def main():
         resource_group_name="res1581",
         account_name="sto9621",
         container_name="container4910",
-        etag="str",
+        etag="8d59f81a7fa7be0",
         match_condition=~azure.core.MatchConditions,
     )
     print(response)
 
 
-# x-ms-original-file: 2025-08-01/BlobContainersDeleteImmutabilityPolicy.json
+# x-ms-original-file: 2026-04-01/BlobContainersDeleteImmutabilityPolicy.json
 if __name__ == "__main__":
     main()

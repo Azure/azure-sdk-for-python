@@ -20,6 +20,7 @@ from azure.confidentialledger.aio._client import (
 # Since we can't `await` in __init__, use the sync client for the Identity Service.
 
 
+from azure.confidentialledger._redirect_caching_policy import AsyncRedirectCachingPolicy
 from azure.confidentialledger.certificate import ConfidentialLedgerCertificateClient  # pylint: disable=import-error,no-name-in-module
 from azure.confidentialledger._patch import ConfidentialLedgerCertificateCredential
 
@@ -114,5 +115,11 @@ class ConfidentialLedgerClient(GeneratedClient):
         # Customize the underlying client to use a self-signed TLS certificate.
 
         kwargs["connection_verify"] = kwargs.get("connection_verify", ledger_certificate_path)
+
+        # Inject the redirect-caching policy so that write requests skip the
+        # load-balancer after the first redirect, and preserve sensitive headers
+        # on service-managed redirects within the trusted ledger endpoint.
+        kwargs.setdefault("redirect_policy", AsyncRedirectCachingPolicy(**kwargs))
+        kwargs.setdefault("disable_redirect_cleanup", True)
 
         super().__init__(endpoint, **kwargs)

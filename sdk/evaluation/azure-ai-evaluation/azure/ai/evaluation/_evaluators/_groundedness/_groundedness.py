@@ -12,7 +12,10 @@ else:
     from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from azure.ai.evaluation._evaluators._common._validators import ConversationValidator, ValidatorInterface
+from azure.ai.evaluation._evaluators._common._validators import (
+    GroundednessConversationValidator,
+    ValidatorInterface,
+)
 from azure.ai.evaluation._model_configurations import Conversation
 from ..._common.utils import (
     ErrorBlame,
@@ -114,14 +117,17 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         self._higher_is_better = True
 
-        # Initialize input validator
-        self._validator = ConversationValidator(
+        # Initialize input validator. ``GroundednessConversationValidator``
+        # carries a wider ``UNSUPPORTED_TOOLS`` list than the shared base:
+        # ``azure_ai_search``, ``azure_fabric``, and ``sharepoint_grounding``
+        # are still rejected here pending a context-extractor helper.
+        self._validator = GroundednessConversationValidator(
             error_target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
             requires_query=False,
             check_for_unsupported_tools=True,
         )
 
-        self._validator_with_query = ConversationValidator(
+        self._validator_with_query = GroundednessConversationValidator(
             error_target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
             requires_query=True,
             check_for_unsupported_tools=True,
@@ -399,7 +405,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         try:
             logger.debug("Extracting context from response")
             tool_calls = self._parse_tools_from_response(response=response)
-            logger.debug(f"Tool Calls parsed successfully: {tool_calls}")
+            logger.debug("Tool calls parsed successfully: count=%d", len(tool_calls) if tool_calls else 0)
 
             if not tool_calls:
                 return NO_CONTEXT

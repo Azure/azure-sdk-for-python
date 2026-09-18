@@ -123,5 +123,5 @@
         "azure.mgmt.databricks.operations.VNetPeeringOperations.list_by_workspace": "Microsoft.Databricks.VirtualNetworkPeerings.listByWorkspace",
         "azure.mgmt.databricks.aio.operations.VNetPeeringOperations.list_by_workspace": "Microsoft.Databricks.VirtualNetworkPeerings.listByWorkspace"
     },
-    "CrossLanguageVersion": "3eacd2af9f8f"
+    "CrossLanguageVersion": "9e0db5091748"
 }

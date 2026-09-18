@@ -1,5 +1,42 @@
 # Release History
 
+## 2.0.0b3 (2026-07-07)
+
+### Features Added
+
+  - Client `SignalRManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `SignalRManagementClient` added method `send_request`
+  - Client `SignalRManagementClient` added operation group `signal_rreplica_shared_private_link_resources`
+  - Model `ServerlessSettings` added property `keep_alive_interval_in_seconds`
+  - Added model `ApplicationFirewallSettings`
+  - Added model `ClientConnectionCountRule`
+  - Added enum `ClientConnectionCountRuleDiscriminator`
+  - Added model `ClientTrafficControlRule`
+  - Added enum `ClientTrafficControlRuleDiscriminator`
+  - Added model `RouteSettings`
+  - Added model `ThrottleByJwtCustomClaimRule`
+  - Added model `ThrottleByJwtSignatureRule`
+  - Added model `ThrottleByUserIdRule`
+  - Added model `TrafficThrottleByJwtCustomClaimRule`
+  - Added model `TrafficThrottleByJwtSignatureRule`
+  - Added model `TrafficThrottleByUserIdRule`
+  - Added operation group `SignalRReplicaSharedPrivateLinkResourcesOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `CustomCertificate` moved instance variable `provisioning_state`, `key_vault_base_uri`, `key_vault_secret_name` and `key_vault_secret_version` under property `properties` whose type is `CustomCertificateProperties`
+  - Model `CustomDomain` moved instance variable `provisioning_state`, `domain_name` and `custom_certificate` under property `properties` whose type is `CustomDomainProperties`
+  - Model `PrivateEndpointConnection` moved instance variable `provisioning_state`, `private_endpoint`, `group_ids` and `private_link_service_connection_state` under property `properties` whose type is `PrivateEndpointConnectionProperties`
+  - Model `PrivateLinkResource` moved instance variable `group_id`, `required_members`, `required_zone_names` and `shareable_private_link_resource_types` under property `properties` whose type is `PrivateLinkResourceProperties`
+  - Model `Replica` moved instance variable `provisioning_state`, `region_endpoint_enabled` and `resource_stopped` under property `properties` whose type is `ReplicaProperties`
+  - Model `SharedPrivateLinkResource` moved instance variable `group_id`, `private_link_resource_id`, `provisioning_state`, `request_message` and `status` under property `properties` whose type is `SharedPrivateLinkResourceProperties`
+  - Model `SignalRResource` moved instance variable `provisioning_state`, `external_ip`, `host_name`, `public_port`, `server_port`, `version`, `private_endpoint_connections`, `shared_private_link_resources`, `tls`, `host_name_prefix`, `features`, `live_trace_configuration`, `resource_log_configuration`, `cors`, `serverless`, `upstream`, `network_ac_ls`, `public_network_access`, `disable_local_auth`, `disable_aad_auth`, `region_endpoint_enabled` and `resource_stopped` under property `properties` whose type is `SignalRProperties`
+
+### Other Changes
+
+  - Deleted model `CustomCertificateList`/`CustomDomainList`/`OperationList`/`PrivateEndpointConnectionList`/`PrivateLinkResourceList`/`ReplicaList`/`SharedPrivateLinkResourceList`/`SignalRResourceList`/`SignalRUsageList` which actually were not used by SDK users
+
 ## 2.0.0b2 (2023-10-23)
 
 ### Features Added

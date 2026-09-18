@@ -379,7 +379,9 @@ class DataLakeFileClient(PathClient):
             expiry_time = convert_datetime_to_rfc1123(expires_on)
         elif expires_on is not None:
             expiry_time = str(expires_on)
-        self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expiry_time, **kwargs)
+        self._datalake_client_for_blob_operation.path.set_expiry(
+            expiry_options=expiry_options, expires_on=expiry_time, **kwargs
+        )
 
     @distributed_trace
     def upload_data(
@@ -688,7 +690,13 @@ class DataLakeFileClient(PathClient):
         :keyword validate_content:
             Enables checksum validation for the transfer. Any checksum calculated is NOT stored with the blob.
             Choose "auto" (let the SDK choose the best algorithm), "crc64", or "md5". The use of bool is deprecated.
-            NOTE: The use of "auto" or "crc64" requires the `azure-storage-extensions` package to be installed.
+
+            .. note:: When using CRC64 validation (including when "auto" resolves to CRC64):
+
+                - The ``ext-checksums`` extra must be installed.
+                - Automatic decompression is not supported. If ``decompress=True`` is explicitly
+                  set, a :class:`ValueError` will be raised. If ``decompress`` is not specified,
+                  it will be set to ``False`` automatically.
         :paramtype validate_content: Union[bool, Literal['auto', 'crc64', 'md5']]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see

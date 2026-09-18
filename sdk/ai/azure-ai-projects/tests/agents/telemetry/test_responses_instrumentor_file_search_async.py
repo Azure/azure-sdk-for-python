@@ -39,7 +39,7 @@ class TestResponsesInstrumentorFileSearchAsync(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_file_search_non_streaming_with_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
@@ -250,7 +250,7 @@ Return Policy: 30-day return policy with no questions asked
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_file_search_non_streaming_without_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
@@ -459,7 +459,7 @@ Return Policy: 30-day return policy with no questions asked
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_file_search_streaming_with_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
@@ -666,7 +666,7 @@ Return Policy: 30-day return policy with no questions asked
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_async_file_search_streaming_without_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements

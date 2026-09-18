@@ -25,7 +25,7 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.snapshots.get(
             resource_group_name=resource_group.name,
             snapshot_name="str",
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         )
 
         # please add some check logic here by yourself
@@ -91,6 +91,13 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
                             "encryptionSettingsVersion": "str",
                         },
                         "hyperVGeneration": "str",
+                        "immutabilityPolicy": {
+                            "immutabilityDurationDays": 0,
+                            "isPolicyExpired": bool,
+                            "policyExpirationTime": "2020-02-20 00:00:00",
+                            "policyStartTime": "2020-02-20 00:00:00",
+                            "type": "str",
+                        },
                         "incremental": bool,
                         "incrementalSnapshotFamilyId": "str",
                         "networkAccessPolicy": "str",
@@ -98,7 +105,11 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
                         "provisioningState": "str",
                         "publicNetworkAccess": "str",
                         "purchasePlan": {"name": "str", "product": "str", "publisher": "str", "promotionCode": "str"},
-                        "securityProfile": {"secureVMDiskEncryptionSetId": "str", "securityType": "str"},
+                        "securityProfile": {
+                            "confidentialVMVersion": "str",
+                            "secureVMDiskEncryptionSetId": "str",
+                            "securityType": "str",
+                        },
                         "snapshotAccessState": "str",
                         "supportedCapabilities": {
                             "acceleratedNetwork": bool,
@@ -122,7 +133,7 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-01-02",
+                api_version="2026-03-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -167,7 +178,7 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
                     "sku": {"name": "str", "tier": "str"},
                     "tags": {"str": "str"},
                 },
-                api_version="2025-01-02",
+                api_version="2026-03-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -181,7 +192,7 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.snapshots.begin_delete(
                 resource_group_name=resource_group.name,
                 snapshot_name="str",
-                api_version="2025-01-02",
+                api_version="2026-03-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -193,7 +204,7 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_snapshots_list_by_resource_group(self, resource_group):
         response = self.client.snapshots.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -203,7 +214,7 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_snapshots_list(self, resource_group):
         response = self.client.snapshots.list(
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -222,7 +233,7 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
                     "fileFormat": "str",
                     "getSecureVMGuestStateSAS": bool,
                 },
-                api_version="2025-01-02",
+                api_version="2026-03-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -236,7 +247,37 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.snapshots.begin_revoke_access(
                 resource_group_name=resource_group.name,
                 snapshot_name="str",
-                api_version="2025-01-02",
+                api_version="2026-03-02",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_snapshots_begin_update_immutability_policy(self, resource_group):
+        response = await (
+            await self.client.snapshots.begin_update_immutability_policy(
+                resource_group_name=resource_group.name,
+                snapshot_name="str",
+                immutability_policy_data={"immutabilityDurationDays": 0, "type": "str"},
+                api_version="2026-03-02",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_snapshots_begin_update_immutability_policy_lock(self, resource_group):
+        response = await (
+            await self.client.snapshots.begin_update_immutability_policy_lock(
+                resource_group_name=resource_group.name,
+                snapshot_name="str",
+                immutability_policy_data={"immutabilityDurationDays": 0, "type": "str"},
+                api_version="2026-03-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 

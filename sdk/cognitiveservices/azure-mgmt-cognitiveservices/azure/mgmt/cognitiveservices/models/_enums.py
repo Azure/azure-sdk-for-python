@@ -80,6 +80,13 @@ class AgentDeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The underlying infra is provisioned by the deployer (BYO)."""
 
 
+class AgentHostingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of infrastructure used to host Foundry agents."""
+
+    MANAGED_CLUSTER = "ManagedCluster"
+    """Agents are hosted on an Azure Kubernetes Service managed cluster."""
+
+
 class AgenticApplicationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of an agentic application."""
 
@@ -106,6 +113,31 @@ class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Agent2Agent standard."""
     RESPONSES = "Responses"
     """OpenAI-compatible."""
+
+
+class ArcDeploymentComputeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Compute type for an Arc deployment."""
+
+    GPU = "gpu"
+    """GPU compute."""
+    CPU = "cpu"
+    """CPU compute."""
+
+
+class ArcDeploymentRuntime(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Inference runtime for an Arc deployment."""
+
+    VLLM = "vllm"
+    """vLLM runtime."""
+    ONNX = "onnx-genai"
+    """ONNX runtime."""
+
+
+class ArcDeploymentSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SKU for an Arc deployment."""
+
+    ARC = "Arc"
+    """Arc SKU."""
 
 
 class BuiltInAuthorizationScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -927,6 +959,8 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CANCELED."""
     RESOLVING_DNS = "ResolvingDNS"
     """RESOLVING_DNS."""
+    EXTENSION_UNREACHABLE = "ExtensionUnreachable"
+    """EXTENSION_UNREACHABLE."""
 
 
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -977,6 +1011,67 @@ class RaiActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HITL."""
     RETRY = "RETRY"
     """RETRY."""
+
+
+class RaiEgressDefaultAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The default action when no user-defined egress rules match."""
+
+    ALLOW = "Allow"
+    """Allow traffic by default when no rules match."""
+    DENY = "Deny"
+    """Deny traffic by default when no rules match."""
+
+
+class RaiEgressHeaderOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operation to apply to a header in a Transform or Rewrite action."""
+
+    SET = "Set"
+    """Set or overwrite the header value, creating it if it does not exist."""
+    INSERT = "Insert"
+    """Add the header only if it is not already present."""
+    REMOVE = "Remove"
+    """Remove the header if present."""
+
+
+class RaiEgressMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The enforcement mode for egress rules. If omitted on create, the server defaults to Enforced."""
+
+    ENFORCED = "Enforced"
+    """Rules are enforced. Matching traffic is allowed or denied per rule actions."""
+    AUDIT = "Audit"
+    """Rules are evaluated and logged but not enforced. Traffic is always forwarded regardless of rule
+    action. A would-be Deny is logged but not applied. Transform and Rewrite actions are still
+    applied to matching traffic (only Deny enforcement is suppressed)."""
+
+
+class RaiEgressRuleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of action an egress rule takes when it matches."""
+
+    ALLOW = "Allow"
+    """Allow the matched traffic."""
+    DENY = "Deny"
+    """Deny the matched traffic."""
+    TRANSFORM = "Transform"
+    """Forward the matched traffic after applying header transforms. Requires at least one header."""
+    REWRITE = "Rewrite"
+    """Redirect the matched traffic to a new destination, optionally applying header transforms.
+    Requires a rewrite target."""
+
+
+class RaiEgressRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of an egress rule, determining what kind of traffic matching it performs."""
+
+    FQDN = "Fqdn"
+    """Fully qualified domain name (FQDN) based rule matching on host and path patterns."""
+
+
+class RaiEgressScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """URL scheme for rewrite targets. Only HTTP and HTTPS are supported."""
+
+    HTTP = "http"
+    """HTTP scheme."""
+    HTTPS = "https"
+    """HTTPS scheme."""
 
 
 class RaiPolicyContentSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1216,5 +1311,5 @@ class VmPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REGULAR = "Regular"
     """Regular VM priority."""
-    LOW_PRIORITY = "LowPriority"
-    """Low-priority VM."""
+    SPOT = "Spot"
+    """Spot VM priority."""

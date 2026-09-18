@@ -1,5 +1,49 @@
 # Release History
 
+## 4.0.0 (2026-07-08)
+
+### Features Added
+
+  - Client `StorageCacheManagementClient` added method `send_request`
+  - Client `StorageCacheManagementClient` added operation group `expansion_jobs`
+  - Enum `AmlFilesystemHealthStateType` added member `EXPANDING`
+  - Added model `AutoExportJobPropertiesStatus`
+  - Added model `AutoImportJobPropertiesStatus`
+  - Added model `CloudError`
+  - Added model `ExpansionJob`
+  - Added model `ExpansionJobProperties`
+  - Added enum `ExpansionJobPropertiesProvisioningState`
+  - Added model `ExpansionJobPropertiesStatus`
+  - Added enum `ExpansionJobStatusType`
+  - Added model `ExpansionJobUpdate`
+  - Added model `ImportJobPropertiesStatus`
+  - Added model `ProxyResource`
+  - Added operation group `ExpansionJobsOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `AmlFilesystem` moved instance variable `storage_capacity_ti_b`, `health`, `provisioning_state`, `filesystem_subnet`, `client_info`, `throughput_provisioned_m_bps`, `encryption_settings`, `maintenance_window`, `hsm` and `root_squash_settings` under property `properties` whose type is `AmlFilesystemProperties`
+  - Model `AmlFilesystemUpdate` moved instance variable `encryption_settings`, `maintenance_window` and `root_squash_settings` under property `properties` whose type is `AmlFilesystemUpdateProperties`
+  - Model `ApiOperation` moved instance variable `service_specification` under property `properties` whose type is `ApiOperationProperties`
+  - Model `AscOperation` moved instance variable `output` under property `properties` whose type is `AscOperationProperties`
+  - Model `AutoExportJob` moved instance variable `provisioning_state`, `admin_status`, `auto_export_prefixes`, `state`, `status_code`, `status_message`, `total_files_exported`, `total_mi_b_exported`, `total_files_failed`, `export_iteration_count`, `last_successful_iteration_completion_time_utc`, `current_iteration_files_discovered`, `current_iteration_mi_b_discovered`, `current_iteration_files_exported`, `current_iteration_mi_b_exported`, `current_iteration_files_failed`, `last_started_time_utc` and `last_completion_time_utc` under property `properties` whose type is `AutoExportJobProperties`
+  - Model `AutoExportJobUpdate` moved instance variable `admin_status` under property `properties` whose type is `AutoExportJobUpdateProperties`
+  - Model `AutoImportJob` moved instance variable `provisioning_state`, `admin_status`, `auto_import_prefixes`, `conflict_resolution_mode`, `enable_deletions`, `maximum_errors`, `state`, `status_code`, `status_message`, `scan_start_time`, `scan_end_time`, `total_blobs_walked`, `rate_of_blob_walk`, `total_blobs_imported`, `rate_of_blob_import`, `imported_files`, `imported_directories`, `imported_symlinks`, `preexisting_files`, `preexisting_directories`, `preexisting_symlinks`, `total_errors`, `total_conflicts`, `blob_sync_events`, `last_started_time_utc` and `last_completion_time_utc` under property `properties` whose type is `AutoImportJobProperties`
+  - Model `AutoImportJobUpdate` moved instance variable `admin_status` under property `properties` whose type is `AutoImportJobUpdateProperties`
+  - Model `Cache` moved instance variable `cache_size_gb`, `health`, `mount_addresses`, `provisioning_state`, `subnet`, `upgrade_status`, `upgrade_settings`, `network_settings`, `encryption_settings`, `security_settings`, `directory_services_settings`, `zones`, `priming_jobs` and `space_allocation` under property `properties` whose type is `CacheProperties`
+  - Model `ImportJob` moved instance variable `provisioning_state`, `admin_status`, `import_prefixes`, `conflict_resolution_mode`, `maximum_errors`, `state`, `status_message`, `total_blobs_walked`, `blobs_walked_per_second`, `total_blobs_imported`, `imported_files`, `imported_directories`, `imported_symlinks`, `preexisting_files`, `preexisting_directories`, `preexisting_symlinks`, `blobs_imported_per_second`, `last_completion_time`, `last_started_time`, `total_errors` and `total_conflicts` under property `properties` whose type is `ImportJobProperties`
+  - Model `ImportJobUpdate` moved instance variable `admin_status` under property `properties` whose type is `ImportJobUpdateProperties`
+  - Model `Restriction` renamed its instance variable `values` to `values_property`
+  - Model `StorageTarget` moved instance variable `junctions`, `target_type`, `provisioning_state`, `state`, `nfs3`, `clfs`, `unknown`, `blob_nfs` and `allocation_percentage` under property `properties` whose type is `StorageTargetProperties`
+  - Method `StorageTargetsOperations.begin_delete` changed its parameter `force` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `AmlFilesystemsListResult`/`ApiOperationListResult`/`AutoExportJobsListResult`/`AutoImportJobsListResult`/`CachesListResult`/`ImportJobsListResult`/`ResourceSkusResult`/`ResourceUsagesListResult`/`StorageTargetsResult`/`UsageModelsResult` which actually were not used by SDK users
+  - Deleted model `StorageTargetResource`/`UserAssignedIdentitiesValueAutoGenerated` which actually were not used by SDK users
+
 ## 4.0.0b1 (2026-05-27)
 
 ### Features Added

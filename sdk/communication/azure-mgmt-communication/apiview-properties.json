@@ -141,5 +141,6 @@
         "azure.mgmt.communication.aio.operations.SuppressionListAddressesOperations.delete": "Microsoft.Communication.SuppressionListAddresses.delete",
         "azure.mgmt.communication.operations.SuppressionListAddressesOperations.list": "Microsoft.Communication.SuppressionListAddresses.list",
         "azure.mgmt.communication.aio.operations.SuppressionListAddressesOperations.list": "Microsoft.Communication.SuppressionListAddresses.list"
-    }
+    },
+    "CrossLanguageVersion": "f731f73111c0"
 }

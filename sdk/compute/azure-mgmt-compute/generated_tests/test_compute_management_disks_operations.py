@@ -24,7 +24,7 @@ class TestComputeManagementDisksOperations(AzureMgmtRecordedTestCase):
         response = self.client.disks.get(
             resource_group_name=resource_group.name,
             disk_name="str",
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         )
 
         # please add some check logic here by yourself
@@ -105,7 +105,11 @@ class TestComputeManagementDisksOperations(AzureMgmtRecordedTestCase):
                     "provisioningState": "str",
                     "publicNetworkAccess": "str",
                     "purchasePlan": {"name": "str", "product": "str", "publisher": "str", "promotionCode": "str"},
-                    "securityProfile": {"secureVMDiskEncryptionSetId": "str", "securityType": "str"},
+                    "securityProfile": {
+                        "confidentialVMVersion": "str",
+                        "secureVMDiskEncryptionSetId": "str",
+                        "securityType": "str",
+                    },
                     "shareInfo": [{"vmUri": "str"}],
                     "supportedCapabilities": {
                         "acceleratedNetwork": bool,
@@ -131,7 +135,7 @@ class TestComputeManagementDisksOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -184,7 +188,7 @@ class TestComputeManagementDisksOperations(AzureMgmtRecordedTestCase):
                 "sku": {"name": "str", "tier": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -196,7 +200,7 @@ class TestComputeManagementDisksOperations(AzureMgmtRecordedTestCase):
         response = self.client.disks.begin_delete(
             resource_group_name=resource_group.name,
             disk_name="str",
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -207,7 +211,7 @@ class TestComputeManagementDisksOperations(AzureMgmtRecordedTestCase):
     def test_disks_list_by_resource_group(self, resource_group):
         response = self.client.disks.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -217,7 +221,7 @@ class TestComputeManagementDisksOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_disks_list(self, resource_group):
         response = self.client.disks.list(
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -235,7 +239,7 @@ class TestComputeManagementDisksOperations(AzureMgmtRecordedTestCase):
                 "fileFormat": "str",
                 "getSecureVMGuestStateSAS": bool,
             },
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -247,7 +251,7 @@ class TestComputeManagementDisksOperations(AzureMgmtRecordedTestCase):
         response = self.client.disks.begin_revoke_access(
             resource_group_name=resource_group.name,
             disk_name="str",
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

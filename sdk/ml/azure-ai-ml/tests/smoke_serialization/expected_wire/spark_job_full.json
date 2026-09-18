@@ -1,0 +1,43 @@
+{
+  "properties": {
+    "args": "--input ${{inputs.data}} --output ${{outputs.output}}",
+    "codeId": "./src",
+    "conf": {
+      "spark.driver.cores": "1",
+      "spark.driver.memory": "2g",
+      "spark.executor.cores": "2",
+      "spark.executor.instances": "2",
+      "spark.executor.memory": "2g"
+    },
+    "description": "smoke serialization spark job",
+    "displayName": "smoke-spark-job-display",
+    "entry": {
+      "file": "main.py",
+      "sparkJobEntryType": "SparkJobPythonEntry"
+    },
+    "experimentName": "smoke-experiment",
+    "inputs": {
+      "data": {
+        "jobInputType": "uri_file",
+        "mode": "Direct",
+        "uri": "azureml://datastores/workspaceblobstore/paths/python/data.csv"
+      }
+    },
+    "isArchived": false,
+    "jobType": "Spark",
+    "outputs": {
+      "output": {
+        "jobOutputType": "uri_folder",
+        "mode": "Direct"
+      }
+    },
+    "properties": {},
+    "resources": {
+      "instanceType": "Standard_E8S_V3",
+      "runtimeVersion": "3.4.0"
+    },
+    "tags": {
+      "tag1": "value1"
+    }
+  }
+}

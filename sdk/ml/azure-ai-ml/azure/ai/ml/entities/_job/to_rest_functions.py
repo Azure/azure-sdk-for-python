@@ -2,14 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,reimported
 
 from functools import singledispatch
 from pathlib import Path
 from typing import Any
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBaseData
-from azure.ai.ml._restclient.v2025_01_01_preview.models import JobBase as JobBaseData202501
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase as JobBaseData202501
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase as JobBaseData
 from azure.ai.ml.constants._common import DEFAULT_EXPERIMENT_NAME
 from azure.ai.ml.entities._builders.command import Command
 from azure.ai.ml.entities._builders.pipeline import Pipeline
