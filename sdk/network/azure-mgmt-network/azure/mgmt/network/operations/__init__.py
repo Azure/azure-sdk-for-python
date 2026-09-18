@@ -16,6 +16,7 @@ from ._operations import Operations  # type: ignore
 from ._operations import ApplicationGatewaysOperations  # type: ignore
 from ._operations import ApplicationGatewayPrivateEndpointConnectionsOperations  # type: ignore
 from ._operations import ApplicationSecurityGroupsOperations  # type: ignore
+from ._operations import AuthenticationPoliciesOperations  # type: ignore
 from ._operations import AzureFirewallsOperations  # type: ignore
 from ._operations import BastionHostsOperations  # type: ignore
 from ._operations import NetworkInterfacesOperations  # type: ignore
@@ -189,6 +190,7 @@ __all__ = [
     "ApplicationGatewaysOperations",
     "ApplicationGatewayPrivateEndpointConnectionsOperations",
     "ApplicationSecurityGroupsOperations",
+    "AuthenticationPoliciesOperations",
     "AzureFirewallsOperations",
     "BastionHostsOperations",
     "NetworkInterfacesOperations",

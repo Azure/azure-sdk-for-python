@@ -133,7 +133,7 @@ For each new sample, provide a one-line description of what it demonstrates. Rea
 Organize detected changes into these categories:
 
 ### Features Added
-- New sub-clients (e.g., "New `.beta.routines` sub-client with routine operations: `create_or_update`, `get`, `enable`, ...")
+- New sub-clients (e.g., "New `.beta.routines` sub-client for creating, scheduling, and managing routines.")
 - New methods on existing sub-clients (e.g., "New methods on `.beta.agents` for optimization jobs: `create_optimization_job`, `get_optimization_job`, ...")
 - New model classes that represent significant features (e.g., "Support integration of external Agents. See new `ExternalAgentDefinition` class.")
 - New properties on existing classes (e.g., "New optional `force` parameter on `agents.delete` method.")
@@ -201,7 +201,7 @@ Breaking changes in beta classes:
 
 **Guidelines for writing entries:**
 - For new methods: mention the sub-client and method name, briefly describe what it does. Only report the sync version — do not list both sync and async versions separately.
-- For new sub-clients: list all the methods it provides (sync versions only)
+- For new sub-clients: summarize the capability the sub-client provides; do not enumerate all of its methods.
 - For new tools: just mention the class name
 - For property changes: mention the class name and the affected property
 - For renames: show "X renamed to Y" format
@@ -282,9 +282,9 @@ Here's an example of a well-formatted changelog entry:
   * Optimization jobs: `create_optimization_job`, `get_optimization_job`, `list_optimization_jobs`, `cancel_optimization_job`, `list_optimization_candidates`.
   * Optimization candidate management: `list_optimization_candidates`, `get_optimization_candidate`, `get_optimization_candidate_config`, `get_optimization_candidate_results`, `get_candidate_file`, `promote_candidate`.
   * `stop_session` to stop a running agent session.
-* New `.beta.datasets` sub-client with data generation job operations: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
-* New `.beta.models` sub-client to handle AI model weights: `create`, `list_versions`, `list`, `get`, `delete`, `update`, `pending_create_version`, `pending_upload`, `get_credentials`.
-* New `.beta.routines` sub-client with routine operations: `create_or_update`, `get`, `enable`, `disable`, `list`, `delete`, `list_runs`, `dispatch`.
+* New `.beta.datasets` sub-client for creating, monitoring, and managing data generation jobs.
+* New `.beta.models` sub-client for registering, versioning, and managing AI model weights.
+* New `.beta.routines` sub-client for creating, scheduling, and managing routines and their runs.
 * New methods on `.beta.evaluators` for evaluator generation jobs: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
 * New methods on `.beta.memory_stores` to handle individual memory items: `create_memory`, `update_memory`, `list_memories`, `get_memory`, `delete_memory`.
 * New methods on `.beta.skills` for versioned skill management: `create`, `list_versions`, `get_version`, `download_version`, `delete_version`.

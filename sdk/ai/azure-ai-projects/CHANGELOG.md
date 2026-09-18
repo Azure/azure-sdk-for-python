@@ -1,5 +1,45 @@
 # Release History
 
+## 2.7.0 (2026-09-18)
+
+### Features Added
+
+* Added preview Voice Agent support, including voice agent definitions, realtime sessions and events, conversations, audio, and telephony models.
+* Added `.beta.agents.create_from_prompt()` to generate and create a Voice Agent from high-level inputs.
+* Added the `.beta.voice_agents.conversations` sub-client for managing voice conversations and retrieving their responses, conversation items, and audio.
+* Added `.beta.voice_agents.realtime.connect()` for sync and async realtime Voice Agent sessions with typed client and server events.
+* Added the `.beta.voice_agents.telephony` sub-client for managing calls, bindings, transfer targets, and durable outbound call jobs.
+* Added optional `harness` and `skills` properties to `PromptAgentDefinition`, with new GitHub Copilot harness, toolset, and skill-reference models.
+* Added invocation moderation through `RaiConfig.invocations_moderation` and `RaiInvocationModeration`.
+* Added `ToolboxesOperations.invoke_latest_toolbox_mcp()` and toolbox version metadata through `ToolboxObject.updated_at` and `ToolboxObject.versions`.
+* Added `DataGenerationJobOutputOptions.write_mode` for controlling dataset output writes and `TracesDataGenerationJobSource.trace_ids` for selecting explicit traces.
+* Made `TracesDataGenerationJobOptions.max_samples` optional.
+* Added read-only agent lifecycle properties `AgentDetails.configuration_state` and `AgentSessionResource.stopped_at`.
+
+### Breaking Changes
+
+Breaking changes in beta classes:
+
+* Removed the `max_samples` constructor argument and property from `DataGenerationJobOptions` and `SimulationSeedDataGenerationJobOptions`.
+* The `ToolboxObject` constructor now requires `updated_at` and `versions`.
+
+### Dependency update
+
+* Added the optional `voice` dependency group, which installs `websockets` for sync realtime Voice Agent sessions and `aiohttp` for async sessions.
+
+### Sample updates
+
+* Added `sample_voice_agent_basic.py` under `samples/agents/voice/`, demonstrating the Voice Agent management lifecycle.
+* Added `sample_voice_agent_generate.py`, demonstrating guided Voice Agent authoring with `.beta.agents.create_from_prompt()`.
+* Added `sample_voice_agent_live_text_conversation.py`, demonstrating a persisted, typed realtime Voice Agent conversation.
+* Added `sample_voice_agent_live_audio_conversation_async.py`, demonstrating a hands-free realtime audio conversation with barge-in.
+* Added `sample_voice_agent_live_function_tool.py`, demonstrating client-side function execution during a realtime Voice Agent session.
+* Added `sample_voice_agent_read_conversation.py`, demonstrating how to read a persisted Voice Agent conversation and transcript.
+* Added `sample_voice_agent_read_conversation_audio.py`, demonstrating how to retrieve merged conversation audio and individual audio segments.
+* Added `sample_voice_agent_versions.py`, demonstrating Voice Agent version and draft management.
+* Added `sample_voice_agent_with_tools.py`, demonstrating audio configuration, tools, and self-deployed models.
+* Updated `sample_synthetic_multiturn_evaluation.py` to set the service-required simulation seed `max_samples` field through the model's mapping interface because `SimulationSeedDataGenerationJobOptions` no longer exposes it as a constructor argument.
+
 ## 2.6.1 (2026-09-14)
 
 ### Sample updates
