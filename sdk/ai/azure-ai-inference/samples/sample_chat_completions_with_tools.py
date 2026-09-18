@@ -61,7 +61,7 @@ def sample_chat_completions_with_tools():
         destination_city (str): The destination city.
 
         Returns:
-        str: The airline name, fight number, date and time of the next flight between the cities, in JSON format.
+        str: The airline name, flight number, date and time of the next flight between the cities, in JSON format.
         """
         if origin_city == "Seattle" and destination_city == "Miami":
             return json.dumps(
@@ -69,7 +69,7 @@ def sample_chat_completions_with_tools():
             )
         return json.dumps({"error": "No flights found between the cities"})
 
-    # Define a function 'tool' that the model can use to retrieves flight information
+    # Define a function 'tool' that the model can use to retrieve flight information
     flight_info = ChatCompletionsToolDefinition(
         function=FunctionDefinition(
             name="get_flight_info",
@@ -96,8 +96,8 @@ def sample_chat_completions_with_tools():
 
     # Make a chat completions call asking for flight information, while providing a tool to handle the request
     messages = [
-        SystemMessage("You an assistant that helps users find flight information."),
-        UserMessage("What is the next flights from Seattle to Miami?"),
+        SystemMessage("You are an assistant that helps users find flight information."),
+        UserMessage("What is the next flight from Seattle to Miami?"),
     ]
 
     response = client.complete(
